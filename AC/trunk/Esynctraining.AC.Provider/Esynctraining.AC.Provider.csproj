@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2876C57D-D520-4E00-971D-176F0C0F0EE8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Esynctraining.AC.Provider</RootNamespace>
+    <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
+    <Compile Include="Constants\Commands.cs" />
+    <Compile Include="Constants\CommandParams.cs" />
+    <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\MeetingAttendeeCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\GenericResult.cs" />
+    <Compile Include="DataObjects\Results\PrincipalResult.cs" />
+    <Compile Include="DataObjects\Results\TransactionCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\PrincipalCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ScoInfoResult.cs" />
+    <Compile Include="DataObjects\Results\PermissionCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ScoContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\MeetingItemCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\EventCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\GenericCollectionResultBase.cs" />
+    <Compile Include="DataObjects\Results\LoginResult.cs" />
+    <Compile Include="DataObjects\Results\ResultBase.cs" />
+    <Compile Include="DataObjects\UserCredentials.cs" />
+    <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\MeetingAttendee.cs" />
+    <Compile Include="Entities\PrincipalDelete.cs" />
+    <Compile Include="Entities\PrincipalPreferences.cs" />
+    <Compile Include="Entities\PrincipalDetail.cs" />
+    <Compile Include="Entities\PrincipalInfo.cs" />
+    <Compile Include="Entities\Enums.cs" />
+    <Compile Include="Entities\PrincipalSetup.cs" />
+    <Compile Include="Entities\ScoInfo.cs" />
+    <Compile Include="Entities\EventUpdateItem.cs" />
+    <Compile Include="Entities\ScoContent.cs" />
+    <Compile Include="Entities\EventInfo.cs" />
+    <Compile Include="Entities\MeetingItem.cs" />
+    <Compile Include="Entities\MeetingUpdateItem.cs" />
+    <Compile Include="Entities\Permissions.cs" />
+    <Compile Include="Entities\Principal.cs" />
+    <Compile Include="Entities\ScoShortcut.cs" />
+    <Compile Include="Entities\ScoUpdateItemBase.cs" />
+    <Compile Include="Entities\StatusInfo.cs" />
+    <Compile Include="Entities\TransactionInfo.cs" />
+    <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="EntityParsing\MeetingAttendeeParser.cs" />
+    <Compile Include="EntityParsing\MeetingAttendeeCollectionParser.cs" />
+    <Compile Include="EntityParsing\TransactionInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\TransactionInfoParser.cs" />
+    <Compile Include="EntityParsing\PrincipalParser.cs" />
+    <Compile Include="EntityParsing\PrincipalCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoInfoParser.cs" />
+    <Compile Include="EntityParsing\PermissionInfoParser.cs" />
+    <Compile Include="EntityParsing\PermissionInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoContentParser.cs" />
+    <Compile Include="EntityParsing\ScoContentCollectionParserCollectionParser.cs" />
+    <Compile Include="EntityParsing\ShortcutCollectionParser.cs" />
+    <Compile Include="EntityParsing\ShortcutParser.cs" />
+    <Compile Include="EntityParsing\EventInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\EventInfoParser.cs" />
+    <Compile Include="EntityParsing\MeetingItemCollectionParser.cs" />
+    <Compile Include="EntityParsing\MeetingItemParser.cs" />
+    <Compile Include="EntityParsing\UserInfoParser.cs" />
+    <Compile Include="Extensions\XmlNodeExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="HttpUtilsInternal.cs" />
+    <Compile Include="DataObjects\Account.cs" />
+    <Compile Include="AdobeConnectProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TraceTool.cs" />
+    <Compile Include="Utils\EnumReflector.cs" />
+    <Compile Include="Utils\QueryStringBuilder.cs" />
+    <Compile Include="Utils\RequestProcessor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

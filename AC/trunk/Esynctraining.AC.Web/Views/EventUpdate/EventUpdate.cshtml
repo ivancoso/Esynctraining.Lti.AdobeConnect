@@ -1,0 +1,77 @@
+﻿@model eSyncTraining.Web.Models.EventDetailModel
+
+@{
+    ViewBag.Title = "Event Details";
+}
+
+@{
+    var meetingDropdownContnent = ViewData["meetings"] as IEnumerable<SelectListItem>;
+
+    if (Model != null && meetingDropdownContnent != null)
+    {
+        var selectedMeeting = meetingDropdownContnent.FirstOrDefault(p => p.Value.Equals(Model.MeetingId));
+
+        if (selectedMeeting != null)
+        {
+            selectedMeeting.Selected = true;
+        }
+    }
+}
+
+<div>
+    <a href="@ViewBag.ReturnUrl">&lt;- Back to List</a>
+</div>
+
+<hgroup class="title">
+    @if (Model == null)
+    {
+        <h1>Unexpected error occured!</h1>
+    }
+    else
+    {
+        <h1>@ViewBag.Title.</h1>
+    }
+    
+</hgroup>
+
+@if (Model != null)
+{
+    using (Html.BeginForm("Save", "EventUpdate", new { returnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <fieldset>
+            <legend>MeetingUpdateModel</legend>
+
+            @Html.Partial("_ScoUpdateFieldsetPartial")
+            
+            <div class="editor-label">
+                @Html.LabelFor(model => model.MeetingId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.MeetingId, meetingDropdownContnent)
+            </div>
+            
+            <p>
+                <input type="submit" value="@(string.IsNullOrWhiteSpace(Model.ScoId) ? "Create" : "Save")" />
+            </p>
+        </fieldset>
+    }
+    if (!string.IsNullOrWhiteSpace(Model.ScoId))
+    {
+        using (Html.BeginForm("Delete", "EventUpdate", new { returnUrl = ViewBag.ReturnUrl }))
+        {
+            if (Model != null)
+            {
+                @Html.HiddenFor(model => model.ScoId)
+            }
+
+            <input type="submit" value="Delete" />
+        }
+    }
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

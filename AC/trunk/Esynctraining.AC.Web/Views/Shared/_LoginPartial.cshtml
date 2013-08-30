@@ -1,0 +1,16 @@
+﻿@if (Context.Request.Cookies["BREEZESESSION"] != null)
+{
+    <text>
+     @Html.Partial("_UserInfoPartial")
+
+     @using (Html.BeginForm("LogOff", "AdobeConnectAccount", FormMethod.Post, new { id = "logoutForm" }))
+        {
+            @Html.AntiForgeryToken()
+            <a href="javascript:document.getElementById('logoutForm').submit()">Log off</a>
+        }
+    </text>
+} else {
+    <ul>
+        <li>@Html.ActionLink("Log in", "Login", "AdobeConnectAccount", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+    </ul>
+}

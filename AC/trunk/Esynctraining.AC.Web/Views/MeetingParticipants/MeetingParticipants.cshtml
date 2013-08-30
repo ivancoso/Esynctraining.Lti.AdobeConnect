@@ -1,0 +1,59 @@
+﻿@model eSyncTraining.Web.Models.MeetingParticipantsModel
+
+@{
+    ViewBag.Title = "Meeting Participants";
+}
+
+@if (Model != null)
+{
+    <h2>@ViewBag.MeetingId - @ViewBag.MeetingName</h2>
+}
+
+<div>
+    <a href="@ViewBag.ReturnUrl">&lt;- Back to List</a>
+</div>
+
+<hgroup class="title">
+    @if (Model == null)
+    {
+        <h1>Unexpected error occured!</h1>
+    }
+    else
+    {
+        <h1>@ViewBag.Title.</h1>
+    }
+    
+</hgroup>
+
+@if (Model != null)
+{
+    <table>
+        <td valign="top">
+            @Html.Partial("_PrincipalsPartial", Model.Principals)
+        </td>
+        <td valign="top">
+            @if (Model.Hosts.Any())
+            {
+                <div style="border:1px dotted grey; padding: 7px;"><h3>Hosts</h3>
+                    @Html.Partial("_ParticipantsPartial", Model.Hosts)
+                </div>
+            }
+            @if (Model.Presenters.Any())
+            {
+                <div style="border:1px dotted grey; padding: 7px;"><h3>Presenters</h3>
+                    @Html.Partial("_ParticipantsPartial", Model.Presenters)
+                </div>
+            }
+            @if (Model.Participants.Any())
+            {
+                <div style="border:1px dotted grey; padding: 7px;"><h3>Participants</h3>
+                    @Html.Partial("_ParticipantsPartial", Model.Participants)
+                </div>
+            }
+        </td>
+    </table>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

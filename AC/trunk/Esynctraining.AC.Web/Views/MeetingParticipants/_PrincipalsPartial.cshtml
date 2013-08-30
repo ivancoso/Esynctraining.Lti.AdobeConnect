@@ -1,0 +1,55 @@
+﻿@model IEnumerable<eSyncTraining.Web.Models.PrincipalSlimModel>
+
+@if (ViewBag.CurrentPrincipalId != null)
+{
+    <p>@Html.ActionLink("Back to Root", "Index", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, currentPrincipalId = string.Empty, returnUrl = ViewBag.ReturnUrl }, null)</p>
+}
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PrincipalId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrincipalId)
+        </td>
+        <td>
+            @(item.HasChildren ? this.Html.ActionLink(item.Name, "Index", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, currentPrincipalId = item.PrincipalId, returnUrl = ViewBag.ReturnUrl }, new { @style="font-weight:bold;" }) : this.Html.DisplayFor(modelItem => item.Name))
+            <br/>
+            (@Html.DisplayFor(modelItem => item.Login))
+        </td>
+        <td>
+            <table>
+                <td>Add as </td>
+                <td>
+                    @using (Html.BeginForm("SetPermission", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, principalId = item.PrincipalId, permissionId = "host", currentPrincipalId = ViewBag.CurrentPrincipalId, returnUrl = ViewBag.ReturnUrl }))
+                    {
+                        <input type="submit" value="Host" />
+                    }
+                </td>
+                <td>
+                    @using (Html.BeginForm("SetPermission", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, principalId = item.PrincipalId, permissionId = "mini-host", currentPrincipalId = ViewBag.CurrentPrincipalId, returnUrl = ViewBag.ReturnUrl }))
+                    {
+                        <input type="submit" value="Presenter" />
+                    }
+                </td>
+                <td>
+                    @using (Html.BeginForm("SetPermission", "MeetingParticipants", new { meetingId = ViewBag.MeetingId, meetingName = ViewBag.MeetingName, principalId = item.PrincipalId, permissionId = "view", currentPrincipalId = ViewBag.CurrentPrincipalId, returnUrl = ViewBag.ReturnUrl }))
+                    {
+                        <input type="submit" value="Participant" />
+                    }
+                </td>
+            </table>
+        </td>
+    </tr>
+}
+
+</table>
