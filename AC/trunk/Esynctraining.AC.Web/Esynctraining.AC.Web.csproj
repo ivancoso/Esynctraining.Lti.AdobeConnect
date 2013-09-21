@@ -278,7 +278,9 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -355,7 +357,7 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerPort>4629</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:1562/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

@@ -83,6 +83,7 @@
     <Compile Include="Entities\UserInfo.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeParser.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoRecordingCollectionParser.cs" />
     <Compile Include="EntityParsing\TransactionInfoCollectionParser.cs" />
     <Compile Include="EntityParsing\TransactionInfoParser.cs" />
     <Compile Include="EntityParsing\PrincipalParser.cs" />

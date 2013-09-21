@@ -122,5 +122,41 @@
             /// </summary>
             public const string Delete = "principals-delete";
         }
+
+        /// <summary>
+        /// Meeting recordings commands
+        /// </summary>
+        internal static class Recordings
+        {
+            /// <summary>
+            /// Lists conversion jobs.
+            /// </summary>
+            public const string ListJobs = "list-recording-jobs";
+
+            /// <summary>
+            /// Schedules a new conversion job.
+            /// </summary>
+            public const string ScheduleJob = "schedule-recording-job";
+
+            /// <summary>
+            /// Gets conversion job details.
+            /// </summary>
+            public const string GetJob = "get-recording-job";
+
+            /// <summary>
+            /// Cancels conversion job.
+            /// </summary>
+            public const string CancelJob = "cancel-recording-job";
+
+            /// <summary>
+            /// Lists meeting recordings (archived meetings).
+            /// </summary>
+            public const string List = "list-recordings";
+
+            /// <summary>
+            /// Lists recordings converted to video files (FLV or MP4).
+            /// </summary>
+            public const string ListConverted = "list-generated-recordings";
+        }
     }
 }

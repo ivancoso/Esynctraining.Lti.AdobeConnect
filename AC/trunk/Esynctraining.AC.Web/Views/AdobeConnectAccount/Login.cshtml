@@ -19,12 +19,12 @@
         <ol>
             <li>
                 @Html.LabelFor(m => m.Login)
-                @Html.TextBoxFor(m => m.Login, new { @Value = "dmitry@esynctraining.com"})
+                @Html.TextBoxFor(m => m.Login)
                 @Html.ValidationMessageFor(m => m.Login)
             </li>
             <li>
                 @Html.LabelFor(m => m.Password)
-                @Html.PasswordFor(m => m.Password, new { @Value = "Nhjkjkj123"})
+                @Html.PasswordFor(m => m.Password)
                 @Html.ValidationMessageFor(m => m.Password)
             </li>
         </ol>

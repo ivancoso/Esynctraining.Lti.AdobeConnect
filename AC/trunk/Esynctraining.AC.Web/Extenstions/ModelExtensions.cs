@@ -1,5 +1,7 @@
 ﻿namespace eSyncTraining.Web.Extenstions
 {
+    using System.Globalization;
+
     using Esynctraining.AC.Provider.Entities;
     using eSyncTraining.Web.Models;
 
@@ -61,8 +63,8 @@
                            Name = model.Name,
                            Description = model.Description,
                            Language = model.Language,
-                           DateBegin = model.BeginDate,
-                           DateEnd = model.EndDate,
+                           DateBegin = model.BeginDate.ToString(CultureInfo.CurrentCulture),
+                           DateEnd = model.EndDate.ToString(CultureInfo.CurrentCulture),
                            UrlPath = model.UrlPath,
                            Type = ScoType.meeting
                        };
@@ -77,8 +79,8 @@
                            Name = model.Name,
                            Description = model.Description,
                            Language = model.Language,
-                           DateBegin = model.BeginDate,
-                           DateEnd = model.EndDate,
+                           DateBegin = model.BeginDate.ToString(CultureInfo.CurrentCulture),
+                           DateEnd = model.EndDate.ToString(CultureInfo.CurrentCulture),
                            UrlPath = model.UrlPath,
                            Type = ScoType.Event,
                            SourceScoId = model.MeetingId

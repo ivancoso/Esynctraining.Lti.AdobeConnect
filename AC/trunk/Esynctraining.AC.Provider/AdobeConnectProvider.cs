@@ -1,7 +1,9 @@
 ﻿namespace Esynctraining.AC.Provider
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
+    using System.Linq;
     using System.Web;
     using System.Xml;
 
@@ -442,6 +444,73 @@
             return ResponseIsOk(doc, status)
                 ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
                 : new TransactionCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The get contents by SCO id.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public ScoContentCollectionResult ReportRecordings()
+        {
+            // act: "report-bulk-objects"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Recording, out status);
+
+            if (ResponseIsOk(doc, status))
+            {
+                var result = new ScoContentCollectionResult(
+                    status, ScoRecordingCollectionParser.Parse(doc));
+
+                return result;
+            }
+
+            return new ScoContentCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The get contents by SCO id.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public ScoContentCollectionResult GetMeetingRecordings(string scoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.MeetingArchives, scoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
+                : new ScoContentCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The get recordings by SCO ids.
+        /// </summary>
+        /// <param name="scoIds">meeting/folder ids</param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>. Values item's FolderId is parent folder id or meeting id.
+        /// </returns>
+        public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds)
+        {
+            var result = new ScoContentCollectionResult(
+                new StatusInfo { Code = StatusCodes.ok }, new List<ScoContent>());
+            foreach (var id in scoIds)
+            {
+                var recordings = this.GetMeetingRecordings(id);
+                if (recordings.Success)
+                {
+                    result.Values = result.Values.Concat(recordings.Values);
+                }
+            }
+
+            return result;
         }
 
         #endregion

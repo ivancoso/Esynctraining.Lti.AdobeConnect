@@ -41,6 +41,11 @@
         public const string ReportMeetingAttendance = "sco-id={0}";
 
         /// <summary>
+        /// The meeting archives.
+        /// </summary>
+        public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
+
+        /// <summary>
         /// The report bulk consolidated transactions filters.
         /// </summary>
         internal static class ReportBulkConsolidatedTransactionsFilters
@@ -76,6 +81,11 @@
             /// Gets the meeting.
             /// </summary>
             public const string Meeting = "filter-type=meeting";
+
+            /// <summary>
+            /// Gets the recordings.
+            /// </summary>
+            public const string Recording = "filter-icon=archive";
         }
 
         /// <summary>
