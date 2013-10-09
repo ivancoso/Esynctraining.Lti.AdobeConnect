@@ -479,6 +479,28 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
+        public ScoContentResult GetScoContent(string scoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Info, string.Format(CommandParams.ScoId, scoId), out status);
+
+            const string scoPath = "//results/sco";
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentResult(status, ScoContentParser.Parse(scos.SelectNodes(scoPath).Cast<XmlNode>().FirstOrDefault()))
+                : new ScoContentResult(status);
+        }
+
+        /// <summary>
+        /// The get contents by SCO id.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
         public ScoContentCollectionResult GetMeetingRecordings(string scoId)
         {
             StatusInfo status;
@@ -665,6 +687,26 @@
 
             this.requestProcessor.Process(Commands.Sco.Delete, string.Format(CommandParams.ScoId, scoId), out status);
 
+            return status;
+        }
+
+        /// <summary>
+        /// The move sco.
+        /// </summary>
+        /// <param name="folderId">
+        /// The folder id.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="StatusInfo"/>.
+        /// </returns>
+        public StatusInfo MoveSco(string folderId, string scoId)
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Sco.Move, string.Format(CommandParams.Move, folderId, scoId), out status);
             return status;
         }
 

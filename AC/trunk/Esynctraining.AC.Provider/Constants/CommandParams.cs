@@ -16,6 +16,11 @@
         public const string ScoId = "sco-id={0}";
 
         /// <summary>
+        /// The SCO id.
+        /// </summary>
+        public const string Move = "folder-id={0}&sco-id={1}";
+
+        /// <summary>
         /// The principal id public access
         /// </summary>
         public const string PrincipalIdPublicAccess = "public-access";

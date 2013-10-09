@@ -71,6 +71,11 @@
             public const string Delete = "sco-delete";
 
             /// <summary>
+            /// The delete.
+            /// </summary>
+            public const string Move = "sco-move";
+
+            /// <summary>
             /// The meeting feature update.
             /// </summary>
             public const string FeatureUpdate = "meeting-feature-update";
