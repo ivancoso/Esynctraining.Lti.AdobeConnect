@@ -784,7 +784,7 @@
         /// <summary>
         /// The update meeting permission for user or a group.
         /// </summary>
-        /// <param name="meetingId">
+        /// <param name="scoId">
         /// The meeting id.
         /// </param>
         /// <param name="principalId">
@@ -796,18 +796,24 @@
         /// <returns>
         /// The <see cref="StatusInfo"/>.
         /// </returns>
-        public StatusInfo UpdateMeetingPermissionForPrincipal(string meetingId, string principalId, MeetingPermissionId permissionId)
+        public StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId)
         {
             switch (permissionId)
             {
                 case MeetingPermissionId.host:
-                    return this.UpdatePermissionsInternal(meetingId, principalId, PermissionId.host);
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.host);
                 case MeetingPermissionId.mini_host:
-                    return this.UpdatePermissionsInternal(meetingId, principalId, PermissionId.mini_host);
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.mini_host);
                 case MeetingPermissionId.view:
-                    return this.UpdatePermissionsInternal(meetingId, principalId, PermissionId.view);
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.view);
                 case MeetingPermissionId.remove:
-                    return this.UpdatePermissionsInternal(meetingId, principalId, PermissionId.remove);
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.remove);
+                case MeetingPermissionId.denied:
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.denied);
+                case MeetingPermissionId.manage:
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.manage);
+                case MeetingPermissionId.publish:
+                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.publish);
                 default:
                     throw new NotImplementedException();
             }

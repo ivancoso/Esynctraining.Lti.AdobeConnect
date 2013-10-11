@@ -163,7 +163,10 @@
         host,
         mini_host,
         view,
-        remove
+        remove,
+        publish,
+        manage,
+        denied
     }
 
     public enum MeetingFeatureId
