@@ -32,7 +32,8 @@
         /// </summary>
         too_much_data,
         internal_error,
-        too_much_meetings
+        too_much_meetings,
+        template_not_found
     }
 
     public enum StatusSubCodes
