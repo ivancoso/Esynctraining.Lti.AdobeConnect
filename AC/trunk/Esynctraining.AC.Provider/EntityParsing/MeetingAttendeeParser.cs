@@ -26,9 +26,10 @@
             {
                 var item = new MeetingAttendee
                                {
-                                   ScoId = xml.SelectAttributeValue("transcript-id"),
-                                   TranscriptId = xml.SelectAttributeValue("sco-id"),
+                                   TranscriptId = xml.SelectAttributeValue("transcript-id"),
+                                   ScoId = xml.SelectAttributeValue("sco-id"),
                                    PrincipalId = xml.SelectAttributeValue("principal-id"),
+                                   AssetId = xml.SelectAttributeValue("asset-id"),
                                    Login = xml.SelectSingleNodeValue("login/text()"),
                                    SessionName = xml.SelectSingleNodeValue("session-name/text()"),
                                    ScoName = xml.SelectSingleNodeValue("sco-name/text()"),

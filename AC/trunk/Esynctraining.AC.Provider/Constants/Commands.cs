@@ -31,6 +31,11 @@
         public const string ReportMeetingAttendance = "report-meeting-attendance";
 
         /// <summary>
+        /// The report bulk meeting session.
+        /// </summary>
+        public const string ReportMeetingSessions = "report-meeting-sessions";
+
+        /// <summary>
         /// The report my events.
         /// </summary>
         public const string ReportMyEvents = "report-my-events";

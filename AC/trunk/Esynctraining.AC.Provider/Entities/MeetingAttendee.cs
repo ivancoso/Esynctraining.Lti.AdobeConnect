@@ -44,6 +44,12 @@ namespace Esynctraining.AC.Provider.Entities
         public string TranscriptId { get; set; }
 
         /// <summary>
+        /// Gets or sets the asset(session) id.
+        /// </summary>
+        [XmlAttribute("asset-id")]
+        public string AssetId { get; set; }
+
+        /// <summary>
         /// Gets or sets the meeting name.
         /// </summary>
         [XmlElement("login")]

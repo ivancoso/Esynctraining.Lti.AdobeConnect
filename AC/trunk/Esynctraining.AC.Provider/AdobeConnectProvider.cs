@@ -209,7 +209,7 @@
             // act: "report-bulk-objects"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ReportMeetingAttendance, scoId), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId), out status);
 
             return ResponseIsOk(doc, status)
                        ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
@@ -235,6 +235,27 @@
             return ResponseIsOk(doc, status)
                        ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
                        : new QuizResponseCollectionResult(status);
+        }
+
+        /// <summary>
+        /// List all meeting's sessions
+        /// </summary>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingSessionCollectionResult"/>.
+        /// </returns>
+        public MeetingSessionCollectionResult ReportMettingSessions(string scoId)
+        {
+            // act: "report-bulk-objects"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions, string.Format(CommandParams.ScoId, scoId), out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
+                       : new MeetingSessionCollectionResult(status);
         }
 
         /// <summary>
