@@ -51,6 +51,11 @@
         public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
 
         /// <summary>
+        /// The url path.
+        /// </summary>
+        public const string UrlPath = "url-path={0}";
+
+        /// <summary>
         /// The report bulk consolidated transactions filters.
         /// </summary>
         internal static class ReportBulkConsolidatedTransactionsFilters

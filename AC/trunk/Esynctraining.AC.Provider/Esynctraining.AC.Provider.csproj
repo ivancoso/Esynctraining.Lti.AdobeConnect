@@ -46,6 +46,7 @@
     <Compile Include="Constants\Commands.cs" />
     <Compile Include="Constants\CommandParams.cs" />
     <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\QuizResponseCollectionResult.cs" />
     <Compile Include="DataObjects\Results\ScoContentResult.cs" />
     <Compile Include="DataObjects\Results\MeetingAttendeeCollectionResult.cs" />
     <Compile Include="DataObjects\Results\GenericResult.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="DataObjects\Results\ResultBase.cs" />
     <Compile Include="DataObjects\UserCredentials.cs" />
     <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\QuizResponse.cs" />
     <Compile Include="Entities\RecordingUpdateItem.cs" />
     <Compile Include="Entities\MeetingAttendee.cs" />
     <Compile Include="Entities\PrincipalDelete.cs" />
@@ -85,6 +87,8 @@
     <Compile Include="Entities\UserInfo.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeParser.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeCollectionParser.cs" />
+    <Compile Include="EntityParsing\QuizResponseCollectionParser.cs" />
+    <Compile Include="EntityParsing\QuizResponseParser.cs" />
     <Compile Include="EntityParsing\ScoRecordingCollectionParser.cs" />
     <Compile Include="EntityParsing\TransactionInfoCollectionParser.cs" />
     <Compile Include="EntityParsing\TransactionInfoParser.cs" />

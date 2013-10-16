@@ -41,6 +41,11 @@
         public const string ReportBulkConsolidatedTransactions = "report-bulk-consolidated-transactions";
 
         /// <summary>
+        /// The report quiz interactions.
+        /// </summary>
+        public const string ReportQuizInteractions = "report-quiz-interactions";
+
+        /// <summary>
         /// SCO commands.
         /// </summary>
         internal static class Sco
@@ -84,6 +89,11 @@
             /// The acl field update.
             /// </summary>
             public const string FieldUpdate = "acl-field-update";
+
+            /// <summary>
+            /// The update.
+            /// </summary>
+            public const string ByUrl = "sco-by-url";
         }
 
         /// <summary>

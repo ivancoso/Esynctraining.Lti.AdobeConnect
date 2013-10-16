@@ -217,6 +217,27 @@
         }
 
         /// <summary>
+        /// List all meeting's quiz
+        /// </summary>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingAttendeeCollectionResult"/>.
+        /// </returns>
+        public QuizResponseCollectionResult ReportQuizInteractions(string scoId)
+        {
+            // act: "report-quiz-interactions"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions, string.Format(CommandParams.ScoId, scoId), out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
+                       : new QuizResponseCollectionResult(status);
+        }
+
+        /// <summary>
         /// Provides information about each event the current user has attended or is scheduled to attend.
         /// The user can be either a host or a participant in the event. The events returned are those in the
         /// user’s my-events folder.
@@ -274,6 +295,29 @@
             StatusInfo status;
 
             var doc = this.requestProcessor.Process(Commands.Sco.Info, string.Format(CommandParams.ScoId, scoId), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new ScoInfoResult(status, ScoInfoParser.Parse(doc.SelectSingleNode(ScoHome)))
+                : new ScoInfoResult(status);
+        }
+
+        /// <summary>
+        /// The get SCO info.
+        /// </summary>
+        /// <param name="scoUrl">
+        /// The SCO url.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoInfoResult"/>.
+        /// </returns>
+        public ScoInfoResult GetScoByUrl(string scoUrl)
+        {
+            // act: "sco-by-url"
+            StatusInfo status;
+
+            var pathId = scoUrl.Split(new[] {'\\', '/'}, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            var urlPath = string.Format("/{0}/", pathId);
+            var doc = this.requestProcessor.Process(Commands.Sco.ByUrl, string.Format(CommandParams.UrlPath, urlPath), out status);
 
             return ResponseIsOk(doc, status)
                 ? new ScoInfoResult(status, ScoInfoParser.Parse(doc.SelectSingleNode(ScoHome)))
