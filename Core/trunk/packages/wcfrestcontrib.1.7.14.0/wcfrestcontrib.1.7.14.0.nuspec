@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>wcfrestcontrib</id>
+    <version>1.7.14.0</version>
+    <title>WCF REST Contrib</title>
+    <authors>Mike O'Brien</authors>
+    <owners>Mike O'Brien</owners>
+    <licenseUrl>https://github.com/mikeobrien/WcfRestContrib/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/mikeobrien/WcfRestContrib</projectUrl>
+    <iconUrl>https://github.com/mikeobrien/WcfRestContrib/raw/master/misc/wcfrestcontrib.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The WCF REST Contrib library adds functionality to the current WCF REST implementation.</description>
+    <summary>The WCF REST Contrib library adds functionality to the current WCF REST implementation.</summary>
+    <language>en-US</language>
+    <tags>wcf rest</tags>
+  </metadata>
+</package>
