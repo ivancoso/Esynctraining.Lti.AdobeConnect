@@ -57,8 +57,7 @@
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="RazorEngine">
       <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -93,6 +92,7 @@
     <Compile Include="Authentication\IAuthenticationValidator.cs" />
     <Compile Include="Authentication\WCFAuthenticationHandler.cs" />
     <Compile Include="Business\IRepository.cs" />
+    <Compile Include="Business\Models\AuthenticationModel.cs" />
     <Compile Include="Business\Models\BaseModel.cs" />
     <Compile Include="Business\Models\MailModel.cs" />
     <Compile Include="Business\Queries\DefaultQueryOver.cs" />

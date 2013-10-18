@@ -1,12 +1,10 @@
-namespace Esynctraining.Core.Weborb.Business.Models
+namespace Esynctraining.Core.Business.Models
 {
     using System;
     using System.Web;
     using System.Web.Security;
 
     using Esynctraining.Core.Extensions;
-
-    using global::Weborb.Examples.DataManagement;
 
     /// <summary>
     ///     The authentication model.
