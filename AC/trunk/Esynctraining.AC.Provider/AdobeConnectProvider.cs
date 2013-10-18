@@ -191,7 +191,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Meeting, out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
+                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
                        : new MeetingItemCollectionResult(status);
         }
 
@@ -277,6 +277,27 @@
             return ResponseIsOk(doc, status)
                 ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
                 : new EventCollectionResult(status);
+        }
+
+        /// <summary>
+        /// Provides information about each event the current user has attended or is scheduled to attend.
+        /// The user can be either a host or a participant in the event. The events returned are those in the
+        /// user’s my-events folder.
+        /// To obtain information about all events on your Enterprise Server or in your Enterprise Hosted
+        /// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
+        /// with the SCO id to list all events.
+        /// </summary>
+        /// <returns><see cref="EventInfo">EventInfo array</see></returns>
+        public MeetingItemCollectionResult ReportMyMeetings()
+        {
+            // act: "report-my-meetings"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, null, out status);
+
+            return ResponseIsOk(doc, status)
+                ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
+                : new MeetingItemCollectionResult(status);
         }
 
         /// <summary>
@@ -488,6 +509,56 @@
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
                 : new PrincipalCollectionResult(status);
+        }
+
+        /// <summary>
+        /// Gets all principals if no Group Id specified.
+        /// Otherwise gets only users of the specified Group.
+        /// </summary>
+        /// <param name="groupId">
+        /// The group id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalCollectionResult GetGroupUsers(string groupId)
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Format("&group-id={0}&filter-is-member=true", groupId), out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
+        /// <summary>
+        /// Gets Group by name.
+        /// </summary>
+        /// <param name="groupName">
+        /// The group id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalResult GetGroupByName(string groupName)
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-type=group", out status);
+            if (ResponseIsOk(principals, status))
+            {
+                var groups = PrincipalCollectionParser.Parse(principals);
+                var group = groups.FirstOrDefault(g => g.Name.Equals(groupName, StringComparison.InvariantCultureIgnoreCase));
+                if (null != group)
+                {
+                    return new PrincipalResult(status, group);
+                }
+            }
+
+            return new PrincipalResult(status);
         }
 
         /// <summary>

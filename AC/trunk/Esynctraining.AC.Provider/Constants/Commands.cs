@@ -41,6 +41,11 @@
         public const string ReportMyEvents = "report-my-events";
 
         /// <summary>
+        /// The report my events.
+        /// </summary>
+        public const string ReportMyMeetings = "report-my-meetings";
+
+        /// <summary>
         /// The report bulk consolidated transactions.
         /// </summary>
         public const string ReportBulkConsolidatedTransactions = "report-bulk-consolidated-transactions";

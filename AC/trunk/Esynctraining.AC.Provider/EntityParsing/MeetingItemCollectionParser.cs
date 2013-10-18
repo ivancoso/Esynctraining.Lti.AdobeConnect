@@ -22,16 +22,17 @@
         /// <param name="xml">The XML.</param>
         /// <param name="serviceUrl">The service URL.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingItem> Parse(XmlNode xml, string serviceUrl)
+        public static IEnumerable<MeetingItem> Parse(XmlNode xml, string serviceUrl, string path)
         {
-            if (xml == null || !xml.NodeListExists(Path))
+            path = path ?? Path;
+            if (xml == null || !xml.NodeListExists(path))
             {
-                TraceTool.TraceMessage(string.Format("Node {0} is empty: no data available", Path));
+                TraceTool.TraceMessage(string.Format("Node {0} is empty: no data available", path));
 
                 return Enumerable.Empty<MeetingItem>();
             }
 
-            return xml.SelectNodes(Path).Cast<XmlNode>()
+            return xml.SelectNodes(path).Cast<XmlNode>()
                 .Select(node => MeetingItemParser.Parse(node, serviceUrl))
                 .Where(item => item != null)
                 .ToArray();

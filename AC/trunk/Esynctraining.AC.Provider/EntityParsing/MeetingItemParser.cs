@@ -39,7 +39,12 @@
                                    DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime))
                                };
 
-                if (!string.IsNullOrEmpty(item.UrlPath))
+                if (string.IsNullOrEmpty(item.UrlPath))
+                {
+                    item.UrlPath = xml.SelectSingleNodeValue("url-path/text()");
+                }
+
+                if (!string.IsNullOrEmpty(item.UrlPath) && !string.IsNullOrEmpty(serviceUrl))
                 {
                     var u = new Uri(serviceUrl);
 
