@@ -72,6 +72,7 @@
         /// </exception>
         public AdobeConnectProvider(ConnectionDetails connectionDetails)
         {
+
             this.requestProcessor = new RequestProcessor(connectionDetails, null);
         }
 
