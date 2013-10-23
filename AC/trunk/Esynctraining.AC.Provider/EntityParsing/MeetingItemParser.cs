@@ -36,7 +36,8 @@
                                    // NOTE: if folder =>  date-begin is null
                                    DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                                    DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                                   DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime))
+                                   DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime)),
+                                   PermissionId = xml.SelectAttributeValue("permission-id")
                                };
 
                 if (string.IsNullOrEmpty(item.UrlPath))

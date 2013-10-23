@@ -131,6 +131,13 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the type.
         /// </summary>
         [XmlElement]
+        [XmlElement("type")]
         public ScoType Type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the permission id.
+        /// </summary>
+        [XmlAttribute("permission-id")]
+        public string PermissionId { get; set; }
     }
 }
