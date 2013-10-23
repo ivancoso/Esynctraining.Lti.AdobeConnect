@@ -218,6 +218,27 @@
         }
 
         /// <summary>
+        /// The search SCO by name.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public ScoContentCollectionResult SearchScoByName(string name)
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Sco.SearchByField, string.Format(CommandParams.FieldAndQuery, "name", name), out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new ScoContentCollectionResult(status, ScoSearchByFieldParser.Parse(doc))
+                       : new ScoContentCollectionResult(status);
+            
+        }
+
+        /// <summary>
         /// List all meeting's quiz
         /// </summary>
         /// <param name="scoId">

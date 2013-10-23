@@ -18,6 +18,11 @@
         /// <summary>
         /// The SCO id.
         /// </summary>
+        public const string FieldAndQuery = "field={0}&query={1}";
+
+        /// <summary>
+        /// The SCO id.
+        /// </summary>
         public const string Move = "folder-id={0}&sco-id={1}";
 
         /// <summary>

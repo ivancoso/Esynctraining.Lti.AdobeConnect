@@ -104,6 +104,11 @@
             /// The update.
             /// </summary>
             public const string ByUrl = "sco-by-url";
+
+            /// <summary>
+            /// The search by field.
+            /// </summary>
+            public const string SearchByField = "sco-search-by-field";
         }
 
         /// <summary>
