@@ -165,7 +165,8 @@
             string fromName, 
             string fromEmail,
             IEnumerable<Attachment> attachments,
-            List<MailAddress> cced = null)
+            List<MailAddress> cced = null, 
+            bool useSsl = false)
         {
             try
             {
@@ -208,6 +209,11 @@
                     {
                         message.CC.Add(cc);    
                     }
+                }
+
+                if (useSsl)
+                {
+                    smtpClientWrapper.EnableSsl = true;
                 }
 
                 smtpClientWrapper.SendAsync(message);
