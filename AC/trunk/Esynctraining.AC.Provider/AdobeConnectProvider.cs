@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Web;
     using System.Xml;
@@ -72,7 +73,6 @@
         /// </exception>
         public AdobeConnectProvider(ConnectionDetails connectionDetails)
         {
-
             this.requestProcessor = new RequestProcessor(connectionDetails, null);
         }
 
@@ -197,10 +197,10 @@
         }
 
         /// <summary>
-        /// List all meeting's attendeies
+        /// List all meeting's attendance
         /// </summary>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
@@ -221,7 +221,7 @@
         /// List all meeting's quiz
         /// </summary>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
@@ -242,7 +242,7 @@
         /// List all meeting's sessions
         /// </summary>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingSessionCollectionResult"/>.
@@ -358,7 +358,7 @@
             // act: "sco-by-url"
             StatusInfo status;
 
-            var pathId = scoUrl.Split(new[] {'\\', '/'}, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            var pathId = scoUrl.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
             var urlPath = string.Format("/{0}/", pathId);
             var doc = this.requestProcessor.Process(Commands.Sco.ByUrl, string.Format(CommandParams.UrlPath, urlPath), out status);
 
@@ -616,15 +616,18 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
         public ScoContentResult GetScoContent(string scoId)
         {
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(Commands.Sco.Info, string.Format(CommandParams.ScoId, scoId), out status);
 
+            // ReSharper disable once InconsistentNaming
             const string scoPath = "//results/sco";
 
             return ResponseIsOk(scos, status)
+                       // ReSharper disable once AssignNullToNotNullAttribute
                 ? new ScoContentResult(status, ScoContentParser.Parse(scos.SelectNodes(scoPath).Cast<XmlNode>().FirstOrDefault()))
                 : new ScoContentResult(status);
         }
@@ -801,8 +804,8 @@
 
         /// <summary>
         /// Deletes one or more objects (SCOs).
-        /// If the sco-id you specify is for a folder, all the contents of the specified folder are deleted. To
-        /// delete multiple SCOs, specify multiple sco-id parameters.
+        /// If the SCO-id you specify is for a folder, all the contents of the specified folder are deleted. To
+        /// delete multiple SCOs, specify multiple SCO-id parameters.
         /// You can use a call such as SCO-contents to check the ref-count of the SCO, which is the
         /// number of other SCOs that reference this SCO. If the SCO has no references, you can safely
         /// remove it, and the server reclaims the space.
@@ -816,7 +819,7 @@
         /// who belong to the built-in authors group have manage permission on their own content
         /// folder, so they can delete content within it.
         /// </summary>
-        /// <param name="scoId">The sco id.</param>
+        /// <param name="scoId">The SCO id.</param>
         /// <returns>Status Info.</returns>
         public StatusInfo DeleteSco(string scoId)
         {
@@ -828,13 +831,13 @@
         }
 
         /// <summary>
-        /// The move sco.
+        /// The move SCO.
         /// </summary>
         /// <param name="folderId">
         /// The folder id.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
         /// </param>
         /// <returns>
         /// The <see cref="StatusInfo"/>.
@@ -843,7 +846,7 @@
         {
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.Sco.Move, string.Format(CommandParams.Move, folderId, scoId), out status);
+            this.requestProcessor.Process(Commands.Sco.Move, string.Format(CommandParams.Move, folderId, scoId), out status);
             return status;
         }
 
@@ -872,7 +875,7 @@
         /// The update meeting feature for account
         /// </summary>
         /// <param name="accountId">
-        /// The acp Id.
+        /// The account Id.
         /// </param>
         /// <param name="featureId">
         /// The feature Id.
@@ -894,10 +897,10 @@
         }
 
         /// <summary>
-        /// The update acl field.
+        /// The update ACL field.
         /// </summary>
         /// <param name="aclId">
-        /// The acl Id.
+        /// The ACL Id.
         /// </param>
         /// <param name="fieldId">
         /// The feature Id.
@@ -1064,6 +1067,7 @@
             {
                 commandParams += "&" + string.Format(CommandParams.Permissions.PrincipalId, principalId);
             }
+
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 commandParams += string.Format("&{0}", filter);
