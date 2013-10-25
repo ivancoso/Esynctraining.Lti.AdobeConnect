@@ -111,6 +111,7 @@
     <Compile Include="EntityParsing\MeetingItemCollectionParser.cs" />
     <Compile Include="EntityParsing\MeetingItemParser.cs" />
     <Compile Include="EntityParsing\UserInfoParser.cs" />
+    <Compile Include="Exceptions\ACStatusException.cs" />
     <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
@@ -128,6 +129,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+      <Project>{454CA615-9F14-4A1F-ADAC-1F1C400E257D}</Project>
+      <Name>Esynctraining.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
