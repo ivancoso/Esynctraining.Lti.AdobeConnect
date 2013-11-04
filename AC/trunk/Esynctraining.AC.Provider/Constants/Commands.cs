@@ -56,6 +56,11 @@
         public const string ReportQuizInteractions = "report-quiz-interactions";
 
         /// <summary>
+        /// The telephony profile list.
+        /// </summary>
+        public const string TelephonyProfileList = "telephony-profile-list";
+
+        /// <summary>
         /// SCO commands.
         /// </summary>
         internal static class Sco

@@ -28,6 +28,11 @@
         /// <summary>
         /// The principal id public access
         /// </summary>
+        public const string PrincipalId = "principal-id={0}";
+
+        /// <summary>
+        /// The principal id public access
+        /// </summary>
         public const string PrincipalIdPublicAccess = "public-access";
 
         /// <summary>

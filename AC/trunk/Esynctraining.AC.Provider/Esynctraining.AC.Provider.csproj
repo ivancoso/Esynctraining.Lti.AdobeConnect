@@ -46,6 +46,7 @@
     <Compile Include="Constants\Commands.cs" />
     <Compile Include="Constants\CommandParams.cs" />
     <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProfilesCollectionResult.cs" />
     <Compile Include="DataObjects\Results\MeetingSessionCollectionResult.cs" />
     <Compile Include="DataObjects\Results\QuizResponseCollectionResult.cs" />
     <Compile Include="DataObjects\Results\ScoContentResult.cs" />
@@ -64,6 +65,7 @@
     <Compile Include="DataObjects\Results\ResultBase.cs" />
     <Compile Include="DataObjects\UserCredentials.cs" />
     <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\TelephonyProfile.cs" />
     <Compile Include="Entities\MeetingSession.cs" />
     <Compile Include="Entities\QuizResponse.cs" />
     <Compile Include="Entities\RecordingUpdateItem.cs" />
@@ -87,6 +89,8 @@
     <Compile Include="Entities\StatusInfo.cs" />
     <Compile Include="Entities\TransactionInfo.cs" />
     <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="EntityParsing\TelephonyProfileParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProfilesCollectionParser.cs" />
     <Compile Include="EntityParsing\ScoSearchByFieldParser.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeParser.cs" />
     <Compile Include="EntityParsing\MeetingAttendeeCollectionParser.cs" />

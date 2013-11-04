@@ -260,6 +260,27 @@
         }
 
         /// <summary>
+        /// List all meeting's quiz
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingAttendeeCollectionResult"/>.
+        /// </returns>
+        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
+        {
+            // act: "telephony-profile-list"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.TelephonyProfileList, string.Format(CommandParams.PrincipalId, principalId), out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new TelephonyProfilesCollectionResult(status, TelephonyProfilesCollectionParser.Parse(doc))
+                       : new TelephonyProfilesCollectionResult(status);
+        }
+
+        /// <summary>
         /// List all meeting's sessions
         /// </summary>
         /// <param name="scoId">

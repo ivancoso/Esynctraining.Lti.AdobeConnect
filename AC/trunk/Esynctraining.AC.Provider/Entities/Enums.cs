@@ -177,7 +177,8 @@
 
     public enum AclFieldId
     {
-        meeting_passcode
+        meeting_passcode,
+        telephony_profile
     }
 
     public enum PermissionId

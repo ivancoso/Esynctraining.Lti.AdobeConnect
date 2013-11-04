@@ -9,6 +9,12 @@
     /// </summary>
     public class ACStatusException : Exception
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ACStatusException"/> class.
+        /// </summary>
+        /// <param name="result">
+        /// The result.
+        /// </param>
         public ACStatusException(ResultBase result)
         {
             this.Result = result;
