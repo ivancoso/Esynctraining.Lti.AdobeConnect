@@ -101,8 +101,7 @@ namespace Esynctraining.Core.Providers
             result = this.collection.Get(binder.Name);
             if (string.IsNullOrWhiteSpace(result.ToString()))
             {
-                throw new ConfigurationErrorsException(
-                    binder.Name + " entry was not found in appSettings section of the configuration file");
+                return true;
             }
 
             return true;
