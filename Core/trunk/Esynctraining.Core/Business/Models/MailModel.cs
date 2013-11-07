@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Net.Mail;
     using Castle.Core.Logging;
@@ -107,6 +108,9 @@
         /// <param name="attachments">
         /// Attachments list
         /// </param>
+        /// <param name="cced">
+        /// The copied.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -118,11 +122,12 @@
             string fromName, 
             string fromEmail,
             IEnumerable<Attachment> attachments,
-            List<MailAddress> cced = null)
+            List<MailAddress> cced = null, 
+            List<MailAddress> bcced = null)
         {
             using (var smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
             {
-                return this.SendEmail(smtpClientWrapper, toName, toEmail, subject, body, fromName, fromEmail, attachments, cced);
+                return this.SendEmail(smtpClientWrapper, toName, toEmail, subject, body, fromName, fromEmail, attachments, cced, bcced);
             }
         }
 
@@ -166,6 +171,7 @@
             string fromEmail,
             IEnumerable<Attachment> attachments,
             List<MailAddress> cced = null, 
+            List<MailAddress> bcced = null,
             bool useSsl = false)
         {
             try
@@ -211,12 +217,23 @@
                     }
                 }
 
+                if (bcced != null && bcced.Any())
+                {
+                    foreach (var bcc in bcced)
+                    {
+                        message.Bcc.Add(bcc);
+                    }
+                }
+
                 if (useSsl)
                 {
                     smtpClientWrapper.EnableSsl = true;
                 }
 
-                smtpClientWrapper.SendAsync(message);
+                smtpClientWrapper.SendCompleted += this.MailDeliveryComplete;
+                string emails = toEmailList.ToPlainString();
+
+                smtpClientWrapper.SendAsync(message, emails);
                 return true;
             }
             catch (Exception ex)
@@ -225,6 +242,34 @@
                 var logger = IoC.Resolve<ILogger>();
                 logger.Error("Error, while sending email", ex);
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// The mail delivery complete.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void MailDeliveryComplete(object sender, AsyncCompletedEventArgs e)
+        {
+            try
+            {
+                var logger = IoC.Resolve<ILogger>();
+                if (e.Error != null)
+                {
+                    logger.Error("Error, while sending email to: " + e.UserState, e.Error);
+                }
+                else if (e.Cancelled)
+                {
+                    logger.ErrorFormat("Sending email to {0} cancelled.", e.UserState);
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -252,6 +297,9 @@
         /// </param>
         /// <param name="fromEmail">
         /// The from Email.
+        /// </param>
+        /// <param name="cced">
+        /// The cced.
         /// </param>
         /// <typeparam name="TModel">
         /// Any view model type
