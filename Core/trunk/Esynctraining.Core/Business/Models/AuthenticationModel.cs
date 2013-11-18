@@ -17,7 +17,7 @@ namespace Esynctraining.Core.Business.Models
         /// <summary>
         ///     Gets the default url.
         /// </summary>
-        public virtual string DefaultUrl
+        public static string DefaultUrl
         {
             get
             {
@@ -82,6 +82,39 @@ namespace Esynctraining.Core.Business.Models
         }
 
         /// <summary>
+        /// The parse cookie value.
+        /// </summary>
+        /// <param name="value">
+        /// The value.
+        /// </param>
+        /// <param name="idEmail">
+        /// The id email.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool ParseCookieValue(string value, out Tuple<int, string> idEmail)
+        {
+            idEmail = null;
+            var result = value.Split("G".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (result.Length == 3)
+            {
+                int id;
+                Guid uid;
+                bool idIsValid = int.TryParse(result[0], out id);
+                bool guidIsValid = Guid.TryParseExact(result[2], "N", out uid);
+                if (idIsValid && guidIsValid)
+                {
+                    idEmail = new Tuple<int, string>(id, result[1]);
+                }
+
+                return idIsValid && guidIsValid;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// The get current user.
         /// </summary>
         /// <param name="getByEmail">
@@ -105,7 +138,7 @@ namespace Esynctraining.Core.Business.Models
         /// The current user key.
         /// </param>
         /// <returns>
-        /// The <see cref="Contact"/>.
+        /// The <see cref="Object"/>.
         /// </returns>
         public virtual object GetCurrentUser(Func<string, object> getByEmail, string currentUserKey)
         {
