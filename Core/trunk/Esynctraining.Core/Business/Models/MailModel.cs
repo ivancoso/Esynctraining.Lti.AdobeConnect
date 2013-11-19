@@ -307,10 +307,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null)
+        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
         {
             string message = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
-            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, this.attachmentsProvider.GetAttachments<TModel>(), cced);
+            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced);
         }
 
         /// <summary>
@@ -340,9 +340,9 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null)
+        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
         {
-            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced);
+            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced);
         }
 
         #endregion
