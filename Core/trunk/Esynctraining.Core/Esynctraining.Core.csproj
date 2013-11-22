@@ -111,6 +111,7 @@
     <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
     <Compile Include="ErrorHandling\Log4NetErrorHandler .cs" />
     <Compile Include="Extensions\BuildVersionExtensions.cs" />
+    <Compile Include="Extensions\SerializeExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Extensions\DateExtensions.cs" />
