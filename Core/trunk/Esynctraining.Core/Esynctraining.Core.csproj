@@ -84,6 +84,7 @@
     <Reference Include="WcfRestContrib">
       <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\WebOrbRestrictedAccess.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Wrappers\SerializableXmlDocument.cs" />
     <Compile Include="Wrappers\SmtpClientWrapper.cs" />
     <Compile Include="Wrappers\XDocumentWrapper.cs" />
+    <Compile Include="Wrappers\ZipArchive.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

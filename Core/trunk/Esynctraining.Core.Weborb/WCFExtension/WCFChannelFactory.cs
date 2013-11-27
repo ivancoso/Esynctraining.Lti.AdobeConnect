@@ -43,6 +43,15 @@ namespace Esynctraining.Core.Weborb.WCFExtension
                 Log.log(LoggingConstants.INFO, "Configuration file: " + config.FilePath);
             }
 
+            if (config.AppSettings.Settings["WCFLocalSSLCertificate"] != null)
+            {
+                var certName = config.AppSettings.Settings["WCFLocalSSLCertificate"].With(x => x.Value);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback += (se, cert, chain, sslerror) =>
+                    {
+                        return certName == "Any" || cert.Subject.Contains(certName);
+                    };
+            }
+
             ServiceModelSectionGroup sectionGroup = ServiceModelSectionGroup.GetSectionGroup(config);
 
             if (sectionGroup != null)

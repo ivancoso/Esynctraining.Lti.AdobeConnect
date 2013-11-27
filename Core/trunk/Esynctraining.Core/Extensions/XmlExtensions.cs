@@ -106,7 +106,21 @@
             }
             else
             {
-                AddProperty(parent, node.Name.ToString(), node.Value.Trim());
+                if (node.HasAttributes)
+                {
+                    var item = new ExpandoObject();
+                    foreach (XAttribute attribute in node.Attributes())
+                    {
+                        AddProperty(item, attribute.Name.ToString(), attribute.Value.Trim());
+                    }
+
+                    AddProperty(item, "value", node.Value.Trim());
+                    AddProperty(parent, node.Name.ToString(), item);
+                }
+                else
+                {
+                    AddProperty(parent, node.Name.ToString(), node.Value.Trim());    
+                }
             }
         }
 
