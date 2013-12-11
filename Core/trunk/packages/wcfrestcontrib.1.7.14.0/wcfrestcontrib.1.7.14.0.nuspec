@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>wcfrestcontrib</id>
     <version>1.7.14.0</version>
@@ -12,7 +12,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The WCF REST Contrib library adds functionality to the current WCF REST implementation.</description>
     <summary>The WCF REST Contrib library adds functionality to the current WCF REST implementation.</summary>
+    <releaseNotes />
+    <copyright />
     <language>en-US</language>
     <tags>wcf rest</tags>
+    <references>
+      <reference file="WcfRestContrib.dll" />
+    </references>
   </metadata>
 </package>

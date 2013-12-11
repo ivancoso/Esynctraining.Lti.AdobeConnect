@@ -11,11 +11,14 @@
     <iconUrl>http://docs.castleproject.org/GetFile.aspx?File=/windsorLogo100px.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Castle Windsor integration package for logging facility via log4net.</description>
+    <releaseNotes />
     <copyright>Copyright 2004-2013 Castle Project - http://www.castleproject.org/</copyright>
-    <tags>castle windsor inversionOfControl DependencyInjection logging log4net</tags>
+    <language />
+    <tags>castle, windsor, inversionOfControl, DependencyInjection, logging, log4net</tags>
     <dependencies>
       <dependency id="Castle.Core-log4net" version="3.2.0" />
       <dependency id="Castle.LoggingFacility" version="3.2.0" />
     </dependencies>
+    <references />
   </metadata>
 </package>

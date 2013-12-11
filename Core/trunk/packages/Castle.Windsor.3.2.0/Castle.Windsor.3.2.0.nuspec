@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Castle Windsor is best of breed, mature Inversion of Control container available for .NET and Silverlight.</description>
     <copyright>Copyright 2004-2013 Castle Project - http://www.castleproject.org/</copyright>
-    <tags>castle windsor inversionOfControl DependencyInjection</tags>
+    <tags>castle, windsor, inversionOfControl, DependencyInjection</tags>
     <dependencies>
       <dependency id="Castle.Core" version="3.2.0" />
     </dependencies>
@@ -30,5 +30,8 @@
       <frameworkAssembly assemblyName="System.Core" targetFramework="Silverlight5.0" />
       <frameworkAssembly assemblyName="System.Windows" targetFramework="Silverlight5.0" />
     </frameworkAssemblies>
+    <references>
+      <reference file="Castle.Windsor.dll" />
+    </references>
   </metadata>
 </package>
