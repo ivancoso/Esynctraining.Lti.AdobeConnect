@@ -27,6 +27,21 @@
         ServiceResponse<CategoryDTO> GetAllByCompanyId(int companyId);
 
         /// <summary>
+        /// The get all for contact id.
+        /// </summary>
+        /// <param name="contactId">
+        /// The contact id.
+        /// </param>
+        /// <param name="includeDetails">
+        /// The include details.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<CategoryDTO> GetAllForContactId(int contactId, bool includeDetails);
+
+        /// <summary>
         /// The get paged.
         /// </summary>
         /// <param name="searchPattern">

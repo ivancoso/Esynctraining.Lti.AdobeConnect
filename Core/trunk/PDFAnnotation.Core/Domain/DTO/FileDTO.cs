@@ -34,7 +34,7 @@
             this.dateCreated = file.DateCreated;
             this.fileName = file.FileName;
             this.fileSize = file.FileSize;
-            this.witness = file.TopicName;
+            this.topicName = file.TopicName;
             this.description = file.Description;
             this.webOrbId = file.WebOrbId;
             this.categoryId = file.Category.Return(x => x.Id, (int?)null);
@@ -54,7 +54,7 @@
         ///     Gets or sets the Topic.
         /// </summary>
         [DataMember]
-        public string witness { get; set; }
+        public string topicName { get; set; }
 
         /// <summary>
         ///     Gets or sets the description.

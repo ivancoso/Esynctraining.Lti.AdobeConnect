@@ -38,7 +38,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// <returns>
         /// The <see cref="IEnumerable{Topic}"/>.
         /// </returns>
-        public IEnumerable<Topic> GetAllByCaseId(int caseId)
+        public IEnumerable<Topic> GetAllByCategoryId(int caseId)
         {
             var defaultQuery = new DefaultQueryOver<Topic, int>().GetQueryOver().Where(x => x.Category.Id == caseId);
             return this.Repository.FindAll(defaultQuery);

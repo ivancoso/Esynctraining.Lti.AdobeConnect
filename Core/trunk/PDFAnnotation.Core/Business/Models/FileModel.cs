@@ -338,9 +338,7 @@
         {
             var searchIds = new List<int>();
             
-            var queryOver =
-                new DefaultQueryOver<File, int>().GetQueryOver()
-                    .Where(Restrictions.On<File>(x => x.Category.Id).IsIn(casesId));
+            var queryOver = new DefaultQueryOver<File, int>().GetQueryOver().WhereRestrictionOn(x => x.Category.Id).IsIn(casesId);
 
             if (start.HasValue && end.HasValue)
             {
@@ -385,7 +383,7 @@
         {
             QueryOver<File, File> defaultQuery =
                 new DefaultQueryOver<File, int>().GetQueryOver()
-                    .Where(Restrictions.On<File>(x => x.Category.Id).IsLike(caseId))
+                    .WhereRestrictionOn(x => x.Category.Id).IsLike(caseId)
                     .Fetch(x => x.Category).Eager
                     .Fetch(x => x.Topic).Eager;
             return this.Repository.FindAll(defaultQuery);
@@ -395,7 +393,7 @@
         /// The get all by contact paged.
         /// </summary>
         /// <param name="topicsIds">
-        /// The witness Ids.
+        /// The topicName Ids.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{Event}"/>.

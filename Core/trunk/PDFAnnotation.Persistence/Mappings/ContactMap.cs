@@ -27,8 +27,9 @@
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.Status).CustomType<ContactStatusEnum>().Not.Nullable().Default(1.ToString());
             this.References(x => x.ContactType).Not.Nullable();
+            this.References(x => x.Company).Nullable();
             this.HasMany(x => x.PasswordActivation).Cascade.Delete().Inverse().ExtraLazyLoad();
-            this.HasMany(x => x.FirmContacts).Cascade.Delete().ExtraLazyLoad();
+            
             this.HasManyToMany(x => x.Categories)
                 .Table("CategoryContact")
                 .ParentKeyColumn("contactId")

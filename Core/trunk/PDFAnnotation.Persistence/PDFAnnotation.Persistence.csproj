@@ -103,8 +103,6 @@
     <Compile Include="Mappings\ContactTypeMap.cs" />
     <Compile Include="Mappings\CategoryMap.cs" />
     <Compile Include="Mappings\TopicMap.cs" />
-    <Compile Include="Mappings\CompanyContactMap.cs" />
-    <Compile Include="Mappings\CompanyContactTypeMap.cs" />
     <Compile Include="Mappings\CompanyTypeMap.cs" />
     <Compile Include="Mappings\CountryMap.cs" />
     <Compile Include="Mappings\FileMap.cs" />

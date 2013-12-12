@@ -57,7 +57,7 @@
         /// <param name="searchPattern">
         /// The searchPattern.
         /// </param>
-        /// <param name="caseId">
+        /// <param name="categoryId">
         /// The case id.
         /// </param>
         /// <param name="start">
@@ -70,19 +70,19 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<FileDTO> GetFilesByDates(string searchPattern, int caseId, DateTime start, DateTime end);
+        ServiceResponse<FileDTO> GetFilesByDates(string searchPattern, int categoryId, DateTime start, DateTime end);
 
         /// <summary>
         /// Gets event's files.
         /// </summary>
-        /// <param name="caseId">
+        /// <param name="categoryId">
         /// The case Id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<FileDTO> GetFilesByCase(int caseId);
+        ServiceResponse<FileDTO> GetFilesByCategory(int categoryId);
 
         /// <summary>
         /// The get exhibits report.

@@ -1,5 +1,6 @@
 namespace PDFAnnotation.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
     using Esynctraining.Core.Extensions;
 
@@ -32,10 +33,10 @@ namespace PDFAnnotation.Core.Domain.DTO
             {
                 this.topicId = topic.Id;
                 this.categoryId = topic.Category.With(x => x.Id);
-                this.firmName = topic.FirmName;
                 this.firstName = topic.FirstName;
                 this.lastName = topic.LastName;
                 this.fullName = topic.FullName;
+                this.dateCreated = topic.DateCreated;
             }
         }
 
@@ -48,12 +49,6 @@ namespace PDFAnnotation.Core.Domain.DTO
         /// </summary>
         [DataMember]
         public int categoryId { get; set; }
-
-        /// <summary>
-        ///     Gets or sets CompanyName
-        /// </summary>
-        [DataMember]
-        public string firmName { get; set; }
 
         /// <summary>
         ///     Gets or sets FirstName
@@ -72,6 +67,12 @@ namespace PDFAnnotation.Core.Domain.DTO
         /// </summary>
         [DataMember]
         public string fullName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets dateCreated
+        /// </summary>
+        [DataMember]
+        public DateTime dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets ParticipantId

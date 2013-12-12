@@ -16,6 +16,7 @@
     using NHibernate.Transform;
 
     using PDFAnnotation.Core.Business.Queries;
+    using PDFAnnotation.Core.Domain.DTO;
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -82,6 +83,59 @@
             var searchIds = this.fullTextModel.Search(pattern, typeof(Contact), maxRows).ToList();
             defaultQuery = defaultQuery.WhereRestrictionOn(x => x.Id).IsIn(searchIds);
             return searchIds.Any() ? this.Repository.FindAll(defaultQuery).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(defaultQuery);
+        }
+
+        /// <summary>
+        /// The get all paged.
+        /// </summary>
+        /// <param name="searchPattern">
+        /// The name.
+        /// </param>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
+        /// <param name="pageIndex">
+        /// The page index.
+        /// </param>
+        /// <param name="pageSize">
+        /// The page size.
+        /// </param>
+        /// <param name="totalCount">
+        /// The total count.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{T}"/>.
+        /// </returns>
+        public IEnumerable<Contact> GetAllByCompanyAndNamePaged(string searchPattern, int companyId, int pageIndex, int pageSize, out int totalCount)
+        {
+            var searchIds = new List<int>();
+            if (pageIndex <= default(int))
+            {
+                pageIndex = 1;
+            }
+
+            var queryOver = new DefaultQueryOver<Contact, int>().GetQueryOver();
+            if (companyId != 0)
+            {
+                queryOver = queryOver.Where(x => x.Company.Id == companyId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchPattern))
+            {
+                searchIds = this.fullTextModel.Search(searchPattern, typeof(Contact), int.MaxValue).ToList();
+                queryOver = queryOver.AndRestrictionOn(x => x.Id).IsIn(searchIds);
+            }
+
+            var rowCountQuery = queryOver.ToRowCountQuery();
+            totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
+
+            if (pageSize > 0)
+            {
+                var pagedQueryOver = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+                return searchIds.Any() ? this.Repository.FindAll(pagedQueryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(pagedQueryOver);
+            }
+
+            return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
@@ -163,6 +217,21 @@
         }
 
         /// <summary>
+        /// The get all by company id.
+        /// </summary>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Contact}"/>.
+        /// </returns>
+        public virtual IEnumerable<Contact> GetAllByCompanyId(int companyId)
+        {
+            var queryOver = new QueryOverContact().GetQueryOver().Where(x => x.Company != null && x.Company.Id == companyId);
+            return this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
         /// The get one by principalId.
         /// </summary>
         /// <param name="principalId">
@@ -240,6 +309,35 @@
             var deleted = ContactStatusEnum.Deleted;
             var query = new DefaultQueryOver<Contact, int>().GetQueryOver().Where(x => x.Status != deleted);
             return this.Repository.FindAll(query);
+        }
+
+        /// <summary>
+        /// The get all by categories ids.
+        /// </summary>
+        /// <param name="categoriesIds">
+        /// The categories ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Contact}"/>.
+        /// </returns>
+        public IEnumerable<CategoryContactDTO> GetAllByCategoriesIds(List<int> categoriesIds)
+        {
+            Contact contact = null;
+            Category category = null;
+            CategoryContactDTO dto = null;
+            var query =
+                new DefaultQueryOver<Contact, int>().GetQueryOver(() => contact)
+                    .JoinQueryOver(() => contact.Categories, () => category)
+                    .WhereRestrictionOn(() => category.Id)
+                    .IsIn(categoriesIds)
+                    .SelectList(
+                        l =>
+                        l.Select(() => contact.Id)
+                            .WithAlias(() => dto.contactId)
+                            .Select(() => category.Id)
+                            .WithAlias(() => dto.categoryId))
+                    .TransformUsing(Transformers.AliasToBean<CategoryContactDTO>());
+            return this.Repository.FindAll<CategoryContactDTO>(query);
         }
 
     }

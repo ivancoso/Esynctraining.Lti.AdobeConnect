@@ -21,7 +21,6 @@
             this.Map(x => x.Phone).Length(255).Nullable();
             this.References(x => x.Address).Nullable().Cascade.Delete();
             this.References(x => x.CompanyType).Not.Nullable();
-            this.HasMany(x => x.Members).Cascade.Delete().Inverse().ExtraLazyLoad();
         }
 
         #endregion

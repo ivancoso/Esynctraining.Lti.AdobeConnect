@@ -7,7 +7,7 @@
     ///     The company DTO.
     /// </summary>
     [DataContract]
-    [KnownType(typeof(CompanyContactDTO))]
+    [KnownType(typeof(ContactDTO))]
     [KnownType(typeof(CategoryDTO))]
     [KnownType(typeof(CompanyDTO))]
     public class CompanyWithDetailsDTO : CompanyDTO
@@ -19,7 +19,7 @@
         /// </summary>
         public CompanyWithDetailsDTO()
         {
-            this.firmContactsTabFirstPage = new TabFirstPageWrapper<CompanyContactExDTO>();
+            this.firmContactsTabFirstPage = new TabFirstPageWrapper<ContactDTO>();
             this.casesTabFirstPage = new TabFirstPageWrapper<CategoryDTO>();
         }
 
@@ -35,11 +35,12 @@
         /// <param name="cases">
         /// The categories.
         /// </param>
-        public CompanyWithDetailsDTO(Company f, TabFirstPageWrapper<CompanyContact> firmContacts = null, TabFirstPageWrapper<Category> cases = null) : base(f)
+        public CompanyWithDetailsDTO(Company f, TabFirstPageWrapper<Contact> firmContacts = null, TabFirstPageWrapper<Category> cases = null)
+            : base(f)
         {
                 if (firmContacts != null)
                 {
-                    this.firmContactsTabFirstPage = firmContacts.Convert(x => new CompanyContactExDTO(x));
+                    this.firmContactsTabFirstPage = firmContacts.Convert(x => new ContactDTO(x));
                 }
 
                 if (cases != null)
@@ -62,7 +63,7 @@
         /// Gets or sets the company contacts first page.
         /// </summary>
         [DataMember]
-        public TabFirstPageWrapper<CompanyContactExDTO> firmContactsTabFirstPage { get; set; }
+        public TabFirstPageWrapper<ContactDTO> firmContactsTabFirstPage { get; set; }
 
         #endregion
     }

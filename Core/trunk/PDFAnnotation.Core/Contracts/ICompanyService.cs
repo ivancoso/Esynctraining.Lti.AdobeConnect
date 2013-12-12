@@ -74,7 +74,19 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyDTO> Save(CompanyDTO entity);
+        ServiceResponse<CompanyDTO> Create(CompanyForCreationDTO entity);
+
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<CompanyDTO> Update(CompanyDTO entity);
 
         #endregion
     }

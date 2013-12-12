@@ -4,9 +4,9 @@
 
     using Esynctraining.Core.Domain.Contracts;
 
-    using global::Weborb.Service;
-
     using PDFAnnotation.Core.Domain.DTO;
+
+    using global::Weborb.Service;
 
     /// <summary>
     ///     The Company Service interface.
@@ -55,16 +55,6 @@
         [OperationContract]
         [WebORBCache(CacheScope = CacheScope.Global)]
         ServiceResponse<StateDTO> GetStates();
-
-        /// <summary>
-        /// The get company contact types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebORBCache(CacheScope = CacheScope.Global)]
-        ServiceResponse<CompanyContactTypeDTO> GetFirmContactTypes();
 
         /// <summary>
         /// The get all.

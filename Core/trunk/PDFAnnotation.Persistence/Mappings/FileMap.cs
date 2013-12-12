@@ -20,13 +20,13 @@
             this.Map(x => x.Status).Nullable().CustomType<FileStatus>();
             this.Map(x => x.WebOrbId).Nullable();
             this.Map(x => x.Description).Nullable();
-            this.Map(x => x.TopicName).Column("Topic").Length(255).Nullable();
+            this.Map(x => x.TopicName).Column("topicName").Length(255).Nullable();
             this.Map(x => x.DisplayName).Length(255).Nullable();
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.FileNumber).Nullable();
 
-            this.References(x => x.Topic).Nullable();
-            this.References(x => x.Category).Nullable();
+            this.References(x => x.Topic).Column("topicId").Not.Nullable();
+            this.References(x => x.Category).Column("categoryId").Not.Nullable();
 
             this.HasMany(x => x.Marks).Cascade.Delete().Inverse().ExtraLazyLoad();
         }

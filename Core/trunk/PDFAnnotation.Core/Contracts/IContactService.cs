@@ -40,6 +40,18 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
+        ServiceResponse<ContactDTO> GetAllByCompanyId(int companyId);
+
+        /// <summary>
+        /// The all.
+        /// </summary>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
         ServiceResponse<ContactDTO> GetAllByIds(List<int> ids);
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿namespace PDFAnnotation.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
@@ -48,6 +49,18 @@
                     .WhereRestrictionOn(x => x.CompanyName)
                     .IsInsensitiveLike("%" + name + "%");
             return this.Repository.FindAll(defaultQuery);
+        }
+
+        /// <summary>
+        /// The get all by company id.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable{Company}"/>.
+        /// </returns>
+        public IEnumerable<int> GetAllIds()
+        {
+            var query = new DefaultQueryOver<Company, int>().GetQueryOver().Select(x => x.Id);
+            return this.Repository.FindAll<int>(query).ToList().Distinct();
         }
 
         #endregion

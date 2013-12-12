@@ -14,9 +14,9 @@ namespace PDFAnnotation.Persistence.Mappings
         /// </summary>
         public TopicMap()
         {
-            this.Map(x => x.FirmName).Nullable();
             this.Map(x => x.FirstName).Nullable();
             this.Map(x => x.LastName).Nullable();
+            this.Map(x => x.DateCreated).Not.Nullable();
             this.References(x => x.Category).Not.Nullable();
         }
 

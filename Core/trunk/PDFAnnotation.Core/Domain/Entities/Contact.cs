@@ -29,11 +29,6 @@
         private ISet<PasswordActivation> passwordActivations = new HashedSet<PasswordActivation>();
 
         /// <summary>
-        ///     The firmContacts.
-        /// </summary>
-        private ISet<CompanyContact> firmContacts = new HashedSet<CompanyContact>();
-
-        /// <summary>
         ///     The categories.
         /// </summary>
         private ISet<Category> categories = new HashedSet<Category>();
@@ -101,23 +96,7 @@
         }
 
         /// <summary>
-        ///     Gets or sets the company contacts.
-        /// </summary>
-        public virtual ISet<CompanyContact> FirmContacts
-        {
-            get
-            {
-                return this.firmContacts;
-            }
-
-            set
-            {
-                this.firmContacts = value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the company contacts.
+        ///     Gets or sets the categories.
         /// </summary>
         public virtual ISet<Category> Categories
         {
@@ -131,6 +110,11 @@
                 this.categories = value;
             }
         }
+
+        /// <summary>
+        ///     Gets or sets the company.
+        /// </summary>
+        public virtual Company Company { get; set; }
 
         /// <summary>
         ///     Gets or sets the first name.

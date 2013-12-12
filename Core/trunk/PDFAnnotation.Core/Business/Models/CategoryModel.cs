@@ -6,13 +6,8 @@ namespace PDFAnnotation.Core.Business.Models
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Extensions;
-
     using NHibernate;
     using NHibernate.Criterion;
-    using NHibernate.Transform;
-
-    using PDFAnnotation.Core.Domain.DTO;
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -91,14 +86,39 @@ namespace PDFAnnotation.Core.Business.Models
         /// <returns>
         /// The <see cref="IEnumerable{Category}"/>.
         /// </returns>
-        public IEnumerable<Category> GetAllByFirmId(int firmId)
+        public IEnumerable<Category> GetAllByCompanyId(int firmId)
         {
             QueryOver<Category, Category> query =
                 new DefaultQueryOver<Category, int>().GetQueryOver().Where(x => x.Company.Id == firmId);
             return this.Repository.FindAll(query).ToList();
         }
 
-       
+        /// <summary>
+        /// The get all by company id. and contact
+        /// </summary>
+        /// <param name="companyIds">
+        /// The company Ids.
+        /// </param>
+        /// <param name="contact">
+        /// The contact.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Category}"/>.
+        /// </returns>
+        public IEnumerable<Category> GetAllByCompanyIdsAndContact(List<int> companyIds, Contact contact)
+        {
+            var query = new DefaultQueryOver<Category, int>().GetQueryOver().WhereRestrictionOn(x => x.Company.Id).IsIn(companyIds);
+            
+            if (contact.ContactType.Id == (int)ContactTypeEnum.Contact)
+            {
+                Contact c = null;
+                var contactId = contact.Id;
+                var resQuery = query.JoinQueryOver(x => x.Contacts, () => c).Where(() => c.Id == contactId);
+                return this.Repository.FindAll(resQuery).ToList();
+            }
+
+            return this.Repository.FindAll(query).ToList();
+        }
 
         /// <summary>
         /// The get all paged.

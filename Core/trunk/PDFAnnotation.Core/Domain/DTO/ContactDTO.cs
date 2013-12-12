@@ -35,6 +35,7 @@
             if (cnt != null)
             {
                 this.rbContactId = cnt.RBContactId;
+                this.companyId = cnt.Company.Return(x => x.Id, (int?)null);
                 this.contactId = cnt.Id;
                 this.dateCreated = cnt.DateCreated;
                 this.dateModified = cnt.DateModified ?? cnt.DateCreated;
@@ -51,6 +52,12 @@
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        ///     Gets or sets the case id.
+        /// </summary>
+        [DataMember]
+        public int? companyId { get; set; }
 
         /// <summary>
         ///     Gets or sets the case id.

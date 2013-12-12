@@ -1,5 +1,7 @@
 namespace PDFAnnotation.Core.Domain.Entities
 {
+    using System;
+
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
@@ -26,6 +28,11 @@ namespace PDFAnnotation.Core.Domain.Entities
         public virtual string LastName { get; set; }
 
         /// <summary>
+        ///     Gets or sets date created
+        /// </summary>
+        public virtual DateTime DateCreated { get; set; }
+
+        /// <summary>
         ///     Gets or sets LastName
         /// </summary>
         public virtual string FullName
@@ -34,17 +41,12 @@ namespace PDFAnnotation.Core.Domain.Entities
             {
                 var res = this.FirstName.Return(x => x, string.Empty) + " " + this.LastName.Return(x => x, string.Empty);
                 res = res.Trim();
-                return string.IsNullOrEmpty(res) ? this.FirmName : res;
+                return res;
             }
             set
             {
             }
         }
-
-        /// <summary>
-        ///     Gets or sets CompanyName
-        /// </summary>
-        public virtual string FirmName { get; set; }
 
         #endregion
     }
