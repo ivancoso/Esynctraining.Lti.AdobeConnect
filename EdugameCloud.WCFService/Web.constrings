@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<connectionStrings>
+<!--	<add name="Database" connectionString="Server=(local)\ms2008;Database=EduGameCloud;Integrated Security=true;" />-->
+</connectionStrings>

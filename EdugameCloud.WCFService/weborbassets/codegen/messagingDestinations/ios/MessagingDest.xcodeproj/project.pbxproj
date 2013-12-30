@@ -1,0 +1,388 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F900336315CA674E005CD067 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F900336215CA674E005CD067 /* UIKit.framework */; };
+		F900336515CA674E005CD067 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F900336415CA674E005CD067 /* Foundation.framework */; };
+		F900336715CA674E005CD067 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F900336615CA674E005CD067 /* CoreGraphics.framework */; };
+		F900336D15CA674E005CD067 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F900336B15CA674E005CD067 /* InfoPlist.strings */; };
+		F900336F15CA674E005CD067 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F900336E15CA674E005CD067 /* main.m */; };
+		F900337315CA674E005CD067 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F900337215CA674E005CD067 /* AppDelegate.m */; };
+		F900337615CA674E005CD067 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F900337415CA674E005CD067 /* MainStoryboard_iPhone.storyboard */; };
+		F900337915CA674E005CD067 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F900337715CA674E005CD067 /* MainStoryboard_iPad.storyboard */; };
+		F900337C15CA674E005CD067 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F900337B15CA674E005CD067 /* ViewController.m */; };
+		F900338715CA6809005CD067 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F900338315CA67EF005CD067 /* CFNetwork.framework */; };
+		F900338815CA6809005CD067 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F900338415CA67EF005CD067 /* Security.framework */; };
+		F90033A315CA69CC005CD067 /* MessagingClient.m in Sources */ = {isa = PBXBuildFile; fileRef = F90033A215CA69CC005CD067 /* MessagingClient.m */; };
+		F951FE2215CC0D21007DFB58 /* CommLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F951FE0E15CC0D21007DFB58 /* CommLibiOS.a */; };
+		F951FE2315CC0D21007DFB58 /* Communication Library for iOS User Guide.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F951FE1015CC0D21007DFB58 /* Communication Library for iOS User Guide.pdf */; };
+		F951FE2415CC0D21007DFB58 /* WeborbClient Class Reference.odt in Resources */ = {isa = PBXBuildFile; fileRef = F951FE1115CC0D21007DFB58 /* WeborbClient Class Reference.odt */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F900335E15CA674E005CD067 /* MessagingDest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MessagingDest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F900336215CA674E005CD067 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F900336415CA674E005CD067 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F900336615CA674E005CD067 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F900336A15CA674E005CD067 /* MessagingDest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MessagingDest-Info.plist"; sourceTree = "<group>"; };
+		F900336C15CA674E005CD067 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F900336E15CA674E005CD067 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F900337015CA674E005CD067 /* MessagingDest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MessagingDest-Prefix.pch"; sourceTree = "<group>"; };
+		F900337115CA674E005CD067 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F900337215CA674E005CD067 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F900337515CA674E005CD067 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		F900337815CA674E005CD067 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		F900337A15CA674E005CD067 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		F900337B15CA674E005CD067 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		F900338315CA67EF005CD067 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		F900338415CA67EF005CD067 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		F90033A115CA69CC005CD067 /* MessagingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagingClient.h; sourceTree = "<group>"; };
+		F90033A215CA69CC005CD067 /* MessagingClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessagingClient.m; sourceTree = "<group>"; };
+		F951FE0E15CC0D21007DFB58 /* CommLibiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = CommLibiOS.a; sourceTree = "<group>"; };
+		F951FE1015CC0D21007DFB58 /* Communication Library for iOS User Guide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Communication Library for iOS User Guide.pdf"; sourceTree = "<group>"; };
+		F951FE1115CC0D21007DFB58 /* WeborbClient Class Reference.odt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WeborbClient Class Reference.odt"; sourceTree = "<group>"; };
+		F951FE1315CC0D21007DFB58 /* BinaryCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryCodec.h; sourceTree = "<group>"; };
+		F951FE1415CC0D21007DFB58 /* DEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEBUG.h; sourceTree = "<group>"; };
+		F951FE1515CC0D21007DFB58 /* IAttributeStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAttributeStore.h; sourceTree = "<group>"; };
+		F951FE1615CC0D21007DFB58 /* IClientSharedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IClientSharedObject.h; sourceTree = "<group>"; };
+		F951FE1715CC0D21007DFB58 /* IClientSharedObjectDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IClientSharedObjectDelegate.h; sourceTree = "<group>"; };
+		F951FE1815CC0D21007DFB58 /* IPendingServiceCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPendingServiceCallback.h; sourceTree = "<group>"; };
+		F951FE1915CC0D21007DFB58 /* IPersistable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPersistable.h; sourceTree = "<group>"; };
+		F951FE1A15CC0D21007DFB58 /* IRTMProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRTMProtocol.h; sourceTree = "<group>"; };
+		F951FE1B15CC0D21007DFB58 /* IServiceCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IServiceCall.h; sourceTree = "<group>"; };
+		F951FE1C15CC0D21007DFB58 /* ISharedObjectListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISharedObjectListener.h; sourceTree = "<group>"; };
+		F951FE1D15CC0D21007DFB58 /* MemoryTicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTicker.h; sourceTree = "<group>"; };
+		F951FE1E15CC0D21007DFB58 /* Responder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Responder.h; sourceTree = "<group>"; };
+		F951FE1F15CC0D21007DFB58 /* RTMPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTMPClient.h; sourceTree = "<group>"; };
+		F951FE2015CC0D21007DFB58 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		F951FE2115CC0D21007DFB58 /* WeborbClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeborbClient.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F900335B15CA674E005CD067 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F900336315CA674E005CD067 /* UIKit.framework in Frameworks */,
+				F900336515CA674E005CD067 /* Foundation.framework in Frameworks */,
+				F900336715CA674E005CD067 /* CoreGraphics.framework in Frameworks */,
+				F900338715CA6809005CD067 /* CFNetwork.framework in Frameworks */,
+				F900338815CA6809005CD067 /* Security.framework in Frameworks */,
+				F951FE2215CC0D21007DFB58 /* CommLibiOS.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F900335315CA674E005CD067 = {
+			isa = PBXGroup;
+			children = (
+				F951FE0D15CC0D21007DFB58 /* CommLibiOS */,
+				F900336815CA674E005CD067 /* MessagingDest */,
+				F900336115CA674E005CD067 /* Frameworks */,
+				F900335F15CA674E005CD067 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F900335F15CA674E005CD067 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F900335E15CA674E005CD067 /* MessagingDest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F900336115CA674E005CD067 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F900338315CA67EF005CD067 /* CFNetwork.framework */,
+				F900338415CA67EF005CD067 /* Security.framework */,
+				F900336215CA674E005CD067 /* UIKit.framework */,
+				F900336415CA674E005CD067 /* Foundation.framework */,
+				F900336615CA674E005CD067 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F900336815CA674E005CD067 /* MessagingDest */ = {
+			isa = PBXGroup;
+			children = (
+				F90033A115CA69CC005CD067 /* MessagingClient.h */,
+				F90033A215CA69CC005CD067 /* MessagingClient.m */,
+				F900337115CA674E005CD067 /* AppDelegate.h */,
+				F900337215CA674E005CD067 /* AppDelegate.m */,
+				F900337415CA674E005CD067 /* MainStoryboard_iPhone.storyboard */,
+				F900337715CA674E005CD067 /* MainStoryboard_iPad.storyboard */,
+				F900337A15CA674E005CD067 /* ViewController.h */,
+				F900337B15CA674E005CD067 /* ViewController.m */,
+				F900336915CA674E005CD067 /* Supporting Files */,
+			);
+			path = MessagingDest;
+			sourceTree = "<group>";
+		};
+		F900336915CA674E005CD067 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F900336A15CA674E005CD067 /* MessagingDest-Info.plist */,
+				F900336B15CA674E005CD067 /* InfoPlist.strings */,
+				F900336E15CA674E005CD067 /* main.m */,
+				F900337015CA674E005CD067 /* MessagingDest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F951FE0D15CC0D21007DFB58 /* CommLibiOS */ = {
+			isa = PBXGroup;
+			children = (
+				F951FE0E15CC0D21007DFB58 /* CommLibiOS.a */,
+				F951FE0F15CC0D21007DFB58 /* doc */,
+				F951FE1215CC0D21007DFB58 /* include */,
+			);
+			name = CommLibiOS;
+			path = ../lib/CommLibiOS;
+			sourceTree = "<group>";
+		};
+		F951FE0F15CC0D21007DFB58 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				F951FE1015CC0D21007DFB58 /* Communication Library for iOS User Guide.pdf */,
+				F951FE1115CC0D21007DFB58 /* WeborbClient Class Reference.odt */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		F951FE1215CC0D21007DFB58 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F951FE1315CC0D21007DFB58 /* BinaryCodec.h */,
+				F951FE1415CC0D21007DFB58 /* DEBUG.h */,
+				F951FE1515CC0D21007DFB58 /* IAttributeStore.h */,
+				F951FE1615CC0D21007DFB58 /* IClientSharedObject.h */,
+				F951FE1715CC0D21007DFB58 /* IClientSharedObjectDelegate.h */,
+				F951FE1815CC0D21007DFB58 /* IPendingServiceCallback.h */,
+				F951FE1915CC0D21007DFB58 /* IPersistable.h */,
+				F951FE1A15CC0D21007DFB58 /* IRTMProtocol.h */,
+				F951FE1B15CC0D21007DFB58 /* IServiceCall.h */,
+				F951FE1C15CC0D21007DFB58 /* ISharedObjectListener.h */,
+				F951FE1D15CC0D21007DFB58 /* MemoryTicker.h */,
+				F951FE1E15CC0D21007DFB58 /* Responder.h */,
+				F951FE1F15CC0D21007DFB58 /* RTMPClient.h */,
+				F951FE2015CC0D21007DFB58 /* Types.h */,
+				F951FE2115CC0D21007DFB58 /* WeborbClient.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F900335D15CA674E005CD067 /* MessagingDest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F900337F15CA674E005CD067 /* Build configuration list for PBXNativeTarget "MessagingDest" */;
+			buildPhases = (
+				F900335A15CA674E005CD067 /* Sources */,
+				F900335B15CA674E005CD067 /* Frameworks */,
+				F900335C15CA674E005CD067 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MessagingDest;
+			productName = MessagingDest;
+			productReference = F900335E15CA674E005CD067 /* MessagingDest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F900335515CA674E005CD067 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "The Midnight Coders, Inc.";
+			};
+			buildConfigurationList = F900335815CA674E005CD067 /* Build configuration list for PBXProject "MessagingDest" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F900335315CA674E005CD067;
+			productRefGroup = F900335F15CA674E005CD067 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F900335D15CA674E005CD067 /* MessagingDest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F900335C15CA674E005CD067 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F900336D15CA674E005CD067 /* InfoPlist.strings in Resources */,
+				F900337615CA674E005CD067 /* MainStoryboard_iPhone.storyboard in Resources */,
+				F900337915CA674E005CD067 /* MainStoryboard_iPad.storyboard in Resources */,
+				F951FE2315CC0D21007DFB58 /* Communication Library for iOS User Guide.pdf in Resources */,
+				F951FE2415CC0D21007DFB58 /* WeborbClient Class Reference.odt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F900335A15CA674E005CD067 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F900336F15CA674E005CD067 /* main.m in Sources */,
+				F900337315CA674E005CD067 /* AppDelegate.m in Sources */,
+				F900337C15CA674E005CD067 /* ViewController.m in Sources */,
+				F90033A315CA69CC005CD067 /* MessagingClient.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F900336B15CA674E005CD067 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F900336C15CA674E005CD067 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		F900337415CA674E005CD067 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F900337515CA674E005CD067 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		F900337715CA674E005CD067 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F900337815CA674E005CD067 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F900337D15CA674E005CD067 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F900337E15CA674E005CD067 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F900338015CA674E005CD067 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MessagingDest/MessagingDest-Prefix.pch";
+				INFOPLIST_FILE = "MessagingDest/MessagingDest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../lib/CommLibiOS\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F900338115CA674E005CD067 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MessagingDest/MessagingDest-Prefix.pch";
+				INFOPLIST_FILE = "MessagingDest/MessagingDest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../lib/CommLibiOS\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F900335815CA674E005CD067 /* Build configuration list for PBXProject "MessagingDest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F900337D15CA674E005CD067 /* Debug */,
+				F900337E15CA674E005CD067 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F900337F15CA674E005CD067 /* Build configuration list for PBXNativeTarget "MessagingDest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F900338015CA674E005CD067 /* Debug */,
+				F900338115CA674E005CD067 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F900335515CA674E005CD067 /* Project object */;
+}

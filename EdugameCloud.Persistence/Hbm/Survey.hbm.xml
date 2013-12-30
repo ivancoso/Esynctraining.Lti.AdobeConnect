@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+  <sql-query name="getSharedForUserSurveysByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getSharedForUserSurveysByUserId @userId=:userId
+  </sql-query>
+  
+  <sql-query name="getUsersSurveysByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getUsersSurveysByUserId @userId=:userId
+  </sql-query>
+  
+  <sql-query name="getSurveySessionsByUserId">
+		<query-param name="userId" type="System.Int32"/>
+		exec getSurveySessionsByUserId @userId=:userId
+	</sql-query>
+	<sql-query name="getSurveyQuestionsForAdminBySMIId">
+		<query-param name="smiId" type="System.Int32"/>
+		<query-param name="acSessionId" type="System.Int32"/>
+		exec getSurveyQuestionsForAdminBySMIId @subModuleItemId=:smiId, @acSessionId=:acSessionId
+	</sql-query>
+	<sql-query name="getSurveyResultByACSessionId">
+		<query-param name="acSessionId" type="System.Int32"/>
+		<query-param name="subModuleItemId" type="System.Int32"/>
+		exec getSurveyResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
+	</sql-query>
+</hibernate-mapping>

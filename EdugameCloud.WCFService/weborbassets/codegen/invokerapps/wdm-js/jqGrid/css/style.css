@@ -1,0 +1,91 @@
+* 
+{
+	font-family: verdana, arial;
+	font-size: 13px;
+	line-height: 1.2em;
+}
+
+#tableList { border: solid 1px #C5DBEC; height: 382px; overflow-x: hidden; overflow-y: auto }
+#tableList div { padding: 2px; cursor: default }
+
+#divNewRecord { width: 600px; display: none; }
+#divNewRecord input { width: 220px; border: solid 1px #C5DBEC }
+table.newRec td { vertical-align: bottom; }
+table.newRec td.cb { padding-right: 15px; }
+
+#divCode { width: 825px; display: none; }
+.divBlockBody { border: solid 1px #C5DBEC; background-color: #fff; padding: 10px; }
+#divCodeContent { height: 455px; border: solid 1px #C5DBEC; background-color: #ffffe0; overflow: auto; padding: 3px }
+
+#divPager { width: 780px; height: 18px; padding-left: 0px; padding-right: 0px; text-align: center; border-top-style: none; display: none }
+#divPager a, #divPager .current-page  { padding: 3px; }
+#divPager a { text-decoration: underline }
+#divPager .current-page { font-weight: normal }
+#divPager input.gp { width: 40px; font-size: 10px; border: 1px solid #C5DBEC; margin-left: 20px; }
+
+
+table, form 
+{ 
+	margin: 0px 
+}
+
+td 
+{ 
+	text-align: left; 
+	vertical-align: top 
+}
+
+td.deleted 
+{ 
+	background-color: #777; 
+	color: #ccc; 
+	font-weight: bold; 
+	text-align: center 
+}
+
+.cb 
+{ 
+	color: #2e6e9e; 
+	font-weight: bold 
+}
+
+.padded 
+{ 
+	padding: 0.3em 0.2em 0.2em 0.3em; 
+}
+
+.cellButton
+{ 
+	border: 1px solid #c5dbec; 
+	background: #dfeffc url("light_twin.png") 50% 50% repeat-x; 
+	font-weight: bold; 
+	color: #2e6e9e;
+	margin: 2px;
+}
+
+.margedBottom
+{
+	margin-bottom: 10px; 
+}
+
+.margedRight
+{
+	margin-right: 10px;
+}
+
+.ptr
+{
+	cursor: pointer;
+}
+
+.ui-jqgrid tr.jqgrow tr { height: 29px; }
+.ui-jqgrid tr.jqgrow td { vertical-align: middle }
+.ui-jqgrid tr.jqgrow td.deleted { background-color: #777; color: #ccc; font-weight: bold; text-align: center }
+
+#gbox_grid { -moz-border-radius-bottomleft: 0px; -moz-border-radius-bottomright: 0px; }
+.selectedLi
+{
+    border: 1px solid #79b7e7;
+    background: #d0e5f5 url(selected_li.png) 50% 50% repeat-x;
+    font-weight: bold; color: #1d5987;
+}

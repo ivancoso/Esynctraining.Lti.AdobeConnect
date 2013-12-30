@@ -1,0 +1,612 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		F900344715CA9088005CD067 /* PhotoRSOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F900344515CA9088005CD067 /* PhotoRSOViewController.m */; };
+		F900344815CA9088005CD067 /* PhotoRSOViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900344615CA9088005CD067 /* PhotoRSOViewController.xib */; };
+		F900344B15CA91F1005CD067 /* DataPushViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900344A15CA91F0005CD067 /* DataPushViewController_iPad.xib */; };
+		F900344D15CA91FF005CD067 /* MethodInvocationViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900344C15CA91FF005CD067 /* MethodInvocationViewController_iPad.xib */; };
+		F900344F15CA920E005CD067 /* PhotoRSOViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900344E15CA920E005CD067 /* PhotoRSOViewController_iPad.xib */; };
+		F900345115CA9218005CD067 /* RemoteSOViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900345015CA9218005CD067 /* RemoteSOViewController_iPad.xib */; };
+		F900345315CA9221005CD067 /* VideoBroadcastViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900345215CA9221005CD067 /* VideoBroadcastViewController_iPad.xib */; };
+		F900345515CA922A005CD067 /* VideoPlayerViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = F900345415CA922A005CD067 /* VideoPlayerViewController_iPad.xib */; };
+		F900345715CA948B005CD067 /* photorso.png in Resources */ = {isa = PBXBuildFile; fileRef = F900345615CA948B005CD067 /* photorso.png */; };
+		F924E54815C97AD700F52D5C /* broadcast.png in Resources */ = {isa = PBXBuildFile; fileRef = F924E54315C97AD700F52D5C /* broadcast.png */; };
+		F924E54915C97AD700F52D5C /* datapush.png in Resources */ = {isa = PBXBuildFile; fileRef = F924E54415C97AD700F52D5C /* datapush.png */; };
+		F924E54A15C97AD700F52D5C /* invoke.png in Resources */ = {isa = PBXBuildFile; fileRef = F924E54515C97AD700F52D5C /* invoke.png */; };
+		F924E54B15C97AD700F52D5C /* player.png in Resources */ = {isa = PBXBuildFile; fileRef = F924E54615C97AD700F52D5C /* player.png */; };
+		F924E54C15C97AD700F52D5C /* remoteso.png in Resources */ = {isa = PBXBuildFile; fileRef = F924E54715C97AD700F52D5C /* remoteso.png */; };
+		F9E94C5115C951550010AFC0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94C5015C951550010AFC0 /* UIKit.framework */; };
+		F9E94C5315C951550010AFC0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94C5215C951550010AFC0 /* Foundation.framework */; };
+		F9E94C5515C951550010AFC0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94C5415C951550010AFC0 /* CoreGraphics.framework */; };
+		F9E94C5B15C951550010AFC0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C5915C951550010AFC0 /* InfoPlist.strings */; };
+		F9E94C5D15C951550010AFC0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C5C15C951550010AFC0 /* main.m */; };
+		F9E94C6115C951550010AFC0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C6015C951550010AFC0 /* AppDelegate.m */; };
+		F9E94C7C15C958C10010AFC0 /* RemoteSOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C7A15C958C10010AFC0 /* RemoteSOViewController.m */; };
+		F9E94C7D15C958C10010AFC0 /* RemoteSOViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C7B15C958C10010AFC0 /* RemoteSOViewController.xib */; };
+		F9E94C8415C95A720010AFC0 /* VideoBroadcastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C8215C95A720010AFC0 /* VideoBroadcastViewController.m */; };
+		F9E94C8515C95A720010AFC0 /* VideoBroadcastViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C8315C95A720010AFC0 /* VideoBroadcastViewController.xib */; };
+		F9E94C8915C95A9B0010AFC0 /* VideoPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C8715C95A9B0010AFC0 /* VideoPlayerViewController.m */; };
+		F9E94C8A15C95A9B0010AFC0 /* VideoPlayerViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C8815C95A9B0010AFC0 /* VideoPlayerViewController.xib */; };
+		F9E94C8E15C95AC30010AFC0 /* DataPushViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C8C15C95AC30010AFC0 /* DataPushViewController.m */; };
+		F9E94C8F15C95AC30010AFC0 /* DataPushViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C8D15C95AC30010AFC0 /* DataPushViewController.xib */; };
+		F9E94C9315C95AF90010AFC0 /* MethodInvocationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F9E94C9115C95AF90010AFC0 /* MethodInvocationViewController.m */; };
+		F9E94C9415C95AFA0010AFC0 /* MethodInvocationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F9E94C9215C95AF90010AFC0 /* MethodInvocationViewController.xib */; };
+		F9E94D1715C968090010AFC0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D0F15C968080010AFC0 /* AudioToolbox.framework */; };
+		F9E94D1815C968090010AFC0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1015C968080010AFC0 /* AVFoundation.framework */; };
+		F9E94D1915C968090010AFC0 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1115C968080010AFC0 /* CFNetwork.framework */; };
+		F9E94D1A15C968090010AFC0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1215C968080010AFC0 /* CoreFoundation.framework */; };
+		F9E94D1B15C968090010AFC0 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1315C968080010AFC0 /* CoreMedia.framework */; };
+		F9E94D1C15C968090010AFC0 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1415C968080010AFC0 /* CoreVideo.framework */; };
+		F9E94D1D15C968090010AFC0 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1515C968080010AFC0 /* libz.dylib */; };
+		F9E94D1E15C968090010AFC0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D1615C968090010AFC0 /* Security.framework */; };
+		F9E94D4615C96A150010AFC0 /* CommLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D2115C96A150010AFC0 /* CommLibiOS.a */; };
+		F9E94D4B15C96A150010AFC0 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D3E15C96A150010AFC0 /* libavcodec.a */; };
+		F9E94D4C15C96A150010AFC0 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D3F15C96A150010AFC0 /* libavdevice.a */; };
+		F9E94D4D15C96A150010AFC0 /* libavfilter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D4015C96A150010AFC0 /* libavfilter.a */; };
+		F9E94D4E15C96A150010AFC0 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D4115C96A150010AFC0 /* libavformat.a */; };
+		F9E94D4F15C96A150010AFC0 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D4215C96A150010AFC0 /* libavutil.a */; };
+		F9E94D5115C96A150010AFC0 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D4415C96A150010AFC0 /* libswscale.a */; };
+		F9E94D5215C96A150010AFC0 /* MediaLibiOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F9E94D4515C96A150010AFC0 /* MediaLibiOS.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F900344415CA9088005CD067 /* PhotoRSOViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotoRSOViewController.h; path = PhotoRSO/PhotoRSOViewController.h; sourceTree = "<group>"; };
+		F900344515CA9088005CD067 /* PhotoRSOViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotoRSOViewController.m; path = PhotoRSO/PhotoRSOViewController.m; sourceTree = "<group>"; };
+		F900344615CA9088005CD067 /* PhotoRSOViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PhotoRSOViewController.xib; path = PhotoRSO/PhotoRSOViewController.xib; sourceTree = "<group>"; };
+		F900344A15CA91F0005CD067 /* DataPushViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DataPushViewController_iPad.xib; path = DataPush/DataPushViewController_iPad.xib; sourceTree = "<group>"; };
+		F900344C15CA91FF005CD067 /* MethodInvocationViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MethodInvocationViewController_iPad.xib; path = MethodInvocation/MethodInvocationViewController_iPad.xib; sourceTree = "<group>"; };
+		F900344E15CA920E005CD067 /* PhotoRSOViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PhotoRSOViewController_iPad.xib; path = PhotoRSO/PhotoRSOViewController_iPad.xib; sourceTree = "<group>"; };
+		F900345015CA9218005CD067 /* RemoteSOViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RemoteSOViewController_iPad.xib; path = RemoteSO/RemoteSOViewController_iPad.xib; sourceTree = "<group>"; };
+		F900345215CA9221005CD067 /* VideoBroadcastViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VideoBroadcastViewController_iPad.xib; path = VideoBroadcast/VideoBroadcastViewController_iPad.xib; sourceTree = "<group>"; };
+		F900345415CA922A005CD067 /* VideoPlayerViewController_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VideoPlayerViewController_iPad.xib; path = VideoPlayer/VideoPlayerViewController_iPad.xib; sourceTree = "<group>"; };
+		F900345615CA948B005CD067 /* photorso.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photorso.png; sourceTree = "<group>"; };
+		F924E54315C97AD700F52D5C /* broadcast.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = broadcast.png; sourceTree = "<group>"; };
+		F924E54415C97AD700F52D5C /* datapush.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = datapush.png; sourceTree = "<group>"; };
+		F924E54515C97AD700F52D5C /* invoke.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = invoke.png; sourceTree = "<group>"; };
+		F924E54615C97AD700F52D5C /* player.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = player.png; sourceTree = "<group>"; };
+		F924E54715C97AD700F52D5C /* remoteso.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = remoteso.png; sourceTree = "<group>"; };
+		F9E94C4C15C951550010AFC0 /* MessagingApps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MessagingApps.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9E94C5015C951550010AFC0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		F9E94C5215C951550010AFC0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		F9E94C5415C951550010AFC0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		F9E94C5815C951550010AFC0 /* MessagingApps-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MessagingApps-Info.plist"; sourceTree = "<group>"; };
+		F9E94C5A15C951550010AFC0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F9E94C5C15C951550010AFC0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F9E94C5E15C951550010AFC0 /* MessagingApps-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MessagingApps-Prefix.pch"; sourceTree = "<group>"; };
+		F9E94C5F15C951550010AFC0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		F9E94C6015C951550010AFC0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		F9E94C7915C958C10010AFC0 /* RemoteSOViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteSOViewController.h; path = RemoteSO/RemoteSOViewController.h; sourceTree = "<group>"; };
+		F9E94C7A15C958C10010AFC0 /* RemoteSOViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemoteSOViewController.m; path = RemoteSO/RemoteSOViewController.m; sourceTree = "<group>"; };
+		F9E94C7B15C958C10010AFC0 /* RemoteSOViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = RemoteSOViewController.xib; path = RemoteSO/RemoteSOViewController.xib; sourceTree = "<group>"; };
+		F9E94C8115C95A720010AFC0 /* VideoBroadcastViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoBroadcastViewController.h; path = VideoBroadcast/VideoBroadcastViewController.h; sourceTree = "<group>"; };
+		F9E94C8215C95A720010AFC0 /* VideoBroadcastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoBroadcastViewController.m; path = VideoBroadcast/VideoBroadcastViewController.m; sourceTree = "<group>"; };
+		F9E94C8315C95A720010AFC0 /* VideoBroadcastViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VideoBroadcastViewController.xib; path = VideoBroadcast/VideoBroadcastViewController.xib; sourceTree = "<group>"; };
+		F9E94C8615C95A9B0010AFC0 /* VideoPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoPlayerViewController.h; path = VideoPlayer/VideoPlayerViewController.h; sourceTree = "<group>"; };
+		F9E94C8715C95A9B0010AFC0 /* VideoPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPlayerViewController.m; path = VideoPlayer/VideoPlayerViewController.m; sourceTree = "<group>"; };
+		F9E94C8815C95A9B0010AFC0 /* VideoPlayerViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VideoPlayerViewController.xib; path = VideoPlayer/VideoPlayerViewController.xib; sourceTree = "<group>"; };
+		F9E94C8B15C95AC30010AFC0 /* DataPushViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataPushViewController.h; path = DataPush/DataPushViewController.h; sourceTree = "<group>"; };
+		F9E94C8C15C95AC30010AFC0 /* DataPushViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DataPushViewController.m; path = DataPush/DataPushViewController.m; sourceTree = "<group>"; };
+		F9E94C8D15C95AC30010AFC0 /* DataPushViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DataPushViewController.xib; path = DataPush/DataPushViewController.xib; sourceTree = "<group>"; };
+		F9E94C9015C95AF90010AFC0 /* MethodInvocationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MethodInvocationViewController.h; path = MethodInvocation/MethodInvocationViewController.h; sourceTree = "<group>"; };
+		F9E94C9115C95AF90010AFC0 /* MethodInvocationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MethodInvocationViewController.m; path = MethodInvocation/MethodInvocationViewController.m; sourceTree = "<group>"; };
+		F9E94C9215C95AF90010AFC0 /* MethodInvocationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MethodInvocationViewController.xib; path = MethodInvocation/MethodInvocationViewController.xib; sourceTree = "<group>"; };
+		F9E94D0F15C968080010AFC0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		F9E94D1015C968080010AFC0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		F9E94D1115C968080010AFC0 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		F9E94D1215C968080010AFC0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		F9E94D1315C968080010AFC0 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		F9E94D1415C968080010AFC0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		F9E94D1515C968080010AFC0 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		F9E94D1615C968090010AFC0 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		F9E94D2115C96A150010AFC0 /* CommLibiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = CommLibiOS.a; sourceTree = "<group>"; };
+		F9E94D2315C96A150010AFC0 /* Communication Library for iOS User Guide.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "Communication Library for iOS User Guide.pdf"; sourceTree = "<group>"; };
+		F9E94D2415C96A150010AFC0 /* WeborbClient Class Reference.odt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WeborbClient Class Reference.odt"; sourceTree = "<group>"; };
+		F9E94D2615C96A150010AFC0 /* BinaryCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryCodec.h; sourceTree = "<group>"; };
+		F9E94D2715C96A150010AFC0 /* DEBUG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEBUG.h; sourceTree = "<group>"; };
+		F9E94D2815C96A150010AFC0 /* IAttributeStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAttributeStore.h; sourceTree = "<group>"; };
+		F9E94D2915C96A150010AFC0 /* IClientSharedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IClientSharedObject.h; sourceTree = "<group>"; };
+		F9E94D2A15C96A150010AFC0 /* IClientSharedObjectDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IClientSharedObjectDelegate.h; sourceTree = "<group>"; };
+		F9E94D2B15C96A150010AFC0 /* IPendingServiceCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPendingServiceCallback.h; sourceTree = "<group>"; };
+		F9E94D2C15C96A150010AFC0 /* IPersistable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPersistable.h; sourceTree = "<group>"; };
+		F9E94D2D15C96A150010AFC0 /* IRTMProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRTMProtocol.h; sourceTree = "<group>"; };
+		F9E94D2E15C96A150010AFC0 /* IServiceCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IServiceCall.h; sourceTree = "<group>"; };
+		F9E94D2F15C96A150010AFC0 /* ISharedObjectListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISharedObjectListener.h; sourceTree = "<group>"; };
+		F9E94D3015C96A150010AFC0 /* MemoryTicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryTicker.h; sourceTree = "<group>"; };
+		F9E94D3115C96A150010AFC0 /* Responder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Responder.h; sourceTree = "<group>"; };
+		F9E94D3215C96A150010AFC0 /* RTMPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTMPClient.h; sourceTree = "<group>"; };
+		F9E94D3315C96A150010AFC0 /* Types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		F9E94D3415C96A150010AFC0 /* WeborbClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeborbClient.h; sourceTree = "<group>"; };
+		F9E94D3715C96A150010AFC0 /* Building Media Stream Apps.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Building Media Stream Apps.docx"; sourceTree = "<group>"; };
+		F9E94D3815C96A150010AFC0 /* Media Library for iOS User Guide.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Media Library for iOS User Guide.docx"; sourceTree = "<group>"; };
+		F9E94D3A15C96A150010AFC0 /* BroadcastStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BroadcastStreamClient.h; sourceTree = "<group>"; };
+		F9E94D3B15C96A150010AFC0 /* MediaConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaConstants.h; sourceTree = "<group>"; };
+		F9E94D3C15C96A150010AFC0 /* MediaStreamPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamPlayer.h; sourceTree = "<group>"; };
+		F9E94D3D15C96A150010AFC0 /* VideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoPlayer.h; sourceTree = "<group>"; };
+		F9E94D3E15C96A150010AFC0 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavcodec.a; sourceTree = "<group>"; };
+		F9E94D3F15C96A150010AFC0 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavdevice.a; sourceTree = "<group>"; };
+		F9E94D4015C96A150010AFC0 /* libavfilter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavfilter.a; sourceTree = "<group>"; };
+		F9E94D4115C96A150010AFC0 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavformat.a; sourceTree = "<group>"; };
+		F9E94D4215C96A150010AFC0 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavutil.a; sourceTree = "<group>"; };
+		F9E94D4315C96A150010AFC0 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswresample.a; sourceTree = "<group>"; };
+		F9E94D4415C96A150010AFC0 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswscale.a; sourceTree = "<group>"; };
+		F9E94D4515C96A150010AFC0 /* MediaLibiOS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = MediaLibiOS.a; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F9E94C4915C951550010AFC0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F9E94D1715C968090010AFC0 /* AudioToolbox.framework in Frameworks */,
+				F9E94D1815C968090010AFC0 /* AVFoundation.framework in Frameworks */,
+				F9E94D1915C968090010AFC0 /* CFNetwork.framework in Frameworks */,
+				F9E94D1A15C968090010AFC0 /* CoreFoundation.framework in Frameworks */,
+				F9E94D1B15C968090010AFC0 /* CoreMedia.framework in Frameworks */,
+				F9E94D1C15C968090010AFC0 /* CoreVideo.framework in Frameworks */,
+				F9E94D1E15C968090010AFC0 /* Security.framework in Frameworks */,
+				F9E94C5115C951550010AFC0 /* UIKit.framework in Frameworks */,
+				F9E94C5315C951550010AFC0 /* Foundation.framework in Frameworks */,
+				F9E94C5515C951550010AFC0 /* CoreGraphics.framework in Frameworks */,
+				F9E94D1D15C968090010AFC0 /* libz.dylib in Frameworks */,
+				F9E94D4615C96A150010AFC0 /* CommLibiOS.a in Frameworks */,
+				F9E94D4B15C96A150010AFC0 /* libavcodec.a in Frameworks */,
+				F9E94D4C15C96A150010AFC0 /* libavdevice.a in Frameworks */,
+				F9E94D4D15C96A150010AFC0 /* libavfilter.a in Frameworks */,
+				F9E94D4E15C96A150010AFC0 /* libavformat.a in Frameworks */,
+				F9E94D4F15C96A150010AFC0 /* libavutil.a in Frameworks */,
+				F9E94D5115C96A150010AFC0 /* libswscale.a in Frameworks */,
+				F9E94D5215C96A150010AFC0 /* MediaLibiOS.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		F900345815CBAF33005CD067 /* VideoBroadcast */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C8115C95A720010AFC0 /* VideoBroadcastViewController.h */,
+				F9E94C8215C95A720010AFC0 /* VideoBroadcastViewController.m */,
+				F9E94C8315C95A720010AFC0 /* VideoBroadcastViewController.xib */,
+				F900345215CA9221005CD067 /* VideoBroadcastViewController_iPad.xib */,
+			);
+			name = VideoBroadcast;
+			sourceTree = "<group>";
+		};
+		F900345915CBAF4B005CD067 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C8615C95A9B0010AFC0 /* VideoPlayerViewController.h */,
+				F9E94C8715C95A9B0010AFC0 /* VideoPlayerViewController.m */,
+				F9E94C8815C95A9B0010AFC0 /* VideoPlayerViewController.xib */,
+				F900345415CA922A005CD067 /* VideoPlayerViewController_iPad.xib */,
+			);
+			name = VideoPlayer;
+			sourceTree = "<group>";
+		};
+		F900345A15CBAF56005CD067 /* RemoteSO */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C7915C958C10010AFC0 /* RemoteSOViewController.h */,
+				F9E94C7A15C958C10010AFC0 /* RemoteSOViewController.m */,
+				F9E94C7B15C958C10010AFC0 /* RemoteSOViewController.xib */,
+				F900345015CA9218005CD067 /* RemoteSOViewController_iPad.xib */,
+			);
+			name = RemoteSO;
+			sourceTree = "<group>";
+		};
+		F900345B15CBAF60005CD067 /* PhotoRSO */ = {
+			isa = PBXGroup;
+			children = (
+				F900344415CA9088005CD067 /* PhotoRSOViewController.h */,
+				F900344515CA9088005CD067 /* PhotoRSOViewController.m */,
+				F900344615CA9088005CD067 /* PhotoRSOViewController.xib */,
+				F900344E15CA920E005CD067 /* PhotoRSOViewController_iPad.xib */,
+			);
+			name = PhotoRSO;
+			sourceTree = "<group>";
+		};
+		F900345C15CBAF6A005CD067 /* DataPush */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C8B15C95AC30010AFC0 /* DataPushViewController.h */,
+				F9E94C8C15C95AC30010AFC0 /* DataPushViewController.m */,
+				F9E94C8D15C95AC30010AFC0 /* DataPushViewController.xib */,
+				F900344A15CA91F0005CD067 /* DataPushViewController_iPad.xib */,
+			);
+			name = DataPush;
+			sourceTree = "<group>";
+		};
+		F900345D15CBAF73005CD067 /* MethodInvocation */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C9015C95AF90010AFC0 /* MethodInvocationViewController.h */,
+				F9E94C9115C95AF90010AFC0 /* MethodInvocationViewController.m */,
+				F9E94C9215C95AF90010AFC0 /* MethodInvocationViewController.xib */,
+				F900344C15CA91FF005CD067 /* MethodInvocationViewController_iPad.xib */,
+			);
+			name = MethodInvocation;
+			sourceTree = "<group>";
+		};
+		F924E54215C97AD700F52D5C /* art */ = {
+			isa = PBXGroup;
+			children = (
+				F900345615CA948B005CD067 /* photorso.png */,
+				F924E54315C97AD700F52D5C /* broadcast.png */,
+				F924E54415C97AD700F52D5C /* datapush.png */,
+				F924E54515C97AD700F52D5C /* invoke.png */,
+				F924E54615C97AD700F52D5C /* player.png */,
+				F924E54715C97AD700F52D5C /* remoteso.png */,
+			);
+			path = art;
+			sourceTree = "<group>";
+		};
+		F9E94C4115C951550010AFC0 = {
+			isa = PBXGroup;
+			children = (
+				F924E54215C97AD700F52D5C /* art */,
+				F9E94D1F15C96A150010AFC0 /* lib */,
+				F9E94C5615C951550010AFC0 /* MessagingApps */,
+				F9E94C4F15C951550010AFC0 /* Frameworks */,
+				F9E94C4D15C951550010AFC0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F9E94C4D15C951550010AFC0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C4C15C951550010AFC0 /* MessagingApps.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F9E94C4F15C951550010AFC0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D1515C968080010AFC0 /* libz.dylib */,
+				F9E94D0F15C968080010AFC0 /* AudioToolbox.framework */,
+				F9E94D1015C968080010AFC0 /* AVFoundation.framework */,
+				F9E94D1115C968080010AFC0 /* CFNetwork.framework */,
+				F9E94D1215C968080010AFC0 /* CoreFoundation.framework */,
+				F9E94D1315C968080010AFC0 /* CoreMedia.framework */,
+				F9E94D1415C968080010AFC0 /* CoreVideo.framework */,
+				F9E94D1615C968090010AFC0 /* Security.framework */,
+				F9E94C5015C951550010AFC0 /* UIKit.framework */,
+				F9E94C5215C951550010AFC0 /* Foundation.framework */,
+				F9E94C5415C951550010AFC0 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F9E94C5615C951550010AFC0 /* MessagingApps */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C5F15C951550010AFC0 /* AppDelegate.h */,
+				F9E94C6015C951550010AFC0 /* AppDelegate.m */,
+				F900345815CBAF33005CD067 /* VideoBroadcast */,
+				F900345915CBAF4B005CD067 /* VideoPlayer */,
+				F900345A15CBAF56005CD067 /* RemoteSO */,
+				F900345B15CBAF60005CD067 /* PhotoRSO */,
+				F900345C15CBAF6A005CD067 /* DataPush */,
+				F900345D15CBAF73005CD067 /* MethodInvocation */,
+				F9E94C5715C951550010AFC0 /* Supporting Files */,
+			);
+			path = MessagingApps;
+			sourceTree = "<group>";
+		};
+		F9E94C5715C951550010AFC0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94C5815C951550010AFC0 /* MessagingApps-Info.plist */,
+				F9E94C5915C951550010AFC0 /* InfoPlist.strings */,
+				F9E94C5C15C951550010AFC0 /* main.m */,
+				F9E94C5E15C951550010AFC0 /* MessagingApps-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F9E94D1F15C96A150010AFC0 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D2015C96A150010AFC0 /* CommLibiOS */,
+				F9E94D3515C96A150010AFC0 /* MediaLibiOS */,
+			);
+			name = lib;
+			path = ../lib;
+			sourceTree = "<group>";
+		};
+		F9E94D2015C96A150010AFC0 /* CommLibiOS */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D2115C96A150010AFC0 /* CommLibiOS.a */,
+				F9E94D2215C96A150010AFC0 /* doc */,
+				F9E94D2515C96A150010AFC0 /* include */,
+			);
+			path = CommLibiOS;
+			sourceTree = "<group>";
+		};
+		F9E94D2215C96A150010AFC0 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D2315C96A150010AFC0 /* Communication Library for iOS User Guide.pdf */,
+				F9E94D2415C96A150010AFC0 /* WeborbClient Class Reference.odt */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		F9E94D2515C96A150010AFC0 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D2615C96A150010AFC0 /* BinaryCodec.h */,
+				F9E94D2715C96A150010AFC0 /* DEBUG.h */,
+				F9E94D2815C96A150010AFC0 /* IAttributeStore.h */,
+				F9E94D2915C96A150010AFC0 /* IClientSharedObject.h */,
+				F9E94D2A15C96A150010AFC0 /* IClientSharedObjectDelegate.h */,
+				F9E94D2B15C96A150010AFC0 /* IPendingServiceCallback.h */,
+				F9E94D2C15C96A150010AFC0 /* IPersistable.h */,
+				F9E94D2D15C96A150010AFC0 /* IRTMProtocol.h */,
+				F9E94D2E15C96A150010AFC0 /* IServiceCall.h */,
+				F9E94D2F15C96A150010AFC0 /* ISharedObjectListener.h */,
+				F9E94D3015C96A150010AFC0 /* MemoryTicker.h */,
+				F9E94D3115C96A150010AFC0 /* Responder.h */,
+				F9E94D3215C96A150010AFC0 /* RTMPClient.h */,
+				F9E94D3315C96A150010AFC0 /* Types.h */,
+				F9E94D3415C96A150010AFC0 /* WeborbClient.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		F9E94D3515C96A150010AFC0 /* MediaLibiOS */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D3615C96A150010AFC0 /* doc */,
+				F9E94D3915C96A150010AFC0 /* include */,
+				F9E94D3E15C96A150010AFC0 /* libavcodec.a */,
+				F9E94D3F15C96A150010AFC0 /* libavdevice.a */,
+				F9E94D4015C96A150010AFC0 /* libavfilter.a */,
+				F9E94D4115C96A150010AFC0 /* libavformat.a */,
+				F9E94D4215C96A150010AFC0 /* libavutil.a */,
+				F9E94D4315C96A150010AFC0 /* libswresample.a */,
+				F9E94D4415C96A150010AFC0 /* libswscale.a */,
+				F9E94D4515C96A150010AFC0 /* MediaLibiOS.a */,
+			);
+			path = MediaLibiOS;
+			sourceTree = "<group>";
+		};
+		F9E94D3615C96A150010AFC0 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D3715C96A150010AFC0 /* Building Media Stream Apps.docx */,
+				F9E94D3815C96A150010AFC0 /* Media Library for iOS User Guide.docx */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		F9E94D3915C96A150010AFC0 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				F9E94D3A15C96A150010AFC0 /* BroadcastStreamClient.h */,
+				F9E94D3B15C96A150010AFC0 /* MediaConstants.h */,
+				F9E94D3C15C96A150010AFC0 /* MediaStreamPlayer.h */,
+				F9E94D3D15C96A150010AFC0 /* VideoPlayer.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		F9E94C4B15C951550010AFC0 /* MessagingApps */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9E94C6415C951550010AFC0 /* Build configuration list for PBXNativeTarget "MessagingApps" */;
+			buildPhases = (
+				F9E94C4815C951550010AFC0 /* Sources */,
+				F9E94C4915C951550010AFC0 /* Frameworks */,
+				F9E94C4A15C951550010AFC0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MessagingApps;
+			productName = MessagingApps;
+			productReference = F9E94C4C15C951550010AFC0 /* MessagingApps.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F9E94C4315C951550010AFC0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = "The Midnight Coders, Inc.";
+			};
+			buildConfigurationList = F9E94C4615C951550010AFC0 /* Build configuration list for PBXProject "MessagingApps" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = F9E94C4115C951550010AFC0;
+			productRefGroup = F9E94C4D15C951550010AFC0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F9E94C4B15C951550010AFC0 /* MessagingApps */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F9E94C4A15C951550010AFC0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F9E94C5B15C951550010AFC0 /* InfoPlist.strings in Resources */,
+				F9E94C7D15C958C10010AFC0 /* RemoteSOViewController.xib in Resources */,
+				F9E94C8515C95A720010AFC0 /* VideoBroadcastViewController.xib in Resources */,
+				F9E94C8A15C95A9B0010AFC0 /* VideoPlayerViewController.xib in Resources */,
+				F9E94C8F15C95AC30010AFC0 /* DataPushViewController.xib in Resources */,
+				F9E94C9415C95AFA0010AFC0 /* MethodInvocationViewController.xib in Resources */,
+				F924E54815C97AD700F52D5C /* broadcast.png in Resources */,
+				F924E54915C97AD700F52D5C /* datapush.png in Resources */,
+				F924E54A15C97AD700F52D5C /* invoke.png in Resources */,
+				F924E54B15C97AD700F52D5C /* player.png in Resources */,
+				F924E54C15C97AD700F52D5C /* remoteso.png in Resources */,
+				F900344815CA9088005CD067 /* PhotoRSOViewController.xib in Resources */,
+				F900344B15CA91F1005CD067 /* DataPushViewController_iPad.xib in Resources */,
+				F900344D15CA91FF005CD067 /* MethodInvocationViewController_iPad.xib in Resources */,
+				F900344F15CA920E005CD067 /* PhotoRSOViewController_iPad.xib in Resources */,
+				F900345115CA9218005CD067 /* RemoteSOViewController_iPad.xib in Resources */,
+				F900345315CA9221005CD067 /* VideoBroadcastViewController_iPad.xib in Resources */,
+				F900345515CA922A005CD067 /* VideoPlayerViewController_iPad.xib in Resources */,
+				F900345715CA948B005CD067 /* photorso.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F9E94C4815C951550010AFC0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F9E94C5D15C951550010AFC0 /* main.m in Sources */,
+				F9E94C6115C951550010AFC0 /* AppDelegate.m in Sources */,
+				F9E94C7C15C958C10010AFC0 /* RemoteSOViewController.m in Sources */,
+				F9E94C8415C95A720010AFC0 /* VideoBroadcastViewController.m in Sources */,
+				F9E94C8915C95A9B0010AFC0 /* VideoPlayerViewController.m in Sources */,
+				F9E94C8E15C95AC30010AFC0 /* DataPushViewController.m in Sources */,
+				F9E94C9315C95AF90010AFC0 /* MethodInvocationViewController.m in Sources */,
+				F900344715CA9088005CD067 /* PhotoRSOViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F9E94C5915C951550010AFC0 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F9E94C5A15C951550010AFC0 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		F9E94C6215C951550010AFC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F9E94C6315C951550010AFC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F9E94C6515C951550010AFC0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MessagingApps/MessagingApps-Prefix.pch";
+				INFOPLIST_FILE = "MessagingApps/MessagingApps-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../lib/CommLibiOS\"",
+					"\"$(SRCROOT)/../lib/MediaLibiOS\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		F9E94C6615C951550010AFC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MessagingApps/MessagingApps-Prefix.pch";
+				INFOPLIST_FILE = "MessagingApps/MessagingApps-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../lib/CommLibiOS\"",
+					"\"$(SRCROOT)/../lib/MediaLibiOS\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		F9E94C4615C951550010AFC0 /* Build configuration list for PBXProject "MessagingApps" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9E94C6215C951550010AFC0 /* Debug */,
+				F9E94C6315C951550010AFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9E94C6415C951550010AFC0 /* Build configuration list for PBXNativeTarget "MessagingApps" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9E94C6515C951550010AFC0 /* Debug */,
+				F9E94C6615C951550010AFC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F9E94C4315C951550010AFC0 /* Project object */;
+}

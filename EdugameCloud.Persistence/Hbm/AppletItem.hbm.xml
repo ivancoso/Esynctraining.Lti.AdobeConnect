@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+  <sql-query name="getUsersCrosswordsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getUsersCrosswordsByUserId @userId=:userId
+  </sql-query>
+  <sql-query name="getSharedForUserCrosswordsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getSharedForUserCrosswordsByUserId @userId=:userId
+  </sql-query>
+  <sql-query name="getCrosswordSessionsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getCrosswordSessionsByUserId @userId=:userId
+  </sql-query>
+  
+  <sql-query name="getCrosswordResultByACSessionId">
+    <query-param name="acSessionId" type="System.Int32"/>
+    exec getCrosswordResultByACSessionId @acSessionId=:acSessionId
+  </sql-query>
+</hibernate-mapping>

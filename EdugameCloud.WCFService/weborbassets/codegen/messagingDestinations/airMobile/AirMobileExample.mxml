@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" applicationComplete="init()">
+	
+	<fx:Script source="AirMobileExample.as"/>
+	
+	<s:VGroup top="8" bottom="8" left="8" right="8" horizontalAlign="right">
+		<s:TextArea id="txtArMessagesLog" width="100%" height="100%"/>
+		<s:HGroup width="100%">
+			<s:Label text="Client ID: "/>
+			<s:TextInput id="txtClientId" width="100%"/>
+		</s:HGroup>
+		<s:HGroup width="100%">
+			<s:Label text="Message:"/>
+			<s:TextInput id="txtMessage" width="100%"/>
+		</s:HGroup>
+		<s:Button id="btnPublish" label="Publish" click="onClick()"/>
+	</s:VGroup>
+	
+</s:Application>

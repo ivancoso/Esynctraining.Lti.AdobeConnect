@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<survey>
+	<option id="1" count="3" label="Numbers (1-3)">
+	 	<optionData>1</optionData>
+	 	<optionData>2</optionData>
+	 	<optionData>3</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="2" count="5" label="Numbers (1-5)">
+	 	<optionData>1</optionData>
+	 	<optionData>2</optionData>
+	 	<optionData>3</optionData>
+	 	<optionData>4</optionData>
+	 	<optionData>5</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="3" count="10" label="Numbers (1-10)">
+	 	<optionData>1</optionData>
+	 	<optionData>2</optionData>
+	 	<optionData>3</optionData>
+	 	<optionData>4</optionData>
+	 	<optionData>5</optionData>
+	 	<optionData>6</optionData>
+	 	<optionData>7</optionData>
+	 	<optionData>8</optionData>
+	 	<optionData>9</optionData>
+	 	<optionData>10</optionData>	 	
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="4" count="5" label="Frequency (5 options)">
+	 	<optionData>Never</optionData>
+	 	<optionData>Rarely</optionData>
+	 	<optionData>Sometimes</optionData>
+	 	 <optionData>Often</optionData>
+	 	<optionData>Always</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="5" count="10" label="Frequency (10 options)">
+	 	<optionData>Never</optionData>
+	 	<optionData>Less than once a year</optionData>
+	 	<optionData>About once or twice a year</optionData>
+	 	 <optionData>Several times a year</optionData>
+	 	 <optionData>About once a month</optionData>
+	 	 <optionData>2-3 times a month</optionData>
+	 	 <optionData>Nearly every week</optionData>
+	 	 <optionData>Every week</optionData>
+	 	 <optionData>Once a day</optionData>
+	 	 <optionData>Several times a day</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="6" count="3" label="Rating Satisfied (3 point scale)">
+	 	<optionData>Unsatisfied</optionData>
+	 	<optionData>Neutral</optionData>
+	 	<optionData>Satisfied</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="7" count="5" label="Rating Satisfied (5 point scale)">
+	 	<optionData>Very Dissatisfied</optionData>
+	 	<optionData>Dissatisfied</optionData>
+	 	<optionData>Neutral</optionData>
+	 	<optionData>Satisfied</optionData>
+	 	<optionData>Very Satisfied</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="8" count="6" label="Rating Satisfied (6 point scale)">
+	 	<optionData>Very Dissatisfied</optionData>
+	 	<optionData>Dissatisfied</optionData>
+	 	<optionData>Somewhat Dissatisfied</optionData>
+	 	<optionData>Somewhat Satisfied</optionData>	
+	 	<optionData>Satisfied</optionData>
+	 	<optionData>Very Satisfied</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="9" count="5" label="Rating Concerned (5 point scale)">
+	 	<optionData>Very Concerned</optionData>
+	 	<optionData>Concerned</optionData>
+	 	<optionData>Neither Concerned nor Unconcerned</optionData>
+	 	<optionData>Not really concerned</optionData>
+	 	<optionData>Not concerned at all</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="10" count="3" label="Rating Agree (3 point scale)">
+	 	<optionData>Disagree </optionData>
+	 	<optionData>Neutral</optionData>
+	 	<optionData>Agree</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="11" count="5" label="Rating Agree (5 point scale)">
+		<optionData>Strongly disagree </optionData>
+		<optionData>Disagree </optionData>
+	 	<optionData>Neutral </optionData>
+	 	<optionData>Agree</optionData>
+	 	<optionData>Strongly agree</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="12" count="7" label="Rating Agree (7 point scale)">
+	 	<optionData>Strongly disagree </optionData>
+		<optionData>Moderately disagree </optionData>
+	 	<optionData>Slightly disagree </optionData>
+	 	<optionData>Neutral</optionData>
+	 	<optionData>Slightly agree</optionData>
+	 	<optionData>Moderately agree</optionData>
+	 	<optionData>Strongly agree</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="13" count="5" label="Rating of Ease (5 point scale)">
+		<optionData>Extremely easy</optionData>
+		<optionData>Very easy</optionData>
+		<optionData>Moderately easy</optionData>
+		<optionData>Slightly easy</optionData>
+		<optionData>Not at all easy</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="14" count="5" label="Rating of Strength (5 point scale)">
+		<optionData>Much Weaker</optionData>
+		<optionData>Weaker</optionData>
+		<optionData>No Change</optionData>
+		<optionData>Stronger</optionData>
+		<optionData>Much Stronger</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="15" count="4" label="Rating of Importance (4 point scale)">
+		<optionData>Not Important</optionData>
+		<optionData>Somewhat Important</optionData>
+		<optionData>Very Important</optionData>
+		<optionData>Essential</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="16" count="3" label="Add your own scale (sample 3 point scale)">
+		<optionData>Enter option 1 here</optionData>
+		<optionData>Enter option 2 here</optionData>
+		<optionData>Enter option 3 here</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="17" count="5" label="Add your own scale (sample 5 point scale)">
+		<optionData>Enter option 1 here</optionData>
+		<optionData>Enter option 2 here</optionData>
+		<optionData>Enter option 3 here</optionData>
+		<optionData>Enter option 4 here</optionData>
+		<optionData>Enter option 5 here</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="18" count="7" label="Add your own scale (sample 7 point scale)">
+		<optionData>Enter option 1 here</optionData>
+		<optionData>Enter option 2 here</optionData>
+		<optionData>Enter option 3 here</optionData>
+		<optionData>Enter option 4 here</optionData>
+		<optionData>Enter option 5 here</optionData>
+		<optionData>Enter option 6 here</optionData>
+		<optionData>Enter option 7 here</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+	<option id="19" count="10" label="Add your own scale (sample 10 point scale)">
+		<optionData>Enter option 1 here</optionData>
+		<optionData>Enter option 2 here</optionData>
+		<optionData>Enter option 3 here</optionData>
+		<optionData>Enter option 4 here</optionData>
+		<optionData>Enter option 5 here</optionData>
+		<optionData>Enter option 6 here</optionData>
+		<optionData>Enter option 7 here</optionData>
+		<optionData>Enter option 8 here</optionData>
+		<optionData>Enter option 9 here</optionData>
+		<optionData>Enter option 10 here</optionData>
+	 	<optionData>Not Applicable</optionData>
+	</option>
+</survey>

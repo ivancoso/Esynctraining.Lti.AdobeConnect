@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="EdugameCloud.WCFService.QuizResultService" CodeBehind="EdugameCloud.WCFService.QuizResultService.svc.cs" %>

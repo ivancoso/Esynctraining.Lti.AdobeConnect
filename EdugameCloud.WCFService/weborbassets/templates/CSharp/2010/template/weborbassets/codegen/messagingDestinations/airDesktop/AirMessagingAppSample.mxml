@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	width="600" height="350" 
+	applicationComplete="init()">
+	
+	<mx:Script source="AirMessagingAppSample.as"/>
+	
+	<mx:VBox top="8" bottom="8" left="8" right="8" horizontalAlign="right">
+		<mx:TextArea id="txtArMessagesLog" width="100%" height="100%"/>
+		<mx:HBox width="100%">
+			<mx:Label text="Client ID:" width="100"/>
+			<mx:TextInput id="txtClientId" width="100%"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<mx:Label text="Message:" width="100"/>
+			<mx:TextInput id="txtMessage" width="100%"/>
+		</mx:HBox>
+		<mx:Button id="btnPublish" label="Publish" click="onClick()"/>
+	</mx:VBox>
+</mx:WindowedApplication>

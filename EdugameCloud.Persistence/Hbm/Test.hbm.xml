@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+  <sql-query name="getSharedForUserTestsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+	  exec getSharedForUserTestsByUserId @userId=:userId
+  </sql-query>
+  <sql-query name="getUsersTestsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+	  exec getUsersTestsByUserId @userId=:userId
+  </sql-query>
+	<sql-query name="getTestSessionsByUserId">
+		<query-param name="userId" type="System.Int32"/>
+		exec getTestSessionsByUserId @userId=:userId
+	</sql-query>
+	<sql-query name="getTestQuestionsForAdminBySMIId">
+		<query-param name="smiId" type="System.Int32"/>
+		<query-param name="acSessionId" type="System.Int32"/>
+		exec getTestQuestionsForAdminBySMIId @subModuleItemId=:smiId, @acSessionId=:acSessionId
+	</sql-query>
+	<sql-query name="getTestResultByACSessionId">
+		<query-param name="acSessionId" type="System.Int32"/>
+		<query-param name="subModuleItemId" type="System.Int32"/>
+		exec getTestResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
+	</sql-query>
+</hibernate-mapping>

@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdugameCloud.Persistence</RootNamespace>
+    <AssemblyName>EdugameCloud.Persistence</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\EdugameCloud.Persistence.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.Logging">
+      <HintPath>..\packages\Castle.LoggingFacility.3.2.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.WcfIntegration">
+      <HintPath>..\packages\Castle.WcfIntegrationFacility.3.2.0\lib\net40\Castle.Facilities.WcfIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate">
+      <HintPath>..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation, Version=3.4.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.2.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Conventions\EnumConvention.cs" />
+    <Compile Include="Conventions\ForeignKeyConstraintHasManyNameConvention.cs" />
+    <Compile Include="Conventions\ForeignKeyConstraintHasManyToManyNameConvention.cs" />
+    <Compile Include="Conventions\ForeignKeyConstraintReferenceNameConvention.cs" />
+    <Compile Include="Conventions\ForeignKeyNameConvention .cs" />
+    <Compile Include="Conventions\ManyToManyNameConvention.cs" />
+    <Compile Include="Conventions\PrimaryKeyConvention.cs" />
+    <Compile Include="Conventions\PropertyNameConvention.cs" />
+    <Compile Include="Conventions\ReferenceConvention .cs" />
+    <Compile Include="Conventions\TableNameConvention .cs" />
+    <Compile Include="Conventions\TimePropertyConvention.cs" />
+    <Compile Include="Extensions\FluentExtensions.cs" />
+    <Compile Include="Extensions\LifeStyleExtensions.cs" />
+    <Compile Include="FluentConfiguration.cs" />
+    <Compile Include="ISessionSource.cs" />
+    <Compile Include="Mappings\BaseClassMap.cs" />
+    <Compile Include="Mappings\CompanyMap.cs" />
+    <Compile Include="Mappings\AddressMap.cs" />
+    <Compile Include="Mappings\ACSessionMap.cs" />
+    <Compile Include="Mappings\ACUserModeMap.cs" />
+    <Compile Include="Mappings\AppletItemMap.cs" />
+    <Compile Include="Mappings\CompanyLicenseMap.cs" />
+    <Compile Include="Mappings\BuildVersionTypeMap.cs" />
+    <Compile Include="Mappings\BuildVersionMap.cs" />
+    <Compile Include="Mappings\QuestionForSingleMultipleChoiceMap.cs" />
+    <Compile Include="Mappings\QuestionForWeightBucketMap.cs" />
+    <Compile Include="Mappings\QuestionForOpenAnswerMap.cs" />
+    <Compile Include="Mappings\QuestionForRateMap.cs" />
+    <Compile Include="Mappings\QuestionForLikertMap.cs" />
+    <Compile Include="Mappings\TestQuestionResultMap.cs" />
+    <Compile Include="Mappings\TestResultMap.cs" />
+    <Compile Include="Mappings\SurveyQuestionResultAnswerMap.cs" />
+    <Compile Include="Mappings\SurveyGroupingTypeMap.cs" />
+    <Compile Include="Mappings\SurveyMap.cs" />
+    <Compile Include="Mappings\SurveyQuestionResultMap.cs" />
+    <Compile Include="Mappings\SurveyResultMap.cs" />
+    <Compile Include="Mappings\SNGroupDiscussionMap.cs" />
+    <Compile Include="Mappings\SNLinkMap.cs" />
+    <Compile Include="Mappings\SNMapProviderMap.cs" />
+    <Compile Include="Mappings\SNMapSettingsMap.cs" />
+    <Compile Include="Mappings\SNProfileMap.cs" />
+    <Compile Include="Mappings\SNProfileSNServiceMap.cs" />
+    <Compile Include="Mappings\SNServiceMap.cs" />
+    <Compile Include="Mappings\SNMemberMap.cs" />
+    <Compile Include="Mappings\ThemeMap.cs" />
+    <Compile Include="Mappings\TestMap.cs" />
+    <Compile Include="Mappings\AppletResultMap.cs" />
+    <Compile Include="Mappings\ScoreTypeMap.cs" />
+    <Compile Include="Mappings\QuizResultMap.cs" />
+    <Compile Include="Mappings\QuizQuestionResultMap.cs" />
+    <Compile Include="Mappings\QuizFormatMap.cs" />
+    <Compile Include="Mappings\QuizMap.cs" />
+    <Compile Include="Mappings\QuestionMap.cs" />
+    <Compile Include="Mappings\QuestionTypeMap.cs" />
+    <Compile Include="Mappings\SubModuleItemMap.cs" />
+    <Compile Include="Mappings\SubModuleCategoryMap.cs" />
+    <Compile Include="Mappings\SubModuleMap.cs" />
+    <Compile Include="Mappings\ModuleMap.cs" />
+    <Compile Include="Mappings\DistractorMap.cs" />
+    <Compile Include="Mappings\FileMap.cs" />
+    <Compile Include="Mappings\LanguageMap.cs" />
+    <Compile Include="Mappings\StateMap.cs" />
+    <Compile Include="Mappings\CountryMap.cs" />
+    <Compile Include="Mappings\TimeZoneMap.cs" />
+    <Compile Include="Mappings\UserActivationMap.cs" />
+    <Compile Include="Mappings\UserLoginHistoryMap.cs" />
+    <Compile Include="Mappings\UserRoleMap.cs" />
+    <Compile Include="Mappings\UserMap.cs" />
+    <Compile Include="NameSpaceTypeSource.cs" />
+    <Compile Include="NHibernateConfigurationActivator.cs" />
+    <Compile Include="NHibernateSessionActivator.cs" />
+    <Compile Include="NHibernateSessionFactoryActivator.cs" />
+    <Compile Include="NHibernateSessionSource.cs" />
+    <Compile Include="NHibernateSessionWebSource.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository.cs" />
+    <Compile Include="WindsorContainerConfiguration.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
+      <Name>Esynctraining.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
+      <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\AppletItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\Quiz.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\SubModuleItem.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\SubModuleCategory.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\ACSession.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\Survey.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\Test.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

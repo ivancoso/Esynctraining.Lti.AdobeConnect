@@ -1,0 +1,124 @@
+﻿@model EdugameCloud.MVC.ViewModels.HomeViewModel
+@using EdugameCloud.MVC.Links
+@using Resources
+@using Scripts = EdugameCloud.MVC.Links.Scripts
+@{
+    Layout = EdugameCloudT4.Shared.Views._BaseLayout;
+    ViewBag.Title = Index.AdminTitle;
+}
+
+@section HeadContent {
+    <meta name="google" value="notranslate" /> 
+    <style type="text/css" media="screen"> 
+        html, body  { height:100%; }
+        body { margin:0; padding:0; overflow:auto; text-align:center; background-color: #ffffff; }   
+        object:focus { outline:none; }
+        #flashContent { display:none; }
+        #safari_rememberDiv { visibility: hidden; display: none; }
+    </style>
+    <!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
+    <!-- BEGIN Browser History required section -->
+    <script type="text/javascript" src="@Scripts.history_js"></script>
+    <!-- END Browser History required section -->  
+    <script type="text/javascript" src="@Scripts.swfobject_js"></script>
+    <script type="text/javascript" language="javascript">
+        // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
+        var swfVersionStr = "11.1.0";
+        // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
+        var xiSwfUrlStr = "@Content.swf.playerProductInstall_swf";
+        var flashvars = {};
+        flashvars.clientIPAddress = "@Model.IP";
+        var params = {};
+        params.quality = "high";
+        params.bgcolor = "#ffffff";
+        params.allowscriptaccess = "sameDomain";
+        params.allowfullscreen = "true";
+        params.clientIPAddress = "@Model.IP";
+        var attributes = {};
+        attributes.id = "Adm_EdugameCloud";
+        attributes.name = "Adm_EdugameCloud";
+        attributes.align = "middle";
+        swfobject.embedSWF("@Model.BuildUrl", "flashContent", "100%", "100%", swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
+        // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
+        swfobject.createCSS("#flashContent", "display:block;text-align:left;");
+        
+        function createCookie(name, value, daysTicks) {
+            var expires;
+            if (daysTicks) {
+                var date = new Date();
+                date.setTime(daysTicks); //date.getTime() + 3600000 * 24 * 2)
+                expires = "; expires=" + date.toGMTString();
+            }
+            else expires = "";
+            document.cookie = name + "=" + value + expires + "; path=/";
+        }
+
+        function readCookie(name) {
+            var nameEq = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEq) == 0) return c.substring(nameEq.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {
+            createCookie(name, "", -1);
+        }
+    </script>
+
+}
+        <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
+             JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
+             when JavaScript is disabled.
+        -->
+        <div id="flashContent">
+            <p>
+                To view this page ensure that Adobe Flash Player version 
+                11.1.0 or greater is installed. 
+            </p>
+            <script type="text/javascript" language="javascript">
+                var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://");
+                document.write("<a href='http://www.adobe.com/go/getflashplayer'><img src='" + pageHost + "www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a>");
+            </script> 
+        </div>
+        
+        <noscript>
+            <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="100%" height="100%" id="Adm_EdugameCloud">
+                <param name="movie" value="@Model.BuildUrl" />
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#ffffff" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <param name="allowFullScreen" value="true" />
+                <param name="clientIPAddress" value="@Model.IP"/>
+                <param name="flashvars" value="clientIPAddress=@Model.IP"/>
+                <!--[if !IE]>-->
+                <object type="application/x-shockwave-flash" data="@Model.BuildUrl" width="100%" height="100%">
+                    <param name="quality" value="high" />
+                    <param name="bgcolor" value="#ffffff" />
+                    <param name="allowScriptAccess" value="sameDomain" />
+                    <param name="allowFullScreen" value="true" />
+                    <param name="clientIPAddress" value="@Model.IP"/>
+                    <param name="flashvars" value="clientIPAddress=@Model.IP"/>
+                <!--<![endif]-->
+                <!--[if gte IE 6]>-->
+                    <p> 
+                        Either scripts and active content are not permitted to run or Adobe Flash Player version
+                        11.1.0 or greater is not installed.
+                    </p>
+                <!--<![endif]-->
+                    <a href="http://www.adobe.com/go/getflashplayer">
+                        <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash Player" />
+                    </a>
+                <!--[if !IE]>-->
+                </object>
+                <!--<![endif]-->
+            </object>
+        </noscript>     
+  
+           
+       
+    
+               

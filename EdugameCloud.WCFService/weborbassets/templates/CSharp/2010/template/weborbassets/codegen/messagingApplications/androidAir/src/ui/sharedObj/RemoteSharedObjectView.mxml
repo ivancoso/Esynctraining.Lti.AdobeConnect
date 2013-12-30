@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	title="Remote Shared Object" initialize="onInitialize()">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable]
+			private var controller:RemoteSharedObjectController;
+			
+			private function onInitialize():void
+			{
+				controller = new RemoteSharedObjectController(this);
+			}
+			
+			protected function onHome(event:MouseEvent):void
+			{
+				controller.onHome();
+				navigator.popView();
+			}
+		]]>
+	</fx:Script>
+	
+	<s:navigationContent>
+		<s:Button id="btnHome" click="onHome(event)">
+			<s:icon>
+				<s:MultiDPIBitmapSource 
+					source160dpi="@Embed('assets/Home_160.png')" 
+					source240dpi="@Embed('assets/Home_240.png')" 
+					source320dpi="@Embed('assets/Home_320.png')"/>
+			</s:icon>
+		</s:Button>
+	</s:navigationContent>
+	
+	<s:Scroller left="6" right="6" top="6" bottom="6">
+		<s:VGroup left="0" right="0">
+			<s:Button id="btnConnect"
+				label="{controller.model.connected ? 'Disconnect' : 'Connect'}" 
+				click="{controller.onConnect()}" />
+			<s:VGroup width="100%" enabled="{controller.model.connected}">
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label text="Key:" width="{lblValue.width}" />
+					<s:TextInput id="txtKey" width="100%" 
+						change="{controller.validateKeyInput()}" 
+						focusOut="{controller.validateKeyInput()}" />
+				</s:HGroup>
+				<s:HGroup width="100%" verticalAlign="middle">
+					<s:Label id="lblValue" text="Value:" />
+					<s:TextInput id="txtValue" width="100%" 
+						change="{controller.validateValueInput()}" 
+						focusOut="{controller.validateValueInput()}" />
+				</s:HGroup>
+				<s:Button id="btnUpdate" label="Update RSO" click="{controller.onUpdateRSO()}" />
+				<s:DataGrid sortableColumns="false" width="100%" height="160" dataProvider="{controller.model.keyValuePairs}">
+					<s:columns>
+						<s:ArrayCollection>
+							<s:GridColumn headerText="Key" dataField="key" />
+							<s:GridColumn headerText="Value" dataField="value" />
+						</s:ArrayCollection>
+					</s:columns>
+				</s:DataGrid>
+				<s:Button id="btnClear" label="Clear RSO values" click="{controller.onClearRSO()}" />
+			</s:VGroup>
+		</s:VGroup>
+	</s:Scroller>
+</s:View>

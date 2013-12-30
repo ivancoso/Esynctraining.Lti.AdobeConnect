@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	title="Video Broadcast" initialize="onInitialize()">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable]
+			private var controller:VideoBroadcastController;
+			
+			private function onInitialize():void
+			{
+				controller = new VideoBroadcastController(this);
+			}
+			
+			protected function onHome(event:MouseEvent):void
+			{
+				controller.onHome();
+				navigator.popView();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:navigationContent>
+		<s:Button id="btnHome" click="onHome(event)">
+			<s:icon>
+				<s:MultiDPIBitmapSource 
+					source160dpi="@Embed('assets/Home_160.png')" 
+					source240dpi="@Embed('assets/Home_240.png')" 
+					source320dpi="@Embed('assets/Home_320.png')"/>
+			</s:icon>
+		</s:Button>
+	</s:navigationContent>
+	
+	<s:Scroller left="0" right="0" bottom="0" top="6">
+		<s:VGroup horizontalAlign="center" horizontalCenter="0">
+			<s:Button id="btnConnection" 
+				label="{controller.model.connected ? 'Disconnect' : 'Connect'}"
+				click="{controller.onConnect()}" />
+			
+			<s:BorderContainer backgroundColor="0x000000" borderVisible="false" width="320" height="240">
+				<mx:UIComponent id="videoContainer" width="320" height="240" />
+			</s:BorderContainer>
+			
+			<s:Button id="btnStartBroadcast"
+				label="{controller.model.broadcasting ? 'Stop' : 'Start'} Broadcast" 
+				enabled="{controller.model.connected}" 
+				click="{controller.onBroadcast()}" />
+			<s:Button id="btnViewBroadcast" label="View Broadcast" 
+				visible="{controller.model.broadcasting}" 
+				includeInLayout="{controller.model.broadcasting}" 
+				click="{controller.onViewBroadcast()}" />
+		</s:VGroup>
+	</s:Scroller>
+	
+</s:View>

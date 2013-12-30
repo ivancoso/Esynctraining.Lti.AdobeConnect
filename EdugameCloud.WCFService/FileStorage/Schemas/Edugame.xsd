@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="questions" nillable="true" type="EdugameQuestions" />
+  <xs:complexType name="EdugameQuestions">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="question" type="EdugameQuestion" />
+    </xs:sequence>
+    <xs:attribute name="smiId" type="xs:int" use="required" />
+  </xs:complexType>
+  <xs:complexType name="EdugameQuestion">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="instruction" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="type" type="EdugameQuestionType" />
+      <xs:element minOccurs="0" maxOccurs="1" name="feedback" type="EdugameQuestionFeedback" />
+      <xs:element minOccurs="1" maxOccurs="1" name="image" nillable="true" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="image-name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="distractor" type="EdugameDistractor" />
+    </xs:sequence>
+    <xs:attribute name="order" type="xs:int" use="required" />
+    <xs:attribute name="score" type="xs:int" use="required" />
+  </xs:complexType>
+  <xs:complexType name="EdugameQuestionType">
+    <xs:attribute name="id" type="xs:int" use="required" />
+    <xs:attribute name="description" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="EdugameQuestionFeedback">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="correct" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="incorrect" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="EdugameDistractor">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="image" nillable="true" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="image-name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="title" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="isCorrect" type="xs:boolean" use="required" />
+    <xs:attribute name="order" type="xs:int" use="required" />
+    <xs:attribute name="distractor-type" type="xs:int" use="required" />
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SkinnablePopUpContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	maxWidth="300" maxHeight="200" 
+	skinClass="ui.controls.skins.AlertSkin">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			private var message:String;
+			
+			public function show(text:String, owner:DisplayObjectContainer, modal:Boolean = false):void
+			{
+				message = text;
+				open(owner, modal);
+				PopUpManager.centerPopUp(this);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10" paddingTop="20" paddingLeft="10" paddingRight="10" 
+			gap="20" horizontalAlign="center" />
+	</s:layout>
+	
+	<s:Label text="{message}" maxDisplayedLines="-1" width="100%" />
+	<s:Button label="OK" width="100" click="{close()}" />
+	
+</s:SkinnablePopUpContainer>

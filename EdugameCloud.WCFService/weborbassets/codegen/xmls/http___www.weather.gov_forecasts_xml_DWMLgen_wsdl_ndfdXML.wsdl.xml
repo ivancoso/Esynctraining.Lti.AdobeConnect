@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<namespaces>
+  <runtime path="C:/Program Files/WebORB for .NET/5.1.0.0/" weborbRootURL="http://localhost/weborb5" />
+  <namespace name="defaultPackage" fullname="defaultPackage">
+    <enum name="sectorType" fullname="defaultPackage.sectorType" typeNamespace="defaultPackage">
+      <field name="conus" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="nhemi" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="alaska" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="guam" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="hawaii" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="puertori" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="npacocn" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <enum name="featureTypeType" fullname="defaultPackage.featureTypeType" typeNamespace="defaultPackage">
+      <field name="Forecast_Gml2Point" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Forecast_Gml2AllWx" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Forecast_GmlsfPoint" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Forecast_GmlObs" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="NdfdMultiPointCoverage" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Ndfd_KmlPoint" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <enum name="unitType" fullname="defaultPackage.unitType" typeNamespace="defaultPackage">
+      <field name="e" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="m" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <datatype name="weatherParametersType" fullname="defaultPackage.weatherParametersType" typeNamespace="defaultPackage">
+      <field name="maxt" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="mint" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="temp" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="dew" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="pop12" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="qpf" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="sky" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="snow" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wspd" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wdir" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wx" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="waveh" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="icons" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="rh" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="appt" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="incw34" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="incw50" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="incw64" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="cumw34" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="cumw50" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="cumw64" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="critfireo" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="dryfireo" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="conhazo" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="ptornado" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="phail" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="ptstmwinds" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="pxtornado" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="pxhail" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="pxtstmwinds" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="ptotsvrtstm" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="pxtotsvrtstm" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpabv14d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpblw14d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpabv30d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpblw30d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpabv90d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tmpblw90d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpabv14d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpblw14d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpabv30d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpblw30d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpabv90d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="prcpblw90d" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="precipa_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="sky_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="td_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="temp_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wdir_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wspd_r" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wwa" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tstmprb" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="tstmcat" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="wgust" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+      <field name="iceaccum" type="Boolean" javatype="boolean" fulltype="Boolean" nativetype="bool" />
+    </datatype>
+    <enum name="compTypeType" fullname="defaultPackage.compTypeType" typeNamespace="defaultPackage">
+      <field name="IsEqual" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Between" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="GreaterThan" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="GreaterThanEqualTo" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="LessThan" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="LessThanEqualTo" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <enum name="productType" fullname="defaultPackage.productType" typeNamespace="defaultPackage">
+      <field name="timeseries" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="glance" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <enum name="formatType" fullname="defaultPackage.formatType" typeNamespace="defaultPackage">
+      <field name="Item24hourly" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+      <field name="Item12hourly" type="String" javatype="java.lang.String" fulltype="String" nativetype="String" />
+    </enum>
+    <service name="ndfdXML" fullname="defaultPackage.ndfdXML" namespace="defaultPackage" url="http://localhost:6789/weborb5/console/weborb.aspx">
+      <method name="Abort" type="void" javatype="void" nativetype="Void" containsvalues="0" />
+      <method name="BeginCornerPoints" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="sector" type="String" javatype="sectorType" nativetype="sectorType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginGmlLatLonList" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="requestedTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="featureType" type="String" javatype="featureTypeType" nativetype="featureTypeType" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginGmlTimeSeries" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="compType" type="String" javatype="compTypeType" nativetype="compTypeType" />
+        <arg name="featureType" type="String" javatype="featureTypeType" nativetype="featureTypeType" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="propertyName" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginLatLonListCityNames" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="displayLevel" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginLatLonListLine" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="endPoint1Lat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint1Lon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint2Lat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint2Lon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginLatLonListSquare" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="centerPointLat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="centerPointLon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="distanceLat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="distanceLon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="resolution" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginLatLonListSubgrid" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="lowerLeftLatitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="lowerLeftLongitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="upperRightLatitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="upperRightLongitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="resolution" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginLatLonListZipCode" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="zipCodeList" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginNDFDgen" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="latitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="longitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="product" type="String" javatype="productType" nativetype="productType" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginNDFDgenByDay" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="latitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="longitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="startDate" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="numDays" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="format" type="String" javatype="formatType" nativetype="formatType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginNDFDgenByDayLatLonList" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="startDate" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="numDays" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="format" type="String" javatype="formatType" nativetype="formatType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="BeginNDFDgenLatLonList" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="product" type="String" javatype="productType" nativetype="productType" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+        <arg name="callback" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="asyncState" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="CornerPoints" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="sector" type="String" javatype="sectorType" nativetype="sectorType" />
+      </method>
+      <method name="CreateObjRef" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0">
+        <arg name="requestedType" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="Discover" type="void" javatype="void" nativetype="Void" containsvalues="0" />
+      <method name="Dispose" type="void" javatype="void" nativetype="Void" containsvalues="0" />
+      <method name="EndCornerPoints" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndGmlLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndGmlTimeSeries" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndLatLonListCityNames" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndLatLonListLine" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndLatLonListSquare" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndLatLonListSubgrid" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndLatLonListZipCode" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndNDFDgen" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndNDFDgenByDay" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndNDFDgenByDayLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="EndNDFDgenLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="asyncResult" type="Object" javatype="Object" nativetype="System.Object" />
+      </method>
+      <method name="GenerateXmlMappings" type="Boolean" javatype="boolean" nativetype="bool" containsvalues="0">
+        <arg name="type" type="Object" javatype="Object" nativetype="System.Object" />
+        <arg name="mappings" type="Array" javatype="java.util.ArrayList&lt;Object&gt;" nativetype="System.Collections.Generic.List&lt;object&gt;" elementType="Object" />
+      </method>
+      <method name="GetLifetimeService" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0" />
+      <method name="GmlLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="requestedTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="featureType" type="String" javatype="featureTypeType" nativetype="featureTypeType" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+      </method>
+      <method name="GmlTimeSeries" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="compType" type="String" javatype="compTypeType" nativetype="compTypeType" />
+        <arg name="featureType" type="String" javatype="featureTypeType" nativetype="featureTypeType" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="propertyName" type="String" javatype="java.lang.String" nativetype="String" />
+      </method>
+      <method name="InitializeLifetimeService" type="Object" javatype="Object" nativetype="System.Object" containsvalues="0" />
+      <method name="LatLonListCityNames" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="displayLevel" type="String" javatype="java.lang.String" nativetype="String" />
+      </method>
+      <method name="LatLonListLine" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="endPoint1Lat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint1Lon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint2Lat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="endPoint2Lon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+      </method>
+      <method name="LatLonListSquare" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="centerPointLat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="centerPointLon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="distanceLat" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="distanceLon" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="resolution" type="Number" javatype="System.Decimal" nativetype="decimal" />
+      </method>
+      <method name="LatLonListSubgrid" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="lowerLeftLatitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="lowerLeftLongitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="upperRightLatitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="upperRightLongitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="resolution" type="Number" javatype="System.Decimal" nativetype="decimal" />
+      </method>
+      <method name="LatLonListZipCode" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="zipCodeList" type="String" javatype="java.lang.String" nativetype="String" />
+      </method>
+      <method name="NDFDgen" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="latitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="longitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="product" type="String" javatype="productType" nativetype="productType" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+      </method>
+      <method name="NDFDgenByDay" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="latitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="longitude" type="Number" javatype="System.Decimal" nativetype="decimal" />
+        <arg name="startDate" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="numDays" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="format" type="String" javatype="formatType" nativetype="formatType" />
+      </method>
+      <method name="NDFDgenByDayLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="startDate" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="numDays" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="format" type="String" javatype="formatType" nativetype="formatType" />
+      </method>
+      <method name="NDFDgenLatLonList" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0">
+        <arg name="listLatLon" type="String" javatype="java.lang.String" nativetype="String" />
+        <arg name="product" type="String" javatype="productType" nativetype="productType" />
+        <arg name="startTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="endTime" type="Date" javatype="java.util.Date" nativetype="DateTime" />
+        <arg name="Unit" type="String" javatype="unitType" nativetype="unitType" />
+        <arg name="weatherParameters" type="weatherParametersType" javatype="weatherParametersType" nativetype="weatherParametersType" />
+      </method>
+      <method name="ToString" type="String" javatype="java.lang.String" nativetype="String" containsvalues="0" />
+    </service>
+  </namespace>
+</namespaces>

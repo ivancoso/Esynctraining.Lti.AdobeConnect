@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.WCFService", "EdugameCloud.WCFService\EdugameCloud.WCFService.csproj", "{1758C513-FDF1-47FA-842F-9C332DA85C17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core", "EdugameCloud.Core\EdugameCloud.Core.csproj", "{4E419CD8-BE17-40E0-B71B-CCA30699D758}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Persistence", "EdugameCloud.Persistence\EdugameCloud.Persistence.csproj", "{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EdugameCloud.DB", "EdugameCloud.DB\EdugameCloud.DB.sqlproj", "{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Web", "EdugameCloud.Web\EdugameCloud.Web.csproj", "{B149C2F2-4E11-4667-A83F-59D6D00401E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MVC", "EdugameCloud.MVC\EdugameCloud.MVC.csproj", "{A17D2033-4439-4418-8224-96A408B548DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Weborb", "..\..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj", "{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1758C513-FDF1-47FA-842F-9C332DA85C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1758C513-FDF1-47FA-842F-9C332DA85C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1758C513-FDF1-47FA-842F-9C332DA85C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1758C513-FDF1-47FA-842F-9C332DA85C17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E419CD8-BE17-40E0-B71B-CCA30699D758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E419CD8-BE17-40E0-B71B-CCA30699D758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E419CD8-BE17-40E0-B71B-CCA30699D758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E419CD8-BE17-40E0-B71B-CCA30699D758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A17D2033-4439-4418-8224-96A408B548DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A17D2033-4439-4418-8224-96A408B548DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A17D2033-4439-4418-8224-96A408B548DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A17D2033-4439-4418-8224-96A408B548DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

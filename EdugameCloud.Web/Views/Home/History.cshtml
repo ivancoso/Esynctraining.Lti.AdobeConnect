@@ -1,0 +1,38 @@
+﻿@model EdugameCloud.MVC.ViewModels.HistoryViewModel
+@using Resources
+@{
+    Layout = EdugameCloudT4.Shared.Views._BaseLayout;
+    ViewBag.Title = Index.Title;
+}
+
+@section HeadContent {
+    <meta name="google" value="notranslate" /> 
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+    <META HTTP-EQUIV="Expires" CONTENT="-1"> 
+    <style type="text/css" media="screen"> 
+        #ie_historyFrame { width: 0px; height: 0px; display:none }
+        #firefox_anchorDiv { width: 0px; height: 0px; display:none }
+        #safari_formDiv { width: 0px; height: 0px; display:none }
+        #safari_rememberDiv { width: 0px; height: 0px; display:none }
+    </style>
+    <script>
+        function processUrl() {
+
+            var pos = url.indexOf("?");
+            url = pos != -1 ? url.substr(pos + 1) : "";
+            if (!parent._ie_firstload) {
+                parent.BrowserHistory.setBrowserURL(url);
+                try {
+                    parent.BrowserHistory.browserURLChange(url);
+                } catch (e) { }
+            } else {
+                parent._ie_firstload = false;
+            }
+        }
+
+        var url = document.location.href;
+        processUrl();
+        document.write(encodeURIComponent(url));
+    </script>
+}
+Hidden frame for Browser History support.

@@ -1,0 +1,202 @@
+@namespace view "com.esynctraining.dcportal.view.*";
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace comps "com.esynctraining.dcadmin.view.comps.*";
+s|Application
+{
+	backgroundColor:#3c3f47;
+}
+view|MainApplication
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.MainApplicationSkin");
+}
+view|LoginView
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.LoginViewSkin");
+}
+view|LoginView mx|FormItem
+{
+	labelStyleName:loginFormItemabelStyle;
+	errorColor:#ff6000;
+}
+view|LoginView s|RadioButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.LoginViewRadioButtonSkin");
+	color:#73bcda;
+	fontSize:12;
+}
+view|LoginView s|CheckBox
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.LoginViewCheckBoxSkin");
+	color:#73bcda;
+	fontSize:12;
+}
+.loginFormItemabelStyle
+{
+	color:#f5f5f5;
+	fontWeight:bold;
+	fontSize:12;
+}
+view|LoginView s|TextInput
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.LoginTextInputSkin");
+}
+s|TextInput
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.TextInputSkin");
+}
+
+s|Button
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ButtonSkin");	
+}
+s|Button.greyButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.GreyButtonSkin");	
+}
+s|Button.helpButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.HelpButtonSkin");	
+}
+s|Button.acceptButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.AcceptButtonSkin");	
+}
+s|Button.iconButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.IconButtonSkin");	
+}
+
+s|NumericStepper
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.NumericStepperSkin");
+	
+}
+view|AppView
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.AppViewSkin");
+}
+view|AppView #mainNavigationBar
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.PublicMainNavigationButtonBarSkin");
+}
+mx|HDividedBox
+{
+	horizontalGap:20;
+}
+mx|VDividedBox
+{
+	verticalGap:20;	
+}
+s|NavigatorContent.moduleViews
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.NavigatorContentSkin");
+}
+.moduleViews s|Panel
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ModuleViewsPanelSkin");
+}
+.moduleViews s|Panel #controlBarGroup s|Button 
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.HeaderButtonSkin");
+}
+comps|SearchBox
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.SearchBoxSkin");
+}
+comps|ControlBar
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ControlBarSkin");
+}
+s|List
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ListSkin");
+	borderAlpha:0;
+	alternatingItemColors:#f7f7f7, #ffffff;
+	selectionColor:#6bc2db;
+	rollOverColor:#9fe2f5
+	
+}
+s|Scroller
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.RectScrollBarSkin");
+}
+s|Button.linkButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.LinkButtonSkin");
+}
+mx|DataGrid
+{
+	borderAlpha:0;
+	alternatingItemColors:#f7f7f7, #ffffff;
+	selectionColor:#6bc2db;
+	rollOverColor:#9fe2f5
+}
+s|MXDataGridItemRenderer s|Button
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ItemRendererButtonSkin");
+	
+}
+comps|BaseTitleWindow
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.BaseTitleWindowSkin");
+}
+
+comps|BaseTitleWindow mx|FormItem
+{
+	labelStyleName:windowFormItemLabelStyle;
+	errorColor:#ff6000;
+}
+.windowFormItemLabelStyle
+{
+	color:#000000;
+	fontWeight:bold;
+	fontSize:12;
+}
+
+comps|BaseTitleWindow s|Scroller 
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ScrollerSkin");
+}
+comps|BaseTitleWindow s|Scroller s|VScrollBar
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.VScrollBarSkin");	
+}
+comps|BaseTitleWindow s|Scroller s|HScrollBar
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.HScrollBarSkin");	
+}
+s|TextArea
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.TextAreaSkin");
+}
+s|DropDownList
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.DropDownListSkin");
+	alternatingItemColors:#f7f7f7, #ffffff;
+	selectionColor:#6bc2db;
+	rollOverColor:#9fe2f5
+}
+
+
+mx|DataGrid mx|VScrollBar,
+mx|AdvancedDataGrid mx|VScrollBar,
+{
+	up-arrow-skin:ClassReference(null);
+	down-arrow-skin:ClassReference(null);
+	thumb-skin:ClassReference("com.esynctraining.dcadmin.view.skins.GridVScrollThumbSkin");
+	track-skin:ClassReference("com.esynctraining.dcadmin.view.skins.GridVScrollTrackSkin");
+}
+
+s|CheckBox
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.CheckBoxSkin");	
+}
+s|RadioButton
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.RadioButtonSkin");	
+}
+s|ButtonBar
+{
+	skinClass:ClassReference("com.esynctraining.dcadmin.view.skins.ButtonBarSkin");
+}

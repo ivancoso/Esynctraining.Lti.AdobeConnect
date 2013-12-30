@@ -1,0 +1,404 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1758C513-FDF1-47FA-842F-9C332DA85C17}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EdugameCloud.WCFService</RootNamespace>
+    <AssemblyName>EdugameCloud.WCFService</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
+    <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentNHibernate, Version=1.3.0.733, Culture=neutral, PublicKeyToken=8aa435e3cb308880, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WcfRestContrib">
+      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="weborb, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Web.ORB.5.1.0.0\lib\weborb.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="clientaccesspolicy.xml" />
+    <Content Include="diagnostics.aspx" />
+    <Content Include="Mail\Templates\LicenseUpgrade.html" />
+    <Content Include="Mail\Templates\Trial.html" />
+    <Content Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.TestResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.TestService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SurveyQuestionResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SurveyResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SurveyService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SNMemberService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SNGroupDiscussionService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SNProfileService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.BuildVersionService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.QuestionTypeService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.ReportingService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.ThemeService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.DistractorService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.QuestionService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SubModuleCategoryService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.SubModuleItemService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.LookupService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.CompanyService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.CompanyLicenseService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.QuizQuestionResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.QuizService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.AppletItemService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.ACSessionService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.AppletResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.QuizResultService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.RestService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.FileService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.ErrorService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.UserService.svc" />
+    <Content Include="Global.asax" />
+    <Content Include="log4net.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Mail\Templates\ChangePassword.html" />
+    <Content Include="Mail\Templates\ActivationInvitation.html" />
+    <Content Include="nhibernate.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="weborbconsole.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_GlobalResources\ErrorsTexts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ErrorsTexts.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Base\ExportService.cs" />
+    <Compile Include="Mail\Models\AccountDeletedModel.cs" />
+    <Compile Include="Mail\Models\ChangePasswordModel.cs" />
+    <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
+    <Compile Include="Mail\Models\TrialModel.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.TestQuestionResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.TestResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.TestResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.TestService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.TestService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SurveyQuestionResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SurveyQuestionResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SurveyResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SurveyResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SurveyService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SurveyService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SNMemberService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SNMemberService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SNGroupDiscussionService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SNGroupDiscussionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SNProfileService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SNProfileService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.BuildVersionService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.BuildVersionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.QuestionTypeService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.QuestionTypeService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.ReportingService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.ReportingService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.ThemeService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.ThemeService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.DistractorService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.DistractorService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.QuestionService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.QuestionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SubModuleCategoryService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SubModuleCategoryService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.SubModuleItemService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SubModuleItemService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.LookupService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.LookupService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.CompanyService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.CompanyService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.CompanyLicenseService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.CompanyLicenseService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.QuizQuestionResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.QuizQuestionResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.QuizService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.QuizService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.AppletItemService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.AppletItemService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.ACSessionService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.ACSessionService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.AppletResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.AppletResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.QuizResultService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.QuizResultService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.RestService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.RestService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.FileService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.FileService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.ErrorService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.ErrorService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.UserService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.UserService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Common.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Common.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Emails.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Emails.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Base\BaseService.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Mail\Models\ActivationInvitationModel.cs" />
+    <Compile Include="Providers\ResourceProviderActivator.cs" />
+    <Compile Include="Providers\WcfResourceProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Streaming\HttpMultipart.cs" />
+    <Compile Include="Streaming\HttpMultipartBoundary.cs" />
+    <Compile Include="Streaming\HttpMultipartBuffer.cs" />
+    <Compile Include="Streaming\HttpMultipartSubStream.cs" />
+    <Compile Include="Streaming\UploadStream.cs" />
+    <Compile Include="Validators\ACSessionDTOValidator.cs" />
+    <Compile Include="Validators\AppletResultDTOValidator.cs" />
+    <Compile Include="Validators\AppletItemDTOValidator.cs" />
+    <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />
+    <Compile Include="Validators\CompanyDTOValidator.cs" />
+    <Compile Include="Validators\BuildVersionDTOValidator.cs" />
+    <Compile Include="Validators\BatchUsersDTOValidator.cs" />
+    <Compile Include="Validators\GeoStateDTOValidator.cs" />
+    <Compile Include="Validators\GeoCountryDTOValidator.cs" />
+    <Compile Include="Validators\TestDTOValidator.cs" />
+    <Compile Include="Validators\TestQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\TestResultDTOValidator.cs" />
+    <Compile Include="Validators\TestSmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\SurveyQuestionResultAnswerDTOValidator.cs" />
+    <Compile Include="Validators\SurveySmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\QuizSmiWrapperDTOValidator.cs" />
+    <Compile Include="Validators\SurveyDTOValidator.cs" />
+    <Compile Include="Validators\SurveyQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\SurveyResultDTOValidator.cs" />
+    <Compile Include="Validators\VCFProfileDTOValidator.cs" />
+    <Compile Include="Validators\UserDTOValidator.cs" />
+    <Compile Include="Validators\SNMemberDTOValidator.cs" />
+    <Compile Include="Validators\SNProfileSNServiceDTOValidator.cs" />
+    <Compile Include="Validators\SNMapSettingsDTOValidator.cs" />
+    <Compile Include="Validators\SNLinkDTOValidator.cs" />
+    <Compile Include="Validators\SNGroupDiscussionValidator.cs" />
+    <Compile Include="Validators\SNProfileDTOValidator.cs" />
+    <Compile Include="Validators\QuestionTypeDTOValidator.cs" />
+    <Compile Include="Validators\DistractorDTOValidator.cs" />
+    <Compile Include="Validators\ThemeDTOValidator.cs" />
+    <Compile Include="Validators\QuestionDTOValidator.cs" />
+    <Compile Include="Validators\SubModuleCategoryDTOValidator.cs" />
+    <Compile Include="Validators\SubModuleItemDTOValidator.cs" />
+    <Compile Include="Validators\QuizQuestionResultDTOValidator.cs" />
+    <Compile Include="Validators\QuizDTOValidator.cs" />
+    <Compile Include="Validators\QuizResultDTOValidator.cs" />
+    <Compile Include="Validators\FileDtoValidator.cs" />
+    <Compile Include="Validators\ForgetPasswordViewModelValidator.cs" />
+    <Compile Include="ViewModels\ForgetPasswordViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Mail\Attachments\svn.ignore" />
+    <Content Include="Web.constrings" />
+    <Content Include="Applications\DBChangesNotifier\app.config" />
+    <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <Content Include="weborb.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
+      <Project>{9abe4ef7-cd9b-49d0-9084-d38f93b71065}</Project>
+      <Name>Esynctraining.Core.Weborb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
+      <Name>Esynctraining.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
+      <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
+      <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
+      <Name>EdugameCloud.MVC</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
+      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
+      <Name>EdugameCloud.Persistence</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\Common.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Common.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_GlobalResources\Emails.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Emails.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\ErrorsTexts.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>ErrorsTexts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>21646</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:2345/services</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

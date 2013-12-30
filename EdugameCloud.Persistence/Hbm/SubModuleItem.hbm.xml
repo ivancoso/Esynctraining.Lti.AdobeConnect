@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+  <sql-query name="getAppletSubModuleItemsByUserID">
+    <query-param name="userId" type="System.Int32"/>
+    exec getAppletSubModuleItemsByUserID @userId=:userId
+  </sql-query>
+  <sql-query name="getSNProfileSubModuleItemsByUserID">
+    <query-param name="userId" type="System.Int32"/>
+    exec getSNProfileSubModuleItemsByUserID @userId=:userId
+  </sql-query>
+  <sql-query name="getSurveySubModuleItemsByUserId">
+    <query-param name="userId" type="System.Int32"/>
+    exec getSurveySubModuleItemsByUserID @userId=:userId
+  </sql-query>
+  <sql-query name="getTestSubModuleItemsByUserID">
+    <query-param name="userId" type="System.Int32"/>
+    exec getTestSubModuleItemsByUserID @userId=:userId
+  </sql-query>
+	<sql-query name="getSMIQuestionsBySMIId">
+		<query-param name="subModuleItemId" type="System.Int32"/>
+		exec getSMIQuestionsBySMIId @subModuleItemId=:subModuleItemId
+	</sql-query>
+	<sql-query name="getSMIDistractorsBySMIId">
+		<query-param name="subModuleItemId" type="System.Int32"/>
+		exec getSMIDistractorsBySMIId @subModuleItemId=:subModuleItemId
+	</sql-query>
+</hibernate-mapping>

@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{454CA615-9F14-4A1F-ADAC-1F1C400E257D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Esynctraining.Core</RootNamespace>
+    <AssemblyName>Esynctraining.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.Logging">
+      <HintPath>..\packages\Castle.LoggingFacility.3.2.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Facilities.WcfIntegration">
+      <HintPath>..\packages\Castle.WcfIntegrationFacility.3.2.0\lib\net40\Castle.Facilities.WcfIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Services.Logging.Log4netIntegration">
+      <HintPath>..\packages\Castle.Core-log4net.3.2.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation">
+      <HintPath>..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\ConnectExtensions\svn\trunk\csharp\ConnectExtensions\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WcfRestContrib">
+      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
+    </Reference>
+    <Reference Include="weborb, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Web.ORB.5.1.0.0\lib\weborb.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\WebOrbRestrictedAccess.cs" />
+    <Compile Include="Authentication\IWebOrbIdentity.cs" />
+    <Compile Include="Authentication\WebOrbPrincipal.cs" />
+    <Compile Include="Authentication\IAuthenticationValidator.cs" />
+    <Compile Include="Authentication\WCFAuthenticationHandler.cs" />
+    <Compile Include="Business\IRepository.cs" />
+    <Compile Include="Business\Models\AuthenticationModel.cs" />
+    <Compile Include="Business\Models\BaseModel.cs" />
+    <Compile Include="Business\Models\MailModel.cs" />
+    <Compile Include="Business\Queries\DefaultQueryOver.cs" />
+    <Compile Include="Business\Queries\QueryOverIDeletable.cs" />
+    <Compile Include="Business\StoreProcedureParam.cs" />
+    <Compile Include="Comparers\BuildVersionComparer.cs" />
+    <Compile Include="Domain\Contracts\ServiceResponse.cs" />
+    <Compile Include="Domain\Entities\DateTimeWithZone.cs" />
+    <Compile Include="Domain\Entities\Entity.cs" />
+    <Compile Include="Domain\Entities\Error.cs" />
+    <Compile Include="Domain\Entities\IDeletable.cs" />
+    <Compile Include="Domain\Entities\IEntity.cs" />
+    <Compile Include="Enums\Errors.cs" />
+    <Compile Include="Enums\FileStatus.cs" />
+    <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
+    <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
+    <Compile Include="ErrorHandling\Log4NetErrorHandler .cs" />
+    <Compile Include="Extensions\BuildVersionExtensions.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Extensions\DateExtensions.cs" />
+    <Compile Include="Extensions\DetachedCriteriaExtensions.cs" />
+    <Compile Include="Extensions\FluentValidationExtensions.cs" />
+    <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TExtensions.cs" />
+    <Compile Include="LifeStyle\EsyncWcfOperationScopeAccessor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\ApplicationSettingsProvider.cs" />
+    <Compile Include="Providers\IResourceProvider.cs" />
+    <Compile Include="Providers\Mailer\AttachmentsProvider.cs" />
+    <Compile Include="Providers\Mailer\Configuration\MailerConfigurationSection.cs" />
+    <Compile Include="Providers\Mailer\IAttachmentsProvider.cs" />
+    <Compile Include="Providers\Mailer\ITemplateProvider.cs" />
+    <Compile Include="Providers\Mailer\ITemplateTransformer.cs" />
+    <Compile Include="Providers\Mailer\Models\BaseTemplateModel.cs" />
+    <Compile Include="Providers\Mailer\TemplateProvider.cs" />
+    <Compile Include="Providers\Mailer\TemplateTransformer.cs" />
+    <Compile Include="Providers\WindsorValidationFactory.cs" />
+    <Compile Include="Utils\Cryptographer.cs" />
+    <Compile Include="Utils\DisposableAction.cs" />
+    <Compile Include="Utils\ILocalData.cs" />
+    <Compile Include="Utils\Inflector.cs" />
+    <Compile Include="Utils\IoC.cs" />
+    <Compile Include="Utils\Lambda.cs" />
+    <Compile Include="Utils\Local.cs" />
+    <Compile Include="Utils\Xml.cs" />
+    <Compile Include="Utils\XsdValidator.cs" />
+    <Compile Include="WCFExtension\AbstractChannelFactory.cs" />
+    <Compile Include="WCFExtension\NonSslAuthHttpTransportBindingElement.cs" />
+    <Compile Include="WCFExtension\NonSslAuthSecurityCapabilities.cs" />
+    <Compile Include="WCFExtension\NonSslAuthTransportElement.cs" />
+    <Compile Include="WCFExtension\WCFChannelFactory.cs" />
+    <Compile Include="WCFExtension\WCFObjectHandler.cs" />
+    <Compile Include="WCFExtension\WCFUtil.cs" />
+    <Compile Include="Wrappers\CacheBase.cs" />
+    <Compile Include="Wrappers\CacheWrapper.cs" />
+    <Compile Include="Wrappers\CultureInfoWrapper.cs" />
+    <Compile Include="Wrappers\SerializableXmlDocument.cs" />
+    <Compile Include="Wrappers\SmtpClientWrapper.cs" />
+    <Compile Include="Wrappers\XDocumentWrapper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

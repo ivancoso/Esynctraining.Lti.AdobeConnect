@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	title="Server Data Push" initialize="onInitialize()">
+	
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable]
+			private var controller:ServerDataPushController;
+			
+			private function onInitialize():void
+			{
+				controller = new ServerDataPushController(this);
+			}
+			
+			protected function onHome(event:MouseEvent):void
+			{
+				controller.onHome();
+				navigator.popView();
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:navigationContent>
+		<s:Button id="btnHome" click="onHome(event)">
+			<s:icon>
+				<s:MultiDPIBitmapSource 
+					source160dpi="@Embed('assets/Home_160.png')" 
+					source240dpi="@Embed('assets/Home_240.png')" 
+					source320dpi="@Embed('assets/Home_320.png')"/>
+			</s:icon>
+		</s:Button>
+	</s:navigationContent>
+	
+	<s:Scroller left="0" right="0" top="6" bottom="0">
+		<s:VGroup horizontalAlign="center" horizontalCenter="0">
+			<s:Button id="btnConnection"
+				label="{controller.model.connected ? 'Disconnect' : 'Connect'}" 
+				click="{controller.onConnect()}" />
+			<s:Button id="btnDataPush" 
+				enabled="{controller.model.connected}"
+				label="{controller.model.pushing ? 'Stop' : 'Start'} Data Push"
+				click="{controller.onDataPush()}" />
+			<s:TextArea id="txtArLog" text="{controller.model.logText}" width="300" height="200" />
+		</s:VGroup>
+	</s:Scroller>
+	
+</s:View>
