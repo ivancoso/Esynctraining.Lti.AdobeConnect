@@ -33,7 +33,7 @@
             this.surveyQuestionResultId = answer.SurveyQuestionResult.With(x => x.Id);
             this.value = answer.Value;
             this.surveyDistractorId = answer.SurveyDistractor.Return(x => x.Id, (int?)null);
-            this.surveyQuestionResultAnswerRefId = answer.SurveyQuestionResultAnswerRef.Return(x => x.Id, (int?)null);
+            this.surveyDistractorAnswerId = answer.SurveyDistractorAnswer.Return(x => x.Id, (int?)null);
             this.questionId = answer.SurveyQuestionResult.With(x => x.QuestionRef.Id);
             this.questionTypeId = answer.SurveyQuestionResult.With(x => x.QuestionType.Id);
         }
@@ -64,7 +64,7 @@
         /// Gets or sets the survey question result id.
         /// </summary>
         [DataMember]
-        public int? surveyQuestionResultAnswerRefId { get; set; }
+        public int? surveyDistractorAnswerId { get; set; }
 
         /// <summary>
         /// Gets or sets the question id.

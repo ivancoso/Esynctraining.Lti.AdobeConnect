@@ -8,8 +8,6 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.Web.Security;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
@@ -416,10 +414,11 @@ namespace EdugameCloud.WCFService
         public ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryPaged(int pageIndex, int pageSize)
         {
             var result = new ServiceResponse<UserLoginHistoryDTO>();
-                int totalCount;
-                var history = this.UserLoginHistoryModel.GetAllPaged(pageIndex, pageSize, out totalCount).ToList();
-                var companies = this.CompanyModel.GetAllByUsers(history.Select(x => x.User.Id).Distinct().ToList());
-                result.objects = history.Select(x => new UserLoginHistoryDTO(x, companies.FirstOrDefault(c => c.Id == x.User.Company.Id))).ToList();
+            int totalCount;
+            var history = this.UserLoginHistoryModel.GetAllPaged(pageIndex, pageSize, out totalCount).ToList();
+            var companies = this.CompanyModel.GetAllByUsers(history.Select(x => x.User.Id).Distinct().ToList());
+            result.objects = history.Select(x => new UserLoginHistoryDTO(x, companies.FirstOrDefault(c => c.Id == x.User.Company.Id))).ToList();
+            result.totalCount = totalCount;
             return result;
         }
 
@@ -448,6 +447,43 @@ namespace EdugameCloud.WCFService
             {
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
                 result.@object = new UserDTO(user);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The request session token.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<SessionDTO> RequestSessionToken(int userId)
+        {
+            var result = new ServiceResponse<SessionDTO>();
+            User user;
+            if ((user = this.UserModel.GetOneById(userId).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_USER,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.AccessError_NoUserExistsWithTheGivenEmail));
+            }
+            else if (user.Status != UserStatus.Active)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_USER_INACTIVE,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.AccessError_UserIsInactive));
+            }
+            else
+            {
+                result.@object = this.GetOrSetANewSession(user);
             }
 
             return result;
@@ -503,7 +539,7 @@ namespace EdugameCloud.WCFService
 
                 this.UserLoginHistoryModel.RegisterSave(userHistory);
 
-                result.@object.authCookie = this.SetAuthenticationCookie(user);
+                result.@object.session = this.GetOrSetANewSession(user);
                 if (dto.sendSplashScreen)
                 {
                     result.@object.splashScreen = new SplashScreenDTO
@@ -766,22 +802,55 @@ namespace EdugameCloud.WCFService
         #region Methods
 
         /// <summary>
-        /// The set authentication cookie.
+        /// The set new session.
         /// </summary>
         /// <param name="user">
         /// The user.
         /// </param>
         /// <returns>
-        /// The <see cref="AuthCookieDTO"/>.
+        /// The <see cref="SessionDTO"/>.
         /// </returns>
-        private AuthCookieDTO SetAuthenticationCookie(User user)
+        private SessionDTO SetNewSession(User user)
         {
-            return new AuthCookieDTO
+            user.SessionToken = AuthenticationModel.CreateRandomPassword(45);
+            var userModel = this.UserModel;
+            while (userModel.GetOneByToken(user.SessionToken).Value != null)
             {
-                dateTimeTicks = DateTime.UtcNow.AddDays(3).Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds,
-                name = FormsAuthentication.FormsCookieName,
-                value = user.GenerateCookieValue(),
+                user.SessionToken = AuthenticationModel.CreateRandomPassword(45);
+            }
+
+            user.SessionTokenExpirationDate = DateTime.Now.AddDays(1);
+            this.UserModel.RegisterSave(user);
+
+            return new SessionDTO
+            {
+                expiration = user.SessionTokenExpirationDate.Value,
+                session = user.SessionToken
             };
+        }
+
+        /// <summary>
+        /// The get or set a new session.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SessionDTO"/>.
+        /// </returns>
+        private SessionDTO GetOrSetANewSession(User user)
+        {
+            if (!string.IsNullOrWhiteSpace(user.SessionToken) && user.SessionTokenExpirationDate.HasValue
+                && user.SessionTokenExpirationDate.Value > DateTime.Now)
+            {
+                return new SessionDTO
+                {
+                    expiration = user.SessionTokenExpirationDate.Value,
+                    session = user.SessionToken
+                };
+            }
+
+            return this.SetNewSession(user);
         }
 
         /// <summary>

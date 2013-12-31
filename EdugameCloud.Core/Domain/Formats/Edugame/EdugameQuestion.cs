@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.Formats.Edugame
 {
     using System.Collections.Generic;
+    using System.Xml.Schema;
     using System.Xml.Serialization;
 
     /// <summary>
@@ -22,10 +23,46 @@
         public int Score { get; set; }
 
         /// <summary>
+        /// Gets or sets isMandatory.
+        /// </summary>
+        [XmlElement(ElementName = "isMandatory", IsNullable = true)]
+        public bool? IsMandatory { get; set; }
+
+        /// <summary>
+        /// Gets or sets isMandatory.
+        /// </summary>
+        [XmlElement(ElementName = "pageNumber", IsNullable = true)]
+        public int? PageNumber { get; set; }
+
+        /// <summary>
         /// Gets or sets question title.
         /// </summary>
         [XmlElement(ElementName = "instruction")]
         public string Instruction { get; set; }
+
+        /// <summary>
+        /// Gets or sets the restrictions.
+        /// </summary>
+        [XmlElement(ElementName = "restrictions", IsNullable = true)]
+        public string Restrictions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total weight bucket.
+        /// </summary>
+        [XmlElement(ElementName = "totalWeightBucket", IsNullable = true)]
+        public decimal? TotalWeightBucket { get; set; }
+
+        /// <summary>
+        /// Gets or sets the weight bucket type.
+        /// </summary>
+        [XmlElement(ElementName = "weightBucketType", IsNullable = true)]
+        public int? WeightBucketType { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether allow other.
+        /// </summary>
+        [XmlElement(ElementName = "allowOther", IsNullable = true)]
+        public bool? AllowOther { get; set; }
 
         /// <summary>
         /// Gets or sets question title.
@@ -48,13 +85,13 @@
         /// <summary>
         /// Gets or sets image.
         /// </summary>
-        [XmlElement(ElementName = "image", IsNullable = true)]
+        [XmlElement(ElementName = "image", IsNullable = true, Form = XmlSchemaForm.None)]
         public string Image { get; set; }
 
         /// <summary>
         /// Gets or sets image name.
         /// </summary>
-        [XmlElement(ElementName = "image-name", IsNullable = true)]
+        [XmlElement(ElementName = "imageName", IsNullable = true, Form = XmlSchemaForm.None)]
         public string ImageName { get; set; }
 
         /// <summary>

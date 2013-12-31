@@ -1,15 +1,11 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
-    using System.Data.SqlTypes;
-
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Enums;
 
     /// <summary>
     /// The user map.
     /// </summary>
-    public class FileMap : BaseClassMap<File>
+    public class FileMap : BaseClassMapGuid<File>
     {
         #region Constructors and Destructors
 
@@ -25,7 +21,6 @@
             this.Map(x => x.Y).Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.Status).Nullable().CustomType<ImageStatus>();
-            this.Map(x => x.WebOrbId).Nullable();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column("createdBy");
         }
 

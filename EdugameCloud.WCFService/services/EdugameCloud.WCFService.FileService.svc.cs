@@ -140,10 +140,10 @@ namespace EdugameCloud.WCFService
             if (this.IsValid(file, out validationResult))
             {
                 user = file.createdBy.HasValue ? this.UserModel.GetOneById(file.createdBy.Value).Value : null;
-                if (user != null && file.fileId == 0)
+                if (user != null)
                 {
                     File createdFile = this.FileModel.CreateFile(user, file.fileName, file.dateCreated, file.width, file.height, file.x, file.y);
-                    result.@object = createdFile.WebOrbId.ToString();
+                    result.@object = createdFile.Id.ToString();
                 }
                 else
                 {
@@ -218,7 +218,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<FileDTO> GetById(int id)
+        public ServiceResponse<FileDTO> GetById(Guid id)
         {
             var result = new ServiceResponse<FileDTO>();
             File session;

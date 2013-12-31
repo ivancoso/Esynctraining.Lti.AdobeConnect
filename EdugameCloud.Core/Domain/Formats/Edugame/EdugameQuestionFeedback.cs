@@ -19,5 +19,17 @@
         /// </summary>
         [XmlElement(ElementName = "incorrect")]
         public string Incorrect { get; set; }
+
+        /// <summary>
+        /// Gets or sets question title.
+        /// </summary>
+        [XmlElement(ElementName = "correctReference", IsNullable = true)]
+        public string CorrectReference { get; set; }
+
+        /// <summary>
+        /// Gets or sets question title.
+        /// </summary>
+        [XmlElement(ElementName = "hint", IsNullable = true)]
+        public string Hint { get; set; }
     }
 }

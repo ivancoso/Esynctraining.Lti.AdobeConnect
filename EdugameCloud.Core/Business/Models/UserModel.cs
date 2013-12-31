@@ -18,8 +18,6 @@
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -348,14 +346,20 @@
         /// <param name="fileStream">
         /// The file stream.
         /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
         /// <param name="failed">
         /// The failed.
         /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
+        /// <param name="sendActivation">
+        /// The send Activation.
+        /// </param>
         /// <param name="notifyViaRTMP">
-        /// The notify via rtmp.
+        /// The notify via RTMP.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{User}"/>.
@@ -367,6 +371,7 @@
             out List<string> failed, 
             out string error, 
             Action<User> sendActivation = null,
+            // ReSharper disable once InconsistentNaming
             bool notifyViaRTMP = true)
         {
             var result = new List<User>();
@@ -441,6 +446,7 @@
                                     instance.Status = UserStatus.Active;
                                     instance.SetPassword(passwordCellValue);
                                 }
+
                                 this.RegisterSave(instance, true);
                                 if (notifyViaRTMP)
                                 {
@@ -493,14 +499,20 @@
         /// <param name="fileContent">
         /// The file content.
         /// </param>
+        /// <param name="fileType">
+        /// The file Type.
+        /// </param>
         /// <param name="failed">
         /// The failed.
         /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
+        /// <param name="sendActivation">
+        /// The send Activation.
+        /// </param>
         /// <param name="notifyViaRTMP">
-        /// The notify via rtmp.
+        /// The notify via RTMP.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{User}"/>.
@@ -512,6 +524,7 @@
             out List<string> failed, 
             out string error,
             Action<User> sendActivation = null,
+            // ReSharper disable once InconsistentNaming
             bool notifyViaRTMP = true)
         {
             return this.UploadBatchOfUsers(
@@ -522,6 +535,21 @@
                 out error,
                 sendActivation,
                 notifyViaRTMP);
+        }
+
+        /// <summary>
+        /// The get one by token.
+        /// </summary>
+        /// <param name="sessionToken">
+        /// The session token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{User}"/>.
+        /// </returns>
+        public IFutureValue<User> GetOneByToken(string sessionToken)
+        {
+            var queryOver = new QueryOverUser().GetQueryOver().WhereRestrictionOn(x => x.SessionToken).IsNotNull.AndRestrictionOn(x => x.SessionToken).IsLike(sessionToken).Take(1);
+            return this.Repository.FindOne(queryOver);
         }
 
         #endregion

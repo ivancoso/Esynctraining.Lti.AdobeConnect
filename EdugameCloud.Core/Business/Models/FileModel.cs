@@ -29,7 +29,7 @@
     /// <summary>
     ///     The file model.
     /// </summary>
-    public class FileModel : BaseModel<File, int>
+    public class FileModel : BaseModel<File, Guid>
     {
         #region Static Fields
 
@@ -67,7 +67,7 @@
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public FileModel(IRepository<File, int> repository, ApplicationSettingsProvider settings)
+        public FileModel(IRepository<File, Guid> repository, ApplicationSettingsProvider settings)
             : base(repository)
         {
             this.settings = settings;
@@ -112,7 +112,7 @@
         /// </returns>
         public virtual IFutureValue<File> GetOneByWebOrbId(Guid id)
         {
-            var queryOver = new DefaultQueryOver<File, int>().GetQueryOver().Where(x => x.WebOrbId == id).Take(1);
+            var queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.Id == id).Take(1);
             return this.Repository.FindOne(queryOver);
         }
 
@@ -356,27 +356,28 @@
             base.RegisterDelete(file, flush);
         }
 
-        /// <summary>
-        /// The register save.
-        /// </summary>
-        /// <param name="entity">
-        /// The entity.
-        /// </param>
-        /// <param name="flush">
-        /// The flush.
-        /// </param>
-        public override void RegisterSave(File entity, bool flush)
-        {
-            if (entity.IsTransient() && entity.WebOrbId.HasValue)
-            {
-                while (this.GetOneByWebOrbId(entity.WebOrbId.Value).Value != null)
-                {
-                    entity.WebOrbId = Guid.NewGuid();
-                }
-            }
-
-            base.RegisterSave(entity, flush);
-        }
+//        /// <summary>
+//        /// The register save.
+//        /// </summary>
+//        /// <param name="entity">
+//        /// The entity.
+//        /// </param>
+//        /// <param name="flush">
+//        /// The flush.
+//        /// </param>
+//        public override void RegisterSave(File entity, bool flush)
+//        {
+//            if (entity.IsTransient() && entity.Id == default(Guid))
+//            {
+//                entity.Id = Guid.NewGuid();
+//                while (this.GetOneByWebOrbId(entity.Id).Value != null)
+//                {
+//                    entity.Id = Guid.NewGuid();
+//                }
+//            }
+//
+//            base.RegisterSave(entity, flush);
+//        }
 
         /// <summary>
         /// The create file.
@@ -502,7 +503,7 @@
             if (file != null)
             {
                 var companyId = file.CreatedBy.With(x => x.Company).With(x => x.Id.ToString(CultureInfo.InvariantCulture));
-                return this.settings.FileStorage + "/" + companyId + "/" + this.settings.PermFilePattern.Replace("{fileId}", file.WebOrbId.ToString());
+                return this.settings.FileStorage + "/" + companyId + "/" + this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString());
             }
 
             return string.Empty;
@@ -519,7 +520,7 @@
         /// </returns>
         public IEnumerable<File> GetAllByGuids(List<Guid> ids)
         {
-            var queryOver = new DefaultQueryOver<File, int>().GetQueryOver().AndRestrictionOn(x => x.WebOrbId).IsIn(ids);
+            var queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().AndRestrictionOn(x => x.Id).IsIn(ids);
             return this.Repository.FindAll(queryOver);
         }
 
@@ -569,7 +570,7 @@
                 Directory.CreateDirectory(folder);
             }
 
-            return Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.WebOrbId.ToString()));
+            return Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString()));
         }
 
         /// <summary>
@@ -583,7 +584,7 @@
         /// </returns>
         private string WebOrbFolderName(File file)
         {
-            return Path.Combine(this.WebOrbStoragePhysicalPath(), file.WebOrbId.ToString());
+            return Path.Combine(this.WebOrbStoragePhysicalPath(), file.Id.ToString());
         }
 
         #endregion

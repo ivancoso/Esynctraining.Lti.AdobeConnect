@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[File] (
-    [fileId]      INT              IDENTITY (1, 1) NOT NULL,
+    [fileId]      UNIQUEIDENTIFIER NOT NULL,
     [fileName]    NVARCHAR (255)   NOT NULL,
     [path]        VARCHAR (MAX)    NULL,
     [height]      INT              NULL,
@@ -10,8 +10,9 @@
     [status]      INT              CONSTRAINT [DF__Image__Status__6EF57B66] DEFAULT ((0)) NULL,
     [x]           INT              NULL,
     [y]           INT              NULL,
-    [webOrbId]    UNIQUEIDENTIFIER NULL,
-    CONSTRAINT [PK_Image] PRIMARY KEY CLUSTERED ([fileId] ASC),
+    CONSTRAINT [PK_File] PRIMARY KEY CLUSTERED ([fileId] ASC),
     CONSTRAINT [FK_Image_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId])
 );
+
+
 

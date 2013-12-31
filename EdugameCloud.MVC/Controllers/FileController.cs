@@ -17,6 +17,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.MVC.Attributes;
     using EdugameCloud.MVC.ViewModels;
     using EdugameCloud.MVC.ViewResults;
 
@@ -146,6 +147,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("export-questions")]
+        [CustomAuthorize]
         public virtual ActionResult ExportQuestions(string id)
         {
             var storagePath = Settings.FileStorage as string;
@@ -196,6 +198,7 @@
         [ValidateInput(false)]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("import-questions-from-xml")]
+        [CustomAuthorize]
         public virtual ActionResult ImportQuestions(ImportQuestionsViewModel model)
         {
             var storagePath = Settings.FileStorage as string;
@@ -259,15 +262,19 @@
                 {
                     foreach (string file in Request.Files)
                     {
+                        // ReSharper disable once RedundantCast
                         var hpf = Request.Files[file] as HttpPostedFileBase;
-                        if (hpf.ContentLength == 0)
+                        if (hpf != null)
                         {
-                            continue;
-                        }
+                            if (hpf.ContentLength == 0)
+                            {
+                                continue;
+                            }
 
-                        hpf.SaveAs(filePath);
-                        isSuccess = true;
-                        break;
+                            hpf.SaveAs(filePath);
+                            isSuccess = true;
+                            break;
+                        }
                     }
                 }
                 catch (Exception)
@@ -292,7 +299,7 @@
         /// </returns>
         [HttpGet]
         [ActionName("test-import-questions")]
-//        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult TestImportQuestions()
         {
             return this.View(EdugameCloudT4.File.Views.ImportQuestions, string.Empty);
@@ -368,7 +375,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("collaboration-report")]
-////        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult GetCollaborationReport(int userId, int? sessionId, string format = "pdf")
         {
             User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
@@ -522,7 +529,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("crossword-report")]
-////        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult GetCrosswordsReport(int userId, int? sessionId, string format = "pdf")
         {
             User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
@@ -662,16 +669,11 @@
         {
             File file = null;
             Guid webOrbId;
-            int idVal;
             if (Guid.TryParse(id, out webOrbId))
             {
                 file = this.fileModel.GetOneByWebOrbId(webOrbId).Value;
             }
-            else if (int.TryParse(id, out idVal))
-            {
-                file = this.fileModel.GetOneById(idVal).Value;
-            }
-
+            
             if (file != null)
             {
                 byte[] buffer = this.fileModel.GetData(file);
@@ -783,7 +785,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("quiz-report")]
-////        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult GetQuizReport(int userId, int? sessionId, string format = "pdf", string type = "full")
         {
             type = (string.IsNullOrWhiteSpace(type) ? "full" : type).ToLower();
@@ -926,13 +928,16 @@
         /// <param name="format">
         /// The format.
         /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("survey-report")]
-////        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult GetSurveyReport(int userId, int? sessionId, string format = "pdf", string type = "full")
         {
             type = (string.IsNullOrWhiteSpace(type) ? "full" : type).ToLower();
@@ -952,19 +957,6 @@
             }
 
             var sessionResults = userSessions.ToDictionary(s => s, s => this.surveyResultModel.GetSurveyResultByACSessionId(s.acSessionId, s.subModuleItemId));
-
-            Func<SurveySessionDTO, IDictionary<int, string>, object> resultConverter =
-                (s, userModes) =>
-                new
-                    {
-                        s.acSessionId, 
-                        acUserMode = userModes[s.acUserModeId],
-                        showUserMode = false,
-                        name = s.surveyName, 
-                        reportType = "survey", 
-                        s.categoryName, 
-                        s.dateCreated, 
-                    };
 
             SubreportProcessingEventHandler detailsHandler = (sender, args) =>
                 {
@@ -1039,16 +1031,7 @@
                 int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
                 int questionId = int.Parse(args.Parameters["questionId"].Values.First());
                 SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                var results = this.СonvertAnswers(sessionResults, acSession, questionId).Select(
-                        pa =>
-                        new
-                        {
-                            resultId = pa.player.surveyResultId,
-                            result = pa.player.score,
-                            resultPercent = ((double)pa.player.score / acSession.TotalQuestion).ToString("0.0%"),
-                            totalResults = sessionResults[acSession].players.Count,
-                            answer = pa.answer.value
-                        }).ToList();
+                var results = this.ConvertAnswers(sessionResults, acSession, questionId).ToList();
                 args.DataSources.Add(new ReportDataSource("ItemDataSet", results));
             };
 
@@ -1058,13 +1041,13 @@
                 int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
                 int questionId = int.Parse(args.Parameters["questionId"].Values.First());
                 SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                var results = sessionResults[acSession].players.SelectMany(p => p.answers.Where(x => x.questionId == questionId).Select(a => new { player = p, answer = a })).Select(
+                var results = this.ConvertAnswersForParticipants(sessionResults, acSession, questionId).Select(
                         pa =>
                         new
                         {
                             participantId = pa.player.surveyResultId,
                             participant = pa.player.participantName,
-                            answer = pa.answer.value
+                            pa.answer,
                         }).ToList();
                 args.DataSources.Add(new ReportDataSource("ItemDataSet", results));
             };
@@ -1105,6 +1088,19 @@
                             }
                     }.ToDictionary(o => o.placeholder, o => new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
 
+            Func<SurveySessionDTO, IDictionary<int, string>, object> resultConverter =
+                (s, userModes) =>
+                new
+                {
+                    s.acSessionId,
+                    acUserMode = userModes[s.acUserModeId],
+                    showUserMode = false,
+                    name = s.surveyName,
+                    reportType = "survey",
+                    s.categoryName,
+                    s.dateCreated,
+                };
+
             return this.GetResultReport(
                 sessionResults, 
                 s => s.acUserModeId, 
@@ -1116,7 +1112,7 @@
         }
 
         /// <summary>
-        /// The Quiz report.
+        /// The Test report.
         /// </summary>
         /// <param name="userId">
         /// user id
@@ -1136,7 +1132,7 @@
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("test-report")]
-////        [Authorize]
+        [CustomAuthorize]
         public virtual ActionResult GetTestReport(int userId, int? sessionId, string format = "pdf", string type = "full")
         {
             type = (string.IsNullOrWhiteSpace(type) ? "full" : type).ToLower();
@@ -1345,17 +1341,182 @@
 
         #region Methods
 
-        private IEnumerable<dynamic> СonvertAnswers(Dictionary<SurveySessionDTO, SurveyResultDataDTO> sessionResults, SurveySessionDTO acSession, int questionId)
+        /// <summary>
+        /// The convert answers.
+        /// </summary>
+        /// <param name="sessionResults">
+        /// The session results.
+        /// </param>
+        /// <param name="session">
+        /// The ac session.
+        /// </param>
+        /// <param name="questionId">
+        /// The question id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Object}"/>.
+        /// </returns>
+        private IEnumerable<dynamic> ConvertAnswers(Dictionary<SurveySessionDTO, SurveyResultDataDTO> sessionResults, SurveySessionDTO session, int questionId)
         {
-            var answers = sessionResults[acSession].players.SelectMany(p => p.answers.Where(x => x.questionId == questionId).Select(a => new { player = p, answer = a })).ToList();
-//            foreach (var ap in answers)
-//            {
-//                if (ap.answer.questionTypeId == QuestionType.)
-//            }
+            var results = sessionResults[session];
+            var activePlayers = results.players.Count(x => x.score > 0);
+            var question = results.questions.FirstOrDefault(x => x.questionId == questionId);
+            var distractors = question.Return(x => x.distractors, new List<DistractorDTO>());
+            var groupedAnswers = results.players.SelectMany(p => p.answers.Where(x => x.questionId == questionId).Select(x => new { player = p, answer = x, answerString = this.ConvertAnswer(x, question, distractors) }))
+                .GroupBy(x => x.answerString).ToDictionary(x => x.Key, x => x.Select(a => a)).ToList();
+            return
+                groupedAnswers.Select(
+                    ga =>
+                    new
+                        {
+                            result = ga.Value.Count(),
+                            resultPercent = ((double)ga.Value.Count() / activePlayers).ToString("0.0%"),
+                            totalResults = groupedAnswers.Count(),
+                            answer = ga.Key
+                        });
+//            return groupedAnswers.SelectMany(ga => ga.Value.Select(
+//                    pa =>
+//                        {
+//                        var result = this.ConvertResult(pa, question);
+//                        var totalQuestions = this.ConvertTotalQuestions(session.TotalQuestion, question);
+//                            return
+//                                new
+//                                    {
+//                                        resultId = pa.player.surveyResultId,
+//                                        result,
+//                                        resultPercent = ((double)result / totalQuestions).ToString("0.0%"),
+//                                        totalResults = groupedAnswers.Count(),
+//                                        answer = ga.Key
+//                                    };
+//                        });
 
-            return answers;
         }
 
+        /// <summary>
+        /// The convert answer.
+        /// </summary>
+        /// <param name="answerDTO">
+        /// The answer DTO.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractors">
+        /// The distractors.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ConvertAnswer(SurveyQuestionResultAnswerDTO answerDTO, QuestionForAdminDTO question, List<DistractorDTO> distractors)
+        {
+            string result;
+            var modifiedAnswer =
+                new
+                    {
+                        answer = answerDTO,
+                        disQuestion = distractors.FirstOrDefault(d => d.distractorId == answerDTO.surveyDistractorId),
+                        disAnswer = distractors.FirstOrDefault(d => d.distractorId == answerDTO.surveyDistractorAnswerId)
+                    };
+            if (question.questionTypeId == (int)QuestionTypeEnum.RateScaleLikert && modifiedAnswer.disQuestion != null)
+            {
+                result = string.Format("{0} : {1}", modifiedAnswer.disQuestion.distractor, modifiedAnswer.disAnswer.Return(x => x.distractor, modifiedAnswer.answer.value ?? string.Empty));
+            }
+            else if (question.questionTypeId == (int)QuestionTypeEnum.WeightedBucketRatio && modifiedAnswer.disQuestion != null)
+            {
+                result = string.Format("{0} : {1}", modifiedAnswer.disQuestion.distractor, modifiedAnswer.answer.value);
+            }
+            else if (question.questionTypeId == (int)QuestionTypeEnum.TrueFalse)
+            {
+                result = modifiedAnswer.answer.value == "1" ? "True" : "False";
+            }
+            else
+            {
+                result = modifiedAnswer.answer.value;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The convert answers for participants.
+        /// </summary>
+        /// <param name="sessionResults">
+        /// The session results.
+        /// </param>
+        /// <param name="session">
+        /// The AC session.
+        /// </param>
+        /// <param name="questionId">
+        /// The question id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Object}"/>.
+        /// </returns>
+        private IEnumerable<dynamic> ConvertAnswersForParticipants(Dictionary<SurveySessionDTO, SurveyResultDataDTO> sessionResults, SurveySessionDTO session, int questionId)
+        {
+            var results = sessionResults[session];
+            var question = results.questions.FirstOrDefault(x => x.questionId == questionId);
+            var distractors = question.Return(x => x.distractors, new List<DistractorDTO>());
+            return results.players.SelectMany(p => p.answers.Where(x => x.questionId == questionId)
+                .GroupBy(x => p).ToDictionary(x => x.Key, g => g.Select(q => q)).ToList()
+                .Select(a => new { player = a.Key, answer = this.GetParticipantAnswers(a.Value.ToList(), question, distractors) }));
+        }
+
+        /// <summary>
+        /// The get participant answers.
+        /// </summary>
+        /// <param name="answers">
+        /// The answers.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractors">
+        /// The distractors.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetParticipantAnswers(List<SurveyQuestionResultAnswerDTO> answers, QuestionForAdminDTO question, List<DistractorDTO> distractors)
+        {
+            string result = string.Empty;
+            var modifiedAnswers =
+                answers.Select(
+                    a =>
+                    new
+                    {
+                        answer = a,
+                        disQuestion = distractors.FirstOrDefault(d => d.distractorId == a.surveyDistractorId),
+                        disAnswer = distractors.FirstOrDefault(d => d.distractorId == a.surveyDistractorAnswerId)
+                    });
+            if (answers.Any())
+            {
+                if (question.questionTypeId == (int)QuestionTypeEnum.RateScaleLikert)
+                {
+                    modifiedAnswers = modifiedAnswers.Where(x => x.disQuestion != null);
+                    result = modifiedAnswers.Aggregate(result, (current, modifiedAnswer) => current + string.Format("{0} : {1}, ", modifiedAnswer.disQuestion.distractor, modifiedAnswer.disAnswer.Return(x => x.distractor, modifiedAnswer.answer.value ?? string.Empty)));
+                    result = result.TrimEnd(", ".ToCharArray());
+                }
+                else if (question.questionTypeId == (int)QuestionTypeEnum.WeightedBucketRatio)
+                {
+                    modifiedAnswers = modifiedAnswers.Where(x => x.disQuestion != null);
+                    result = modifiedAnswers.Aggregate(result, (current, modifiedAnswer) => current + string.Format("{0} : {1}, ", modifiedAnswer.disQuestion.distractor, modifiedAnswer.answer.value));
+                    result = result.TrimEnd(", ".ToCharArray());
+                }
+                else if (question.questionTypeId == (int)QuestionTypeEnum.TrueFalse)
+                {
+                    result = modifiedAnswers.Aggregate(result, (current, modifiedAnswer) => current + string.Format("{0}, ", modifiedAnswer.answer.value == "1" ? "True" : "False"));
+                    result = result.TrimEnd(", ".ToCharArray());
+                }
+                else
+                {
+                    result = modifiedAnswers.Aggregate(result, (current, modifiedAnswer) => current + string.Format("{0}, ", modifiedAnswer.answer.value));
+                    result = result.TrimEnd(", ".ToCharArray());
+                }
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// The fill participant data.
@@ -1385,6 +1546,7 @@
                             };
                 }
             }
+                // ReSharper disable once EmptyGeneralCatchClause
             catch (Exception) { }
 
             return new { id = 0, name = string.Empty, location = string.Empty, imgUrl = string.Empty };
@@ -1669,6 +1831,7 @@
                     return "xlsx";
                 }
             }
+                // ReSharper disable once EmptyGeneralCatchClause
             catch (Exception)
             {
             }
@@ -1790,7 +1953,7 @@
         }
 
         /// <summary>
-        /// Gets hint-word values from crossword's XML definition
+        /// Gets Hint-word values from crossword's XML definition
         /// </summary>
         /// <param name="documentXml">
         /// Input xml document

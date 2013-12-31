@@ -304,9 +304,29 @@ namespace EdugameCloud.WCFService
         /// <param name="smiId">SubModule item id.</param>
         /// <param name="format">Import format.</param>
         /// <returns>The <see cref="ServiceResponse"/>.</returns>
-        public ServiceResponse ImportQuestionsBySubModuleItemId(string id, int smiId, string format)
+        public ServiceResponse<QuestionDTO> ImportQuestionsBySubModuleItemId(string id, int smiId, string format)
         {
-            return this.Import(id, smiId, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
+            return this.Import(id, smiId, null, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
+        }
+
+        /// <summary>
+        /// Import questions by SubModule item id.
+        /// </summary>
+        /// <param name="id">
+        /// Import id.
+        /// </param>
+        /// <param name="userId">
+        /// The user Id.
+        /// </param>
+        /// <param name="format">
+        /// Import format.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<QuestionDTO> GetParsedQuestionsById(string id, int userId, string format)
+        {
+            return this.Import(id, null, userId, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
         }
 
         /// <summary>
@@ -317,18 +337,6 @@ namespace EdugameCloud.WCFService
         public ServiceResponse<string> ExportBySubModuleId(int smiId)
         {
             return this.Export(smiId);
-        }
-
-        /// <summary>
-        /// Import entity by SubModule item id.
-        /// </summary>
-        /// <param name="id">Import id.</param>
-        /// <param name="smiId">SubModule item id.</param>
-        /// <param name="format">Import format.</param>
-        /// <returns>The <see cref="ServiceResponse"/>.</returns>
-        public ServiceResponse ImportBySubModuleItemId(string id, int smiId, string format)
-        {
-            return this.Import(id, smiId, (FormatsEnum)Enum.Parse(typeof(FormatsEnum), format));
         }
 
         #endregion

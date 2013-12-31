@@ -97,7 +97,7 @@
         ///     Gets or sets the file id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         ///     Gets or sets the file name.

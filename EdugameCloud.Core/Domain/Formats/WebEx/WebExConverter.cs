@@ -19,8 +19,8 @@
             { WebExQuestionType.Essay, 11 },
             { WebExQuestionType.FillBlanks, 4 },
             { WebExQuestionType.Instructions, 1 },
-            { WebExQuestionType.MultipleChoise, 1 },
-            { WebExQuestionType.MultipleReponce, 1 },
+            { WebExQuestionType.SingleChoice, 1 },
+            { WebExQuestionType.MultipleChoice, 1 },
             { WebExQuestionType.TrueFalse, 2 }
         };
 
@@ -71,6 +71,28 @@
                 Title = value.Title,
                 Type = Convert(value.Type, questionTypes)
             };
+
+            //to be multiple at least 2 distractors should be set as IsCorrect
+            if (value.Type == WebExQuestionType.MultipleChoice)
+            {
+                if (result.Distractors.Count(x => x.IsCorrect) <= 1)
+                {
+                    result.Distractors.ForEach(x => x.IsCorrect = true);
+                }
+            }
+
+            //in case of single choice only one should be true
+            if (value.Type == WebExQuestionType.SingleChoice)
+            {
+                if (result.Distractors.Count(x => x.IsCorrect) == 0)
+                {
+                    var distractor = result.Distractors.FirstOrDefault();
+                    if (distractor != null)
+                    {
+                        distractor.IsCorrect = true;
+                    }
+                }
+            }
 
             return result;
         }

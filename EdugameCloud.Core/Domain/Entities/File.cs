@@ -2,15 +2,13 @@
 {
     using System;
     using System.Runtime.Serialization;
-
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
 
     /// <summary>
     ///     The file.
     /// </summary>
     [DataContract]
-    public class File : Entity
+    public class File : EntityGuid
     {
         #region Fields
 
@@ -28,7 +26,6 @@
         /// </summary>
         public File()
         {
-            this.WebOrbId = Guid.NewGuid();
             this.DateCreated = DateTime.Now;
             this.status = ImageStatus.Created;
         }
@@ -75,12 +72,6 @@
                 this.status = value;
             }
         }
-
-        /// <summary>
-        ///     Gets or sets the web orb id.
-        /// </summary>
-        [DataMember(IsRequired = true)]
-        public virtual Guid? WebOrbId { get; set; }
 
         /// <summary>
         ///     Gets or sets the width.

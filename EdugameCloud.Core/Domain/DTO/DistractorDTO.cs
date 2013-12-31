@@ -33,7 +33,7 @@
         {
             this.distractorId = distractor.Id;
             this.questionId = distractor.Question.Return(x => x.Id, (int?)null);
-            this.imageId = distractor.Image.Return(x => x.Id, (int?)null);
+            this.imageId = distractor.Image.Return(x => x.Id, (Guid?)null);
             this.distractor = distractor.DistractorName;
             this.distractorOrder = distractor.DistractorOrder;
             this.score = distractor.Score;
@@ -103,7 +103,7 @@
         /// Gets or sets the image id.
         /// </summary>
         [DataMember]
-        public int? imageId { get; set; }
+        public Guid? imageId { get; set; }
 
         /// <summary>
         /// Gets or sets the is active.

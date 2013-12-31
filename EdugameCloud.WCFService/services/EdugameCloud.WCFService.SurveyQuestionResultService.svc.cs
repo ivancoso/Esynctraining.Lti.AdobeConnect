@@ -341,7 +341,7 @@ namespace EdugameCloud.WCFService
         {
             instance = instance ?? new SurveyQuestionResultAnswer();
             instance.Value = resultDTO.value;
-            instance.SurveyQuestionResultAnswerRef = resultDTO.surveyQuestionResultAnswerRefId.HasValue ? this.SurveyQuestionResultAnswerModel.GetOneById(resultDTO.surveyQuestionResultAnswerRefId.Value).Value : null;
+            instance.SurveyDistractorAnswer = resultDTO.surveyDistractorAnswerId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorAnswerId.Value).Value : null;
             instance.SurveyDistractor = resultDTO.surveyDistractorId.HasValue ? this.DistractorModel.GetOneById(resultDTO.surveyDistractorId.Value).Value : null;
             instance.SurveyQuestionResult = result;
             return instance;

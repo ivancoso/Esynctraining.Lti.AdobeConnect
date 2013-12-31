@@ -97,10 +97,7 @@
                 .WhereRestrictionOn(x => x.QuestionRef.Id).IsIn(questionIds)
                 .AndRestrictionOn(x => x.SurveyResult.Id).IsIn(res.players.Select(q => q.surveyResultId).ToList());
 
-            var distractorsQuery =
-                new DefaultQueryOver<Distractor, int>().GetQueryOver()
-                    .WhereRestrictionOn(x => x.Question.Id)
-                    .IsIn(questionIds);
+            var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().WhereRestrictionOn(x => x.Question.Id).IsIn(questionIds);
 
             var playerAnswers = this.surveyQuestionResultRepository.FindAll(query).ToList();
 

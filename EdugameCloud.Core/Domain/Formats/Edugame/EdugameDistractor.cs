@@ -29,13 +29,13 @@
         /// <summary>
         /// Gets or sets image name.
         /// </summary>
-        [XmlElement(ElementName = "image-name", IsNullable = true)]
+        [XmlElement(ElementName = "imageName", IsNullable = true)]
         public string ImageName { get; set; }
 
         /// <summary>
         /// Gets or sets the distractor order.
         /// </summary>
-        [XmlAttribute(AttributeName = "distractor-type")]
+        [XmlAttribute(AttributeName = "distractorType")]
         public int DistractorType { get; set; }
         
         /// <summary>

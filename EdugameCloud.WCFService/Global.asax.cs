@@ -7,6 +7,7 @@
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.Persistence;
@@ -36,10 +37,13 @@
         protected void Application_End(object sender, EventArgs e)
         {
             IoC.Container.Dispose();
-            var server = Application[ApplicationKeys.WebOrbRTMPServerKey] as RTMPServer;
-            if (server != null)
+            if (WebConfigurationManager.AppSettings.HasKey("RTMPServerPort"))
             {
-                server.shutdown();
+                var server = Application[ApplicationKeys.WebOrbRTMPServerKey] as RTMPServer;
+                if (server != null)
+                {
+                    server.shutdown();
+                }
             }
         }
 
@@ -67,14 +71,17 @@
 
                 // Create Messaging server. 2037 is the port number, 500 is connection backlog
                 var name = typeof(DBChangesNotifier).Name;
-                var port = int.Parse(WebConfigurationManager.AppSettings["RTMPServerPort"]);
+                if (WebConfigurationManager.AppSettings.HasKey("RTMPServerPort"))
+                {
+                    var port = int.Parse(WebConfigurationManager.AppSettings["RTMPServerPort"]);
 
-                var server = new RTMPServer(name, port, 500, config);
-                // Start the messaging server
-                server.start();
+                    var server = new RTMPServer(name, port, 500, config);
+                    // Start the messaging server
+                    server.start();
 
-                // Store the server instance in the Application context, so it can be cleared out when application stops     
-                Application[ApplicationKeys.WebOrbRTMPServerKey] = server;
+                    // Store the server instance in the Application context, so it can be cleared out when application stops     
+                    Application[ApplicationKeys.WebOrbRTMPServerKey] = server;
+                }
             }
             catch (Exception ex)
             {
@@ -88,8 +95,6 @@
             Weborb.Util.ThreadContext.setCurrentHttpContext(HttpContext.Current);
             Weborb.Security.ORBSecurity.AuthenticateRequest();
         }
-
-        
 
         #endregion
     }

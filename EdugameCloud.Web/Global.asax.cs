@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Web
 {
     using System;
+    using System.Net;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Optimization;
@@ -11,6 +12,7 @@
     using Castle.Windsor;
 
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;
     using EdugameCloud.Persistence;
@@ -61,7 +63,8 @@
                 }
             }
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
-            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(IoC.Container)));
+            ModelValidatorProviders.Providers.Add(
+                new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(IoC.Container)));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -78,13 +81,13 @@
         {
             container.Register(
                 Classes.FromAssemblyNamed("EdugameCloud.MVC")
-                       .BasedOn(typeof(BaseModelBinder))
-                       .WithService.Base()
-                       .LifestyleTransient());
+                    .BasedOn(typeof(BaseModelBinder))
+                    .WithService.Base()
+                    .LifestyleTransient());
             container.Register(
                 Component.For<IResourceProvider>()
-                         .ImplementedBy<EGCResourceProvider>()
-                         .Activator<ResourceProviderActivator>());
+                    .ImplementedBy<EGCResourceProvider>()
+                    .Activator<ResourceProviderActivator>());
         }
 
         /// <summary>
@@ -110,34 +113,68 @@
         /// </param>
         public void FormsAuthentication_OnAuthenticate(Object sender, FormsAuthenticationEventArgs e)
         {
-            if (FormsAuthentication.CookiesSupported)
+
+            if (Request.QueryString != null && Request.QueryString.HasKey("egcSession"))
             {
-                if (Request.Cookies[FormsAuthentication.FormsCookieName] != null)
+                try
                 {
-                    try
+                    var userModel = IoC.Resolve<UserModel>();
+                    var user = userModel.GetOneByToken(Request.QueryString["egcSession"]).Value;
+                    if (user != null && user.SessionTokenExpirationDate.HasValue
+                        && user.SessionTokenExpirationDate > DateTime.Now)
                     {
-                        Tuple<int, string> idEmailHash;
-                        if (AuthenticationModel.ParseCookieValue(Request.Cookies[FormsAuthentication.FormsCookieName].Value, out idEmailHash))
+                        e.User = new System.Security.Principal.GenericPrincipal(new System.Security.Principal.GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                        if (FormsAuthentication.CookiesSupported)
                         {
-                            var user = IoC.Resolve<UserModel>().GetOneById(idEmailHash.Item1).Value;
-                            if (user.HashEmail() == idEmailHash.Item2)
-                            {
-                                e.User = new System.Security.Principal.GenericPrincipal(new System.Security.Principal.GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
-                            }
-                            else
-                            {
-                                Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
-                            }
+                            FormsAuthentication.SetAuthCookie(user.Email, false);
+                            Request.Cookies[FormsAuthentication.FormsCookieName].Expires =
+                                user.SessionTokenExpirationDate.Value;
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        //somehting went wrong
+                        if (FormsAuthentication.CookiesSupported)
+                        {
+                            Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    //somehting went wrong
+                }
+            }
+            else if (FormsAuthentication.CookiesSupported && Request.Cookies != null
+                     && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
+            {
+                var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+                FormsAuthenticationTicket ticket = null;
+                try
+                {
+                    ticket = FormsAuthentication.Decrypt(cookie.Value);
+
+                }
+                catch (Exception decryptError)
+                {
+                }
+
+                if (ticket == null) return; // Not authorised
+                if (ticket.Expiration > DateTime.Now)
+                {
+                    var userModel = IoC.Resolve<UserModel>();
+                    var user = userModel.GetOneByEmail(ticket.Name).Value;
+                    if (user != null)
+                    {
+                        e.User = new System.Security.Principal.GenericPrincipal(new System.Security.Principal.GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                    }
+                    else
+                    {
+                        Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                    }    
                 }
                 else
                 {
-                    
+                    Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
                 }
 
             }

@@ -26,12 +26,12 @@
         /// A question that requires attendees to select one correct answer.
         /// </summary>
         [XmlEnum(Name = "mcone")]
-        MultipleChoise,
+        SingleChoice,
         /// <summary>
         /// A question that requires attendees to select more than one correct answer.
         /// </summary>
         [XmlEnum(Name = "mcmany")]
-        MultipleReponce,
+        MultipleChoice,
         /// <summary>
         /// A question that requires attendees to indicate whether the statement in the question is true or false.
         /// </summary>

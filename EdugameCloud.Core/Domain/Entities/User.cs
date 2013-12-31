@@ -95,6 +95,16 @@
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
+        ///     Gets or sets the session
+        /// </summary>
+        public virtual string SessionToken { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date created.
+        /// </summary>
+        public virtual DateTime? SessionTokenExpirationDate { get; set; }
+
+        /// <summary>
         ///     Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }

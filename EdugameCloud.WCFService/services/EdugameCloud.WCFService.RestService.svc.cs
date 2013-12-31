@@ -141,7 +141,7 @@ namespace EdugameCloud.WCFService
             ServiceResponse<string> result;
             if (this.Validate(id, out result))
             {
-                File file = this.FileModel.GetOneById(int.Parse(id)).Value;
+                File file = this.FileModel.GetOneById(Guid.Parse(id)).Value;
                 var buffer = this.FileModel.GetData(file);
                 if (buffer != null)
                 {
@@ -172,7 +172,7 @@ namespace EdugameCloud.WCFService
             ServiceResponse<string> result;
             if (this.Validate(id, out result))
             {
-                File file = this.FileModel.GetOneById(int.Parse(id)).Value;
+                File file = this.FileModel.GetOneById(Guid.Parse(id)).Value;
                 var buffer = this.FileModel.GetData(file);
                 if (buffer != null)
                 {
@@ -233,11 +233,11 @@ namespace EdugameCloud.WCFService
                 return result;
             }
 
-            int id;
-            if (!int.TryParse(imageId, out id))
+            Guid id;
+            if (!Guid.TryParse(imageId, out id))
             {
                 result.error = new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "FileIdValidation", "Provided fileId is not numeric");
+                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "FileIdValidation", "Provided fileId is not UUID");
                 return result;
             }
 

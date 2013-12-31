@@ -8,7 +8,12 @@
         /// <summary>
         /// The administrator.
         /// </summary>
-        Admin = 9, 
+        Admin = 9,
+
+        /// <summary>
+        /// The super administrator.
+        /// </summary>
+        SuperAdmin = 11, 
 
         /// <summary>
         /// The user.

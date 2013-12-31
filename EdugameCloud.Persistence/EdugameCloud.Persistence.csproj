@@ -100,6 +100,7 @@
     <Compile Include="Mappings\CompanyLicenseMap.cs" />
     <Compile Include="Mappings\BuildVersionTypeMap.cs" />
     <Compile Include="Mappings\BuildVersionMap.cs" />
+    <Compile Include="Mappings\BaseClassMapGuid.cs" />
     <Compile Include="Mappings\QuestionForSingleMultipleChoiceMap.cs" />
     <Compile Include="Mappings\QuestionForWeightBucketMap.cs" />
     <Compile Include="Mappings\QuestionForOpenAnswerMap.cs" />
@@ -158,7 +159,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>

@@ -116,6 +116,18 @@
         ServiceResponse<UserWithSplashScreenDTO> Login(LoginWithHistoryDTO dto);
 
         /// <summary>
+        /// The request session token.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<SessionDTO> RequestSessionToken(int userId);
+
+        /// <summary>
         /// Deletes user by id.
         /// </summary>
         /// <param name="id">

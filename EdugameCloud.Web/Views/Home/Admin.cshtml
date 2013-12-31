@@ -41,32 +41,6 @@
         swfobject.embedSWF("@Model.BuildUrl", "flashContent", "100%", "100%", swfVersionStr, xiSwfUrlStr, flashvars, params, attributes);
         // JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
         swfobject.createCSS("#flashContent", "display:block;text-align:left;");
-        
-        function createCookie(name, value, daysTicks) {
-            var expires;
-            if (daysTicks) {
-                var date = new Date();
-                date.setTime(daysTicks); //date.getTime() + 3600000 * 24 * 2)
-                expires = "; expires=" + date.toGMTString();
-            }
-            else expires = "";
-            document.cookie = name + "=" + value + expires + "; path=/";
-        }
-
-        function readCookie(name) {
-            var nameEq = name + "=";
-            var ca = document.cookie.split(';');
-            for (var i = 0; i < ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEq) == 0) return c.substring(nameEq.length, c.length);
-            }
-            return null;
-        }
-
-        function eraseCookie(name) {
-            createCookie(name, "", -1);
-        }
     </script>
 
 }

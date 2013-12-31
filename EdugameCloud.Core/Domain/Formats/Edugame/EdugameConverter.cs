@@ -2,7 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.Linq;
+
+    using EdugameCloud.Core.Domain.DTO;
+
     using Entities;
 
     /// <summary>
@@ -19,7 +23,7 @@
         /// <param name="getImageFunc">Function that retrieves image content as base64 string.</param>
         /// <param name="getImageNameFunc">Function that retrieves image name.</param>
         /// <returns>The question.</returns>
-        public static EdugameQuestion Convert(Question value, QuestionType questionType, IEnumerable<Distractor> distractors, Func<File, string> getImageFunc, Func<File, string> getImageNameFunc)
+        public static EdugameQuestion Convert(QuestionDTO value, File image, QuestionType questionType, IEnumerable<Distractor> distractors, Func<File, string> getImageFunc, Func<File, string> getImageNameFunc)
         {
             if (value == null || questionType == null)
             {
@@ -28,18 +32,26 @@
 
             var result = new EdugameQuestion
             {
-                Distractors = distractors.Where(x => x.Question.Id == value.Id).Select(d => Convert(d, getImageFunc, getImageNameFunc)).ToList(),
+                Distractors = distractors.Where(x => x.Question.Id == value.questionId).Select(d => Convert(d, getImageFunc, getImageNameFunc)).ToList(),
                 Feedback = new EdugameQuestionFeedback
                 {
-                    Correct = value.CorrectMessage,
-                    Incorrect = value.IncorrectMessage,
+                    Correct = value.correctMessage,
+                    Incorrect = value.incorrectMessage,
+                    CorrectReference = value.correctReference ?? string.Empty,
+                    Hint = value.hint ?? string.Empty
                 },
-                Image = getImageFunc(value.Image),
-                ImageName = getImageNameFunc(value.Image),
-                Instruction = value.Instruction,
-                Order = value.QuestionOrder,
-                Score = value.ScoreValue,
-                Title = value.QuestionName,
+                Image = getImageFunc(image),
+                ImageName = getImageNameFunc(image),
+                Instruction = value.instruction,
+                Order = value.questionOrder,
+                Score = value.scoreValue,
+                Title = value.question,
+                IsMandatory = value.isMandatory,
+                PageNumber = value.pageNumber ?? 0,
+                Restrictions = value.restrictions ?? string.Empty,
+                AllowOther = value.allowOther,
+                WeightBucketType = value.weightBucketType ?? 0,
+                TotalWeightBucket = value.totalWeightBucket ?? 0,
                 Type = Convert(questionType),
             };
 
@@ -99,7 +111,7 @@
         /// </summary>
         /// <param name="value">The question.</param>
         /// <returns>Question DTO.</returns>
-        public static Question Convert(EdugameQuestion value)
+        public static Question Convert(EdugameQuestion value, IEnumerable<QuestionType> questionTypes)
         {
             if (value == null)
             {
@@ -110,17 +122,15 @@
             {
                 CorrectMessage = value.Feedback.Correct,
                 IncorrectMessage = value.Feedback.Incorrect,
+                CorrectReference = value.Feedback.CorrectReference,
+                Hint = value.Feedback.Hint,
                 ScoreValue = value.Score,
-                Distractors = null,
                 QuestionOrder = value.Order,
                 Instruction = value.Instruction,
                 QuestionName = value.Title,
                 DateCreated = DateTime.Now,
                 DateModified = DateTime.Now,
-                QuestionType = new QuestionType
-                {
-                    Id = value.Type.Id
-                },
+                QuestionType = questionTypes.FirstOrDefault(x => x.Id == value.Type.Id),
                 IsActive = true
             };
 

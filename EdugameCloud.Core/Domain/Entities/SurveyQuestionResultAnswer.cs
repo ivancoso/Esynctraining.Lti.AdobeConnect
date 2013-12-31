@@ -25,9 +25,9 @@
         public virtual Distractor SurveyDistractor { get; set; }
 
         /// <summary>
-        /// Gets or sets the survey question result answer ref.
+        /// Gets or sets the survey distractor answer.
         /// </summary>
-        public virtual SurveyQuestionResultAnswer SurveyQuestionResultAnswerRef { get; set; }
+        public virtual Distractor SurveyDistractorAnswer { get; set; }
 
         #endregion
     }

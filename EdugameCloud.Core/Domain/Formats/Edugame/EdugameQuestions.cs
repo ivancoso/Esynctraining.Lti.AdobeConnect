@@ -14,25 +14,30 @@
         /// </summary>
         public EdugameQuestions()
         {
-            Questions = new List<EdugameQuestion>();
+            this.Questions = new List<EdugameQuestion>();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EdugameQuestions"/> class.
         /// </summary>
-        /// <param name="smiId">SubModule item Id.</param>
-        /// <param name="questions">Edugame questions.</param>
-        public EdugameQuestions(int smiId, IEnumerable<EdugameQuestion> questions) : this()
+        /// <param name="subModuleId">
+        /// The smi Type Id.
+        /// </param>
+        /// <param name="questions">
+        /// Edugame questions.
+        /// </param>
+        public EdugameQuestions(int subModuleId, IEnumerable<EdugameQuestion> questions)
+            : this()
         {
-            Questions.AddRange(questions);
-            SmiId = smiId;
+            this.Questions.AddRange(questions);
+            this.SubModuleId = subModuleId;
         }
 
         /// <summary>
-        /// Gets or sers smiId.
+        /// Gets or sers smi type Id.
         /// </summary>
-        [XmlAttribute(AttributeName = "smiId")]
-        public int SmiId { get; set; }
+        [XmlAttribute(AttributeName = "subModuleId")]
+        public int SubModuleId { get; set; }
 
         /// <summary>
         /// Gets or sets questions.

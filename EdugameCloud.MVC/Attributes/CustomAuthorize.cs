@@ -12,6 +12,7 @@ namespace EdugameCloud.MVC.Attributes
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net;
     using System.Security.Principal;
     using System.Web;
     using System.Web.Mvc;
@@ -36,7 +37,7 @@ namespace EdugameCloud.MVC.Attributes
         /// <param name="roles">
         /// The roles.
         /// </param>
-        public CustomAuthorize(params string[] roles)
+        public CustomAuthorize(params UserRoleEnum[] roles)
         {
             this.RolesList = roles.ToList();
         }
@@ -48,7 +49,7 @@ namespace EdugameCloud.MVC.Attributes
         /// <summary>
         /// Gets or sets the roles list.
         /// </summary>
-        public IEnumerable<string> RolesList { get; set; }
+        public IEnumerable<UserRoleEnum> RolesList { get; set; }
 
         #endregion
 
@@ -77,25 +78,13 @@ namespace EdugameCloud.MVC.Attributes
             }
 
             var model = IoC.Resolve<AuthenticationModel>();
-            var user = (User)model.GetCurrentUser(IoC.Resolve<UserModel>().GetOneByEmail);
+            var user = (User)model.GetCurrentUser(x => IoC.Resolve<UserModel>().GetOneByEmail(x).Value);
             if (user == null)
             {
                 return false;
             }
 
-            var role = user.UserRole.UserRoleName;
-
-            if (this.RolesList != null && this.RolesList.Any() && (this.RolesList.Contains(role, StringComparer.OrdinalIgnoreCase) || this.RolesList.Contains(UserRoleEnum.Any.ToString(), StringComparer.OrdinalIgnoreCase)))
-            {
-                return true;
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Roles) && (SafeSplit(this.Roles).Length > 0) && (SafeSplit(this.Roles).Contains(role, StringComparer.OrdinalIgnoreCase) || SafeSplit(this.Roles).Contains(UserRoleEnum.Any.ToString(), StringComparer.OrdinalIgnoreCase)))
-            {
-                return true;
-            }
-
-            return false;
+            return this.RolesList == null || !this.RolesList.Any() || this.RolesList.Contains(UserRoleEnum.Any) || user.IsInAnyRole(this.RolesList.ToArray());
         }
 
         /// <summary>
@@ -108,12 +97,9 @@ namespace EdugameCloud.MVC.Attributes
         /// </exception>
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            if (IoC.Resolve<AuthenticationModel>().GetCurrentUser(IoC.Resolve<UserModel>().GetOneByEmail) != null)
-            {
-                throw new AccessDeniedException();
-            }
-
-            base.HandleUnauthorizedRequest(filterContext);
+            filterContext.RequestContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            filterContext.RequestContext.HttpContext.Response.StatusDescription = "Forbidden";
+            filterContext.RequestContext.HttpContext.Response.End();
         }
 
         /// <summary>

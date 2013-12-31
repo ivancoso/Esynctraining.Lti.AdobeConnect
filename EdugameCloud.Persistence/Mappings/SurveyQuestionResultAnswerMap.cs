@@ -16,7 +16,7 @@
         {
             this.Map(x => x.Value).Not.Nullable();
             this.References(x => x.SurveyDistractor).Column("surveyDistractorId").Nullable();
-            this.References(x => x.SurveyQuestionResultAnswerRef).Column("surveyQuestionResultAnswerRefId").Nullable();
+            this.References(x => x.SurveyDistractorAnswer).Column("surveyDistractorAnswerId").Nullable();
             this.References(x => x.SurveyQuestionResult).Not.Nullable();
         }
 

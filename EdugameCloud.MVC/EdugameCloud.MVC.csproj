@@ -188,7 +188,7 @@
     <None Include="T4MVC.tt.settings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>

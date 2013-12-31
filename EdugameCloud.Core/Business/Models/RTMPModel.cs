@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Web;
+    using System.Web.Configuration;
 
     using Castle.Core.Logging;
 
@@ -137,7 +138,7 @@
                                        typeof(SNGroupDiscussion),
                                        typeof(SNMember)
                                    };
-            if (allowedTypes.Contains(typeof(T)))
+            if (allowedTypes.Contains(typeof(T)) && !string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
             {
                 this.logger.Error(string.Format("starting RTMP call: {0}, companyId={1}, id={2}", notificationType.ToString(), companyId, id));
                 this.rtmpClient.connect(
@@ -160,9 +161,9 @@
         {
             lock (_locker)
             {
-                if (HttpContext.Current != null)
+                if (!string.IsNullOrWhiteSpace(this.settings.RTMPServerPort) && HttpContext.Current != null)
                 {
-                    var server = (RTMPServer)HttpContext.Current.Application[ApplicationKeys.WebOrbRTMPServerKey];
+                    var server = HttpContext.Current.Application[ApplicationKeys.WebOrbRTMPServerKey] as RTMPServer;
                     if (server == null || !server.IsRunning)
                     {
                         try

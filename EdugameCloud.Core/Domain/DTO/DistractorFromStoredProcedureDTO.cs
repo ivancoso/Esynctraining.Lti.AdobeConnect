@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -27,7 +28,7 @@
         public virtual bool? isCorrect { get; set; }
 
         [DataMember]
-        public virtual int? imageId { get; set; }
+        public virtual Guid? imageId { get; set; }
 
         [DataMember]
         public virtual FileDTO imageVO { get; set; }

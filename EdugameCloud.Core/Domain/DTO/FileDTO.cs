@@ -60,7 +60,7 @@
         ///     Gets or sets the id.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.

@@ -38,7 +38,7 @@
         /// Gets or sets the authentication cookie.
         /// </summary>
         [DataMember]
-        public AuthCookieDTO authCookie { get; set; }
+        public SessionDTO session { get; set; }
 
         /// <summary>
         /// Gets or sets the splash screen.

@@ -314,6 +314,12 @@
     <Content Include="Mail\Attachments\svn.ignore" />
     <Content Include="Web.constrings" />
     <Content Include="Applications\DBChangesNotifier\app.config" />
+    <Content Include="FileStorage\Schemas\Edugame.xsd">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="FileStorage\Schemas\WebEx.xsd">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -326,11 +332,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
+    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
       <Project>{9abe4ef7-cd9b-49d0-9084-d38f93b71065}</Project>
       <Name>Esynctraining.Core.Weborb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>

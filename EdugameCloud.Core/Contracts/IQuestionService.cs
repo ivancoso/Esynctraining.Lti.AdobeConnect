@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.ServiceModel;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Formats;
     using Esynctraining.Core.Domain.Contracts;
 
     /// <summary>
@@ -112,17 +111,25 @@
         /// <param name="format">Import format.</param>
         /// <returns>The <see cref="ServiceResponse"/>.</returns>
         [OperationContract]
-        ServiceResponse ImportQuestionsBySubModuleItemId(string id, int smiId, string format);
+        ServiceResponse<QuestionDTO> ImportQuestionsBySubModuleItemId(string id, int smiId, string format);
 
         /// <summary>
-        /// Import entity by SubModule item id.
+        /// The get parsed questions by id.
         /// </summary>
-        /// <param name="id">Import id.</param>
-        /// <param name="smiId">SubModule item id.</param>
-        /// <param name="format">Import format.</param>
-        /// <returns>The <see cref="ServiceResponse"/>.</returns>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="format">
+        /// The format.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
-        ServiceResponse ImportBySubModuleItemId(string id, int smiId, string format);
+        ServiceResponse<QuestionDTO> GetParsedQuestionsById(string id, int userId, string format);
 
         #endregion
     }

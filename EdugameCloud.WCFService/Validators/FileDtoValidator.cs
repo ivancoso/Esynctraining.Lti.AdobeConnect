@@ -23,11 +23,11 @@
             this.RuleFor(x => x.dateCreated).NotEqual(default(DateTime)).WithError(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Date is invalid");
             this.RuleFor(x => x.fileName)
                 .Must((model, x) =>
-                    (model.fileId == 0 && !string.IsNullOrWhiteSpace(x) && Path.GetExtension(x) != null)
-                    || (model.fileId != 0 && (string.IsNullOrWhiteSpace(x) || Path.GetExtension(x) != null)))
+                    (model.fileId != default(Guid) && (string.IsNullOrWhiteSpace(x) || Path.GetExtension(x) != null))
+                    || (!string.IsNullOrWhiteSpace(x) && Path.GetExtension(x) != null))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "File name is empty or not contains extension");
             this.RuleFor(x => x.fileId)
-                .Must((model, x) => (x == 0 && model.createdBy.HasValue)
+                .Must((model, x) => (x == default(Guid) && model.createdBy.HasValue)
                     || (model.height.HasValue || model.width.HasValue || model.x.HasValue || model.y.HasValue || !string.IsNullOrWhiteSpace(model.fileName)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Required param is missing: createdBy for insert; or height, width, x, y or fileName must be set for update");
         }

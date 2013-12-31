@@ -43,7 +43,7 @@
             this.questionTypeId = question.QuestionType.Id;
             this.questionOrder = question.QuestionOrder;
             this.subModuleItemId = question.SubModuleItem.With(x => x.Id);
-            this.imageId = question.Image.Return(x => x.Id, (int?)null);
+            this.imageId = question.Image.Return(x => x.Id, (Guid?)null);
             this.instruction = question.Instruction;
             this.correctMessage = question.CorrectMessage;
             this.incorrectMessage = question.IncorrectMessage;
@@ -123,7 +123,7 @@
         ///     Gets or sets the File id.
         /// </summary>
         [DataMember]
-        public int? imageId { get; set; }
+        public Guid? imageId { get; set; }
 
         /// <summary>
         ///     Gets or sets the image vo.

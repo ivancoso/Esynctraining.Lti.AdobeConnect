@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
+    using System;
     using System.ServiceModel;
     using EdugameCloud.Core.Domain.DTO;
     using Esynctraining.Core.Domain.Contracts;
@@ -70,7 +71,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<FileDTO> GetById(int id);
+        ServiceResponse<FileDTO> GetById(Guid id);
 
 
 

@@ -19,6 +19,8 @@
             this.Map(x => x.LastName).Length(100).Nullable();
             this.Map(x => x.Password).Length(100).Nullable();
             this.Map(x => x.Email).Nullable();
+            this.Map(x => x.SessionToken).Nullable();
+            this.Map(x => x.SessionTokenExpirationDate).Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.Status).Default(1.ToString());
