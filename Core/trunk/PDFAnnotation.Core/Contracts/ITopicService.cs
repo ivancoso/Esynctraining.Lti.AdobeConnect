@@ -75,6 +75,31 @@
         [OperationContract]
         ServiceResponse<int> DeleteById(int id);
 
+        /// <summary>
+        /// The get all by category or company and name paged.
+        /// </summary>
+        /// <param name="searchPattern">
+        /// The search pattern.
+        /// </param>
+        /// <param name="categoryId">
+        /// The category id.
+        /// </param>
+        /// <param name="pageIndex">
+        /// The page index.
+        /// </param>
+        /// <param name="pageSize">
+        /// The page size.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<TopicDTO> GetAllByCategoryAndNamePaged(
+            string searchPattern,
+            int categoryId,
+            int pageIndex,
+            int pageSize);
+
         #endregion
     }
 }

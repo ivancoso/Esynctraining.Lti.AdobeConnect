@@ -6,7 +6,9 @@
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Extensions;
 
+    using NHibernate;
     using NHibernate.Criterion;
 
     using PDFAnnotation.Core.Domain.Entities;
@@ -61,6 +63,22 @@
         {
             var query = new DefaultQueryOver<Company, int>().GetQueryOver().Select(x => x.Id);
             return this.Repository.FindAll<int>(query).ToList().Distinct();
+        }
+
+        /// <summary>
+        /// The get one by name.
+        /// </summary>
+        /// <param name="companyName">
+        /// The company name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Company}"/>.
+        /// </returns>
+        public IFutureValue<Company> GetOneByName(string companyName)
+        {
+            var companyNameToLower = companyName.Return(x => x.ToLowerInvariant(), string.Empty);
+            var query = new DefaultQueryOver<Company, int>().GetQueryOver().WhereRestrictionOn(x => x.CompanyName).IsInsensitiveLike(companyNameToLower);
+            return this.Repository.FindOne(query);
         }
 
         #endregion

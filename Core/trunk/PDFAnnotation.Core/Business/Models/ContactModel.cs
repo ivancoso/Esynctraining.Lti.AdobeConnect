@@ -8,11 +8,9 @@
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Extensions;
 
     using NHibernate;
     using NHibernate.Criterion;
-    using NHibernate.SqlCommand;
     using NHibernate.Transform;
 
     using PDFAnnotation.Core.Business.Queries;
@@ -34,6 +32,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ContactModel"/> class.
         /// </summary>
+        /// <param name="fullTextModel">
+        /// The full Text Model.
+        /// </param>
         /// <param name="repository">
         /// The repository.
         /// </param>
@@ -176,10 +177,7 @@
         /// <param name="flush">
         /// The flush.
         /// </param>
-        /// <param name="acp">
-        /// The acp.
-        /// </param>
-        public void RegisterDelete(Contact entity, bool flush)
+        public override void RegisterDelete(Contact entity, bool flush)
         {
             entity.Status = ContactStatusEnum.Deleted;
             base.RegisterSave(entity, flush);
@@ -339,6 +337,5 @@
                     .TransformUsing(Transformers.AliasToBean<CategoryContactDTO>());
             return this.Repository.FindAll<CategoryContactDTO>(query);
         }
-
     }
 }

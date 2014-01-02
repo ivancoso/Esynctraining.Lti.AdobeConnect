@@ -50,16 +50,34 @@
         public string companyName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company type id.
+        /// Gets or sets the color primary.
         /// </summary>
         [DataMember]
-        public int companyTypeId { get; set; }
+        public string colorPrimary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color secondary.
+        /// </summary>
+        [DataMember]
+        public string colorSecondary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color text.
+        /// </summary>
+        [DataMember]
+        public string colorText { get; set; }
 
         /// <summary>
         ///     Gets or sets the phone.
         /// </summary>
         [DataMember]
         public string phone { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the logo.
+        /// </summary>
+        [DataMember]
+        public int? logoId { get; set; }
 
         #endregion
     }

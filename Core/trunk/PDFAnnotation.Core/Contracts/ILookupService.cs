@@ -27,16 +27,6 @@
         ServiceResponse<ContactTypeDTO> GetContactTypes();
 
         /// <summary>
-        /// The get company types.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        [WebORBCache(CacheScope = CacheScope.Global)]
-        ServiceResponse<CompanyTypeDTO> GetFirmTypes();
-
-        /// <summary>
         /// The get countries.
         /// </summary>
         /// <returns>

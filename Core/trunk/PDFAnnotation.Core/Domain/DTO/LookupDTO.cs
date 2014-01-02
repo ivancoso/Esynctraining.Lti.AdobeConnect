@@ -24,12 +24,6 @@
         public List<CountryDTO> Countries { get; set; }
 
         /// <summary>
-        /// Gets or sets the company types.
-        /// </summary>
-        [DataMember]
-        public List<CompanyTypeDTO> CompanyTypes { get; set; }
-
-        /// <summary>
         /// Gets or sets the states.
         /// </summary>
         [DataMember]

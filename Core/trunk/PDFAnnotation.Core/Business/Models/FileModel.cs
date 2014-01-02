@@ -3,20 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.Data.SqlTypes;
+    using System.Drawing;
+    using System.Drawing.Drawing2D;
+    using System.Drawing.Imaging;
     using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Web;
 
+    using Castle.Core.Logging;
+
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
-    using Iesi.Collections.Generic;
 
     using NHibernate;
     using NHibernate.Criterion;
@@ -117,6 +119,7 @@
         /// The full Text Model.
         /// </param>
         /// <param name="markModel">
+        /// Marks model
         /// </param>
         public FileModel(
             IRepository<File, int> repository, 
@@ -149,9 +152,11 @@
         /// <summary>
         /// Checks supposed exhibit number, returns this or first available
         /// </summary>
-        /// <param name="category">
+        /// <param name="categoryId">
+        /// The category Id.
         /// </param>
-        /// <param name="topic">
+        /// <param name="topicId">
+        /// The topic Id.
         /// </param>
         /// <param name="fileNumber">
         /// The exhibit number.
@@ -159,32 +164,27 @@
         /// <returns>
         /// The <see cref="Nullable{Int32}"/>.
         /// </returns>
-        public int CheckFileNumber(Category category, Topic topic, int? fileNumber)
+        public int CheckFileNumber(int categoryId, int topicId, int? fileNumber)
         {
-            List<File> files =
-                category.Return(x => x.Files.Where(f => f.Topic.With(w => w.Id) == topic.Id), new HashedSet<File>())
-                    .Distinct().ToList();
+            var query =
+                new DefaultQueryOver<File, int>().GetQueryOver()
+                    .Where(x => x.Category.Id == categoryId && x.Topic.Id == topicId)
+                    .AndRestrictionOn(x => x.FileNumber)
+                    .IsNotNull.TransformUsing(Transformers.DistinctRootEntity).Select(x => x.FileNumber);
+            var numbers = this.Repository.FindAll<int>(query).ToList();
 
-            int nextNumber;
-            if (category.With(c => c.IsFileNumbersAutoIncremented) || !fileNumber.HasValue || fileNumber.Value == 0)
+            int next = 1;
+            if (fileNumber.HasValue && fileNumber.Value != 0)
             {
-                int lastNumber = files.Where(f => f.FileNumber.HasValue).Max(f => f.FileNumber) ?? 0;
-                nextNumber = lastNumber + 1;
-            }
-            else
-            {
-                List<int> numbers = // ReSharper disable once PossibleInvalidOperationException
-                    files.Where(f => f.FileNumber.HasValue).Select(f => f.FileNumber.Value).ToList();
-                int n = Math.Max(fileNumber.Value, 1);
-                while (numbers.Contains(n))
-                {
-                    n++;
-                }
-
-                nextNumber = n;
+                next = Math.Max(fileNumber.Value, 1);
             }
 
-            return nextNumber;
+            while (numbers.Contains(next))
+            {
+                next++;
+            }
+
+            return next;
         }
 
         /// <summary>
@@ -236,6 +236,87 @@
         }
 
         /// <summary>
+        /// The resize image.
+        /// </summary>
+        /// <param name="content">
+        /// Image content.
+        /// </param>
+        /// <param name="maxImageWidth">
+        /// The max Image Width.
+        /// </param>
+        /// <param name="maxImageHeight">
+        /// The max Image Height.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte[]"/>.
+        /// </returns>
+        public byte[] ResizeImage(byte[] content, int maxImageWidth, int maxImageHeight)
+        {
+            Image img;
+            if (TryParseImage(content, out img))
+            {
+                try
+                {
+                    var resizedImage = this.ResizeImage(string.Empty, maxImageWidth, maxImageHeight, img);
+                    var iciPng = GetPngImageCodecInfo();
+                    var encoderParameters = new EncoderParameters(1);
+                    encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
+                    var ms = new MemoryStream();
+                    resizedImage.Save(ms, iciPng, encoderParameters);
+                    return ms.ToArray();
+                }
+                catch (Exception ex)
+                {
+                    IoC.Resolve<ILogger>().Error("Fail during image resize", ex);
+                }
+            }
+
+            return content;
+        }
+
+        /// <summary>
+        /// The try parse image.
+        /// </summary>
+        /// <param name="bytes">
+        /// The bytes.
+        /// </param>
+        /// <param name="img">
+        /// The img.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool TryParseImage(byte[] bytes, out Image img)
+        {
+            img = null;
+            try
+            {
+                img = Image.FromStream(new MemoryStream(bytes));
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static ImageCodecInfo GetPngImageCodecInfo()
+        {
+            ImageCodecInfo iciPng = null;
+            foreach (ImageCodecInfo ici in ImageCodecInfo.GetImageDecoders())
+            {
+                if (ici.FilenameExtension.ToLower().Contains("png"))
+                {
+                    iciPng = ici;
+                    break;
+                }
+            }
+            iciPng = iciPng ?? ImageCodecInfo.GetImageDecoders()[1];
+            return iciPng;
+        }
+
+        /// <summary>
         /// The create file.
         /// </summary>
         /// <param name="name">
@@ -249,9 +330,6 @@
         /// </param>
         /// <param name="date">
         /// The date.
-        /// </param>
-        /// <param name="event">
-        /// The event
         /// </param>
         /// <param name="category">
         /// The category.
@@ -274,7 +352,7 @@
             Topic topic = null, 
             byte[] content = null)
         {
-            var file = new File { FileName = name, FileSize = size, TopicName = deponent };
+            var file = new File { FileName = name.Replace(" ", "_"), FileSize = size, TopicName = deponent };
 
             if (string.IsNullOrWhiteSpace(file.TopicName))
             {
@@ -334,7 +412,7 @@
         /// <returns>
         /// The <see cref="IEnumerable{File}"/>.
         /// </returns>
-        public IEnumerable<File> GetAllByCasesSearched(string searchPattern, DateTime? start, DateTime? end, List<int> casesId)
+        public IEnumerable<File> GetAllByCategoriesSearched(string searchPattern, DateTime? start, DateTime? end, List<int> casesId)
         {
             var searchIds = new List<int>();
             
@@ -492,10 +570,13 @@
         /// </returns>
         public byte[] GetPDFData(File file)
         {
-            string fileName = this.PermanentPdfName(file);
-            if (System.IO.File.Exists(fileName))
+            if (file != null)
             {
-                return System.IO.File.ReadAllBytes(fileName);
+                string fileName = this.PermanentPdfName(file);
+                if (System.IO.File.Exists(fileName))
+                {
+                    return System.IO.File.ReadAllBytes(fileName);
+                }
             }
 
             return null;
@@ -621,47 +702,60 @@
         }
 
         /// <summary>
-        /// Get file data as image.
+        /// The get updated SWF data.
         /// </summary>
         /// <param name="id">
-        /// The file id.
+        /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="Stream"/>.
+        /// The <see cref="byte"/>.
         /// </returns>
         public byte[] GetUpdatedSWFData(string id)
         {
             int fileId = int.Parse(id);
             File file = this.GetOneById(fileId).Value;
+            return this.GetUpdatedSWFData(file);
+        }
 
+        /// <summary>
+        /// Get file data as image.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stream"/>.
+        /// </returns>
+        public byte[] GetUpdatedSWFData(File file)
+        {
             byte[] buffer = this.GetPDFData(file);
             if (buffer != null)
             {
-                List<ATDrawing> drawings = this.drawingModel.GetAllForFile(fileId).ToList();
+                List<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id).ToList();
                 drawings.Where(o => o.Mark.DateChanged > file.DateModified)
                     .ToList()
                     .ForEach(o => this.drawingModel.RegisterDelete(o));
                 drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
 
-                List<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(fileId).ToList();
+                List<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id).ToList();
                 highlights.Where(o => o.Mark.DateChanged > file.DateModified)
                     .ToList()
                     .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
                 highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
 
-                List<ATShape> shapes = this.shapeModel.GetAllForFile(fileId).ToList();
+                List<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id).ToList();
                 shapes.Where(o => o.Mark.DateChanged > file.DateModified)
                     .ToList()
                     .ForEach(o => this.shapeModel.RegisterDelete(o));
                 shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
 
-                List<ATTextItem> textItems = this.textItemModel.GetAllForFile(fileId).ToList();
+                List<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id).ToList();
                 textItems.Where(o => o.Mark.DateChanged > file.DateModified)
                     .ToList()
                     .ForEach(o => this.textItemModel.RegisterDelete(o));
                 textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
 
-                List<ATRotation> rotations = this.rotationModel.GetAllForFile(fileId).ToList();
+                List<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id).ToList();
                 rotations.Where(o => o.Mark.DateChanged > file.DateModified)
                     .ToList()
                     .ForEach(o => this.rotationModel.RegisterDelete(o));
@@ -836,6 +930,8 @@
             this.shapeModel.Flush();
             this.textItemModel.Flush();
             this.rotationModel.Flush();
+
+            this.markModel.Flush();
         }
 
         /// <summary>
@@ -943,6 +1039,32 @@
         }
 
         /// <summary>
+        /// The get one by file id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="File"/>.
+        /// </returns>
+        public File GetOneByFileId(string id)
+        {
+            int idVal;
+            Guid idGuid;
+            if (Guid.TryParse(id, out idGuid))
+            {
+                return this.GetOneByWebOrbId(idGuid).Value;
+            }
+
+            if (int.TryParse(id, out idVal))
+            {
+                return this.GetOneById(idVal).Value;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Sets auto-incremented display file name if needed
         /// </summary>
         /// <param name="entity">
@@ -954,11 +1076,13 @@
         public void SetDisplayName(File entity, int exhibitNumber)
         {
             Topic topic = entity.Topic;
-            string displayName = string.Format(
-                "{0:#0000}_{1}{2}", 
-                exhibitNumber, 
-                topic.FullName.Trim().Replace(" ", "_"), 
-                new FileInfo(entity.FileName).Extension);
+            var availiblePatternOptions = new Dictionary<string, string>();
+            var file = new FileInfo(entity.FileName);
+            availiblePatternOptions.Add("{fileName}", file.Name);
+            availiblePatternOptions.Add("{extension}", file.Extension);
+            availiblePatternOptions.Add("{number}", string.Format("{0:#0000}", exhibitNumber));
+            availiblePatternOptions.Add("{topic}", topic.FullName.Trim().Replace(" ", "_"));
+            string displayName = availiblePatternOptions.Keys.Aggregate((string)this.settings.DisplayNamePattern, (current, optionKey) => current.Replace(optionKey, availiblePatternOptions[optionKey]));
             entity.DisplayName = displayName;
             entity.FileNumber = exhibitNumber;
         }
@@ -966,6 +1090,83 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The resize image.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <param name="maxCanvasWidth">
+        /// The max canvas width.
+        /// </param>
+        /// <param name="maxCanvasHeight">
+        /// The max canvas height.
+        /// </param>
+        /// <param name="img">
+        /// The img.
+        /// </param>
+        /// <param name="originalWidth">
+        /// The original width.
+        /// </param>
+        /// <param name="originalHeight">
+        /// The original height.
+        /// </param>
+        private Image ResizeImage(string path,
+            /* note changed names */
+                     int maxCanvasWidth, int maxCanvasHeight,
+            /* new */
+                     Image img = null,
+                     int? originalWidth = null, int? originalHeight = null)
+        {
+            Image image = img ?? Image.FromFile(path);
+            if (originalWidth == null)
+            {
+                originalWidth = image.Width;
+            }
+
+            if (originalHeight == null)
+            {
+                originalHeight = image.Height;
+            }
+
+            var canvasWidth = Math.Min(maxCanvasWidth, originalWidth.Value);
+            var canvasHeight = Math.Min(maxCanvasHeight, originalHeight.Value);
+
+
+
+            /* ------------------ new code --------------- */
+
+            // Figure out the ratio
+            double ratioX = (double)canvasWidth / (double)originalWidth;
+            double ratioY = (double)canvasHeight / (double)originalHeight;
+
+            // use whichever multiplier is smaller
+            double ratio = ratioX < ratioY ? ratioX : ratioY;
+
+            // now we can get the new height and width
+            int newHeight = Convert.ToInt32(originalHeight * ratio);
+            int newWidth = Convert.ToInt32(originalWidth * ratio);
+
+            // Now calculate the X,Y position of the upper-left corner 
+            // (one of these will always be zero)
+            int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
+            int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
+
+
+            Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names
+
+            var graphic = Graphics.FromImage(thumbnail);
+            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphic.SmoothingMode = SmoothingMode.HighQuality;
+            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            graphic.CompositingQuality = CompositingQuality.HighQuality;
+            graphic.Clear(Color.Transparent); // white padding
+            graphic.DrawImage(image, 0, 0, newWidth, newHeight);
+
+            /* ------------- end new code ---------------- */
+            return thumbnail;
+        }
 
         /// <summary>
         /// The file storage physical path.
@@ -1071,36 +1272,6 @@
             }
 
             return path;
-        }
-
-        /// <summary>
-        /// The reassign.
-        /// </summary>
-        /// <param name="origin">
-        /// The origin.
-        /// </param>
-        /// <param name="mark">
-        /// The mark.
-        /// </param>
-        /// <param name="newFile">
-        /// The new file.
-        /// </param>
-        /// <param name="save">
-        /// The save.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
-        private void Reassign<T>(T origin, ATMark mark, File newFile, Action<T> save) where T : Entity
-        {
-            mark.File = null;
-            ATMark m = mark.DeepClone();
-            m.Id = Guid.NewGuid();
-            m.File = newFile;
-
-            T @new = origin.DeepClone();
-            @new.Id = default(int);
-
-            save(@new);
         }
 
         #endregion

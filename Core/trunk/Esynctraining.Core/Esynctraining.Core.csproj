@@ -101,6 +101,7 @@
     <Compile Include="Business\StoreProcedureParam.cs" />
     <Compile Include="Comparers\BuildVersionComparer.cs" />
     <Compile Include="Domain\Contracts\ServiceResponse.cs" />
+    <Compile Include="Domain\Entities\EntityGuid.cs" />
     <Compile Include="Domain\Entities\DateTimeWithZone.cs" />
     <Compile Include="Domain\Entities\Entity.cs" />
     <Compile Include="Domain\Entities\Error.cs" />

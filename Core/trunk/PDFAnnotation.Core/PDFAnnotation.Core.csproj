@@ -118,7 +118,6 @@
     <Compile Include="Business\Models\CategoryModel.cs" />
     <Compile Include="Business\Models\ContactModel.cs" />
     <Compile Include="Business\Models\ContactTypeModel.cs" />
-    <Compile Include="Business\Models\CompanyTypeModel.cs" />
     <Compile Include="Business\Models\CountryModel.cs" />
     <Compile Include="Business\Models\FileModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
@@ -159,7 +158,6 @@
     <Compile Include="Domain\DTO\ExtendedCategoryDTO.cs" />
     <Compile Include="Domain\DTO\GroupedCategoriesDTO.cs" />
     <Compile Include="Domain\DTO\CompanyWithDetailsDTO.cs" />
-    <Compile Include="Domain\DTO\CompanyTypeDTO.cs" />
     <Compile Include="Domain\DTO\CountryDTO.cs" />
     <Compile Include="Domain\DTO\FileDTO.cs" />
     <Compile Include="Domain\DTO\CompanyDTO.cs" />
@@ -181,8 +179,6 @@
     <Compile Include="Domain\Entities\ContactTypeEnum.cs" />
     <Compile Include="Domain\Entities\Category.cs" />
     <Compile Include="Domain\Entities\Topic.cs" />
-    <Compile Include="Domain\Entities\CompanyType.cs" />
-    <Compile Include="Domain\Entities\CompanyTypeEnum.cs" />
     <Compile Include="Domain\Entities\Country.cs" />
     <Compile Include="Domain\Entities\File.cs" />
     <Compile Include="Domain\Entities\FileStatus.cs" />

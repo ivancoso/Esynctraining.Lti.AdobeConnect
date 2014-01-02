@@ -1,11 +1,12 @@
 ﻿namespace PDFAnnotation.Core.Domain.DTO
 {
     using System;
+    using System.IO;
     using System.Runtime.Serialization;
 
     using Esynctraining.Core.Extensions;
 
-    using PDFAnnotation.Core.Domain.Entities;
+    using File = PDFAnnotation.Core.Domain.Entities.File;
 
     /// <summary>
     ///     The image DTO.
@@ -150,7 +151,30 @@
         /// </returns>
         public bool HasCategoryAndTopic()
         {
-            return this.categoryId.HasValue && this.categoryId.Value != default(int) && this.topicId.HasValue && this.topicId.Value != default(int);
+            return this.categoryId.HasValue && this.categoryId.Value != default(int) && this.HasTopic();
+        }
+
+        /// <summary>
+        /// The has case and Topic.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool HasTopic()
+        {
+            return this.topicId.HasValue && this.topicId.Value != default(int);
+        }
+
+        /// <summary>
+        /// The is PDF.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool IsPDF()
+        {
+            return !string.IsNullOrWhiteSpace(this.fileName)
+                   && Path.GetExtension(this.fileName).ToLowerInvariant().EndsWith("pdf");
         }
     }
 }

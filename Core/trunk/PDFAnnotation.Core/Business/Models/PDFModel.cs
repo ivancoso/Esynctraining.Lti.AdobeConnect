@@ -84,6 +84,17 @@
             return this.converter.ConvertIfNotExist(fileDTO, ms);
         }
 
+        public byte[] DrawOnPDF(
+            IEnumerable<ATDrawing> drawings,
+            IEnumerable<ATHighlightStrikeOut> highlights,
+            IEnumerable<ATShape> shapes,
+            IEnumerable<ATTextItem> textItems,
+            IEnumerable<ATRotation> rotations,
+            byte[] buffer)
+        {
+            return this.DrawOnPDFOrdered(drawings.ToList().OrderBy(x => x.Mark.DateChanged), highlights.ToList().OrderBy(x => x.Mark.DateChanged), shapes.ToList().OrderBy(x => x.Mark.DateChanged), textItems.ToList().OrderBy(x => x.Mark.DateChanged), rotations.ToList().OrderBy(x => x.Mark.DateChanged), buffer);
+        }
+
         /// <summary>
         /// The draw on PDF.
         /// </summary>
@@ -103,7 +114,7 @@
         /// <exception cref="WcfRestContrib.ServiceModel.Web.Exceptions.WebException">
         /// When something went wrong
         /// </exception>
-        public byte[] DrawOnPDF(IEnumerable<ATDrawing> drawings, IEnumerable<ATHighlightStrikeOut> highlights, IEnumerable<ATShape> shapes, IEnumerable<ATTextItem> textItems, IEnumerable<ATRotation> rotations, byte[] buffer)
+        public byte[] DrawOnPDFOrdered(IEnumerable<ATDrawing> drawings, IEnumerable<ATHighlightStrikeOut> highlights, IEnumerable<ATShape> shapes, IEnumerable<ATTextItem> textItems, IEnumerable<ATRotation> rotations, byte[] buffer)
         {
             try
             {

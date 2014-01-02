@@ -45,30 +45,6 @@
 
         #endregion
 
-        /// <summary>
-        /// The validate date time.
-        /// </summary>
-        /// <param name="dt">
-        /// The dt.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DateTime"/>.
-        /// </returns>
-        protected DateTime ValidateDateTime(DateTime dt)
-        {
-            if (SqlDateTime.MinValue.Value > dt)
-            {
-                return SqlDateTime.MinValue.Value;
-            }
-
-            if (SqlDateTime.MaxValue.Value < dt)
-            {
-                return SqlDateTime.MaxValue.Value;
-            }
-
-            return dt;
-        }
-
         #region Public Methods and Operators
 
         /// <summary>
@@ -119,6 +95,21 @@
         {
             QueryOver<T, T> queryOver = new DefaultQueryOver<T, TId>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsLike(id);
             return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
+        /// Exists.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public virtual bool Exists(TId id)
+        {
+            QueryOver<T, T> queryOver = new DefaultQueryOver<T, TId>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsLike(id);
+            return !(this.Repository.FindOne(queryOver).Value == null);
         }
 
         /// <summary>
@@ -200,5 +191,29 @@
         }
 
         #endregion
+
+        /// <summary>
+        /// The validate date time.
+        /// </summary>
+        /// <param name="dt">
+        /// The dt.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTime"/>.
+        /// </returns>
+        protected DateTime ValidateDateTime(DateTime dt)
+        {
+            if (SqlDateTime.MinValue.Value > dt)
+            {
+                return SqlDateTime.MinValue.Value;
+            }
+
+            if (SqlDateTime.MaxValue.Value < dt)
+            {
+                return SqlDateTime.MaxValue.Value;
+            }
+
+            return dt;
+        }
     }
 }

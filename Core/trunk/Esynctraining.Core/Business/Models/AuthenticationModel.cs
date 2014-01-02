@@ -6,6 +6,8 @@ namespace Esynctraining.Core.Business.Models
 
     using Esynctraining.Core.Extensions;
 
+    using NHibernate;
+
     /// <summary>
     ///     The authentication model.
     /// </summary>

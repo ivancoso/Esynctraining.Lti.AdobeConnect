@@ -2,7 +2,7 @@
 {
     using System;
     using System.Runtime.Serialization;
-
+    using Esynctraining.Core.Extensions;
     using PDFAnnotation.Core.Domain.Entities;
 
     /// <summary>
@@ -32,18 +32,39 @@
             if (f != null)
             {
                 this.companyId = f.Id;
-                this.companyTypeId = f.CompanyType.Id;
                 this.addressVO = f.Address != null ? new AddressDTO(f.Address) : null;
                 this.companyName = f.CompanyName;
                 this.dateCreated = f.DateCreated;
                 this.dateModified = f.DateModified;
                 this.phone = f.Phone;
+                this.logoId = f.Logo.Return(x => x.Id, (int?)null);
+                this.colorPrimary = f.ColorPrimary;
+                this.colorSecondary = f.ColorSecondary;
+                this.colorText = f.ColorText;
             }
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the color primary.
+        /// </summary>
+        [DataMember]
+        public string colorPrimary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color secondary.
+        /// </summary>
+        [DataMember]
+        public string colorSecondary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the color text.
+        /// </summary>
+        [DataMember]
+        public string colorText { get; set; }
 
         /// <summary>
         ///     Gets or sets the address.
@@ -70,16 +91,16 @@
         public int companyId { get; set; }
 
         /// <summary>
+        ///     Gets or sets the logo.
+        /// </summary>
+        [DataMember]
+        public int? logoId { get; set; }
+
+        /// <summary>
         ///     Gets or sets the company name.
         /// </summary>
         [DataMember]
         public string companyName { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the company type id.
-        /// </summary>
-        [DataMember]
-        public int companyTypeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the phone.

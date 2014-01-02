@@ -150,20 +150,11 @@
         /// <summary>
         /// Creates a new empty PDF file
         /// </summary>
-        /// <param name="categoryId">
-        /// The category Id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic Id.
-        /// </param>
-        /// <param name="originFileId">
-        /// The origin File Id.
-        /// </param>
         /// <returns>
         /// file dto
         /// </returns>
         [OperationContract]
-        ServiceResponse<FileDTO> Create(int categoryId, int topicId, int originFileId);
+        ServiceResponse<FileDTO> Create(FileDTO dto);
 
         #endregion
     }

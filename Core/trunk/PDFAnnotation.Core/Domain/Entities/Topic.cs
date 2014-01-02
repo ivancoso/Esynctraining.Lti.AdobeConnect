@@ -5,9 +5,12 @@ namespace PDFAnnotation.Core.Domain.Entities
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
+    using PDFAnnotation.Core.FullText;
+
     /// <summary>
     /// The Topic.
     /// </summary>
+    [FullTextEnabled]
     public class Topic : Entity
     {
         #region Public Properties
@@ -35,6 +38,7 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// <summary>
         ///     Gets or sets LastName
         /// </summary>
+        [FullTextIndexed(0)]
         public virtual string FullName
         {
             get

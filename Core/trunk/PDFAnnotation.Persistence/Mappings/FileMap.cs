@@ -25,8 +25,8 @@
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.FileNumber).Nullable();
 
-            this.References(x => x.Topic).Column("topicId").Not.Nullable();
-            this.References(x => x.Category).Column("categoryId").Not.Nullable();
+            this.References(x => x.Topic).Column("topicId").Nullable();
+            this.References(x => x.Category).Column("categoryId").Nullable();
 
             this.HasMany(x => x.Marks).Cascade.Delete().Inverse().ExtraLazyLoad();
         }

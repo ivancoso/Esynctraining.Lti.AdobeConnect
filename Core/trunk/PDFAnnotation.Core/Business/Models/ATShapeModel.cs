@@ -39,7 +39,7 @@
             var query =
                 new DefaultQueryOver<ATShape, int>().GetQueryOver()
                                                     .JoinQueryOver(x => x.Mark)
-                                                    .Where(x => x.File.Id == fileId);
+                                                    .Where(x => x.File.Id == fileId).Fetch(x => x.Mark).Eager;
             return this.Repository.FindAll(query);
         }
     }
