@@ -1,5 +1,7 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
+    using System.Globalization;
+
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Utils;
@@ -24,7 +26,7 @@
             this.Map(x => x.IncorrectMessage).Nullable();
             this.Map(x => x.Hint).Nullable();
             this.Map(x => x.IsActive).Nullable();
-            this.Map(x => x.ScoreValue).Not.Nullable().Default(0.ToString());
+            this.Map(x => x.ScoreValue).Not.Nullable().Default(0.ToString(CultureInfo.InvariantCulture));
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
 
@@ -34,6 +36,7 @@
             this.HasMany(x => x.Distractors).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.LikertQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.RateQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
+            this.HasMany(x => x.TrueFalseQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.WeightBucketQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.OpenAnswerQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.SingleMultipleChoiceQuestions).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();

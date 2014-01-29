@@ -127,8 +127,7 @@
                         if (FormsAuthentication.CookiesSupported)
                         {
                             FormsAuthentication.SetAuthCookie(user.Email, false);
-                            Request.Cookies[FormsAuthentication.FormsCookieName].Expires =
-                                user.SessionTokenExpirationDate.Value;
+                            Request.Cookies[FormsAuthentication.FormsCookieName].Expires = user.SessionTokenExpirationDate.Value;
                         }
                     }
                     else

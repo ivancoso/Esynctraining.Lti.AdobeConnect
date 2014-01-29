@@ -39,6 +39,7 @@ SELECT   Q.questionId,
 			WHEN Q.questionTypeId = 14 THEN qw.isMandatory 
 			WHEN Q.questionTypeId = 1 or Q.questionTypeId = 7 THEN qc.isMandatory 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.isMandatory 
+			WHEN Q.questionTypeId = 2 THEN qtf.isMandatory 
 			ELSE null END AS isMandatory,
 		CASE 
 		    WHEN Q.questionTypeId = 12 THEN qr.pageNumber 
@@ -46,6 +47,7 @@ SELECT   Q.questionId,
 			WHEN Q.questionTypeId = 14 THEN qw.pageNumber 
 			WHEN Q.questionTypeId = 1 or Q.questionTypeId = 7 THEN qc.pageNumber 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.pageNumber 
+			WHEN Q.questionTypeId = 2 THEN qtf.pageNumber 
 			ELSE null END AS pageNumber,
 		 CASE 
 			WHEN Q.questionTypeId = 14 THEN qw.totalWeightBucket 
@@ -62,6 +64,7 @@ FROM     Question Q
 	     left outer join QuestionForLikert ql on ql.questionId = q.questionId
 		 left outer join QuestionForOpenAnswer qo on qo.questionId = q.questionId
 		 left outer join QuestionForRate qr on qr.questionId = q.questionId
+		 left outer join QuestionForTrueFalse qtf on qtf.questionId = q.questionId
 		 left outer join QuestionForWeightBucket qw on qw.questionId = q.questionId
 		 left outer join QuestionForSingleMultipleChoice qc on qc.questionId = q.questionId 
 		 INNER JOIN

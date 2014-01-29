@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
+    using System;
     using System.Collections.Generic;
     using System.ServiceModel;
     using EdugameCloud.Core.Domain.DTO;
@@ -162,6 +163,21 @@
         /// </returns>
         [OperationContract]
         ServiceResponse ActivateById(int userId);
+
+        /// <summary>
+        /// The update logo.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="logoId">
+        /// The logo id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse UpdateLogo(int userId, Guid logoId);
 
         /// <summary>
         /// The deactivate by id.

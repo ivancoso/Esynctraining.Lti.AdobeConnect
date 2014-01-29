@@ -31,65 +31,6 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class QuestionService : ExportService, IQuestionService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionForLikertModel QuestionForLikertModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForLikertModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionForRateModel QuestionForRateModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForRateModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionForOpenAnswerModel QuestionForOpenAnswerModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForOpenAnswerModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionForWeightBucketModel QuestionForWeightBucketModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForWeightBucketModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question model.
-        /// </summary>
-        private QuestionForSingleMultipleChoiceModel QuestionForSingleMultipleChoiceModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionForSingleMultipleChoiceModel>();
-            }
-        }
-
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>
@@ -362,6 +303,13 @@ namespace EdugameCloud.WCFService
         {
             switch (question.QuestionType.Id)
             {
+                case (int)QuestionTypeEnum.TrueFalse:
+                    var qtf = wasTransient ? new QuestionForTrueFalse() : question.TrueFalseQuestions.FirstOrDefault() ?? new QuestionForTrueFalse();
+                    qtf.PageNumber = dto.pageNumber;
+                    qtf.IsMandatory = dto.isMandatory;
+                    qtf.Question = question;
+                    this.QuestionForTrueFalseModel.RegisterSave(qtf);
+                    return qtf;
                 case (int)QuestionTypeEnum.Rate:
                     var qr = wasTransient ? new QuestionForRate() : question.RateQuestions.FirstOrDefault() ?? new QuestionForRate();
                     qr.AllowOther = dto.allowOther;
@@ -417,24 +365,7 @@ namespace EdugameCloud.WCFService
             return null;
         }
 
-        /// <summary>
-        /// The select custom type from list.
-        /// </summary>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="customQuestions">
-        /// The custom questions.
-        /// </param>
-        /// <returns>
-        /// The <see cref="QuestionFor"/>.
-        /// </returns>
-        private QuestionFor SelectCustomTypeFromList(Question question, IEnumerable<QuestionFor> customQuestions)
-        {
-            return customQuestions.FirstOrDefault(c => c.QuestionTypes.Contains((QuestionTypeEnum)question.QuestionType.Id) && c.Question.Id == question.Id);
-        }
-
-        /// <summary>
+/// <summary>
         /// The create distractors.
         /// </summary>
         /// <param name="dto">

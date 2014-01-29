@@ -24,12 +24,19 @@ namespace EdugameCloud.MVC.Attributes
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
 
+    using NHibernate.Mapping;
+
     /// <summary>
     ///     The custom authorize.
     /// </summary>
     public class CustomAuthorize : AuthorizeAttribute
     {
         #region Constructors and Destructors
+
+        public CustomAuthorize()
+        {
+            this.RolesList = new List<UserRoleEnum>();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CustomAuthorize"/> class.
@@ -50,6 +57,8 @@ namespace EdugameCloud.MVC.Attributes
         /// Gets or sets the roles list.
         /// </summary>
         public IEnumerable<UserRoleEnum> RolesList { get; set; }
+
+        public bool RedirectToLogin { get; set; }
 
         #endregion
 
@@ -97,9 +106,16 @@ namespace EdugameCloud.MVC.Attributes
         /// </exception>
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
-            filterContext.RequestContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            filterContext.RequestContext.HttpContext.Response.StatusDescription = "Forbidden";
-            filterContext.RequestContext.HttpContext.Response.End();
+            if (!RedirectToLogin)
+            {
+                filterContext.RequestContext.HttpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                filterContext.RequestContext.HttpContext.Response.StatusDescription = "Forbidden";
+                filterContext.RequestContext.HttpContext.Response.End();
+            }
+            else
+            {
+                base.HandleUnauthorizedRequest(filterContext);    
+            }
         }
 
         /// <summary>

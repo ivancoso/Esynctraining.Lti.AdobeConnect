@@ -78,6 +78,17 @@
         /// <summary>
         ///     Gets the question model.
         /// </summary>
+protected QuestionForTrueFalseModel QuestionForTrueFalseModel
+        {
+            get
+            {
+                return IoC.Resolve<QuestionForTrueFalseModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the question model.
+        /// </summary>
         protected QuestionForOpenAnswerModel QuestionForOpenAnswerModel
         {
             get
@@ -537,7 +548,22 @@
         protected QuestionFor ProcessCustomQuestionType(Question question, EdugameQuestion dto)
         {
             switch (question.QuestionType.Id)
-            {
+            
+ {
+                case (int)QuestionTypeEnum.TrueFalse:
+                    var qtf = new QuestionForTrueFalse
+                    {
+                        PageNumber = dto.PageNumber,
+                        IsMandatory = dto.IsMandatory ?? false,
+                        Question = question
+                    };
+
+                    if (question.SubModuleItem != null)
+                    {
+                        this.QuestionForTrueFalseModel.RegisterSave(qtf);
+                    }
+
+                    return qtf;
                 case (int)QuestionTypeEnum.Rate:
                     var qr = new QuestionForRate
                                  {

@@ -116,6 +116,47 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
+        public ServiceResponse UpdateLogo(int userId, Guid logoId)
+        {
+            var result = new ServiceResponse();
+            UserModel model = this.UserModel;
+            User user;
+            File file;
+            if ((user = model.GetOneById(userId).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_USER,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.DeleteById_NoUserExists));
+            }
+            else if ((file = this.FileModel.GetOneById(logoId).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_NotFound,
+                        ErrorsTexts.ImageUploadFailed_FileNotFound));
+            }
+            else
+            {
+                user.Logo = file;
+                model.RegisterSave(user, true);
+                IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The activate by id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse ActivateById(int userId)
         {
             var result = new ServiceResponse();
@@ -585,7 +626,7 @@ namespace EdugameCloud.WCFService
             }
 
             result = this.UpdateResult(result, validationResult);
-            this.LogError("Upload buld", result);
+            this.LogError("Upload batch users", result);
             return result;
         }
 
@@ -885,6 +926,9 @@ namespace EdugameCloud.WCFService
             instance.CreatedBy = user.createdBy.HasValue ? this.UserModel.GetOneById(user.createdBy.Value).Value : null;
             instance.ModifiedBy = user.modifiedBy.HasValue
                                       ? this.UserModel.GetOneById(user.modifiedBy.Value).Value
+                                      : null;
+instance.Logo = user.logoId.HasValue
+                                      ? this.FileModel.GetOneById(user.logoId.Value).Value
                                       : null;
             return instance;
         }

@@ -566,7 +566,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>=" Created at: " &amp; FormatDateTime(System.DateTime.Today, DateFormat.ShortDate)</Value>
+                      <Value>=" Created at: " &amp; Format(System.DateTime.Now, "MM/dd/yyyy hh:mm tt")</Value>
                       <Style>
                         <FontFamily>Abel</FontFamily>
                       </Style>

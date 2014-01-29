@@ -13,9 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Web", "Edugame
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MVC", "EdugameCloud.MVC\EdugameCloud.MVC.csproj", "{A17D2033-4439-4418-8224-96A408B548DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Weborb", "..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj", "{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Weborb", "..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj", "{9ABE4EF7-CD9B-49D0-9084-D38F93B71065}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

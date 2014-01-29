@@ -28,10 +28,34 @@
         /// </summary>
         private ISet<TestQuestionResult> testQuestionResults = new HashedSet<TestQuestionResult>();
 
+        /// <summary>
+        /// The like questions.
+        /// </summary>
         private ISet<QuestionForLikert> likertQuestions = new HashedSet<QuestionForLikert>();
+
+        /// <summary>
+        /// The rate questions.
+        /// </summary>
         private ISet<QuestionForRate> rateQuestions = new HashedSet<QuestionForRate>();
+
+        /// <summary>
+        /// The true false questions.
+        /// </summary>
+        private ISet<QuestionForTrueFalse> trueFalseQuestions = new HashedSet<QuestionForTrueFalse>();
+
+        /// <summary>
+        /// The open answer questions.
+        /// </summary>
         private ISet<QuestionForOpenAnswer> openAnswerQuestions = new HashedSet<QuestionForOpenAnswer>();
+
+        /// <summary>
+        /// The weight questions.
+        /// </summary>
         private ISet<QuestionForWeightBucket> weightQuestions = new HashedSet<QuestionForWeightBucket>();
+
+        /// <summary>
+        /// The single multiple choice questions.
+        /// </summary>
         private ISet<QuestionForSingleMultipleChoice> singleMultipleChoiceQuestions = new HashedSet<QuestionForSingleMultipleChoice>();
 
         /// <summary>
@@ -183,7 +207,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the questions for likert.
+        /// Gets or sets the questions for like.
         /// </summary>
         public virtual ISet<QuestionForLikert> LikertQuestions
         {
@@ -199,7 +223,7 @@
         }
 
         /// <summary>
-        /// Gets or sets the questions for likert.
+        /// Gets or sets the questions for rate.
         /// </summary>
         public virtual ISet<QuestionForRate> RateQuestions
         {
@@ -215,7 +239,23 @@
         }
 
         /// <summary>
-        /// Gets or sets the questions for likert.
+        /// Gets or sets the questions for true false questions.
+        /// </summary>
+        public virtual ISet<QuestionForTrueFalse> TrueFalseQuestions
+        {
+            get
+            {
+                return this.trueFalseQuestions;
+            }
+
+            set
+            {
+                this.trueFalseQuestions = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the questions for open answer.
         /// </summary>
         public virtual ISet<QuestionForOpenAnswer> OpenAnswerQuestions
         {

@@ -31,6 +31,11 @@
         private readonly IRepository<QuestionForRate, int> rateRepository;
 
         /// <summary>
+        /// The rate repository.
+        /// </summary>
+        private readonly IRepository<QuestionForTrueFalse, int> trueFalseRepository;
+
+        /// <summary>
         /// The weight repository.
         /// </summary>
         private readonly IRepository<QuestionForWeightBucket, int> weightRepository;
@@ -57,15 +62,19 @@
         /// <param name="rateRepository">
         /// The rate Repository.
         /// </param>
+        /// <param name="trueFalseRepository">
+        /// The true False Repository.
+        /// </param>
         /// <param name="weightRepository">
         /// The weight Repository.
         /// </param>
         /// <param name="choiceRepository">
         /// The choice Repository.
         /// </param>
-        public QuestionModel(IRepository<Question, int> repository, IRepository<QuestionForLikert, int> likertRepository, IRepository<QuestionForOpenAnswer, int> openAnswerRepository, IRepository<QuestionForRate, int> rateRepository, IRepository<QuestionForWeightBucket, int> weightRepository, IRepository<QuestionForSingleMultipleChoice, int> choiceRepository)
+        public QuestionModel(IRepository<Question, int> repository, IRepository<QuestionForLikert, int> likertRepository, IRepository<QuestionForOpenAnswer, int> openAnswerRepository, IRepository<QuestionForRate, int> rateRepository, IRepository<QuestionForTrueFalse, int> trueFalseRepository, IRepository<QuestionForWeightBucket, int> weightRepository, IRepository<QuestionForSingleMultipleChoice, int> choiceRepository)
             : base(repository)
         {
+            this.trueFalseRepository = trueFalseRepository;
             this.likertRepository = likertRepository;
             this.openAnswerRepository = openAnswerRepository;
             this.rateRepository = rateRepository;
@@ -195,6 +204,12 @@
                                 .WhereRestrictionOn(x => x.Question.Id)
                                 .IsIn(typeWithQuestions.Value.ToList());
                         result.AddRange(this.rateRepository.FindAll(ratesListQuery));
+                        break;
+                    case (int)QuestionTypeEnum.TrueFalse:
+                        var trueFalseListQuery = new DefaultQueryOver<QuestionForTrueFalse, int>().GetQueryOver()
+                                .WhereRestrictionOn(x => x.Question.Id)
+                                .IsIn(typeWithQuestions.Value.ToList());
+                        result.AddRange(this.trueFalseRepository.FindAll(trueFalseListQuery));
                         break;
                     case (int)QuestionTypeEnum.OpenAnswerMultiLine:
                     case (int)QuestionTypeEnum.OpenAnswerSingleLine:

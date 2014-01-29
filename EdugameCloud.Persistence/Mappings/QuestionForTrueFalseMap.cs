@@ -5,18 +5,16 @@
     /// <summary>
     /// The question mapping
     /// </summary>
-    public class QuestionForRateMap : BaseClassMap<QuestionForRate>
+    public class QuestionForTrueFalseMap : BaseClassMap<QuestionForTrueFalse>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuestionForRateMap"/> class. 
+        /// Initializes a new instance of the <see cref="QuestionForTrueFalseMap"/> class. 
         /// </summary>
-        public QuestionForRateMap()
+        public QuestionForTrueFalseMap()
         {
-            this.Map(x => x.Restrictions).Nullable();
             this.Map(x => x.PageNumber).Nullable();
-            this.Map(x => x.AllowOther).Nullable();
             this.Map(x => x.IsMandatory).Not.Nullable().Default("1");
 
             this.References(x => x.Question);

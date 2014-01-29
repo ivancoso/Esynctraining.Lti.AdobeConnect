@@ -312,7 +312,10 @@
                 {
                     vcfCard.GivenName = xmlRoot.@base.firstName;
                     vcfCard.FamilyName = xmlRoot.@base.lastName;
-                    fileName = vcfCard.GivenName + " " + vcfCard.FamilyName + ".vcf";
+                    vcfCard.GivenName = vcfCard.GivenName.Trim();
+                    vcfCard.FamilyName = vcfCard.FamilyName.Trim();
+                    var fullName = vcfCard.GivenName + vcfCard.FamilyName;
+                    fileName = string.Format("{0}.vcf", fullName.Trim());
                     vcfCard.Title = xmlRoot.@base.jobTitle;
 
                     if (!string.IsNullOrWhiteSpace(xmlRoot.@base.about))

@@ -95,6 +95,11 @@
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
+        ///     Gets or sets the created by.
+        /// </summary>
+        public virtual File Logo { get; set; }
+
+        /// <summary>
         ///     Gets or sets the session
         /// </summary>
         public virtual string SessionToken { get; set; }

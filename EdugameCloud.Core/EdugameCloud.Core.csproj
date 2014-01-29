@@ -122,8 +122,9 @@
     <Compile Include="Business\Models\AddressModel.cs" />
     <Compile Include="Business\Models\BuildVersionModel.cs" />
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
+    <Compile Include="Business\Models\QuestionForRateModel.cs" />
     <Compile Include="Business\Models\QuestionForSingleMultipleChoiceModel.cs" />
-    <Compile Include="Business\Models\QuestionForRate.cs" />
+    <Compile Include="Business\Models\QuestionForTrueFalse.cs" />
     <Compile Include="Business\Models\QuestionForWeightBucketModel.cs" />
     <Compile Include="Business\Models\QuestionForOpenAnswerModel.cs" />
     <Compile Include="Business\Models\QuestionForLikertModel.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />
+    <Compile Include="Domain\Entities\QuestionForTrueFalse.cs" />
     <Compile Include="Domain\Entities\QuestionForWeightBucket.cs" />
     <Compile Include="Domain\Entities\QuestionForOpenAnswer.cs" />
     <Compile Include="Domain\Entities\QuestionForRate.cs" />
@@ -395,11 +397,11 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
+    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
       <Project>{9abe4ef7-cd9b-49d0-9084-d38f93b71065}</Project>
       <Name>Esynctraining.Core.Weborb</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>

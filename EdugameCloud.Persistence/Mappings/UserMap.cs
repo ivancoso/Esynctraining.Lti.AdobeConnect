@@ -24,7 +24,7 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.Status).Default(1.ToString());
-            this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<User>(x => x.CreatedBy)));
+            this.References(x => x.Logo).Nullable().LazyLoad().Column("logoId");
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<User>(x => x.ModifiedBy)));
 
             this.HasMany(x => x.Activations).Cascade.Delete().Inverse().ExtraLazyLoad();

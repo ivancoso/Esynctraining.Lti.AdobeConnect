@@ -13,6 +13,8 @@
     [DataContract]
     public class UserDTO
     {
+        
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -39,6 +41,7 @@
                 this.dateCreated = user.DateCreated;
                 this.dateModified = user.DateModified;
                 this.email = user.Email;
+                this.logoId = user.Logo.Return(x => x.Id, (Guid?)null);
                 this.firstName = user.FirstName;
                 this.languageId = user.Language.Id;
                 this.lastName = user.LastName;
@@ -52,6 +55,9 @@
         #endregion
 
         #region Public Properties
+
+        [DataMember]
+        public Guid? logoId { get; set; }
 
         /// <summary>
         /// Gets or sets the full name.

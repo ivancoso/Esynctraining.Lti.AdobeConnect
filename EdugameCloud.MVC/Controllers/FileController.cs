@@ -318,7 +318,7 @@
         [ValidateInput(false)]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("toVcf")]
-////      [Authorize]
+        [CustomAuthorize(RedirectToLogin = true)]
         public virtual ActionResult ConvertToVCF(VCFViewModel model)
         {
             if (this.ModelState.IsValid)
@@ -457,7 +457,7 @@
                     var participants = sessionResults[acSession].members.Select(p => new 
                                      {
                                          acSessionId,
-                                         profile = string.IsNullOrWhiteSpace(p.ParticipantProfile) ? null : Url.ActionAbsolute(EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id)),
+                                         profile = string.IsNullOrWhiteSpace(p.ParticipantProfile) ? null : Url.ActionAbsolute(EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id)) + (!string.IsNullOrWhiteSpace(user.SessionToken) ? "&egcSession=" + user.SessionToken : string.Empty),
                                          participant = p.Participant,
                                          totalMessages = (int)p.ParsedProfile.id != 0 ? sessionMessages.Count(m => (int)m.userId == (int)p.ParsedProfile.id) : sessionMessages.Count(m => m.userName == p.Participant || m.userName == p.ParsedProfile.name),
                                          totalLikes = (int)p.ParsedProfile.id != 0 ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id).Sum(m => m.likes) : sessionMessages.Where(m => m.userName == p.Participant || m.userName == p.ParsedProfile.name).Sum(m => m.likes), 
@@ -740,7 +740,7 @@
         [OutputCache(Duration = 2592000, VaryByParam = "sessionId;snMemberId", NoStore = false, 
             Location = OutputCacheLocation.Any)]
         [ActionName("get-profile-vCard")]
-////        [Authorize]
+        [CustomAuthorize(RedirectToLogin = true)]
         public virtual ActionResult GetProfileVCard(int sessionId, int snMemberId)
         {
             SNMember snMember = IoC.Resolve<SNMemberModel>().GetOneById(snMemberId).Value;
