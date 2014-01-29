@@ -68,7 +68,7 @@
     </Reference>
     <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\ConnectExtensions\svn\trunk\csharp\ConnectExtensions\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
+      <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -397,11 +397,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
-      <Project>{9abe4ef7-cd9b-49d0-9084-d38f93b71065}</Project>
-      <Name>Esynctraining.Core.Weborb</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
+    <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>

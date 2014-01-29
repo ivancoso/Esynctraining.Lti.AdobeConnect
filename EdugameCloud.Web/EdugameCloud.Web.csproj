@@ -395,14 +395,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core.Weborb\Esynctraining.Core.Weborb.csproj">
-      <Project>{9abe4ef7-cd9b-49d0-9084-d38f93b71065}</Project>
-      <Name>Esynctraining.Core.Weborb</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
-      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
-      <Name>Esynctraining.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
@@ -414,6 +406,10 @@
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>DepositionConferencing.Persistence</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj">
+      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
+      <Name>Esynctraining.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
