@@ -1,17 +1,16 @@
-﻿namespace PDFAnnotation.Core.FullText
+﻿namespace Esynctraining.Core.FullText
 {
     using System.Diagnostics.CodeAnalysis;
 
+    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
-
     using NHibernate.Event;
-
-    using PDFAnnotation.Core.Business.Models;
 
     /// <summary>
     /// The lucene ft index event listener.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+    // ReSharper disable once InconsistentNaming
     public class LuceneFTIndexEventListener : IPostUpdateEventListener, 
                                               IPostDeleteEventListener, 
                                               IPostInsertEventListener

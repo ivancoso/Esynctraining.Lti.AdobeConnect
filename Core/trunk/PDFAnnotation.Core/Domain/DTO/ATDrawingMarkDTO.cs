@@ -1,5 +1,6 @@
 ﻿namespace PDFAnnotation.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
 
     using PDFAnnotation.Core.Domain.Entities;
@@ -26,7 +27,7 @@
             this.datechanged = item.Mark.DateChanged;
             this.datecreated = item.Mark.DateCreated;
             this.@readonly = item.Mark.IsReadonly;
-
+            this.rotation = item.Mark.Rotation;
             this.color = item.Color;
             this.points = item.Points;
         }
@@ -57,6 +58,12 @@
         #region Base Properties
 
         /// <summary>
+        /// Gets or sets a value indicating rotation.
+        /// </summary>
+        [DataMember]
+        public float? rotation { get; set; }
+
+        /// <summary>
         ///     Gets or sets the id.
         /// </summary>
         [DataMember]
@@ -84,7 +91,7 @@
         /// Gets or sets the file id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         /// Gets or sets the date changed.

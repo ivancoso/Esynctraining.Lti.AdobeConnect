@@ -39,9 +39,7 @@
         {
             Contact user;
             if (!string.IsNullOrWhiteSpace(email)
-                && !string.IsNullOrWhiteSpace(passwordHash)
-                && (user = IoC.Resolve<ContactModel>().GetOneByEmail(email).Value) != null
-                && (user.ValidatePasswordHash(passwordHash) || user.ValidatePassword(passwordHash)))
+                && (user = IoC.Resolve<ContactModel>().GetOneByEmail(email).Value) != null)
             {
                 return new WebOrbPrincipal(new PDFAnnotationIdentity(user));
             }

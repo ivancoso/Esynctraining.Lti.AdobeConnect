@@ -33,7 +33,6 @@
             this.Name = userEntity.Email;
             this.InternalId = userEntity.Id;
             this.InternalEntity = userEntity;
-            this.roles.Add(((ContactTypeEnum)userEntity.ContactType.Id).ToString().ToLower());
             this.roles.Add(ContactTypeEnum.Any.ToString().ToLower());
         }
 

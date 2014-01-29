@@ -6,14 +6,8 @@
     public enum ScheduleDescriptor : byte
     {
         /// <summary>
-        /// The paticipants report update.
+        /// The clear files.
         /// </summary>
-        UpdateParticipants = 0,
-
-        /// <summary>
-        /// The recording import routing update.
-        /// </summary>
-        UpdateEventsWithRecordingAndParticipantsAndShutThemDown = 1,
-
+        ClearFiles = 0
     }
 }

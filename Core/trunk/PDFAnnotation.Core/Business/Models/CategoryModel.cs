@@ -109,7 +109,7 @@ namespace PDFAnnotation.Core.Business.Models
         {
             var query = new DefaultQueryOver<Category, int>().GetQueryOver().WhereRestrictionOn(x => x.Company.Id).IsIn(companyIds);
             
-            if (contact.ContactType.Id == (int)ContactTypeEnum.Contact)
+            if (!contact.IsSuperAdmin && contact.CompanyContacts.ToList().Any(x => x.ContactType.Id == (int)ContactTypeEnum.Contact && companyIds.Contains(x.Company.Id)))
             {
                 Contact c = null;
                 var contactId = contact.Id;

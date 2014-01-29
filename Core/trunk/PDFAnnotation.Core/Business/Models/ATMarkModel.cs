@@ -25,6 +25,39 @@
         {
         }
 
+ /// <summary>
+        /// The get marks by file.
+        /// </summary>
+        /// <param name="fileId">
+        /// The file id.
+        /// </param>
+        /// <param name="date">
+        /// The date.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{ATMark}"/>.
+        /// </returns>
+        public IEnumerable<ATMark> GetMarksByFileOlderThen(Guid fileId, DateTime date)
+        {
+            ATMark mark = null;
+            return this.Repository.Session.QueryOver(() => mark).Where(x => x.File.Id == fileId && x.DateChanged > date).Fetch(x => x.File).Eager.Future<ATMark>().ToList();
+        }
+
+        /// <summary>
+        /// The get marks by file.
+        /// </summary>
+        /// <param name="fileId">
+        /// The file id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{ATMark}"/>.
+        /// </returns>
+        public IEnumerable<ATMark> GetMarksByFile(Guid fileId)
+        {
+            ATMark mark = null;
+            return this.Repository.Session.QueryOver(() => mark).Where(x => x.File.Id == fileId).Fetch(x => x.File).Eager.Future<ATMark>().ToList();
+        }
+
         /// <summary>
         /// The get marks for file.
         /// </summary>
@@ -35,7 +68,7 @@
         /// The <see cref="Tuple"/>.
         /// </returns>
 #pragma warning disable 168
-        public Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>> GetMarksForFile(int fileId)
+        public Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>> GetMarksForFile(Guid fileId)
         {
             // trick to make NHibernate to load all child instances in one roundtrip to db (if db supports it)
             var result = new Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>>(new List<ATShape>(), new List<ATDrawing>(), new List<ATHighlightStrikeOut>(), new List<ATTextItem>());

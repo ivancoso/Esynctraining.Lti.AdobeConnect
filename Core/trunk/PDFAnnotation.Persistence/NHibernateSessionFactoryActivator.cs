@@ -5,11 +5,9 @@
     using Castle.MicroKernel.ComponentActivator;
     using Castle.MicroKernel.Context;
 
+    using Esynctraining.Core.FullText;
     using Esynctraining.Core.Utils;
-
     using NHibernate.Cfg;
-
-    using PDFAnnotation.Core.FullText;
 
     /// <summary>
     /// The n hibernate session factory activator.

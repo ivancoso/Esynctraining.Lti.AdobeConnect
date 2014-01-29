@@ -1,8 +1,8 @@
 ﻿namespace PDFAnnotation.Core.Domain.Entities
 {
     using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.FullText;
     using Iesi.Collections.Generic;
-    using PDFAnnotation.Core.FullText;
 
     /// <summary>
     ///     The case
@@ -28,7 +28,7 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the rb case id.
+        /// Gets or sets the RB case id.
         /// </summary>
         public virtual int? RBCaseId { get; set; }
 

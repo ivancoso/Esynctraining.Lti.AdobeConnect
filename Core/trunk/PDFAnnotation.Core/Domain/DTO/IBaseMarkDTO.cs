@@ -20,6 +20,11 @@
         int pageIndex { get; set; }
 
         /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        float? rotation { get; set; }
+
+        /// <summary>
         /// Gets or sets the display format.
         /// </summary>
         string displayFormat { get; set; }
@@ -32,7 +37,7 @@
         /// <summary>
         /// Gets or sets the file id.
         /// </summary>
-        int fileId { get; set; }
+        Guid fileId { get; set; }
 
         /// <summary>
         /// Gets or sets the date changed.

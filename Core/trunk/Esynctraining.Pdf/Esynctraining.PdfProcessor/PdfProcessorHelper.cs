@@ -28,7 +28,7 @@
         /// </param>
         public void CheckIfDocumentWasScannedAndFixIfNecessary(string path, int resolution = 150)
         {
-            this.RenderScannedPagesWithGsNet(path, path, resolution);
+            this.RenderSpecialCsPagesWithGsNet(path, path, resolution);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@
         public byte[] CheckIfDocumentWasScannedAndFixIfNecessary(byte[] inputStream, int resolution = 150)
         {
             byte[] output;
-            if (this.RenderScannedPagesWithGsNet(inputStream, out output, resolution))
+            if (this.RenderSpecialCsPagesWithGsNet(inputStream, out output, resolution))
             {
                 return output;
             }
@@ -70,7 +70,7 @@
         {
             var originalPosition = inputStream.Position;
             byte[] output;
-            if (this.RenderScannedPagesWithGsNet(inputStream.ToArray(), out output, resolution))
+            if (this.RenderSpecialCsPagesWithGsNet(inputStream.ToArray(), out output, resolution))
             {
                 return new MemoryStream(output);
             }
@@ -96,13 +96,13 @@
         ///     If the document has been changed it is witten to out pdf stream.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public bool RenderScannedPagesWithGsNet(string inPdfPath, string outPdfPath, int resolution)
+        public bool RenderSpecialCsPagesWithGsNet(string inPdfPath, string outPdfPath, int resolution)
         {
             if (File.Exists(inPdfPath))
             {
                 byte[] output;
                 var input = File.ReadAllBytes(inPdfPath);
-                var result = this.RenderScannedPagesWithGsNet(input, out output, resolution);
+                var result = this.RenderSpecialCsPagesWithGsNet(input, out output, resolution);
                 File.WriteAllBytes(outPdfPath, result ? output : input);
                 return result;
             }
@@ -125,7 +125,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool RenderScannedPagesWithGsNet(byte[] inPdfBuffer, out byte[] outPdfBuffer, int resolution)
+        public bool RenderSpecialCsPagesWithGsNet(byte[] inPdfBuffer, out byte[] outPdfBuffer, int resolution)
         {
             bool result = false;
             using (var reader = new PdfReader(inPdfBuffer))
@@ -135,22 +135,22 @@
                         new AndFilter(new List<PdfFilter>
                                 {
                                     new HasSpecialCsResourceFilter(reader),
-                                    new NotFilter(new HasFontResourceFilter(reader)),
+//                                    new NotFilter(new HasFontResourceFilter(reader)),
                                     new NotFilter(new PageHasSpecificKeyFilter(reader, RenderPageAction.EstPageRendered, new PdfBoolean(true)))
                                 });
                     var processor = new PdfProcessor(new List<IPdfAction> { andFilter });
-                    bool containsScannedPages = false;
+                    bool containsSpecialCsPages = false;
                     for (var i = 1; i <= reader.NumberOfPages; i++)
                     {
                         if (processor.Execute(i))
                         {
-                            containsScannedPages = true;
+                            containsSpecialCsPages = true;
                             break;
                         }
                     }
 
                     // Render the document if it has scanned pages.
-                    if (containsScannedPages)
+                    if (containsSpecialCsPages)
                     {
                         using (var outPdfStream = new MemoryStream())
                         {

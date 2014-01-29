@@ -1,11 +1,9 @@
 namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
-
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
-
-    using PDFAnnotation.Core.FullText;
+    using Esynctraining.Core.FullText;
 
     /// <summary>
     /// The Topic.
@@ -47,6 +45,8 @@ namespace PDFAnnotation.Core.Domain.Entities
                 res = res.Trim();
                 return res;
             }
+
+            // ReSharper disable once ValueParameterNotUsed
             set
             {
             }

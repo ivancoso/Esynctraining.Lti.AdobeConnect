@@ -11,13 +11,28 @@
         Created = 1,
 
         /// <summary>
-        /// The completed.
+        /// The saved.
         /// </summary>
-        Completed = 2,
+        Saved = 2,
 
         /// <summary>
-        /// The active.
+        /// The upload completed mode.
         /// </summary>
-        Active = 3
+        UploadCompleted = 3,
+
+        /// <summary>
+        /// The practice mode.
+        /// </summary>
+        PracticeMode = 4,
+
+        /// <summary>
+        /// The preloaded.
+        /// </summary>
+        Preloaded = 5,
+
+        /// <summary>
+        /// The failed.
+        /// </summary>
+        Failed = 6
     }
 }

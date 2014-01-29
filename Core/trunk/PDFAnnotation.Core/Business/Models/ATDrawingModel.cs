@@ -1,5 +1,6 @@
 ﻿namespace PDFAnnotation.Core.Business.Models.Annotation
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
 
@@ -34,7 +35,7 @@
         /// <returns>
         /// The <see cref="IEnumerable"/>.
         /// </returns>
-        public IEnumerable<ATDrawing> GetAllForFile(int fileId)
+        public IEnumerable<ATDrawing> GetAllForFile(Guid fileId)
         {
             var query =
                 new DefaultQueryOver<ATDrawing, int>().GetQueryOver()

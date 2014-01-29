@@ -7,6 +7,7 @@
     using System.Net;
     using System.Text;
 
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     using iTextSharp.text;
@@ -84,6 +85,30 @@
             return this.converter.ConvertIfNotExist(fileDTO, ms);
         }
 
+        /// <summary>
+        /// The draw on pdf.
+        /// </summary>
+        /// <param name="drawings">
+        /// The drawings.
+        /// </param>
+        /// <param name="highlights">
+        /// The highlights.
+        /// </param>
+        /// <param name="shapes">
+        /// The shapes.
+        /// </param>
+        /// <param name="textItems">
+        /// The text items.
+        /// </param>
+        /// <param name="rotations">
+        /// The rotations.
+        /// </param>
+        /// <param name="buffer">
+        /// The buffer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
         public byte[] DrawOnPDF(
             IEnumerable<ATDrawing> drawings,
             IEnumerable<ATHighlightStrikeOut> highlights,
@@ -118,6 +143,28 @@
         {
             try
             {
+                var pageRotations = rotations.ToList();
+                if (pageRotations.Any())
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        var reader = new PdfReader(buffer);
+                        using (var stamper = new PdfStamper(reader, ms))
+                        {
+                            foreach (var pageRotation in pageRotations)
+                            {
+                                var rotationOrigin = reader.GetPageRotation(pageRotation.Mark.PageIndex);
+                                var pageDict = reader.GetPageN(pageRotation.Mark.PageIndex);
+                                int rotation = pageRotation.Mark.Rotation.Return(x => (int)Math.Round(x.Value), 0);
+                                pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + rotation));
+                            }
+                            stamper.Close();
+                        }
+                        ms.Flush();
+                        buffer = ms.ToArray();
+                    }
+                }
+
                 using (var ms = new MemoryStream())
                 {
                     var reader = new PdfReader(buffer);
@@ -131,27 +178,6 @@
                     }
                     ms.Flush();
                     buffer = ms.ToArray();
-                }
-
-                var pageRotations = rotations.ToList();
-                if (pageRotations.Any())
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        var reader = new PdfReader(buffer);
-                        using (var stamper = new PdfStamper(reader, ms))
-                        {
-                            foreach (var pageRotation in pageRotations)
-                            {
-                                var rotationOrigin = reader.GetPageRotation(pageRotation.Mark.PageIndex);
-                                var pageDict = reader.GetPageN(pageRotation.Mark.PageIndex);
-                                pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + pageRotation.Mark.Rotation));
-                            }
-                            stamper.Close();
-                        }
-                        ms.Flush();
-                        buffer = ms.ToArray();
-                    }
                 }
 
                 return buffer;

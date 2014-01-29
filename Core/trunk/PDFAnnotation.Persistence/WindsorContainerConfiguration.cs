@@ -14,15 +14,13 @@
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Wrappers;
-
-    using FluentValidation;
-
-    using PDFAnnotation.Persistence.Extensions;
+    using Esynctraining.PdfProcessor;
 
     using NHibernate;
 
     using PDFAnnotation.Core.Business.Models;
     using PDFAnnotation.Core.Utils;
+    using PDFAnnotation.Persistence.Extensions;
 
     using Configuration = NHibernate.Cfg.Configuration;
 
@@ -92,8 +90,9 @@
             container.Register(Component.For<IAttachmentsProvider>().ImplementedBy<AttachmentsProvider>().LifeStyle.Transient);
             container.Register(Component.For<FullTextModel>().LifeStyle.Singleton);
             container.Register(Component.For<Pdf2SwfConverter>().LifeStyle.Singleton);
-            container.Register(Types.FromAssemblyNamed("PDFAnnotation.Core").Pick().If(Component.IsInNamespace("PDFAnnotation.Core.Business.Models", true)).Unless(x => x == typeof(FullTextModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
-            container.Register(Types.FromAssemblyNamed("Esynctraining.Core").Pick().If(Component.IsInNamespace("Esynctraining.Core.Business.Models")).If(type => type != typeof(AuthenticationModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
+            container.Register(Component.For<PdfProcessorHelper>().LifeStyle.Singleton);
+            container.Register(Types.FromAssemblyNamed("PDFAnnotation.Core").Pick().If(Component.IsInNamespace("PDFAnnotation.Core.Business.Models", true)).WithService.Self().Configure(c => c.LifestyleTransient()));
+            container.Register(Types.FromAssemblyNamed("Esynctraining.Core").Pick().If(Component.IsInNamespace("Esynctraining.Core.Business.Models")).Unless(type => type == typeof(AuthenticationModel) || type == typeof(FullTextModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
             
             if (web)
             {

@@ -24,7 +24,7 @@
             this.HasManyToMany(x => x.Contacts)
                 .Table("CategoryContact")
                 .ParentKeyColumn("categoryId")
-                .ChildKeyColumn("contactId").Cascade.Delete().Inverse();
+                .ChildKeyColumn("contactId");
         }
 
         #endregion

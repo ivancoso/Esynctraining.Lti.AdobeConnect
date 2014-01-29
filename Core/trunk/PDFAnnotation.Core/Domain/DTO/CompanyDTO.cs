@@ -32,12 +32,13 @@
             if (f != null)
             {
                 this.companyId = f.Id;
+                this.organizationId = f.OrganizationId;
                 this.addressVO = f.Address != null ? new AddressDTO(f.Address) : null;
                 this.companyName = f.CompanyName;
                 this.dateCreated = f.DateCreated;
                 this.dateModified = f.DateModified;
                 this.phone = f.Phone;
-                this.logoId = f.Logo.Return(x => x.Id, (int?)null);
+                this.logoId = f.Logo.Return(x => x.Id, (Guid?)null);
                 this.colorPrimary = f.ColorPrimary;
                 this.colorSecondary = f.ColorSecondary;
                 this.colorText = f.ColorText;
@@ -47,6 +48,12 @@
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the organization Id.
+        /// </summary>
+        [DataMember]
+        public Guid organizationId { get; set; }
 
         /// <summary>
         /// Gets or sets the color primary.
@@ -94,7 +101,7 @@
         ///     Gets or sets the logo.
         /// </summary>
         [DataMember]
-        public int? logoId { get; set; }
+        public Guid? logoId { get; set; }
 
         /// <summary>
         ///     Gets or sets the company name.

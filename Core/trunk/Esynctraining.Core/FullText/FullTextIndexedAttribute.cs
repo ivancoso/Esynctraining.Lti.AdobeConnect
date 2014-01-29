@@ -1,4 +1,4 @@
-﻿namespace PDFAnnotation.Core.FullText
+﻿namespace Esynctraining.Core.FullText
 {
     using System;
 

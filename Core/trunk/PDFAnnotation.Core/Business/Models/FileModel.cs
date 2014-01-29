@@ -16,9 +16,11 @@
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Esynctraining.PdfProcessor;
 
     using NHibernate;
     using NHibernate.Criterion;
@@ -35,7 +37,7 @@
     /// <summary>
     ///     The file model.
     /// </summary>
-    public class FileModel : BaseModel<File, int>
+    public class FileModel : BaseModel<File, Guid>
     {
         #region Fields
 
@@ -45,9 +47,19 @@
         private readonly DrawingModel drawingModel;
 
         /// <summary>
+        ///     The full text model.
+        /// </summary>
+        private readonly FullTextModel fullTextModel;
+
+        /// <summary>
         ///     The highlight strike out model.
         /// </summary>
         private readonly HighlightStrikeOutModel highlightStrikeOutModel;
+
+        /// <summary>
+        ///     The logger.
+        /// </summary>
+        private readonly ILogger logger;
 
         /// <summary>
         ///     The mark model.
@@ -60,14 +72,14 @@
         private readonly PdfModel pdfModel;
 
         /// <summary>
+        ///     The PDF processor helper.
+        /// </summary>
+        private readonly PdfProcessorHelper pdfProcessorHelper;
+
+        /// <summary>
         ///     The rotation model.
         /// </summary>
         private readonly RotationModel rotationModel;
-
-        /// <summary>
-        /// The full text model.
-        /// </summary>
-        private readonly FullTextModel fullTextModel;
 
         /// <summary>
         ///     The settings.
@@ -118,11 +130,17 @@
         /// <param name="fullTextModel">
         /// The full Text Model.
         /// </param>
+        /// <param name="pdfProcessorHelper">
+        /// The pdf Processor Helper.
+        /// </param>
         /// <param name="markModel">
         /// Marks model
         /// </param>
+        /// <param name="logger">
+        /// The error logger
+        /// </param>
         public FileModel(
-            IRepository<File, int> repository, 
+            IRepository<File, Guid> repository, 
             ApplicationSettingsProvider settings, 
             DrawingModel drawingModel, 
             PdfModel pdfModel, 
@@ -130,8 +148,10 @@
             ShapeModel shapeModel, 
             TextItemModel textItemModel, 
             RotationModel rotationModel, 
-            FullTextModel fullTextModel,
-            MarkModel markModel)
+            FullTextModel fullTextModel, 
+            PdfProcessorHelper pdfProcessorHelper, 
+            MarkModel markModel, 
+            ILogger logger)
             : base(repository)
         {
             this.settings = settings;
@@ -142,137 +162,14 @@
             this.textItemModel = textItemModel;
             this.rotationModel = rotationModel;
             this.fullTextModel = fullTextModel;
+            this.pdfProcessorHelper = pdfProcessorHelper;
             this.markModel = markModel;
+            this.logger = logger;
         }
 
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// Checks supposed exhibit number, returns this or first available
-        /// </summary>
-        /// <param name="categoryId">
-        /// The category Id.
-        /// </param>
-        /// <param name="topicId">
-        /// The topic Id.
-        /// </param>
-        /// <param name="fileNumber">
-        /// The exhibit number.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Nullable{Int32}"/>.
-        /// </returns>
-        public int CheckFileNumber(int categoryId, int topicId, int? fileNumber)
-        {
-            var query =
-                new DefaultQueryOver<File, int>().GetQueryOver()
-                    .Where(x => x.Category.Id == categoryId && x.Topic.Id == topicId)
-                    .AndRestrictionOn(x => x.FileNumber)
-                    .IsNotNull.TransformUsing(Transformers.DistinctRootEntity).Select(x => x.FileNumber);
-            var numbers = this.Repository.FindAll<int>(query).ToList();
-
-            int next = 1;
-            if (fileNumber.HasValue && fileNumber.Value != 0)
-            {
-                next = Math.Max(fileNumber.Value, 1);
-            }
-
-            while (numbers.Contains(next))
-            {
-                next++;
-            }
-
-            return next;
-        }
-
-        /// <summary>
-        /// The complete file.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public bool CompleteFile(File file)
-        {
-            string permanentFileName = new FileInfo(file.FileName).Extension.ToLowerInvariant() == ".pdf"
-                                           ? this.PermanentPdfName(file)
-                                           : this.PermanentFileName(file);
-            using (FileStream fileStream = System.IO.File.OpenWrite(permanentFileName))
-            {
-                string webOrbFolderName = this.WebOrbFolderName(file);
-                string webOrbFile;
-                if (Directory.Exists(webOrbFolderName)
-                    && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
-                {
-                    byte[] content = System.IO.File.ReadAllBytes(webOrbFile);
-                    fileStream.Write(content, 0, content.Length);
-                    try
-                    {
-                        new DirectoryInfo(webOrbFolderName).GetFiles().ToList().ForEach(f => f.Delete());
-                        Directory.Delete(webOrbFolderName);
-                    }
-                        
-                        // ReSharper disable once EmptyGeneralCatchClause
-                    catch
-                    {
-                    }
-
-                    if (string.IsNullOrWhiteSpace(file.FileSize))
-                    {
-                        file.FileSize = content.Length.ToString(CultureInfo.CurrentCulture);
-                    }
-
-                    file.Status = FileStatus.Completed;
-                    this.RegisterSave(file);
-                    return true;
-                }
-
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// The resize image.
-        /// </summary>
-        /// <param name="content">
-        /// Image content.
-        /// </param>
-        /// <param name="maxImageWidth">
-        /// The max Image Width.
-        /// </param>
-        /// <param name="maxImageHeight">
-        /// The max Image Height.
-        /// </param>
-        /// <returns>
-        /// The <see cref="byte[]"/>.
-        /// </returns>
-        public byte[] ResizeImage(byte[] content, int maxImageWidth, int maxImageHeight)
-        {
-            Image img;
-            if (TryParseImage(content, out img))
-            {
-                try
-                {
-                    var resizedImage = this.ResizeImage(string.Empty, maxImageWidth, maxImageHeight, img);
-                    var iciPng = GetPngImageCodecInfo();
-                    var encoderParameters = new EncoderParameters(1);
-                    encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
-                    var ms = new MemoryStream();
-                    resizedImage.Save(ms, iciPng, encoderParameters);
-                    return ms.ToArray();
-                }
-                catch (Exception ex)
-                {
-                    IoC.Resolve<ILogger>().Error("Fail during image resize", ex);
-                }
-            }
-
-            return content;
-        }
 
         /// <summary>
         /// The try parse image.
@@ -301,19 +198,85 @@
             return true;
         }
 
-        private static ImageCodecInfo GetPngImageCodecInfo()
+        /// <summary>
+        /// Checks supposed exhibit number, returns this or first available
+        /// </summary>
+        /// <param name="categoryId">
+        /// The category Id.
+        /// </param>
+        /// <param name="topicId">
+        /// The topic Id.
+        /// </param>
+        /// <param name="fileNumber">
+        /// The exhibit number.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Nullable{Int32}"/>.
+        /// </returns>
+        public int CheckFileNumber(int categoryId, int topicId, int? fileNumber)
         {
-            ImageCodecInfo iciPng = null;
-            foreach (ImageCodecInfo ici in ImageCodecInfo.GetImageDecoders())
+            QueryOver<File, File> query =
+                new DefaultQueryOver<File, Guid>().GetQueryOver()
+                    .Where(x => x.Category.Id == categoryId && x.Topic.Id == topicId)
+                    .AndRestrictionOn(x => x.FileNumber)
+                    .IsNotNull.TransformUsing(Transformers.DistinctRootEntity)
+                    .Select(x => x.FileNumber);
+            List<int> numbers = this.Repository.FindAll<int>(query).ToList();
+
+            int next = 1;
+            if (fileNumber.HasValue && fileNumber.Value != 0)
             {
-                if (ici.FilenameExtension.ToLower().Contains("png"))
-                {
-                    iciPng = ici;
-                    break;
-                }
+                next = Math.Max(fileNumber.Value, 1);
             }
-            iciPng = iciPng ?? ImageCodecInfo.GetImageDecoders()[1];
-            return iciPng;
+
+            while (numbers.Contains(next))
+            {
+                next++;
+            }
+
+            return next;
+        }
+
+        /// <summary>
+        /// The complete file.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool CompleteFile(File file)
+        {
+            bool isPdf = new FileInfo(file.FileName).Extension.ToLowerInvariant() == ".pdf";
+            string permanentFileName = isPdf ? this.PermanentPdfName(file) : this.PermanentFileName(file);
+            using (FileStream fileStream = System.IO.File.OpenWrite(permanentFileName))
+            {
+                string webOrbFolderName = this.WebOrbFolderName(file);
+                string webOrbFile;
+                if (Directory.Exists(webOrbFolderName)
+                    && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
+                {
+                    byte[] content = System.IO.File.ReadAllBytes(webOrbFile);
+                    if (isPdf)
+                    {
+                        content = this.FixContentForBlackSquares(content);
+                    }
+                    fileStream.Write(content, 0, content.Length);
+                    this.ClearDirectoryAndRemoveItSafely(webOrbFolderName);
+
+                    if (string.IsNullOrWhiteSpace(file.FileSize))
+                    {
+                        file.FileSize = content.Length.ToString(CultureInfo.CurrentCulture);
+                    }
+
+//                    file.Status = FileStatus.UploadCompleted;
+                    this.RegisterSave(file);
+                    return true;
+                }
+
+                return false;
+            }
         }
 
         /// <summary>
@@ -337,6 +300,9 @@
         /// <param name="topic">
         /// The Topic.
         /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
         /// <param name="content">
         /// file content
         /// </param>
@@ -350,6 +316,7 @@
             DateTime date, 
             Category category = null, 
             Topic topic = null, 
+            Contact user = null,
             byte[] content = null)
         {
             var file = new File { FileName = name.Replace(" ", "_"), FileSize = size, TopicName = deponent };
@@ -359,6 +326,11 @@
                 if (null != topic)
                 {
                     file.TopicName = topic.FullName;
+                }
+
+                if (null != user)
+                {
+                    file.TopicName = user.FullName;
                 }
             }
 
@@ -373,6 +345,8 @@
 
             file.Category = category;
             file.Topic = topic;
+            file.User = user;
+            file.Status = FileStatus.Created;
 
             this.RegisterSave(file, true);
 
@@ -412,16 +386,21 @@
         /// <returns>
         /// The <see cref="IEnumerable{File}"/>.
         /// </returns>
-        public IEnumerable<File> GetAllByCategoriesSearched(string searchPattern, DateTime? start, DateTime? end, List<int> casesId)
+        public IEnumerable<File> GetAllByCategoriesSearched(
+            string searchPattern, 
+            DateTime? start, 
+            DateTime? end, 
+            List<int> casesId)
         {
-            var searchIds = new List<int>();
-            
-            var queryOver = new DefaultQueryOver<File, int>().GetQueryOver().WhereRestrictionOn(x => x.Category.Id).IsIn(casesId);
+            var searchIds = new List<Guid>();
+
+            QueryOver<File, File> queryOver =
+                new DefaultQueryOver<File, Guid>().GetQueryOver().WhereRestrictionOn(x => x.Category.Id).IsIn(casesId);
 
             if (start.HasValue && end.HasValue)
             {
-                var startDate = start.Value;
-                var endDate = end.Value;
+                DateTime startDate = start.Value;
+                DateTime endDate = end.Value;
                 if (startDate > endDate)
                 {
                     endDate = startDate;
@@ -432,39 +411,154 @@
                 queryOver = queryOver.AndRestrictionOn(x => x.DateCreated).IsBetween(startDate).And(endDate);
             }
 
-            queryOver = queryOver.AndRestrictionOn(x => x.FileNumber).IsNotNull
-                    .Fetch(x => x.Category).Eager
-                    .Fetch(x => x.Topic).Eager;
+            queryOver =
+                queryOver.AndRestrictionOn(x => x.FileNumber)
+                    .IsNotNull.Fetch(x => x.Category)
+                    .Eager.Fetch(x => x.Topic)
+                    .Eager;
 
             if (!string.IsNullOrWhiteSpace(searchPattern))
             {
-                searchIds = this.fullTextModel.Search(searchPattern, typeof(File), int.MaxValue).ToList();
+                searchIds = this.fullTextModel.SearchGuids(searchPattern, typeof(File), int.MaxValue).ToList();
                 queryOver = queryOver.AndRestrictionOn(x => x.Id).IsIn(searchIds);
             }
 
-            return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);
+            return searchIds.Any()
+                       ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id))
+                       : this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
         /// The get all by events.
         /// </summary>
-        /// <param name="eventIds">
-        /// The event ids.
+        /// <param name="user">
+        /// The user.
         /// </param>
-        /// <param name="caseId">
-        /// The category Id.
+        /// <param name="event">
+        /// The event.
+        /// </param>
+        /// <param name="status">
+        /// The status.
+        /// </param>
+        /// <param name="includeShared">
+        /// The include Shared.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{File}"/>.
         /// </returns>
-        public IEnumerable<File> GetAllByEventsAndCase(List<int> eventIds, int caseId)
+        public IEnumerable<File> GetAllByUserAndMeetingAndStatus(
+            Contact user,
+            string meetingUrl,
+            FileStatus status,
+            bool includeShared = false)
         {
-            QueryOver<File, File> defaultQuery =
-                new DefaultQueryOver<File, int>().GetQueryOver()
-                    .WhereRestrictionOn(x => x.Category.Id).IsLike(caseId)
-                    .Fetch(x => x.Category).Eager
-                    .Fetch(x => x.Topic).Eager;
-            return this.Repository.FindAll(defaultQuery);
+            int userId = user.Id;
+            var defaultQuery =
+                new DefaultQueryOver<File, Guid>().GetQueryOver()
+                    .Where(x => x.User != null && x.User.Id == userId && x.Status == status)
+                    .Fetch(x => x.User)
+                    .Eager;
+
+            if (!string.IsNullOrWhiteSpace(meetingUrl))
+            {
+                defaultQuery = defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl).IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl).IsInsensitiveLike(meetingUrl, MatchMode.Exact);
+            }
+            else
+            {
+                defaultQuery = defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl).IsNull;
+            }
+
+            if (string.IsNullOrWhiteSpace(meetingUrl) || !includeShared)
+            {
+                return this.Repository.FindAll(defaultQuery);
+            }
+
+            var result = this.Repository.FindAll(defaultQuery).ToList();
+
+            var secondOver = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.User != null && x.IsShared == true && x.User.Id != userId && x.Status == status);
+
+            secondOver = secondOver.WhereRestrictionOn(x => x.AcMeetingUrl).IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl).IsInsensitiveLike(meetingUrl, MatchMode.Exact);
+
+            secondOver = secondOver.Fetch(x => x.User).Eager;
+
+            return result.Union(this.Repository.FindAll(secondOver));
+        }
+
+//        /// <summary>
+//        /// The get all by events.
+//        /// </summary>
+//        /// <param name="user">
+//        /// The user.
+//        /// </param>
+//        /// <param name="status">
+//        /// The status.
+//        /// </param>
+//        /// <param name="includeShared">
+//        /// The include Shared.
+//        /// </param>
+//        /// <returns>
+//        /// The <see cref="IEnumerable{File}"/>.
+//        /// </returns>
+//        public IEnumerable<File> GetAllByUserAndStatus(Contact user, FileStatus status, bool includeShared = false)
+//        {
+//            const int FirmContactAdminTypeId = (int)ContactTypeEnum.CompanyAdmin;
+//            const int FirmContactTypeId = (int)ContactTypeEnum.Contact;
+//            int userId = user.Id;
+//            var defaultQuery =
+//                new DefaultQueryOver<File, Guid>().GetQueryOver()
+//                    .Where(x => x.User != null && x.User.Id == userId && x.Status == status)
+//                    .Fetch(x => x.User)
+//                    .Eager;
+//            if (!includeShared || !user.CompanyContacts.Any())
+//            {
+//                return this.Repository.FindAll(defaultQuery);
+//            }
+//
+//            var result = this.Repository.FindAll(defaultQuery).ToList();
+//            var firmIds = user.CompanyContacts.Select(x => x.Company.Id).ToList();
+//            var subQuesry = QueryOver.Of<CompanyContact>()
+//                    .Where(x => x.ContactType.Id == FirmContactTypeId || x.ContactType.Id == FirmContactAdminTypeId)
+//                    .AndRestrictionOn(x => x.Company.Id)
+//                    .IsIn(firmIds).Select(x => x.Contact.Id);
+//            var secondOver = new DefaultQueryOver<File, Guid>().GetQueryOver()
+//                    .Where(x => x.User != null && x.IsShared == true && x.User.Id != userId)
+//                    .WithSubquery.WhereProperty(x => x.User.Id)
+//                    .In(subQuesry)
+//                    .Fetch(x => x.User)
+//                    .Eager;
+//            result.AddRange(this.Repository.FindAll(secondOver));
+//            return result;
+//        }
+
+        /// <summary>
+        /// The get all by ids.
+        /// </summary>
+        /// <param name="ids">
+        /// The ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Image}"/>.
+        /// </returns>
+        public IEnumerable<File> GetAllByGuids(List<Guid> ids)
+        {
+            QueryOver<File, File> queryOver =
+                new DefaultQueryOver<File, Guid>().GetQueryOver().AndRestrictionOn(x => x.Id).IsIn(ids);
+            return this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
+        /// The get all by statuses to clear before date.
+        /// </summary>
+        /// <param name="fileStatuses">
+        /// The file statuses.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{File}"/>.
+        /// </returns>
+        public IEnumerable<File> GetAllByStatuses(FileStatus[] fileStatuses)
+        {
+            QueryOver<File> queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().WhereRestrictionOn(x => x.Status).IsIn(fileStatuses);
+            return this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
@@ -479,8 +573,8 @@
         public IEnumerable<FileTopicDTO> GetAllIdsByTopicsIds(List<int> topicsIds)
         {
             FileTopicDTO dto = null;
-            var queryOver =
-                new DefaultQueryOver<File, int>().GetQueryOver()
+            QueryOver<File, File> queryOver =
+                new DefaultQueryOver<File, Guid>().GetQueryOver()
                     .WhereRestrictionOn(x => x.Topic.Id)
                     .IsIn(topicsIds)
                     .SelectList(
@@ -491,22 +585,6 @@
                             .WithAlias(() => dto.fileId))
                     .TransformUsing(Transformers.AliasToBean<FileTopicDTO>());
             return this.Repository.FindAll<FileTopicDTO>(queryOver);
-        }
-
-        /// <summary>
-        /// The get all by ids.
-        /// </summary>
-        /// <param name="ids">
-        /// The ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Image}"/>.
-        /// </returns>
-        public IEnumerable<File> GetAllByGuids(List<Guid> ids)
-        {
-            QueryOver<File, File> queryOver =
-                new DefaultQueryOver<File, int>().GetQueryOver().AndRestrictionOn(x => x.WebOrbId).IsIn(ids);
-            return this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
@@ -524,6 +602,26 @@
             if (System.IO.File.Exists(fileName))
             {
                 return System.IO.File.ReadAllBytes(fileName);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The get one by file id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="File"/>.
+        /// </returns>
+        public File GetOneByFileId(string id)
+        {
+            Guid idGuid;
+            if (Guid.TryParse(id, out idGuid))
+            {
+                return this.GetOneByWebOrbId(idGuid).Value;
             }
 
             return null;
@@ -555,7 +653,7 @@
         public virtual IFutureValue<File> GetOneByWebOrbId(Guid id)
         {
             QueryOver<File> queryOver =
-                new DefaultQueryOver<File, int>().GetQueryOver().Where(x => x.WebOrbId == id).Take(1);
+                new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.Id == id).Take(1);
             return this.Repository.FindOne(queryOver);
         }
 
@@ -601,8 +699,7 @@
                 dynamic filePattern = !pageIndex.HasValue
                                           ? this.settings.PermSWFPattern
                                           : this.settings.PermSWFPagePattern;
-                dynamic filePath = filePattern.Replace("{fileId}", file.WebOrbId.ToString())
-                    .Replace("{pageIndex}", pageIndex.ToString());
+                dynamic filePath = filePattern.Replace("{fileId}", file.Id.ToString()).Replace("{pageIndex}", pageIndex.ToString());
                 return this.settings.FileStorage + "/" + filePath;
             }
 
@@ -622,8 +719,7 @@
         {
             if (file != null)
             {
-                return this.settings.FileStorage + "/"
-                       + this.settings.PermFilePattern.Replace("{fileId}", file.WebOrbId.ToString());
+                return this.settings.FileStorage + "/" + this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString());
             }
 
             return string.Empty;
@@ -659,11 +755,11 @@
         /// The file id.
         /// </param>
         /// <returns>
-        /// The <see cref="Stream"/>.
+        /// The <see cref="System.IO.Stream"/>.
         /// </returns>
         public byte[] GetUpdatedPDFData(string id)
         {
-            int fileId = int.Parse(id);
+            Guid fileId = Guid.Parse(id);
             File file = this.GetOneById(fileId).Value;
             return this.GetUpdatedPDFData(file);
         }
@@ -675,27 +771,34 @@
         /// The file.
         /// </param>
         /// <returns>
-        /// The <see cref="Stream"/>.
+        /// The <see cref="System.IO.Stream"/>.
         /// </returns>
         public byte[] GetUpdatedPDFData(File file)
         {
-            byte[] buffer = this.GetPDFData(file);
-            if (buffer != null)
+            try
             {
-                IEnumerable<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id);
-                IEnumerable<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id);
-                IEnumerable<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id);
-                IEnumerable<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id);
-                IEnumerable<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id);
-                byte[] resultBuffer = this.pdfModel.DrawOnPDF(
-                    drawings,
-                    highlights,
-                    shapes,
-                    textItems,
-                    rotations,
-                    buffer);
+                byte[] buffer = this.GetPDFData(file);
+                if (buffer != null)
+                {
+                    IEnumerable<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id);
+                    IEnumerable<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id);
+                    IEnumerable<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id);
+                    IEnumerable<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id);
+                    IEnumerable<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id);
+                    byte[] resultBuffer = this.pdfModel.DrawOnPDF(
+                        drawings, 
+                        highlights, 
+                        shapes, 
+                        textItems, 
+                        rotations, 
+                        buffer);
 
-                return resultBuffer;
+                    return resultBuffer;
+                }
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error("Unexpected error during pdf read/write:" + ex);
             }
 
             return null;
@@ -712,7 +815,7 @@
         /// </returns>
         public byte[] GetUpdatedSWFData(string id)
         {
-            int fileId = int.Parse(id);
+            Guid fileId = Guid.Parse(id);
             File file = this.GetOneById(fileId).Value;
             return this.GetUpdatedSWFData(file);
         }
@@ -724,7 +827,7 @@
         /// The file.
         /// </param>
         /// <returns>
-        /// The <see cref="Stream"/>.
+        /// The <see cref="System.IO.Stream"/>.
         /// </returns>
         public byte[] GetUpdatedSWFData(File file)
         {
@@ -763,8 +866,12 @@
 
                 byte[] pdfBuffer = this.pdfModel.DrawOnPDF(drawings, highlights, shapes, textItems, rotations, buffer);
                 string tmpName = Guid.NewGuid().ToString();
-                string tmpPDF = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), tmpName + ".pdf");
-                string tmpSWF = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), tmpName + ".swf");
+                string tmpPDF = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
+                    tmpName + ".pdf");
+                string tmpSWF = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
+                    tmpName + ".swf");
 
                 using (var fs = new FileStream(tmpPDF, FileMode.CreateNew, FileAccess.Write))
                 {
@@ -790,7 +897,7 @@
         /// <param name="newId">
         /// The new Id.
         /// </param>
-        public void MoveMarksToNewFile(int originId, int newId)
+        public void MoveMarksToNewFile(Guid originId, Guid newId)
         {
             File newFile = this.GetOneById(newId).Value;
             File originFile = this.GetOneById(originId).Value;
@@ -935,35 +1042,6 @@
         }
 
         /// <summary>
-        /// The permanent file name.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public string PermanentPdfName(File file)
-        {
-            string folder = this.FileStoragePhysicalPath();
-            if (!Directory.Exists(folder))
-            {
-                Directory.CreateDirectory(folder);
-            }
-
-            dynamic path = Path.Combine(
-                folder, 
-                this.settings.PermPDFPattern.Replace("{fileId}", file.WebOrbId.ToString()));
-            var di = new DirectoryInfo(Path.GetDirectoryName(path) ?? this.FileStoragePhysicalPath());
-            if (!di.Exists)
-            {
-                di.Create();
-            }
-
-            return path;
-        }
-
-        /// <summary>
         /// The read stream fully.
         /// </summary>
         /// <param name="input">
@@ -1026,42 +1104,47 @@
         /// </param>
         public override void RegisterSave(File entity, bool flush)
         {
-            if (entity.IsTransient() && entity.WebOrbId.HasValue)
-            {
-                while (this.GetOneByWebOrbId(entity.WebOrbId.Value).Value != null)
-                {
-                    entity.WebOrbId = Guid.NewGuid();
-                }
-            }
-
             entity.DateModified = DateTime.Now;
             base.RegisterSave(entity, flush);
         }
 
         /// <summary>
-        /// The get one by file id.
+        /// The resize image.
         /// </summary>
-        /// <param name="id">
-        /// The id.
+        /// <param name="content">
+        /// Image content.
+        /// </param>
+        /// <param name="maxImageWidth">
+        /// The max Image Width.
+        /// </param>
+        /// <param name="maxImageHeight">
+        /// The max Image Height.
         /// </param>
         /// <returns>
-        /// The <see cref="File"/>.
+        /// The <see cref="byte[]"/>.
         /// </returns>
-        public File GetOneByFileId(string id)
+        public byte[] ResizeImage(byte[] content, int maxImageWidth, int maxImageHeight)
         {
-            int idVal;
-            Guid idGuid;
-            if (Guid.TryParse(id, out idGuid))
+            Image img;
+            if (TryParseImage(content, out img))
             {
-                return this.GetOneByWebOrbId(idGuid).Value;
+                try
+                {
+                    Image resizedImage = this.ResizeImage(string.Empty, maxImageWidth, maxImageHeight, img);
+                    ImageCodecInfo iciPng = GetPngImageCodecInfo();
+                    var encoderParameters = new EncoderParameters(1);
+                    encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
+                    var ms = new MemoryStream();
+                    resizedImage.Save(ms, iciPng, encoderParameters);
+                    return ms.ToArray();
+                }
+                catch (Exception ex)
+                {
+                    IoC.Resolve<ILogger>().Error("Fail during image resize", ex);
+                }
             }
 
-            if (int.TryParse(id, out idVal))
-            {
-                return this.GetOneById(idVal).Value;
-            }
-
-            return null;
+            return content;
         }
 
         /// <summary>
@@ -1078,11 +1161,13 @@
             Topic topic = entity.Topic;
             var availiblePatternOptions = new Dictionary<string, string>();
             var file = new FileInfo(entity.FileName);
-            availiblePatternOptions.Add("{fileName}", file.Name);
+            availiblePatternOptions.Add("{fileName}", Path.GetFileNameWithoutExtension(file.Name));
             availiblePatternOptions.Add("{extension}", file.Extension);
             availiblePatternOptions.Add("{number}", string.Format("{0:#0000}", exhibitNumber));
             availiblePatternOptions.Add("{topic}", topic.FullName.Trim().Replace(" ", "_"));
-            string displayName = availiblePatternOptions.Keys.Aggregate((string)this.settings.DisplayNamePattern, (current, optionKey) => current.Replace(optionKey, availiblePatternOptions[optionKey]));
+            string displayName = availiblePatternOptions.Keys.Aggregate(
+                (string)this.settings.DisplayNamePattern, 
+                (current, optionKey) => current.Replace(optionKey, availiblePatternOptions[optionKey]));
             entity.DisplayName = displayName;
             entity.FileNumber = exhibitNumber;
         }
@@ -1090,83 +1175,6 @@
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The resize image.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <param name="maxCanvasWidth">
-        /// The max canvas width.
-        /// </param>
-        /// <param name="maxCanvasHeight">
-        /// The max canvas height.
-        /// </param>
-        /// <param name="img">
-        /// The img.
-        /// </param>
-        /// <param name="originalWidth">
-        /// The original width.
-        /// </param>
-        /// <param name="originalHeight">
-        /// The original height.
-        /// </param>
-        private Image ResizeImage(string path,
-            /* note changed names */
-                     int maxCanvasWidth, int maxCanvasHeight,
-            /* new */
-                     Image img = null,
-                     int? originalWidth = null, int? originalHeight = null)
-        {
-            Image image = img ?? Image.FromFile(path);
-            if (originalWidth == null)
-            {
-                originalWidth = image.Width;
-            }
-
-            if (originalHeight == null)
-            {
-                originalHeight = image.Height;
-            }
-
-            var canvasWidth = Math.Min(maxCanvasWidth, originalWidth.Value);
-            var canvasHeight = Math.Min(maxCanvasHeight, originalHeight.Value);
-
-
-
-            /* ------------------ new code --------------- */
-
-            // Figure out the ratio
-            double ratioX = (double)canvasWidth / (double)originalWidth;
-            double ratioY = (double)canvasHeight / (double)originalHeight;
-
-            // use whichever multiplier is smaller
-            double ratio = ratioX < ratioY ? ratioX : ratioY;
-
-            // now we can get the new height and width
-            int newHeight = Convert.ToInt32(originalHeight * ratio);
-            int newWidth = Convert.ToInt32(originalWidth * ratio);
-
-            // Now calculate the X,Y position of the upper-left corner 
-            // (one of these will always be zero)
-            int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
-            int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
-
-
-            Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names
-
-            var graphic = Graphics.FromImage(thumbnail);
-            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphic.SmoothingMode = SmoothingMode.HighQuality;
-            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.CompositingQuality = CompositingQuality.HighQuality;
-            graphic.Clear(Color.Transparent); // white padding
-            graphic.DrawImage(image, 0, 0, newWidth, newHeight);
-
-            /* ------------- end new code ---------------- */
-            return thumbnail;
-        }
 
         /// <summary>
         /// The file storage physical path.
@@ -1211,7 +1219,41 @@
                 Directory.CreateDirectory(folder);
             }
 
-            return Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.WebOrbId.ToString()));
+            var path = Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString()));
+            var di = new DirectoryInfo(Path.GetDirectoryName(path) ?? this.FileStoragePhysicalPath());
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
+            return path;
+        }
+
+        /// <summary>
+        /// The permanent file name.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string PermanentPdfName(File file)
+        {
+            string folder = this.FileStoragePhysicalPath();
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            var path = Path.Combine(folder, ((string)this.settings.PermPDFPattern).Replace("{fileId}", file.Id.ToString()));
+            var di = new DirectoryInfo(Path.GetDirectoryName(path) ?? this.FileStoragePhysicalPath());
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
+            return path;
         }
 
         /// <summary>
@@ -1225,7 +1267,7 @@
         /// </returns>
         internal string WebOrbFolderName(File file)
         {
-            return Path.Combine(this.WebOrbStoragePhysicalPath(), file.WebOrbId.ToString());
+            return Path.Combine(this.WebOrbStoragePhysicalPath(), file.Id.ToString());
         }
 
         /// <summary>
@@ -1238,6 +1280,72 @@
         {
             dynamic fileStorage = this.settings.WebOrbStorage;
             return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
+        }
+
+        /// <summary>
+        /// The get png image codec info.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ImageCodecInfo"/>.
+        /// </returns>
+        private static ImageCodecInfo GetPngImageCodecInfo()
+        {
+            ImageCodecInfo iciPng = null;
+            foreach (ImageCodecInfo ici in ImageCodecInfo.GetImageDecoders())
+            {
+                if (ici.FilenameExtension.ToLower().Contains("png"))
+                {
+                    iciPng = ici;
+                    break;
+                }
+            }
+
+            iciPng = iciPng ?? ImageCodecInfo.GetImageDecoders()[1];
+            return iciPng;
+        }
+
+        /// <summary>
+        /// The clear directory and remove it safely.
+        /// </summary>
+        /// <param name="webOrbFolderName">
+        /// The web orb folder name.
+        /// </param>
+        private void ClearDirectoryAndRemoveItSafely(string webOrbFolderName)
+        {
+            try
+            {
+                new DirectoryInfo(webOrbFolderName).GetFiles().ToList().ForEach(f => f.Delete());
+                Directory.Delete(webOrbFolderName);
+            }
+
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
+        }
+
+        /// <summary>
+        /// The fix content for black squares.
+        /// </summary>
+        /// <param name="content">
+        /// The content.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
+        private byte[] FixContentForBlackSquares(byte[] content)
+        {
+            try
+            {
+                content = this.pdfProcessorHelper.CheckIfDocumentWasScannedAndFixIfNecessary(content);
+            }
+                
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch (Exception)
+            {
+            }
+
+            return content;
         }
 
         /// <summary>
@@ -1261,7 +1369,7 @@
             }
 
             dynamic filePattern = !pageIndex.HasValue ? this.settings.PermSWFPattern : this.settings.PermSWFPagePattern;
-            dynamic filePath = filePattern.Replace("{fileId}", file.WebOrbId.ToString())
+            dynamic filePath = filePattern.Replace("{fileId}", file.Id.ToString())
                 .Replace("{pageIndex}", pageIndex.ToString());
 
             dynamic path = Path.Combine(folder, filePath);
@@ -1272,6 +1380,141 @@
             }
 
             return path;
+        }
+
+        /// <summary>
+        /// The remove file all file type safely.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        private void RemoveFileAllFileTypeSafely(string fileName)
+        {
+            try
+            {
+                var fi = new FileInfo(fileName);
+
+                // ReSharper disable once PossibleNullReferenceException
+                if (fi.Directory != null && fi.Directory.Exists
+                    && !fi.DirectoryName.Equals(
+                        this.FileStoragePhysicalPath(), 
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    FileInfo[] files = fi.Directory.GetFiles("*" + fi.Extension);
+                    foreach (FileInfo file in files)
+                    {
+                        this.RemoveFileSafely(file.FullName);
+                    }
+                }
+            }
+
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
+        }
+
+        /// <summary>
+        /// The remove file safely.
+        /// </summary>
+        /// <param name="fileName">
+        /// The file name.
+        /// </param>
+        private void RemoveFileSafely(string fileName)
+        {
+            try
+            {
+                var fi = new FileInfo(fileName);
+                if (fi.Exists)
+                {
+                    fi.Delete();
+                }
+            }
+
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
+        }
+
+        /// <summary>
+        /// The resize image.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <param name="maxCanvasWidth">
+        /// The max canvas width.
+        /// </param>
+        /// <param name="maxCanvasHeight">
+        /// The max canvas height.
+        /// </param>
+        /// <param name="img">
+        /// The img.
+        /// </param>
+        /// <param name="originalWidth">
+        /// The original width.
+        /// </param>
+        /// <param name="originalHeight">
+        /// The original height.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Image"/>.
+        /// </returns>
+        private Image ResizeImage(
+            string path, 
+            /* note changed names */
+            int maxCanvasWidth, 
+            int maxCanvasHeight, 
+            /* new */
+            Image img = null, 
+            int? originalWidth = null, 
+            int? originalHeight = null)
+        {
+            Image image = img ?? Image.FromFile(path);
+            if (originalWidth == null)
+            {
+                originalWidth = image.Width;
+            }
+
+            if (originalHeight == null)
+            {
+                originalHeight = image.Height;
+            }
+
+            int canvasWidth = Math.Min(maxCanvasWidth, originalWidth.Value);
+            int canvasHeight = Math.Min(maxCanvasHeight, originalHeight.Value);
+
+            /* ------------------ new code --------------- */
+
+            // Figure out the ratio
+            double ratioX = canvasWidth / (double)originalWidth;
+            double ratioY = canvasHeight / (double)originalHeight;
+
+            // use whichever multiplier is smaller
+            double ratio = ratioX < ratioY ? ratioX : ratioY;
+
+            // now we can get the new height and width
+            int newHeight = Convert.ToInt32(originalHeight * ratio);
+            int newWidth = Convert.ToInt32(originalWidth * ratio);
+
+            // Now calculate the X,Y position of the upper-left corner 
+            // (one of these will always be zero)
+            int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
+            int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
+
+            Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names
+
+            Graphics graphic = Graphics.FromImage(thumbnail);
+            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphic.SmoothingMode = SmoothingMode.HighQuality;
+            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            graphic.CompositingQuality = CompositingQuality.HighQuality;
+            graphic.Clear(Color.Transparent); // white padding
+            graphic.DrawImage(image, 0, 0, newWidth, newHeight);
+
+            /* ------------- end new code ---------------- */
+            return thumbnail;
         }
 
         #endregion

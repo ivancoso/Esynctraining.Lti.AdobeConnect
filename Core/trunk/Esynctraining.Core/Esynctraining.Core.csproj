@@ -54,6 +54,9 @@
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Lucene.Net">
+      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
@@ -95,6 +98,7 @@
     <Compile Include="Business\IRepository.cs" />
     <Compile Include="Business\Models\AuthenticationModel.cs" />
     <Compile Include="Business\Models\BaseModel.cs" />
+    <Compile Include="Business\Models\FullTextModel.cs" />
     <Compile Include="Business\Models\MailModel.cs" />
     <Compile Include="Business\Queries\DefaultQueryOver.cs" />
     <Compile Include="Business\Queries\QueryOverIDeletable.cs" />
@@ -122,9 +126,13 @@
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
+    <Compile Include="FullText\FullTextEnabledAttribute.cs" />
+    <Compile Include="FullText\FullTextIndexedAttribute.cs" />
+    <Compile Include="FullText\LuceneFTIndexEventListener.cs" />
     <Compile Include="LifeStyle\EsyncWcfOperationScopeAccessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationSettingsProvider.cs" />
+    <Compile Include="Providers\FlexSettingsProvider.cs" />
     <Compile Include="Providers\IResourceProvider.cs" />
     <Compile Include="Providers\Mailer\AttachmentsProvider.cs" />
     <Compile Include="Providers\Mailer\Configuration\MailerConfigurationSection.cs" />

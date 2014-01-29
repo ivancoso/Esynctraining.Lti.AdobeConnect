@@ -1,23 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Company.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The company.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace PDFAnnotation.Core.Domain.Entities
+﻿namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
 
     using Esynctraining.Core.Domain.Entities;
+
+    using Iesi.Collections.Generic;
 
     /// <summary>
     ///     The company.
     /// </summary>
     public class Company : Entity
     {
+
+        /// <summary>
+        ///     The companyContacts.
+        /// </summary>
+        private ISet<CompanyContact> companyContacts = new HashedSet<CompanyContact>();
+
         #region Public Properties
 
         /// <summary>
@@ -29,6 +28,11 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// Gets or sets the color primary.
         /// </summary>
         public virtual string ColorPrimary { get; set; }
+
+        /// <summary>
+        /// Gets or sets the organization Id.
+        /// </summary>
+        public virtual Guid OrganizationId { get; set; }
 
         /// <summary>
         /// Gets or sets the color secondary.
@@ -69,6 +73,22 @@ namespace PDFAnnotation.Core.Domain.Entities
         ///     Gets or sets the rb company id.
         /// </summary>
         public virtual int? RBFirmId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the companyContacts.
+        /// </summary>
+        public virtual ISet<CompanyContact> CompanyContacts
+        {
+            get
+            {
+                return this.companyContacts;
+            }
+
+            set
+            {
+                this.companyContacts = value;
+            }
+        }
 
         #endregion
     }

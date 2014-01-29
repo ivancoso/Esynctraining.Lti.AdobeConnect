@@ -1,9 +1,8 @@
-﻿namespace PDFAnnotation.Core.Business.Models
+﻿namespace Esynctraining.Core.Business.Models
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -14,8 +13,10 @@
 
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.FullText;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+
 
     using Lucene.Net.Analysis.Standard;
     using Lucene.Net.Documents;
@@ -26,42 +27,22 @@
 
     using NHibernate.Util;
 
-    using PDFAnnotation.Core.FullText;
-
     using Version = Lucene.Net.Util.Version;
 
     /// <summary>
-    ///     The full text model.
+    /// The full text model.
     /// </summary>
     public class FullTextModel
     {
         #region Static Fields
 
         /// <summary>
-        ///     The _locker.
-        /// </summary>
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", 
-            "SA1214:StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements", 
-            Justification = "Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", 
-            "SA1214:StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements", 
-            Justification = "Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", 
-            Justification = "Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", 
-            "SA1214:StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements", 
-            Justification = "Reviewed. Suppression is OK here.")]
-        [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:DeclarationKeywordsMustFollowOrder", 
-            Justification = "Reviewed. Suppression is OK here.")]
-        private static readonly object _locker = new object();
-
-        /// <summary>
-        ///     The _ full search directory.
+        /// The _ full search directory.
         /// </summary>
         private static FSDirectory fullSearchDirectory;
 
         /// <summary>
-        ///     The index path.
+        /// The index path.
         /// </summary>
         private static string indexPath;
 
@@ -70,12 +51,17 @@
         #region Fields
 
         /// <summary>
-        ///     The logger.
+        /// The logger.
         /// </summary>
         private readonly ILogger logger;
 
         /// <summary>
-        ///     The settings.
+        /// The locker.
+        /// </summary>
+        private readonly static object locker = new object();
+
+        /// <summary>
+        /// The settings.
         /// </summary>
         private readonly dynamic settings;
 
@@ -103,7 +89,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the full search directory.
+        /// Gets the full search directory.
         /// </summary>
         public FSDirectory FullSearchDirectory
         {
@@ -111,7 +97,7 @@
             {
                 if (fullSearchDirectory == null)
                 {
-                    lock (_locker)
+                    lock (locker)
                     {
                         if (fullSearchDirectory == null)
                         {
@@ -149,35 +135,6 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The full text enabled.
-        /// </summary>
-        /// <param name="obj">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool FullTextEnabled(object obj)
-        {
-            return FullTextEnabled(obj.GetType());
-        }
-
-        /// <summary>
-        /// The full text enabled.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool FullTextEnabled(Type type)
-        {
-            return typeof(Entity).IsAssignableFrom(type)
-                   && type.GetCustomAttributes(typeof(FullTextEnabledAttribute), true).Any();
-        }
-
-        /// <summary>
         /// Determines if the type has Full-Text index properties.
         /// </summary>
         /// <param name="type">
@@ -188,10 +145,7 @@
         /// </returns>
         public static bool IsIndexable(Type type)
         {
-            return FullTextEnabled(type)
-                   && type.GetProperties()
-                          .SelectMany(x => x.GetCustomAttributes(typeof(FullTextIndexedAttribute), true))
-                          .Any();
+            return FullTextEnabled(type) && type.GetProperties().SelectMany(x => x.GetCustomAttributes(typeof(FullTextIndexedAttribute), true)).Any();
         }
 
         /// <summary>
@@ -214,12 +168,7 @@
         public void ClearIndices()
         {
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
-            using (
-                var writer = new IndexWriter(
-                    this.FullSearchDirectory, 
-                    analyzer, 
-                    true, 
-                    IndexWriter.MaxFieldLength.UNLIMITED))
+            using (var writer = new IndexWriter(this.FullSearchDirectory, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED))
             {
                 writer.DeleteAll();
             }
@@ -247,8 +196,7 @@
             Type entityType = entity.GetType();
             string entityName = entityType.Name;
             string entityIdName = string.Format("{0}Id", entityName);
-            string entityIdValue =
-                entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
+            string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
             this.logger.DebugFormat("Deleting FT Index for {0} {1}...", entityIdName, entityIdValue);
             var searchQuery = new TermQuery(new Term(entityIdName, entityIdValue));
@@ -277,6 +225,34 @@
         }
 
         /// <summary>
+        /// The full text enabled.
+        /// </summary>
+        /// <param name="obj">
+        /// The type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool FullTextEnabled(object obj)
+        {
+            return FullTextEnabled(obj.GetType());
+        }
+
+        /// <summary>
+        /// The full text enabled.
+        /// </summary>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool FullTextEnabled(Type type)
+        {
+            return (typeof(Entity).IsAssignableFrom(type) || typeof(EntityGuid).IsAssignableFrom(type)) && type.GetCustomAttributes(typeof(FullTextEnabledAttribute), true).Any();
+        }
+
+        /// <summary>
         /// Collects the list of PropertyInfo objects decorated with the
         ///     FullTextIndexedAttribute class for the supplied type.
         /// </summary>
@@ -295,9 +271,8 @@
                         x =>
                         new
                             {
-                                PropInfo = x, 
-                                Priority =
-                            x.GetCustomAttributes(true).OfType<FullTextIndexedAttribute>().First().IndexPriority
+                                PropInfo = x,
+                                Priority = x.GetCustomAttributes(true).OfType<FullTextIndexedAttribute>().First().IndexPriority
                             })
                     .OrderBy(x => x.Priority)
                     .Select(x => x.PropInfo);
@@ -328,8 +303,7 @@
             Type entityType = entity.GetType();
             string entityName = entityType.Name;
             string entityIdName = string.Format("{0}Id", entityName);
-            string entityIdValue =
-                entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
+            string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
             this.logger.DebugFormat("Inserting FT Index for {0} {1}...", entityIdName, entityIdValue);
 
@@ -372,8 +346,7 @@
             {
                 foreach (T entity in entities)
                 {
-                    string entityIdValue =
-                        entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
+                    string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
                     Document doc = this.CreateDocument(entity, entityIdName, entityIdValue, indexables);
                     writer.AddDocument(doc);
                 }
@@ -388,10 +361,10 @@
         /// <param name="entities">
         /// The list of entities
         /// </param>
-        public void PopulateIndex(IEnumerable entities)
+        public void PopulateIndex(IEnumerable entities) 
         {
             object first = null;
-            if (!entities.Any() || !IsIndexable((first = entities.First())))
+            if (!entities.Any() || !IsIndexable(entities.First()))
             {
                 return;
             }
@@ -404,19 +377,44 @@
 
             this.logger.DebugFormat("Populating the Full-text index with values from the {0} entity...", entityName);
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
-            using (
-                var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
+            using (var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
             {
-                foreach (object entity in entities)
+                foreach (var entity in entities)
                 {
-                    string entityIdValue =
-                        entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
+                    string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
                     Document doc = this.CreateDocument(entity, entityIdName, entityIdValue, indexables);
                     writer.AddDocument(doc);
                 }
             }
 
             this.logger.DebugFormat("Index population of {0} is complete.", entityName);
+        }
+
+        /// <summary>
+        /// The search guids.
+        /// </summary>
+        /// <param name="searchText">
+        /// The search text.
+        /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <param name="maxRows">
+        /// The max rows.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Guid[]"/>.
+        /// </returns>
+        public Guid[] SearchGuids(string searchText, Type type, int maxRows)
+        {
+            Func<object, Guid> converter = x =>
+            {
+                Guid trial;
+                return x == null || !Guid.TryParse(x.ToString(),  out trial)
+                           ? Guid.Empty
+                           : trial;
+            };
+            return this.Search(searchText, type, maxRows, converter);
         }
 
         /// <summary>
@@ -432,19 +430,19 @@
         /// The max rows.
         /// </param>
         /// <returns>
-        /// The <see cref="int"/>.
+        /// The <see cref="int[]"/>.
         /// </returns>
         public int[] Search(string searchText, Type type, int maxRows)
         {
-            int trial;
-            return this.Search(
-                searchText, 
-                type, 
-                maxRows, 
-                x =>
-                x == null || !int.TryParse(x.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out trial)
-                    ? 0
-                    : trial);
+            Func<object, int> converter = x =>
+                {
+                    int trial;
+                    return x == null
+                           || !int.TryParse(x.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out trial)
+                               ? 0
+                               : trial;
+                };
+            return this.Search(searchText, type, maxRows, converter);
         }
 
         /// <summary>
@@ -497,8 +495,7 @@
                 }
 
                 ScoreDoc[] hits = searcher.Search(query, null, maxRows, Sort.RELEVANCE).ScoreDocs;
-                TId[] results =
-                    hits.Select(x => idParser(searcher.Doc(x.Doc).Get(string.Format("{0}Id", type.Name)))).ToArray();
+                TId[] results = hits.Select(x => idParser(searcher.Doc(x.Doc).Get(string.Format("{0}Id", type.Name)))).ToArray();
 
                 this.logger.DebugFormat("Found {0} hits for '{1}'.", results.Count(), searchText);
                 return results;
@@ -526,17 +523,15 @@
             Type entityType = entity.GetType();
             string entityName = entityType.Name;
             string entityIdName = string.Format("{0}Id", entityName);
-            string entityIdValue =
-                entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
+            string entityIdValue = entityType.GetProperty(Lambda.Property<Entity>(x => x.Id)).GetValue(entity, null).ToString();
 
             this.logger.DebugFormat("Updating FT Index for {0} {1}...", entityIdName, entityIdValue);
 
             using (var analyzer = new StandardAnalyzer(Version.LUCENE_30))
-            using (
-                var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
+            using (var writer = new IndexWriter(this.FullSearchDirectory, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
             {
                 Document doc = this.CreateDocument(entity, entityIdName, entityIdValue, indexables);
-                string val = doc.GetFieldable(entityIdName).StringValue;
+                var val = doc.GetFieldable(entityIdName).StringValue;
                 var term = new Term(entityIdName, val);
                 writer.UpdateDocument(term, doc);
                 this.logger.DebugFormat("Updated the FT index for {0} {1}", entityIdName, entityIdValue);

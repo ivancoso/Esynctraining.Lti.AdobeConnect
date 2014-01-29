@@ -38,12 +38,13 @@
             this.pageIndex = mark.PageIndex;
             this.@readonly = mark.IsReadonly;
             this.type = mark.Type;
-        }
+            this.rotation = mark.Rotation;
+        } 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
         /// </summary>
-        /// <param name="atDrawing">
+        /// <param name="drawing">
         /// The ATDrawing.
         /// </param>
         public ATMarkDTO(ATDrawing atDrawing) : this(atDrawing.Mark)
@@ -136,6 +137,7 @@
             this.pageIndex = mark.pageIndex;
             this.@readonly = mark.@readonly;
             this.type = mark.type;
+            this.rotation = mark.rotation;
         }
 
         /// <summary>
@@ -253,7 +255,7 @@
         /// Gets or sets the file id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         ///     Gets or sets the date changed.
@@ -373,7 +375,7 @@
         /// Gets or sets the rotation (page or object).
         /// </summary>
         [DataMember]
-        public int rotation { get; set; }
+        public float? rotation { get; set; }
 
         /// <summary>
         /// Gets or sets the labelText.
@@ -429,6 +431,7 @@
             o.Rotation = mark.rotation;
             o.DisplayFormat = mark.displayFormat;
             o.Type = mark.type;
+            o.Rotation = mark.rotation;
             return o;
         }
 

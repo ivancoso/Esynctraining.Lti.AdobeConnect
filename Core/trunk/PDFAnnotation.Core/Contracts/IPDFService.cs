@@ -24,7 +24,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<ATMarkDTO> GetAllMarksForFile(int fileId);
+        ServiceResponse<ATMarkDTO> GetAllMarksForFile(Guid fileId);
 
         /// <summary>
         /// The draw.
@@ -169,7 +169,7 @@
         /// <param name="fileId">file identifier</param>
         /// <returns>The <see cref="ServiceResponse"/>.</returns>
         [OperationContract]
-        ServiceResponse<ATPageSymbolsDTO> GetAllSymbolsFromFile(int fileId);
+        ServiceResponse<ATPageSymbolsDTO> GetAllSymbolsFromFile(Guid fileId);
 
         /// <summary>
         /// Gets all symbol positions and values from specified page in file buffer
@@ -178,7 +178,7 @@
         /// <param name="pageIndex">page index</param>
         /// <returns>The <see cref="ServiceResponse"/>.</returns>
         [OperationContract]
-        ServiceResponse<ATPageSymbolsDTO> GetAllSymbolsFromPage(int fileId, int pageIndex);
+        ServiceResponse<ATPageSymbolsDTO> GetAllSymbolsFromPage(Guid fileId, int pageIndex);
 
         /// <summary>
         /// Add or update common properties.
@@ -202,8 +202,10 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse RotatePage(int fileId, int pageIndex, int rotation);
+        ServiceResponse RotatePage(Guid fileId, int pageIndex, int rotation);
 
+        [OperationContract]
+        ServiceResponse ClearUnsavedMarks(Guid fileId);
         #endregion
     }
 }

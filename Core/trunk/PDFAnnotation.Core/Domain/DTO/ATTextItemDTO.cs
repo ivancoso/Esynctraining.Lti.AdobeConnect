@@ -36,6 +36,7 @@ namespace PDFAnnotation.Core.Domain.DTO
             this.datechanged = item.Mark.DateChanged;
             this.datecreated = item.Mark.DateCreated;
             this.@readonly = item.Mark.IsReadonly;
+            this.rotation = item.Mark.Rotation;
 
             this.positionX = (float)item.PositionX;
             this.positionY = (float)item.PositionY;
@@ -53,6 +54,12 @@ namespace PDFAnnotation.Core.Domain.DTO
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the rotation.
+        /// </summary>
+        [DataMember]
+        public float? rotation { get; set; }
 
         /// <summary>
         ///     Gets or sets text alignment
@@ -88,7 +95,7 @@ namespace PDFAnnotation.Core.Domain.DTO
         ///     Gets or sets the file id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         ///     Gets or sets FontFamily

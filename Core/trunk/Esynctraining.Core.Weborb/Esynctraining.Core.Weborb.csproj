@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj">
-      <Project>{454CA615-9F14-4A1F-ADAC-1F1C400E257D}</Project>
+      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
     </ProjectReference>
   </ItemGroup>

@@ -169,7 +169,7 @@
         /// <summary>
         /// Gets or sets the object rotation angle.
         /// </summary>
-        public virtual int Rotation { get; set; }
+        public virtual float? Rotation { get; set; }
 
         #endregion
 

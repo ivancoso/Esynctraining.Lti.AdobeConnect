@@ -18,7 +18,11 @@
         /// <summary>
         /// The monthly.
         /// </summary>
-        Monthly = 2
+        Monthly = 2,
 
+        /// <summary>
+        /// The hourly.
+        /// </summary>
+        Hourly = 3
     }
 }

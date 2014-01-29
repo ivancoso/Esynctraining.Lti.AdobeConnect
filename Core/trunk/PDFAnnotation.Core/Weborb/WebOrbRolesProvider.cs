@@ -1,10 +1,7 @@
 ﻿namespace PDFAnnotation.Core.Weborb
 {
     using System.Linq;
-
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using global::Weborb.Security;
 
     using PDFAnnotation.Core.Business.Models;
@@ -38,13 +35,7 @@
         /// </returns>
         public string[] GetUserRoles(string userName)
         {
-            var result = new string[] { };
-            string currentRole = IoC.Resolve<ContactModel>().GetOneByEmail(userName).Value.With(x => x.ContactType.ContactTypeName);
-            if (!string.IsNullOrWhiteSpace(currentRole))
-            {
-                result = new[] { currentRole };
-            }
-
+            var result = new[] { "Any" };
             return result;
         }
 

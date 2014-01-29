@@ -14,6 +14,11 @@
     [DataContract]
     public class FileDTO
     {
+        /// <summary>
+        /// The meeting url.
+        /// </summary>
+        private string meetingUrl = null;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -37,19 +42,63 @@
             this.fileSize = file.FileSize;
             this.topicName = file.TopicName;
             this.description = file.Description;
-            this.webOrbId = file.WebOrbId;
             this.categoryId = file.Category.Return(x => x.Id, (int?)null);
+            this.userId = file.User.Return(x => x.Id, (int?)null);
             this.displayName = file.DisplayName;
             this.dateModified = file.DateModified;
             this.fileNumber = file.FileNumber;
             this.categoryName = file.Category.With(c => c.CategoryName);
+            this.userName = file.User.Return(x => x.FullName, null);
             this.topicVo = new TopicDTO(file.Topic);
-            this.topicId = this.topicVo.Return(x => x.topicId, (int?) null);
+            this.topicId = this.topicVo.Return(x => x.topicId, (int?)null);
+            this.fileStatus = (int)file.Status;
+            this.isShared = file.IsShared.HasValue && file.IsShared.Value;
+            this.acMeetingUrl = file.AcMeetingUrl;
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is shared.
+        /// </summary>
+        [DataMember]
+        public bool isShared { get; set; }
+
+        /// <summary>
+        /// Gets or sets a meeting url.
+        /// </summary>
+        [DataMember]
+        public string acMeetingUrl
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.meetingUrl.With(x => x.Trim())) ? null : this.meetingUrl.Trim();
+            }
+            set
+            {
+                this.meetingUrl = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the fileStatus.
+        /// </summary>
+        [DataMember]
+        public int fileStatus { get; set; }
+
+        /// <summary>
+        /// Gets or sets the case id.
+        /// </summary>
+        [DataMember]
+        public int? userId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user name.
+        /// </summary>
+        [DataMember]
+        public string userName { get; set; }
 
         /// <summary>
         ///     Gets or sets the Topic.
@@ -73,7 +122,7 @@
         ///     Gets or sets the id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.
@@ -92,12 +141,6 @@
         /// </summary>
         [DataMember]
         public string createdBy { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the name.
-        /// </summary>
-        [DataMember]
-        public Guid? webOrbId { get; set; }
 
         /// <summary>
         /// Gets or sets the case id.
@@ -175,6 +218,17 @@
         {
             return !string.IsNullOrWhiteSpace(this.fileName)
                    && Path.GetExtension(this.fileName).ToLowerInvariant().EndsWith("pdf");
+        }
+
+        /// <summary>
+        /// The has case and witness.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool HasUser()
+        {
+            return this.IsPDF() && !this.HasTopic() && !this.HasCategoryAndTopic() && this.userId.HasValue && this.userId.Value != default(int);
         }
     }
 }

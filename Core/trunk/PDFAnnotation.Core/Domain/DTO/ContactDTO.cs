@@ -1,9 +1,9 @@
 ﻿namespace PDFAnnotation.Core.Domain.DTO
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Runtime.Serialization;
-
-    using Esynctraining.Core.Extensions;
 
     using PDFAnnotation.Core.Domain.Entities;
 
@@ -12,6 +12,7 @@
     /// </summary>
     [DataContract]
     [KnownType(typeof(CategoryDTO))]
+    [KnownType(typeof(CompanyContactDTO))]
     [Serializable]
     public class ContactDTO
     {
@@ -22,6 +23,7 @@
         /// </summary>
         public ContactDTO()
         {
+            this.companies = new List<CompanyContactDTO>();
         }
 
         /// <summary>
@@ -30,12 +32,16 @@
         /// <param name="cnt">
         /// The user.
         /// </param>
-        public ContactDTO(Contact cnt)
+        /// <param name="userToken">
+        /// The user Token.
+        /// </param>
+        public ContactDTO(Contact cnt, string userToken = null)
         {
+            this.companies = new List<CompanyContactDTO>();
             if (cnt != null)
             {
                 this.rbContactId = cnt.RBContactId;
-                this.companyId = cnt.Company.Return(x => x.Id, (int?)null);
+                this.companies = cnt.CompanyContacts.Select(x => new CompanyContactDTO(x)).ToList();
                 this.contactId = cnt.Id;
                 this.dateCreated = cnt.DateCreated;
                 this.dateModified = cnt.DateModified ?? cnt.DateCreated;
@@ -43,9 +49,11 @@
                 this.firstName = cnt.FirstName;
                 this.lastName = cnt.LastName;
                 this.isActive = cnt.Status == ContactStatusEnum.Active;
-                this.contactTypeId = cnt.ContactType.With(x => x.Id);
+                this.isSuperAdmin = cnt.IsSuperAdmin;
                 this.officePhone = cnt.OfficePhone;
                 this.mobilePhone = cnt.MobilePhone;
+                this.userToken = userToken;
+                this.isSuperAdmin = cnt.IsSuperAdmin;
             }
         }
 
@@ -57,31 +65,13 @@
         ///     Gets or sets the case id.
         /// </summary>
         [DataMember]
-        public int? companyId { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the case id.
-        /// </summary>
-        [DataMember]
-        public int? rbContactId { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the phone cell.
-        /// </summary>
-        [DataMember]
-        public string mobilePhone { get; set; }
+        public List<CompanyContactDTO> companies { get; set; }
 
         /// <summary>
         ///     Gets or sets id
         /// </summary>
         [DataMember]
         public int contactId { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the contact type id.
-        /// </summary>
-        [DataMember]
-        public int contactTypeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the date created.
@@ -114,10 +104,28 @@
         public bool isActive { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether is super admin.
+        /// </summary>
+        [DataMember]
+        public bool isSuperAdmin { get; set; }
+
+        /// <summary>
         ///     Gets or sets the last name.
         /// </summary>
         [DataMember]
         public string lastName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the phone cell.
+        /// </summary>
+        [DataMember]
+        public string mobilePhone { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the phone work.
+        /// </summary>
+        [DataMember]
+        public string officePhone { get; set; }
 
         /// <summary>
         ///     Gets or sets the password.
@@ -126,12 +134,17 @@
         public string password { get; set; }
 
         /// <summary>
-        ///     Gets or sets the phone work.
+        ///     Gets or sets the case id.
         /// </summary>
         [DataMember]
-        public string officePhone { get; set; }
+        public int? rbContactId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the user token.
+        /// </summary>
+        [DataMember]
+        public string userToken { get; set; }
 
         #endregion
-
     }
 }

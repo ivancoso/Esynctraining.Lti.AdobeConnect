@@ -1,5 +1,6 @@
 ﻿namespace PDFAnnotation.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -78,6 +79,21 @@
         {
             var companyNameToLower = companyName.Return(x => x.ToLowerInvariant(), string.Empty);
             var query = new DefaultQueryOver<Company, int>().GetQueryOver().WhereRestrictionOn(x => x.CompanyName).IsInsensitiveLike(companyNameToLower);
+            return this.Repository.FindOne(query);
+        }
+
+        /// <summary>
+        /// The get one by name.
+        /// </summary>
+        /// <param name="organizationId">
+        /// The organization Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Company}"/>.
+        /// </returns>
+        public IFutureValue<Company> GetOneByOrganizationId(Guid organizationId)
+        {
+            var query = new DefaultQueryOver<Company, int>().GetQueryOver().Where(x => x.OrganizationId == organizationId).Take(1);
             return this.Repository.FindOne(query);
         }
 

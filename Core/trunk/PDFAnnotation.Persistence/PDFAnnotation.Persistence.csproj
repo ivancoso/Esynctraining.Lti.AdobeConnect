@@ -99,6 +99,8 @@
     <Compile Include="Mappings\ATShapeMap.cs" />
     <Compile Include="Mappings\ATTextItemMap.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
+    <Compile Include="Mappings\BaseClassMapGuid.cs" />
+    <Compile Include="Mappings\CompanyContactMap.cs" />
     <Compile Include="Mappings\ContactMap.cs" />
     <Compile Include="Mappings\ContactTypeMap.cs" />
     <Compile Include="Mappings\CategoryMap.cs" />
@@ -130,6 +132,10 @@
     <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj">
       <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
       <Name>Esynctraining.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Pdf\Esynctraining.PdfProcessor\Esynctraining.PdfProcessor.csproj">
+      <Project>{52f607bb-ab4f-4fe5-8cab-89f423af6e8f}</Project>
+      <Name>Esynctraining.PdfProcessor</Name>
     </ProjectReference>
     <ProjectReference Include="..\PDFAnnotation.Core\PDFAnnotation.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>

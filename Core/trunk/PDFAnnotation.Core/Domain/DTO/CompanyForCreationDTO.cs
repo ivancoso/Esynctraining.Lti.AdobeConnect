@@ -17,6 +17,12 @@
         ///     Gets or sets the contact.
         /// </summary>
         [DataMember]
+        public int contactId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the contact.
+        /// </summary>
+        [DataMember]
         public ContactDTO contactVO { get; set; }
 
         /// <summary>
@@ -77,7 +83,13 @@
         ///     Gets or sets the logo.
         /// </summary>
         [DataMember]
-        public int? logoId { get; set; }
+        public Guid? logoId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the organization Id.
+        /// </summary>
+        [DataMember]
+        public Guid organizationId { get; set; }
 
         #endregion
     }

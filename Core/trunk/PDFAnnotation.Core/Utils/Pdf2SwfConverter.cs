@@ -83,13 +83,11 @@
         /// </returns>
         public bool ConvertIfNotExist(FileDTO fileDTO, byte[] ms = null)
         {
-            if (fileDTO.webOrbId.HasValue)
-            {
                 try
                 {
                     var workingDir = FileModel.FileStoragePhysicalPath(this.settings);
                     this.EnsureDirectoryExist(workingDir);
-                    workingDir = Path.Combine(workingDir, fileDTO.webOrbId.Value.ToString());
+                    workingDir = Path.Combine(workingDir, fileDTO.fileId.ToString());
                     this.EnsureDirectoryExist(workingDir);
                     var pdfFile = Path.Combine(workingDir, "document.pdf");
                     var swfFile = Path.Combine(workingDir, "document.swf");
@@ -145,9 +143,6 @@
                     this.logger.Error("Converting error", ex);
                     return false;
                 }
-            }
-
-            return false;
         }
 
         public void Convert(string pdfFilePath, string swfFilePath)

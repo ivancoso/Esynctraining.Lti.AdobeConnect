@@ -2,17 +2,17 @@
 {
     using System;
     using Esynctraining.Core.Domain.Entities;
-
+    using Esynctraining.Core.Enums;
+    using Esynctraining.Core.FullText;
     using Iesi.Collections.Generic;
 
-    using PDFAnnotation.Core.FullText;
 
     /// <summary>
     ///     The file.
     /// </summary>
     [Serializable]
     [FullTextEnabled]
-    public class File : Entity
+    public class File : EntityGuid
     {
         #region Fields
 
@@ -26,6 +26,9 @@
         /// </summary>
         private ISet<ATMark> marks = new HashedSet<ATMark>();
 
+        /// <summary>
+        /// The date created.
+        /// </summary>
         private DateTime dateCreated;
 
         #endregion
@@ -37,8 +40,7 @@
         /// </summary>
         public File()
         {
-            this.WebOrbId = Guid.NewGuid();
-            this.DateCreated = DateTime.Now;
+            this.dateCreated = DateTime.Now;
             this.status = FileStatus.Created;
         }
 
@@ -67,10 +69,14 @@
         /// </summary>
         public virtual DateTime DateCreated
         {
-            get { return dateCreated; }
+            get
+            {
+                return this.dateCreated;
+            }
+
             set
             {
-                dateCreated = value;
+                this.dateCreated = value;
                 this.DateModified = value;
             }
         }
@@ -79,6 +85,11 @@
         ///     Gets or sets the date.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name.
+        /// </summary>
+        public virtual string AcMeetingUrl { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.
@@ -119,11 +130,6 @@
         }
 
         /// <summary>
-        ///     Gets or sets the web orb id.
-        /// </summary>
-        public virtual Guid? WebOrbId { get; set; }
-
-        /// <summary>
         /// Gets or sets the event.
         /// </summary>
         public virtual Topic Topic { get; set; }
@@ -132,6 +138,11 @@
         /// Gets or sets the event.
         /// </summary>
         public virtual Category Category { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the user.
+        /// </summary>
+        public virtual Contact User { get; set; }
 
         /// <summary>
         ///     Gets or sets the event's unique name.
@@ -144,6 +155,11 @@
         /// </summary>
         [FullTextIndexed(3)]
         public virtual int? FileNumber { get; set; }
+
+        /// <summary>
+        /// Gets or sets the is shared.
+        /// </summary>
+        public virtual bool? IsShared { get; set; }
 
         #endregion
     }

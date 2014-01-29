@@ -5,10 +5,10 @@
     /// </summary>
     public enum ContactTypeEnum
     {
-        /// <summary>
-        /// The super admin.
-        /// </summary>
-        SuperAdmin = 1, 
+//        /// <summary>
+//        /// The super admin.
+//        /// </summary>
+//        SuperAdmin = 1, 
 
         /// <summary>
         /// The company admin.

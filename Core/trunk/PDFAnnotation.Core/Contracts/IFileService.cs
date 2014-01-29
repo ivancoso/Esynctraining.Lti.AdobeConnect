@@ -1,6 +1,7 @@
 ﻿namespace PDFAnnotation.Core.Contracts
 {
     using System;
+    using System.Collections.Generic;
     using System.ServiceModel;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -21,11 +22,14 @@
         /// <param name="webOrbId">
         /// The file id.
         /// </param>
+        /// <param name="fileStatus">
+        /// The file Status.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<FileDTO> FileUploadEnd(string webOrbId);
+        ServiceResponse<FileDTO> FileUploadEnd(string webOrbId, int fileStatus);
 
         /// <summary>
         /// Should remove uploaded image file if any and instance from DB
@@ -87,11 +91,8 @@
         /// <summary>
         /// The get exhibits report.
         /// </summary>
-        /// <param name="caseId">
-        /// The case id.
-        /// </param>
-        /// <param name="firmId">
-        /// The company id.
+        /// <param name="companyId">
+        /// The company Id.
         /// </param>
         /// <param name="start">
         /// The start.
@@ -106,10 +107,22 @@
         ServiceResponse<FileDTO> GetFilesReport(int companyId, DateTime? start, DateTime? end);
 
         /// <summary>
+        /// The delete by id.
+        /// </summary>
+        /// <param name="ids">
+        /// The id array.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<Guid> DeleteByIds(List<Guid> ids);
+
+        /// <summary>
         /// The save.
         /// </summary>
         /// <param name="dto">
-        /// The dto.
+        /// The DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -118,10 +131,28 @@
         ServiceResponse<FileDTO> Save(FileDTO dto);
 
         /// <summary>
+        /// The get preloaded exhibits.
+        /// </summary>
+        /// <param name="contactId">
+        /// The contact id.
+        /// </param>
+        /// <param name="acMeetingUrl">
+        /// The ac Meeting Url.
+        /// </param>
+        /// <param name="includeSharedToFirm">
+        /// The include Shared To Firm.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<FileDTO> GetPreloadedFiles(int contactId, string acMeetingUrl, bool includeSharedToFirm = true);
+
+        /// <summary>
         /// Checks supposed exhibit number, returns this or first available
         /// </summary>
         /// <param name="dto">
-        /// The dto.
+        /// The DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -150,11 +181,30 @@
         /// <summary>
         /// Creates a new empty PDF file
         /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
         /// <returns>
-        /// file dto
+        /// file DTO
         /// </returns>
         [OperationContract]
         ServiceResponse<FileDTO> Create(FileDTO dto);
+
+        /// <summary>
+        /// The update status.
+        /// </summary>
+        /// <param name="fileId">
+        /// The file id.
+        /// </param>
+        /// <param name="status">
+        /// The status.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<FileDTO> UpdateStatus(Guid fileId, int status);
+
 
         #endregion
     }

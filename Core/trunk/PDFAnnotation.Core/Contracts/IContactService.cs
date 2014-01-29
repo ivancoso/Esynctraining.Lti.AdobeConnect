@@ -33,8 +33,8 @@
         /// <summary>
         /// The all.
         /// </summary>
-        /// <param name="ids">
-        /// The ids.
+        /// <param name="companyId">
+        /// The company Id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -209,7 +209,7 @@
         /// </returns>
         [OperationContract]
         ServiceResponse<ContactDTO> Save(ContactDTO contact);
-        
+
         #endregion
     }
 }

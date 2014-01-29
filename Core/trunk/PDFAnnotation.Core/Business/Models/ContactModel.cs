@@ -116,10 +116,7 @@
             }
 
             var queryOver = new DefaultQueryOver<Contact, int>().GetQueryOver();
-            if (companyId != 0)
-            {
-                queryOver = queryOver.Where(x => x.Company.Id == companyId);
-            }
+            
 
             if (!string.IsNullOrWhiteSpace(searchPattern))
             {
@@ -127,16 +124,34 @@
                 queryOver = queryOver.AndRestrictionOn(x => x.Id).IsIn(searchIds);
             }
 
-            var rowCountQuery = queryOver.ToRowCountQuery();
-            totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
-
-            if (pageSize > 0)
+            if (companyId != 0)
             {
-                var pagedQueryOver = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
-                return searchIds.Any() ? this.Repository.FindAll(pagedQueryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(pagedQueryOver);
-            }
+                CompanyContact companyContact = null;
+                var queryOver2 = queryOver.JoinQueryOver(x => x.CompanyContacts, () => companyContact).Where(() => companyContact.Company.Id == companyId);
+                var rowCountQuery = queryOver2.ToRowCountQuery();
+                totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
 
-            return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);
+                if (pageSize > 0)
+                {
+                    var pagedQueryOver = queryOver2.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+                    return searchIds.Any() ? this.Repository.FindAll(pagedQueryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(pagedQueryOver);
+                }
+
+                return searchIds.Any() ? this.Repository.FindAll(queryOver2).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver2);
+            }
+            else
+            {
+                var rowCountQuery = queryOver.ToRowCountQuery();
+                totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
+
+                if (pageSize > 0)
+                {
+                    var pagedQueryOver = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+                    return searchIds.Any() ? this.Repository.FindAll(pagedQueryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(pagedQueryOver);
+                }
+
+                return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);    
+            }
         }
 
         /// <summary>
@@ -205,13 +220,29 @@
         /// The email.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue{User}"/>.
+        /// The <see cref="IFutureValue{Contact}"/>.
         /// </returns>
         public virtual IFutureValue<Contact> GetOneByEmail(string email)
         {
             var emailToLower = email.ToLower();
             var queryOver = new QueryOverContact().GetQueryOver().WhereRestrictionOn(x => x.Email).IsInsensitiveLike(emailToLower);
             return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
+        /// The get one by email.
+        /// </summary>
+        /// <param name="emails">
+        /// The emails.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Contact}"/>.
+        /// </returns>
+        public virtual IEnumerable<Contact> GetAllByEmails(List<string> emails)
+        {
+            emails.ForEach(x => x = x.ToLowerInvariant());
+            var queryOver = new QueryOverContact().GetQueryOver().WhereRestrictionOn(x => x.Email).IsIn(emails);
+            return this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
@@ -225,7 +256,24 @@
         /// </returns>
         public virtual IEnumerable<Contact> GetAllByCompanyId(int companyId)
         {
-            var queryOver = new QueryOverContact().GetQueryOver().Where(x => x.Company != null && x.Company.Id == companyId);
+            CompanyContact companyContact = null;
+            var queryOver = new QueryOverContact().GetQueryOver().JoinQueryOver(x => x.CompanyContacts, () => companyContact).Where(() => companyContact.Company.Id == companyId);
+            return this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
+        /// The get all by company id.
+        /// </summary>
+        /// <param name="organizationId">
+        /// The company Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Contact}"/>.
+        /// </returns>
+        public virtual IEnumerable<Contact> GetAllByOrganizationId(Guid organizationId)
+        {
+            CompanyContact companyContact = null;
+            var queryOver = new QueryOverContact().GetQueryOver().JoinQueryOver(x => x.CompanyContacts, () => companyContact).Where(() => companyContact.Company.OrganizationId == organizationId);
             return this.Repository.FindAll(queryOver);
         }
 
@@ -261,40 +309,6 @@
         }
 
         #endregion
-
-        /// <summary>
-        /// The get all by role.
-        /// </summary>
-        /// <param name="contactTypeId">
-        /// The contact type id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        public IEnumerable<Contact> GetAllByRole(int contactTypeId)
-        {
-            var query =
-                new QueryOverContact().GetQueryOver()
-                                      .Where(x => x.ContactType.Id == contactTypeId);
-            return this.Repository.FindAll(query);
-        }
-
-        /// <summary>
-        /// The get all by roles.
-        /// </summary>
-        /// <param name="contactTypeIds">
-        /// The contact Type Ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        public IEnumerable<Contact> GetAllByRoles(List<int> contactTypeIds)
-        {
-            var query =
-                new QueryOverContact().GetQueryOver()
-                                      .WhereRestrictionOn(x => x.ContactType.Id).IsIn(contactTypeIds);
-            return this.Repository.FindAll(query);
-        }
 
         /// <summary>
         /// The get all including billing.
