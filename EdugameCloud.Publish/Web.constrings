@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<connectionStrings>
-	<!-- <add name="Database" connectionString="Server=(local)\ms2008;Database=EduGameCloud;Integrated Security=true;Connection Timeout=120;" /> -->
-  <add name="Database" connectionString="Server=64.27.12.38;Database=EduGameCloud;User ID=sa;password=devcfx9;Connection Timeout=180;" />
-</connectionStrings>    
