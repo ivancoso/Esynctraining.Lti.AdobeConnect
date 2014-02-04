@@ -165,8 +165,8 @@
                                         result |= processor.Execute(i);
                                     }
                                 }
+                                reader.RemoveUnusedObjects();
                             }
-
                             outPdfBuffer = outPdfStream.ToArray();
                         }
                     }
