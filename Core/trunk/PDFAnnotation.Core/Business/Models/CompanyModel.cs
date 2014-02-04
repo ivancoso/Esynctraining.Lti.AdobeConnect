@@ -97,6 +97,37 @@
             return this.Repository.FindOne(query);
         }
 
+        /// <summary>
+        /// The get all for user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Company}"/>.
+        /// </returns>
+        public IEnumerable<Company> GetAllForUser(int userId)
+        {
+            CompanyContact companyContact = null;
+            var query = new DefaultQueryOver<Company, int>().GetQueryOver().JoinQueryOver(x => x.CompanyContacts, () => companyContact).Where(() => companyContact.Contact.Id == userId);
+            return this.Repository.FindAll(query);
+        }
+
+        /// <summary>
+        /// The get one by name.
+        /// </summary>
+        /// <param name="organizationIds">
+        /// The organization Ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Company}"/>.
+        /// </returns>
+        public IEnumerable<Company> GetAllByOrganizationIds(List<Guid> organizationIds)
+        {
+            var query = new DefaultQueryOver<Company, int>().GetQueryOver().WhereRestrictionOn(x => x.OrganizationId).IsIn(organizationIds);
+            return this.Repository.FindAll(query);
+        }
+
         #endregion
     }
 }

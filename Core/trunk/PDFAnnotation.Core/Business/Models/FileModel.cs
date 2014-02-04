@@ -452,36 +452,53 @@
             FileStatus status,
             bool includeShared = false)
         {
-            int userId = user.Id;
-            var defaultQuery =
-                new DefaultQueryOver<File, Guid>().GetQueryOver()
-                    .Where(x => x.User != null && x.User.Id == userId && x.Status == status)
-                    .Fetch(x => x.User)
-                    .Eager;
-
-            if (!string.IsNullOrWhiteSpace(meetingUrl))
+            var result = new List<File>();
+            int userId = user.With(x => x.Id);
+            if (userId != 0)
             {
-                defaultQuery = defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl).IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl).IsInsensitiveLike(meetingUrl, MatchMode.Exact);
+                var defaultQuery =
+                    new DefaultQueryOver<File, Guid>().GetQueryOver()
+                        .Where(x => x.User != null && x.User.Id == userId && x.Status == status)
+                        .Fetch(x => x.User)
+                        .Eager;
+
+                if (!string.IsNullOrWhiteSpace(meetingUrl))
+                {
+                    defaultQuery =
+                        defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl)
+                            .IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl)
+                            .IsInsensitiveLike(meetingUrl, MatchMode.Exact);
+                }
+                else
+                {
+                    defaultQuery = defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl).IsNull;
+                }
+
+                if (string.IsNullOrWhiteSpace(meetingUrl) || !includeShared)
+                {
+                    return this.Repository.FindAll(defaultQuery);
+                }
+
+                result = this.Repository.FindAll(defaultQuery).ToList();
             }
-            else
+
+            if (!string.IsNullOrWhiteSpace(meetingUrl) && includeShared)
             {
-                defaultQuery = defaultQuery.WhereRestrictionOn(x => x.AcMeetingUrl).IsNull;
+                var secondOver =
+                    new DefaultQueryOver<File, Guid>().GetQueryOver()
+                        .Where(x => x.User != null && x.IsShared == true && x.User.Id != userId && x.Status == status);
+
+                secondOver =
+                    secondOver.WhereRestrictionOn(x => x.AcMeetingUrl)
+                        .IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl)
+                        .IsInsensitiveLike(meetingUrl, MatchMode.Exact);
+
+                secondOver = secondOver.Fetch(x => x.User).Eager;
+
+                return result.Union(this.Repository.FindAll(secondOver));
             }
 
-            if (string.IsNullOrWhiteSpace(meetingUrl) || !includeShared)
-            {
-                return this.Repository.FindAll(defaultQuery);
-            }
-
-            var result = this.Repository.FindAll(defaultQuery).ToList();
-
-            var secondOver = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.User != null && x.IsShared == true && x.User.Id != userId && x.Status == status);
-
-            secondOver = secondOver.WhereRestrictionOn(x => x.AcMeetingUrl).IsNotNull.AndRestrictionOn(x => x.AcMeetingUrl).IsInsensitiveLike(meetingUrl, MatchMode.Exact);
-
-            secondOver = secondOver.Fetch(x => x.User).Eager;
-
-            return result.Union(this.Repository.FindAll(secondOver));
+            return result;
         }
 
 //        /// <summary>

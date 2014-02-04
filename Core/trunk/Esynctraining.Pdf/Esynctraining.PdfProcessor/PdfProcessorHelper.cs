@@ -135,7 +135,7 @@
                         new AndFilter(new List<PdfFilter>
                                 {
                                     new HasSpecialCsResourceFilter(reader),
-//                                    new NotFilter(new HasFontResourceFilter(reader)),
+////                                new NotFilter(new HasFontResourceFilter(reader)),
                                     new NotFilter(new PageHasSpecificKeyFilter(reader, RenderPageAction.EstPageRendered, new PdfBoolean(true)))
                                 });
                     var processor = new PdfProcessor(new List<IPdfAction> { andFilter });

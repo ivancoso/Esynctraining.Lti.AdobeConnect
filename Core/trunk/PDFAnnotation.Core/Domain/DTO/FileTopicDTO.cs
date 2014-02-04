@@ -1,5 +1,6 @@
 ﻿namespace PDFAnnotation.Core.Domain.DTO
 {
+    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -14,7 +15,7 @@
         /// Gets or sets the file id.
         /// </summary>
         [DataMember]
-        public int fileId { get; set; }
+        public Guid fileId { get; set; }
 
         /// <summary>
         /// Gets or sets the topic id.
