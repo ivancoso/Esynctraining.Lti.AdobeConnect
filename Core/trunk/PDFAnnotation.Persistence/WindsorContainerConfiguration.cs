@@ -54,7 +54,6 @@
                 container.Register(Component.For<AuthenticationModel>().ImplementedBy(typeof(AuthenticationModel)).LifeStyle.PerWcfOperation());
             }
 
-            container.Register(Component.For<FluentConfiguration>().LifeStyle.Singleton);
             container.Register(Component.For<Configuration>().LifeStyle.Singleton.Activator<NHibernateConfigurationActivator>());
             container.Register(Component.For<ISessionFactory>().LifeStyle.Singleton.Activator<NHibernateSessionFactoryActivator>());
 

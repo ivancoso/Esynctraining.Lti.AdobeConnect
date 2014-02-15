@@ -17,12 +17,10 @@ namespace PDFAnnotation.Core.Business.Models
     {
         #region Fields
 
-        private readonly FullTextModel fullTextModel;
-
         /// <summary>
-        ///     The contact repository.
+        /// The full text model.
         /// </summary>
-        private readonly IRepository<Contact, int> contactRepository;
+        private readonly FullTextModel fullTextModel;
 
         #endregion
 
@@ -34,14 +32,13 @@ namespace PDFAnnotation.Core.Business.Models
         /// <param name="repository">
         /// The repository.
         /// </param>
-        /// <param name="contactRepository">
-        /// The contact Repository.
+        /// <param name="fullTextModel">
+        /// The full Text Model.
         /// </param>
-        public CategoryModel(IRepository<Category, int> repository, FullTextModel fullTextModel, IRepository<Contact, int> contactRepository)
+        public CategoryModel(IRepository<Category, int> repository, FullTextModel fullTextModel)
             : base(repository)
         {
             this.fullTextModel = fullTextModel;
-            this.contactRepository = contactRepository;
         }
 
         #endregion
@@ -126,7 +123,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// <param name="searchPattern">
         /// The name.
         /// </param>
-        /// <param name="firmId">
+        /// <param name="companyId">
         /// The company Id.
         /// </param>
         /// <param name="pageIndex">
@@ -193,6 +190,7 @@ namespace PDFAnnotation.Core.Business.Models
             return this.Repository.FindAll(defaultQuery);
         }
 
+        /// <summary>
         /// The get one by id.
         /// </summary>
         /// <param name="id">
@@ -227,6 +225,5 @@ namespace PDFAnnotation.Core.Business.Models
         }
 
         #endregion
-
     }
 }

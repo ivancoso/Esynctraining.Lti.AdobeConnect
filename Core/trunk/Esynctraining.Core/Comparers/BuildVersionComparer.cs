@@ -1,11 +1,12 @@
 ﻿namespace Esynctraining.Core.Comparers
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
     /// The build version comparer.
     /// </summary>
-    public class BuildVersionComparer : IComparer<KeyValuePair<int, string>>
+    public class BuildVersionComparer : IComparer<KeyValuePair<Version, string>>
     {
         #region Public Methods and Operators
 
@@ -21,7 +22,7 @@
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public int Compare(KeyValuePair<int, string> x, KeyValuePair<int, string> y)
+        public int Compare(KeyValuePair<Version, string> x, KeyValuePair<Version, string> y)
         {
             return y.Key.CompareTo(x.Key);
         }

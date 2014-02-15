@@ -8,6 +8,7 @@
     using System.Threading;
     using System.Web;
 
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers.Mailer.Configuration;
 
     /// <summary>
@@ -31,7 +32,7 @@
         /// </summary>
         public AttachmentsProvider()
         {
-            this.attachmentsDirectory = MailerConfigurationSection.Current.AttachmentsFolderPath;
+            this.attachmentsDirectory = MailerConfigurationSection.Current.With(x => x.AttachmentsFolderPath);
         }
 
         #endregion

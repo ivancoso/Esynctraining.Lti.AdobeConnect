@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.Core.Extensions
 {
+    using System;
     using System.Linq;
     using System.Text.RegularExpressions;
 
@@ -13,7 +14,7 @@
         /// <summary>
         /// The regex.
         /// </summary>
-        private static readonly Regex regex = new Regex(@"\d", RegexOptions.Compiled);
+        private static readonly Regex regex = new Regex(@"(\d+\.)+", RegexOptions.Compiled);
 
         #endregion
 
@@ -28,24 +29,27 @@
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        public static int GetBuildVersion(this string fileName)
+        public static Version GetBuildVersion(this string fileName)
         {
             string result = string.Empty;
             int res;
             try
             {
-                result = regex.Matches(fileName).Cast<Match>().Aggregate(result, (current, m) => current + m.Value);
+                var firstMatch = regex.Match(fileName);
+                result = firstMatch.Success ? firstMatch.Value.TrimEnd(".".ToCharArray()) : "1.0";
             }
             catch
             {
             }
 
-            if (int.TryParse(result, out res))
+            try
             {
-                return res;
+                return new Version(result);
             }
-
-            return 0;
+            catch (Exception)
+            {
+                return new Version(1, 0);
+            }
         }
 
         #endregion

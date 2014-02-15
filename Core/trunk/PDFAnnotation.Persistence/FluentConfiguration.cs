@@ -57,14 +57,27 @@
         /// <param name="cfg">
         /// The config.
         /// </param>
-        public void Configured(Configuration cfg)
+        public virtual void Configured(Configuration cfg)
+        {
+            var persistenceModel = new PersistenceModel();
+            this.Configure(persistenceModel, cfg);
+        }
+
+        /// <summary>
+        /// The configured.
+        /// </summary>
+        /// <param name="persistenceModel">
+        /// The persistence Model.
+        /// </param>
+        /// <param name="cfg">
+        /// The config.
+        /// </param>
+        protected virtual void Configure(PersistenceModel persistenceModel, Configuration cfg)
         {
             Assembly executing = Assembly.GetExecutingAssembly();
             cfg.AddAssembly(executing);
-            var persistenceModel = new PersistenceModel();
             persistenceModel.AddMappingsFromSource(new NameSpaceTypeSource(executing, typeof(ContactTypeMap).Namespace));
             persistenceModel.AddMappingsFromSource(new NameSpaceTypeSource(executing, typeof(ATMarkMap).Namespace));
-
             AddConventions(persistenceModel.Conventions);
             persistenceModel.Configure(cfg);
         }

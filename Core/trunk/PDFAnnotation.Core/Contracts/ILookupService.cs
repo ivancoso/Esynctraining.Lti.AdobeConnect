@@ -57,6 +57,16 @@
         ServiceResponse<LookupDTO> GetAll();
 
         /// <summary>
+        /// The get config.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse{ContactDTO}"/>.
+        /// </returns>
+        [OperationContract]
+        [WebORBCache(CacheScope = CacheScope.Global)]
+        ServiceResponse<ConfigDTO> GetConfig();
+
+        /// <summary>
         /// The is EST in daylight zone.
         /// </summary>
         /// <returns>

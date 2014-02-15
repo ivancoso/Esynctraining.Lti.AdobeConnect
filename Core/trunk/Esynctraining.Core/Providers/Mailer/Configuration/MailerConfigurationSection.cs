@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.Core.Providers.Mailer.Configuration
 {
+    using System;
     using System.Configuration;
 
     /// <summary>
@@ -27,10 +28,17 @@
             {
                 if (current == null)
                 {
-                    object settings = ConfigurationManager.GetSection("mailerSettings");
-                    if (settings != null)
+                    try
                     {
-                        current = settings as MailerConfigurationSection;
+                        object settings = ConfigurationManager.GetSection("mailerSettings");
+                        if (settings != null)
+                        {
+                            current = settings as MailerConfigurationSection;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        
                     }
                 }
 

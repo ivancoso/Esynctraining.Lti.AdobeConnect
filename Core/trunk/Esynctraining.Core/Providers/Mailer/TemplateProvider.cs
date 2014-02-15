@@ -5,6 +5,7 @@
     using System.Threading;
     using System.Web;
 
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers.Mailer.Configuration;
 
     /// <summary>
@@ -33,8 +34,8 @@
         /// </summary>
         public TemplateProvider()
         {
-            this.templatesDirectory = MailerConfigurationSection.Current.TemplatesFolderPath;
-            this.asciiTemplatesDirectory = MailerConfigurationSection.Current.AsciiTemplatesFolderPath;
+            this.templatesDirectory = MailerConfigurationSection.Current.With(x => x.TemplatesFolderPath);
+            this.asciiTemplatesDirectory = MailerConfigurationSection.Current.With(x => x.AsciiTemplatesFolderPath);
         }
 
         #endregion

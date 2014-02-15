@@ -32,6 +32,9 @@
         /// <param name="contactId">
         /// The contact id.
         /// </param>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
         /// <param name="includeDetails">
         /// The include details.
         /// </param>
@@ -39,7 +42,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CategoryDTO> GetAllForContactId(int contactId, bool includeDetails);
+        ServiceResponse<CategoryDTO> GetAllForContactAndCompanyId(int contactId, int companyId, bool includeDetails);
 
         /// <summary>
         /// The get paged.
