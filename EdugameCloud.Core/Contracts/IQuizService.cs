@@ -94,7 +94,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetQuizSMItemsByUserId(int userId);
+        ServiceResponse<SubModuleItemDTO> GetQuizSMItemsByUserId(int userId);
 
         /// <summary>
         /// The get quizes by user subModuleId.

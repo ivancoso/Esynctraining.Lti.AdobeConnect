@@ -57,9 +57,9 @@
         public virtual int TotalLicensesCount { get; set; }
 
         /// <summary>
-        /// Gets or sets the is trial.
+        /// Gets or sets the is license status.
         /// </summary>
-        public virtual bool? IsTrial { get; set; }
+        public virtual CompanyLicenseStatus LicenseStatus { get; set; }
 
         #endregion
     }

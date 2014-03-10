@@ -158,21 +158,6 @@
         }
 
         /// <summary>
-        /// The get quiz sub module items by user id.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{QuizSubModuleItemDTOFromStoredProcedureDTO}"/>.
-        /// </returns>
-        public IEnumerable<SubModuleItemDTOFromStoredProcedureDTO> GetQuizSMItemsByUserId(int userId)
-        {
-            return this.Repository.StoreProcedureForMany<SubModuleItemDTOFromStoredProcedureDTO>(
-                "getQuizSubModuleItemsByUserID", new StoreProcedureParam<int>("userId", userId));
-        }
-
-        /// <summary>
         /// The get quiz data by quiz id.
         /// </summary>
         /// <param name="quizId">

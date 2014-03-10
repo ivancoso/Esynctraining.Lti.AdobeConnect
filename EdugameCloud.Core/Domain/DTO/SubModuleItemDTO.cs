@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
 
@@ -10,6 +11,7 @@
     ///     The sub module item DTO.
     /// </summary>
     [DataContract]
+    [KnownType(typeof(SubModuleItemThemeDTO))]
     public class SubModuleItemDTO
     {
         #region Constructors and Destructors
@@ -19,6 +21,7 @@
         /// </summary>
         public SubModuleItemDTO()
         {
+            themeVO = new SubModuleItemThemeDTO();
         }
 
         /// <summary>
@@ -34,15 +37,28 @@
             this.subModuleCategoryId = result.SubModuleCategory.With(x => x.Id);
             this.createdBy = result.CreatedBy.Return(x => x.Id, (int?)null);
             this.modifiedBy = result.ModifiedBy.Return(x => x.Id, (int?)null);
+            this.themeId = (int?)null;
             this.isActive = result.IsActive;
             this.isShared = result.IsShared;
             this.dateCreated = result.DateCreated;
             this.dateModified = result.DateModified;
+            var theme = result.Themes.FirstOrDefault();
+            if (theme != null)
+            {
+                this.themeId = theme.Id;
+                this.themeVO = new SubModuleItemThemeDTO(theme);
+            }
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        ///     Gets or sets the created by.
+        /// </summary>
+        [DataMember]
+        public virtual int? themeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the created by.
@@ -97,6 +113,12 @@
         /// </summary>
         [DataMember]
         public virtual int subModuleId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the theme.
+        /// </summary>
+        [DataMember]
+        public virtual SubModuleItemThemeDTO themeVO { get; set; }
 
         #endregion
     }

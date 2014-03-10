@@ -28,6 +28,7 @@
             this.HasMany(x => x.Tests).ExtraLazyLoad().Cascade.Delete().Inverse();
             this.HasMany(x => x.SNProfiles).ExtraLazyLoad().Cascade.Delete().Inverse();
             this.HasMany(x => x.ACSessions).ExtraLazyLoad().Cascade.Delete().Inverse();
+            this.HasMany(x => x.Themes).Cascade.Delete().Inverse();
 
             this.References(x => x.SubModuleCategory);
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<SubModuleItem>(x => x.ModifiedBy)));

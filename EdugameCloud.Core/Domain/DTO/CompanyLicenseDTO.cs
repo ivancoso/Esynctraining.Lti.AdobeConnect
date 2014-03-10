@@ -5,8 +5,10 @@
 
     using EdugameCloud.Core.Domain.Entities;
 
+    using NHibernate.Proxy;
+
     /// <summary>
-    ///     The company license dto.
+    ///     The company license DTO.
     /// </summary>
     [DataContract]
     public class CompanyLicenseDTO 
@@ -36,7 +38,9 @@
             this.dateModified = l.DateModified;
             this.expiryDate = l.ExpiryDate;
             this.totalLicensesCount = l.TotalLicensesCount;
-            this.isTrial = l.IsTrial ?? false;
+            this.isTrial = l.LicenseStatus == CompanyLicenseStatus.Trial;
+            this.isPro = l.LicenseStatus == CompanyLicenseStatus.Pro;
+            this.isEnterprise = l.LicenseStatus == CompanyLicenseStatus.Enterprise;
         }
 
         #region Public Properties
@@ -60,10 +64,22 @@
         public int createdBy { get; set; }
 
         /// <summary>
-        /// Gets or sets the created by.
+        /// Gets or sets a value indicating whether is trial.
         /// </summary>
         [DataMember]
         public bool isTrial { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is pro.
+        /// </summary>
+        [DataMember]
+        public bool isPro { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is enterprise.
+        /// </summary>
+        [DataMember]
+        public bool isEnterprise { get; set; }
 
         /// <summary>
         ///     Gets or sets the date created.

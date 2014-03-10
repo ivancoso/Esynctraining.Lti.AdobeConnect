@@ -2,13 +2,10 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
-    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -17,7 +14,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Utils;
+
     using FluentValidation.Results;
     using Resources;
 
@@ -29,43 +26,6 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SubModuleItemService : BaseService, ISubModuleItemService
     {
-        #region Properties
-
-        /// <summary>
-        /// Gets the quiz model.
-        /// </summary>
-        private QuizModel QuizModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the sub module item model.
-        /// </summary>
-        private SubModuleItemModel SubModuleItemModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleItemModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the sub module category model.
-        /// </summary>
-        private SubModuleCategoryModel SubModuleCategoryModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleCategoryModel>();
-            }
-        }
-
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>
@@ -96,14 +56,13 @@ namespace EdugameCloud.WCFService
             {
                 var subModuleItemModel = this.SubModuleItemModel;
                 var isTransient = resultDto.subModuleItemId == 0;
-                var quizResult = isTransient ? null : subModuleItemModel.GetOneById(resultDto.subModuleItemId).Value;
-                quizResult = this.ConvertDto(resultDto, quizResult);
-                subModuleItemModel.RegisterSave(quizResult);
-                result.@object = new SubModuleItemDTO(quizResult);
+                var subModuleItem = isTransient ? null : subModuleItemModel.GetOneById(resultDto.subModuleItemId).Value;
+                subModuleItem = this.Convert(resultDto, subModuleItem, true);
+                result.@object = new SubModuleItemDTO(subModuleItem);
                 return result;
             }
 
-            result = (ServiceResponse<SubModuleItemDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }
@@ -130,8 +89,7 @@ namespace EdugameCloud.WCFService
                     var sessionModel = this.SubModuleItemModel;
                     var isTransient = appletResultDTO.subModuleItemId == 0;
                     var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.subModuleItemId).Value;
-                    appletResult = this.ConvertDto(appletResultDTO, appletResult);
-                    sessionModel.RegisterSave(appletResult);
+                    appletResult = this.Convert(appletResultDTO, appletResult);
                     created.Add(appletResult);
                 }
                 else
@@ -280,11 +238,11 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetQuizSubModuleItemsByUserId(int userId)
+        public ServiceResponse<SubModuleItemDTO> GetQuizSubModuleItemsByUserId(int userId)
         {
-            return new ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO>
+            return new ServiceResponse<SubModuleItemDTO>
             {
-                objects = this.QuizModel.GetQuizSMItemsByUserId(userId).ToList()
+                objects = this.SubModuleItemModel.GetQuizSMItemsByUserId(userId).ToList()
             };
         }
 
@@ -320,35 +278,6 @@ namespace EdugameCloud.WCFService
             {
                 objects = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(userId)
             };
-        }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="smi">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItem"/>.
-        /// </returns>
-        private SubModuleItem ConvertDto(SubModuleItemDTO smi, SubModuleItem instance)
-        {
-            instance = instance ?? new SubModuleItem();
-            instance.IsActive = smi.isActive;
-            instance.IsShared = smi.isShared;
-            instance.DateCreated = smi.dateCreated == DateTime.MinValue ? DateTime.Now : smi.dateCreated;
-            instance.DateModified = smi.dateModified == DateTime.MinValue ? DateTime.Now : smi.dateModified;
-            instance.SubModuleCategory = this.SubModuleCategoryModel.GetOneById(smi.subModuleCategoryId).Value;
-            instance.CreatedBy = smi.createdBy.HasValue ? this.UserModel.GetOneById(smi.createdBy.Value).Value : null;
-            instance.ModifiedBy = smi.modifiedBy.HasValue ? this.UserModel.GetOneById(smi.modifiedBy.Value).Value : null;
-            return instance;
         }
 
         #endregion

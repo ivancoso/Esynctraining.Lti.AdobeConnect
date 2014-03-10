@@ -5,7 +5,6 @@
     using System.IO;
     using System.Linq;
     using System.Text;
-    using System.Web;
     using System.Web.Mvc;
     using System.Web.Security;
     using System.Web.UI;
@@ -97,7 +96,7 @@
         [HttpGet]
         public virtual ActionResult Cookies()
         {
-            StringBuilder sb = new StringBuilder("Server side cookies:");
+            var sb = new StringBuilder("Server side cookies:");
             foreach (string cookie in this.Request.Cookies)
             {
                 sb.AppendLine();
@@ -268,12 +267,12 @@
             string folder = this.Server.MapPath(swfFolder);
             if (Directory.Exists(folder))
             {
-                var versions = new List<KeyValuePair<int, string>>();
+                var versions = new List<KeyValuePair<Version, string>>();
                 foreach (string file in Directory.GetFiles(folder, (string)this.Settings.BuildSelector))
                 {
                     string fileName = Path.GetFileName(file);
-                    int version = fileName.GetBuildVersion();
-                    versions.Add(new KeyValuePair<int, string>(version, fileName));
+                    var version = fileName.GetBuildVersion();
+                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
                 }
 
                 versions.Sort(new BuildVersionComparer());

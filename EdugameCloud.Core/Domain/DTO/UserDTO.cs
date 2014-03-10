@@ -13,8 +13,6 @@
     [DataContract]
     public class UserDTO
     {
-        
-
         #region Constructors and Destructors
 
         /// <summary>

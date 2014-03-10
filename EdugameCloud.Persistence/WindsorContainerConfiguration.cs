@@ -12,6 +12,7 @@
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business;
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Converters;
     using EdugameCloud.Persistence.Extensions;
 
     using Esynctraining.Core.Business;
@@ -97,6 +98,7 @@
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Core").Pick().If(Component.IsInNamespace("EdugameCloud.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
             container.Register(Classes.FromAssemblyNamed("Esynctraining.Core").Pick().If(Component.IsInNamespace("Esynctraining.Core.Business.Models")).If(type => type != typeof(AuthenticationModel)).WithService.Self().Configure(c => c.LifestyleTransient()));
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Core").BasedOn(typeof(BaseConverter<,>)).WithService.Base().LifestyleTransient());
 
             if (web)
             {

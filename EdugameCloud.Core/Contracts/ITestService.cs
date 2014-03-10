@@ -32,7 +32,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<TestDTO> GetById(int id);
+        ServiceResponse<TestWithSmiDTO> GetById(int id);
 
         /// <summary>
         /// Get user by id.
@@ -44,7 +44,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<TestDTO> GetBySMIId(int smiId);
+        ServiceResponse<TestWithSmiDTO> GetBySMIId(int smiId);
 
         /// <summary>
         /// The get paged.
@@ -95,7 +95,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetTestSMItemsByUserId(int userId);
+        ServiceResponse<SubModuleItemDTO> GetTestSMItemsByUserId(int userId);
 
         /// <summary>
         /// The get tests by user id.
@@ -131,7 +131,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<TestDTO> Save(TestDTO appletItemDTO);
+        ServiceResponse<TestWithSmiDTO> Save(TestDTO appletItemDTO);
 
         /// <summary>
         /// The create.
@@ -143,7 +143,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<TestDTO> Create(TestSMIWrapperDTO dto);
+        ServiceResponse<TestWithSmiDTO> Create(TestSMIWrapperDTO dto);
 
         #endregion
     }

@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.ViewModels;
 
     using Esynctraining.Core.Enums;
@@ -21,13 +22,14 @@
         /// </param>
         public ForgetPasswordViewModelValidator(UserModel userModel)
         {
+            User user;
             CascadeMode = CascadeMode.StopOnFirstFailure;
             this.RuleFor(x => x.Email)
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_LOGIN, "Email is empty")
                 .EmailAddress()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_LOGIN, "Email is invalid")
-                .Must(x => userModel.GetOneByEmail(x).Value != null)
+                .Must(x => (user = userModel.GetOneByEmail(x).Value) != null && (user.Status == UserStatus.Active || user.Status == UserStatus.Activating))
                 .WithError(Errors.CODE_ERRORTYPE_USER_EXISTING, "User do not exist");
         }
     }

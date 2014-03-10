@@ -97,7 +97,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetSurveySMItemsByUserId(int userId);
+        ServiceResponse<SubModuleItemDTO> GetSurveySMItemsByUserId(int userId);
 
         /// <summary>
         /// The get surveys by user subModuleId.

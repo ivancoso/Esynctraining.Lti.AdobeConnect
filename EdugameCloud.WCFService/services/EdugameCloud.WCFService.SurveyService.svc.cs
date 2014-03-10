@@ -11,7 +11,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Domain.Formats.Edugame;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
 
@@ -34,17 +33,6 @@ namespace EdugameCloud.WCFService
     public class SurveyService : BaseService, ISurveyService
     {
         #region Properties
-
-        /// <summary>
-        /// Gets the sub module category model.
-        /// </summary>
-        private SubModuleCategoryModel SubModuleCategoryModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleCategoryModel>();
-            }
-        }
 
         /// <summary>
         /// Gets the Survey model.
@@ -121,13 +109,12 @@ namespace EdugameCloud.WCFService
             if (this.IsValid(dto, out validationResult))
             {
                 var quizModel = this.SurveyModel;
-                var smiResult = this.ConvertDto(dto.SmiDTO, null);
-                this.SubModuleItemModel.RegisterSave(smiResult, true);
+                var smiResult = this.Convert(dto.SmiDTO, (SubModuleItem)null, true);
                 dto.SurveyDTO.subModuleItemId = smiResult.Id;
                 return this.ConvertQuizAndGetServiceResponse(dto.SurveyDTO, null, quizModel, result);
             }
 
-            result = (ServiceResponse<SurveyDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }
@@ -153,7 +140,7 @@ namespace EdugameCloud.WCFService
                 return this.ConvertQuizAndGetServiceResponse(surveyDTO, survey, quizModel, result);
             }
 
-            result = (ServiceResponse<SurveyDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }
@@ -261,9 +248,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetSurveySMItemsByUserId(int userId)
+        public ServiceResponse<SubModuleItemDTO> GetSurveySMItemsByUserId(int userId)
         {
-            return new ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> { objects = this.SurveyModel.GetSurveySMItemsByUserId(userId).ToList() };
+            return new ServiceResponse<SubModuleItemDTO> { objects = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(userId).ToList() };
         }
 
         /// <summary>
@@ -309,31 +296,6 @@ namespace EdugameCloud.WCFService
                 this.SubModuleItemModel.RegisterSave(instance.SubModuleItem);
             }
 
-            return instance;
-        }
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="smi">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItem"/>.
-        /// </returns>
-        private SubModuleItem ConvertDto(SubModuleItemDTO smi, SubModuleItem instance)
-        {
-            instance = instance ?? new SubModuleItem();
-            instance.IsActive = smi.isActive;
-            instance.IsShared = smi.isShared;
-            instance.DateCreated = smi.dateCreated == DateTime.MinValue ? DateTime.Now : smi.dateCreated;
-            instance.DateModified = smi.dateModified == DateTime.MinValue ? DateTime.Now : smi.dateModified;
-            instance.SubModuleCategory = this.SubModuleCategoryModel.GetOneById(smi.subModuleCategoryId).Value;
-            instance.CreatedBy = smi.createdBy.HasValue ? this.UserModel.GetOneById(smi.createdBy.Value).Value : null;
-            instance.ModifiedBy = smi.modifiedBy.HasValue ? this.UserModel.GetOneById(smi.modifiedBy.Value).Value : null;
             return instance;
         }
 

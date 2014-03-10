@@ -91,17 +91,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// Gets the authentication model.
-        /// </summary>
-        private AuthenticationModel AuthenticationModel
-        {
-            get
-            {
-                return IoC.Resolve<AuthenticationModel>();
-            }
-        }
-
-        /// <summary>
         /// Gets the time zone model.
         /// </summary>
         private TimeZoneModel TimeZoneModel
@@ -174,6 +163,9 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The get all.
         /// </summary>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -340,7 +332,7 @@ namespace EdugameCloud.WCFService
                                           DateCreated = DateTime.Now,
                                           DateModified = DateTime.Now,
                                           ExpiryDate = dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1),
-                                          IsTrial = dto.licenseVO.isTrial,
+                                          LicenseStatus = this.GetLicenseStatus(dto.licenseVO),
                                           TotalLicensesCount = dto.licenseVO.totalLicensesCount,
                                           Domain = dto.licenseVO.domain,
                                           LicenseNumber = Guid.NewGuid().ToString()
@@ -364,7 +356,7 @@ namespace EdugameCloud.WCFService
                     if (isUserTransient)
                     {
                         var license = instance.Licenses.FirstOrDefault();
-                        if (license.Return(x => x.IsTrial.HasValue && x.IsTrial.Value, false))
+                        if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false))
                         {
                             user.Status = UserStatus.Active;
                             UserModel.RegisterSave(user);
@@ -401,6 +393,30 @@ namespace EdugameCloud.WCFService
             response = this.UpdateResult(response, result);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, response, string.Empty);
             return response;
+        }
+
+        /// <summary>
+        /// The get license status.
+        /// </summary>
+        /// <param name="licenseVo">
+        /// The license vo.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CompanyLicenseStatus"/>.
+        /// </returns>
+        private CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
+        {
+            if (licenseVo.isTrial)
+            {
+                return CompanyLicenseStatus.Trial;
+            }
+            
+            if (licenseVo.isEnterprise)
+            {
+                return CompanyLicenseStatus.Enterprise;
+            }
+
+            return CompanyLicenseStatus.Pro;
         }
 
         #endregion

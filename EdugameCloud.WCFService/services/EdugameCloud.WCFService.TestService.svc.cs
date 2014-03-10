@@ -11,7 +11,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Domain.Formats.Edugame;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
 
@@ -43,17 +42,6 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<TestModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the sub module category model.
-        /// </summary>
-        private SubModuleCategoryModel SubModuleCategoryModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleCategoryModel>();
             }
         }
 
@@ -114,17 +102,16 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<TestDTO> Create(TestSMIWrapperDTO dto)
+        public ServiceResponse<TestWithSmiDTO> Create(TestSMIWrapperDTO dto)
         {
-            var result = new ServiceResponse<TestDTO>();
+            var result = new ServiceResponse<TestWithSmiDTO>();
             ValidationResult validationResult;
             if (this.IsValid(dto, out validationResult))
             {
                 var quizModel = this.TestModel;
-                var smiResult = this.ConvertDto(dto.SmiDTO, null);
-                this.SubModuleItemModel.RegisterSave(smiResult, true);
+                var smiResult = this.Convert(dto.SmiDTO, (SubModuleItem)null, true);
                 dto.TestDTO.subModuleItemId = smiResult.Id;
-                return this.ConvertTestAndGetServiceResponse(dto.TestDTO, null, quizModel, result);
+                return this.ConvertTestAndGetServiceResponse(dto.TestDTO, null, smiResult, quizModel, result);
             }
 
             result = this.UpdateResult(result, validationResult);
@@ -141,16 +128,16 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<TestDTO> Save(TestDTO appletResultDTO)
+        public ServiceResponse<TestWithSmiDTO> Save(TestDTO appletResultDTO)
         {
-            var result = new ServiceResponse<TestDTO>();
+            var result = new ServiceResponse<TestWithSmiDTO>();
             ValidationResult validationResult;
             if (this.IsValid(appletResultDTO, out validationResult))
             {
                 var quizModel = this.TestModel;
                 var isTransient = appletResultDTO.testId == 0;
                 var quiz = isTransient ? null : quizModel.GetOneById(appletResultDTO.testId).Value;
-                return this.ConvertTestAndGetServiceResponse(appletResultDTO, quiz, quizModel, result);
+                return this.ConvertTestAndGetServiceResponse(appletResultDTO, quiz, null, quizModel, result);
             }
 
             result = this.UpdateResult(result, validationResult);
@@ -167,9 +154,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<TestDTO> GetById(int id)
+        public ServiceResponse<TestWithSmiDTO> GetById(int id)
         {
-            var result = new ServiceResponse<TestDTO>();
+            var result = new ServiceResponse<TestWithSmiDTO>();
             Test test;
             if ((test = this.TestModel.GetOneById(id).Value) == null)
             {
@@ -178,7 +165,7 @@ namespace EdugameCloud.WCFService
             else
             {
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
-                result.@object = new TestDTO(test);
+                result.@object = new TestWithSmiDTO(test);
             }
 
             return result;
@@ -193,9 +180,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<TestDTO> GetBySMIId(int id)
+        public ServiceResponse<TestWithSmiDTO> GetBySMIId(int id)
         {
-            var result = new ServiceResponse<TestDTO>();
+            var result = new ServiceResponse<TestWithSmiDTO>();
             Test test;
             if ((test = this.TestModel.GetOneBySMIId(id).Value) == null)
             {
@@ -204,7 +191,7 @@ namespace EdugameCloud.WCFService
             else
             {
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
-                result.@object = new TestDTO(test);
+                result.@object = new TestWithSmiDTO(test);
             }
 
             return result;
@@ -261,9 +248,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetTestSMItemsByUserId(int userId)
+        public ServiceResponse<SubModuleItemDTO> GetTestSMItemsByUserId(int userId)
         {
-            return new ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> { objects = this.TestModel.GetTestSMItemsByUserId(userId).ToList() };
+            return new ServiceResponse<SubModuleItemDTO> { objects = this.SubModuleItemModel.GetTestSubModuleItemsByUserId(userId).ToList() };
         }
 
         /// <summary>
@@ -319,31 +306,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="smi">
-        /// The result DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItem"/>.
-        /// </returns>
-        private SubModuleItem ConvertDto(SubModuleItemDTO smi, SubModuleItem instance)
-        {
-            instance = instance ?? new SubModuleItem();
-            instance.IsActive = smi.isActive;
-            instance.IsShared = smi.isShared;
-            instance.DateCreated = smi.dateCreated == DateTime.MinValue ? DateTime.Now : smi.dateCreated;
-            instance.DateModified = smi.dateModified == DateTime.MinValue ? DateTime.Now : smi.dateModified;
-            instance.SubModuleCategory = this.SubModuleCategoryModel.GetOneById(smi.subModuleCategoryId).Value;
-            instance.CreatedBy = smi.createdBy.HasValue ? this.UserModel.GetOneById(smi.createdBy.Value).Value : null;
-            instance.ModifiedBy = smi.modifiedBy.HasValue ? this.UserModel.GetOneById(smi.modifiedBy.Value).Value : null;
-            return instance;
-        }
-
-        /// <summary>
         /// The convert test and get service response.
         /// </summary>
         /// <param name="appletResultDTO">
@@ -361,13 +323,13 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        private ServiceResponse<TestDTO> ConvertTestAndGetServiceResponse(TestDTO appletResultDTO, Test test, TestModel testModel, ServiceResponse<TestDTO> result)
+        private ServiceResponse<TestWithSmiDTO> ConvertTestAndGetServiceResponse(TestDTO appletResultDTO, Test test, SubModuleItem smi, TestModel testModel, ServiceResponse<TestWithSmiDTO> result)
         {
             test = this.ConvertDto(appletResultDTO, test);
             testModel.RegisterSave(test, true);
-            int companyId = test.With(x => x.SubModuleItem).With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
+            int companyId = smi.With(x => x.SubModuleCategory).With(x => x.User).With(x => x.Company.Id);
             IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<Test>(NotificationType.Update, companyId, test.Id);
-            result.@object = new TestDTO(test);
+            result.@object = new TestWithSmiDTO(test, smi);
             return result;
         }
 

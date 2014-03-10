@@ -17,7 +17,7 @@
         public CompanyLicenseMap()
         {
             this.Map(x => x.Domain).Nullable();
-            this.Map(x => x.IsTrial).Nullable();
+            this.Map(x => x.LicenseStatus).CustomType<CompanyLicenseStatus>().Not.Nullable();
             this.Map(x => x.ExpiryDate);
             this.Map(x => x.LicenseNumber).Length(50).Not.Nullable();
             this.Map(x => x.TotalLicensesCount).Not.Nullable().Default("(1)");

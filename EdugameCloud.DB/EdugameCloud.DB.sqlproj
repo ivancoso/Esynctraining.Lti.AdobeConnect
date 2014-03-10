@@ -161,8 +161,8 @@
     <Build Include="dbo\Tables\QuestionForRate_1.sql" />
     <Build Include="dbo\Tables\QuestionForOpenAnswer_1.sql" />
     <Build Include="dbo\Tables\QuestionForLikert_1.sql" />
-    <Build Include="Security\edu.sql" />
     <Build Include="dbo\Tables\QuestionForTrueFalse.sql" />
+    <Build Include="dbo\Tables\SubModuleItemTheme.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />

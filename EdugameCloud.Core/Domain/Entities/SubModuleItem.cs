@@ -21,6 +21,11 @@
         private ISet<ACSession> acSessions = new HashedSet<ACSession>();
 
         /// <summary>
+        /// The themes.
+        /// </summary>
+        private ISet<SubModuleItemTheme> themes = new HashedSet<SubModuleItemTheme>();
+
+        /// <summary>
         /// The applet items.
         /// </summary>
         private ISet<AppletItem> appletItems = new HashedSet<AppletItem>();
@@ -68,6 +73,22 @@
             set
             {
                 this.acSessions = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the ac sessions.
+        /// </summary>
+        public virtual ISet<SubModuleItemTheme> Themes
+        {
+            get
+            {
+                return this.themes;
+            }
+
+            set
+            {
+                this.themes = value;
             }
         }
 

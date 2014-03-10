@@ -372,6 +372,7 @@ namespace EdugameCloud.WCFService
                 User user = this.UserModel.GetOneByEmail(email).Value;
                 string newPassword = AuthenticationModel.CreateRandomPassword();
                 user.SetPassword(newPassword);
+                user.Status = UserStatus.Active;
                 this.UserModel.RegisterSave(user);
                 this.SendPasswordEmail(user.FirstName, user.Email, newPassword);
                 return result;

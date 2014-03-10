@@ -15,6 +15,7 @@
 
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Converters;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Providers.Mailer.Models;
@@ -224,6 +225,32 @@
         }
 
         /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="transferObject">
+        /// The t 1.
+        /// </param>
+        /// <param name="instance">
+        /// The t 2.
+        /// </param>
+        /// <param name="flush">
+        /// The flush.
+        /// </param>
+        /// <typeparam name="TDataTransferObject">
+        /// Data transfer object instance
+        /// </typeparam>
+        /// <typeparam name="TObjectInstance">
+        /// Object instance
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="TObjectInstance"/> instance.
+        /// </returns>
+        protected TObjectInstance Convert<TDataTransferObject, TObjectInstance>(TDataTransferObject transferObject, TObjectInstance instance, bool flush = false)
+        {
+            return IoC.Resolve<BaseConverter<TDataTransferObject, TObjectInstance>>().Convert(transferObject, instance, flush);
+        }
+
+        /// <summary>
         /// The update cache.
         /// </summary>
         /// <param name="method">
@@ -240,6 +267,8 @@
         /// <summary>
         /// The update cache.
         /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
         /// <param name="target">
         /// The target.
         /// </param>
@@ -400,7 +429,7 @@
                     PrimaryEmail = company.PrimaryContact.With(x => x.Email),
                     PrimaryName = company.PrimaryContact.With(x => x.FullName),
                     SeatsCount = license.With(x => x.TotalLicensesCount),
-                    IsTrial = license.Return(x => x.IsTrial.HasValue && x.IsTrial.Value, false),
+                    IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
                     ExpirationDate = license.With(x => x.ExpiryDate.ToEst() + " EST")
                 },
                 Common.AppEmailName,

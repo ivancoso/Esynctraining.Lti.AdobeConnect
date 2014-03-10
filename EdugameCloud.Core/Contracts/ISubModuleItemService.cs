@@ -88,7 +88,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SubModuleItemDTOFromStoredProcedureDTO> GetQuizSubModuleItemsByUserId(int userId);
+        ServiceResponse<SubModuleItemDTO> GetQuizSubModuleItemsByUserId(int userId);
 
         /// <summary>
         /// The get SN profile sub module items by user id.

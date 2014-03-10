@@ -334,7 +334,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
                         byte[] raw = this.FileModel.GetData(file);
                         if (raw != null)
                         {
-                            result = Convert.ToBase64String(raw);
+                            result = System.Convert.ToBase64String(raw);
                         }
                     }
 
@@ -802,7 +802,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
                         null, 
                         null, 
                         null);
-                    byte[] byteData = Convert.FromBase64String(imageData);
+                    byte[] byteData = System.Convert.FromBase64String(imageData);
                     fileModel.SetData(file, byteData);
 
                     string permanentFileName = fileModel.PermanentFileName(file);
