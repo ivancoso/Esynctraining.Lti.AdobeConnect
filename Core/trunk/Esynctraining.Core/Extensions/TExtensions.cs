@@ -145,6 +145,40 @@
         }
 
         /// <summary>
+        /// If evaluator than result else default value.
+        /// </summary>
+        /// <param name="o">
+        /// The o.
+        /// </param>
+        /// <param name="evaluator">
+        /// The evaluator.
+        /// </param>
+        /// <param name="affirmative">
+        /// The affirmative.
+        /// </param>
+        /// <param name="negative">
+        /// The negative.
+        /// </param>
+        /// <typeparam name="TInput">
+        /// Type of input
+        /// </typeparam>
+        /// <typeparam name="TResult">
+        /// Type of result
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="TResult"/>.
+        /// </returns>
+        public static TResult IfElse<TInput, TResult>(this TInput o, Func<TInput, bool> evaluator, Func<TInput, TResult> affirmative, Func<TInput, TResult> negative) where TInput : class
+        {
+            if (o == null)
+            {
+                return default(TResult);
+            }
+
+            return evaluator(o) ? affirmative(o) : negative(o);
+        }
+
+        /// <summary>
         /// The is default or null.
         /// </summary>
         /// <param name="o">

@@ -1,6 +1,7 @@
 ﻿namespace Esynctraining.Core.Extensions
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.ComponentModel;
@@ -65,6 +66,53 @@
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Expands nave value collection to a dynamic object.
+        /// </summary>
+        /// <param name="valueCollection">
+        /// The value collection.
+        /// </param>
+        /// <returns>
+        /// The dynamic object result.
+        /// </returns>
+        public static dynamic ToExpandoWithAdditionalData(this NameValueCollection valueCollection, IEnumerable<KeyValuePair<string, string>> additionalData)
+        {
+            var extended = new NameValueCollection(valueCollection);
+            foreach (var pair in additionalData)
+            {
+                extended.Add(pair.Key, pair.Value);
+            }
+
+            return extended.ToExpando();
+        }
+
+        /// <summary>
+        /// Expands nave value collection to a dynamic object.
+        /// </summary>
+        /// <param name="valueCollection">
+        /// The value collection.
+        /// </param>
+        /// <returns>
+        /// The dynamic object result.
+        /// </returns>
+        public static dynamic ToExpando(this Hashtable valueCollection)
+        {
+            dynamic resultEx = new ExpandoObject();
+            resultEx.Get = new Func<string, string>(
+                key =>
+                {
+                    var res = resultEx as IDictionary<string, object>;
+                    return res != null && res.ContainsKey(key) ? res[key].ToString() : string.Empty;
+                });
+            var result = resultEx as IDictionary<string, object>;
+            foreach (string key in valueCollection.Keys)
+            {
+                result.Add(key, valueCollection[key]);
+            }
+
+            return result;
         }
 
         /// <summary>

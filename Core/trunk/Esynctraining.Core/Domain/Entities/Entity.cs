@@ -1,6 +1,7 @@
 ﻿namespace Esynctraining.Core.Domain.Entities
 {
     using System;
+    using System.Data.SqlTypes;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -29,6 +30,48 @@
         #endregion
 
         #region Public Methods and Operators
+
+        protected DateTime AdaptToSql(DateTime dt)
+        {
+            if (SqlDateTime.MinValue.Value > dt)
+            {
+                return SqlDateTime.MinValue.Value;
+            }
+
+            if (SqlDateTime.MaxValue.Value < dt)
+            {
+                return SqlDateTime.MaxValue.Value;
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// The fix date time.
+        /// </summary>
+        /// <param name="dt">
+        /// The dt.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Nullable<DateTime>"/>.
+        /// </returns>
+        protected DateTime? AdaptToSql(DateTime? dt)
+        {
+            if (dt.HasValue)
+            {
+                if (SqlDateTime.MinValue.Value > dt.Value)
+                {
+                    return SqlDateTime.MinValue.Value;
+                }
+
+                if (SqlDateTime.MaxValue.Value < dt.Value)
+                {
+                    return SqlDateTime.MaxValue.Value;
+                }
+            }
+
+            return dt;
+        }
 
         /// <summary>
         /// Compare equality trough Id

@@ -165,10 +165,27 @@
         /// <param name="flush">
         /// The flush.
         /// </param>
-        public virtual void RegisterSave(T entity, bool flush)
+        /// <param name="updateDateModified">
+        /// The prevent Date Modification.
+        /// </param>
+        public virtual void RegisterSave(T entity, bool flush, bool updateDateModified = true)
         {
             if (!entity.Equals(default(T)))
             {
+                if (typeof(IDatesContainer).IsAssignableFrom(typeof(T)))
+                {
+                    var datesContainer = (IDatesContainer)entity;
+                    if (entity.Id.Equals(default(TId)))
+                    {
+                        datesContainer.DateCreated = DateTime.Now;
+                        datesContainer.DateModified = null;
+                    }
+                    else if (updateDateModified)
+                    {
+                        datesContainer.DateModified = DateTime.Now;
+                    }
+                }
+
                 this.Repository.RegisterSave(entity);
 
                 if (flush)
@@ -211,6 +228,33 @@
             if (SqlDateTime.MaxValue.Value < dt)
             {
                 return SqlDateTime.MaxValue.Value;
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// The validate date time.
+        /// </summary>
+        /// <param name="dt">
+        /// The dt.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTime"/>.
+        /// </returns>
+        protected DateTime? ValidateDateTime(DateTime? dt)
+        {
+            if (dt.HasValue)
+            {
+                if (SqlDateTime.MinValue.Value > dt)
+                {
+                    return SqlDateTime.MinValue.Value;
+                }
+
+                if (SqlDateTime.MaxValue.Value < dt)
+                {
+                    return SqlDateTime.MaxValue.Value;
+                }
             }
 
             return dt;

@@ -25,6 +25,10 @@ namespace Esynctraining.Core.Providers
         /// </summary>
         private readonly string defaultUILanguage = "en-US";
 
+        /// <summary>
+        /// The connection string.
+        /// </summary>
+        private readonly string connectionString = string.Empty;
         #endregion
 
         #region Constructors and Destructors
@@ -40,9 +44,10 @@ namespace Esynctraining.Core.Providers
         /// </param>
         public ApplicationSettingsProvider(NameValueCollection collection, GlobalizationSection globalizationSection = null)
         {
+            this.connectionString = ConfigurationManager.ConnectionStrings["Database"].With(x => x.ConnectionString);
             if (collection != null)
             {
-                this.collection = collection.ToExpando();
+                this.collection = collection.ToExpandoWithAdditionalData(new[] { new KeyValuePair<string, string>("ConnectionString", this.connectionString) });
             }
 
             if (globalizationSection != null)
@@ -63,6 +68,17 @@ namespace Esynctraining.Core.Providers
             get
             {
                 return this.defaultUILanguage;
+            }
+        }
+
+        /// <summary>
+        ///     Gets connection string.
+        /// </summary>
+        public string ConnectionString
+        {
+            get
+            {
+                return this.connectionString;
             }
         }
 

@@ -109,10 +109,12 @@
     <Compile Include="Domain\Entities\DateTimeWithZone.cs" />
     <Compile Include="Domain\Entities\Entity.cs" />
     <Compile Include="Domain\Entities\Error.cs" />
+    <Compile Include="Domain\Entities\IDatesContainer.cs" />
     <Compile Include="Domain\Entities\IDeletable.cs" />
     <Compile Include="Domain\Entities\IEntity.cs" />
     <Compile Include="Enums\Errors.cs" />
     <Compile Include="Enums\FileStatus.cs" />
+    <Compile Include="Enums\UploadFileStatus.cs" />
     <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
     <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
     <Compile Include="ErrorHandling\Log4NetErrorHandler .cs" />
