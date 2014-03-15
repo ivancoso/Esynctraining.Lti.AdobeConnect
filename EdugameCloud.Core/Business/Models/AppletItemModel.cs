@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using NHibernate.SqlCommand;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -18,7 +20,16 @@
     ///     The AppletItem model.
     /// </summary>
     public class AppletItemModel : BaseModel<AppletItem, int>
-    {
+    {        
+		#region Fields
+
+        /// <summary>
+        /// The user repository.
+        /// </summary>
+        private readonly IRepository<User, int> userRepository;
+
+		#endregion
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -27,9 +38,10 @@
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public AppletItemModel(IRepository<AppletItem, int> repository)
+        public AppletItemModel(IRepository<User, int> userRepository,IRepository<AppletItem, int> repository)
             : base(repository)
         {
+	        this.userRepository = userRepository;
         }
 
         #endregion
@@ -129,8 +141,46 @@
         /// </returns>
         public IEnumerable<CrosswordDTO> GetCrosswordsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<CrosswordDTO>(
-                "getUsersCrosswordsByUserId", new StoreProcedureParam<int>("userId", userId));
+	        AppletItem ai = null;
+	        SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        User u = null;
+	        User u2 = null;
+	        CrosswordDTO dto = null;
+	        var queryOver = new DefaultQueryOver<AppletItem, int>().GetQueryOver(() => ai)
+		        .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true)
+		        .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+		        .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+		        .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.LeftOuterJoin)
+		        .Where(() => u2.Id == userId)
+		        .SelectList(res =>
+			        res.Select(() => ai.AppletName)
+				        .WithAlias(() => dto.appletName)
+				        .Select(() => ai.Id)
+				        .WithAlias(() => dto.appletItemId)
+				        .Select(() => u.LastName)
+				        .WithAlias(() => dto.lastName)
+				        .Select(() => u.FirstName)
+				        .WithAlias(() => dto.firstName)
+				        .Select(() => u.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => u2.LastName)
+				        .WithAlias(() => dto.createdByLastName)
+				        .Select(() => u2.FirstName)
+				        .WithAlias(() => dto.createdByName)
+				        .Select(() => smi.CreatedBy.Id)
+				        .WithAlias(() => dto.createdBy)
+				        .Select(() => smi.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smi.Id)
+				        .WithAlias(() => dto.subModuleItemId)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId))
+		        .TransformUsing(Transformers.AliasToBean<CrosswordDTO>());
+	        var result = this.Repository.FindAll<CrosswordDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -160,8 +210,54 @@
         /// </returns>
         public IEnumerable<CrosswordDTO> GetSharedCrosswordsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<CrosswordDTO>("getSharedForUserCrosswordsByUserId", new StoreProcedureParam<int>("userId", userId));
-        }
+	        var query =
+		        new DefaultQueryOver<User, int>().GetQueryOver()
+			        .Where(x => x.Id == userId)
+					.Select(res=>
+					res.Company.Id);
+			var id = this.userRepository.FindOne<int>(query);
+
+			AppletItem ai = null;
+			SubModuleItem smi = null;
+			SubModuleCategory smc = null;
+			User u = null;
+			User u2 = null;
+			CrosswordDTO dto = null;
+			var queryOver = new DefaultQueryOver<AppletItem, int>().GetQueryOver(() => ai)
+				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true && smi.IsShared == true)
+				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+				.JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+				.JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
+				.Where(() => u2.Id != userId && u2.Company.Id == id.Value && (int)u2.Status == 1)
+				.SelectList(res =>
+					res.Select(() => ai.AppletName)
+						.WithAlias(() => dto.appletName)
+						.Select(() => ai.Id)
+						.WithAlias(() => dto.appletItemId)
+						.Select(() => u.LastName)
+						.WithAlias(() => dto.lastName)
+						.Select(() => u.FirstName)
+						.WithAlias(() => dto.firstName)
+						.Select(() => u.Id)
+						.WithAlias(() => dto.userId)
+						.Select(() => u2.LastName)
+						.WithAlias(() => dto.createdByLastName)
+						.Select(() => u2.FirstName)
+						.WithAlias(() => dto.createdByName)
+						.Select(() => smi.CreatedBy.Id)
+						.WithAlias(() => dto.createdBy)
+						.Select(() => smi.DateModified)
+						.WithAlias(() => dto.dateModified)
+						.Select(() => smi.Id)
+						.WithAlias(() => dto.subModuleItemId)
+						.Select(() => smc.CategoryName)
+						.WithAlias(() => dto.categoryName)
+						.Select(() => smc.Id)
+						.WithAlias(() => dto.subModuleCategoryId))
+				.TransformUsing(Transformers.AliasToBean<CrosswordDTO>());
+			var result = this.Repository.FindAll<CrosswordDTO>(queryOver).ToList();
+			return result;
+		}
 
         #endregion
     }

@@ -43,7 +43,7 @@
         /// <summary>
         ///     Gets or sets the passing score.
         /// </summary>
-        public virtual float? PassingScore { get; set; }
+        public virtual decimal? PassingScore { get; set; }
 
         /// <summary>
         /// Gets or sets the results.

@@ -1,4 +1,10 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using System.Linq;
+using EdugameCloud.Core.Domain.DTO;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
 
@@ -163,5 +169,58 @@
                 .AndRestrictionOn(x => x.Question.Id).IsIn(questionIds).Fetch(x => x.Image).Eager;
             return this.Repository.FindAll(queryOver);
         }
+
+		  public IEnumerable<DistractorFromStoredProcedureDTO> GetTestDistractorsWithoutImagesBySMIId(int smiId)
+	    {
+		    Distractor d = null;
+		    Question q = null;
+		    SubModuleItem smi = null;
+		    File f = null;
+		    DistractorFromStoredProcedureDTO dto = null;
+			var qieryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver(()=>d)
+				.JoinQueryOver(x=>x.Question, ()=>q, JoinType.InnerJoin)
+				.JoinQueryOver(()=>q.SubModuleItem, ()=>smi, JoinType.InnerJoin)
+				.JoinQueryOver(()=>d.Image, ()=>f)
+				.Where(()=>q.SubModuleItem.Id == smiId && q.IsActive == true && d. IsActive == true)
+				.SelectList(res=>
+					res.Select(Projections.Distinct(Projections.ProjectionList()
+						.Add(Projections.Property(() => d.Id))
+						.Add(Projections.Property(() => d.Question.Id))
+						.Add(Projections.Property(() => d.DistractorType))
+						.Add(Projections.Property(() => d.DistractorName))
+						.Add(Projections.Property(() => d.DistractorOrder))
+						.Add(Projections.Property(() => d.IsCorrect))
+						.Add(Projections.Property(() => d.Image.Id))
+						.Add(Projections.Property(() => f.X))
+						.Add(Projections.Property(() => f.Y))
+						.Add(Projections.Property(() => f.Height))
+						.Add(Projections.Property(() => f.Width))
+				        ))
+				.Select(()=>d.Id)
+				.WithAlias(()=>dto.distractorId)
+				.Select(()=>d.Question.Id)
+				.WithAlias(()=>dto.questionId)
+				.Select(()=>d.DistractorType)
+				.WithAlias(()=>dto.distractorType)
+				.Select(()=>d.DistractorName)
+				.WithAlias(()=>dto.distractor)
+				.Select(()=>d.DistractorOrder)
+				.WithAlias(()=>dto.distractorOrder)
+				.Select(()=>d.IsCorrect)
+				.WithAlias(()=>dto.isCorrect)
+				.Select(()=>d.Image.Id)
+				.WithAlias(()=>dto.imageId)
+				.Select(()=>f.X)
+				.WithAlias(()=>dto.x)
+				.Select(()=>f.Y)
+				.WithAlias(()=>dto.y)
+				.Select(()=>f.Height)
+				.WithAlias(()=>dto.height)
+				.Select(()=>f.Width)
+				.WithAlias(()=>dto.width)
+				).TransformUsing(Transformers.AliasToBean<DistractorFromStoredProcedureDTO>());
+			var result = Repository.FindAll<DistractorFromStoredProcedureDTO>(qieryOver).ToList();
+			 return result;
+	    }
     }
 }

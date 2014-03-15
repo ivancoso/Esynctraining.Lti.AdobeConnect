@@ -462,7 +462,36 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetQuizSubModuleItemsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SubModuleItemDTO>("getQuizSubModuleItemsByUserID", new StoreProcedureParam<int>("userId", userId));
+	        SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        Quiz q = null;
+	        SubModuleItemDTO dto = null;
+	        var queryOver = new DefaultQueryOver<SubModuleItem, int>().GetQueryOver(() => smi)
+		        .JoinQueryOver(x => x.SubModuleCategory, () => smc, JoinType.InnerJoin)
+		        .JoinQueryOver(() => smi.Quizes, () => q, JoinType.LeftOuterJoin)
+		        .Where(() => smi.CreatedBy.Id == userId && smc.User.Id == userId && q.Id != 0)
+		        .SelectList(res =>
+			        res.Select(() => smi.IsActive)
+				        .WithAlias(() => dto.isActive)
+				        .Select(() => smi.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smi.DateCreated)
+				        .WithAlias(() => dto.dateCreated)
+				        .Select(() => smi.ModifiedBy.Id)
+				        .WithAlias(() => dto.modifiedBy)
+				        .Select(() => smi.IsShared)
+				        .WithAlias(() => dto.isShared)
+				        .Select(() => smi.CreatedBy.Id)
+				        .WithAlias(() => dto.createdBy)
+				        .Select(() => smi.SubModuleCategory.Id)
+				        .WithAlias(() => dto.subModuleCategoryId)
+				        .Select(() => smc.SubModule.Id)
+				        .WithAlias(() => dto.subModuleId)
+				        .Select(() => smi.Id)
+				        .WithAlias(() => dto.subModuleItemId))
+		        .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
+	        var result = Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+	        return result;
         }
 
         #endregion

@@ -1,4 +1,9 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using System.Linq;
+using NHibernate.Criterion;
+using NHibernate.SqlCommand;
+using NHibernate.Transform;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;
@@ -68,8 +73,41 @@
         /// </returns>
         public IEnumerable<SubModuleCategoryDTO> GetAppletCategoriesByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SubModuleCategoryDTO>(
-                "getAppletCategoriesByUserID", new StoreProcedureParam<int>("userId", userId));
+			SubModuleItem smi = null;
+			SubModuleCategory smc = null;
+			AppletItem ai = null;
+			SubModuleCategoryDTO dto = null;
+	        var queryOver = new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver(() => smc)
+		        .JoinQueryOver(x => x.SubModuleItems, () => smi, JoinType.InnerJoin)
+		        .JoinQueryOver(() => smi.AppletItems, () => ai, JoinType.LeftOuterJoin)
+		        .Where(() => smc.User.Id == userId && smi.CreatedBy.Id == userId && ai.Id != 0)
+		        .SelectList(res =>
+			        res.Select(Projections.Distinct(Projections.ProjectionList()
+				        .Add(Projections.Property(() => smc.IsActive))
+				        .Add(Projections.Property(() => smc.DateModified))
+				        .Add(Projections.Property(() => smc.ModifiedBy.Id))
+				        .Add(Projections.Property(() => smc.CategoryName))
+				        .Add(Projections.Property(() => smc.SubModule.Id))
+				        .Add(Projections.Property(() => smc.User.Id))
+				        .Add(Projections.Property(() => smc.Id))
+				        ))
+				        .Select(() => smc.IsActive)
+				        .WithAlias(() => dto.isActive)
+				        .Select(() => smc.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smc.ModifiedBy.Id)
+				        .WithAlias(() => dto.modifiedBy)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.SubModule.Id)
+				        .WithAlias(() => dto.subModuleId)
+				        .Select(() => smc.User.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId))
+		        .TransformUsing(Transformers.AliasToBean<SubModuleCategoryDTO>());
+			var result = this.Repository.FindAll<SubModuleCategoryDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -83,8 +121,41 @@
         /// </returns>
         public IEnumerable<SubModuleCategoryDTO> GetQuizCategoriesByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SubModuleCategoryDTO>(
-                "getQuizCategoriesByUserID", new StoreProcedureParam<int>("userId", userId));
+			SubModuleItem smi = null;
+			SubModuleCategory smc = null;
+			Quiz q = null;
+			SMICategoriesFromStoredProcedureDTO dto = null;
+			var queryOver = new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver(() => smc)
+				.JoinQueryOver(x => x.SubModuleItems, () => smi, JoinType.InnerJoin)
+				.JoinQueryOver(() => smi.Quizes, () => q, JoinType.LeftOuterJoin)
+				.Where(() => smc.User.Id == userId && smi.CreatedBy.Id == userId && q.Id != 0)
+				.SelectList(res =>
+					  res.Select(Projections.Distinct(Projections.ProjectionList()
+						.Add(Projections.Property(() => smc.IsActive))
+						.Add(Projections.Property(() => smc.DateModified))
+						.Add(Projections.Property(() => smc.ModifiedBy.Id))
+						.Add(Projections.Property(() => smc.CategoryName))
+						.Add(Projections.Property(() => smc.SubModule.Id))
+						.Add(Projections.Property(() => smc.User.Id))
+						.Add(Projections.Property(() => smc.Id))
+						))
+						.Select(() => smc.IsActive)
+						.WithAlias(() => dto.isActive)
+						.Select(() => smc.DateModified)
+						.WithAlias(() => dto.dateModified)
+						.Select(() => smc.ModifiedBy.Id)
+						.WithAlias(() => dto.modifiedBy)
+						.Select(() => smc.CategoryName)
+						.WithAlias(() => dto.categoryName)
+						.Select(() => smc.SubModule.Id)
+						.WithAlias(() => dto.subModuleId)
+						.Select(() => smc.User.Id)
+						.WithAlias(() => dto.userId)
+						.Select(() => smc.Id)
+						.WithAlias(() => dto.subModuleCategoryId))
+				.TransformUsing(Transformers.AliasToBean<SubModuleCategoryDTO>());
+			var result = this.Repository.FindAll<SubModuleCategoryDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -128,8 +199,42 @@
         /// </returns>
         public IEnumerable<SubModuleCategoryDTO> GetTestCategoriesByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SubModuleCategoryDTO>(
-                "getTestCategoriesByUserID", new StoreProcedureParam<int>("userId", userId));
+			SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        Test t = null;
+	        SubModuleCategoryDTO dto = null;
+	        var qieryOver = new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver(() => smc)
+		        .JoinQueryOver(x => x.SubModuleItems, () => smi, JoinType.InnerJoin)
+		        .JoinQueryOver(() => smi.Tests, () => t, JoinType.LeftOuterJoin)
+		        .Where(() => smc.User.Id == userId && smi.CreatedBy.Id == userId && t.Id != 0)
+		        .SelectList(res =>
+			        res.Select(Projections.Distinct(Projections.ProjectionList()
+				        .Add(Projections.Property(() => smc.IsActive))
+				        .Add(Projections.Property(() => smc.DateModified))
+				        .Add(Projections.Property(() => smc.ModifiedBy.Id))
+				        .Add(Projections.Property(() => smc.CategoryName))
+				        .Add(Projections.Property(() => smc.SubModule.Id))
+				        .Add(Projections.Property(() => smc.User.Id))
+				        .Add(Projections.Property(() => smc.Id))
+				        ))
+				        .Select(() => smc.IsActive)
+				        .WithAlias(() => dto.isActive)
+				        .Select(() => smc.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smc.ModifiedBy.Id)
+				        .WithAlias(() => dto.modifiedBy)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.SubModule.Id)
+				        .WithAlias(() => dto.subModuleId)
+				        .Select(() => smc.User.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId)
+		        )
+		        .TransformUsing(Transformers.AliasToBean<SubModuleCategoryDTO>());
+			var result = Repository.FindAll<SubModuleCategoryDTO>(qieryOver).ToList();
+	        return result;
         }
 
         #endregion

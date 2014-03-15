@@ -53,7 +53,7 @@
         /// Gets or sets the passing score.
         /// </summary>
         [DataMember]
-        public float? passingScore { get; set; }
+        public decimal? passingScore { get; set; }
 
         /// <summary>
         /// Gets or sets the score format.

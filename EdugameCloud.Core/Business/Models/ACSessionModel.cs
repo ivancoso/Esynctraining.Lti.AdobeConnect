@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using NHibernate.SqlCommand;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -175,7 +177,7 @@
         /// </returns>
         public IEnumerable<TestSessionDTO> GetTestSessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<TestSessionDTO>("getTestSessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+			return this.Repository.StoreProcedureForMany<TestSessionDTO>("getTestSessionsByUserId", new StoreProcedureParam<int>("userId", userId));
         }
 
         /// <summary>

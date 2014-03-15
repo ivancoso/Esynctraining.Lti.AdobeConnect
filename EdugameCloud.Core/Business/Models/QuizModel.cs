@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using NHibernate.SqlCommand;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -19,10 +21,25 @@
     /// </summary>
     public class QuizModel : BaseModel<Quiz, int>
     {
+		#region Fields
+
+		/// <summary>
+		/// The user repository.
+		/// </summary>
+		private readonly IRepository<User, int> userRepository;
+
+		#endregion
+
         /// <summary>
         /// The file model.
         /// </summary>
         private readonly FileModel fileModel;
+
+		/// <summary>
+		/// The distractor model.
+		/// </summary>
+		private readonly DistractorModel distractorModel;
+
 
         #region Constructors and Destructors
 
@@ -35,10 +52,12 @@
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public QuizModel(FileModel fileModel, IRepository<Quiz, int> repository)
+		public QuizModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Quiz, int> repository)
             : base(repository)
         {
             this.fileModel = fileModel;
+	        this.distractorModel = distractorModel;
+	        this.userRepository = userRepository;
         }
 
         #endregion
@@ -123,8 +142,48 @@
         /// </returns>
         public IEnumerable<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<QuizFromStoredProcedureDTO>(
-                "getUsersQuizzesByUserId", new StoreProcedureParam<int>("userId", userId));
+	        Quiz q = null;
+	        SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        User u = null;
+	        User u2 = null;
+	        QuizFromStoredProcedureDTO dto = null;
+			var queryOver = new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
+				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true)
+		        .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+		        .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+		        .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.LeftOuterJoin)
+		        .Where(() => u2.Id == userId)
+		        .SelectList(res =>
+			        res.Select(() => q.Description)
+				        .WithAlias(() => dto.description)
+				        .Select(() => q.QuizName)
+				        .WithAlias(() => dto.quizName)
+				        .Select(() => q.Id)
+				        .WithAlias(() => dto.quizId)
+				        .Select(() => u.LastName)
+				        .WithAlias(() => dto.lastName)
+				        .Select(() => u.FirstName)
+				        .WithAlias(() => dto.firstName)
+				        .Select(() => u.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => u2.LastName)
+				        .WithAlias(() => dto.createdByLastName)
+				        .Select(() => u2.FirstName)
+				        .WithAlias(() => dto.createdByName)
+				        .Select(() => smi.CreatedBy.Id)
+				        .WithAlias(() => dto.createdBy)
+				        .Select(() => smi.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smi.Id)
+				        .WithAlias(() => dto.subModuleItemId)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId))
+		        .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
+	        var result = this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -138,8 +197,55 @@
         /// </returns>
         public IEnumerable<QuizFromStoredProcedureDTO> GetSharedForUserQuizzesByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<QuizFromStoredProcedureDTO>(
-                "getSharedForUserQuizzesByUserId", new StoreProcedureParam<int>("userId", userId));
+			 var query =
+		        new DefaultQueryOver<User, int>().GetQueryOver()
+			        .Where(x => x.Id == userId)
+					.Select(res=>
+					res.Company.Id);
+			var id = this.userRepository.FindOne<int>(query);
+
+			Quiz q = null;
+			SubModuleItem smi = null;
+			SubModuleCategory smc = null;
+			User u = null;
+			User u2 = null;
+			QuizFromStoredProcedureDTO dto = null;
+			var queryOver = new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
+				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true && smi.IsShared == true)
+				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+				.JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+				.JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
+				.Where(() => u2.Id != userId && u2.Company.Id == id.Value && (int)u2.Status == 1)
+				.SelectList(res =>
+					res.Select(() => q.Description)
+						.WithAlias(() => dto.description)
+						.Select(() => q.QuizName)
+						.WithAlias(() => dto.quizName)
+						.Select(() => q.Id)
+						.WithAlias(() => dto.quizId)
+						.Select(() => u.LastName)
+						.WithAlias(() => dto.lastName)
+						.Select(() => u.FirstName)
+						.WithAlias(() => dto.firstName)
+						.Select(() => u.Id)
+						.WithAlias(() => dto.userId)
+						.Select(() => u2.LastName)
+						.WithAlias(() => dto.createdByLastName)
+						.Select(() => u2.FirstName)
+						.WithAlias(() => dto.createdByName)
+						.Select(() => smi.CreatedBy.Id)
+						.WithAlias(() => dto.createdBy)
+						.Select(() => smi.DateModified)
+						.WithAlias(() => dto.dateModified)
+						.Select(() => smi.Id)
+						.WithAlias(() => dto.subModuleItemId)
+						.Select(() => smc.CategoryName)
+						.WithAlias(() => dto.categoryName)
+						.Select(() => smc.Id)
+						.WithAlias(() => dto.subModuleCategoryId))
+				.TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
+			var result = this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+			return result;
         }
 
         /// <summary>
@@ -153,8 +259,41 @@
         /// </returns>
         public IEnumerable<SMICategoriesFromStoredProcedureDTO> GetQuizCategoriesbyUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SMICategoriesFromStoredProcedureDTO>(
-                "getQuizCategoriesByUserID", new StoreProcedureParam<int>("userId", userId));
+	        SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        Quiz q = null;
+	        SMICategoriesFromStoredProcedureDTO dto = null;
+			var queryOver = new DefaultQueryOver<Quiz, int>().GetQueryOver(()=>q)
+				.JoinQueryOver(x=>x.SubModuleItem, ()=>smi, JoinType.RightOuterJoin)
+				.JoinQueryOver(()=>smi.SubModuleCategory, ()=>smc, JoinType.InnerJoin)
+				.Where(()=>smc.User.Id== userId && smi.CreatedBy.Id == userId && q.Id!=0)
+				.SelectList(res=>
+					  res.Select(Projections.Distinct(Projections.ProjectionList()
+				        .Add(Projections.Property(() => smc.IsActive))
+				        .Add(Projections.Property(() => smc.DateModified))
+				        .Add(Projections.Property(() => smc.ModifiedBy.Id))
+				        .Add(Projections.Property(() => smc.CategoryName))
+				        .Add(Projections.Property(() => smc.SubModule.Id))
+				        .Add(Projections.Property(() => smc.User.Id))
+				        .Add(Projections.Property(() => smc.Id))
+				        ))
+						.Select(() => smc.IsActive)
+				        .WithAlias(() => dto.isActive)
+				        .Select(() => smc.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smc.ModifiedBy.Id)
+				        .WithAlias(() => dto.modifiedBy)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.SubModule.Id)
+				        .WithAlias(() => dto.subModuleId)
+				        .Select(() => smc.User.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId))
+		        .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureDTO>());
+			var result = this.Repository.FindAll<SMICategoriesFromStoredProcedureDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -214,7 +353,7 @@
         /// </returns>
         public IEnumerable<DistractorFromStoredProcedureDTO> GetQuizDistractorsBySMIId(int smiId)
         {
-            var distructors = this.Repository.StoreProcedureForMany<DistractorFromStoredProcedureDTO>("getSMIDistractorsBySMIId", new StoreProcedureParam<int>("subModuleItemId", smiId)).ToList();
+	        var distructors = distractorModel.GetTestDistractorsWithoutImagesBySMIId(smiId).ToList(); 
             var imageIds = distructors.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
             if (imageIds.Any())
             {

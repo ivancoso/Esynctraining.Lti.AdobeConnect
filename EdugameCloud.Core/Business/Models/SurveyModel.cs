@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using NHibernate.SqlCommand;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -19,26 +21,45 @@
     /// </summary>
     public class SurveyModel : BaseModel<Survey, int>
     {
+		#region Fields
+
+		/// <summary>
+		/// The user repository.
+		/// </summary>
+		private readonly IRepository<User, int> userRepository;
+
         /// <summary>
         /// The file model.
         /// </summary>
         private readonly FileModel fileModel;
 
-        #region Constructors and Destructors
+		/// <summary>
+		/// The distractor model.
+		/// </summary>
+		private readonly DistractorModel distractorModel;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SurveyModel"/> class. 
-        /// </summary>
-        /// <param name="fileModel">
-        /// The file Model.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public SurveyModel(FileModel fileModel, IRepository<Survey, int> repository)
+		#endregion
+
+		#region Constructors and Destructors
+
+		/// <summary>
+	    /// Initializes a new instance of the <see cref="SurveyModel"/> class. 
+	    /// </summary>
+	    /// <param name="fileModel">
+	    /// The file Model.
+	    /// </param>
+	    /// <param name="userRepository">
+	    /// The user repository.
+	    /// </param>
+	    /// <param name="repository">
+	    /// The repository.
+	    /// </param>
+	    public SurveyModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Survey, int> repository)
             : base(repository)
         {
             this.fileModel = fileModel;
+			this.distractorModel = distractorModel;
+	        this.userRepository = userRepository;
         }
 
         #endregion
@@ -125,8 +146,50 @@
         /// </returns>
         public IEnumerable<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SurveyFromStoredProcedureDTO>(
-                "getUsersSurveysByUserId", new StoreProcedureParam<int>("userId", userId));
+	        Survey s = null;
+	        SubModuleItem smi = null;
+	        SubModuleCategory smc = null;
+	        User u = null;
+	        User u2 = null;
+	        SurveyFromStoredProcedureDTO dto = null;
+	        var queryOver =new DefaultQueryOver<Survey, int>().GetQueryOver(()=>s)
+				.JoinQueryOver(x=>x.SubModuleItem, ()=>smi,JoinType.InnerJoin).Where(()=>smi.IsActive==true)
+				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+				.JoinQueryOver(()=>smc.User, ()=>u,JoinType.InnerJoin)
+ 				.JoinQueryOver(()=>smi.CreatedBy, ()=>u2, JoinType.LeftOuterJoin)
+				.Where(()=>u2.Id == userId)
+				.SelectList(res=>
+				res.Select(()=>s.SurveyGroupingType.Id)
+					.WithAlias(()=>dto.surveyGroupingTypeId)
+					.Select(()=>s.Description)
+					.WithAlias(()=>dto.description)
+					.Select(()=>s.SurveyName)
+					.WithAlias(()=>dto.surveyName)
+					.Select(()=>s.Id)
+					.WithAlias(()=>dto.surveyId)
+					.Select(()=>u.LastName)
+					.WithAlias(()=>dto.lastName)
+					.Select(()=>u.FirstName)
+					.WithAlias(()=>dto.firstName)
+					.Select(()=>u.Id)
+					.WithAlias(()=>dto.userId)
+					.Select(()=>u2.LastName)
+					.WithAlias(()=>dto.createdByLastName)
+					.Select(()=>u2.FirstName)
+					.WithAlias(()=>dto.createdByName)
+					.Select(()=>smi.CreatedBy.Id)
+					.WithAlias(()=>dto.createdBy)
+					.Select(()=>smi.DateModified)
+					.WithAlias(()=>dto.dateModified)
+					.Select(()=>smi.Id)
+					.WithAlias(()=>dto.subModuleItemId)
+					.Select(()=>smc.CategoryName)
+					.WithAlias(()=>dto.categoryName)
+					.Select(()=>smc.Id)
+					.WithAlias(()=>dto.subModuleCategoryId))
+					.TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
+	        var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -140,8 +203,57 @@
         /// </returns>
         public IEnumerable<SurveyFromStoredProcedureDTO> GetSharedForUserSurveysByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SurveyFromStoredProcedureDTO>(
-                "getSharedForUserSurveysByUserId", new StoreProcedureParam<int>("userId", userId));
+			var query =
+				new DefaultQueryOver<User, int>().GetQueryOver()
+					.Where(x => x.Id == userId)
+					.Select(res =>
+					res.Company.Id);
+			var id = this.userRepository.FindOne<int>(query);
+
+			Survey s = null;
+			SubModuleItem smi = null;
+			SubModuleCategory smc = null;
+			User u = null;
+			User u2 = null;
+			SurveyFromStoredProcedureDTO dto = null;
+			var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
+				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true && smi.IsShared == true)
+				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+				.JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+				.JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin).Where(()=>(int)u2.Status == 1)
+				.Where(() => u2.Id != userId&& u2.Company.Id == id.Value)
+				.SelectList(res =>
+				res.Select(() => s.SurveyGroupingType.Id)
+					.WithAlias(() => dto.surveyGroupingTypeId)
+					.Select(() => s.Description)
+					.WithAlias(() => dto.description)
+					.Select(() => s.SurveyName)
+					.WithAlias(() => dto.surveyName)
+					.Select(() => s.Id)
+					.WithAlias(() => dto.surveyId)
+					.Select(() => u.LastName)
+					.WithAlias(() => dto.lastName)
+					.Select(() => u.FirstName)
+					.WithAlias(() => dto.firstName)
+					.Select(() => u.Id)
+					.WithAlias(() => dto.userId)
+					.Select(() => u2.LastName)
+					.WithAlias(() => dto.createdByLastName)
+					.Select(() => u2.FirstName)
+					.WithAlias(() => dto.createdByName)
+					.Select(() => smi.CreatedBy.Id)
+					.WithAlias(() => dto.createdBy)
+					.Select(() => smi.DateModified)
+					.WithAlias(() => dto.dateModified)
+					.Select(() => smi.Id)
+					.WithAlias(() => dto.subModuleItemId)
+					.Select(() => smc.CategoryName)
+					.WithAlias(() => dto.categoryName)
+					.Select(() => smc.Id)
+					.WithAlias(() => dto.subModuleCategoryId))
+					.TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
+			var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
+			return result;
         }
 
         /// <summary>
@@ -155,8 +267,41 @@
         /// </returns>
         public IEnumerable<SMICategoriesFromStoredProcedureDTO> GetSurveyCategoriesbyUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SMICategoriesFromStoredProcedureDTO>(
-                "getSurveyCategoriesByUserId", new StoreProcedureParam<int>("userId", userId));
+			Survey s = null;
+	        SubModuleCategory smc = null;
+	        SubModuleItem smi = null;
+	        SMICategoriesFromStoredProcedureDTO dto = null;
+	        var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
+		        .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.RightOuterJoin)
+		        .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
+		        .Where(() => smc.User.Id == userId && smi.CreatedBy.Id == userId && s.Id != 0)
+		        .SelectList(res =>
+					res.Select(Projections.Distinct(Projections.ProjectionList()
+				        .Add(Projections.Property(() => smc.IsActive))
+				        .Add(Projections.Property(() => smc.DateModified))
+				        .Add(Projections.Property(() => smc.ModifiedBy.Id))
+				        .Add(Projections.Property(() => smc.CategoryName))
+				        .Add(Projections.Property(() => smc.SubModule.Id))
+				        .Add(Projections.Property(() => smc.User.Id))
+				        .Add(Projections.Property(() => smc.Id))
+				        ))
+			        .Select(() => smc.IsActive)
+				        .WithAlias(() => dto.isActive)
+				        .Select(() => smc.DateModified)
+				        .WithAlias(() => dto.dateModified)
+				        .Select(() => smc.ModifiedBy.Id)
+				        .WithAlias(() => dto.modifiedBy)
+				        .Select(() => smc.CategoryName)
+				        .WithAlias(() => dto.categoryName)
+				        .Select(() => smc.SubModule.Id)
+				        .WithAlias(() => dto.subModuleId)
+				        .Select(() => smc.User.Id)
+				        .WithAlias(() => dto.userId)
+				        .Select(() => smc.Id)
+				        .WithAlias(() => dto.subModuleCategoryId))
+		        .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureDTO>());
+	        var result = Repository.FindAll<SMICategoriesFromStoredProcedureDTO>(queryOver).ToList();
+	        return result;
         }
 
         /// <summary>
@@ -216,7 +361,7 @@
         /// </returns>
         public IEnumerable<DistractorFromStoredProcedureDTO> GetSurveyDistractorsBySMIId(int smiId)
         {
-            var distructors = this.Repository.StoreProcedureForMany<DistractorFromStoredProcedureDTO>("getSMIDistractorsBySMIId", new StoreProcedureParam<int>("subModuleItemId", smiId)).ToList();
+	        var distructors = distractorModel.GetTestDistractorsWithoutImagesBySMIId(smiId).ToList(); 
             var imageIds = distructors.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
             if (imageIds.Any())
             {
