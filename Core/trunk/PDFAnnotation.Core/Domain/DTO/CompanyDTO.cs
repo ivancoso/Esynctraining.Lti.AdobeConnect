@@ -42,12 +42,26 @@
                 this.colorPrimary = f.ColorPrimary;
                 this.colorSecondary = f.ColorSecondary;
                 this.colorText = f.ColorText;
+                this.numberOfLicenses = f.NumberOfLicenses;
+                this.orderDate = f.OrderDate;
             }
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        ///     Gets or sets the number of licenses.
+        /// </summary>
+        [DataMember]
+        public int? numberOfLicenses { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the order date.
+        /// </summary>
+        [DataMember]
+        public DateTime? orderDate { get; set; }
 
         /// <summary>
         /// Gets or sets the organization Id.

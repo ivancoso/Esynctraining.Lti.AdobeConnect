@@ -14,6 +14,18 @@
         #region Public Properties
 
         /// <summary>
+        ///     Gets or sets the number of licenses.
+        /// </summary>
+        [DataMember]
+        public int? numberOfLicenses { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the order date.
+        /// </summary>
+        [DataMember]
+        public DateTime? orderDate { get; set; }
+
+        /// <summary>
         ///     Gets or sets the contact.
         /// </summary>
         [DataMember]

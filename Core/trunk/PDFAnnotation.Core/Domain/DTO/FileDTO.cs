@@ -53,12 +53,19 @@
             this.topicId = this.topicVo.Return(x => x.topicId, (int?)null);
             this.fileStatus = (int)file.Status;
             this.isShared = file.IsShared.HasValue && file.IsShared.Value;
+            this.isOriginal = file.IsOriginal.HasValue && file.IsOriginal.Value;
             this.acMeetingUrl = file.AcMeetingUrl;
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is shared.
+        /// </summary>
+        [DataMember]
+        public bool isOriginal { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is shared.

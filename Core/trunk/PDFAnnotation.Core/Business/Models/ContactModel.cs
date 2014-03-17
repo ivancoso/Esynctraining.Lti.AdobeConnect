@@ -207,10 +207,13 @@
         /// <param name="flush">
         /// The flush.
         /// </param>
-        public override void RegisterSave(Contact entity, bool flush)
+        /// <param name="updateDateModified">
+        /// The update Date Modified.
+        /// </param>
+        public override void RegisterSave(Contact entity, bool flush, bool updateDateModified = true)
         {
             entity.DateModified = DateTime.Now;
-            base.RegisterSave(entity, flush);
+            base.RegisterSave(entity, flush, updateDateModified);
         }
 
         /// <summary>
@@ -240,8 +243,15 @@
         /// </returns>
         public virtual IEnumerable<Contact> GetAllByEmails(List<string> emails)
         {
-            emails.ForEach(x => x = x.ToLowerInvariant());
-            var queryOver = new QueryOverContact().GetQueryOver().WhereRestrictionOn(x => x.Email).IsIn(emails);
+            var queryOver = new QueryOverContact().GetQueryOver();
+            var disjunction= new Disjunction();
+            foreach (var email in emails)
+            {
+                disjunction.Add(Restrictions.On<Contact>(x => x.Email).IsInsensitiveLike(email));
+            }
+
+            queryOver.Where(disjunction);
+
             return this.Repository.FindAll(queryOver);
         }
 

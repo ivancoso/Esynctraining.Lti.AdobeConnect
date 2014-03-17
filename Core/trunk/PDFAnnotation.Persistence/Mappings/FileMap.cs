@@ -26,6 +26,7 @@
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.FileNumber).Nullable();
             this.Map(x => x.IsShared).Nullable();
+            this.Map(x => x.IsOriginal).Nullable();
             this.Map(x => x.AcMeetingUrl).Column("acMeetingUrl").Length(1000).Nullable();
 
             this.References(x => x.User).Column("userId").Nullable();

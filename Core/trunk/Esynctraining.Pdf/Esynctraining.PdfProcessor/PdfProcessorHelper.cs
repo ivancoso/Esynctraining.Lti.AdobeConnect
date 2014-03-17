@@ -102,9 +102,17 @@
             {
                 byte[] output;
                 var input = File.ReadAllBytes(inPdfPath);
-                var result = this.RenderSpecialCsPagesWithGsNet(input, out output, resolution);
-                File.WriteAllBytes(outPdfPath, result ? output : input);
-                return result;
+                var pdfWasRendered = this.RenderSpecialCsPagesWithGsNet(input, out output, resolution);
+                if (Path.GetFullPath(inPdfPath) == Path.GetFullPath(outPdfPath) && pdfWasRendered)
+                {
+                    File.WriteAllBytes(outPdfPath, output);
+                }
+                else
+                {
+                    File.WriteAllBytes(outPdfPath, pdfWasRendered ? output : input);    
+                }
+                
+                return pdfWasRendered;
             }
 
             return false;

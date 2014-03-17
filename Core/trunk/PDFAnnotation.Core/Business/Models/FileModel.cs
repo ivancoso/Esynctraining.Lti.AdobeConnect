@@ -148,9 +148,9 @@
             ShapeModel shapeModel, 
             TextItemModel textItemModel, 
             RotationModel rotationModel, 
-            FullTextModel fullTextModel, 
+
             PdfProcessorHelper pdfProcessorHelper, 
-            MarkModel markModel, 
+			FullTextModel fullTextModel,            MarkModel markModel, 
             ILogger logger)
             : base(repository)
         {
@@ -218,8 +218,9 @@
             QueryOver<File, File> query =
                 new DefaultQueryOver<File, Guid>().GetQueryOver()
                     .Where(x => x.Category.Id == categoryId && x.Topic.Id == topicId)
-                    .AndRestrictionOn(x => x.FileNumber)
-                    .IsNotNull.TransformUsing(Transformers.DistinctRootEntity)
+                    .AndRestrictionOn(x => x.FileNumber).IsNotNull
+                    .And(x => x.IsOriginal == null || x.IsOriginal == false)
+                    .TransformUsing(Transformers.DistinctRootEntity)
                     .Select(x => x.FileNumber);
             List<int> numbers = this.Repository.FindAll<int>(query).ToList();
 
@@ -434,8 +435,8 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        /// <param name="event">
-        /// The event.
+        /// <param name="meetingUrl">
+        /// The meeting url.
         /// </param>
         /// <param name="status">
         /// The status.
@@ -1119,10 +1120,13 @@
         /// <param name="flush">
         /// The flush.
         /// </param>
-        public override void RegisterSave(File entity, bool flush)
+        /// <param name="updateDateModified">
+        /// The update Date Modified.
+        /// </param>
+        public override void RegisterSave(File entity, bool flush, bool updateDateModified = true)
         {
             entity.DateModified = DateTime.Now;
-            base.RegisterSave(entity, flush);
+            base.RegisterSave(entity, flush, updateDateModified);
         }
 
         /// <summary>
@@ -1138,7 +1142,7 @@
         /// The max Image Height.
         /// </param>
         /// <returns>
-        /// The <see cref="byte[]"/>.
+        /// The <see cref="byte"/>.
         /// </returns>
         public byte[] ResizeImage(byte[] content, int maxImageWidth, int maxImageHeight)
         {
@@ -1175,17 +1179,24 @@
         /// </param>
         public void SetDisplayName(File entity, int exhibitNumber)
         {
-            Topic topic = entity.Topic;
-            var availiblePatternOptions = new Dictionary<string, string>();
-            var file = new FileInfo(entity.FileName);
-            availiblePatternOptions.Add("{fileName}", Path.GetFileNameWithoutExtension(file.Name));
-            availiblePatternOptions.Add("{extension}", file.Extension);
-            availiblePatternOptions.Add("{number}", string.Format("{0:#0000}", exhibitNumber));
-            availiblePatternOptions.Add("{topic}", topic.FullName.Trim().Replace(" ", "_"));
-            string displayName = availiblePatternOptions.Keys.Aggregate(
-                (string)this.settings.DisplayNamePattern, 
-                (current, optionKey) => current.Replace(optionKey, availiblePatternOptions[optionKey]));
-            entity.DisplayName = displayName;
+            if (!entity.IsOriginal.HasValue || !entity.IsOriginal.Value)
+            {
+                Topic topic = entity.Topic;
+                var availiblePatternOptions = new Dictionary<string, string>();
+                var file = new FileInfo(entity.FileName);
+                availiblePatternOptions.Add("{fileName}", Path.GetFileNameWithoutExtension(file.Name));
+                availiblePatternOptions.Add("{extension}", file.Extension);
+                availiblePatternOptions.Add("{number}", string.Format("{0:#0000}", exhibitNumber));
+                availiblePatternOptions.Add("{topic}", topic.FullName.Trim().Replace(" ", "_"));
+                string displayName = availiblePatternOptions.Keys.Aggregate(
+                    (string)this.settings.DisplayNamePattern,
+                    (current, optionKey) => current.Replace(optionKey, availiblePatternOptions[optionKey]));
+                entity.DisplayName = displayName;
+            }
+            else
+            {
+                entity.DisplayName = entity.FileName;
+            }
             entity.FileNumber = exhibitNumber;
         }
 
@@ -1405,6 +1416,7 @@
         /// <param name="fileName">
         /// The file name.
         /// </param>
+        // ReSharper disable once UnusedMember.Local
         private void RemoveFileAllFileTypeSafely(string fileName)
         {
             try
@@ -1517,7 +1529,9 @@
 
             // Now calculate the X,Y position of the upper-left corner 
             // (one of these will always be zero)
+            // ReSharper disable once UnusedVariable
             int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
+            // ReSharper disable once UnusedVariable
             int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
 
             Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names

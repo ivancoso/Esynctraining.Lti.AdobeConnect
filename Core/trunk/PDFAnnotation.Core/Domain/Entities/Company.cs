@@ -30,6 +30,16 @@
         public virtual string ColorPrimary { get; set; }
 
         /// <summary>
+        /// Gets or sets the order date.
+        /// </summary>
+        public virtual DateTime? OrderDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the number of licenses.
+        /// </summary>
+        public virtual int? NumberOfLicenses { get; set; }
+
+        /// <summary>
         /// Gets or sets the organization Id.
         /// </summary>
         public virtual Guid OrganizationId { get; set; }

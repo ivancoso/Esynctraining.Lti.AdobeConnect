@@ -161,6 +161,11 @@
         /// </summary>
         public virtual bool? IsShared { get; set; }
 
+        /// <summary>
+        /// Gets or sets the is shared.
+        /// </summary>
+        public virtual bool? IsOriginal { get; set; }
+
         #endregion
     }
 }
