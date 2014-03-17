@@ -31,7 +31,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="CompanyDTOValidator" /> class.
         /// </summary>
-        public CompanyDTOValidator()
+        public CompanyDTOValidator(IValidator<UserDTO> primaryContactValidator)
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
             this.RuleFor(model => model.companyName)
@@ -52,7 +52,7 @@
                 .Must((model, x) => x.HasValue || model.primaryContactVO != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Primary contact is empty");
             this.RuleFor(model => model.primaryContactVO)
-                .Must((model, x) => x == null || this.ValidatePrimaryContact(x))
+                .Must((model, x) => x == null || this.ValidatePrimaryContact(primaryContactValidator, x))
                 .WithDynamicError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, () => this.lastPrimaryContactError);
         }
 
@@ -91,9 +91,9 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool ValidatePrimaryContact(UserDTO userDTO)
+        private bool ValidatePrimaryContact(IValidator<UserDTO> primaryContactValidator, UserDTO userDTO)
         {
-            ValidationResult res = IoC.Resolve<IValidator<UserDTO>>().Validate(userDTO);
+            var res = primaryContactValidator.Validate(userDTO);
             this.lastPrimaryContactError = res.IsValid
                                                ? string.Empty
                                                : this.GetContactError(res.Errors.FirstOrDefault());
