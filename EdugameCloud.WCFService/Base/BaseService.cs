@@ -356,7 +356,7 @@
                     },
                 Common.AppEmailName,
                 Common.AppEmail,
-                new List<MailAddress> { new MailAddress(this.Settings.TrialContactEmail) });
+                bcced:new List<MailAddress> { new MailAddress(this.Settings.TrialContactEmail), new MailAddress(Common.JacquieEmail,Common.JacquieName) });
         }
 
         /// <summary>
