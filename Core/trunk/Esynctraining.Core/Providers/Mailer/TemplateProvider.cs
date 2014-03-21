@@ -119,7 +119,7 @@
                     HttpContext.Current.Server.MapPath(
                         VirtualPathUtility.Combine(this.templatesDirectory, templateFileName));
             }
-            return Path.Combine(this.templatesDirectory, templateFileName);
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateFileName);
         }
 
         private string GetAsciiFullPathToTemplate(string templateFileName)
@@ -130,7 +130,7 @@
                     HttpContext.Current.Server.MapPath(
                         VirtualPathUtility.Combine(this.asciiTemplatesDirectory, templateFileName));
             }
-            return Path.Combine(this.asciiTemplatesDirectory, templateFileName);
+			return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateFileName);
         }
 
         /// <summary>

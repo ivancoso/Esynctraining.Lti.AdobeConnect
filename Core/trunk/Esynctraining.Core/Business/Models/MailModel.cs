@@ -44,7 +44,7 @@
         /// </param>
         public MailModel(ITemplateProvider templateProvider, IAttachmentsProvider attachmentsProvider)
         {
-            this.templateProvider = templateProvider;
+            this .templateProvider = templateProvider;
             this.attachmentsProvider = attachmentsProvider;
         }
 

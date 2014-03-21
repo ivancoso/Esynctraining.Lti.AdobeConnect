@@ -1,4 +1,7 @@
-﻿namespace Esynctraining.Core.Providers.Mailer
+﻿using System.Net.Mime;
+using Esynctraining.Core.Utils;
+
+namespace Esynctraining.Core.Providers.Mailer
 {
     using System;
     using System.Collections.Generic;
@@ -48,14 +51,22 @@
         /// </returns>
         public IEnumerable<Attachment> GetAttachments<TTemplateModel>()
         {
-            if (!string.IsNullOrWhiteSpace(this.attachmentsDirectory))
-            {
-                var attachments = this.LoadTemplateAttachments(typeof(TTemplateModel));
-                if (attachments != null)
-                {
-                    return attachments.Select(attachment => new Attachment(attachment)).ToList();
+            var attachments = this.LoadTemplateAttachments(typeof(TTemplateModel));
+	        if (attachments != null)
+	        {
+		        return
+			        attachments.Select(
+				        attachment =>
+				        {
+					        var at =  new Attachment(attachment);
+					        at.ContentDisposition.Inline = true;
+					        at.ContentId = typeof (TTemplateModel).Name.Replace("Model", string.Empty);
+					        return at;
+
+				        }
+	        ).
+	        ToList();
                 }
-            }
             return null;
         }
 
@@ -128,7 +139,7 @@
             {
                 return HttpContext.Current.Server.MapPath(VirtualPathUtility.Combine(this.attachmentsDirectory, templateAttachmentsFolderName));
             }
-            return Path.Combine(this.attachmentsDirectory, templateAttachmentsFolderName);
+			return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateAttachmentsFolderName);
         }
 
         /// <summary>
