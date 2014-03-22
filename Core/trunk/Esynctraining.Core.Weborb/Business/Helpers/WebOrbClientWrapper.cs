@@ -101,8 +101,32 @@
         public Domain.Contracts.ServiceResponse<T> Invoke(params object[] args)
         {
             var lookupService = new WeborbClient(this.gateway, this.destination ?? "GenericDestination");
-
             lookupService.Invoke(this.@class, this.method, args, new Responder<ServiceResponse>(this.GotResult, this.GotError));
+            this.executedCallBack.WaitOne();
+            if (this.fault != null)
+            {
+                throw new ApplicationException(string.Format("Message: " + this.fault.Message + ", Details: " + this.fault.Detail));
+            }
+
+            return this.result;
+        }
+
+        /// <summary>
+        /// The invoke.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        /// <returns>
+        /// The <see cref="T"/>.
+        /// </returns>
+        /// <exception cref="Exception">
+        /// Exception when error is returned
+        /// </exception>
+        public Domain.Contracts.ServiceResponse<T> InvokeV3Message(params object[] args)
+        {
+            var lookupService = new WeborbClient(this.gateway, this.destination ?? "GenericDestination");
+            lookupService.Invoke(this.@class, this.method, args, new Responder<ServiceResponseV3Message>(this.GotResult, this.GotError));
             this.executedCallBack.WaitOne();
             if (this.fault != null)
             {
@@ -119,6 +143,18 @@
         /// The res.
         /// </param>
         private void GotResult(ServiceResponse res)
+        {
+            this.result = this.Convert(res);
+            this.executedCallBack.Set();
+        }
+
+        /// <summary>
+        /// The got result.
+        /// </summary>
+        /// <param name="res">
+        /// The res.
+        /// </param>
+        private void GotResult(ServiceResponseV3Message res)
         {
             this.result = this.Convert(res);
             this.executedCallBack.Set();
@@ -153,6 +189,23 @@
             {
                 response.SetError(this.ConvertError(res.error.ToExpando()));
             }
+
+            return response;
+        }
+
+        /// <summary>
+        /// The convert.
+        /// </summary>
+        /// <param name="res">
+        /// The res.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        private Domain.Contracts.ServiceResponse<T> Convert(ServiceResponseV3Message res)
+        {
+            var response = new Domain.Contracts.ServiceResponse<T>();
+            
 
             return response;
         }

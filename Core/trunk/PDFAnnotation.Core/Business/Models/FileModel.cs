@@ -263,6 +263,7 @@
                     {
                         content = this.FixContentForBlackSquares(content);
                     }
+
                     fileStream.Write(content, 0, content.Length);
                     this.ClearDirectoryAndRemoveItSafely(webOrbFolderName);
 
