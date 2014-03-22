@@ -31,11 +31,19 @@
                     ParticipantsCount = xml.SelectAttributeValue("num-participants"),
                     AssetId = xml.SelectAttributeValue("asset-id"),
                     DateCreated = xml.ParseNodeDateTime("date-created/text()", default(DateTime)),
-                    DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
                 };
 
+                try
+                {
+                    item.DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime));
+                }
+                catch (Exception)
+                {
+                    item.DateEnd = default(DateTime);
+                }
 
-                if (!item.DateCreated.Equals(default(DateTime)) && !item.DateEnd.Equals(default(DateTime)))
+
+                if (!item.DateCreated.Equals(default(DateTime)))
                 {
                     return item;
                 }
