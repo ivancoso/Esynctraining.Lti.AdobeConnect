@@ -20,6 +20,7 @@
     public class TwitterClient : OAuth2Client
     {
         ///https://dev.twitter.com/docs/auth/implementing-sign-twitter
+        /// //http://www.codeproject.com/Articles/247336/Twitter-OAuth-authentication-using-Net
         
         #region Constants
 
