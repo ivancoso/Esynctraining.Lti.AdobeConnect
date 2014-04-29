@@ -48,6 +48,18 @@
         ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryForUser(int userId);
 
         /// <summary>
+        /// The get login history for company.
+        /// </summary>
+        /// <param name="companyId">
+        /// The company id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryForCompany(int companyId);
+
+        /// <summary>
         /// The get login history paged.
         /// </summary>
         /// <param name="pageIndex">
@@ -103,6 +115,18 @@
         /// </returns>
         [OperationContract]
         ServiceResponse<UserDTO> UploadBatchUsers(BatchUsersDTO batch);
+
+        /// <summary>
+        /// The get company id by email.
+        /// </summary>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<int> GetCompanyIdByEmail(string email);
 
         /// <summary>
         /// The login.

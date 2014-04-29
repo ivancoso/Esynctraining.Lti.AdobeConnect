@@ -20,10 +20,11 @@
             this.Map(x => x.Status).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
-            this.References(x => x.Address).Nullable();
+            this.References(x => x.Address).Nullable().Cascade.Delete();
+            this.References(x => x.Theme).Nullable().Cascade.Delete();
             this.References(x => x.PrimaryContact).Nullable().Column(Inflector.Uncapitalize(Lambda.Property<Company>(x => x.PrimaryContact)) + "Id");
-            this.HasMany(x => x.Users);
-            this.HasMany(x => x.Licenses);
+            this.HasMany(x => x.Users).Cascade.Delete().Inverse(); 
+            this.HasMany(x => x.Licenses).Cascade.Delete().Inverse();
         }
 
         #endregion

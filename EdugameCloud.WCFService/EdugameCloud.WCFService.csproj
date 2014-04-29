@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+      <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -67,7 +67,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.DynamicData" />
@@ -101,7 +101,9 @@
     <Content Include="clientaccesspolicy.xml" />
     <Content Include="diagnostics.aspx" />
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
+    <Content Include="Mail\Templates\Enterprise.html" />
     <Content Include="Mail\Templates\Trial.html" />
+    <Content Include="services\EdugameCloud.WCFService.SocialService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestResultService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestService.svc" />
@@ -155,8 +157,16 @@
     <Compile Include="Base\ExportService.cs" />
     <Compile Include="Mail\Models\AccountDeletedModel.cs" />
     <Compile Include="Mail\Models\ChangePasswordModel.cs" />
+    <Compile Include="Mail\Models\EnterpriseModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
+    <Compile Include="Mail\Models\TrialFirstWeekModel.cs" />
+    <Compile Include="Mail\Models\TrialFourthWeekModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
+    <Compile Include="Mail\Models\TrialSecondWeekModel.cs" />
+    <Compile Include="Mail\Models\TrialThirdWeekModel.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.SocialService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.SocialService.svc</DependentUpon>
+    </Compile>
     <Compile Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.TestQuestionResultService.svc</DependentUpon>
     </Compile>
@@ -279,6 +289,7 @@
     <Compile Include="Validators\BatchUsersDTOValidator.cs" />
     <Compile Include="Validators\GeoStateDTOValidator.cs" />
     <Compile Include="Validators\GeoCountryDTOValidator.cs" />
+    <Compile Include="Validators\CompanyThemeDTOValidator.cs" />
     <Compile Include="Validators\TestDTOValidator.cs" />
     <Compile Include="Validators\TestQuestionResultDTOValidator.cs" />
     <Compile Include="Validators\TestResultDTOValidator.cs" />
@@ -323,6 +334,7 @@
     <Content Include="FileStorage\Schemas\WebEx.xsd">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -338,10 +350,6 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
-      <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
-      <Name>EdugameCloud.MVC</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>

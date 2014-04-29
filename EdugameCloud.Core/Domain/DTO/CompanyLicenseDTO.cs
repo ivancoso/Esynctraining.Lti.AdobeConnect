@@ -36,8 +36,10 @@
             this.modifiedBy = l.ModifiedBy.Id;
             this.dateCreated = l.DateCreated;
             this.dateModified = l.DateModified;
+            this.startDate = l.DateStart;
             this.expiryDate = l.ExpiryDate;
             this.totalLicensesCount = l.TotalLicensesCount;
+            this.totalParticipantsCount = l.TotalParticipantsCount;
             this.isTrial = l.LicenseStatus == CompanyLicenseStatus.Trial;
             this.isPro = l.LicenseStatus == CompanyLicenseStatus.Pro;
             this.isEnterprise = l.LicenseStatus == CompanyLicenseStatus.Enterprise;
@@ -88,6 +90,12 @@
         public DateTime dateCreated { get; set; }
 
         /// <summary>
+        /// Gets or sets the start date.
+        /// </summary>
+        [DataMember]
+        public DateTime startDate { get; set; }
+
+        /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
@@ -122,6 +130,9 @@
         /// </summary>
         [DataMember]
         public int totalLicensesCount { get; set; }
+
+        [DataMember]
+        public int totalParticipantsCount { get; set; }
 
         #endregion
     }

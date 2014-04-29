@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
 
     using EdugameCloud.Core.Business.Queries;
@@ -9,6 +10,7 @@
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
 
+    using NHibernate;
     using NHibernate.Criterion;
 
     /// <summary>
@@ -44,18 +46,18 @@
         }
 
         /// <summary>
-        /// The register delete.
+        /// The get all by users.
         /// </summary>
-        /// <param name="entity">
-        /// The entity.
+        /// <param name="contactId">
+        /// The contact Id.
         /// </param>
-        /// <param name="flush">
-        /// The flush.
-        /// </param>
-        public override void RegisterDelete(Company entity, bool flush)
+        /// <returns>
+        /// The <see cref="IEnumerable{Company}"/>.
+        /// </returns>
+        public IFutureValue<Company> GetOneByPrimaryContact(int contactId)
         {
-            entity.Status = CompanyStatus.Deleted;
-            this.RegisterSave(entity, flush);
+            var defaultQuery = new QueryOverCompany().GetQueryOver().Where(x => x.PrimaryContact != null && x.PrimaryContact.Id == contactId).Take(1);
+            return this.Repository.FindOne(defaultQuery);
         }
 
         /// <summary>
@@ -78,6 +80,36 @@
                 .Asc.WithSubquery.WhereProperty(x => x.Id)
                 .In(idSubQuery);
             return this.Repository.FindAll(query);
+        }
+
+        /// <summary>
+        /// The get one by company theme id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Company}"/>.
+        /// </returns>
+        public IFutureValue<Company> GetOneByCompanyThemeId(Guid id)
+        {
+            var defaultQuery = new QueryOverCompany().GetQueryOver().Where(x => x.Theme != null && x.Theme.Id == id).Take(1);
+            return this.Repository.FindOne(defaultQuery);
+        }
+
+        /// <summary>
+        /// The get all by company theme id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Company}"/>.
+        /// </returns>
+        public IEnumerable<Company> GetAllByCompanyThemeId(Guid id)
+        {
+            var defaultQuery = new QueryOverCompany().GetQueryOver().Where(x => x.Theme != null && x.Theme.Id == id);
+            return this.Repository.FindAll(defaultQuery);
         }
     }
 }

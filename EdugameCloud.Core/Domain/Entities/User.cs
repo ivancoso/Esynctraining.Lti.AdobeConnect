@@ -1,8 +1,10 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
+
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Utils;
@@ -18,26 +20,62 @@
         #region Fields
 
         /// <summary>
-        /// The ac sessions.
+        ///     The AC sessions.
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
         private ISet<ACSession> acSessions = new HashedSet<ACSession>();
 
         /// <summary>
-        /// The ac sessions.
+        ///     The activations.
+        /// </summary>
+        private ISet<UserActivation> activations = new HashedSet<UserActivation>();
+
+        /// <summary>
+        ///     The distractors created.
+        /// </summary>
+        private ISet<Distractor> distractorsCreated = new HashedSet<Distractor>();
+
+        /// <summary>
+        ///     The distractors modified.
+        /// </summary>
+        private ISet<Distractor> distractorsModified = new HashedSet<Distractor>();
+
+        /// <summary>
+        ///     The files.
+        /// </summary>
+        private ISet<File> files = new HashedSet<File>();
+
+        /// <summary>
+        ///     The ac sessions.
         /// </summary>
         private ISet<UserLoginHistory> loginHistory = new HashedSet<UserLoginHistory>();
 
         /// <summary>
-        /// The activations.
+        ///     The sub module categories.
         /// </summary>
-        private ISet<UserActivation> activations = new HashedSet<UserActivation>();
+        private ISet<SubModuleCategory> subModuleCategories = new HashedSet<SubModuleCategory>();
+
+        /// <summary>
+        ///     The sub module categories modified.
+        /// </summary>
+        private ISet<SubModuleCategory> subModuleCategoriesModified = new HashedSet<SubModuleCategory>();
+
+        /// <summary>
+        ///     The theme attributes created.
+        /// </summary>
+        private ISet<ThemeAttribute> themeAttributesCreated = new HashedSet<ThemeAttribute>();
+
+        /// <summary>
+        ///     The theme attributes modified.
+        /// </summary>
+        private ISet<ThemeAttribute> themeAttributesModified = new HashedSet<ThemeAttribute>();
 
         #endregion
 
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the ac sessions.
+        ///     Gets or sets the ac sessions.
         /// </summary>
         public virtual ISet<ACSession> ACSessions
         {
@@ -49,22 +87,6 @@
             set
             {
                 this.acSessions = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the ac sessions.
-        /// </summary>
-        public virtual ISet<UserLoginHistory> LoginHistory
-        {
-            get
-            {
-                return this.loginHistory;
-            }
-
-            set
-            {
-                this.loginHistory = value;
             }
         }
 
@@ -95,21 +117,6 @@
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
-        /// </summary>
-        public virtual File Logo { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the session
-        /// </summary>
-        public virtual string SessionToken { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the date created.
-        /// </summary>
-        public virtual DateTime? SessionTokenExpirationDate { get; set; }
-
-        /// <summary>
         ///     Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
@@ -120,9 +127,57 @@
         public virtual DateTime DateModified { get; set; }
 
         /// <summary>
+        /// Gets or sets the distractors created.
+        /// </summary>
+        public virtual ISet<Distractor> DistractorsCreated
+        {
+            get
+            {
+                return this.distractorsCreated;
+            }
+
+            set
+            {
+                this.distractorsCreated = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the distractors modified.
+        /// </summary>
+        public virtual ISet<Distractor> DistractorsModified
+        {
+            get
+            {
+                return this.distractorsModified;
+            }
+
+            set
+            {
+                this.distractorsModified = value;
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets the email.
         /// </summary>
         public virtual string Email { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the ac sessions.
+        /// </summary>
+        public virtual ISet<File> Files
+        {
+            get
+            {
+                return this.files;
+            }
+
+            set
+            {
+                this.files = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the first name.
@@ -141,11 +196,6 @@
         }
 
         /// <summary>
-        ///     Gets or sets a status.
-        /// </summary>
-        public virtual UserStatus Status { get; set; }
-
-        /// <summary>
         ///     Gets or sets the language id.
         /// </summary>
         public virtual Language Language { get; set; }
@@ -156,6 +206,27 @@
         public virtual string LastName { get; set; }
 
         /// <summary>
+        ///     Gets or sets the ac sessions.
+        /// </summary>
+        public virtual ISet<UserLoginHistory> LoginHistory
+        {
+            get
+            {
+                return this.loginHistory;
+            }
+
+            set
+            {
+                this.loginHistory = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the created by.
+        /// </summary>
+        public virtual File Logo { get; set; }
+
+        /// <summary>
         ///     Gets or sets the modified by.
         /// </summary>
         public virtual User ModifiedBy { get; set; }
@@ -164,6 +235,85 @@
         ///     Gets or sets the password.
         /// </summary>
         public virtual string Password { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the session
+        /// </summary>
+        public virtual string SessionToken { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date created.
+        /// </summary>
+        public virtual DateTime? SessionTokenExpirationDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a status.
+        /// </summary>
+        public virtual UserStatus Status { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the sub module categories.
+        /// </summary>
+        public virtual ISet<SubModuleCategory> SubModuleCategories
+        {
+            get
+            {
+                return this.subModuleCategories;
+            }
+
+            set
+            {
+                this.subModuleCategories = value;
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the sub module categories modified.
+        /// </summary>
+        public virtual ISet<SubModuleCategory> SubModuleCategoriesModified
+        {
+            get
+            {
+                return this.subModuleCategoriesModified;
+            }
+
+            set
+            {
+                this.subModuleCategoriesModified = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the theme attributes created.
+        /// </summary>
+        public virtual ISet<ThemeAttribute> ThemeAttributesCreated
+        {
+            get
+            {
+                return this.themeAttributesCreated;
+            }
+
+            set
+            {
+                this.themeAttributesCreated = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the theme attributes modified.
+        /// </summary>
+        public virtual ISet<ThemeAttribute> ThemeAttributesModified
+        {
+            get
+            {
+                return this.themeAttributesModified;
+            }
+
+            set
+            {
+                this.themeAttributesModified = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the time zone id.
@@ -178,6 +328,28 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        ///     The generate cookie value.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="string" />.
+        /// </returns>
+        public virtual string GenerateCookieValue()
+        {
+            return this.Id + "G" + this.HashEmail() + "G" + Guid.NewGuid().ToString("N").ToUpper();
+        }
+
+        /// <summary>
+        ///     The hash email.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="string" />.
+        /// </returns>
+        public virtual string HashEmail()
+        {
+            return BitConverter.ToString(Cryptographer.GenerateHash(this.Email)).Replace("-", string.Empty).ToUpper();
+        }
 
         /// <summary>
         ///     The is administrator.
@@ -282,29 +454,8 @@
         /// </param>
         public virtual void SetPassword(string password)
         {
-            this.Password = BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToUpper();
-        }
-
-        /// <summary>
-        /// The hash email.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public virtual string HashEmail()
-        {
-            return BitConverter.ToString(Cryptographer.GenerateHash(this.Email)).Replace("-", string.Empty).ToUpper();
-        }
-
-        /// <summary>
-        /// The generate cookie value.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public virtual string GenerateCookieValue()
-        {
-            return this.Id + "G" + this.HashEmail() + "G" + Guid.NewGuid().ToString("N").ToUpper();
+            this.Password =
+                BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToUpper();
         }
 
         /// <summary>
@@ -322,7 +473,9 @@
             {
                 return false;
             }
-            return this.Password.ToLower() == BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToLower();
+
+            return this.Password.ToLower()
+                   == BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToLower();
         }
 
         /// <summary>
@@ -340,6 +493,7 @@
             {
                 return false;
             }
+
             return this.Password.ToLower() == passwordHash.ToLower();
         }
 

@@ -27,6 +27,11 @@
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
+        ///     Gets or sets the date start.
+        /// </summary>
+        public virtual DateTime DateStart { get; set; }
+
+        /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
@@ -55,6 +60,11 @@
         /// Gets or sets the total licenses count.
         /// </summary>
         public virtual int TotalLicensesCount { get; set; }
+
+        /// <summary>
+        /// Gets or sets the total participants count.
+        /// </summary>
+        public virtual int TotalParticipantsCount { get; set; }
 
         /// <summary>
         /// Gets or sets the is license status.

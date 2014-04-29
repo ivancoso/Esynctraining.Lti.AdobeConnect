@@ -27,6 +27,7 @@ public static class EdugameCloudT4
     public static EdugameCloud.MVC.Controllers.ErrorController Error = new EdugameCloud.MVC.Controllers.T4MVC_ErrorController();
     public static EdugameCloud.MVC.Controllers.FileController File = new EdugameCloud.MVC.Controllers.T4MVC_FileController();
     public static EdugameCloud.MVC.Controllers.HomeController Home = new EdugameCloud.MVC.Controllers.T4MVC_HomeController();
+    public static EdugameCloud.MVC.Controllers.SocialController Social = new EdugameCloud.MVC.Controllers.T4MVC_SocialController();
     public static EdugameCloud.MVC.SharedController Shared = new EdugameCloud.MVC.SharedController();
 }
 
@@ -325,7 +326,6 @@ namespace EdugameCloud.MVC.Links
                 private const string URLPATH = "~/Content/swf/pub";
                 public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
                 public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-                public static readonly string PUB_EdugameCloud_Web_zip = Url("PUB_EdugameCloud_Web.zip");
             }
         
         }

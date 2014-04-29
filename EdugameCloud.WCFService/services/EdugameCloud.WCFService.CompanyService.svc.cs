@@ -36,17 +36,6 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
-        /// Gets the Address model.
-        /// </summary>
-        private AddressModel AddressModel
-        {
-            get
-            {
-                return IoC.Resolve<AddressModel>();
-            }
-        }
-
-        /// <summary>
         /// Gets the company model.
         /// </summary>
         private CompanyModel CompanyModel
@@ -58,6 +47,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CompanyThemeModel CompanyThemeModel
+        {
+            get
+            {
+                return IoC.Resolve<CompanyThemeModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the company license model.
         /// </summary>
         private CompanyLicenseModel CompanyLicenseModel
@@ -65,28 +65,6 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<CompanyLicenseModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CountryModel CountryModel
-        {
-            get
-            {
-                return IoC.Resolve<CountryModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the state model.
-        /// </summary>
-        private StateModel StateModel
-        {
-            get
-            {
-                return IoC.Resolve<StateModel>();
             }
         }
 
@@ -151,8 +129,60 @@ namespace EdugameCloud.WCFService
             }
             else
             {
+                if (company.PrimaryContact != null)
+                {
+                    company.PrimaryContact = null;
+                    model.RegisterSave(company, true);
+                }
+
+                var userModel = this.UserModel;
+                foreach (var user in company.Users)
+                {
+                    userModel.RealDelete(user, true);
+                }
+
+                model.Refresh(ref company);
                 model.RegisterDelete(company, true);
                 IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Delete, company.Id, company.Id);
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = id;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deletes company theme by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse{Guid}"/>.
+        /// </returns>
+        public ServiceResponse<Guid> DeleteThemeById(Guid id)
+        {
+            var result = new ServiceResponse<Guid>();
+            CompanyTheme companyTheme;
+            var model = this.CompanyThemeModel;
+            if ((companyTheme = model.GetOneById(id).Value) == null)
+            {
+                result.SetError(new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_Subject,
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                var companyModel = CompanyModel;
+                var companies = companyModel.GetAllByCompanyThemeId(id);
+                foreach (var company in companies)
+                {
+                    company.Theme = null;
+                    companyModel.RegisterSave(company);
+                }
+
+                model.RegisterDelete(companyTheme, true);
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
                 result.@object = id;
             }
@@ -205,6 +235,36 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The get by id.
         /// </summary>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<CompanyLicenseDTO> GetLicenseHistoryByCompanyId(int companyId)
+        {
+            var result = new ServiceResponse<CompanyLicenseDTO>();
+            Company company;
+            if ((company = this.CompanyModel.GetOneById(companyId).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_Subject,
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@objects = company.Licenses.ToList().OrderByDescending(x => x.ExpiryDate).Select(x => new CompanyLicenseDTO(x)).ToList();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get by id.
+        /// </summary>
         /// <param name="id">
         /// The id.
         /// </param>
@@ -227,6 +287,67 @@ namespace EdugameCloud.WCFService
             {
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
                 result.@object = new CompanyDTO(company);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<CompanyThemeDTO> GetThemeByCompanyId(int id)
+        {
+            var result = new ServiceResponse<CompanyThemeDTO>();
+            Company company;
+            if ((company = this.CompanyModel.GetOneById(id).Value) == null || (company.CurrentLicense ?? company.FutureActiveLicense).With(cl => cl.LicenseStatus != CompanyLicenseStatus.Enterprise))
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_Subject,
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = company.Theme == null ? null : new CompanyThemeDTO(company.Id, company.Theme);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<CompanyThemeDTO> GetThemeById(Guid id)
+        {
+            var result = new ServiceResponse<CompanyThemeDTO>();
+            CompanyTheme companyTheme;
+            Company company;
+            if ((companyTheme = this.CompanyThemeModel.GetOneById(id).Value) == null || ((company = this.CompanyModel.GetOneByCompanyThemeId(companyTheme.Id).Value) == null) || (company.CurrentLicense ?? company.FutureActiveLicense).With(cl => cl.LicenseStatus != CompanyLicenseStatus.Enterprise))
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_Subject,
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = new CompanyThemeDTO(company.Id, companyTheme);
             }
 
             return result;
@@ -297,6 +418,35 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The save update.
+        /// </summary>
+        /// <param name="companyThemeDTO">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<CompanyThemeDTO> SaveTheme(CompanyThemeDTO companyThemeDTO)
+        {
+            var result = new ServiceResponse<CompanyThemeDTO>();
+            ValidationResult validationResult;
+            if (this.IsValid(companyThemeDTO, out validationResult))
+            {
+                var company = this.CompanyModel.GetOneById(companyThemeDTO.companyId).Value;
+                var companyTheme = company.With(x => x.Theme);
+                companyTheme = this.Convert(companyThemeDTO, companyTheme, true);
+                company.Theme = companyTheme;
+                this.CompanyModel.RegisterSave(company, true);
+                result.@object = new CompanyThemeDTO(company.Id, companyTheme);
+                return result;
+            }
+
+            result = this.UpdateResult(result, validationResult);
+            this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
+            return result;
+        }
+
+        /// <summary>
         /// The save.
         /// </summary>
         /// <param name="dto">
@@ -313,34 +463,45 @@ namespace EdugameCloud.WCFService
             {
                 var companyModel = this.CompanyModel;
                 var companyLicenseModel = this.CompanyLicenseModel;
-                Company instance = (dto.companyId == 0)
+                var instance = (dto.companyId == 0)
                                               ? null
                                               : companyModel.GetOneById(dto.companyId).Value;
-                instance = this.ConvertDto(dto, instance);
-                bool isTransient = instance.IsTransient();
+
+                instance = this.Convert(dto, instance);
+                var isTransient = instance.IsTransient();
                 companyModel.RegisterSave(instance, true);
 
                 if (isTransient && dto.licenseVO != null)
                 {
                     var user = this.UserModel.GetOneById(dto.licenseVO.createdBy).Value;
 
-                    var license = new CompanyLicense
-                                      {
-                                          Company = instance,
-                                          CreatedBy = user,
-                                          ModifiedBy = user,
-                                          DateCreated = DateTime.Now,
-                                          DateModified = DateTime.Now,
-                                          ExpiryDate = dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1),
-                                          LicenseStatus = this.GetLicenseStatus(dto.licenseVO),
-                                          TotalLicensesCount = dto.licenseVO.totalLicensesCount,
-                                          Domain = dto.licenseVO.domain,
-                                          LicenseNumber = Guid.NewGuid().ToString()
-                                      };
+                    var license = instance.CurrentLicense ?? new CompanyLicense();
+                    license.Company = instance;
+                    var licenseIsTransient = license.IsTransient();
+                    if (licenseIsTransient)
+                    {
+                        license.CreatedBy = user;
+                        license.DateCreated = DateTime.Now;
+                    }
+
+                    license.ModifiedBy = user;
+                    license.DateModified = DateTime.Now;
+                    license.ExpiryDate = dto.licenseVO.expiryDate < DateTime.Now || dto.licenseVO.expiryDate == DateTime.MinValue ? dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1) : dto.licenseVO.expiryDate.AdaptToSQL();
+                    license.DateStart = dto.licenseVO.startDate < DateTime.Now || dto.licenseVO.startDate == DateTime.MinValue ? DateTime.Now : dto.licenseVO.startDate.AdaptToSQL();
+                    license.LicenseStatus = this.GetLicenseStatus(dto.licenseVO);
+                    license.TotalLicensesCount = dto.licenseVO.totalLicensesCount;
+                    
+                    license.TotalParticipantsCount = dto.licenseVO.totalParticipantsCount == 0 ? 100 : dto.licenseVO.totalParticipantsCount;
+                    license.Domain = dto.licenseVO.domain;
+                    license.LicenseNumber = Guid.NewGuid().ToString();
 
                     companyLicenseModel.RegisterSave(license);
-                    instance.Licenses.Add(license);
-                    companyModel.RegisterSave(instance, false);
+
+                    if (licenseIsTransient)
+                    {
+                        instance.Licenses.Add(license);
+                        companyModel.RegisterSave(instance, false);
+                    }
                 }
 
                 if ((!dto.primaryContactId.HasValue || dto.primaryContactId == default(int)) && dto.primaryContactVO != null)
@@ -361,6 +522,12 @@ namespace EdugameCloud.WCFService
                             user.Status = UserStatus.Active;
                             UserModel.RegisterSave(user);
                             this.SendTrialEmail(user, dto.primaryContactVO.password, instance);
+                        }
+                        else if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false))
+                        {
+                            user.Status = UserStatus.Active;
+                            UserModel.RegisterSave(user);
+                            this.SendEnterpriseEmail(user, dto.primaryContactVO.password, instance);
                         }
                         else
                         {
@@ -395,75 +562,9 @@ namespace EdugameCloud.WCFService
             return response;
         }
 
-        /// <summary>
-        /// The get license status.
-        /// </summary>
-        /// <param name="licenseVo">
-        /// The license vo.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLicenseStatus"/>.
-        /// </returns>
-        private CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
-        {
-            if (licenseVo.isTrial)
-            {
-                return CompanyLicenseStatus.Trial;
-            }
-            
-            if (licenseVo.isEnterprise)
-            {
-                return CompanyLicenseStatus.Enterprise;
-            }
-
-            return CompanyLicenseStatus.Pro;
-        }
-
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="companyDto">
-        /// The company DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Company"/>.
-        /// </returns>
-        private Company ConvertDto(CompanyDTO companyDto, Company instance)
-        {
-            instance = instance ?? new Company();
-            instance.CompanyName = companyDto.companyName;
-            instance.Status = companyDto.isActive ? CompanyStatus.Active : CompanyStatus.Inactive;
-            instance.DateCreated = (companyDto.dateCreated == DateTime.MinValue) ? DateTime.Now : companyDto.dateCreated;
-            instance.DateModified = (companyDto.dateModified == DateTime.MinValue) ? DateTime.Now : companyDto.dateModified;
-            if (companyDto.addressVO != null)
-            {
-                instance.Address = instance.Address ?? new Address();
-                var addressVo = companyDto.addressVO;
-                instance.Address.Address1 = addressVo.address1;
-                instance.Address.Address2 = addressVo.address2;
-                instance.Address.City = addressVo.city;
-                instance.Address.DateCreated = addressVo.dateCreated.HasValue ? addressVo.dateCreated.Value : DateTime.Now;
-                instance.Address.DateModified = DateTime.Now;
-                instance.Address.Country = addressVo.countryId.HasValue
-                                               ? this.CountryModel.GetOneById(addressVo.countryId.Value).Value
-                                               : null;
-                instance.Address.State = addressVo.stateId.HasValue
-                                               ? this.StateModel.GetOneById(addressVo.stateId.Value).Value
-                                               : null;
-                instance.Address.Zip = addressVo.zip;
-                this.AddressModel.RegisterSave(instance.Address);
-            }
-
-            instance.PrimaryContact = (companyDto.primaryContactId.HasValue && companyDto.primaryContactId != default(int)) ? this.UserModel.GetOneById(companyDto.primaryContactId.Value).Value : instance.PrimaryContact;
-            return instance;
-        }
 
         /// <summary>
         /// The process contact.
@@ -485,8 +586,9 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private User ProcessPrimaryContact(CompanyDTO companyDTO, Company instance, out bool passwordChanged, out bool emailChanged)
         {
+            var userModel = this.UserModel;
             var entityDto = companyDTO.primaryContactVO;
-            var result = instance.PrimaryContact ?? (this.UserModel.GetOneById(entityDto.userId).Value ?? new User());
+            var result = instance.PrimaryContact ?? (userModel.GetOneById(entityDto.userId).Value ?? new User());
             bool isTransient = result.IsTransient();
             passwordChanged = false;
             emailChanged = !isTransient && !entityDto.email.Equals(result.Email, StringComparison.InvariantCultureIgnoreCase);
@@ -499,8 +601,8 @@ namespace EdugameCloud.WCFService
             result.Language = this.LanguageModel.GetOneById(entityDto.languageId).Value;
             result.TimeZone = this.TimeZoneModel.GetOneById(entityDto.timeZoneId).Value;
             result.UserRole = this.UserRoleModel.GetOneById(entityDto.userRoleId).Value;
-            result.CreatedBy = entityDto.createdBy.HasValue ? this.UserModel.GetOneById(entityDto.createdBy.Value).Value : null;
-            result.ModifiedBy = entityDto.modifiedBy.HasValue ? this.UserModel.GetOneById(entityDto.modifiedBy.Value).Value : null;
+            result.CreatedBy = entityDto.createdBy.HasValue ? userModel.GetOneById(entityDto.createdBy.Value).Value : null;
+            result.ModifiedBy = entityDto.modifiedBy.HasValue ? userModel.GetOneById(entityDto.modifiedBy.Value).Value : null;
             if (isTransient && string.IsNullOrWhiteSpace(entityDto.password))
             {
                 entityDto.password = AuthenticationModel.CreateRandomPassword();
@@ -514,7 +616,7 @@ namespace EdugameCloud.WCFService
 
             return result;
         }
-
+        
         #endregion
     }
 }

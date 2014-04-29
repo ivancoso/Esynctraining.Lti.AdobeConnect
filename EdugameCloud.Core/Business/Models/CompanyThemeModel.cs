@@ -1,25 +1,25 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
-    using System.Diagnostics.CodeAnalysis;
+    using System;
+
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
 
     /// <summary>
-    ///     The QuestionForLikert model.
+    ///     The Company Theme model.
     /// </summary>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class QuestionForRateModel : BaseModel<QuestionForRate, int>
+    public class CompanyThemeModel : BaseModel<CompanyTheme, Guid>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuestionForRateModel"/> class. 
+        /// Initializes a new instance of the <see cref="CompanyThemeModel"/> class. 
         /// </summary>
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public QuestionForRateModel(IRepository<QuestionForRate, int> repository)
+        public CompanyThemeModel(IRepository<CompanyTheme, Guid> repository)
             : base(repository)
         {
         }

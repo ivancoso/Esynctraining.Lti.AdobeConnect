@@ -336,6 +336,66 @@
         /// <param name="company">
         /// The company.
         /// </param>
+        protected void SendEnterpriseEmail(User user, string password, Company company)
+        {
+            var license = company.Licenses.FirstOrDefault();
+            var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
+
+            this.MailModel.SendEmail(
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                new EnterpriseModel(this.Settings)
+                {
+                    CompanyName = company.CompanyName,
+                    MailSubject = Emails.TrialSubject,
+                    TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                    TrialDays = days,
+                    UserName = user.Email,
+                    Password = password,
+                    ExpirationDate = license.Return(x => x.ExpiryDate.ToShortDateString(), string.Empty) 
+                },
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: new List<MailAddress> { new MailAddress(this.Settings.TrialContactEmail), new MailAddress(Common.JacquieEmail, Common.JacquieName) });
+        }
+
+        /// <summary>
+        /// The get license status.
+        /// </summary>
+        /// <param name="licenseVo">
+        /// The license vo.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CompanyLicenseStatus"/>.
+        /// </returns>
+        protected CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
+        {
+            if (licenseVo.isTrial)
+            {
+                return CompanyLicenseStatus.Trial;
+            }
+
+            if (licenseVo.isEnterprise)
+            {
+                return CompanyLicenseStatus.Enterprise;
+            }
+
+            return CompanyLicenseStatus.Pro;
+        }
+
+        /// <summary>
+        /// The send trial email.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <param name="company">
+        /// The company.
+        /// </param>
         protected void SendTrialEmail(User user, string password, Company company)
         {
             var license = company.Licenses.FirstOrDefault();
@@ -481,7 +541,7 @@
                 blindCopies.AddRange(bcced);
             }
 
-            var bccedProduction = T4MVCHelpers.IsProduction() ? GetBCCed(Settings.BCCActivationEmail as string) : null;
+            var bccedProduction = HttpContext.Current != null && !HttpContext.Current.IsDebuggingEnabled ? GetBCCed(this.Settings.BCCActivationEmail as string) : null;
             if (bccedProduction != null)
             {
                 blindCopies.AddRange(bccedProduction);

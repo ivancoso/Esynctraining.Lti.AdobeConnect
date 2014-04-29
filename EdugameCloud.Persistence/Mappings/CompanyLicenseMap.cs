@@ -21,6 +21,8 @@
             this.Map(x => x.ExpiryDate);
             this.Map(x => x.LicenseNumber).Length(50).Not.Nullable();
             this.Map(x => x.TotalLicensesCount).Not.Nullable().Default("(1)");
+            this.Map(x => x.TotalParticipantsCount).Not.Nullable().Default("(100)");
+            this.Map(x => x.DateStart).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.References(x => x.Company).Nullable();

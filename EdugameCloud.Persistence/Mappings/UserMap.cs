@@ -30,6 +30,15 @@
             this.HasMany(x => x.Activations).Cascade.Delete().Inverse().ExtraLazyLoad();
             this.HasMany(x => x.ACSessions).Cascade.Delete().Inverse().ExtraLazyLoad();
             this.HasMany(x => x.LoginHistory).Cascade.Delete().Inverse().ExtraLazyLoad();
+            this.HasMany(x => x.Files).Cascade.Delete().Inverse().ExtraLazyLoad().KeyColumn("createdBy");
+            this.HasMany(x => x.DistractorsCreated).ExtraLazyLoad().KeyColumn("createdBy");
+            this.HasMany(x => x.DistractorsModified).ExtraLazyLoad().KeyColumn("modifiedBy");
+
+            this.HasMany(x => x.ThemeAttributesCreated).ExtraLazyLoad().KeyColumn("createdBy");
+            this.HasMany(x => x.ThemeAttributesModified).ExtraLazyLoad().KeyColumn("modifiedBy");
+
+            this.HasMany(x => x.SubModuleCategories).Cascade.Delete().Inverse().ExtraLazyLoad().KeyColumn("userId");
+            this.HasMany(x => x.SubModuleCategoriesModified).ExtraLazyLoad().KeyColumn("modifiedBy");
 
             this.References(x => x.UserRole).Not.Nullable();
             this.References(x => x.Company).Not.Nullable().LazyLoad();

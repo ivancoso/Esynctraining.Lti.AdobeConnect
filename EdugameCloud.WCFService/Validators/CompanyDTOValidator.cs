@@ -44,10 +44,9 @@
                 .NotEmpty()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Date modified is empty");
             this.RuleFor(model => model.licenseVO)
-                .Must(x => x != null && x.createdBy != default(int) && x.totalLicensesCount != default(int))
-                .WithError(
-                    Errors.CODE_ERRORTYPE_INVALID_OBJECT, 
-                    "Invalid license (vo is null, or createdBy == 0, or totalLicensesCount == 0)");
+                .Must(x => x == null || (x.createdBy != default(int) && x.totalLicensesCount != default(int)))
+                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    "Invalid license (licenseVo.createdBy == 0, or licenseVo.totalLicensesCount == 0)");
             this.RuleFor(model => model.primaryContactId)
                 .Must((model, x) => x.HasValue || model.primaryContactVO != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Primary contact is empty");
@@ -85,6 +84,9 @@
         /// <summary>
         /// The validate primary contact.
         /// </summary>
+        /// <param name="primaryContactValidator">
+        /// The primary Contact Validator.
+        /// </param>
         /// <param name="userDTO">
         /// The user dto.
         /// </param>

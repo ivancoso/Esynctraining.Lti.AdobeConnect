@@ -142,7 +142,7 @@
         private string ToQueryString(NameValueCollection nvc)
         {
             nvc.Add("format", "json");
-            List<string> array = new List<string>();
+            var array = new List<string>();
             foreach (var key in nvc.AllKeys.Where(key => !string.IsNullOrWhiteSpace(key)))
             {
                 var value = nvc[key];
@@ -151,6 +151,7 @@
                     array.Add(string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(value)));
                 }
             }
+
             return "?" + string.Join("&", array);
         }
 

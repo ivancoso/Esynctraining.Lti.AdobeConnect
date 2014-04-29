@@ -65,7 +65,7 @@
     </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -127,6 +127,7 @@
     <Compile Include="Business\Models\AddressModel.cs" />
     <Compile Include="Business\Models\BuildVersionModel.cs" />
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
+    <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\SubModuleItemThemeModel.cs" />
     <Compile Include="Business\Models\QuestionForRateModel.cs" />
     <Compile Include="Business\Models\QuestionForSingleMultipleChoiceModel.cs" />
@@ -178,10 +179,12 @@
     <Compile Include="Business\Models\FileModel.cs" />
     <Compile Include="Business\Models\UserModel.cs" />
     <Compile Include="Business\Models\VCFModel.cs" />
+    <Compile Include="Business\Models\WebProxyModel.cs" />
     <Compile Include="Business\Queries\QueryOverCompany.cs" />
     <Compile Include="Business\Queries\QueryOverUser.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
+    <Compile Include="Contracts\ISocialService.cs" />
     <Compile Include="Contracts\ITestQuestionResultService.cs" />
     <Compile Include="Contracts\ITestResultService.cs" />
     <Compile Include="Contracts\ITestService.cs" />
@@ -189,7 +192,11 @@
     <Compile Include="Contracts\ISurveyResultService.cs" />
     <Compile Include="Contracts\ISurveyService.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
+    <Compile Include="Converters\AddressDTOConverter.cs" />
+    <Compile Include="Converters\CompanyThemeDTOConverter.cs" />
+    <Compile Include="Converters\CompanyDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
+    <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
     <Compile Include="Domain\DTO\SessionDTO.cs" />
     <Compile Include="Domain\DTO\BatchUsersDTO.cs" />
@@ -231,9 +238,12 @@
     <Compile Include="Domain\DTO\UserLoginHistoryDTO.cs" />
     <Compile Include="Domain\DTO\VCFProfileDTO.cs" />
     <Compile Include="Domain\DTO\GoogleSearchDTO.cs" />
+    <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
+    <Compile Include="Domain\DTO\WebRequestDTO.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />
+    <Compile Include="Domain\Entities\CompanyTheme.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />
     <Compile Include="Domain\Entities\QuestionForTrueFalse.cs" />
@@ -264,7 +274,6 @@
     <Compile Include="Domain\Formats\WebEx\WebExPool.cs" />
     <Compile Include="Domain\Formats\WebEx\WebExQuestion.cs" />
     <Compile Include="Domain\Formats\WebEx\WebExQuestionType.cs" />
-    <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="RTMP\ClientConnectionHandler.cs" />
     <Compile Include="RTMP\DBChangesNotifier.cs" />
@@ -402,6 +411,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

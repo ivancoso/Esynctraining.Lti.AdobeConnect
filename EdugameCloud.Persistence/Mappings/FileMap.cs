@@ -22,6 +22,8 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.Status).Nullable().CustomType<ImageStatus>();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column("createdBy");
+            this.HasMany(x => x.Distractors).ExtraLazyLoad().KeyColumn("imageId");
+            this.HasMany(x => x.Questions).ExtraLazyLoad().KeyColumn("imageId");
         }
 
 

@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.Web
 {
     using System;
+    using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Web;
     using System.Web.Mvc;
@@ -45,12 +47,13 @@
         /// </summary>
         protected void Application_Start()
         {
-            IoC.Initialize(new WindsorContainer());
-            IoC.Container.RegisterComponents(web: true);
-            RegisterLocalComponents(IoC.Container);
-            SetControllerFactory(IoC.Container);
+            var container = new WindsorContainer();
+            IoC.Initialize(container);
+            container.RegisterComponents(web: true);
+            RegisterLocalComponents(container);
+            SetControllerFactory(container);
             AreaRegistration.RegisterAllAreas();
-            var modelBinders = IoC.Container.ResolveAll(typeof(BaseModelBinder));
+            var modelBinders = container.ResolveAll(typeof(BaseModelBinder));
             foreach (var binder in modelBinders)
             {
                 var modelBinder = (BaseModelBinder)binder;
@@ -62,13 +65,29 @@
                     }
                 }
             }
+
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
-            ModelValidatorProviders.Providers.Add(
-                new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(IoC.Container)));
+            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(container)));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             DefaultModelBinder.ResourceClassKey = "Errors";
+
+            string pathPropertiesPath = this.GetPathPropertiesPath();
+            container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
+            AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
+        }
+
+        /// <summary>
+        /// The get path properties path.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetPathPropertiesPath()
+        {
+            string @path = @"Content\swf\config\paths.properties";
+            return Path.Combine(HttpContext.Current.Server.MapPath("~"), @path);
         }
 
         /// <summary>

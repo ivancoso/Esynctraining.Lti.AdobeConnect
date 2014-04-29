@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
+    using System.Linq;
 
     using Esynctraining.Core.Domain.Entities;
 
@@ -33,6 +34,11 @@
         public virtual Address Address { get; set; }
 
         /// <summary>
+        /// Gets or sets the address.
+        /// </summary>
+        public virtual CompanyTheme Theme { get; set; }
+
+        /// <summary>
         /// Gets or sets the company name.
         /// </summary>
         public virtual string CompanyName { get; set; }
@@ -51,6 +57,36 @@
         /// Gets or sets the primary contact.
         /// </summary>
         public virtual User PrimaryContact { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the age of a user.
+        /// </summary>
+        public virtual CompanyLicense CurrentLicense
+        {
+            get
+            {
+                return this.Licenses.ToList().Where(x => x.DateStart <= DateTime.Now && x.ExpiryDate >= DateTime.Now).OrderByDescending(x => (int)x.LicenseStatus).ThenByDescending(x => x.DateCreated).FirstOrDefault();
+            }
+            set
+            {
+
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets the age of a user.
+        /// </summary>
+        public virtual CompanyLicense FutureActiveLicense
+        {
+            get
+            {
+                return this.Licenses.FirstOrDefault(x => x.ExpiryDate >= DateTime.Now);
+            }
+            set
+            {
+
+            }
+        }
 
         /// <summary>
         /// Gets or sets the users.

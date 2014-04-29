@@ -45,6 +45,24 @@
         /// <summary>
         /// The get all for user.
         /// </summary>
+        /// <param name="userIds">
+        /// The user Ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{UserLoginHistory}"/>.
+        /// </returns>
+        public IEnumerable<UserLoginHistory> GetAllForUsers(List<int> userIds)
+        {
+            var query =
+                new DefaultQueryOver<UserLoginHistory, int>().GetQueryOver()
+                                                     .WhereRestrictionOn(x => x.User.Id).IsIn(userIds)
+                                                     .Fetch(x => x.User).Eager;
+            return this.Repository.FindAll(query);
+        }
+
+        /// <summary>
+        /// The get all for user.
+        /// </summary>
         /// <param name="userId">
         /// The user Id.
         /// </param>

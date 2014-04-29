@@ -361,7 +361,7 @@ namespace EdugameCloud.Core.Business.Models
         /// </returns>
         public IEnumerable<DistractorFromStoredProcedureDTO> GetSurveyDistractorsBySMIId(int smiId)
         {
-	        var distructors = distractorModel.GetTestDistractorsWithoutImagesBySMIId(smiId).ToList(); 
+	        var distructors = distractorModel.GetDistractorsBySMIId(smiId).ToList(); 
             var imageIds = distructors.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
             if (imageIds.Any())
             {

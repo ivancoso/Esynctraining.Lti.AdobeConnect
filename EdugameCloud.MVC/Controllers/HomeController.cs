@@ -1,9 +1,6 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
     using System.Text;
     using System.Web.Mvc;
     using System.Web.Security;
@@ -17,7 +14,6 @@
     using EdugameCloud.MVC.ViewModels;
 
     using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -82,10 +78,9 @@
         [HttpGet]
         public virtual ActionResult Admin(string view = null, string code = null)
         {
-            string versionFileSwf = this.ProcessVersion("~/Content/swf/admin");
+            string versionFileSwf = this.ProcessVersion("~/Content/swf/admin", (string)this.Settings.BuildSelector);
             return this.View(EdugameCloudT4.Home.Views.Admin, new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });
         }
-
 
         /// <summary>
         /// The index.
@@ -101,8 +96,18 @@
             {
                 sb.AppendLine();
                 var c = this.Request.Cookies[cookie];
-                sb.AppendFormat("{0}: http: {1}, path: {2}, value: {3}, expires: {4}", c.Name, c.HttpOnly, c.Path, c.Value, c.Expires);
+                if (c != null)
+                {
+                    sb.AppendFormat(
+                        "{0}: http: {1}, path: {2}, value: {3}, expires: {4}",
+                        c.Name,
+                        c.HttpOnly,
+                        c.Path,
+                        c.Value,
+                        c.Expires);
+                }
             }
+
             return this.Content(sb.ToString());
         }
 
@@ -133,7 +138,7 @@
             {
                 var user = this.userModel.GetOneByEmail(model.UserName.Trim()).Value;
 
-                if (user != null && user.Status == UserStatus.Active && (user.ValidatePassword(model.Password.Trim())))
+                if (user != null && user.Status == UserStatus.Active && user.ValidatePassword(model.Password.Trim()))
                 {
                     return this.RedirectFromLoginPage(user, model.ReturnUrl, model.RememberMe);
                 }
@@ -250,36 +255,6 @@
             }
 
             return this.Redirect(AuthenticationModel.DefaultUrl);
-        }
-
-        /// <summary>
-        /// The process version.
-        /// </summary>
-        /// <param name="swfFolder">
-        /// The SWF folder.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        [NonAction]
-        private string ProcessVersion(string swfFolder)
-        {
-            string folder = this.Server.MapPath(swfFolder);
-            if (Directory.Exists(folder))
-            {
-                var versions = new List<KeyValuePair<Version, string>>();
-                foreach (string file in Directory.GetFiles(folder, (string)this.Settings.BuildSelector))
-                {
-                    string fileName = Path.GetFileName(file);
-                    var version = fileName.GetBuildVersion();
-                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
-                }
-
-                versions.Sort(new BuildVersionComparer());
-                return versions.FirstOrDefault().With(x => x.Value);
-            }
-
-            return null;
         }
 
         #endregion

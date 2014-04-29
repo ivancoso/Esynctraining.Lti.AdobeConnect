@@ -1,9 +1,13 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
+    using System.Linq;
     using System.Web.Mvc;
 
+    using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
@@ -15,7 +19,7 @@
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MVC.BaseController"/> class.
+        /// Initializes a new instance of the <see cref="BaseController"/> class.
         /// </summary>
         /// <param name="settings">
         /// The settings
@@ -79,6 +83,40 @@
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// The process version.
+        /// </summary>
+        /// <param name="swfFolder">
+        /// The SWF folder.
+        /// </param>
+        /// <param name="buildSelector">
+        /// The build Selector.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        [NonAction]
+        protected string ProcessVersion(string swfFolder, string buildSelector)
+        {
+            var folder = this.Server.MapPath(swfFolder);
+            if (Directory.Exists(folder))
+            {
+                var versions = new List<KeyValuePair<Version, string>>();
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (var file in Directory.GetFiles(folder, buildSelector))
+                {
+                    var fileName = Path.GetFileName(file);
+                    var version = fileName.GetBuildVersion();
+                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
+                }
+
+                versions.Sort(new BuildVersionComparer());
+                return versions.FirstOrDefault().With(x => x.Value);
+            }
+
+            return null;
         }
 
         #endregion

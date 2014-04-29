@@ -57,6 +57,8 @@
         /// </summary>
         private readonly TimeZoneModel timeZoneModel;
 
+        private readonly FileModel fileModel;
+
         /// <summary>
         /// The user role model.
         /// </summary>
@@ -88,6 +90,7 @@
             UserRoleModel userRoleModel, 
             LanguageModel languageModel, 
             TimeZoneModel timeZoneModel, 
+            FileModel fileModel,
             ApplicationSettingsProvider settings, 
             IRepository<User, int> repository)
             : base(repository)
@@ -95,6 +98,7 @@
             this.userRoleModel = userRoleModel;
             this.languageModel = languageModel;
             this.timeZoneModel = timeZoneModel;
+            this.fileModel = fileModel;
             this.settings = settings;
         }
 
@@ -173,7 +177,7 @@
         /// </returns>
         public IEnumerable<UserWithLoginHistoryDTO> GetAllForCompany(int companyId)
         {
-            QueryOver<User, User> queryOver = new QueryOverUser().GetQueryOver().Where(x => x.Company.Id == companyId).Fetch(x => x.UserRole).Eager;
+            var queryOver = new QueryOverUser().GetQueryOver().Where(x => x.Company.Id == companyId).Fetch(x => x.UserRole).Eager;
             var users = this.Repository.FindAll(queryOver).ToList();
             var usersIds = users.Select(x => x.Id).ToList();
             User u = null;
@@ -320,6 +324,38 @@
                 this.Repository.Session.Query<User>()
                     .Where(x => (x.Email.ToLower() == emailOrUserName.ToLower()) && x.Password == passwordHashString)
                     .ToFutureValue();
+        }
+
+        /// <summary>
+        /// The register delete.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        /// <param name="flush">
+        /// The flush.
+        /// </param>
+        public void RealDelete(User entity, bool flush = false)
+        {
+            try
+            {
+                if (entity.Logo != null)
+                {
+                    this.fileModel.RegisterDelete(entity.Logo);
+                }
+
+                foreach (var file in entity.Files)
+                {
+                    this.fileModel.RegisterDelete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                
+            }
+
+            this.fileModel.Flush();
+            base.RegisterDelete(entity, flush);
         }
 
         /// <summary>

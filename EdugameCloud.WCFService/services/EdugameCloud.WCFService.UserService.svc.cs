@@ -113,13 +113,16 @@ namespace EdugameCloud.WCFService
         /// <param name="userId">
         /// The user id.
         /// </param>
+        /// <param name="logoId">
+        /// The logo Id.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         public ServiceResponse UpdateLogo(int userId, Guid logoId)
         {
             var result = new ServiceResponse();
-            UserModel model = this.UserModel;
+            var model = this.UserModel;
             User user;
             File file;
             if ((user = model.GetOneById(userId).Value) == null)
@@ -417,6 +420,33 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The get login history for contact.
         /// </summary>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryForCompany(int companyId)
+        {
+            var result = new ServiceResponse<UserLoginHistoryDTO>();
+            Company company;
+            if ((company = this.CompanyModel.GetOneById(companyId).Value) == null)
+            {
+                result.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_USER, ErrorsTexts.AccessError_Subject, ErrorsTexts.GetById_NoUserExists));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                var history = this.UserLoginHistoryModel.GetAllForUsers(company.Users.Select(x => x.Id).ToList()).ToList();
+                result.objects = history.Select(x => new UserLoginHistoryDTO(x, company)).ToList();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get login history for contact.
+        /// </summary>
         /// <param name="userId">
         /// The user id.
         /// </param>
@@ -552,13 +582,21 @@ namespace EdugameCloud.WCFService
                         ErrorsTexts.AccessError_Subject, 
                         ErrorsTexts.AccessError_NoUserExistsWithTheGivenEmail));
             }
-            else if (user.Status != UserStatus.Active)
+            else if (user.Status != UserStatus.Active || user.Company.Status != CompanyStatus.Active)
             {
                 result.SetError(
                     new Error(
                         Errors.CODE_ERRORTYPE_USER_INACTIVE, 
                         ErrorsTexts.AccessError_Subject, 
                         ErrorsTexts.AccessError_UserIsInactive));
+            }
+            else if (user.Company.CurrentLicense == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_EXPIRED_LICENSE,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.AccessError_CompanyLicenseIsExpired));
             }
             else if (!user.ValidatePasswordHash(dto.passwordHash) && !user.ValidatePassword(dto.passwordHash))
             {
@@ -628,6 +666,35 @@ namespace EdugameCloud.WCFService
 
             result = this.UpdateResult(result, validationResult);
             this.LogError("Upload batch users", result);
+            return result;
+        }
+
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<int> GetCompanyIdByEmail(string email)
+        {
+            var result = new ServiceResponse<int>();
+            User user;
+            if ((user = this.UserModel.GetOneByEmail(email).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                        ErrorsTexts.GetResultError_Subject,
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                result.@object = user.Company.With(x => x.Id);
+            }
+
             return result;
         }
 

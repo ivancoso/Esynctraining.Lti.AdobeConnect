@@ -59,6 +59,21 @@
         [OperationContract]
         ServiceResponse<CompanyLicenseDTO> Save(CompanyLicenseDTO dto);
 
+        /// <summary>
+        /// The update seats count.
+        /// </summary>
+        /// <param name="licenseId">
+        /// The license id.
+        /// </param>
+        /// <param name="seatsCount">
+        /// The seats count.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<int> UpdateSeatsCount(int licenseId, int seatsCount);
+
         #endregion
     }
 }

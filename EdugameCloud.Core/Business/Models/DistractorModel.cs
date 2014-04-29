@@ -170,7 +170,7 @@ namespace EdugameCloud.Core.Business.Models
             return this.Repository.FindAll(queryOver);
         }
 
-		  public IEnumerable<DistractorFromStoredProcedureDTO> GetTestDistractorsWithoutImagesBySMIId(int smiId)
+		  public IEnumerable<DistractorFromStoredProcedureDTO> GetDistractorsBySMIId(int smiId)
 	    {
 		    Distractor d = null;
 		    Question q = null;
@@ -180,8 +180,8 @@ namespace EdugameCloud.Core.Business.Models
 			var qieryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver(()=>d)
 				.JoinQueryOver(x=>x.Question, ()=>q, JoinType.InnerJoin)
 				.JoinQueryOver(()=>q.SubModuleItem, ()=>smi, JoinType.InnerJoin)
-				.JoinQueryOver(()=>d.Image, ()=>f)
-				.Where(()=>q.SubModuleItem.Id == smiId && q.IsActive == true && d. IsActive == true)
+                .JoinQueryOver(() => d.Image, () => f, JoinType.LeftOuterJoin)
+				.Where(()=>q.SubModuleItem.Id == smiId && q.IsActive == true && d.IsActive == true)
 				.SelectList(res=>
 					res.Select(Projections.Distinct(Projections.ProjectionList()
 						.Add(Projections.Property(() => d.Id))

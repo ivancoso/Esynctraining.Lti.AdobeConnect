@@ -98,9 +98,6 @@
     <Build Include="dbo\Tables\DistractorHistory.sql" />
     <Build Include="dbo\Tables\Distractor.sql" />
     <Build Include="dbo\Tables\Country.sql" />
-    <Build Include="dbo\Tables\CompanyThemeMeeting.sql" />
-    <Build Include="dbo\Tables\CompanyThemeLogin.sql" />
-    <Build Include="dbo\Tables\CompanyThemeAdmin.sql" />
     <Build Include="dbo\Tables\CompanyTheme.sql" />
     <Build Include="dbo\Tables\CompanyLicenseHistory.sql" />
     <Build Include="dbo\Tables\CompanyLicense.sql" />

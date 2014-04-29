@@ -67,6 +67,12 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult Public()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.Public);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult GetGroupDiscussion()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.GetGroupDiscussion);
@@ -118,6 +124,8 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string GetCollaborationReport = "collaboration-report";
             public readonly string GetCrosswordsReport = "crossword-report";
             public readonly string GetFile = "get";
+            public readonly string Public = "public";
+            public readonly string GetPublicBuild = "get-public-build";
             public readonly string GetGroupDiscussion = "get-group-discussion";
             public readonly string GetProfileVCard = "get-profile-vCard";
             public readonly string GetQuizReport = "quiz-report";
@@ -136,6 +144,8 @@ namespace EdugameCloud.MVC.Controllers
             public const string GetCollaborationReport = "collaboration-report";
             public const string GetCrosswordsReport = "crossword-report";
             public const string GetFile = "get";
+            public const string Public = "public";
+            public const string GetPublicBuild = "get-public-build";
             public const string GetGroupDiscussion = "get-group-discussion";
             public const string GetProfileVCard = "get-profile-vCard";
             public const string GetQuizReport = "quiz-report";
@@ -196,6 +206,14 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionParamsClass_GetFile
         {
             public readonly string id = "id";
+        }
+        static readonly ActionParamsClass_Public s_params_Public = new ActionParamsClass_Public();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Public PublicParams { get { return s_params_Public; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Public
+        {
+            public readonly string fileName = "fileName";
         }
         static readonly ActionParamsClass_GetGroupDiscussion s_params_GetGroupDiscussion = new ActionParamsClass_GetGroupDiscussion();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -341,6 +359,19 @@ namespace EdugameCloud.MVC.Controllers
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetFile);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult Public(string fileName)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Public);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "fileName", fileName);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult GetPublicBuild()
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetPublicBuild);
             return callInfo;
         }
 

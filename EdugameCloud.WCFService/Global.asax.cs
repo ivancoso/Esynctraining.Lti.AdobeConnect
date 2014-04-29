@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.WCFService
 {
     using System;
+    using System.IO;
+    using System.Linq;
     using System.Web;
     using System.Web.Configuration;
 
