@@ -50,6 +50,17 @@
         }
 
         /// <summary>
+        /// Gets a value indicating whether is daylight saving time.
+        /// </summary>
+        public bool IsDaylightSavingTime
+        {
+            get
+            {
+                return this.TimeZone.IsDaylightSavingTime(this.DateTime);
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets the date time.
         /// </summary>
         public DateTime DateTime { get; set; }

@@ -174,15 +174,16 @@
             {
                 if (typeof(IDatesContainer).IsAssignableFrom(typeof(T)))
                 {
+                    var date = DateTime.Now;
                     var datesContainer = (IDatesContainer)entity;
                     if (entity.Id.Equals(default(TId)))
                     {
-                        datesContainer.DateCreated = DateTime.Now;
+                        datesContainer.DateCreated = date;
                         datesContainer.DateModified = null;
                     }
                     else if (updateDateModified)
                     {
-                        datesContainer.DateModified = DateTime.Now;
+                        datesContainer.DateModified = date;
                     }
                 }
 

@@ -84,6 +84,12 @@
         /// The code error type invalid object.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:FieldNamesMustNotContainUnderscore", Justification = "Reviewed. Suppression is OK here.")]
+        public const int CODE_ERRORTYPE_EXPIRED_LICENSE = 112;
+
+        /// <summary>
+        /// The code error type invalid object.
+        /// </summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1310:FieldNamesMustNotContainUnderscore", Justification = "Reviewed. Suppression is OK here.")]
         public const int CODE_ERRORTYPE_INVALID_OBJECT = 109;
 
         /// <summary>

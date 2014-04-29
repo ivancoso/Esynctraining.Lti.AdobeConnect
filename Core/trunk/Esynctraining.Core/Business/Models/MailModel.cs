@@ -5,12 +5,15 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Net.Mail;
+
     using Castle.Core.Logging;
 
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
     using Esynctraining.Core.Wrappers;
+
+    using MailMessage = System.Net.Mail.MailMessage;
 
     /// <summary>
     /// The mail model.
@@ -111,6 +114,9 @@
         /// <param name="cced">
         /// The copied.
         /// </param>
+        /// <param name="bcced">
+        /// The hidden.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -158,6 +164,15 @@
         /// <param name="attachments">
         /// The attachments
         /// </param>
+        /// <param name="cced">
+        /// The copied emails list.
+        /// </param>
+        /// <param name="bcced">
+        /// The hidden copied emails list.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -186,7 +201,7 @@
                 var toEmailList = toEmail.ToList();
                 var toNameList = toName.With(x => x.ToList());
 
-                for (int i = 0; i < toEmailList.Count(); i++)
+                for (var i = 0; i < toEmailList.Count(); i++)
                 {
                     var index = i;
                     var name = toNameList.With(x => x.ElementAtOrDefault(index) ?? string.Empty);
@@ -201,6 +216,7 @@
                 {
                     message.From = new MailAddress(fromEmail, fromName);
                 }
+
                 if (attachments != null)
                 {
                     foreach (var attachment in attachments)
@@ -231,7 +247,7 @@
                 }
 
                 smtpClientWrapper.SendCompleted += this.MailDeliveryComplete;
-                string emails = toEmailList.ToPlainString();
+                var emails = toEmailList.ToPlainString();
 
                 smtpClientWrapper.SendAsync(message, emails);
                 return true;
@@ -242,34 +258,6 @@
                 var logger = IoC.Resolve<ILogger>();
                 logger.Error("Error, while sending email", ex);
                 return false;
-            }
-        }
-
-        /// <summary>
-        /// The mail delivery complete.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        private void MailDeliveryComplete(object sender, AsyncCompletedEventArgs e)
-        {
-            try
-            {
-                var logger = IoC.Resolve<ILogger>();
-                if (e.Error != null)
-                {
-                    logger.Error("Error, while sending email to: " + e.UserState, e.Error);
-                }
-                else if (e.Cancelled)
-                {
-                    logger.ErrorFormat("Sending email to {0} cancelled.", e.UserState);
-                }
-            }
-            catch (Exception)
-            {
             }
         }
 
@@ -299,7 +287,13 @@
         /// The from Email.
         /// </param>
         /// <param name="cced">
-        /// The cced.
+        /// The copied.
+        /// </param>
+        /// <param name="bcced">
+        /// The hidden.
+        /// </param>
+        /// <param name="attachments">
+        /// The attachments.
         /// </param>
         /// <typeparam name="TModel">
         /// Any view model type
@@ -307,10 +301,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null)
         {
-            string message = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
-            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced);
+            var message = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
+            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, attachments ?? this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced);
         }
 
         /// <summary>
@@ -334,15 +328,53 @@
         /// <param name="fromEmail">
         /// The from email.
         /// </param>
+        /// <param name="cced">
+        /// The copied.
+        /// </param>
+        /// <param name="bcced">
+        /// The hidden.
+        /// </param>
+        /// <param name="attachments">
+        /// The attachments.
+        /// </param>
         /// <typeparam name="TModel">
         /// Mail model
         /// </typeparam>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null)
         {
-            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced);
+            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced, attachments);
+        }
+
+        /// <summary>
+        /// The mail delivery complete.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The e.
+        /// </param>
+        private void MailDeliveryComplete(object sender, AsyncCompletedEventArgs e)
+        {
+            try
+            {
+                var logger = IoC.Resolve<ILogger>();    
+                if (e.Error != null)
+                {
+                    logger.Error("Error, while sending email to: " + e.UserState, e.Error);
+                }
+                else if (e.Cancelled)
+                {
+                    logger.ErrorFormat("Sending email to {0} cancelled.", e.UserState);
+                }
+            }
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
         }
 
         #endregion

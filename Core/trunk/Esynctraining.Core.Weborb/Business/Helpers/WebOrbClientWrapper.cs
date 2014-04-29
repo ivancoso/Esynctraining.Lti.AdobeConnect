@@ -40,6 +40,11 @@
         private readonly Func<Hashtable, T> dtoConverter;
 
         /// <summary>
+        /// The DTO converter.
+        /// </summary>
+        private readonly Func<object, T> objectConverter;
+
+        /// <summary>
         /// The destination.
         /// </summary>
         private readonly string destination;
@@ -61,18 +66,61 @@
         /// <param name="method">
         /// The method.
         /// </param>
+        /// <param name="objectConverter">
+        /// The object Converter.
+        /// </param>
+        /// <param name="destination">
+        /// The destination.
+        /// </param>
+        public WebOrbClientWrapper(string gateway, string @class, string method, Func<object, T> objectConverter = null, string destination = null)
+            : this(gateway, @class, method, destination)
+        {
+            this.objectConverter = objectConverter;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebOrbClientWrapper{T}"/> class.
+        /// </summary>
+        /// <param name="gateway">
+        /// The gateway.
+        /// </param>
+        /// <param name="class">
+        /// The class.
+        /// </param>
+        /// <param name="method">
+        /// The method.
+        /// </param>
         /// <param name="dtoConverter">
         /// The DTO Converter.
         /// </param>
         /// <param name="destination">
         /// The destination.
         /// </param>
-        public WebOrbClientWrapper(string gateway, string @class, string method, Func<Hashtable, T> dtoConverter, string destination = null)
+        public WebOrbClientWrapper(string gateway, string @class, string method, Func<Hashtable, T> dtoConverter = null, string destination = null) : this(gateway, @class, method, destination)
+        {
+            this.dtoConverter = dtoConverter;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebOrbClientWrapper{T}"/> class.
+        /// </summary>
+        /// <param name="gateway">
+        /// The gateway.
+        /// </param>
+        /// <param name="class">
+        /// The class.
+        /// </param>
+        /// <param name="method">
+        /// The method.
+        /// </param>
+        /// <param name="destination">
+        /// The destination.
+        /// </param>
+        public WebOrbClientWrapper(string gateway, string @class, string method, string destination = null)
         {
             this.gateway = gateway;
             this.@class = @class;
             this.method = method;
-            this.dtoConverter = dtoConverter;
             this.destination = destination;
         }
 
@@ -112,49 +160,12 @@
         }
 
         /// <summary>
-        /// The invoke.
-        /// </summary>
-        /// <param name="args">
-        /// The args.
-        /// </param>
-        /// <returns>
-        /// The <see cref="T"/>.
-        /// </returns>
-        /// <exception cref="Exception">
-        /// Exception when error is returned
-        /// </exception>
-        public Domain.Contracts.ServiceResponse<T> InvokeV3Message(params object[] args)
-        {
-            var lookupService = new WeborbClient(this.gateway, this.destination ?? "GenericDestination");
-            lookupService.Invoke(this.@class, this.method, args, new Responder<ServiceResponseV3Message>(this.GotResult, this.GotError));
-            this.executedCallBack.WaitOne();
-            if (this.fault != null)
-            {
-                throw new ApplicationException(string.Format("Message: " + this.fault.Message + ", Details: " + this.fault.Detail));
-            }
-
-            return this.result;
-        }
-
-        /// <summary>
         /// The got result.
         /// </summary>
         /// <param name="res">
         /// The res.
         /// </param>
         private void GotResult(ServiceResponse res)
-        {
-            this.result = this.Convert(res);
-            this.executedCallBack.Set();
-        }
-
-        /// <summary>
-        /// The got result.
-        /// </summary>
-        /// <param name="res">
-        /// The res.
-        /// </param>
-        private void GotResult(ServiceResponseV3Message res)
         {
             this.result = this.Convert(res);
             this.executedCallBack.Set();
@@ -174,14 +185,28 @@
             var response = new Domain.Contracts.ServiceResponse<T>();
             if (this.dtoConverter != null)
             {
-                if (res.@object != null)
+                Hashtable dto;
+                if ((dto = res.@object as Hashtable) != null)
                 {
-                    response.@object = this.dtoConverter(res.@object);
+                    response.@object = this.dtoConverter(dto);
                 }
 
                 if (res.@objects != null)
                 {
-                    response.@objects = res.objects.Select(x => this.dtoConverter(x)).ToList();
+                    response.@objects = res.objects.Where(x => x is Hashtable).Select(x => this.dtoConverter((Hashtable)x)).ToList();
+                }
+            }
+
+            if (this.objectConverter != null)
+            {
+                if (res.@object != null)
+                {
+                    response.@object = this.objectConverter(res.@object);
+                }
+
+                if (res.@objects != null)
+                {
+                    response.@objects = res.objects.Select(x => this.objectConverter(x)).ToList();
                 }
             }
 
@@ -189,23 +214,6 @@
             {
                 response.SetError(this.ConvertError(res.error.ToExpando()));
             }
-
-            return response;
-        }
-
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="res">
-        /// The res.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        private Domain.Contracts.ServiceResponse<T> Convert(ServiceResponseV3Message res)
-        {
-            var response = new Domain.Contracts.ServiceResponse<T>();
-            
 
             return response;
         }
@@ -248,7 +256,6 @@
             }
 
             return error;
-
         }
     }
 }

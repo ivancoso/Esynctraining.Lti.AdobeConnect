@@ -18,6 +18,38 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The get bytes.
+        /// </summary>
+        /// <param name="str">
+        /// The string.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
+        public static byte[] GetBytes(this string str)
+        {
+            var bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
+        /// <summary>
+        /// The get string.
+        /// </summary>
+        /// <param name="bytes">
+        /// The bytes.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string GetString(this byte[] bytes)
+        {
+            var chars = new char[bytes.Length / sizeof(char)];
+            System.Buffer.BlockCopy(bytes, 0, chars, 0, bytes.Length);
+            return new string(chars);
+        }
+
+        /// <summary>
         /// The get content type by extension.
         /// </summary>
         /// <param name="fileName">
@@ -55,7 +87,7 @@
         /// The replace all.
         /// </summary>
         /// <param name="str">
-        /// The str.
+        /// The string.
         /// </param>
         /// <param name="pattern">
         /// The pattern.
@@ -117,7 +149,7 @@
         /// Truncates string if length is more then provided
         /// </summary>
         /// <param name="str">
-        /// The str.
+        /// The string.
         /// </param>
         /// <param name="maxLength">
         /// The max length that would not be truncated.

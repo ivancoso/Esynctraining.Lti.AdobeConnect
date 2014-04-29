@@ -54,6 +54,28 @@
         }
 
         /// <summary>
+        /// Gets the base url for images.
+        /// </summary>
+        public string BaseUrlForImages
+        {
+            get
+            {
+                return this.CEUrl + "file/get?id=";
+            }
+        }
+
+        /// <summary>
+        /// Gets the CE url.
+        /// </summary>
+        public string CEUrl
+        {
+            get
+            {
+                return this.BaseUrl.Replace("services/", string.Empty);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the mail subject.
         /// </summary>
         public string MailSubject { get; set; }
