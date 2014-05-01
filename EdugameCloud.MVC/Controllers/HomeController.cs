@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Web.Mvc;
     using System.Web.Security;
@@ -17,6 +19,8 @@
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+
+    using NHibernate.Mapping;
 
     /// <summary>
     ///     The home controller.
@@ -80,6 +84,107 @@
         {
             string versionFileSwf = this.ProcessVersion("~/Content/swf/admin", (string)this.Settings.BuildSelector);
             return this.View(EdugameCloudT4.Home.Views.Admin, new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });
+        }
+
+        /// <summary>
+        /// The index.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [HttpPut]
+        public virtual ActionResult Fake()
+        {
+            var quizes = new List<int> { 446 };
+            var quizResultsModel = IoC.Resolve<QuizResultModel>();
+            var quizQuestionResultsModel = IoC.Resolve<QuizQuestionResultModel>();
+            
+            var quizParticipants = quizResultsModel.GetQuizResultsByQuizIds(quizes).ToList().GroupBy(x => x.Quiz.Id).ToDictionary(x => x.Key, x => x.ToList());
+            if (quizParticipants[446].Count < 100)
+            {
+                var rand = new Random();
+                foreach (var quiz in quizParticipants.Keys)
+                {
+                    var participants = quizParticipants[quiz];
+                    var participantsCount = participants.Count;
+                    var repeatingTimes = 1000 / participantsCount;
+                    for (var i = 0; i < repeatingTimes; i++)
+                    {
+                        for (int j = 0; j < participantsCount; j++)
+                        {
+                            var participant = participants[j];
+                            this.CreateFakeParticipant(
+                                participant,
+                                rand,
+                                i,
+                                j,
+                                quizResultsModel,
+                                quizQuestionResultsModel);
+                        }
+
+                        quizResultsModel.Flush();
+                    }
+
+                }
+
+                return this.Content("Fake accounts where created");
+            }
+
+            return this.Content("Fake accounts where NOT created");
+        }
+
+        /// <summary>
+        /// The create fake participant.
+        /// </summary>
+        /// <param name="participant">
+        /// The participant.
+        /// </param>
+        /// <param name="rand">
+        /// The rand.
+        /// </param>
+        /// <param name="i">
+        /// The i.
+        /// </param>
+        /// <param name="j">
+        /// The j.
+        /// </param>
+        /// <param name="quizResultsModel">
+        /// The quiz results model.
+        /// </param>
+        /// <param name="quizQuestionResultModel">
+        /// The quiz question result model.
+        /// </param>
+        private void CreateFakeParticipant(QuizResult participant, Random rand, int i, int j, QuizResultModel quizResultsModel, QuizQuestionResultModel quizQuestionResultModel)
+        {
+            var randEx = "i" + i + "j" + j + rand.Next(0, 200);
+            var startDate = participant.StartTime.AddSeconds(rand.Next(0, 50));
+            var newParticipant = new QuizResult
+                                     {
+                                         Quiz = participant.Quiz,
+                                         ACSessionId = participant.ACSessionId,
+                                         DateCreated = DateTime.Now,
+                                         Email = string.Format("{0}{1}@test.com", participant.Email.Trim(), randEx),
+                                         StartTime = startDate,
+                                         EndTime = startDate.AddMinutes(rand.Next(0, 10)),
+                                         IsArchive = participant.IsArchive,
+                                         ParticipantName = string.Format("{0}_{1}", participant.ParticipantName.Trim(), randEx).TruncateIfMoreThen(500),
+                                         Score = participant.Score,
+                                     };
+
+            quizResultsModel.RegisterSave(newParticipant);
+
+            foreach (var questionResult in participant.Results)
+            {
+                var newQuestionResult = new QuizQuestionResult
+                                            {
+                                                QuizResult = newParticipant,
+                                                IsCorrect = questionResult.IsCorrect,
+                                                Question = questionResult.Question.Trim(),
+                                                QuestionRef = questionResult.QuestionRef,
+                                                QuestionType = questionResult.QuestionType,
+                                            };
+                quizQuestionResultModel.RegisterSave(newQuestionResult);
+            }
         }
 
         /// <summary>

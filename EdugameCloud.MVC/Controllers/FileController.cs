@@ -1004,7 +1004,7 @@
                 type = (string.IsNullOrWhiteSpace(type) ? "full" : type).ToLower();
                 User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
                 string outputName = user.FullName.Replace(" ", "-") + "-quiz-report-";
-                List<QuizSessionDTO> userSessions = this.sessionModel.GetQuizSessionsByUserId(userId).ToList();
+                var userSessions = this.sessionModel.GetQuizSessionsByUserId(userId).ToList();
                 if (sessionId.HasValue)
                 {
                     userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
@@ -1016,7 +1016,7 @@
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
 
-                Dictionary<QuizSessionDTO, QuizResultDataDTO> sessionResults = userSessions.ToDictionary(
+                var sessionResults = userSessions.ToDictionary(
                     s => s,
                     s => IoC.Resolve<QuizResultModel>().GetQuizResultByACSessionId(s.acSessionId, s.subModuleItemId));
 
@@ -1072,8 +1072,8 @@
                                         acSessionId,
                                         rank = p.position,
                                         p.score,
-                                        startTime = p.score > 0 ? p.startTime : DateTime.Today,
-                                        endTime = p.score > 0 ? p.endTime : DateTime.Today,
+                                        startTime = p.startTime,// p.score > 0 ? p.startTime : DateTime.Today,
+                                        endTime = p.endTime,// p.score > 0 ? p.endTime : DateTime.Today,
                                         p.participantName,
                                         totalQuestions = questions.Count,
                                         scorePercent = ((double)p.score / questions.Count).ToString("0.0%")

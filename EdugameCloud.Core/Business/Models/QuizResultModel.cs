@@ -11,6 +11,7 @@
     using Esynctraining.Core.Business.Queries;
 
     using NHibernate;
+    using NHibernate.Transform;
 
     /// <summary>
     ///     The QuizResult model.
@@ -100,6 +101,25 @@
             }
 
             return res;
+        }
+
+        /// <summary>
+        /// The get quiz results by quiz ids.
+        /// </summary>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{QuizResult}"/>.
+        /// </returns>
+        public IEnumerable<QuizResult> GetQuizResultsByQuizIds(List<int> quizIds)
+        {
+            var query =
+                new DefaultQueryOver<QuizResult, int>().GetQueryOver().WhereRestrictionOn(x => x.Quiz.Id).IsIn(quizIds)
+                .Fetch(x => x.Quiz).Eager
+                .Fetch(x => x.Results).Eager
+                .TransformUsing(Transformers.RootEntity);
+            return this.Repository.FindAll(query);
         }
     }
 }
