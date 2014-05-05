@@ -5,7 +5,9 @@
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Text;
 
     using DotNetOpenAuth.AspNet.Clients;
@@ -32,17 +34,17 @@
         /// <summary>
         ///     The authorization endpoint.
         /// </summary>
-        private const string AuthorizationEndpoint = "https://api.instagram.com/oauth/authorize";
+        private const string RequestTokenEndpoint = "https://api.twitter.com//oauth/request_token";
 
         /// <summary>
         ///     The token endpoint.
         /// </summary>
-        private const string TokenEndpoint = "https://api.instagram.com/oauth/access_token";
+        private const string AuthenticateTokenEndpoint = "https://api.twitter.com/oauth/authenticate";
 
         /// <summary>
         ///     The token endpoint.
         /// </summary>
-        private const string UserEndpoint = "https://api.instagram.com/v1/users/self?access_token=";
+        private const string ConvertTokenEndpoint = "https://api.twitter.com/oauth/access_token";
 
         #endregion
 
@@ -53,7 +55,7 @@
         /// </summary>
         private static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
 
-        private static Dictionary<string, InstagramUser> userDataCache = new Dictionary<string, InstagramUser>();
+        private static Dictionary<string, TwitterRequestTokenResponse> userDataCache = new Dictionary<string, TwitterRequestTokenResponse>();
 
         #endregion
 
@@ -85,7 +87,7 @@
         /// The app secret.
         /// </param>
         public TwitterClient(string appId, string appSecret)
-            : base("instagram")
+            : base("twitter")
         {
             this.appId = appId;
             this.appSecret = appSecret;
@@ -106,20 +108,101 @@
         /// </returns>
         protected override Uri GetServiceLoginUrl(Uri returnUrl)
         {
-            // Note: Facebook doesn't like us to url-encode the redirect_uri value
-            var builder = new UriBuilder(AuthorizationEndpoint);
-            var parameters = new Dictionary<string, string>
-                                 {
-                                     { "client_id", this.appId }, 
-                                     { "redirect_uri", returnUrl.AbsoluteUri }, 
-                                     { "response_type", "code" }, 
-                                 };
-            foreach (var key in parameters.Keys)
+            var oauth_callback = returnUrl.AbsoluteUri.Replace("localhost:2345", "app.edugamecloud.com");
+            var resource_url = RequestTokenEndpoint;
+            var oauth_version = "1.0";
+            var oauth_consumer_key = appId;
+            var oauth_consumer_secret = appSecret;
+            var oauth_signature_method = "HMAC-SHA1";
+            var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+            var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+
+            var baseFormat = "oauth_nonce={0}&oauth_callback={1}&oauth_signature_method={2}&oauth_timestamp={3}&oauth_consumer_key={4}&oauth_version={5}";
+
+            var baseString = string.Format(
+                baseFormat,
+                oauth_nonce,
+                oauth_callback,
+                oauth_signature_method,
+                oauth_timestamp,
+                oauth_consumer_key,
+                oauth_version);
+
+            baseString = string.Concat("POST&", Uri.EscapeDataString(resource_url), "&", Uri.EscapeDataString(baseString));
+
+            var compositeKey = Uri.EscapeDataString(oauth_consumer_secret);
+
+            string oauth_signature;
+            using (HMACSHA1 hasher = new HMACSHA1(ASCIIEncoding.ASCII.GetBytes(compositeKey)))
             {
-                builder.AppendQueryArgument(key, parameters[key]);
+                oauth_signature = Convert.ToBase64String(
+                    hasher.ComputeHash(ASCIIEncoding.ASCII.GetBytes(baseString)));
             }
 
-            return builder.Uri;
+            var headerFormat = "OAuth oauth_nonce=\"{0}\", oauth_callback=\"{1}\", oauth_signature_method=\"{2}\", " +
+                   "oauth_timestamp=\"{3}\", " +
+                   "oauth_consumer_key=\"{4}\", oauth_signature=\"{5}\", " +
+                   "oauth_version=\"{6}\"";
+
+            var authHeader = string.Format(
+                headerFormat,
+                Uri.EscapeDataString(oauth_nonce),
+                Uri.EscapeDataString(oauth_callback),
+                Uri.EscapeDataString(oauth_signature_method),
+                Uri.EscapeDataString(oauth_timestamp),
+                Uri.EscapeDataString(oauth_consumer_key),
+                Uri.EscapeDataString(oauth_signature),
+                Uri.EscapeDataString(oauth_version));
+
+            ServicePointManager.Expect100Continue = false;
+
+            var request = (HttpWebRequest)WebRequest.Create(resource_url);
+            request.Headers.Add("Authorization", authHeader);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            try
+            {
+                using (var response = request.GetResponse())
+                {
+                    using (var responseStream = response.GetResponseStream())
+                    {
+                        using (var sr = new StreamReader(responseStream))
+                        {
+                            var data = sr.ReadToEnd();
+                            var tokens =
+                                data.Split("&".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                                    .ToDictionary(x => x.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).First(), x => x.Split("=".ToCharArray(), StringSplitOptions.RemoveEmptyEntries).ElementAt(1));
+                            var builder = new UriBuilder(AuthenticateTokenEndpoint);
+                            var parameters = new Dictionary<string, string>
+                                 {
+                                     { "oauth_token", tokens["oauth_token"] }, 
+                                 };
+
+                            foreach (var key in parameters.Keys)
+                            {
+                                builder.AppendQueryArgument(key, parameters[key]);
+                            }
+
+                            return builder.Uri;
+                        }
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                var reader = new StreamReader(ex.Response.GetResponseStream());
+                string line;
+                var result = new StringBuilder();
+                while ((line = reader.ReadLine()) != null)
+                {
+                    result.Append(line);
+                }
+
+                var error = result.ToString();
+
+                throw new ApplicationException(error);
+            }
         }
 
         /// <summary>
@@ -133,40 +216,42 @@
         /// </returns>
         protected override IDictionary<string, string> GetUserData(string accessToken)
         {
-            if (!userDataCache.ContainsKey(accessToken))
-            {
-                InstagramUserData graphData;
-                var request = WebRequest.Create(UserEndpoint + this.EscapeUriDataStringRfc3986(accessToken));
-                using (var response = request.GetResponse())
-                {
-                    using (var responseStream = response.GetResponseStream())
-                    {
-                        using (var sr = new StreamReader(responseStream))
-                        {
-                            var data = sr.ReadToEnd();
-                            graphData = JsonConvert.DeserializeObject<InstagramUserData>(data);
-                        }
-                    }
-                }
+//            if (!userDataCache.ContainsKey(accessToken))
+//            {
+//                InstagramUserData graphData;
+//                var request = WebRequest.Create(UserEndpoint + this.EscapeUriDataStringRfc3986(accessToken));
+//                using (var response = request.GetResponse())
+//                {
+//                    using (var responseStream = response.GetResponseStream())
+//                    {
+//                        using (var sr = new StreamReader(responseStream))
+//                        {
+//                            var data = sr.ReadToEnd();
+//                            graphData = JsonConvert.DeserializeObject<InstagramUserData>(data);
+//                        }
+//                    }
+//                }
+//
+//                userDataCache.Add(accessToken, graphData.data);
+//            }
+//
+//            var user = userDataCache[accessToken];
+//
+//            // this dictionary must contains 
+//            var userData = new Dictionary<string, string>
+//                               {
+//                                   { "id", user.id }, 
+//                                   { "username", user.username }, 
+//                                   { "name", user.full_name }, 
+//                                   { "image", user.profile_picture }, 
+//                                   { "bio", user.bio }, 
+//                                   { "website", user.website },
+//                               };
+//
+//            userDataCache.Remove(accessToken);
+//            return userData;
 
-                userDataCache.Add(accessToken, graphData.data);
-            }
-
-            var user = userDataCache[accessToken];
-
-            // this dictionary must contains 
-            var userData = new Dictionary<string, string>
-                               {
-                                   { "id", user.id }, 
-                                   { "username", user.username }, 
-                                   { "name", user.full_name }, 
-                                   { "image", user.profile_picture }, 
-                                   { "bio", user.bio }, 
-                                   { "website", user.website },
-                               };
-
-            userDataCache.Remove(accessToken);
-            return userData;
+            return new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -200,7 +285,7 @@
             {
                 try
                 {
-                    var response = client.UploadValues(TokenEndpoint, "POST", parameters);
+                    var response = client.UploadValues(ConvertTokenEndpoint, "POST", parameters);
                     var data = Encoding.Default.GetString(response);
                     if (string.IsNullOrEmpty(data))
                     {
@@ -216,7 +301,7 @@
 
                     if (!userDataCache.ContainsKey(graphData.access_token))
                     {
-                        userDataCache.Add(graphData.access_token, graphData.user);
+                        userDataCache.Add(graphData.access_token, null);
                     }
 
                     return graphData.access_token;

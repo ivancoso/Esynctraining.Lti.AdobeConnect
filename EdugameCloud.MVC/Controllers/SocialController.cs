@@ -4,6 +4,7 @@
     using System.Web.Mvc;
 
     using EdugameCloud.MVC.HtmlHelpers;
+    using EdugameCloud.MVC.OAuth;
     using EdugameCloud.MVC.ViewModels;
 
     using Esynctraining.Core.Extensions;
@@ -69,7 +70,7 @@
                                 Provider = provider,
                                 BuildUrl = Links.Content.swf.pub.Url("SocialAccessProxy.swf"),
                                 UserName = extra.ContainsKey("name") && !string.IsNullOrWhiteSpace(extra["name"]) ? extra["name"] : result.UserName,
-                                AccessTokenSecret = this.Request.Params.HasKey("OAuthTokenSecret") ? Request.Params["OAuthTokenSecret"] : string.Empty
+                                AccessTokenSecret = provider == "twitter" ? TwitterClient2.TokenManager.GetTokenSecret(extra["accesstoken"]) : string.Empty
                             });
                     }
                 }

@@ -165,11 +165,13 @@
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Modules\HttpErrorModule.cs" />
     <Compile Include="OAuth\InstagramAuthResponse.cs" />
+    <Compile Include="OAuth\TwitterClient2.cs" />
     <Compile Include="OAuth\TwitterClient.cs" />
     <Compile Include="OAuth\InstagramClient.cs" />
     <Compile Include="OAuth\InstagramUser.cs" />
     <Compile Include="OAuth\InstagramUserCounts.cs" />
     <Compile Include="OAuth\InstagramUserData.cs" />
+    <Compile Include="OAuth\TwitterRequestTokenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\WindsorControllerFactory.cs" />
     <Compile Include="Resources\WebResources.cs">
