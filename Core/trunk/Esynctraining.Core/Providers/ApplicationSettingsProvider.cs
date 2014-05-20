@@ -42,7 +42,9 @@ namespace Esynctraining.Core.Providers
         /// <param name="globalizationSection">
         /// The globalization section.
         /// </param>
-        public ApplicationSettingsProvider(NameValueCollection collection, GlobalizationSection globalizationSection = null)
+        public ApplicationSettingsProvider(
+            NameValueCollection collection,
+            GlobalizationSection globalizationSection = null)
         {
             this.connectionString = ConfigurationManager.ConnectionStrings["Database"].With(x => x.ConnectionString);
             if (collection != null)

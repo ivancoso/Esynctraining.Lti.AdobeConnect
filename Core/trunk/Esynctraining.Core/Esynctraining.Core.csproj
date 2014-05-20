@@ -57,8 +57,7 @@
     <Reference Include="Lucene.Net">
       <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4000\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine">
@@ -113,9 +112,9 @@
     <Compile Include="Domain\Entities\IDatesContainer.cs" />
     <Compile Include="Domain\Entities\IDeletable.cs" />
     <Compile Include="Domain\Entities\IEntity.cs" />
+    <Compile Include="Enums\UploadFileStatus.cs" />
     <Compile Include="Enums\Errors.cs" />
     <Compile Include="Enums\FileStatus.cs" />
-    <Compile Include="Enums\UploadFileStatus.cs" />
     <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
     <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
     <Compile Include="ErrorHandling\Log4NetErrorHandler .cs" />
@@ -165,9 +164,27 @@
     <Compile Include="Wrappers\ZipArchive.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="Esynctraining.Core.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
+    <None Include="PostBuildScripts\New-NuGetPackage.ps1" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.bat" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="PostBuildScripts\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
+ECHO Building NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)PostBuildScripts\BuildNewPackage-RanAutomatically.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -Configuration '$(ConfigurationName)' -Platform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
