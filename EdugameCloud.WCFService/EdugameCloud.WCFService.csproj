@@ -135,7 +135,6 @@
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
     <Content Include="Mail\Templates\Trial.html" />
-    <Content Include="PostBuildScripts\NuGet.exe" />
     <Content Include="services\EdugameCloud.WCFService.SocialService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestResultService.svc" />

@@ -319,7 +319,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="PostBuildScripts\NuGet.exe" />
     <Content Include="Reports\Content\header.png" />
     <Content Include="Reports\Content\header_with_logo.jpg" />
     <Content Include="Reports\Content\logo.png" />
