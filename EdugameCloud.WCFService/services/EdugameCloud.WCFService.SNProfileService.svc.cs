@@ -54,17 +54,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// Gets the sub module item model.
-        /// </summary>
-        private SubModuleItemModel SubModuleItemModel
-        {
-            get
-            {
-                return IoC.Resolve<SubModuleItemModel>();
-            }
-        }
-
-        /// <summary>
         ///     Gets the SN profile Model.
         /// </summary>
         private SNProfileModel SNProfileModel
@@ -287,7 +276,7 @@ namespace EdugameCloud.WCFService
                 return result;
             }
 
-            result = (ServiceResponse<SNProfileDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }

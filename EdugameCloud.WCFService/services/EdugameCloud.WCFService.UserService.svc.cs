@@ -38,6 +38,17 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
+        ///     Gets the social user tokens
+        /// </summary>
+        protected SocialUserTokensModel SocialUserTokensModel
+        {
+            get
+            {
+                return IoC.Resolve<SocialUserTokensModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the user login history model.
         /// </summary>
         protected UserLoginHistoryModel UserLoginHistoryModel
@@ -519,6 +530,36 @@ namespace EdugameCloud.WCFService
             {
                 result.status = Errors.CODE_RESULTTYPE_SUCCESS;
                 result.@object = new UserDTO(user);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get by id.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<SocialUserTokensDTO> GetSocialUserTokens(string key)
+        {
+            var result = new ServiceResponse<SocialUserTokensDTO>();
+            SocialUserTokens user;
+            if ((user = this.SocialUserTokensModel.GetOneByKey(key).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_USER,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.GetById_NoUserExists));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = new SocialUserTokensDTO(user);
             }
 
             return result;

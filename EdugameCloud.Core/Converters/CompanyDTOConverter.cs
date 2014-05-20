@@ -88,12 +88,12 @@
             instance.DateModified = DateTime.Now;
             if (companyDto.addressVO != null)
             {
-                this.addressDTOConverter.Convert(companyDto.addressVO, instance.Address, true);
+                instance.Address = this.addressDTOConverter.Convert(companyDto.addressVO, instance.Address, true);
             }
 
             if (companyDto.themeVO != null)
             {
-                this.companyThemeDTOConverter.Convert(companyDto.themeVO, instance.Theme, true);
+                instance.Theme = this.companyThemeDTOConverter.Convert(companyDto.themeVO, instance.Theme, true);
             }
 
             instance.PrimaryContact = (companyDto.primaryContactId.HasValue && companyDto.primaryContactId != default(int)) ? this.userModel.GetOneById(companyDto.primaryContactId.Value).Value : instance.PrimaryContact;

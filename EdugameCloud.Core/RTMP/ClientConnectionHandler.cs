@@ -19,6 +19,9 @@
         /// </summary>
         private readonly RTMPClient client;
 
+        /// <summary>
+        /// The logger.
+        /// </summary>
         private readonly ILogger logger;
 
         /// <summary>
@@ -50,6 +53,9 @@
         /// </summary>
         /// <param name="client">
         /// The client.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
         /// </param>
         /// <param name="domainObjectType">
         /// The domain object type.
@@ -85,7 +91,7 @@
         /// </param>
         public void resultReceived(IPendingServiceCall call)
         {
-            this.logger.Error(string.Format("internal RTMP client connected: {0}, companyId={1}, id={2}", type, companyId, id));
+            this.logger.Error(string.Format("internal RTMP client connected: {0}, companyId={1}, id={2}", this.type, this.companyId, this.id));
             // client connected
             switch (this.type)
             {

@@ -19,6 +19,7 @@
             this.Map(x => x.ButtonTextColor).Length(10).Nullable();
             this.Map(x => x.GridHeaderTextColor).Length(10).Nullable();
             this.Map(x => x.GridHeaderBackgroundColor).Length(10).Nullable();
+            this.Map(x => x.LoginHeaderTextColor).Length(10).Nullable();
             this.Map(x => x.GridRolloverColor).Length(10).Nullable();
 
             this.References(x => x.Logo).Nullable().Column("logoId");

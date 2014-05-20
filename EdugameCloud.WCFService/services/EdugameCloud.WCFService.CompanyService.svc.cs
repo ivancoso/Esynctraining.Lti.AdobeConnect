@@ -69,6 +69,28 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CountryModel CountryModel
+        {
+            get
+            {
+                return IoC.Resolve<CountryModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the state model.
+        /// </summary>
+        private StateModel StateModel
+        {
+            get
+            {
+                return IoC.Resolve<StateModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the time zone model.
         /// </summary>
         private TimeZoneModel TimeZoneModel
@@ -560,6 +582,30 @@ namespace EdugameCloud.WCFService
             response = this.UpdateResult(response, result);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, response, string.Empty);
             return response;
+        }
+
+        /// <summary>
+        /// The get license status.
+        /// </summary>
+        /// <param name="licenseVo">
+        /// The license vo.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CompanyLicenseStatus"/>.
+        /// </returns>
+        private CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
+        {
+            if (licenseVo.isTrial)
+            {
+                return CompanyLicenseStatus.Trial;
+            }
+            
+            if (licenseVo.isEnterprise)
+            {
+                return CompanyLicenseStatus.Enterprise;
+            }
+
+            return CompanyLicenseStatus.Pro;
         }
 
         #endregion

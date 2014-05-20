@@ -80,6 +80,7 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionParamsClass_AuthenticationCallback
         {
             public readonly string provider = "provider";
+            public readonly string key = "key";
         }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -102,10 +103,11 @@ namespace EdugameCloud.MVC.Controllers
     {
         public T4MVC_SocialController() : base(Dummy.Instance) { }
 
-        public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider)
+        public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider, string key)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.AuthenticationCallback);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "key", key);
             return callInfo;
         }
 

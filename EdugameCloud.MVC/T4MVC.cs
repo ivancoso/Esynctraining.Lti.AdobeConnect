@@ -326,6 +326,7 @@ namespace EdugameCloud.MVC.Links
                 private const string URLPATH = "~/Content/swf/pub";
                 public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
                 public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                public static readonly string SocialAccessProxy_swf = Url("SocialAccessProxy.swf");
             }
         
         }

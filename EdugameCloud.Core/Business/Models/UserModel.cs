@@ -339,6 +339,8 @@
         {
             try
             {
+                var company = entity.Company;
+
                 if (entity.Logo != null)
                 {
                     this.fileModel.RegisterDelete(entity.Logo);
@@ -346,15 +348,23 @@
 
                 foreach (var file in entity.Files)
                 {
+                    if (file.Equals(company.Theme.With(x => x.Logo)))
+                    {
+                        company.Theme.Logo = null;
+                        IoC.Resolve<CompanyThemeModel>().RegisterSave(company.Theme);
+                    }
+
                     this.fileModel.RegisterDelete(file);
                 }
             }
             catch (Exception ex)
             {
-                
             }
 
             this.fileModel.Flush();
+
+            this.Refresh(ref entity);
+
             base.RegisterDelete(entity, flush);
         }
 

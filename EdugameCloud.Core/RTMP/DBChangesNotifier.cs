@@ -39,39 +39,34 @@
         /// The conn.
         /// </param>
         /// <param name="parms">
-        /// The params.
+        /// The parameters.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
         public override bool appConnect(IConnection conn, object[] parms)
         {
-            int companyId;
             var logger = IoC.Resolve<ILogger>();
             try
             {
+                int companyId;
                 if (parms.Length > 0 && parms[0] is IAdaptingType
                     && int.TryParse(((IAdaptingType)parms[0]).adapt(typeof(int)).With(x => x.ToString()), out companyId))
                 {
                     conn.setAttribute(ClientConstants.CompanyIdAttribute, companyId);
-                    logger.Info("RTMP Client connected: " + companyId);
+                    logger.Info(string.Format("RTMP Client connected: {0}", companyId));
                 }
                 else
                 {
-                    logger.Error(
-                        "Connected client doesn't have companyId. Params count: " + parms.Length + " First param: "
-                        + parms.FirstOrDefault());
+                    logger.Error(string.Format("Connected client doesn't have companyId. Params count: {0} First param: {1}", parms.Length, parms.FirstOrDefault()));
                 }
             }
             catch (Exception ex)
             {
-                logger.Error(
-                    "Connected client doesn't have companyId. Params count: " + parms.Length + " First param: "
-                    + parms.FirstOrDefault());
+                logger.Error(string.Format("Connected client doesn't have companyId. Params count: {0}; First param: {1}; Error: {2}", parms.Length, parms.FirstOrDefault(), ex));
             }
 
             return base.appConnect(conn, parms);
-            
         }
 
         /// <summary>

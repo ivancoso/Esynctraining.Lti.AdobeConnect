@@ -74,6 +74,10 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.0\lib\net40\Esynctraining.Core.dll</HintPath>
+    </Reference>
     <Reference Include="FluentValidation, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\FluentValidation.4.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
@@ -103,6 +107,10 @@
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -376,6 +384,7 @@
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="log4net.cfg.xml" />
     <Content Include="nhibernate.cfg.xml" />
+    <Content Include="PostBuildScripts\NuGet.exe" />
     <Content Include="Scripts\core.js" />
     <Content Include="Scripts\history.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
@@ -439,10 +448,6 @@
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>DepositionConferencing.Persistence</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Esynctraining.Core\Esynctraining.Core.csproj">
-      <Project>{454ca615-9f14-4a1f-adac-1f1c400e257d}</Project>
-      <Name>Esynctraining.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

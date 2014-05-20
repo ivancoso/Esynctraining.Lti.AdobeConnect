@@ -2,9 +2,12 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
+    using System.IO;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Web;
+
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
@@ -13,6 +16,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -208,6 +212,38 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The get version info.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<EGCVersionsDTO> GetVersionInfo()
+        {
+            string @base = string.Empty;
+            DirectoryInfo parent;
+            if ((parent = Directory.GetParent(HttpContext.Current.Server.MapPath("~"))) != null)
+            {
+                @base = parent.FullName;
+                if (parent.EnumerateDirectories("EdugameCloud.Web").Any())
+                {
+                    @base = Path.Combine(@base, "EdugameCloud.Web");
+                }
+            }
+            var adminPath = @base + @"\Content\swf\admin";
+            var publicPath = @base + @"\Content\swf\pub";
+            var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
+            var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
+            return new ServiceResponse<EGCVersionsDTO>
+            {
+                @object = new EGCVersionsDTO
+                              {
+                                  adminVersion = admin.Return(x => new VersionDTO(admin), null),
+                                  publicVersion = @public.Return(x => new VersionDTO(@public), null)
+                              }
+            };
+        }
 
        /// <summary>
         /// The get countries.

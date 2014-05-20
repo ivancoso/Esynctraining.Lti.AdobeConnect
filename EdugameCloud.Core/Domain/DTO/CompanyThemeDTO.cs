@@ -37,6 +37,7 @@
             this.companyId = companyId;
             this.logoId = theme.Return(x => x.Logo.Return(i => i.Id, (Guid?)null), null);
             this.headerBackgroundColor = theme.With(x => x.HeaderBackgroundColor);
+            this.loginHeaderTextColor = theme.With(x => x.LoginHeaderTextColor);
             this.buttonColor = theme.With(x => x.ButtonColor);
             this.buttonTextColor = theme.With(x => x.ButtonTextColor);
             this.gridHeaderTextColor = theme.With(x => x.GridHeaderTextColor);
@@ -100,7 +101,7 @@
         /// Gets or sets the instruction color.
         /// </summary>
         [DataMember]
-        public string instructionColor { get; set; }
+        public string loginHeaderTextColor { get; set; }
 
         /// <summary>
         ///     Gets or sets the logo image id.

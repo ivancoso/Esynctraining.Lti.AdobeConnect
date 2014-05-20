@@ -101,6 +101,10 @@
         <Value>False</Value>
       </PropertyElementName>
       <PropertyElementName>
+        <Name>DropStatisticsNotInSource</Name>
+        <Value>True</Value>
+      </PropertyElementName>
+      <PropertyElementName>
         <Name>GenerateSmartDefaults</Name>
         <Value>False</Value>
       </PropertyElementName>

@@ -2,12 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Web;
-    using System.Web.Configuration;
-
     using Castle.Core.Logging;
 
     using EdugameCloud.Core.Converters;
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
@@ -31,6 +31,7 @@
         /// <summary>
         /// The _locker.
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here.")]
         private static readonly object _locker = new object();
 
         #endregion
@@ -129,24 +130,56 @@
         {
             var allowedTypes = new List<Type>
                                    {
-                                       typeof(User), 
-                                       typeof(AppletResult), 
-                                       typeof(QuizResult), 
-                                       typeof(TestResult), 
-                                       typeof(SurveyResult), 
+                                       typeof(User),
+                                       typeof(AppletResult),
+                                       typeof(QuizResult),
+                                       typeof(TestResult),
+                                       typeof(SurveyResult),
                                        typeof(Company),
                                        typeof(SNGroupDiscussion),
-                                       typeof(SNMember)
+                                       typeof(SNMember),
                                    };
             if (allowedTypes.Contains(typeof(T)) && !string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
             {
-                this.logger.Error(string.Format("starting RTMP call: {0}, companyId={1}, id={2}", notificationType.ToString(), companyId, id));
+                this.logger.Error(
+                    string.Format(
+                        "starting RTMP call: {0}, companyId={1}, id={2}",
+                        notificationType.ToString(),
+                        companyId,
+                        id));
                 this.rtmpClient.connect(
-                    "localhost", 
-                    int.Parse(this.settings.RTMPServerPort), 
-                    "DBChangesNotifier", 
-                    new object[] { -1 }, 
-                    new ClientConnectionHandler(this.rtmpClient, this.logger, typeof(T), notificationType, id, companyId));
+                    "localhost",
+                    int.Parse((string)this.settings.RTMPServerPort),
+                    "DBChangesNotifier",
+                    new object[] { -1 },
+                    new ClientConnectionHandler(
+                        this.rtmpClient,
+                        this.logger,
+                        typeof(T),
+                        notificationType,
+                        id,
+                        companyId));
+            }
+        }
+
+        /// <summary>
+        /// The notify clients about social tokens.
+        /// </summary>
+        /// <param name="tokens">
+        /// The tokens.
+        /// </param>
+        public void NotifyClientsAboutSocialTokens(SocialUserTokensDTO tokens)
+        {
+            if (!string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
+            {
+                var vo = this.ConvertToJson(tokens);
+                this.logger.Info(string.Format("starting social RTMP call: key={0}, provider={1}", tokens.key, tokens.provider));
+                this.rtmpClient.connect(
+                    "localhost",
+                    int.Parse((string)this.settings.RTMPServerPort),
+                    "SocialNotifier",
+                    new object[] { "###serverSideClient###" },
+                    new SocialConnectionHandler(this.rtmpClient, this.logger, tokens.key, vo));
             }
         }
 
@@ -171,19 +204,27 @@
                             if (server != null)
                             {
                                 server.shutdown();
+                                // ReSharper disable once RedundantAssignment
                                 server = null;
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            this.logger.Error("RTMP Shutdown issue", ex);
                         }
 
                         // Initialize WebORB configuration before starting messaging server
                         ORBConfig config = ORBConfig.GetInstance();
-                        server = new RTMPServer(typeof(DBChangesNotifier).Name, int.Parse((string)this.settings.RTMPServerPort), 500, config);
+                        server = new RTMPServer(
+                            typeof(DBChangesNotifier).Name,
+                            int.Parse((string)this.settings.RTMPServerPort),
+                            500,
+                            config);
+
                         // Start the messaging server
                         server.start();
                         this.logger.Error("RTMP server was restarted");
+
                         // Store the server instance in the Application context, so it can be cleared out when application stops     
                         HttpContext.Current.Application[ApplicationKeys.WebOrbRTMPServerKey] = server;
                     }
@@ -192,7 +233,7 @@
         }
 
         /// <summary>
-        ///     The on rtmp client connect failed event.
+        ///     The on RTMP client connect failed event.
         /// </summary>
         private void OnRTMPClientConnectFailedEvent()
         {
@@ -210,7 +251,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string СonvertToJson<T>(T entityDto)
+        private string ConvertToJson<T>(T entityDto)
         {
             return JsonConvert.SerializeObject(entityDto, new JsonDateTimeConverter());
         }

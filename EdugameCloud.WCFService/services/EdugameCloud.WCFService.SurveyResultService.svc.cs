@@ -142,8 +142,8 @@ namespace EdugameCloud.WCFService
 
             if (faults.Any())
             {
-                result.status = created.Any() ? Errors.CODE_RESULTTYPE_PARTIALSUCCESS : Errors.CODE_RESULTTYPE_ERROR;
                 result.SetError(new Error(faults.Any(x => x.StartsWith("108")) ? Errors.CODE_ERRORTYPE_INVALID_SESSION : Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.EntityCreationError_Subject, ErrorsTexts.EntityCreation_PartialSuccessMessage, faults));
+                result.status = created.Any() ? Errors.CODE_RESULTTYPE_PARTIALSUCCESS : Errors.CODE_RESULTTYPE_ERROR;
             }
 
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);

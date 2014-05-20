@@ -33,6 +33,15 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
+        ServiceResponse<EGCVersionsDTO> GetVersionInfo();
+
+        /// <summary>
+        /// The get languages.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
         [WebORBCache(CacheScope = CacheScope.Global)]
         ServiceResponse<LanguageDTO> GetLanguages();
 

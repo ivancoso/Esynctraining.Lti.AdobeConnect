@@ -12,6 +12,11 @@
         /// </summary>
         public const string CompanyIdAttribute = "companyId";
 
+        /// <summary>
+        /// The company id attribute.
+        /// </summary>
+        public const string SocialKeyAttribute = "socialKey";
+
         #endregion
     }
 }

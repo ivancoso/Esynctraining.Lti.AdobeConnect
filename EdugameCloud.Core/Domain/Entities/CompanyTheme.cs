@@ -40,6 +40,11 @@
         public virtual string HeaderBackgroundColor { get; set; }
 
         /// <summary>
+        /// Gets or sets the login header text color.
+        /// </summary>
+        public virtual string LoginHeaderTextColor { get; set; }
+
+        /// <summary>
         /// Gets or sets the logo.
         /// </summary>
         public virtual File Logo { get; set; }

@@ -64,6 +64,7 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionNamesClass
         {
             public readonly string Admin = "Admin";
+            public readonly string Fake = "Fake";
             public readonly string Cookies = "Cookies";
             public readonly string LogIn = "LogIn";
             public readonly string Activate = "Activate";
@@ -75,6 +76,7 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionNameConstants
         {
             public const string Admin = "Admin";
+            public const string Fake = "Fake";
             public const string Cookies = "Cookies";
             public const string LogIn = "LogIn";
             public const string Activate = "Activate";
@@ -146,6 +148,12 @@ namespace EdugameCloud.MVC.Controllers
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Admin);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "view", view);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult Fake()
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Fake);
             return callInfo;
         }
 

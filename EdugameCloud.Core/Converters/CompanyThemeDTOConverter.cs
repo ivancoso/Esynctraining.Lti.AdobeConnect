@@ -69,6 +69,7 @@
             instance.ButtonTextColor = dto.buttonTextColor;
             instance.GridHeaderTextColor = dto.gridHeaderTextColor;
             instance.GridHeaderBackgroundColor = dto.gridHeaderBackgroundColor;
+            instance.LoginHeaderTextColor = dto.loginHeaderTextColor;
             instance.GridRolloverColor = dto.gridRolloverColor;
             instance.Logo = dto.logoId.HasValue ? this.fileModel.GetOneById(dto.logoId.Value).Value : null;
 

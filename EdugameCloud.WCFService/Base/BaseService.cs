@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net.Mail;
@@ -22,6 +23,7 @@
     using EdugameCloud.WCFService.Mail.Models;
 
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
@@ -194,6 +196,38 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The process version.
+        /// </summary>
+        /// <param name="swfFolder">
+        /// The SWF folder.
+        /// </param>
+        /// <param name="buildSelector">
+        /// The build Selector.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        protected Version ProcessVersion(string swfFolder, string buildSelector)
+        {
+            if (Directory.Exists(swfFolder))
+            {
+                var versions = new List<KeyValuePair<Version, string>>();
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (var file in Directory.GetFiles(swfFolder, buildSelector))
+                {
+                    var fileName = Path.GetFileName(file);
+                    var version = fileName.GetBuildVersion();
+                    versions.Add(new KeyValuePair<Version, string>(version, fileName));
+                }
+
+                versions.Sort(new BuildVersionComparer());
+                return versions.FirstOrDefault().With(x => x.Key);
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// The is valid.
