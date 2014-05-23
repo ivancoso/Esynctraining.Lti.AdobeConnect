@@ -191,11 +191,7 @@
     <Compile Include="Mail\Models\ChangePasswordModel.cs" />
     <Compile Include="Mail\Models\EnterpriseModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
-    <Compile Include="Mail\Models\TrialFirstWeekModel.cs" />
-    <Compile Include="Mail\Models\TrialFourthWeekModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
-    <Compile Include="Mail\Models\TrialSecondWeekModel.cs" />
-    <Compile Include="Mail\Models\TrialThirdWeekModel.cs" />
     <Compile Include="services\EdugameCloud.WCFService.SocialService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.SocialService.svc</DependentUpon>
     </Compile>
