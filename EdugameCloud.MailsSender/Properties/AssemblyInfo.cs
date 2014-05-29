@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MailScheduler")]
+[assembly: AssemblyTitle("EdugameCloud.MailSender")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("KOMP")]
-[assembly: AssemblyProduct("MailScheduler")]
-[assembly: AssemblyCopyright("Copyright © KOMP 2014")]
+[assembly: AssemblyCompany("eSyncTraining.com")]
+[assembly: AssemblyProduct("EdugameCloud.MailSender")]
+[assembly: AssemblyCopyright("Copyright © eSyncTraining.com 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

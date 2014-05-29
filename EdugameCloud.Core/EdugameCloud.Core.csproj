@@ -53,9 +53,9 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>..\packages\DocumentFormat.OpenXml.1.0\lib\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Esynctraining.Core, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.0\lib\net40\Esynctraining.Core.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.4\lib\net40\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Facebook">
       <HintPath>..\packages\Facebook.6.4.2\lib\net40-client\Facebook.dll</HintPath>

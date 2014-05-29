@@ -1,5 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
+
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
@@ -69,6 +71,19 @@
                                                            .Where(() => user.Id == userId);
             queryOver.TransformUsing(Transformers.DistinctRootEntity).Take(1);
             return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
+        /// The get one by user id.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="IEnumerable{CompanyLicense}"/>.
+        /// </returns>
+        public IEnumerable<CompanyLicense> GetAllTrial()
+        {
+            var queryOver =
+                new DefaultQueryOver<CompanyLicense, int>().GetQueryOver().Where(x => x.LicenseStatus == CompanyLicenseStatus.Trial);
+            return this.Repository.FindAll(queryOver);
         }
 
         #endregion
