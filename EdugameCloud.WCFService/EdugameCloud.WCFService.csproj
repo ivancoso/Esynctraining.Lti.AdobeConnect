@@ -132,6 +132,7 @@
   <ItemGroup>
     <Content Include="clientaccesspolicy.xml" />
     <Content Include="diagnostics.aspx" />
+    <Content Include="Mail\Templates\ErrorMail.html" />
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
     <Content Include="Mail\Templates\Trial.html" />
@@ -175,6 +176,7 @@
     <Content Include="nhibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="services\EdugameCloud.WCFService.ErrorMailService.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -190,6 +192,7 @@
     <Compile Include="Mail\Models\AccountDeletedModel.cs" />
     <Compile Include="Mail\Models\ChangePasswordModel.cs" />
     <Compile Include="Mail\Models\EnterpriseModel.cs" />
+    <Compile Include="Mail\Models\ErrorMailModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
     <Compile Include="services\EdugameCloud.WCFService.SocialService.svc.cs">
@@ -303,6 +306,9 @@
     <Compile Include="Providers\ResourceProviderActivator.cs" />
     <Compile Include="Providers\WcfResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.ErrorMailService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.ErrorMailService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Streaming\HttpMultipart.cs" />
     <Compile Include="Streaming\HttpMultipartBoundary.cs" />
     <Compile Include="Streaming\HttpMultipartBuffer.cs" />
@@ -367,9 +373,11 @@
     <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
     <Content Include="weborb.config">
       <SubType>Designer</SubType>
@@ -418,7 +426,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

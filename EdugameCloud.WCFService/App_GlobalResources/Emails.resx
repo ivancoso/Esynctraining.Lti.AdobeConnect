@@ -138,4 +138,7 @@
   <data name="UserEmailEditedSubject" xml:space="preserve">
     <value>{0}: Your login name has been changed</value>
   </data>
+  <data name="ErrorSubject" xml:space="preserve">
+    <value>An error occured in EduGame Cloud</value>
+  </data>
 </root>
