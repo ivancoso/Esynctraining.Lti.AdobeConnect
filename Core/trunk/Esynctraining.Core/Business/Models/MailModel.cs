@@ -129,11 +129,12 @@
             string fromEmail,
             IEnumerable<Attachment> attachments,
             List<MailAddress> cced = null, 
-            List<MailAddress> bcced = null)
+            List<MailAddress> bcced = null,
+            List<LinkedResource> linkedResources = null)
         {
             using (var smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
             {
-                return this.SendEmail(smtpClientWrapper, toName, toEmail, subject, body, fromName, fromEmail, attachments, cced, bcced);
+                return this.SendEmail(smtpClientWrapper, toName, toEmail, subject, body, fromName, fromEmail, attachments, cced, bcced, linkedResources);
             }
         }
 
@@ -187,6 +188,7 @@
             IEnumerable<Attachment> attachments,
             List<MailAddress> cced = null, 
             List<MailAddress> bcced = null,
+            List<LinkedResource> linkedResources = null,
             bool useSsl = false)
         {
             try
@@ -197,6 +199,17 @@
                     Body = body,
                     IsBodyHtml = true
                 };
+
+                if (linkedResources != null && linkedResources.Any())
+                {
+                    var htmlView = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                    foreach (var linkedResource in linkedResources)
+                    {
+                        htmlView.LinkedResources.Add(linkedResource);    
+                    }
+
+                    message.AlternateViews.Add(htmlView);
+                }
 
                 var toEmailList = toEmail.ToList();
                 var toNameList = toName.With(x => x.ToList());
@@ -301,10 +314,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null)
+        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
         {
             var message = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
-            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, attachments ?? this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced);
+            return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, attachments ?? this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced, linkedResources);
         }
 
         /// <summary>
@@ -337,15 +350,18 @@
         /// <param name="attachments">
         /// The attachments.
         /// </param>
+        /// <param name="linkedResources">
+        /// The linked Resources.
+        /// </param>
         /// <typeparam name="TModel">
         /// Mail model
         /// </typeparam>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null)
+        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
         {
-            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced, attachments);
+            return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced, attachments, linkedResources);
         }
 
         /// <summary>

@@ -18,6 +18,32 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The trim end.
+        /// </summary>
+        /// <param name="str">
+        /// The str.
+        /// </param>
+        /// <param name="removingPatterns">
+        /// The removing patterns.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string TrimEndStrings(this string str, params string[] removingPatterns)
+        {
+            foreach (string item in removingPatterns)
+            {
+                if (str.EndsWith(item))
+                {
+                    str = str.Substring(0, str.LastIndexOf(item, StringComparison.Ordinal));
+                    break; 
+                }
+            }
+
+            return str;
+        }
+
+        /// <summary>
         /// The get bytes.
         /// </summary>
         /// <param name="str">

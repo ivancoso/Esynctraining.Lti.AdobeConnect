@@ -6,6 +6,8 @@ namespace PDFAnnotation.Core.Business.Models
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Utils;
+
     using NHibernate.Criterion;
     using PDFAnnotation.Core.Domain.Entities;
 
@@ -133,6 +135,25 @@ namespace PDFAnnotation.Core.Business.Models
             }
 
             return searchIds.Any() ? this.Repository.FindAll(queryOver).ToList().OrderBy(x => searchIds.IndexOf(x.Id)) : this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
+        /// The register save.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        /// <param name="flush">
+        /// The flush.
+        /// </param>
+        /// <param name="updateDateModified">
+        /// The update date modified.
+        /// </param>
+        public override void RegisterSave(Topic entity, bool flush, bool updateDateModified = true)
+        {
+            var fileModel = IoC.Resolve<FileModel>();
+            fileModel.UpdateTopicsFiles(entity);
+            base.RegisterSave(entity, flush, updateDateModified);
         }
 
         #endregion

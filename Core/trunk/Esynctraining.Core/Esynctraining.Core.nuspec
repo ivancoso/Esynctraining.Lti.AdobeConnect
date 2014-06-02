@@ -1,34 +1,38 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
+    <id>Esynctraining.Core.Only</id>
 <!--    <id>Esynctraining.Core.Basic</id>-->
-    <id>Esynctraining.Core.Common</id>
-    <version>1.0.0.0</version>
+<!--    <id>Esynctraining.Core.Common</id>-->
+    <version>1.0.0.5</version>
+    <title>Esynctraining.Core.Only</title>
 <!--    <title>Esynctraining.Core.Basic</title>-->
-    <title>Esynctraining.Core.Common</title>
+<!--    <title>Esynctraining.Core.Common</title>-->
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
     <projectUrl>http://esynctraining.com/</projectUrl>
     <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-<!--        <description>Provides basic functionality for eSyncTraining projects.</description>-->
-    <description>Provides common functionality for eSyncTraining projects.</description>
+    <description>Provides core functionality for eSyncTraining projects. Core library only</description>
+<!--    <description>Provides basic functionality for eSyncTraining projects.</description>-->
+<!--    <description>Provides common functionality for eSyncTraining projects.</description>-->
     <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
-    <tags>core, castle, log4net, fluentValidation, nhibernate, razor</tags>
+    <tags>core</tags>
+    <releaseNotes>Provides core functionality for eSyncTraining projects. Core library only</releaseNotes>
 <!--        <releaseNotes>Provides basic functionality for eSyncTraining projects.</releaseNotes>-->
-    <releaseNotes>Provides common functionality for eSyncTraining projects.</releaseNotes>
+<!--    <releaseNotes>Provides common functionality for eSyncTraining projects.</releaseNotes>-->
     <dependencies>
-      <dependency id="log4net" version="1.2.10" />
-      <dependency id="Castle.Core" version="3.2.0" />
-      <dependency id="Castle.Core-log4net" version="3.2.0" />
-      <dependency id="Castle.LoggingFacility" version="3.2.0" />
-      <dependency id="Castle.Windsor" version="3.2.0" />
-      <dependency id="Castle.Windsor-log4net" version="3.2.0.1" />
+<!--      <dependency id="log4net" version="1.2.10" />-->
+<!--      <dependency id="Castle.Core" version="3.2.0" />-->
+<!--      <dependency id="Castle.Core-log4net" version="3.2.0" />-->
+<!--      <dependency id="Castle.LoggingFacility" version="3.2.0" />-->
+<!--      <dependency id="Castle.Windsor" version="3.2.0" />-->
+<!--      <dependency id="Castle.Windsor-log4net" version="3.2.0.1" />-->
 <!--      Common package content-->
-      <dependency id="FluentValidation" version="3.4.6.0" />
-      <dependency id="NHibernate" version="3.3.3.4000" />
-      <dependency id="Microsoft.AspNet.Razor" version="2.0.20715.0" />
-      <dependency id="RazorEngine" version="3.2.0" />
+<!--      <dependency id="FluentValidation" version="3.4.6.0" />-->
+<!--      <dependency id="NHibernate" version="3.3.3.4000" />-->
+<!--      <dependency id="Microsoft.AspNet.Razor" version="2.0.20715.0" />-->
+<!--      <dependency id="RazorEngine" version="3.2.0" />-->
     </dependencies>
     <references>
       <reference file="Esynctraining.Core.dll" />

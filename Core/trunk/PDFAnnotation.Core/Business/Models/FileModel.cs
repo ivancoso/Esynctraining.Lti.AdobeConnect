@@ -172,6 +172,30 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The update witness files.
+        /// </summary>
+        /// <param name="entity">
+        /// The entity.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int UpdateTopicsFiles(Topic entity)
+        {
+            int counter = 0;
+            var query = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.Topic != null && x.Topic.Id == entity.Id);
+            var files = this.Repository.FindAll(query).ToList();
+            foreach (var file in files)
+            {
+                counter++;
+                file.TopicName = entity.FullName;
+                this.RegisterSave(file, false, true);
+            }
+
+            return counter;
+        }
+
+        /// <summary>
         /// The try parse image.
         /// </summary>
         /// <param name="bytes">

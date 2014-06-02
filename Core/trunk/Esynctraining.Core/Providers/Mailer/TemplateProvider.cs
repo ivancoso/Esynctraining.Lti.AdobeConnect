@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Reflection;
     using System.Threading;
     using System.Web;
 
@@ -116,12 +117,35 @@
             if (HttpContext.Current != null)
             {
                 return
-                    HttpContext.Current.Server.MapPath(
-                        VirtualPathUtility.Combine(this.templatesDirectory, templateFileName));
+                    HttpContext.Current.Server.MapPath(VirtualPathUtility.Combine(this.templatesDirectory, templateFileName));
             }
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateFileName);
+
+            if (!Directory.Exists(this.templatesDirectory))
+            {
+                var callingAssembly = Assembly.GetCallingAssembly();
+
+                return
+                    Path.Combine(
+                        callingAssembly.Location.TrimEndStrings(
+                            callingAssembly.GetName().Name + ".exe",
+                            callingAssembly.GetName().Name + ".dll") + this.templatesDirectory,
+                        templateFileName);
+            }
+            else
+            {
+                return Path.Combine(this.templatesDirectory, templateFileName);
+            }
         }
 
+        /// <summary>
+        /// The get ascii full path to template.
+        /// </summary>
+        /// <param name="templateFileName">
+        /// The template file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetAsciiFullPathToTemplate(string templateFileName)
         {
             if (HttpContext.Current != null)
@@ -130,7 +154,22 @@
                     HttpContext.Current.Server.MapPath(
                         VirtualPathUtility.Combine(this.asciiTemplatesDirectory, templateFileName));
             }
-			return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateFileName);
+
+            if (!Directory.Exists(this.asciiTemplatesDirectory))
+            {
+                var callingAssembly = Assembly.GetCallingAssembly();
+
+                return
+                    Path.Combine(
+                        callingAssembly.Location.TrimEndStrings(
+                            callingAssembly.GetName().Name + ".exe",
+                            callingAssembly.GetName().Name + ".dll") + this.asciiTemplatesDirectory,
+                        templateFileName);
+            }
+            else
+            {
+                return Path.Combine(this.asciiTemplatesDirectory, templateFileName);
+            }
         }
 
         /// <summary>

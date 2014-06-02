@@ -8,6 +8,7 @@ namespace Esynctraining.Core.Providers.Mailer
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
+    using System.Reflection;
     using System.Threading;
     using System.Web;
 
@@ -127,19 +128,34 @@ namespace Esynctraining.Core.Providers.Mailer
         /// <summary>
         /// The get full path to template.
         /// </summary>
-        /// <param name="templateAttachmentsFolderName">
+        /// <param name="templateName">
         /// The template file name.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetFullPathToTemplate(string templateAttachmentsFolderName)
+        private string GetFullPathToTemplate(string templateName)
         {
             if (HttpContext.Current != null)
             {
-                return HttpContext.Current.Server.MapPath(VirtualPathUtility.Combine(this.attachmentsDirectory, templateAttachmentsFolderName));
+                return HttpContext.Current.Server.MapPath(VirtualPathUtility.Combine(this.attachmentsDirectory, templateName));
             }
-			return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, templateAttachmentsFolderName);
+
+            if (!Directory.Exists(this.attachmentsDirectory))
+            {
+                var callingAssembly = Assembly.GetCallingAssembly();
+
+                return
+                    Path.Combine(
+                        callingAssembly.Location.TrimEndStrings(
+                            callingAssembly.GetName().Name + ".exe",
+                            callingAssembly.GetName().Name + ".dll") + this.attachmentsDirectory,
+                        templateName);
+            }
+            else
+            {
+                return Path.Combine(this.attachmentsDirectory, templateName);
+            }
         }
 
         /// <summary>
