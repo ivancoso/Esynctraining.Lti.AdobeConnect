@@ -209,73 +209,81 @@
             
             foreach (CompanyLicense trialLicense in trialLicenses.Where(l => l.DateStart.AddDays((int)trialWeek).Date == DateTime.Today.Date).ToList())
             {
-//                var trialLicense = trialLicenses.FirstOrDefault();
-                var firstName = trialLicense.CreatedBy.FirstName;
-                var email = trialLicense.CreatedBy.Email;
-                Console.WriteLine("Sending notification to {0}: {1}", firstName, email);
-                this.Logger.Error(string.Format("Sending notification to {0}: {1}", firstName, email));
-                
-                switch (trialWeek)
-                {
-                    case TrialWeeks.First:
-                        this.MailModel.SendEmail(
-                            firstName, 
-                            email, 
-                            Subject, 
-                            new TrialFirstWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                }, 
-                            NameFrom,
-                            EmailFrom, 
-                            bcced: bcced);
-                        break;
-                    case TrialWeeks.Second:
-                        this.MailModel.SendEmail(
-                            firstName, 
-                            email, 
-                            Subject, 
-                            new TrialSecondWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                }, 
-                            NameFrom,
-                            EmailFrom, 
-                            bcced: bcced);
-                        break;
-                    case TrialWeeks.Third:
-                        this.MailModel.SendEmail(
-                            firstName,
-                            email, 
-                            Subject, 
-                            new TrialThirdWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                }, 
-                            NameFrom,
-                            EmailFrom, 
-                            bcced: bcced,
-                            linkedResources: new List<LinkedResource> { imagelink });
-                        break;
-                    case TrialWeeks.Fourth:
-                        this.MailModel.SendEmail(
-                            firstName,
-                            email, 
-                            Subject, 
-                            new TrialFourthWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                }, 
-                            NameFrom,
-                            EmailFrom, 
-                            bcced: bcced);
-                        break;
-                }
+                if (trialLicense.Company == null) continue;
 
+                var users = trialLicense.Company.PrimaryContact != null
+                    ? new List<User> { trialLicense.Company.PrimaryContact }
+                    : trialLicense.Company.Users.Where(u => u.IsAdministrator()).ToList();
+
+                foreach (var user in users)
+                {
+                    var firstName = user.FirstName;
+                    var email = user.Email;
+
+                    Console.WriteLine("Sending notification to {0}: {1}", firstName, email);
+                    this.Logger.Error(string.Format("Sending notification to {0}: {1}", firstName, email));
+
+                    switch (trialWeek)
+                    {
+                        case TrialWeeks.First:
+                            this.MailModel.SendEmail(
+                                firstName,
+                                email,
+                                Subject,
+                                new TrialFirstWeekModel(this.Settings)
+                                {
+                                    FirstName = firstName, 
+                                    MailSubject = Subject
+                                },
+                                NameFrom,
+                                EmailFrom,
+                                bcced: bcced);
+                            break;
+                        case TrialWeeks.Second:
+                            this.MailModel.SendEmail(
+                                firstName,
+                                email,
+                                Subject,
+                                new TrialSecondWeekModel(this.Settings)
+                                {
+                                    FirstName = firstName, 
+                                    MailSubject = Subject
+                                },
+                                NameFrom,
+                                EmailFrom,
+                                bcced: bcced);
+                            break;
+                        case TrialWeeks.Third:
+                            this.MailModel.SendEmail(
+                                firstName,
+                                email,
+                                Subject,
+                                new TrialThirdWeekModel(this.Settings)
+                                {
+                                    FirstName = firstName, 
+                                    MailSubject = Subject
+                                },
+                                NameFrom,
+                                EmailFrom,
+                                bcced: bcced,
+                                linkedResources: new List<LinkedResource> { imagelink });
+                            break;
+                        case TrialWeeks.Fourth:
+                            this.MailModel.SendEmail(
+                                firstName,
+                                email,
+                                Subject,
+                                new TrialFourthWeekModel(this.Settings)
+                                {
+                                    FirstName = firstName, 
+                                    MailSubject = Subject
+                                },
+                                NameFrom,
+                                EmailFrom,
+                                bcced: bcced);
+                            break;
+                    }
+                }
                 Thread.Sleep(3000);
             }
         }
