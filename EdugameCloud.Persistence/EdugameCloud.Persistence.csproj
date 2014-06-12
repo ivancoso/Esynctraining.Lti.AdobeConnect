@@ -125,6 +125,7 @@
     <Compile Include="Mappings\BuildVersionMap.cs" />
     <Compile Include="Mappings\BaseClassMapGuid.cs" />
     <Compile Include="Mappings\CompanyThemeMap.cs" />
+    <Compile Include="Mappings\SubscriptionUpdateMap.cs" />
     <Compile Include="Mappings\SocialUserTokensMap.cs" />
     <Compile Include="Mappings\SubModuleItemThemeMap.cs" />
     <Compile Include="Mappings\QuestionForSingleMultipleChoiceMap.cs" />

@@ -87,6 +87,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -144,6 +147,7 @@
     <Compile Include="Business\Models\BuildVersionModel.cs" />
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
+    <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
     <Compile Include="Business\Models\SubModuleItemThemeModel.cs" />
     <Compile Include="Business\Models\QuestionForRateModel.cs" />
@@ -199,7 +203,6 @@
     <Compile Include="Business\Models\WebProxyModel.cs" />
     <Compile Include="Business\Queries\QueryOverCompany.cs" />
     <Compile Include="Business\Queries\QueryOverUser.cs" />
-    <Compile Include="Contracts\IErrorMailService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
     <Compile Include="Contracts\ISocialService.cs" />
@@ -220,6 +223,11 @@
     <Compile Include="Domain\DTO\SessionDTO.cs" />
     <Compile Include="Domain\DTO\BatchUsersDTO.cs" />
     <Compile Include="Domain\DTO\LookupAllDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionResDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionResultDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionUpdateDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionUpdateWrapper.cs" />
     <Compile Include="Domain\DTO\TestWithSmiDTO.cs" />
     <Compile Include="Domain\DTO\UserLastLoginDTO.cs" />
     <Compile Include="Domain\DTO\UserWithLoginHistoryDTO.cs" />
@@ -275,6 +283,7 @@
     <Compile Include="Domain\Entities\QuestionForLikert.cs" />
     <Compile Include="Domain\Entities\QuestionForSingleMultipleChoice.cs" />
     <Compile Include="Domain\Entities\QuestionTypeEnum.cs" />
+    <Compile Include="Domain\Entities\SubscriptionUpdate.cs" />
     <Compile Include="Domain\Entities\TestQuestionResult.cs" />
     <Compile Include="Domain\Entities\TestResult.cs" />
     <Compile Include="Domain\Entities\SurveyQuestionResultAnswer.cs" />

@@ -17,18 +17,6 @@
         /// <summary>
         /// The all.
         /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        [OperationContract]
-        ServiceResponse<SocialUserTokensDTO> GetSocialUserTokens(string key);
-
-        /// <summary>
-        /// The all.
-        /// </summary>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -214,6 +202,18 @@
         /// </returns>
         [OperationContract]
         ServiceResponse UpdateLogo(int userId, Guid logoId);
+
+        /// <summary>
+        /// The get social user tokens.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<SocialUserTokensDTO> GetSocialUserTokens(string key);
 
         /// <summary>
         /// The deactivate by id.

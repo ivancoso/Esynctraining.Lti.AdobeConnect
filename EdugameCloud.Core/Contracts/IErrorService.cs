@@ -13,13 +13,34 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The all.
+        /// Logs the error.
         /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="details">
+        /// The details.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
         ServiceResponse LogError(string message, string details);
+
+        /// <summary>
+        /// Sends mail about error.
+        /// </summary>
+        /// <param name="message">
+        /// The message.
+        /// </param>
+        /// <param name="details">
+        /// The details.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse SendEmailAboutError(string message, string details);
 
         #endregion
     }

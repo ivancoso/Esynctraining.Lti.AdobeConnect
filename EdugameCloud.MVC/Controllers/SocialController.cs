@@ -1,7 +1,15 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Net;
+    using System.Text;
+    using System.Threading.Tasks;
     using System.Web.Mvc;
+
+    using Castle.Core.Logging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
@@ -9,12 +17,17 @@
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.MVC.HtmlHelpers;
     using EdugameCloud.MVC.OAuth;
+    using EdugameCloud.MVC.Social.Subscriptions;
     using EdugameCloud.MVC.ViewModels;
 
+    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Utils;
 
     using Microsoft.Web.WebPages.OAuth;
+
+    using RazorEngine;
 
     /// <summary>
     ///     The social controller.
@@ -32,6 +45,8 @@
         /// </summary>
         private readonly RTMPModel rtmpModel;
 
+        private readonly ILogger logger;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -46,16 +61,127 @@
         /// <param name="settings">
         /// The settings
         /// </param>
-        public SocialController(SocialUserTokensModel socialUserTokensModel, RTMPModel rtmpModel, ApplicationSettingsProvider settings)
+        public SocialController(SocialUserTokensModel socialUserTokensModel, RTMPModel rtmpModel, ILogger logger, ApplicationSettingsProvider settings)
             : base(settings)
         {
             this.socialUserTokensModel = socialUserTokensModel;
             this.rtmpModel = rtmpModel;
+            this.logger = logger;
         }
 
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The authentication callback.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="hub">
+        /// The hub.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [ActionName("realtime-callback")]
+        [AllowAnonymous]
+        [HttpGet]
+        public virtual ActionResult RealtimeCallback(string provider, InstagramSubscriptionHub hub)
+        {
+            return this.Content(hub.challenge);
+        }
+
+        /// <summary>
+        /// The authentication callback.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="updates">
+        /// The updates.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [ActionName("realtime-callback")]
+        [AllowAnonymous]
+        [HttpPost]
+        public virtual ActionResult RealtimeCallback(string provider)
+        {
+            var connectionString = (string)this.Settings.ConnectionString;
+            var updates = new List<SubscriptionUpdateDTO>();
+            string data = "Not received";
+            var log = this.logger;
+            try
+            {
+                data = System.Text.Encoding.ASCII.GetString(HttpContext.Request.InputStream.ReadToEnd());
+                var des = (SubscriptionUpdateWrapper)Newtonsoft.Json.JsonConvert.DeserializeObject("{data:" + data + "}", typeof(SubscriptionUpdateWrapper));
+                updates = des.data;
+            }
+            catch (Exception ex)
+            {
+                log.Error("Social Realtime Error data=" + data, ex);
+            }
+
+            if (updates.Any())
+            {
+                Task.Factory.StartNew(() => this.InsertRealTimeCallbackData(connectionString, updates, log));
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// The insert real time callback data.
+        /// </summary>
+        /// <param name="connectionString">
+        /// The connection string.
+        /// </param>
+        /// <param name="dtos">
+        /// The DTOS.
+        /// </param>
+        /// <param name="log">
+        /// The log.
+        /// </param>
+        private void InsertRealTimeCallbackData(string connectionString, IEnumerable<SubscriptionUpdateDTO> dtos, ILogger log)
+        {
+            var typeName = typeof(SubscriptionUpdate).Name;
+            var insertCommand = string.Format("insert into [EduGameCloud].[dbo].[SubscriptionUpdate] ([subscription_id],[object],[object_id],[changed_aspect],[time],[createdDate]) values(@subscriptionId,@objectType,@objectId,@changedAspect,@time,GETDATE())", typeName);
+            using (var con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                foreach (var dto in dtos)
+                {
+                    try
+                    {
+                        using (var cmd = new SqlCommand(insertCommand, con))
+                        {
+                            cmd.Parameters.AddWithValue("@subscriptionId", dto.subscription_id);
+                            cmd.Parameters.AddWithValue("@objectType", dto.@object);
+                            cmd.Parameters.AddWithValue("@objectId", dto.object_id);
+                            cmd.Parameters.AddWithValue("@changedAspect", dto.changed_aspect);
+                            cmd.Parameters.AddWithValue("@time", dto.time);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                        // ReSharper disable once EmptyGeneralCatchClause
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            log.Error("Social subscription update. Failed to insert: " + dto, ex);
+                        }
+                            // ReSharper disable once EmptyGeneralCatchClause
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// The authentication callback.

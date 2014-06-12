@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Configuration;
+    using System.IO;
     using System.Linq;
     using System.Net.Mail;
-    using System.Reflection;
     using System.Threading;
 
     using Castle.Core.Logging;
@@ -15,9 +15,7 @@
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.MailSender.Extensions;
     using EdugameCloud.Persistence;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
@@ -26,10 +24,7 @@
 
     using global::MailSender.Mail.Models;
 
-    using log4net.Repository.Hierarchy;
-
     using NHibernate;
-
 
     using Configuration = NHibernate.Cfg.Configuration;
 
@@ -144,11 +139,12 @@
         public static void Main()
         {
             InitializeContainer();
-
+            dynamic settings = IoC.Resolve<ApplicationSettingsProvider>();
+            var imagesFolder = (string)settings.ImagesFolderToLink;
             var trialMailsSender = new TrialMailsSender();
             foreach (TrialWeeks trialWeek in Enum.GetValues(typeof(TrialWeeks)))
             {
-                trialMailsSender.SendMails(trialWeek);
+                trialMailsSender.SendMails(imagesFolder, trialWeek);
             }
         }
 
@@ -195,18 +191,16 @@
         /// <summary>
         /// The send mails.
         /// </summary>
+        /// <param name="imagesFolder">
+        /// The images Folder.
+        /// </param>
         /// <param name="trialWeek">
         /// The trial week.
         /// </param>
-        private void SendMails(TrialWeeks trialWeek)
+        private void SendMails(string imagesFolder, TrialWeeks trialWeek)
         {
-            var imagelink = new LinkedResource(@"images/img.png", "image/png");
-            imagelink.ContentId = "TrialThirdWeek";
-            imagelink.TransferEncoding = System.Net.Mime.TransferEncoding.Base64;
-
             var bcced = new List<MailAddress> { new MailAddress(EmailFrom, NameFrom) };
             var trialLicenses = this.CompanyLicenseModel.GetAllTrial().ToList();
-            
             foreach (CompanyLicense trialLicense in trialLicenses.Where(l => l.DateStart.AddDays((int)trialWeek).Date == DateTime.Today.Date).ToList())
             {
                 if (trialLicense.Company == null) continue;
@@ -248,17 +242,22 @@
                                 {
                                     FirstName = firstName, 
                                     MailSubject = Subject
-                                },
-                                NameFrom,
-                                EmailFrom,
-                                bcced: bcced);
-                            break;
-                        case TrialWeeks.Third:
-                            this.MailModel.SendEmail(
-                                firstName,
-                                email,
-                                Subject,
-                                new TrialThirdWeekModel(this.Settings)
+                                }, 
+                            NameFrom,
+                            EmailFrom, 
+                            bcced: bcced);
+                        break;
+                    case TrialWeeks.Third:
+                        var imagelink = new LinkedResource(Path.Combine(imagesFolder, "img.png"), "image/png")
+                        {
+                            ContentId = "TrialThirdWeek",
+                            TransferEncoding = System.Net.Mime.TransferEncoding.Base64
+                        };
+                        this.MailModel.SendEmail(
+                            firstName,
+                            email, 
+                            Subject, 
+                            new TrialThirdWeekModel(this.Settings)
                                 {
                                     FirstName = firstName, 
                                     MailSubject = Subject

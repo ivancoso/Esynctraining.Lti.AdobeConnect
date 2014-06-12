@@ -1,13 +1,18 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Net;
     using System.Text;
     using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.DTO;
+
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+
+    using RestSharp;
 
     /// <summary>
     /// The web proxy model.
@@ -48,6 +53,110 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The unsubscribe INSTAGRAM tag.
+        /// </summary>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubscriptionResDTO"/>.
+        /// </returns>
+        public SubscriptionResDTO UnsubscribeInstagramTag(string tag)
+        {
+            var all = this.ListSubscriptions();
+            var tagSubscription = all.data.FirstOrDefault(x => x.object_id.Equals(tag) && x.@object == "tag");
+            return tagSubscription != null
+                       ? this.DeleteInstagramSubscription(tagSubscription.id)
+                       : new SubscriptionResDTO
+                             {
+                                 meta = new SubscriptionMeta { code = 404 },
+                                 raw = "Subscription not found"
+                             };
+        }
+
+        /// <summary>
+        /// The delete INSTAGRAM subscription.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubscriptionResDTO"/>.
+        /// </returns>
+        public SubscriptionResDTO DeleteInstagramSubscription(int id)
+        {
+            var client_id = (string)this.settings.InstagramClientId;
+            var client_secret = (string)this.settings.InstagramClientSecret;
+            var client = new RestClient("https://api.instagram.com");
+            var request = new RestRequest("v1/subscriptions?client_secret={client_secret}&client_id={client_id}&id={subscription_id}", Method.DELETE);
+            request.AddUrlSegment("client_id", client_id);
+            request.AddUrlSegment("client_secret", client_secret);
+            request.AddUrlSegment("subscription_id", id.ToString(CultureInfo.InvariantCulture));
+            try
+            {
+                var response = client.Execute<SubscriptionResDTO>(request);
+                var res = response.Data;
+                res.raw = response.Content;
+                return res;
+            }
+            catch (Exception)
+            {
+                var response = client.Execute(request);
+                return new SubscriptionResDTO { raw = response.Content };
+            }
+        }
+
+        /// <summary>
+        /// The subscribe to INSTAGRAM tag.
+        /// </summary>
+        /// <param name="tag">
+        /// The tag.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubscriptionResDTO"/>.
+        /// </returns>
+        public SubscriptionResDTO SubscribeToInstagramTag(string tag)
+        {
+            var client_id = (string)this.settings.InstagramClientId;
+            var client_secret = (string)this.settings.InstagramClientSecret;
+            var callbackurl = ((string)this.settings.BasePath).Replace(@"services/", string.Empty) + "social/instagram-realtime";
+            var client = new RestClient("https://api.instagram.com");
+            var request = new RestRequest("v1/subscriptions", Method.POST);
+            request.AddParameter("client_id", client_id);
+            request.AddParameter("client_secret", client_secret);
+            request.AddParameter("object", "tag");
+            request.AddParameter("aspect", "media");
+            request.AddParameter("verify_token", Guid.NewGuid().ToString());
+            request.AddParameter("object_id", tag);
+            request.AddParameter("callback_url", callbackurl);
+            try
+            {
+                var response = client.Execute<SubscriptionResDTO>(request);
+                var res = response.Data;
+                res.raw = response.Content;
+                return res;
+            }
+            catch (Exception)
+            {
+                var response = client.Execute(request);
+                return new SubscriptionResDTO { raw = response.Content };
+            }
+        }
+
+        public SubscriptionDTO ListSubscriptions()
+        {
+            var client_id = (string)this.settings.InstagramClientId;
+            var client_secret = (string)this.settings.InstagramClientSecret;
+            var client = new RestClient("https://api.instagram.com");
+            var request = new RestRequest("v1/subscriptions?client_secret={client_secret}&client_id={client_id}", Method.GET);
+            request.AddUrlSegment("client_id", client_id);
+            request.AddUrlSegment("client_secret", client_secret);
+            
+            var response = client.Execute<SubscriptionDTO>(request);
+            return response.Data;
+        }
 
         /// <summary>
         /// The get.
@@ -113,12 +222,15 @@
         /// <param name="webParams">
         /// The web parameters.
         /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
         public string Post(WebRequestDTO webParams, out bool result)
         {
-            string strResponse;
+            string strResponse = string.Empty;
             try
             {
                 var req = (HttpWebRequest)WebRequest.Create(webParams.url);
@@ -158,6 +270,32 @@
                 }
 
                 result = true;
+            }
+            catch (WebException ex)
+            {
+                result = false;
+                try
+                {
+                    var inputStream = ex.Response.GetResponseStream();
+                    if (inputStream != null)
+                    {
+                        using (var inputStreamReader = new StreamReader(inputStream))
+                        {
+                            strResponse = inputStreamReader.ReadToEnd();
+                            inputStreamReader.Close();
+                        }
+                    }
+                    else
+                    {
+                        strResponse = string.Empty;
+                    }
+
+                    this.logger.Error("Post web error: " + strResponse);
+                }
+                catch (Exception ex2)
+                {
+                    this.logger.Error("Post web error: ", ex2);
+                }
             }
             catch (Exception ex)
             {

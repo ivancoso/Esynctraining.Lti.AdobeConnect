@@ -23,6 +23,7 @@
             routes.MapLowercaseRoute("Public", "public/{fileName}", new { controller = "File", action = "Public" });
             routes.MapLowercaseRoute("OAuthLogin", "social/{provider}-login", new { controller = "Social", action = "login" });
             routes.MapLowercaseRoute("OAuthCallback", "social/{provider}-callback", new { controller = "Social", action = "callback" });
+            routes.MapLowercaseRoute("SubscriptionCallback", "social/{provider}-realtime", new { controller = "Social", action = "realtime-callback" });
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
             routes.MapLowercaseRoute("Default", "{action}", new { controller = "Home", action = "Admin" });
         }
