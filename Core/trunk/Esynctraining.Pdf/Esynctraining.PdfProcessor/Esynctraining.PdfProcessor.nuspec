@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Esynctraining.PdfProcessor</id>
+    <version>1.0.0.0</version>
+    <title>Esynctraining.PdfProcessor</title>
+    <authors>eSyncTraining.com</authors>
+    <owners>eSyncTraining.com</owners>
+    <projectUrl>http://esynctraining.com/</projectUrl>
+    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides pdf pre processing functionality. GhostScript based</description>
+    <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
+    <tags>core</tags>
+    <releaseNotes>Provides pdf pre processing functionality. GhostScript based</releaseNotes>
+    <dependencies>
+      <dependency id="Ghostscript.NET" version="1.1.2" />
+      <dependency id="iTextSharp" version="5.4.4" />
+    </dependencies>
+    <references>
+      <reference file="Esynctraining.PdfProcessor.dll" />
+    </references>
+  </metadata>
+</package>
