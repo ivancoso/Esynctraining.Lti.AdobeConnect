@@ -138,6 +138,11 @@
         internal static class Principal
         {
             /// <summary>
+            /// The info.
+            /// </summary>
+            public const string Info = "principal-info";
+
+            /// <summary>
             /// The list.
             /// </summary>
             public const string List = "principal-list";

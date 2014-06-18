@@ -235,7 +235,26 @@
             return ResponseIsOk(doc, status)
                        ? new ScoContentCollectionResult(status, ScoSearchByFieldParser.Parse(doc))
                        : new ScoContentCollectionResult(status);
-            
+        }
+
+        /// <summary>
+        /// The search SCO by name.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public ScoContentCollectionResult SearchScoByDescription(string description)
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Sco.SearchByField, string.Format(CommandParams.FieldAndQuery, "description", description), out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new ScoContentCollectionResult(status, ScoSearchByFieldParser.Parse(doc))
+                       : new ScoContentCollectionResult(status);
         }
 
         /// <summary>
@@ -509,6 +528,27 @@
         public PrincipalCollectionResult GetAllPrincipals()
         {
             return this.GetGroupPrincipalUsers(null);
+        }
+
+        /// <summary>
+        /// Provides a list of users by email
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalInfoResult GetOneByPrincipalId(string principalId)
+        {
+            // act: "principal-info"
+            StatusInfo status;
+
+            var principalInfo = this.requestProcessor.Process(Commands.Principal.Info, string.Format(CommandParams.PrincipalId, principalId), out status);
+
+            return ResponseIsOk(principalInfo, status)
+                ? new PrincipalInfoResult(status, PrincipalInfoParser.Parse(principalInfo))
+                : new PrincipalInfoResult(status);
         }
 
         /// <summary>

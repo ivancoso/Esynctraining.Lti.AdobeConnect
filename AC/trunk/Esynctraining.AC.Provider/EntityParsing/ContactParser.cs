@@ -8,40 +8,27 @@
     /// <summary>
     /// The Principal parser.
     /// </summary>
-    public static class PrincipalParser
+    internal static class ContactParser
     {
         /// <summary>
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
         /// <returns>Principal object.</returns>
-        public static Principal Parse(XmlNode xml)
+        public static Contact Parse(XmlNode xml)
         {
             if (xml == null || xml.Attributes == null)
             {
-                if (xml != null && xml.NodeExists("//principal"))
-                {
-                    return Parse(xml.SelectSingleNode("//principal"));
-                }
                 return null;
             }
 
             try
             {
-                return new Principal
+                return new Contact
                            {
-                               PrincipalId = xml.SelectAttributeValue("principal-id"),
-                               AccountId = xml.SelectAttributeValue("account-id"),
-                               IsHidden = xml.ParseAttributeBool("is-hidden"),
-                               IsPrimary = xml.ParseAttributeBool("is-primary"),
-                               HasChildren = xml.ParseAttributeBool("has-children"),
-                               Type = xml.SelectAttributeValue("type"),
-                               Login = xml.SelectSingleNodeValue("login/text()"),
-                               Name = xml.SelectSingleNodeValue("name/text()"),
                                FirstName = xml.SelectSingleNodeValue("first-name/text()"),
                                LastName = xml.SelectSingleNodeValue("last-name/text()"),
                                Email = xml.SelectSingleNodeValue("email/text()"),
-                               DisplayId = xml.SelectSingleNodeValue("display-uid/text()")
                            };
             }
             catch (Exception ex)

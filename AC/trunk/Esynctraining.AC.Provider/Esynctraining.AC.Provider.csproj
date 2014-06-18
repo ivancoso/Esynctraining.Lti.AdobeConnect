@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.0\lib\net40\Esynctraining.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web" />
@@ -46,6 +50,7 @@
     <Compile Include="Constants\Commands.cs" />
     <Compile Include="Constants\CommandParams.cs" />
     <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfilesCollectionResult.cs" />
     <Compile Include="DataObjects\Results\MeetingSessionCollectionResult.cs" />
     <Compile Include="DataObjects\Results\QuizResponseCollectionResult.cs" />
@@ -65,6 +70,7 @@
     <Compile Include="DataObjects\Results\ResultBase.cs" />
     <Compile Include="DataObjects\UserCredentials.cs" />
     <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\TelephonyProfile.cs" />
     <Compile Include="Entities\MeetingSession.cs" />
     <Compile Include="Entities\QuizResponse.cs" />
@@ -89,6 +95,9 @@
     <Compile Include="Entities\StatusInfo.cs" />
     <Compile Include="Entities\TransactionInfo.cs" />
     <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="EntityParsing\ContactParser.cs" />
+    <Compile Include="EntityParsing\PrincipalInfoParser.cs" />
+    <Compile Include="EntityParsing\PrincipalPreferencesParser.cs" />
     <Compile Include="EntityParsing\TelephonyProfileParser.cs" />
     <Compile Include="EntityParsing\TelephonyProfilesCollectionParser.cs" />
     <Compile Include="EntityParsing\ScoSearchByFieldParser.cs" />
@@ -130,17 +139,28 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Esynctraining.AC.Provider.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+    <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
+    <None Include="PostBuildScripts\New-NuGetPackage.ps1" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.bat" />
+    <None Include="PostBuildScripts\UploadPackage-RunManually.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Enums\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Core\Esynctraining.Core\Esynctraining.Core.csproj">
-      <Project>{454CA615-9F14-4A1F-ADAC-1F1C400E257D}</Project>
-      <Name>Esynctraining.Core</Name>
-    </ProjectReference>
+    <Content Include="PostBuildScripts\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
+ECHO Building NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)PostBuildScripts\BuildNewPackage-RanAutomatically.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -Configuration '$(ConfigurationName)' -Platform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
