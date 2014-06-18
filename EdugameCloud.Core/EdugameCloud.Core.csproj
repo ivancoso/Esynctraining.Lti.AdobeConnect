@@ -147,6 +147,7 @@
     <Compile Include="Business\Models\BuildVersionModel.cs" />
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
+    <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
     <Compile Include="Business\Models\SubModuleItemThemeModel.cs" />
@@ -226,8 +227,10 @@
     <Compile Include="Domain\DTO\SubscriptionResDTO.cs" />
     <Compile Include="Domain\DTO\SubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\SubscriptionResultDTO.cs" />
+    <Compile Include="Domain\DTO\SubscriptionUpdateSumDTO.cs" />
     <Compile Include="Domain\DTO\SubscriptionUpdateDTO.cs" />
     <Compile Include="Domain\DTO\SubscriptionUpdateWrapper.cs" />
+    <Compile Include="Domain\DTO\TagRequestDTO.cs" />
     <Compile Include="Domain\DTO\TestWithSmiDTO.cs" />
     <Compile Include="Domain\DTO\UserLastLoginDTO.cs" />
     <Compile Include="Domain\DTO\UserWithLoginHistoryDTO.cs" />
@@ -283,6 +286,7 @@
     <Compile Include="Domain\Entities\QuestionForLikert.cs" />
     <Compile Include="Domain\Entities\QuestionForSingleMultipleChoice.cs" />
     <Compile Include="Domain\Entities\QuestionTypeEnum.cs" />
+    <Compile Include="Domain\Entities\SubscriptionHistoryLog.cs" />
     <Compile Include="Domain\Entities\SubscriptionUpdate.cs" />
     <Compile Include="Domain\Entities\TestQuestionResult.cs" />
     <Compile Include="Domain\Entities\TestResult.cs" />

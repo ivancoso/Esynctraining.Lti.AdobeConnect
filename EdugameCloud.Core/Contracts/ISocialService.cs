@@ -1,10 +1,13 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
+    using System.Collections.Generic;
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Domain.Contracts;
+
+    using NHibernate.Mapping;
 
     /// <summary>
     ///     The ProxyService interface.
@@ -62,14 +65,14 @@
         /// <summary>
         /// The subscribe to tag.
         /// </summary>
-        /// <param name="tag">
-        /// The tag.
+        /// <param name="tags">
+        /// The tags.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SubscriptionUpdateDTO> GetUpdatesForTag(string tag);
+        ServiceResponse<SubscriptionUpdateSumDTO> GetUpdatesForTags(List<TagRequestDTO> tags);
 
         /// <summary>
         /// The unsubscribe to tag.

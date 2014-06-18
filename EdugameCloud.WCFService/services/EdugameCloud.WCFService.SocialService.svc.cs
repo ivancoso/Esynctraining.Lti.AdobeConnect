@@ -2,6 +2,8 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.ServiceModel;
@@ -16,7 +18,10 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
+
+    using NHibernate.Mapping;
 
     using Resources;
 
@@ -63,6 +68,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// Gets the subscription history log model.
+        /// </summary>
+        private SubscriptionHistoryLogModel SubscriptionHistoryLogModel
+        {
+            get
+            {
+                return IoC.Resolve<SubscriptionHistoryLogModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -106,10 +122,29 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public ServiceResponse<SubscriptionResDTO> SubscribeToTag(string tag)
         {
-            return new ServiceResponse<SubscriptionResDTO>
-                       {
-                           @object = this.WebProxyModel.SubscribeToInstagramTag(tag)
-                       };
+            var result = this.WebProxyModel.SubscribeToInstagramTag(tag);
+            var res = new ServiceResponse<SubscriptionResDTO> { @object = result };
+            
+            if (result.meta != null && result.meta.code == 200 && result.data != null)
+            {
+                if (result.data.id != 0)
+                {
+                    var item = this.SubscriptionHistoryLogModel.GetOneByTag(tag).Value;
+                    item = item ?? new SubscriptionHistoryLog { SubscriptionTag = tag };
+                    item.SubscriptionId = result.data.id;
+                    this.SubscriptionHistoryLogModel.RegisterSave(item, true);
+                }
+                else
+                {
+                    res.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_ACCESS, "Instagram id not parsed", result.raw));
+                }
+            }
+            else
+            {
+                res.SetError(new Error(result.meta.With(x => x.code), "Instagram error", result.raw));
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -132,17 +167,20 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The get updates for tag.
         /// </summary>
-        /// <param name="tag">
-        /// The tag.
+        /// <param name="tagList">
+        /// The tag List.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SubscriptionUpdateDTO> GetUpdatesForTag(string tag)
+        public ServiceResponse<SubscriptionUpdateSumDTO> GetUpdatesForTags(List<TagRequestDTO> tagList)
         {
-            return new ServiceResponse<SubscriptionUpdateDTO>
+            this.SubscriptionHistoryLogModel.SaveUpdate(tagList.Select(x => new Tuple<string, int>(x.tag, 0)).ToList());
+            var res = this.SubscriptionUpdateModel.GetAllByTags(tagList).ToList();
+            var groupedList = tagList.ToDictionary(tag => tag.tag, tag => new Tuple<long, List<SubscriptionUpdate>>(tag.time, res.Where(x => x.Object_id == tag.tag).ToList()));
+            return new ServiceResponse<SubscriptionUpdateSumDTO>
             {
-                @objects = this.SubscriptionUpdateModel.GetAllByTag(tag).ToList().Select(x => new SubscriptionUpdateDTO(x)).ToList()
+                @objects = groupedList.Select(x => new SubscriptionUpdateSumDTO(x.Key, x.Value.Item2, x.Value.Item1)).ToList()
             };
         }
 

@@ -147,8 +147,13 @@
         /// </param>
         private void InsertRealTimeCallbackData(string connectionString, IEnumerable<SubscriptionUpdateDTO> dtos, ILogger log)
         {
-            var typeName = typeof(SubscriptionUpdate).Name;
-            var insertCommand = string.Format("insert into [EduGameCloud].[dbo].[SubscriptionUpdate] ([subscription_id],[object],[object_id],[changed_aspect],[time],[createdDate]) values(@subscriptionId,@objectType,@objectId,@changedAspect,@time,GETDATE())", typeName);
+            const string InsertCommand = @"declare @logCount int
+		                                        set @logCount = 0
+		                                        select @logCount = count(*) from [EduGameCloud].[dbo].[SubscriptionHistoryLog] where subscriptionId = @subscriptionId
+		                                        if (@logCount > 0)
+		                                        begin
+                                                insert into [EduGameCloud].[dbo].[SubscriptionUpdate] ([subscription_id],[object],[object_id],[changed_aspect],[time],[createdDate]) values(@subscriptionId,@objectType,@objectId,@changedAspect,@time,GETDATE())
+                                                end";
             using (var con = new SqlConnection(connectionString))
             {
                 con.Open();
@@ -156,7 +161,7 @@
                 {
                     try
                     {
-                        using (var cmd = new SqlCommand(insertCommand, con))
+                        using (var cmd = new SqlCommand(InsertCommand, con))
                         {
                             cmd.Parameters.AddWithValue("@subscriptionId", dto.subscription_id);
                             cmd.Parameters.AddWithValue("@objectType", dto.@object);
@@ -181,7 +186,6 @@
                 }
             }
         }
-
 
         /// <summary>
         /// The authentication callback.

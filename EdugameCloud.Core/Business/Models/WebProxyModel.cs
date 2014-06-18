@@ -85,6 +85,38 @@
         /// <returns>
         /// The <see cref="SubscriptionResDTO"/>.
         /// </returns>
+        public SubscriptionResDTO DeleteAllInstagramSubscriptions()
+        {
+            var client_id = (string)this.settings.InstagramClientId;
+            var client_secret = (string)this.settings.InstagramClientSecret;
+            var client = new RestClient("https://api.instagram.com");
+            var request = new RestRequest("v1/subscriptions?client_secret={client_secret}&client_id={client_id}&id={subscription_id}&object={object_type}", Method.DELETE);
+            request.AddUrlSegment("client_id", client_id);
+            request.AddUrlSegment("client_secret", client_secret);
+            request.AddUrlSegment("object_type", "all");
+            try
+            {
+                var response = client.Execute<SubscriptionResDTO>(request);
+                var res = response.Data;
+                res.raw = response.Content;
+                return res;
+            }
+            catch (Exception)
+            {
+                var response = client.Execute(request);
+                return new SubscriptionResDTO { raw = response.Content };
+            }
+        }
+
+        /// <summary>
+        /// The delete INSTAGRAM subscription.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubscriptionResDTO"/>.
+        /// </returns>
         public SubscriptionResDTO DeleteInstagramSubscription(int id)
         {
             var client_id = (string)this.settings.InstagramClientId;

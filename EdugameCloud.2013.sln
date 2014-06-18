@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MVC", "Edugame
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MailSender", "EdugameCloud.MailsSender\EdugameCloud.MailSender.csproj", "{7C9BF166-B714-4553-A5D0-8F7FD334F3A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.SocialSubscriptionHandler", "EdugameCloud.SocialSubscriptionHandler\EdugameCloud.SocialSubscriptionHandler.csproj", "{5650F53A-90F2-4585-929C-6B372464397C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{7C9BF166-B714-4553-A5D0-8F7FD334F3A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C9BF166-B714-4553-A5D0-8F7FD334F3A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C9BF166-B714-4553-A5D0-8F7FD334F3A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
