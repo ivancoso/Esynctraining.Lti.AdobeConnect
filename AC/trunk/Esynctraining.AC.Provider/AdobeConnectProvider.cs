@@ -714,6 +714,28 @@
                 : new ScoContentResult(status);
         }
 
+
+        /// <summary>
+        /// The get meetings by SCO id.
+        /// </summary>
+        /// <param name="folderScoId">
+        /// The folder SCO Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
+        public ScoContentCollectionResult GetMeetingsByFolder(string folderScoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.Meetings, folderScoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
+                : new ScoContentCollectionResult(status);
+        }
+
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>

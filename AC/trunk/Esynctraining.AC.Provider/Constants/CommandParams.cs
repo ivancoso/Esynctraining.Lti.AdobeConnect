@@ -61,6 +61,11 @@
         public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
 
         /// <summary>
+        /// The meeting archives.
+        /// </summary>
+        public const string Meetings = "sco-id={0}&filter-type=meeting";
+
+        /// <summary>
         /// The url path.
         /// </summary>
         public const string UrlPath = "url-path={0}";
