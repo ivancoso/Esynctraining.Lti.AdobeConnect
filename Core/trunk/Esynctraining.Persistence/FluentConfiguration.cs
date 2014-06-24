@@ -77,7 +77,7 @@
             Assembly executing = Assembly.GetExecutingAssembly();
             cfg.AddAssembly(executing);
             persistenceModel.AddMappingsFromSource(new AssemblyTypeSource(Assembly.GetCallingAssembly()));
-            AddConventions(persistenceModel.Conventions);
+            this.AddConventions(persistenceModel.Conventions);
             persistenceModel.Configure(cfg);
         }
 
@@ -91,7 +91,7 @@
         /// <param name="conventions">
         /// The conventions.
         /// </param>
-        private static void AddConventions(IConventionFinder conventions)
+        protected virtual void AddConventions(IConventionFinder conventions)
         {
             // uncomment lines if needed 
             conventions.Add(new ForeignKeyConstraintHasManyNameConvention());
