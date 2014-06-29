@@ -1,6 +1,7 @@
 ﻿namespace PDFAnnotation.Persistence.Mappings
 {
     using Esynctraining.Core.Enums;
+    using Esynctraining.Persistence.Mappings;
 
     using PDFAnnotation.Core.Domain.Entities;
 

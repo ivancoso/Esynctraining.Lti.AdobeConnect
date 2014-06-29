@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>PDFAnnotation.Core</id>
+    <version>1.0.0.4</version>
+    <title>PDFAnnotation.Core</title>
+    <authors>eSyncTraining.com</authors>
+    <owners>eSyncTraining.com</owners>
+    <projectUrl>http://esynctraining.com/</projectUrl>
+    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides core functionality for pdf annotations projects</description>
+    <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
+    <tags>pdf annotation</tags>
+    <releaseNotes>Provides core functionality for pdf annotations projects</releaseNotes>
+    <dependencies>
+        <dependency id="Esynctraining.Core.Common" version="[1.0.0.0,2.0.0.0]" />
+        <dependency id="Esynctraining.Core.Weborb" version="[1.0.0.0,2.0.0.0]" />
+        <dependency id="Esynctraining.PdfProcessor" version="1.0.0.0" />
+        <dependency id="Newtonsoft.Json" version="6.0.3" />
+    </dependencies>
+    <references>
+      <reference file="PDFAnnotation.Core.dll" />
+    </references>
+  </metadata>
+</package>
