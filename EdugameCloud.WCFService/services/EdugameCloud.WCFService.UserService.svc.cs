@@ -902,6 +902,39 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The activate by id.
+        /// </summary>
+        /// <param name="code">
+        /// The code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Esynctraining.Core.Domain.Contracts.ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<bool> ActivateByCode(string code)
+        {
+            var result = new ServiceResponse<bool>();
+            var passwordActivation = this.UserActivationModel.GetOneByCode(code).Value;
+            var contact = passwordActivation.With(x => x.User);
+            if (contact != null)
+            {
+                contact.Status = UserStatus.Activating;
+                this.UserModel.RegisterSave(contact, true);
+                result.@object = true;
+            }
+            else
+            {
+                result.@object = false;
+                result.SetError(
+                   new Error(
+                       Errors.CODE_ERRORTYPE_INVALID_USER,
+                       ErrorsTexts.AccessError_Subject,
+                       ErrorsTexts.DeleteById_NoUserExists));
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// The update password.
         /// </summary>
         /// <param name="email">
