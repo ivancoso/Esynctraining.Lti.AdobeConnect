@@ -97,6 +97,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WcfRestContrib">
+      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Conventions\EnumConvention.cs" />
@@ -125,6 +128,8 @@
     <Compile Include="Mappings\BuildVersionMap.cs" />
     <Compile Include="Mappings\BaseClassMapGuid.cs" />
     <Compile Include="Mappings\CompanyThemeMap.cs" />
+    <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
+    <Compile Include="Mappings\EmailHistoryMap.cs" />
     <Compile Include="Mappings\SubscriptionHistoryLogMap.cs" />
     <Compile Include="Mappings\SubscriptionUpdateMap.cs" />
     <Compile Include="Mappings\SocialUserTokensMap.cs" />

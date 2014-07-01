@@ -47,6 +47,7 @@
                 this.userRoleId = user.UserRole.Id;
                 this.isActive = user.Status == UserStatus.Active;
                 this.userRole = user.UserRole.With(x => x.UserRoleName);
+                this.isUnsubscribed = user.IsUnsubscribed;
             }
         }
 
@@ -161,6 +162,12 @@
         /// </summary>
         [DataMember]
         public virtual int userRoleId { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is unsubscribed.
+        /// </summary>
+        [DataMember]
+        public virtual bool isUnsubscribed { get; set; }
 
         #endregion
     }

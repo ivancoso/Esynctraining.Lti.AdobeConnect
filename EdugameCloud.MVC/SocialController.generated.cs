@@ -43,6 +43,12 @@ namespace EdugameCloud.MVC.Controllers
 
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult RealtimeCallback()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.RealtimeCallback);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult AuthenticationCallback()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.AuthenticationCallback);
@@ -63,16 +69,27 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
+            public readonly string RealtimeCallback = "realtime-callback";
             public readonly string AuthenticationCallback = "callback";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
+            public const string RealtimeCallback = "realtime-callback";
             public const string AuthenticationCallback = "callback";
         }
 
 
+        static readonly ActionParamsClass_RealtimeCallback s_params_RealtimeCallback = new ActionParamsClass_RealtimeCallback();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_RealtimeCallback RealtimeCallbackParams { get { return s_params_RealtimeCallback; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_RealtimeCallback
+        {
+            public readonly string provider = "provider";
+            public readonly string hub = "hub";
+        }
         static readonly ActionParamsClass_AuthenticationCallback s_params_AuthenticationCallback = new ActionParamsClass_AuthenticationCallback();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_AuthenticationCallback AuthenticationCallbackParams { get { return s_params_AuthenticationCallback; } }
@@ -102,6 +119,21 @@ namespace EdugameCloud.MVC.Controllers
     public class T4MVC_SocialController : EdugameCloud.MVC.Controllers.SocialController
     {
         public T4MVC_SocialController() : base(Dummy.Instance) { }
+
+        public override System.Web.Mvc.ActionResult RealtimeCallback(string provider, EdugameCloud.MVC.Social.Subscriptions.InstagramSubscriptionHub hub)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.RealtimeCallback);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "hub", hub);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult RealtimeCallback(string provider)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.RealtimeCallback);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
+            return callInfo;
+        }
 
         public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider, string key)
         {

@@ -9,6 +9,7 @@
     using System.Reflection;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.Text.RegularExpressions;
     using System.Web;
 
     using Castle.Core.Logging;
@@ -29,6 +30,7 @@
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
     using Esynctraining.Core.Weborb.WCFExtension;
 
@@ -190,6 +192,28 @@
             get
             {
                 return IoC.Resolve<ACSessionModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the ACSession model.
+        /// </summary>
+        protected ITemplateProvider TemplateProvider
+        {
+            get
+            {
+                return IoC.Resolve<ITemplateProvider>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the ACSession model.
+        /// </summary>
+        protected EmailHistoryModel EmailHistoryModel
+        {
+            get
+            {
+                return IoC.Resolve<EmailHistoryModel>();
             }
         }
 
@@ -375,23 +399,42 @@
             var license = company.Licenses.FirstOrDefault();
             var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
 
+            var model = new EnterpriseModel(this.Settings)
+                        {
+                            CompanyName = company.CompanyName,
+                            MailSubject = Emails.TrialSubject,
+                            TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                            TrialDays = days,
+                            UserName = user.Email,
+                            Password = password,
+                            ExpirationDate =
+                                license.Return(
+                                    x => x.ExpiryDate.ToShortDateString(),
+                                    string.Empty)
+                        };
+            var bcced = new List<MailAddress>
+                        {
+                            new MailAddress(this.Settings.TrialContactEmail),
+                            new MailAddress(Common.JacquieEmail, Common.JacquieName)
+                        };
+
             this.MailModel.SendEmail(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
-                new EnterpriseModel(this.Settings)
-                {
-                    CompanyName = company.CompanyName,
-                    MailSubject = Emails.TrialSubject,
-                    TrialContactEmail = (string)this.Settings.TrialContactEmail,
-                    TrialDays = days,
-                    UserName = user.Email,
-                    Password = password,
-                    ExpirationDate = license.Return(x => x.ExpiryDate.ToShortDateString(), string.Empty) 
-                },
+                model,
                 Common.AppEmailName,
                 Common.AppEmail,
-                bcced: new List<MailAddress> { new MailAddress(this.Settings.TrialContactEmail), new MailAddress(Common.JacquieEmail, Common.JacquieName) });
+                bcced: bcced);
+
+            this.SaveHistory(
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
         }
 
         /// <summary>
@@ -434,23 +477,39 @@
         {
             var license = company.Licenses.FirstOrDefault();
             var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
-            
+
+            var model = new TrialModel(this.Settings)
+                        {
+                            CompanyName = company.CompanyName,
+                            MailSubject = Emails.TrialSubject,
+                            TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                            TrialDays = days,
+                            UserName = user.Email,
+                            Password = password
+                        };
+            var bcced = new List<MailAddress>
+                        {
+                            new MailAddress(this.Settings.TrialContactEmail),
+                            new MailAddress(Common.JacquieEmail, Common.JacquieName)
+                        };
+
             this.MailModel.SendEmail(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
-                new TrialModel(this.Settings)
-                    {
-                        CompanyName = company.CompanyName,
-                        MailSubject = Emails.TrialSubject,
-                        TrialContactEmail = (string)this.Settings.TrialContactEmail,
-                        TrialDays = days,
-                        UserName = user.Email,
-                        Password = password
-                    },
+                model,
                 Common.AppEmailName,
                 Common.AppEmail,
-                bcced:new List<MailAddress> { new MailAddress(this.Settings.TrialContactEmail), new MailAddress(Common.JacquieEmail,Common.JacquieName) });
+                bcced: bcced);
+
+            this.SaveHistory(
+                user.FirstName,
+                user.Email,
+                Emails.TrialSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail,
+                bcced: bcced);
         }
 
         /// <summary>
@@ -512,20 +571,37 @@
         protected void SendLicenseUpgradeEmail(Company company)
         {
             var license = company.Licenses.FirstOrDefault();
+            var model = new LicenseUpgradeModel(this.Settings)
+                        {
+                            CompanyName = company.CompanyName,
+                            MailSubject = Emails.LicenseUpgradeRequested,
+                            PrimaryEmail =
+                                company.PrimaryContact.With(x => x.Email),
+                            PrimaryName =
+                                company.PrimaryContact.With(x => x.FullName),
+                            SeatsCount = license.With(x => x.TotalLicensesCount),
+                            IsTrial =
+                                license.Return(
+                                    x =>
+                                x.LicenseStatus == CompanyLicenseStatus.Trial,
+                                    false),
+                            ExpirationDate =
+                                license.With(x => x.ExpiryDate.ToEst() + " EST")
+                        };
+
             this.MailModel.SendEmail(
                 "License Admin",
                 (string)this.Settings.TrialContactEmail,
                 Emails.LicenseUpgradeRequested,
-                new LicenseUpgradeModel(this.Settings)
-                {
-                    CompanyName = company.CompanyName,
-                    MailSubject = Emails.LicenseUpgradeRequested,
-                    PrimaryEmail = company.PrimaryContact.With(x => x.Email),
-                    PrimaryName = company.PrimaryContact.With(x => x.FullName),
-                    SeatsCount = license.With(x => x.TotalLicensesCount),
-                    IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
-                    ExpirationDate = license.With(x => x.ExpiryDate.ToEst() + " EST")
-                },
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+
+            this.SaveHistory(
+                "License Admin",
+                (string)this.Settings.TrialContactEmail,
+                Emails.LicenseUpgradeRequested,
+                model,
                 Common.AppEmailName,
                 Common.AppEmail);
         }
@@ -544,11 +620,26 @@
         /// </param>
         protected void SendPasswordEmail(string firstName, string email, string password)
         {
+            var model = new ChangePasswordModel(this.Settings)
+                        {
+                            FirstName = firstName,
+                            Password = password,
+                            TrialContactEmail = this.Settings.TrialContactEmail
+                        };
+
             this.MailModel.SendEmail(
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
-                new ChangePasswordModel(this.Settings) { FirstName = firstName, Password = password, TrialContactEmail = this.Settings.TrialContactEmail },
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+
+            this.SaveHistory(
+                firstName,
+                email,
+                Emails.ChangePasswordSubject,
+                model,
                 Common.AppEmailName,
                 Common.AppEmail);
         }
@@ -581,13 +672,31 @@
                 blindCopies.AddRange(bccedProduction);
             }
 
+            var model = new ActivationInvitationModel(this.Settings)
+                           {
+                               FirstName = firstName,
+                               ActivationCode = activationCode,
+                               TrialContactEmail =
+                                   this.Settings.TrialContactEmail,
+                               CompanyName = company.CompanyName
+                           };               
+
             this.MailModel.SendEmail(
                 firstName,
                 email,
                 Emails.ActivationSubject,
-                new ActivationInvitationModel(this.Settings) { FirstName = firstName, ActivationCode = activationCode, TrialContactEmail = this.Settings.TrialContactEmail, CompanyName = company.CompanyName },
+                model,
                 Common.AppEmailName,
                 Common.AppEmail, cced, blindCopies);
+
+            this.SaveHistory(
+                firstName,
+                email,
+                Emails.ActivationSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail, cced, blindCopies);
+            
         }
 
         /// <summary>
@@ -747,6 +856,50 @@
             }
 
             return list;
+        }
+
+        private void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        {
+            string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model),
+                message = body;
+            if (message != null)
+            {
+                message = Regex.Replace(message, "<[^>]*(>|$)", "");
+                message = message.Replace("\r\n", "\n").Replace("\r", "\n").Replace("&nbsp;", " ").Replace("&#39;", @"'");
+                message = Regex.Replace(message, @"[ ]{2,}", " ");
+                message = message.Replace("\n ", "\n").Replace(" \n", "\n");
+                message = Regex.Replace(message, @"[\n]{2,}", "\n");
+                message =
+                    message.Replace(
+                        "Enriching online interaction for meetings, training and education on Adobe Connect",
+                        "");
+                while (message.StartsWith("\n")) message = message.Remove(0, 1);
+            }
+
+            var emailHistory = new EmailHistory()
+                               {
+                                   SentTo = toEmail,
+                                   SentToName = toName,
+                                   SentFrom = fromEmail,
+                                   SentFromName = fromName,
+                                   Date = DateTime.Now,
+                                   SentBcc =
+                                       bcced != null
+                                           ? bcced.Select(ma => ma.Address)
+                                       .Aggregate((a1, a2) => a1 + ";" + a2)
+                                           : null,
+                                   SentCc =
+                                       cced != null
+                                           ? cced.Select(ma => ma.Address)
+                                       .Aggregate((a1, a2) => a1 + ";" + a2)
+                                           : null,
+                                   Subject = subject,
+                                   User = UserModel.GetOneByEmail(toEmail).Value,
+                                   Body = body,
+                                   Message = message
+                               };
+
+            this.EmailHistoryModel.RegisterSave(emailHistory, true);
         }
 
         #endregion

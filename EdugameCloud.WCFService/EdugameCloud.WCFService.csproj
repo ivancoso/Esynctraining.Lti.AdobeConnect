@@ -136,6 +136,7 @@
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
     <Content Include="Mail\Templates\Trial.html" />
+    <Content Include="services\EdugameCloud.WCFService.EmailService.svc" />
     <Content Include="services\EdugameCloud.WCFService.SocialService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestResultService.svc" />
@@ -194,6 +195,9 @@
     <Compile Include="Mail\Models\ErrorMailModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.EmailService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.EmailService.svc</DependentUpon>
+    </Compile>
     <Compile Include="services\EdugameCloud.WCFService.SocialService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.SocialService.svc</DependentUpon>
     </Compile>
@@ -313,6 +317,8 @@
     <Compile Include="Validators\ACSessionDTOValidator.cs" />
     <Compile Include="Validators\AppletResultDTOValidator.cs" />
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
+    <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
+    <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
     <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />
     <Compile Include="Validators\CompanyDTOValidator.cs" />
     <Compile Include="Validators\BuildVersionDTOValidator.cs" />
@@ -356,7 +362,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Mail\Attachments\svn.ignore" />
-    <Content Include="Web.constrings" />
+    <Content Include="Web.constrings">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Applications\DBChangesNotifier\app.config" />
     <Content Include="FileStorage\Schemas\Edugame.xsd">
       <SubType>Designer</SubType>

@@ -16,6 +16,7 @@
     [sessionToken]               NVARCHAR (64)    NULL,
     [sessionTokenExpirationDate] DATETIME         NULL,
     [logoId]                     UNIQUEIDENTIFIER NULL,
+    [isUnsubscribed]             BIT              NULL,
     CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([userId] ASC),
     CONSTRAINT [FK_User_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]),
     CONSTRAINT [FK_User_CreatedBy] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
@@ -24,6 +25,8 @@
     CONSTRAINT [FK_User_TimeZone] FOREIGN KEY ([timeZoneId]) REFERENCES [dbo].[TimeZone] ([timeZoneId]),
     CONSTRAINT [FK_User_UserRole] FOREIGN KEY ([userRoleId]) REFERENCES [dbo].[UserRole] ([userRoleId])
 );
+
+
 
 
 

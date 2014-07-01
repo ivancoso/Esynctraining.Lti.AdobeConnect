@@ -7,9 +7,12 @@
     [gridHeaderBackgroundColor] VARCHAR (10)     NULL,
     [gridRolloverColor]         VARCHAR (10)     NULL,
     [logoId]                    UNIQUEIDENTIFIER NULL,
+    [loginHeaderTextColor]      VARCHAR (10)     NULL,
     CONSTRAINT [PK_CompanyTheme] PRIMARY KEY CLUSTERED ([companyThemeId] ASC),
     CONSTRAINT [FK_CompanyTheme_File] FOREIGN KEY ([logoId]) REFERENCES [dbo].[File] ([fileId])
 );
+
+
 
 
 

@@ -325,6 +325,11 @@
         /// </summary>
         public virtual UserRole UserRole { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the unsibscribed.
+        /// </summary>
+        public virtual bool IsUnsubscribed { get; set; }
+
         #endregion
 
         #region Public Methods and Operators

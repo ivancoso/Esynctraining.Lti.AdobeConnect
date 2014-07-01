@@ -147,6 +147,8 @@
     <Compile Include="Business\Models\BuildVersionModel.cs" />
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
+    <Compile Include="Business\Models\EmailHistoryModel.cs" />
+    <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="Business\Models\WebProxyModel.cs" />
     <Compile Include="Business\Queries\QueryOverCompany.cs" />
     <Compile Include="Business\Queries\QueryOverUser.cs" />
+    <Compile Include="Contracts\IEmailService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
     <Compile Include="Contracts\ISocialService.cs" />
@@ -219,6 +222,8 @@
     <Compile Include="Converters\CompanyDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
+    <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
     <Compile Include="Domain\DTO\SessionDTO.cs" />
@@ -276,6 +281,8 @@
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />
     <Compile Include="Domain\Entities\CompanyTheme.cs" />
+    <Compile Include="Domain\Entities\EmailHistory.cs" />
+    <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />

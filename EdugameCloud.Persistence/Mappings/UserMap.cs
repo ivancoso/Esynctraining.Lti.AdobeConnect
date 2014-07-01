@@ -44,7 +44,8 @@
             this.References(x => x.Company).Not.Nullable().LazyLoad();
             this.References(x => x.Language).Not.Nullable().LazyLoad();
             this.References(x => x.TimeZone).Not.Nullable().LazyLoad();
-            
+            this.Map(x => x.IsUnsubscribed).Nullable();
+
         }
 
 

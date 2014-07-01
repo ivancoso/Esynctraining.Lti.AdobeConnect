@@ -302,6 +302,18 @@
         [OperationContract]
         ServiceResponse UpdatePasswordByCode(string code, string newPassword);
 
+        /// <summary>
+        /// The activate by code.
+        /// </summary>
+        /// <param name="code">
+        /// The code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Esynctraining.Core.Domain.Contracts.ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<bool> ActivateByCode(string code);
+
         #endregion
     }
 }

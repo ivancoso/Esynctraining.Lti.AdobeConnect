@@ -12,6 +12,9 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EdugameCloud.DB", "EdugameCloud.DB\EdugameCloud.DB.sqlproj", "{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Web", "EdugameCloud.Web\EdugameCloud.Web.csproj", "{B149C2F2-4E11-4667-A83F-59D6D00401E4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1758C513-FDF1-47FA-842F-9C332DA85C17} = {1758C513-FDF1-47FA-842F-9C332DA85C17}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MVC", "EdugameCloud.MVC\EdugameCloud.MVC.csproj", "{A17D2033-4439-4418-8224-96A408B548DB}"
 EndProject

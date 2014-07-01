@@ -355,6 +355,14 @@ using Esynctraining.Core.Utils;
 			   }
 		    }
 		
+			public static string Login 
+		    {
+			   get 
+			   {
+			       return ResourceProvider.GetResourceString("Login", "Buttons");
+			   }
+		    }
+		
 			public static string Next 
 		    {
 			   get 
@@ -529,6 +537,14 @@ using Esynctraining.Core.Utils;
 			   }
 		    }
 		
+			public static string Title 
+		    {
+			   get 
+			   {
+			       return ResourceProvider.GetResourceString("Title", "LogIn");
+			   }
+		    }
+		
 			public static string UserName 
 		    {
 			   get 
@@ -569,6 +585,25 @@ using Esynctraining.Core.Utils;
 			   get 
 			   {
 			       return ResourceProvider.GetResourceString("Optional", "Shared");
+			   }
+		    }
+		}
+	 
+		public static class Social 
+	    { 
+			public static string AdminTitle 
+		    {
+			   get 
+			   {
+			       return ResourceProvider.GetResourceString("AdminTitle", "Social");
+			   }
+		    }
+		
+			public static string SuccessTitle 
+		    {
+			   get 
+			   {
+			       return ResourceProvider.GetResourceString("SuccessTitle", "Social");
 			   }
 		    }
 		}
