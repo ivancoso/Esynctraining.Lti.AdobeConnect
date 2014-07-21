@@ -22,6 +22,12 @@
             this.Map(x => x.LoginHeaderTextColor).Length(10).Nullable();
             this.Map(x => x.GridRolloverColor).Length(10).Nullable();
 
+            this.Map(x => x.PopupHeaderBackgroundColor).Length(10).Nullable();
+            this.Map(x => x.PopupHeaderTextColor).Length(10).Nullable();
+            this.Map(x => x.QuestionColor).Length(10).Nullable();
+            this.Map(x => x.QuestionHeaderColor).Length(10).Nullable();
+            this.Map(x => x.WelcomeTextColor).Length(10).Nullable();
+
             this.References(x => x.Logo).Nullable().Column("logoId");
         }
 

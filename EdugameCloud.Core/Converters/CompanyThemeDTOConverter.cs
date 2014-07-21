@@ -71,6 +71,13 @@
             instance.GridHeaderBackgroundColor = dto.gridHeaderBackgroundColor;
             instance.LoginHeaderTextColor = dto.loginHeaderTextColor;
             instance.GridRolloverColor = dto.gridRolloverColor;
+
+            instance.PopupHeaderBackgroundColor = dto.popupHeaderBackgroundColor;
+            instance.PopupHeaderTextColor = dto.popupHeaderTextColor;
+            instance.QuestionColor = dto.questionColor;
+            instance.QuestionHeaderColor = dto.questionHeaderColor;
+            instance.WelcomeTextColor = dto.welcomeTextColor;
+
             instance.Logo = dto.logoId.HasValue ? this.fileModel.GetOneById(dto.logoId.Value).Value : null;
 
             if (flushUpdates)

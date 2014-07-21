@@ -43,11 +43,47 @@
             this.gridHeaderTextColor = theme.With(x => x.GridHeaderTextColor);
             this.gridHeaderBackgroundColor = theme.With(x => x.GridHeaderBackgroundColor);
             this.gridRolloverColor = theme.With(x => x.GridRolloverColor);
+
+            this.popupHeaderBackgroundColor = theme.With(x => x.PopupHeaderBackgroundColor);
+            this.popupHeaderTextColor = theme.With(x => x.PopupHeaderTextColor);
+            this.questionColor = theme.With(x => x.QuestionColor);
+            this.questionHeaderColor = theme.With(x => x.QuestionHeaderColor);
+            this.welcomeTextColor = theme.With(x => x.WelcomeTextColor);
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the popup header background color.
+        /// </summary>
+        [DataMember]
+        public string popupHeaderBackgroundColor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the popup header text color.
+        /// </summary>
+        [DataMember]
+        public string popupHeaderTextColor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question color.
+        /// </summary>
+        [DataMember]
+        public string questionColor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question header color.
+        /// </summary>
+        [DataMember]
+        public string questionHeaderColor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the welcome text color.
+        /// </summary>
+        [DataMember]
+        public string welcomeTextColor { get; set; }
 
         /// <summary>
         /// Gets or sets the button color.
