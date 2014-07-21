@@ -80,12 +80,22 @@ namespace EdugameCloud.WCFService
                 var user = arr.User;
                 user.Status = UserStatus.Active;
                 user.DateModified = DateTime.Now;
-                var newPassword = AuthenticationModel.CreateRandomPassword();
-                user.SetPassword(newPassword);
+                UserActivationModel model = this.UserActivationModel;
+                UserActivation userActivation;
+                if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                {
+                    userActivation = new UserActivation
+                    {
+                        User = user,
+                        ActivationCode = Guid.NewGuid().ToString(),
+                        DateExpires = DateTime.Now.AddDays(7)
+                    };
+                    model.RegisterSave(userActivation);
+                }
                 UserModel.RegisterSave(user);
                 IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
                 UserActivationModel.RegisterDelete(arr);
-                this.SendPasswordEmail(user.FirstName, user.Email, newPassword);
+                this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
                 if (WebOperationContext.Current != null)
                 {
                     var response = WebOperationContext.Current.OutgoingResponse;

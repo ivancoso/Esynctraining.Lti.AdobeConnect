@@ -15,7 +15,7 @@
     <AssemblyName>EdugameCloud.WCFService</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -132,6 +132,7 @@
   <ItemGroup>
     <Content Include="clientaccesspolicy.xml" />
     <Content Include="diagnostics.aspx" />
+    <Content Include="Mail\Templates\ActivationLink.html" />
     <Content Include="Mail\Templates\ErrorMail.html" />
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
@@ -167,6 +168,7 @@
     <Content Include="services\EdugameCloud.WCFService.RestService.svc" />
     <Content Include="services\EdugameCloud.WCFService.FileService.svc" />
     <Content Include="services\EdugameCloud.WCFService.ErrorService.svc" />
+    <Content Include="services\EdugameCloud.WCFService.MoodleService.svc" />
     <Content Include="services\EdugameCloud.WCFService.UserService.svc" />
     <Content Include="Global.asax" />
     <Content Include="log4net.cfg.xml">
@@ -190,6 +192,7 @@
     </Compile>
     <Compile Include="Base\ExportService.cs" />
     <Compile Include="Mail\Models\AccountDeletedModel.cs" />
+    <Compile Include="Mail\Models\ActivationLinkModel.cs" />
     <Compile Include="Mail\Models\ChangePasswordModel.cs" />
     <Compile Include="Mail\Models\EnterpriseModel.cs" />
     <Compile Include="Mail\Models\ErrorMailModel.cs" />
@@ -288,6 +291,9 @@
     <Compile Include="services\EdugameCloud.WCFService.ErrorService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.ErrorService.svc</DependentUpon>
     </Compile>
+    <Compile Include="services\EdugameCloud.WCFService.MoodleService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.MoodleService.svc</DependentUpon>
+    </Compile>
     <Compile Include="services\EdugameCloud.WCFService.UserService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.UserService.svc</DependentUpon>
     </Compile>
@@ -317,6 +323,7 @@
     <Compile Include="Validators\ACSessionDTOValidator.cs" />
     <Compile Include="Validators\AppletResultDTOValidator.cs" />
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
+    <Compile Include="Validators\MoodleUserDTOValidator.cs" />
     <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
     <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
     <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />
@@ -430,11 +437,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2345/services</IISUrl>
+          <IISUrl>http://localhost:2345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

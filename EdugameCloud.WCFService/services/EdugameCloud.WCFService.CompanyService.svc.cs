@@ -538,18 +538,31 @@ namespace EdugameCloud.WCFService
                     companyModel.RegisterSave(instance, true);
                     if (isUserTransient)
                     {
+                        UserActivationModel model = this.UserActivationModel;
+                        UserActivation userActivation;
+                        if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                        {
+                            userActivation = new UserActivation
+                            {
+                                User = user,
+                                ActivationCode = Guid.NewGuid().ToString(),
+                                DateExpires = DateTime.Now.AddDays(7)
+                            };
+                            model.RegisterSave(userActivation);
+                        }
+
                         var license = instance.Licenses.FirstOrDefault();
                         if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false))
                         {
                             user.Status = UserStatus.Active;
                             UserModel.RegisterSave(user);
-                            this.SendTrialEmail(user, dto.primaryContactVO.password, instance);
+                            this.SendTrialEmail(user, userActivation.ActivationCode, instance);
                         }
                         else if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false))
                         {
                             user.Status = UserStatus.Active;
                             UserModel.RegisterSave(user);
-                            this.SendEnterpriseEmail(user, dto.primaryContactVO.password, instance);
+                            this.SendEnterpriseEmail(user, userActivation.ActivationCode, instance);
                         }
                         else
                         {
@@ -558,7 +571,20 @@ namespace EdugameCloud.WCFService
                     }
                     else if (passwordChanged || emailChanged)
                     {
-                        this.SendPasswordEmail(user.FirstName, user.Email, dto.primaryContactVO.password);
+                        UserActivationModel model = this.UserActivationModel;
+                        UserActivation userActivation;
+                        if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                        {
+                            userActivation = new UserActivation
+                            {
+                                User = user,
+                                ActivationCode = Guid.NewGuid().ToString(),
+                                DateExpires = DateTime.Now.AddDays(7)
+                            };
+                            model.RegisterSave(userActivation);
+                        }
+
+                        this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
                     }
                 }
                 else if (instance.PrimaryContact == null)

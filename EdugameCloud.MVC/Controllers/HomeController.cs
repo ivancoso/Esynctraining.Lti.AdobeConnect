@@ -279,6 +279,30 @@
         }
 
         /// <summary>
+        /// The development.
+        /// </summary>
+        /// <param name="code">
+        /// The code.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [HttpGet]
+        public virtual ActionResult Unsubscribe(string code)
+        {
+            var email = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(code));
+            var users = userModel.GetAll().Where(u => u.Email != null && u.Email.Equals(email));
+
+            foreach (var user in users)
+            {
+                user.IsUnsubscribed = true;
+                userModel.RegisterSave(user);
+            }
+
+            return this.View("Unsubscribed");
+        }
+
+        /// <summary>
         /// The index.
         /// </summary>
         /// <param name="referer">

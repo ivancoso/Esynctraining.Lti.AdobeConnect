@@ -8,7 +8,7 @@
     /// <summary>
     /// The trial model.
     /// </summary>
-    public class TrialModel : BaseTemplateModel
+    public class TrialModel : ActivationInvitationModel
     {
         #region Constructors and Destructors
 
@@ -22,26 +22,6 @@
             : base(settings)
         {
         }
-
-        /// <summary>
-        /// Gets or sets the user name.
-        /// </summary>
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
-        public string Password { get; set; }
-
-        /// <summary>
-        /// Gets or sets the company name.
-        /// </summary>
-        public string CompanyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the trial contact email.
-        /// </summary>
-        public string TrialContactEmail { get; set; }
 
         /// <summary>
         /// Gets or sets the trial days.

@@ -394,7 +394,7 @@
         /// <param name="company">
         /// The company.
         /// </param>
-        protected void SendEnterpriseEmail(User user, string password, Company company)
+        protected void SendEnterpriseEmail(User user, string activationCode, Company company)
         {
             var license = company.Licenses.FirstOrDefault();
             var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
@@ -406,7 +406,8 @@
                             TrialContactEmail = (string)this.Settings.TrialContactEmail,
                             TrialDays = days,
                             UserName = user.Email,
-                            Password = password,
+                            FirstName = user.FirstName,
+                            ActivationCode = activationCode,
                             ExpirationDate =
                                 license.Return(
                                     x => x.ExpiryDate.ToShortDateString(),
@@ -473,11 +474,11 @@
         /// <param name="company">
         /// The company.
         /// </param>
-        protected void SendTrialEmail(User user, string password, Company company)
+        protected void SendTrialEmail(User user, string activationCode, Company company)
         {
             var license = company.Licenses.FirstOrDefault();
             var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
-
+            
             var model = new TrialModel(this.Settings)
                         {
                             CompanyName = company.CompanyName,
@@ -485,7 +486,8 @@
                             TrialContactEmail = (string)this.Settings.TrialContactEmail,
                             TrialDays = days,
                             UserName = user.Email,
-                            Password = password
+                            ActivationCode = activationCode,
+                            FirstName = user.FirstName
                         };
             var bcced = new List<MailAddress>
                         {
@@ -645,6 +647,45 @@
         }
 
         /// <summary>
+        /// The send password email.
+        /// </summary>
+        /// <param name="firstName">
+        /// The first name.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        protected void SendActivationLinkEmail(string firstName, string email, string activationCode)
+        {
+            var model = new ActivationLinkModel(this.Settings)
+            {
+                FirstName = firstName,
+                ActivationCode = activationCode,
+                TrialContactEmail = this.Settings.TrialContactEmail
+            };
+
+            this.MailModel.SendEmail(
+                firstName,
+                email,
+                Emails.ChangePasswordSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+
+            this.SaveHistory(
+                firstName,
+                email,
+                Emails.ChangePasswordSubject,
+                model,
+                Common.AppEmailName,
+                Common.AppEmail);
+        }
+
+
+        /// <summary>
         /// The send activation email.
         /// </summary>
         /// <param name="firstName">
@@ -675,6 +716,7 @@
             var model = new ActivationInvitationModel(this.Settings)
                            {
                                FirstName = firstName,
+                               UserName = email,
                                ActivationCode = activationCode,
                                TrialContactEmail =
                                    this.Settings.TrialContactEmail,
@@ -867,7 +909,7 @@
                 message = Regex.Replace(message, "<[^>]*(>|$)", "");
                 message = message.Replace("\r\n", "\n").Replace("\r", "\n").Replace("&nbsp;", " ").Replace("&#39;", @"'");
                 message = Regex.Replace(message, @"[ ]{2,}", " ");
-                message = message.Replace("\n ", "\n").Replace(" \n", "\n");
+                message = message.Replace("\n ", "\n");
                 message = Regex.Replace(message, @"[\n]{2,}", "\n");
                 message =
                     message.Replace(

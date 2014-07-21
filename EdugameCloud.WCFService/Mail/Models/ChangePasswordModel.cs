@@ -32,9 +32,6 @@
         /// </summary>
         public string FirstName { get; set; }
 
-        /// <summary>
-        /// Gets or sets the password.
-        /// </summary>
         public string Password { get; set; }
 
         /// <summary>

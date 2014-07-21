@@ -56,6 +56,11 @@ namespace EdugameCloud.WCFService.Mail.Models
         public string FirstName { get; set; }
 
         /// <summary>
+        /// Gets or sets the first name.
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
         /// Gets or sets the trial contact email.
         /// </summary>
         public string TrialContactEmail { get; set; }

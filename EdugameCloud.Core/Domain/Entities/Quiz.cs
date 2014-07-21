@@ -61,6 +61,11 @@
         /// </summary>
         public virtual SubModuleItem SubModuleItem { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the moodle id.
+        /// </summary>
+        public virtual int MoodleId { get; set; }
+
         #endregion
     }
 }

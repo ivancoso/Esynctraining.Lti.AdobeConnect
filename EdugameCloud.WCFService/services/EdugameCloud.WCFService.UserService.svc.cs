@@ -414,11 +414,23 @@ namespace EdugameCloud.WCFService
             if (this.IsValid(new ForgetPasswordViewModel { Email = email }, out validationResult))
             {
                 User user = this.UserModel.GetOneByEmail(email).Value;
-                string newPassword = AuthenticationModel.CreateRandomPassword();
-                user.SetPassword(newPassword);
+                
+                UserActivationModel model = this.UserActivationModel;
+                UserActivation userActivation;
+                if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                {
+                    userActivation = new UserActivation
+                    {
+                        User = user,
+                        ActivationCode = Guid.NewGuid().ToString(),
+                        DateExpires = DateTime.Now.AddDays(7)
+                    };
+                    model.RegisterSave(userActivation);
+                }
+                
                 user.Status = UserStatus.Active;
                 this.UserModel.RegisterSave(user);
-                this.SendPasswordEmail(user.FirstName, user.Email, newPassword);
+                this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
                 return result;
             }
 

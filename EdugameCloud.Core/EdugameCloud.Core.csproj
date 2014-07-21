@@ -148,6 +148,7 @@
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
+    <Compile Include="Business\Models\MoodleUserModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
@@ -209,6 +210,8 @@
     <Compile Include="Contracts\IEmailService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
+    <Compile Include="Contracts\IMoodle.cs" />
+    <Compile Include="Contracts\IMoodleService.cs" />
     <Compile Include="Contracts\ISocialService.cs" />
     <Compile Include="Contracts\ITestQuestionResultService.cs" />
     <Compile Include="Contracts\ITestResultService.cs" />
@@ -223,6 +226,8 @@
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleQuizInfoDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleUserDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
@@ -282,6 +287,11 @@
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />
     <Compile Include="Domain\Entities\CompanyTheme.cs" />
     <Compile Include="Domain\Entities\EmailHistory.cs" />
+    <Compile Include="Domain\Entities\MoodleQuestion.cs" />
+    <Compile Include="Domain\Entities\MoodleQuestionOption.cs" />
+    <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
+    <Compile Include="Domain\Entities\MoodleQuiz.cs" />
+    <Compile Include="Domain\Entities\MoodleUser.cs" />
     <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
@@ -316,6 +326,9 @@
     <Compile Include="Domain\Formats\WebEx\WebExPool.cs" />
     <Compile Include="Domain\Formats\WebEx\WebExQuestion.cs" />
     <Compile Include="Domain\Formats\WebEx\WebExQuestionType.cs" />
+    <Compile Include="EntityParsing\MoodleQuizInfoParser.cs" />
+    <Compile Include="EntityParsing\MoodleQuizParser.cs" />
+    <Compile Include="Extensions\MoodleParserExtension.cs" />
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="RTMP\SocialConnectionHandler.cs" />
     <Compile Include="RTMP\ClientConnectionHandler.cs" />
@@ -461,6 +474,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
