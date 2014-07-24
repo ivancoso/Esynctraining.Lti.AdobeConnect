@@ -23,6 +23,8 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -155,75 +157,71 @@ namespace EdugameCloud.WCFService
 
         #region Public Methods and Operators
 
-        private string GetToken(string domain, string username, string password)
+        private string GetToken(ServiceResponse serviceResponse, string domain, string username, string password)
         {
-            string uri = domain + Settings.MoodleTokenUrl;
             var pairs = new NameValueCollection()
             {
                 { "username", username },
                 { "password", password },
                 { "service", "adobe_connect" }
             };
+            
             byte[] response = null;
             using (WebClient client = new WebClient())
             {
-                response = client.UploadValues(uri, pairs);
+                response = client.UploadValues(this.GetTokenUrl(domain), pairs);
             }
             string resp = System.Text.Encoding.UTF8.GetString(response);
 
-            var token = (new JavaScriptSerializer()).Deserialize<MoodleUserDTO>(resp).token;
+            var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
 
-            return token;
+            if (token.error != null)
+            {
+                serviceResponse.SetError(new Error(
+                        Errors.CODE_ERRORTYPE_GENERIC_ERROR,
+                        "TokenNotFound",
+                        token.error));
+
+            }
+
+            return token.token;
         }
 
         /// <summary>
         /// The get quizes.
         /// </summary>
-        /// <param name="token">
-        /// The token.
-        /// </param>
-        /// <param name="username">
-        /// The token.
-        /// </param>
-        /// <param name="password">
-        /// The token.
+        /// <param name="userInfo">
+        /// The userInfo.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         public ServiceResponse<MoodleQuizInfoDTO> GetQuizesForUser(MoodleUserInfoDTO userInfo)
         {
-            while (userInfo.domain.Last() == '/')
+            var serviceResponse = new ServiceResponse<MoodleQuizInfoDTO>();
+
+            var token = this.GetToken(serviceResponse, userInfo.domain, userInfo.name, userInfo.password);
+
+            if (token == null)
             {
-                userInfo.domain = userInfo.domain.Remove(userInfo.domain.Length - 1);
-            }
-            if (((string)this.Settings.MoodleChangeUrl).ToLower().Equals("true"))
-            {
-                userInfo.domain = userInfo.domain.Replace("64.27.12.61", "WIN-J0J791DL0DG");
+                return serviceResponse;
             }
 
-            var token = this.GetToken(userInfo.domain, userInfo.name, userInfo.password);
-
-            var user = MoodleUserModel.GetAll().FirstOrDefault(x => x.UserId == userInfo.userId && x.UserName.Equals(userInfo.name)) ?? new MoodleUser()
-                                                                                                    {
-                                                                                                        Domain = userInfo.domain,
-                                                                                                        Password = userInfo.password,
-                                                                                                        UserName = userInfo.name,
-                                                                                                        UserId = userInfo.userId
-                                                                                                    };
+            var user = MoodleUserModel.GetOneByUserIdAndUserName(userInfo.userId, userInfo.name) ?? this.ConvertDTO(userInfo);
+            user.DateModified = DateTime.Now;
             user.Token = token;
             MoodleUserModel.RegisterSave(user);
 
-            string uri = user.Domain + Settings.MoodleUrl;
             var pairs = new NameValueCollection()
             {
                 { "wsfunction", "mod_adobeconnect_get_total_quiz_list" },
                 { "wstoken", token }
             };
+            
             byte[] response = null;
             using (WebClient client = new WebClient())
             {
-                response = client.UploadValues(uri, pairs);
+                response = client.UploadValues(this.GetServicesUrl(user.Domain), pairs);
             }
             string resp = System.Text.Encoding.UTF8.GetString(response);
 
@@ -231,23 +229,43 @@ namespace EdugameCloud.WCFService
             xmlDoc.LoadXml(resp);
 
             var quizes = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
+            serviceResponse.objects = quizes;
 
-            return new ServiceResponse<MoodleQuizInfoDTO>()
-                   {
-                       objects = quizes
-                   };
+            return serviceResponse;
         }
 
-        public bool ConvertQuizes(MoodleQuizConvertDTO quiz)
+        /// <summary>
+        /// The convert quizes.
+        /// </summary>
+        /// <param name="quizesInfo">
+        /// The quiz.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<int> ConvertQuizes(MoodleQuizConvertDTO quizesInfo)
         {
-            if (quiz.quizIds == null) return false;
+            var serviceResponse = new ServiceResponse<int>();
 
-            var user = UserModel.GetOneById(quiz.userId).Value;
-            var moodleUser = MoodleUserModel.GetOneByUserId(quiz.userId);
+            if (quizesInfo.quizIds == null)
+            {
+                return serviceResponse;
+            }
 
-            string uri = moodleUser.Domain + Settings.MoodleUrl;
+            var user = UserModel.GetOneById(quizesInfo.userId).Value;
 
-            foreach (var id in quiz.quizIds)
+            var moodleUser = MoodleUserModel.GetOneByUserId(quizesInfo.userId);
+
+            if (moodleUser == null)
+            {
+                serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR,
+                                            "TokenNotFound",
+                                            "No" 
+                                         ));
+                return serviceResponse;
+            }
+
+            foreach (var id in quizesInfo.quizIds)
             {
                 var pairs = new NameValueCollection()
                 {
@@ -259,7 +277,7 @@ namespace EdugameCloud.WCFService
                 byte[] response = null;
                 using (WebClient client = new WebClient())
                 {
-                    response = client.UploadValues(uri, pairs);
+                    response = client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
                 }
                 string resp = System.Text.Encoding.UTF8.GetString(response);
 
@@ -272,7 +290,7 @@ namespace EdugameCloud.WCFService
             }
            
 
-            return true;
+            return serviceResponse;
         }
 
         private void ConvertAndSave(MoodleQuiz quiz, User user)
@@ -414,40 +432,49 @@ namespace EdugameCloud.WCFService
             
         }
 
-        /// <summary>
-        /// The get quizes.
-        /// </summary>
-        /// <param name="token">
-        /// The token.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="User"/>.
-        /// </returns>
-        private MoodleUser ConvertDto(MoodleUserDTO user, MoodleUser instance)
+        private MoodleUser ConvertDTO(MoodleUserInfoDTO dto)
         {
-            instance = instance ?? new MoodleUser();
-            instance.Password = user.password;
-            instance.UserName = user.userName;
-            return instance;
+            var user = new MoodleUser()
+                       {
+                           Domain = dto.domain,
+                           Password = dto.password,
+                           UserName = dto.name,
+                           UserId = dto.userId
+                       };
+
+            return user;
         }
 
+        private string FixDomain(string domain)
+        {
+            if (domain.Last() != '/')
+            {
+                domain = domain + '/';
+            }
+
+            if (((string)this.Settings.MoodleChangeUrl).ToLower().Equals("true"))
+            {
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG");
+            }
+
+            return domain;
+        }
+
+        private string GetServicesUrl(string domain)
+        {
+            var serviceUrl = (string)this.Settings.MoodleServiceUrl;
+            return this.FixDomain(domain) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+        }
+
+        private string GetTokenUrl(string domain)
+        {
+            var tokenUrl = (string)this.Settings.MoodleTokenUrl;
+            return this.FixDomain(domain) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);            
+        }
 
         #endregion
     }

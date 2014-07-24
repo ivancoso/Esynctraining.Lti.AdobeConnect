@@ -1,5 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
+    using System;
+
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
@@ -20,14 +22,19 @@
         public virtual string Password { get; set; }
 
         /// <summary>
-        /// Gets or sets the first name.
+        /// Gets or sets the token.
         /// </summary>
         public virtual string Token { get; set; }
 
         /// <summary>
-        /// Gets or sets the first name.
+        /// Gets or sets the domain.
         /// </summary>
         public virtual string Domain { get; set; }
+
+        /// <summary>
+        /// Gets or sets the moodle user id.
+        /// </summary>
+        public virtual DateTime DateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the moodle user id.

@@ -98,7 +98,7 @@
                                { Lambda.Property<GeoDTO>(x => x.state), this.state }, 
                                { Lambda.Property<GeoDTO>(x => x.city), this.city }, 
                                { Lambda.Property<GeoDTO>(x => x.country), this.country }, 
-                               { Lambda.Property<GeoDTO>(x => x.street), this.street }, 
+                               { Lambda.Property<GeoDTO>(x => x.street), this.street } 
                            };
             }
 

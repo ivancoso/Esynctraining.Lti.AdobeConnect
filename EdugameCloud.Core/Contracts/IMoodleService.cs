@@ -56,7 +56,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        bool ConvertQuizes(MoodleQuizConvertDTO quiz);
+        ServiceResponse<int> ConvertQuizes(MoodleQuizConvertDTO quiz);
 
         #endregion
     }

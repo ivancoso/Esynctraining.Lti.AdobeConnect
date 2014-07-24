@@ -19,6 +19,7 @@
             this.Map(x => x.Domain).Length(100).Not.Nullable();
             this.Map(x => x.UserId).Not.Nullable();
             this.Map(x => x.Token).Length(50).Not.Nullable();
+            this.Map(x => x.DateModified).Not.Nullable();
         }
 
         #endregion

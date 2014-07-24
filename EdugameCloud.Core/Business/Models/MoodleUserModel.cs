@@ -36,13 +36,17 @@ namespace EdugameCloud.Core.Business.Models
         public MoodleUser GetOneByUserIdAndUserName(int userId, string userName)
         {
             return
-                this.GetAll().FirstOrDefault(x => x.UserId == userId && x.UserName != null && x.UserName.Equals(userName));
+                this.Repository.FindAll<MoodleUser>(
+                new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
+                    .Where(x => x.UserId == userId && x.UserName != null && x.UserName == userName)).FirstOrDefault();
         }
 
         public MoodleUser GetOneByUserId(int userId)
         {
             return
-                this.GetAll().FirstOrDefault(x => x.UserId == userId);
+                this.Repository.FindAll<MoodleUser>(
+                new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
+                    .Where(x => x.UserId == userId).OrderBy(x => x.DateModified).Desc).FirstOrDefault();
         }
 
         #endregion
