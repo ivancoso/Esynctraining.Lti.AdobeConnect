@@ -22,22 +22,17 @@
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
-        public virtual string FirstName { get; set; }
+        public virtual string Token { get; set; }
 
         /// <summary>
-        /// Gets or sets the last name.
+        /// Gets or sets the first name.
         /// </summary>
-        public virtual string LastName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the company id.
-        /// </summary>
-        public virtual int CompanyId { get; set; }
+        public virtual string Domain { get; set; }
 
         /// <summary>
         /// Gets or sets the moodle user id.
         /// </summary>
-        public virtual int MoodleUserId { get; set; }
+        public virtual int UserId { get; set; }
 
         #endregion
     }

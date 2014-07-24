@@ -40,6 +40,7 @@
             this.startTime = result.StartTime;
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
+            this.lmsId = result.LmsId;
         }
 
         #endregion
@@ -111,6 +112,12 @@
         /// </summary>
         [DataMember]
         public bool isArchive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the quiz result id.
+        /// </summary>
+        [DataMember]
+        public int lmsId { get; set; }
 
         #endregion
     }

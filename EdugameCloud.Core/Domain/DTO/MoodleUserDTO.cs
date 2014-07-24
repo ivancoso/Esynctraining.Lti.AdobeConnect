@@ -4,6 +4,8 @@
 
     using EdugameCloud.Core.Domain.Entities;
 
+    using Esynctraining.Core.Extensions;
+
     using NHibernate.Hql.Ast.ANTLR;
 
     [DataContract]
@@ -28,13 +30,11 @@
         {
             if (user != null)
             {
-                this.id = user.Id;
+                this.userId = user.UserId;
                 this.userName = user.UserName;
-                this.firstName = user.FirstName;
-                this.lastName = user.LastName;
                 this.password = user.Password;
-                this.companyId = user.CompanyId;
-                this.moodleUserId = user.MoodleUserId;
+                this.token = user.Token;
+                this.domain = user.Domain;
             }
         }
 
@@ -43,10 +43,10 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets id
+        /// Gets or sets password
         /// </summary>
         [DataMember]
-        public virtual int id { get; set; }
+        public virtual string password { get; set; }
 
         /// <summary>
         /// Gets or sets user name
@@ -55,34 +55,23 @@
         public virtual string userName { get; set; }
 
         /// <summary>
-        /// Gets or sets first name
+        /// Gets or sets token
         /// </summary>
         [DataMember]
-        public virtual string firstName { get; set; }
-
-        /// <summary>
-        /// Gets or sets last name
-        /// </summary>
-        [DataMember]
-        public virtual string lastName { get; set; }
-
-        /// <summary>
-        /// Gets or sets password
-        /// </summary>
-        [DataMember]
-        public virtual string password { get; set; }
+        public virtual string token { get; set; }
 
         /// <summary>
         /// Gets or sets the company id.
         /// </summary>
         [DataMember]
-        public virtual int companyId { get; set; }
+        public virtual int userId { get; set; }
 
         /// <summary>
         /// Gets or sets the company id.
         /// </summary>
         [DataMember]
-        public virtual int moodleUserId { get; set; }
+        public virtual string domain { get; set; }
+
 
         #endregion
     }

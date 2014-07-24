@@ -22,6 +22,7 @@
             this.Map(x => x.IncorrectMessage).Length(500).Nullable();
             this.Map(x => x.IconSource).Length(500).Nullable();
             this.Map(x => x.IsActive).Nullable();
+            this.Map(x => x.MoodleQuestionType).Length(50).Nullable();
         }
 
         #endregion

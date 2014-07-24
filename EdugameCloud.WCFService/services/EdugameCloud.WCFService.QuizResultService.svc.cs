@@ -237,6 +237,7 @@ namespace EdugameCloud.WCFService
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
             instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
+            instance.LmsId = resultDTO.lmsId;
             return instance;
         }
 

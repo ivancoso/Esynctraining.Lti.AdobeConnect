@@ -71,6 +71,16 @@
         /// </summary>
         public virtual string Score { get; set; }
 
+        /// <summary>
+        /// Gets or sets the moodle answer id.
+        /// </summary>
+        public virtual int MoodleAnswerId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the moodle wrong answer id.
+        /// </summary>
+        public virtual int MoodleWrongAnswerId { get; set; }
+
         #endregion
     }
 }

@@ -9,6 +9,7 @@ namespace EdugameCloud.Core.Business.Models
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
 
     /// <summary>
     /// The moodle user model
@@ -31,6 +32,18 @@ namespace EdugameCloud.Core.Business.Models
 
         #endregion
         #region Public Methods and Operators
+
+        public MoodleUser GetOneByUserIdAndUserName(int userId, string userName)
+        {
+            return
+                this.GetAll().FirstOrDefault(x => x.UserId == userId && x.UserName != null && x.UserName.Equals(userName));
+        }
+
+        public MoodleUser GetOneByUserId(int userId)
+        {
+            return
+                this.GetAll().FirstOrDefault(x => x.UserId == userId);
+        }
 
         #endregion
 

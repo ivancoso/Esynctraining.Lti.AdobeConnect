@@ -44,7 +44,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<MoodleQuizInfoDTO> GetQuizesForUser(string token);
+        ServiceResponse<MoodleQuizInfoDTO> GetQuizesForUser(MoodleUserInfoDTO userInfo);
 
         /// <summary>
         /// The get quizes.
@@ -56,7 +56,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        bool ConvertQuizes(List<int> ids);
+        bool ConvertQuizes(MoodleQuizConvertDTO quiz);
 
         #endregion
     }

@@ -15,11 +15,10 @@
         public MoodleUserMap()
         {
             this.Map(x => x.UserName).Length(100).Not.Nullable();
-            this.Map(x => x.FirstName).Length(100).Not.Nullable();
-            this.Map(x => x.LastName).Length(100).Not.Nullable();
-            this.Map(x => x.Password).Length(32).Not.Nullable();
-            this.Map(x => x.MoodleUserId).Not.Nullable();
-            this.Map(x => x.CompanyId).Nullable();
+            this.Map(x => x.Password).Length(100).Not.Nullable();
+            this.Map(x => x.Domain).Length(100).Not.Nullable();
+            this.Map(x => x.UserId).Not.Nullable();
+            this.Map(x => x.Token).Length(50).Not.Nullable();
         }
 
         #endregion

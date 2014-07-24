@@ -226,8 +226,11 @@
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleQuizConvertDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizInfoDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="Domain\DTO\MoodleUserDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleUserInfoDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />

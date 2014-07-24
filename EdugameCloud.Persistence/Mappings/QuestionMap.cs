@@ -29,6 +29,7 @@
             this.Map(x => x.ScoreValue).Not.Nullable().Default(0.ToString(CultureInfo.InvariantCulture));
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
+            this.Map(x => x.MoodleQuestionId).Nullable();
 
             this.HasMany(x => x.QuizQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.SurveyQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();

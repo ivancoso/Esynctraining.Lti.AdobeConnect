@@ -49,6 +49,12 @@
         /// </summary>
         public virtual string Type { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the moodle question type type.
+        /// </summary>
+        public virtual string MoodleQuestionType { get; set; }
+
+
         #endregion
     }
 }

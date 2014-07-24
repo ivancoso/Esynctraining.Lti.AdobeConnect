@@ -2,10 +2,15 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
+    using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
+    using System.IO;
     using System.Linq;
+    using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Web.Script.Serialization;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
@@ -165,6 +170,9 @@ namespace EdugameCloud.WCFService
             }
 
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
+
+            this.SendResultsToMoodle(results);
+
             return result;
         }
 
@@ -251,6 +259,78 @@ namespace EdugameCloud.WCFService
             instance.QuizResult = this.QuizResultModel.GetOneById(resultDTO.quizResultId).Value;
             instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
             return instance;
+        }
+
+        private static int ConvertToUnixTimestamp(DateTime date)
+        {
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            TimeSpan diff = date.ToUniversalTime() - origin;
+            return (int)Math.Floor(diff.TotalSeconds);
+        }
+
+        private string SendResultsToMoodle(IEnumerable<QuizQuestionResultDTO> results)
+        {
+            var toSend = new List<MoodleQuizResultDTO>();
+            foreach (var r in results)
+            {
+                var m = new MoodleQuizResultDTO();
+                var quizResult = QuizResultModel.GetOneById(r.quizResultId).Value;
+                m.QuizId = quizResult.Quiz.MoodleId;
+                var question = QuestionModel.GetOneById(r.questionId).Value;
+                m.QuestionId = question.MoodleQuestionId;
+                var distractor = question.Distractors.First();
+                m.Answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault()) || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
+                m.UserId = quizResult.LmsId;
+                m.StartTime = ConvertToUnixTimestamp(quizResult.StartTime);
+                if (m.UserId > 0 & m.QuizId > 0)
+                    toSend.Add(m);
+            }
+
+            if (toSend.Count == 0) return string.Empty;
+
+            var ret =
+                toSend.GroupBy(s => s.QuizId)
+                    .Select(
+                        s =>
+                            new
+                            {
+                                QuizId = s.Key,
+                                UsersResults =
+                                    s.GroupBy(u => new { u.UserId, u.StartTime })
+                                        .Select(
+                                            u =>
+                                                new
+                                                {
+                                                    u.Key.UserId,
+                                                    u.Key.StartTime,
+                                                    Answers =
+                                                        u.Select(
+                                                            a =>
+                                                                new
+                                                                {
+                                                                    a.QuestionId,
+                                                                    a.Answer
+                                                                })
+                                                })
+                            });
+
+            var json = new JavaScriptSerializer().Serialize(ret);
+
+            var pairs = new NameValueCollection()
+                {
+                    { "wsfunction", "mod_adobeconnect_save_external_quiz_report" },
+                    { "wstoken", Settings.MoodleDefaultToken },
+                    { "reportObject", json }
+                };
+
+            byte[] response = null;
+            using (WebClient client = new WebClient())
+            {
+                response = client.UploadValues(Settings.MoodleUrl, pairs);
+            }
+            string resp = System.Text.Encoding.UTF8.GetString(response);
+
+            return resp;
         }
 
         #endregion

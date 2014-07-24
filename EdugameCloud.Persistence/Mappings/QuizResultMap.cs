@@ -22,6 +22,7 @@
             this.Map(x => x.ACSessionId).Not.Nullable();
             this.Map(x => x.IsArchive).Nullable();
             this.Map(x => x.Email).Length(500).Nullable();
+            this.Map(x => x.LmsId).Nullable();
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             this.References(x => x.Quiz).Not.Nullable();
         }
