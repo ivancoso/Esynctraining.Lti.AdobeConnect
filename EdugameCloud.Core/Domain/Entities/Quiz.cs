@@ -64,7 +64,7 @@
         /// <summary>
         ///     Gets or sets the moodle id.
         /// </summary>
-        public virtual int MoodleId { get; set; }
+        public virtual int? MoodleId { get; set; }
 
         #endregion
     }

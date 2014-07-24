@@ -21,6 +21,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -275,7 +276,7 @@ namespace EdugameCloud.WCFService
             {
                 var m = new MoodleQuizResultDTO();
                 var quizResult = QuizResultModel.GetOneById(r.quizResultId).Value;
-                m.QuizId = quizResult.Quiz.MoodleId;
+                m.QuizId = quizResult.Quiz.MoodleId ?? 0;
                 var question = QuestionModel.GetOneById(r.questionId).Value;
                 m.QuestionId = question.MoodleQuestionId;
                 var distractor = question.Distractors.First();

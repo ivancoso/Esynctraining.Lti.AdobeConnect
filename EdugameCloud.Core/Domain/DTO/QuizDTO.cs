@@ -7,13 +7,16 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The quiz dto.
+    ///     The quiz DTO.
     /// </summary>
     [DataContract]
     public class QuizDTO
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizDTO"/> class.
+        /// </summary>
         public QuizDTO()
         {
         }
@@ -32,51 +35,54 @@
             this.quizFormatId = result.QuizFormat.Return(x => x.Id, (int?)null);
             this.description = result.Description;
             this.quizName = result.QuizName;
-            this.moodleId = result.MoodleId;
+            this.moodleId = result.MoodleId ?? 0;
         }
 
         #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
         [DataMember]
-        public virtual string description { get; set; }
+        public string description { get; set; }
 
         /// <summary>
         ///     Gets or sets the quiz format.
         /// </summary>
         [DataMember]
-        public virtual int? quizFormatId { get; set; }
+        public int? quizFormatId { get; set; }
 
         /// <summary>
         ///     Gets or sets the quiz name.
         /// </summary>
         [DataMember]
-        public virtual string quizName { get; set; }
+        public string quizName { get; set; }
 
         /// <summary>
         ///     Gets or sets the score type.
         /// </summary>
         [DataMember]
-        public virtual int? scoreTypeId { get; set; }
+        public int? scoreTypeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.
         /// </summary>
         [DataMember]
-        public virtual int? subModuleItemId { get; set; }
+        public int? subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
         [DataMember]
-        public virtual int quizId { get; set; }
+        public int quizId { get; set; }
 
         /// <summary>
         /// Gets or sets the moodle id.
         /// </summary>
         [DataMember]
-        public virtual int moodleId { get; set; }
+        public int moodleId { get; set; }
 
         #endregion
     }

@@ -16,6 +16,8 @@ namespace EdugameCloud.Core.Business.Models
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
 
+    using NHibernate;
+
     /// <summary>
     ///     The SubModuleCategory model.
     /// </summary>
@@ -37,6 +39,28 @@ namespace EdugameCloud.Core.Business.Models
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The get one by name and user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{SubModuleCategory}"/>.
+        /// </returns>
+        public IFutureValue<SubModuleCategory> GetOneByNameAndUser(int userId, string name)
+        {
+            var query =
+                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver()
+                    .WhereRestrictionOn(x => x.CategoryName)
+                    .IsInsensitiveLike(name, MatchMode.Exact)
+                    .And(x => x.User.Id == userId);
+            return this.Repository.FindOne(query);
+        }
 
         /// <summary>
         /// The get all paged.

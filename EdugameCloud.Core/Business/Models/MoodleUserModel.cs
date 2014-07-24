@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace EdugameCloud.Core.Business.Models
+﻿namespace EdugameCloud.Core.Business.Models
 {
     using EdugameCloud.Core.Domain.Entities;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+
+    using NHibernate.Criterion;
 
     /// <summary>
     /// The moodle user model
@@ -33,20 +29,45 @@ namespace EdugameCloud.Core.Business.Models
         #endregion
         #region Public Methods and Operators
 
+        /// <summary>
+        /// The get one by user id and user name.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="userName">
+        /// The user name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MoodleUser"/>.
+        /// </returns>
         public MoodleUser GetOneByUserIdAndUserName(int userId, string userName)
         {
             return
-                this.Repository.FindAll<MoodleUser>(
+                this.Repository.FindOne(
                 new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
-                    .Where(x => x.UserId == userId && x.UserName != null && x.UserName == userName)).FirstOrDefault();
+                    .Where(x => x.UserId == userId)
+                    .AndRestrictionOn(x => x.UserName).IsNotNull
+                    .AndRestrictionOn(x => x.UserName).IsInsensitiveLike(userName, MatchMode.Exact)
+                    .Take(1)).Value;
         }
 
+        /// <summary>
+        /// The get one by user id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MoodleUser"/>.
+        /// </returns>
         public MoodleUser GetOneByUserId(int userId)
         {
             return
-                this.Repository.FindAll<MoodleUser>(
-                new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
-                    .Where(x => x.UserId == userId).OrderBy(x => x.DateModified).Desc).FirstOrDefault();
+                this.Repository.FindOne(new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
+                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.DateModified).Desc
+                .Take(1)).Value;
         }
 
         #endregion
