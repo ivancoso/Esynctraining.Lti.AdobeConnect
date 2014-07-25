@@ -68,6 +68,13 @@
                             continue;
                         }
 
+                        var singleChoice = optionsSingle.GetNodeValue("single");
+                        int singleChoiceInt;
+                        if (int.TryParse(singleChoice, out singleChoiceInt))
+                        {
+                            q.IsSingle = singleChoiceInt > 0;
+                        }
+
                         var answers = optionsSingle.SelectSingleNode("KEY[@name='answers']");
                         if (answers == null)
                         {

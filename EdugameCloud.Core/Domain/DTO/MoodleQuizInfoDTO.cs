@@ -6,8 +6,8 @@
     public class MoodleQuizInfoDTO
     {
         [DataMember]
-        public string Id { get; set; }
+        public string id { get; set; }
         [DataMember]
-        public string Name { get; set; }
+        public string name { get; set; }
     }
 }

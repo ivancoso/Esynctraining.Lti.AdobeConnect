@@ -172,7 +172,7 @@ namespace EdugameCloud.WCFService
 
             if (moodleUser == null)
             {
-                serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "TokenNotFound", "No"));
+                serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "TokenNotFound", "No user details were found"));
                 return serviceResponse;
             }
 
@@ -290,7 +290,7 @@ namespace EdugameCloud.WCFService
 
             this.ProcessQuizData(quiz, egcQuiz, submodule);
 
-            this.ProcessQuizQuestions(quiz, user, submodule, moodleId ?? 0);
+            this.ProcessQuizQuestions(quiz, user, submodule);
         }
 
         /// <summary>
@@ -532,20 +532,12 @@ namespace EdugameCloud.WCFService
             var isCorrect = false;
             foreach (var a in q.Answers)
             {
-                var isCoorectAnswer = a.Fraction != null && a.Fraction.StartsWith("1");
-                if (a.Answer != null && a.Answer.ToLower().Equals("true") && isCoorectAnswer)
+                var isCorrectAnswer = a.Fraction != null && a.Fraction.StartsWith("1");
+                if (a.Answer != null && a.Answer.ToLower().Equals("true") && isCorrectAnswer)
                 {
                     isCorrect = true;
                 }
 
-                if (isCoorectAnswer)
-                {
-                    distractor.MoodleAnswerId = int.Parse(a.Id ?? "0");
-                }
-                else
-                {
-                    distractor.MoodleWrongAnswerId = int.Parse(a.Id ?? "0");
-                }
             }
 
             distractor.IsCorrect = isCorrect;
@@ -607,7 +599,7 @@ namespace EdugameCloud.WCFService
         /// <param name="moodleId">
         /// The moodle id.
         /// </param>
-        private void ProcessQuizQuestions(MoodleQuiz quiz, User user, SubModuleItem submodule, int moodleId)
+        private void ProcessQuizQuestions(MoodleQuiz quiz, User user, SubModuleItem submodule)
         {
             var qtypes = this.QuestionTypeModel.GetAllActive().ToList();
 
@@ -629,7 +621,8 @@ namespace EdugameCloud.WCFService
                                        CreatedBy = user, 
                                        ModifiedBy = user, 
                                        IsActive = true, 
-                                       MoodleQuestionId = moodleId
+                                       MoodleQuestionId = int.Parse(quizQuestion.Id),
+                                       IsMoodleSingle = quizQuestion.IsSingle
                                    };
 
                 this.QuestionModel.RegisterSave(question);
@@ -661,6 +654,7 @@ namespace EdugameCloud.WCFService
             this.QuestionForSingleMultipleChoiceModel.RegisterSave(
                 new QuestionForSingleMultipleChoice { Question = question });
 
+            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
             foreach (var a in q.Answers)
             {
                 var distractor = new Distractor
@@ -673,7 +667,8 @@ namespace EdugameCloud.WCFService
                                          DistractorName = ClearName(a.Answer), 
                                          IsActive = true, 
                                          DistractorType = 1, 
-                                         IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0
+                                         IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0,
+                                         MoodleAnswer = (answerNumber++).ToString()
                                      };
 
                 distractorModel.RegisterSave(distractor);

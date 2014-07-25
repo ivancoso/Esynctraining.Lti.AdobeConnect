@@ -8,9 +8,9 @@
     {
         public string Id { get; set; }
         public string Name { get; set; }
-
         public string QuestionText { get; set; }
         public string QuestionType { get; set; }
+        public bool? IsSingle { get; set; }
 
         public List<MoodleQuestionOptionAnswer> Answers { get; set; }
     }

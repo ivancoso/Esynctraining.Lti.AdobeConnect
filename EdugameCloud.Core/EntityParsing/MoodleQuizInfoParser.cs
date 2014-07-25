@@ -33,8 +33,8 @@
             foreach (XmlNode i in infos)
             {
                 var info = new MoodleQuizInfoDTO();
-                info.Id = i.GetNodeValue("id");
-                info.Name = i.GetNodeValue("name");
+                info.id = i.GetNodeValue("id");
+                info.name = i.GetNodeValue("name");
                 ret.Add(info);
             }
 

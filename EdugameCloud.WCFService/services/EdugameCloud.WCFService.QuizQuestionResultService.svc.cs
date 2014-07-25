@@ -82,6 +82,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// Gets the question model.
+        /// </summary>
+        private MoodleUserModel MoodleUserModel
+        {
+            get
+            {
+                return IoC.Resolve<MoodleUserModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -272,66 +283,121 @@ namespace EdugameCloud.WCFService
         private string SendResultsToMoodle(IEnumerable<QuizQuestionResultDTO> results)
         {
             var toSend = new List<MoodleQuizResultDTO>();
+
             foreach (var r in results)
             {
                 var m = new MoodleQuizResultDTO();
                 var quizResult = QuizResultModel.GetOneById(r.quizResultId).Value;
-                m.QuizId = quizResult.Quiz.MoodleId ?? 0;
+                m.quizId = quizResult.Quiz.MoodleId ?? 0;
                 var question = QuestionModel.GetOneById(r.questionId).Value;
-                m.QuestionId = question.MoodleQuestionId;
-                var distractor = question.Distractors.First();
-                m.Answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault()) || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
-                m.UserId = quizResult.LmsId;
-                m.StartTime = ConvertToUnixTimestamp(quizResult.StartTime);
-                if (m.UserId > 0 & m.QuizId > 0)
+                m.questionId = question.MoodleQuestionId;
+                m.questionType = question.QuestionType.MoodleQuestionType;
+                m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
+                m.userId = quizResult.LmsId;
+                m.startTime = ConvertToUnixTimestamp(quizResult.StartTime);
+ 
+                if (r.answerDistractors != null && r.answerDistractors.Count > 0) // multichoice
+                {
+                    m.answers = question.Distractors.Where(q => r.answerDistractors.Contains(q.Id))
+                        .Select(q => q.MoodleAnswer)
+                        .ToList();
+                }
+                else // truefalse
+                {
+                    var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
+                    if (distractor != null)
+                    {
+                        var answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                                      || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
+                        m.answers = new List<string> { answer ? "true" : "false" };
+                    }
+                }
+                
+
+                if (m.userId > 0 & m.quizId > 0)
                     toSend.Add(m);
             }
 
             if (toSend.Count == 0) return string.Empty;
 
             var ret =
-                toSend.GroupBy(s => s.QuizId)
+                toSend.GroupBy(s => s.quizId)
                     .Select(
                         s =>
                             new
                             {
-                                QuizId = s.Key,
-                                UsersResults =
-                                    s.GroupBy(u => new { u.UserId, u.StartTime })
+                                quizId = s.Key,
+                                usersResults =
+                                    s.GroupBy(u => new { u.userId, u.startTime })
                                         .Select(
                                             u =>
                                                 new
                                                 {
-                                                    u.Key.UserId,
-                                                    u.Key.StartTime,
-                                                    Answers =
+                                                    u.Key.userId,
+                                                    u.Key.startTime,
+                                                    answers =
                                                         u.Select(
                                                             a =>
                                                                 new
                                                                 {
-                                                                    a.QuestionId,
-                                                                    a.Answer
+                                                                    a.questionId,
+                                                                    a.answers
                                                                 })
+                                                }),
+                                questionsInfo = 
+                                    s.GroupBy(u => new { u.questionId, u.questionType, u.isSingle })
+                                        .Select(
+                                            u => 
+                                                new
+                                                {
+                                                    u.Key.questionId, 
+                                                    u.Key.questionType, 
+                                                    u.Key.isSingle
                                                 })
                             });
 
             var json = new JavaScriptSerializer().Serialize(ret);
 
+            var moodleUser = MoodleUserModel.GetAll().OrderByDescending(u => u.DateModified).FirstOrDefault();
+            if (moodleUser == null) return "No Moodle user account set";
+
             var pairs = new NameValueCollection()
                 {
                     { "wsfunction", "mod_adobeconnect_save_external_quiz_report" },
-                    { "wstoken", Settings.MoodleDefaultToken },
+                    { "wstoken", moodleUser.Token },
                     { "reportObject", json }
                 };
 
+            
             byte[] response = null;
             using (WebClient client = new WebClient())
             {
-                response = client.UploadValues(Settings.MoodleUrl, pairs);
+                response = client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
             }
             string resp = System.Text.Encoding.UTF8.GetString(response);
 
             return resp;
+        }
+
+        private string FixDomain(string domain)
+        {
+            if (domain.Last() != '/')
+            {
+                domain = domain + '/';
+            }
+
+            if (((string)this.Settings.MoodleChangeUrl).ToLower().Equals("true"))
+            {
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG");
+            }
+
+            return domain;
+        }
+
+        private string GetServicesUrl(string domain)
+        {
+            var serviceUrl = (string)this.Settings.MoodleServiceUrl;
+            return this.FixDomain(domain) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
         }
 
         #endregion

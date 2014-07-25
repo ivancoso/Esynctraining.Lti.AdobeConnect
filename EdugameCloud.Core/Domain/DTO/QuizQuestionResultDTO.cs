@@ -1,10 +1,13 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Extensions;
+
+    using NHibernate.Mapping;
 
     /// <summary>
     ///     The quiz question result DTO.
@@ -76,6 +79,12 @@
         /// </summary>
         [DataMember]
         public int quizResultId { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the answer disctractors.
+        /// </summary>
+        [DataMember]
+        public List<int> answerDistractors { get; set; }
 
         #endregion
     }

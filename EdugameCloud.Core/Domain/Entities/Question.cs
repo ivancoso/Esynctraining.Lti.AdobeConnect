@@ -146,6 +146,11 @@
         /// Gets or sets the moodle question id.
         /// </summary>
         public virtual int MoodleQuestionId { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the value indicating whether is single.
+        /// </summary>
+        public virtual bool? IsMoodleSingle { get; set; }
 
         /// <summary>
         /// Gets or sets the quiz question results.

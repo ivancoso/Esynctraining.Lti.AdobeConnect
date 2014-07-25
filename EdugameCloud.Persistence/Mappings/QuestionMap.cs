@@ -30,6 +30,7 @@
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.MoodleQuestionId).Nullable();
+            this.Map(x => x.IsMoodleSingle).Nullable();
 
             this.HasMany(x => x.QuizQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.SurveyQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
