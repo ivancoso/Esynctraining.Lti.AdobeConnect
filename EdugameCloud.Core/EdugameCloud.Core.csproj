@@ -232,6 +232,7 @@
     <Compile Include="Domain\DTO\MoodleTokenDTO.cs" />
     <Compile Include="Domain\DTO\MoodleUserInfoDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
+    <Compile Include="Domain\DTO\QuizesAndSubModuleItemsDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
     <Compile Include="Domain\DTO\SessionDTO.cs" />

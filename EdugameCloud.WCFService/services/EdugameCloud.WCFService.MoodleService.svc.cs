@@ -2,6 +2,7 @@
 namespace EdugameCloud.WCFService
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Globalization;
     using System.Linq;
@@ -158,9 +159,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<int> ConvertQuizes(MoodleQuizConvertDTO quizesInfo)
+        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizes(MoodleQuizConvertDTO quizesInfo)
         {
-            var serviceResponse = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
             if (quizesInfo.quizIds == null)
             {
@@ -175,6 +176,8 @@ namespace EdugameCloud.WCFService
                 serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "TokenNotFound", "No user details were found"));
                 return serviceResponse;
             }
+
+            var subModuleItemsQuizes = new Dictionary<int, int>();
 
             foreach (var id in quizesInfo.quizIds)
             {
@@ -198,9 +201,24 @@ namespace EdugameCloud.WCFService
 
                 var q = MoodleQuizParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
 
-                this.ConvertAndSave(q, user);
+                if (q.Questions != null && q.Questions.Any())
+                {
+                    var res = this.ConvertAndSave(q, user);
+                    if (!subModuleItemsQuizes.ContainsKey(res.Item1))
+                    {
+                        subModuleItemsQuizes.Add(res.Item1, res.Item2);
+                    }
+                }
             }
 
+            var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
+            var quizes = this.QuizModel.GetQuizzesByUserId(user.Id).ToList();
+
+            serviceResponse.@object = new QuizesAndSubModuleItemsDTO
+                                          {
+                                              quizes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
+                                              subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
+                                          };
             return serviceResponse;
         }
 
@@ -279,8 +297,9 @@ namespace EdugameCloud.WCFService
         /// <param name="user">
         /// The user.
         /// </param>
-        private void ConvertAndSave(MoodleQuiz quiz, User user)
+        private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user)
         {
+            Tuple<int, int> result;
             var moodleId = string.IsNullOrEmpty(quiz.Id) ? (int?)null : int.Parse(quiz.Id);
             var egcQuiz = moodleId.HasValue
                                ? this.QuizModel.GetOneByMoodleId(moodleId.Value).Value ?? new Quiz()
@@ -288,9 +307,11 @@ namespace EdugameCloud.WCFService
 
             var submodule = this.ProcessSubModule(user, egcQuiz);
 
-            this.ProcessQuizData(quiz, egcQuiz, submodule);
+            result = this.ProcessQuizData(quiz, egcQuiz, submodule);
 
             this.ProcessQuizQuestions(quiz, user, submodule);
+
+            return result;
         }
 
         /// <summary>
@@ -553,23 +574,24 @@ namespace EdugameCloud.WCFService
         /// <param name="egcQuiz">
         /// The EGC quiz.
         /// </param>
-        /// <param name="submodule">
+        /// <param name="submoduleItem">
         /// The sub module.
         /// </param>
-        private void ProcessQuizData(MoodleQuiz quiz, Quiz egcQuiz, SubModuleItem submodule)
+        private Tuple<int, int> ProcessQuizData(MoodleQuiz quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
+            
             egcQuiz.MoodleId = int.Parse(quiz.Id ?? "0");
             egcQuiz.QuizName = quiz.Name;
-            egcQuiz.SubModuleItem = submodule;
+            egcQuiz.SubModuleItem = submoduleItem;
             egcQuiz.Description = Regex.Replace(quiz.Intro, "<[^>]*(>|$)", string.Empty);
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
 
-            this.QuizModel.RegisterSave(egcQuiz);
-
+            this.QuizModel.RegisterSave(egcQuiz, true);
+            var result = new Tuple<int, int>(submoduleItem.Id, egcQuiz.Id);
             if (!egcQuiz.IsTransient())
             {
-                var questionData = this.QuestionModel.GetAllBySubModuleItemId(submodule.Id);
+                var questionData = this.QuestionModel.GetAllBySubModuleItemId(submoduleItem.Id);
                 foreach (var question in questionData)
                 {
                     question.IsActive = false;
@@ -582,6 +604,8 @@ namespace EdugameCloud.WCFService
                     }
                 }
             }
+
+            return result;
         }
 
         /// <summary>

@@ -56,7 +56,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<int> ConvertQuizes(MoodleQuizConvertDTO quiz);
+        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizes(MoodleQuizConvertDTO quiz);
 
         #endregion
     }
