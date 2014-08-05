@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Configuration;
+
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
 
@@ -10,6 +12,7 @@
     using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Extensions;
 
+    using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.SqlCommand;
     using NHibernate.Transform;
@@ -51,6 +54,11 @@
         /// </summary>
         private readonly SNProfileModel socialProfileModel;
 
+        /// <summary>
+        ///     The user repository.
+        /// </summary>
+        private readonly IRepository<User, int> userRepository;
+
         #endregion
 
         #region Constructors and Destructors
@@ -79,6 +87,10 @@
         /// <param name="testModel">
         /// The test model.
         /// </param>
+        /// </param>
+        /// <param name="userRepository">
+        /// The user Repository.
+        /// </param>
         public SubModuleItemModel(
             IRepository<SubModuleItem, int> repository,
             IRepository<SubModuleItemTheme, int> themeRepository, 
@@ -86,7 +98,8 @@
             QuizModel quizModel,
             SurveyModel surveyModel,
             SNProfileModel socialProfileModel,
-            TestModel testModel)
+            TestModel testModel,
+            IRepository<User, int> userRepository)
             : base(repository)
         {
             this.themeRepository = themeRepository;
@@ -95,6 +108,7 @@
             this.quizModel = quizModel;
             this.surveyModel = surveyModel;
             this.socialProfileModel = socialProfileModel;
+            this.userRepository = userRepository;
         }
 
         #endregion
@@ -148,17 +162,26 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetQuizSMItemsByUserId(int userId)
         {
+            QueryOver<User, User> query =
+                new DefaultQueryOver<User, int>().GetQueryOver()
+                    .Where(x => x.Id == userId)
+                    .Select(res => res.Company.Id);
+            IFutureValue<int> companyId = this.userRepository.FindOne<int>(query);
+
             SubModuleItemDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             Quiz quiz = null;
             SubModuleItemTheme theme = null;
+            User u = null;
             var queryOver =
                 new DefaultQueryOver<SubModuleItem, int>().GetQueryOver(() => smi)
                     .JoinQueryOver(x => x.SubModuleCategory, () => smc)
                     .JoinQueryOver(() => smi.Quizes, () => quiz)
                     .JoinQueryOver(() => smi.Themes, () => theme, JoinType.LeftOuterJoin)
-                    .Where(() => smi.CreatedBy != null && smi.CreatedBy.Id == userId && smc.User != null && smc.User.Id == userId)
+                    .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+                    .Where(() => smi.CreatedBy != null && smc.User != null && ((smi.CreatedBy.Id == userId && smc.User.Id == userId)
+                        || (u.Company.Id == companyId.Value && quiz.LmsQuizId != null)))
                     .SelectList(res =>
                         res.Select(() => smi.CreatedBy.Id)
                             .WithAlias(() => dto.createdBy)

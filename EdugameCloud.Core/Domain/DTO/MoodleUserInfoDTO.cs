@@ -15,5 +15,9 @@
         public virtual string domain { get; set; }
         [DataMember]
         public virtual string provider { get; set; }
+        [DataMember]
+        public virtual string token { get; set; }
+        [DataMember]
+        public virtual string courseId { get; set; }
     }
 }

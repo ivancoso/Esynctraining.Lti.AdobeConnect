@@ -85,6 +85,24 @@
         ServiceResponse<QuizDataDTO> GetQuizDataByQuizId(int quizId);
 
         /// <summary>
+        /// The get lms quizzes.
+        /// </summary>
+        /// <param name="userId">
+        /// The id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id
+        /// </param>
+        /// <param name="provider">
+        /// The provider
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int courseId, string provider);
+
+        /// <summary>
         /// The get quiz sm items by user subModuleId.
         /// </summary>
         /// <param name="userId">
@@ -96,17 +114,21 @@
         [OperationContract]
         ServiceResponse<SubModuleItemDTO> GetQuizSMItemsByUserId(int userId);
 
+
         /// <summary>
         /// The get quizes by user subModuleId.
         /// </summary>
         /// <param name="userId">
         /// The user subModuleId.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId);
+        ServiceResponse<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId, bool? showLms);
 
         /// <summary>
         /// The get shared quizes by user subModuleId.

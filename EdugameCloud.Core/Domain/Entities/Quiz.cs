@@ -62,9 +62,14 @@
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         /// <summary>
-        ///     Gets or sets the moodle id.
+        ///     Gets or sets the lms id.
         /// </summary>
-        public virtual int? MoodleId { get; set; }
+        public virtual int? LmsQuizId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lms provider
+        /// </summary>
+        public virtual LmsProvider LmsProvider { get; set; }
 
         #endregion
     }

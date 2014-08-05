@@ -19,6 +19,7 @@
             this.Map(x => x.CategoryName).Length(255).Nullable();
             this.Map(x => x.IsActive).Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
+            this.Map(x => x.LmsCourseId).Nullable();
 
             this.HasMany(x => x.SubModuleItems).ExtraLazyLoad().Cascade.Delete().Inverse();
 

@@ -148,6 +148,7 @@
     <Compile Include="Business\Models\BuildVersionTypeModel.cs" />
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
+    <Compile Include="Business\Models\LmsProviderModel.cs" />
     <Compile Include="Business\Models\MoodleUserModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
@@ -226,6 +227,7 @@
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\MoodleCourseInfoDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizConvertDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizResultDTO.cs" />
@@ -291,6 +293,8 @@
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />
     <Compile Include="Domain\Entities\CompanyTheme.cs" />
     <Compile Include="Domain\Entities\EmailHistory.cs" />
+    <Compile Include="Domain\Entities\LmsProvider.cs" />
+    <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
     <Compile Include="Domain\Entities\MoodleQuestion.cs" />
     <Compile Include="Domain\Entities\MoodleQuestionOption.cs" />
     <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
@@ -332,6 +336,7 @@
     <Compile Include="Domain\Formats\WebEx\WebExQuestionType.cs" />
     <Compile Include="EntityParsing\MoodleQuizInfoParser.cs" />
     <Compile Include="EntityParsing\MoodleQuizParser.cs" />
+    <Compile Include="Extensions\DateConverter.cs" />
     <Compile Include="Extensions\MoodleParserExtension.cs" />
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="RTMP\SocialConnectionHandler.cs" />

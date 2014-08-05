@@ -72,9 +72,14 @@
         public virtual string Score { get; set; }
 
         /// <summary>
-        /// Gets or sets the moodle answer.
+        /// Gets or sets the lms answer.
         /// </summary>
-        public virtual string MoodleAnswer { get; set; }
+        public virtual string LmsAnswer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lms provider
+        /// </summary>
+        public virtual LmsProvider LmsProvider { get; set; }
 
         #endregion
     }

@@ -14,8 +14,8 @@
         /// </summary>
         public MoodleUserMap()
         {
-            this.Map(x => x.UserName).Length(100).Not.Nullable();
-            this.Map(x => x.Password).Length(100).Not.Nullable();
+            this.Map(x => x.UserName).Length(100).Nullable();
+            this.Map(x => x.Password).Length(100).Nullable();
             this.Map(x => x.Domain).Length(100).Not.Nullable();
             this.Map(x => x.UserId).Not.Nullable();
             this.Map(x => x.Token).Length(50).Not.Nullable();

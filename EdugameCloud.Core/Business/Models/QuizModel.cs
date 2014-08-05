@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography.X509Certificates;
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -194,18 +195,39 @@
         /// <summary>
         /// The get one by moodle id.
         /// </summary>
-        /// <param name="moodleId">
-        /// The moodle id.
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsQuizId">
+        /// The lms quiz id.
+        /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms provider id.
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{Quiz}"/>.
         /// </returns>
-        public IFutureValue<Quiz> GetOneByMoodleId(int moodleId)
+        public IFutureValue<Quiz> GetOneByLmsQuizId(int userId, int lmsQuizId, int lmsProviderId)
         {
+            QueryOver<User, User> companyQuery =
+               new DefaultQueryOver<User, int>().GetQueryOver()
+                   .Where(x => x.Id == userId)
+                   .Select(res => res.Company.Id);
+            IFutureValue<int> id = this.userRepository.FindOne<int>(companyQuery);
+
+            Quiz q = null;
+            SubModuleItem smi = null;
+            User u2 = null;
+
             var query =
-                new DefaultQueryOver<Quiz, int>().GetQueryOver()
-                    .WhereRestrictionOn(x => x.MoodleId)
-                    .IsNotNull.And(x => x.MoodleId == moodleId).Take(1);
+                new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
+                    .WhereRestrictionOn(x => x.LmsQuizId).IsNotNull
+                    .And(x => x.LmsQuizId == lmsQuizId)
+                    .And(x => x.LmsProvider.Id == lmsProviderId)
+                    .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                    .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
+                    .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
+                    .Take(1);
             return this.Repository.FindOne(query);
         }
 
@@ -270,10 +292,13 @@
         /// <param name="userId">
         /// The user id.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms.
+        /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId)
+        public IEnumerable<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId, bool showLms)
         {
             Quiz q = null;
             SubModuleItem smi = null;
@@ -285,6 +310,7 @@
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                     .Where(() => smi.IsActive == true)
+                    .And(() => q.LmsQuizId == null || showLms == true)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
@@ -296,6 +322,8 @@
                             .WithAlias(() => dto.description)
                             .Select(() => q.QuizName)
                             .WithAlias(() => dto.quizName)
+                            .Select(() => q.LmsQuizId)
+                            .WithAlias(() => dto.lmsQuizId)
                             .Select(() => q.Id)
                             .WithAlias(() => dto.quizId)
                             .Select(() => u.LastName)
@@ -319,6 +347,78 @@
                             .Select(() => smc.Id)
                             .WithAlias(() => dto.subModuleCategoryId))
                     .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
+            List<QuizFromStoredProcedureDTO> result =
+                this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+            return result;
+        }
+
+        /// <summary>
+        /// The get quizzes by user id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
+        /// </returns>
+        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid)
+        {
+            QueryOver<User, User> query =
+               new DefaultQueryOver<User, int>().GetQueryOver()
+                   .Where(x => x.Id == userId)
+                   .Select(res => res.Company.Id);
+            IFutureValue<int> id = this.userRepository.FindOne<int>(query);
+
+            Quiz q = null;
+            SubModuleItem smi = null;
+            SubModuleCategory smc = null;
+            User u = null;
+            User u2 = null;
+            QuizFromStoredProcedureDTO dto = null;
+            QueryOver<Quiz, User> queryOver =
+                new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
+                    .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                    .Where(() => smi.IsActive == true && q.LmsQuizId != null)
+                    .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
+                    .Where(() => smc.IsActive == true)
+                    .And(() => courseid == 0 || smc.LmsCourseId == courseid)
+                    .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+                    .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
+                    .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
+                    .SelectList(
+                        res =>
+                        res.Select(() => q.Description)
+                            .WithAlias(() => dto.description)
+                            .Select(() => q.QuizName)
+                            .WithAlias(() => dto.quizName)
+                            .Select(() => q.LmsQuizId)
+                            .WithAlias(() => dto.lmsQuizId)
+                            .Select(() => q.Id)
+                            .WithAlias(() => dto.quizId)
+                            .Select(() => u.LastName)
+                            .WithAlias(() => dto.lastName)
+                            .Select(() => u.FirstName)
+                            .WithAlias(() => dto.firstName)
+                            .Select(() => u.Id)
+                            .WithAlias(() => dto.userId)
+                            .Select(() => u2.LastName)
+                            .WithAlias(() => dto.createdByLastName)
+                            .Select(() => u2.FirstName)
+                            .WithAlias(() => dto.createdByName)
+                            .Select(() => smi.CreatedBy.Id)
+                            .WithAlias(() => dto.createdBy)
+                            .Select(() => smi.DateModified)
+                            .WithAlias(() => dto.dateModified)
+                            .Select(() => smi.Id)
+                            .WithAlias(() => dto.subModuleItemId)
+                            .Select(() => smc.CategoryName)
+                            .WithAlias(() => dto.categoryName)
+                            .Select(() => smc.Id)
+                            .WithAlias(() => dto.subModuleCategoryId))
+                            .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
             List<QuizFromStoredProcedureDTO> result =
                 this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
             return result;
@@ -350,7 +450,7 @@
             QueryOver<Quiz, User> queryOver =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
-                    .Where(() => smi.IsActive == true && smi.IsShared == true)
+                    .Where(() => smi.IsActive == true && smi.IsShared == true && q.LmsQuizId == null)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)

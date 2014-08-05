@@ -214,12 +214,35 @@ namespace EdugameCloud.WCFService
         /// <param name="userId">
         /// The id.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId)
+        public ServiceResponse<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId, bool? showLms)
         {
-            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetQuizzesByUserId(userId).ToList() };
+            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetQuizzesByUserId(userId, showLms ?? false).ToList() };
+        }
+
+        /// <summary>
+        /// The get lms quizzes.
+        /// </summary>
+        /// <param name="userId">
+        /// The id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id
+        /// </param>
+        /// <param name="provider">
+        /// The provider
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int courseId, string provider)
+        {
+            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetLMSQuizzes(userId, courseId).ToList() };
         }
 
         /// <summary>

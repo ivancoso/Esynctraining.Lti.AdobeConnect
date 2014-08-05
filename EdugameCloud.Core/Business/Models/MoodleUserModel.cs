@@ -53,6 +53,29 @@
         }
 
         /// <summary>
+        /// The get one by user id and token.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="token">
+        /// The token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MoodleUser"/>.
+        /// </returns>
+        public MoodleUser GetOneByUserIdAndToken(int userId, string token)
+        {
+            return
+                this.Repository.FindOne(
+                new DefaultQueryOver<MoodleUser, int>().GetQueryOver()
+                    .Where(x => x.UserId == userId)
+                    .AndRestrictionOn(x => x.Token).IsNotNull
+                    .AndRestrictionOn(x => x.Token).IsInsensitiveLike(token, MatchMode.Exact)
+                    .Take(1)).Value;
+        }
+
+        /// <summary>
         /// The get one by user id.
         /// </summary>
         /// <param name="userId">

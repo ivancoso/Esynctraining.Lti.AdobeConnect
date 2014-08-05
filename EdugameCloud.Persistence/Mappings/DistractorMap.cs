@@ -24,11 +24,12 @@
             this.Map(x => x.DistractorType).Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
-            this.Map(x => x.MoodleAnswer).Length(100).Nullable();
+            this.Map(x => x.LmsAnswer).Length(100).Nullable();
             this.References(x => x.Question).Nullable();
             this.References(x => x.Image).Column("imageId").Nullable();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Distractor>(x => x.CreatedBy)));
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Distractor>(x => x.ModifiedBy)));
+            this.References(x => x.LmsProvider).Nullable();
         }
 
         #endregion

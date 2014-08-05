@@ -63,6 +63,25 @@ namespace EdugameCloud.Core.Business.Models
         }
 
         /// <summary>
+        /// The get one by name and user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsCourseId">
+        /// The lms id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{SubModuleCategory}"/>.
+        /// </returns>
+        public IFutureValue<SubModuleCategory> GetOneByLmsCourseId(int lmsCourseId)
+        {
+            var query =
+                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver().Where(x => x.LmsCourseId == lmsCourseId);
+            return this.Repository.FindOne(query);
+        }
+
+        /// <summary>
         /// The get all paged.
         /// </summary>
         /// <param name="pageIndex">

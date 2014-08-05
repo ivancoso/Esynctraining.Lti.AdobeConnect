@@ -29,7 +29,7 @@
             this.Map(x => x.ScoreValue).Not.Nullable().Default(0.ToString(CultureInfo.InvariantCulture));
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
-            this.Map(x => x.MoodleQuestionId).Nullable();
+            this.Map(x => x.LmsQuestionId).Nullable();
             this.Map(x => x.IsMoodleSingle).Nullable();
 
             this.HasMany(x => x.QuizQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
@@ -48,6 +48,7 @@
             this.References(x => x.Image).Column("imageId");
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Question>(x => x.ModifiedBy)));
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Question>(x => x.CreatedBy)));
+            this.References(x => x.LmsProvider).Nullable();
         }
 
         #endregion

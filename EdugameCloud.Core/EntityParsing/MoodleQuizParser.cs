@@ -39,6 +39,21 @@
             ret.Intro = single.GetNodeValue("intro");
             ret.Questions = new List<MoodleQuestion>();
 
+            var courseNode = single.SelectSingleNode("KEY[@name='course']");
+            if (courseNode != null)
+            {
+                var courseSingle = courseNode.SelectSingleNode("SINGLE");
+                if (courseSingle != null)
+                {
+                    int courseIdInt;
+                    if (int.TryParse(courseSingle.GetNodeValue("id"), out courseIdInt))
+                    {
+                        ret.LmsSubmoduleId = courseIdInt;
+                    }
+                    ret.LmsSubmoduleName = courseSingle.GetNodeValue("fullname");
+                }
+            }
+
             var questionsNode = single.SelectSingleNode("KEY[@name='questions']");
             if (questionsNode != null)
             {

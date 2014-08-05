@@ -35,7 +35,7 @@
             this.quizFormatId = result.QuizFormat.Return(x => x.Id, (int?)null);
             this.description = result.Description;
             this.quizName = result.QuizName;
-            this.moodleId = result.MoodleId ?? 0;
+            this.lmsQuizId = result.LmsQuizId ?? 0;
         }
 
         #endregion
@@ -82,7 +82,7 @@
         /// Gets or sets the moodle id.
         /// </summary>
         [DataMember]
-        public int moodleId { get; set; }
+        public int lmsQuizId { get; set; }
 
         #endregion
     }

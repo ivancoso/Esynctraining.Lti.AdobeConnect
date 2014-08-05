@@ -89,6 +89,12 @@
         [DataMember]
         public virtual int userId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms quiz id.
+        /// </summary>
+        [DataMember]
+        public virtual int? lmsQuizId { get; set; }
+
         #endregion
     }
 }

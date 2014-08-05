@@ -19,6 +19,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.EntityParsing;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -116,6 +117,17 @@ namespace EdugameCloud.WCFService
         /// <summary>
         ///     Gets the company model.
         /// </summary>
+        private LmsProviderModel LmsProviderModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsProviderModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the company model.
+        /// </summary>
         private QuizModel QuizModel
         {
             get
@@ -146,6 +158,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        ///     Gets the submodule category model.
+        /// </summary>
+        private SubModuleModel SubModuleModel
+        {
+            get
+            {
+                return IoC.Resolve<SubModuleModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -159,7 +182,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizes(MoodleQuizConvertDTO quizesInfo)
+        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(MoodleQuizConvertDTO quizesInfo)
         {
             var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
@@ -212,7 +235,7 @@ namespace EdugameCloud.WCFService
             }
 
             var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
-            var quizes = this.QuizModel.GetQuizzesByUserId(user.Id).ToList();
+            var quizes = this.QuizModel.GetLMSQuizzes(user.Id, 0);
 
             serviceResponse.@object = new QuizesAndSubModuleItemsDTO
                                           {
@@ -231,18 +254,21 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<MoodleQuizInfoDTO> GetQuizesForUser(MoodleUserInfoDTO userInfo)
+        public ServiceResponse<MoodleQuizInfoDTO> GetQuizzesForUser(MoodleUserInfoDTO userInfo)
         {
             var serviceResponse = new ServiceResponse<MoodleQuizInfoDTO>();
 
-            var token = this.GetToken(serviceResponse, userInfo.domain, userInfo.name, userInfo.password);
+            var token = userInfo.token ?? this.GetToken(serviceResponse, userInfo.domain, userInfo.name, userInfo.password); 
 
             if (token == null)
             {
                 return serviceResponse;
             }
 
-            var user = this.MoodleUserModel.GetOneByUserIdAndUserName(userInfo.userId, userInfo.name) ?? this.ConvertDTO(userInfo);
+            var user = this.MoodleUserModel.GetOneByUserIdAndToken(userInfo.userId, token) 
+                ?? (userInfo.name != null ? this.MoodleUserModel.GetOneByUserIdAndUserName(userInfo.userId, userInfo.name) : null) 
+                ?? this.ConvertDTO(userInfo);
+
             user.DateModified = DateTime.Now;
             user.Token = token;
             this.MoodleUserModel.RegisterSave(user);
@@ -250,7 +276,8 @@ namespace EdugameCloud.WCFService
             var pairs = new NameValueCollection
                             {
                                 { "wsfunction", "mod_adobeconnect_get_total_quiz_list" }, 
-                                { "wstoken", token }
+                                { "wstoken", token },
+                                { "course", userInfo.courseId }
                             };
 
             byte[] response;
@@ -264,7 +291,21 @@ namespace EdugameCloud.WCFService
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(resp);
 
-            var quizes = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
+            var courseNames = new Dictionary<string, string>();
+
+            var quizes = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"), ref courseNames);
+
+            foreach (var quiz in quizes)
+            {
+                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.UserId, int.Parse(quiz.id), (int)LmsProviderEnum.Moodle).Value;
+                if (egcQuiz != null)
+                {
+                    quiz.lastModifiedEGC = egcQuiz.SubModuleItem.DateModified.ConvertToUnixTimestamp();
+                }
+
+                quiz.courseName = courseNames.ContainsKey(quiz.course) ? courseNames[quiz.course] : string.Empty;
+            }
+
             serviceResponse.objects = quizes;
 
             return serviceResponse;
@@ -302,10 +343,10 @@ namespace EdugameCloud.WCFService
             Tuple<int, int> result;
             var moodleId = string.IsNullOrEmpty(quiz.Id) ? (int?)null : int.Parse(quiz.Id);
             var egcQuiz = moodleId.HasValue
-                               ? this.QuizModel.GetOneByMoodleId(moodleId.Value).Value ?? new Quiz()
+                               ? this.QuizModel.GetOneByLmsQuizId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value ?? new Quiz()
                                : new Quiz();
 
-            var submodule = this.ProcessSubModule(user, egcQuiz);
+            var submodule = this.ProcessSubModule(user, egcQuiz, quiz);
 
             result = this.ProcessQuizData(quiz, egcQuiz, submodule);
 
@@ -580,12 +621,14 @@ namespace EdugameCloud.WCFService
         private Tuple<int, int> ProcessQuizData(MoodleQuiz quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
             
-            egcQuiz.MoodleId = int.Parse(quiz.Id ?? "0");
+            egcQuiz.LmsQuizId = int.Parse(quiz.Id ?? "0");
             egcQuiz.QuizName = quiz.Name;
             egcQuiz.SubModuleItem = submoduleItem;
             egcQuiz.Description = Regex.Replace(quiz.Intro, "<[^>]*(>|$)", string.Empty);
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
+            egcQuiz.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Moodle).Value;
+            egcQuiz.SubModuleItem.IsShared = true;
 
             this.QuizModel.RegisterSave(egcQuiz, true);
             var result = new Tuple<int, int>(submoduleItem.Id, egcQuiz.Id);
@@ -645,7 +688,7 @@ namespace EdugameCloud.WCFService
                                        CreatedBy = user, 
                                        ModifiedBy = user, 
                                        IsActive = true, 
-                                       MoodleQuestionId = int.Parse(quizQuestion.Id),
+                                       LmsQuestionId = int.Parse(quizQuestion.Id),
                                        IsMoodleSingle = quizQuestion.IsSingle
                                    };
 
@@ -692,7 +735,7 @@ namespace EdugameCloud.WCFService
                                          IsActive = true, 
                                          DistractorType = 1, 
                                          IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0,
-                                         MoodleAnswer = (answerNumber++).ToString()
+                                         LmsAnswer = (answerNumber++).ToString()
                                      };
 
                 distractorModel.RegisterSave(distractor);
@@ -711,7 +754,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="SubModuleItem"/>.
         /// </returns>
-        private SubModuleItem ProcessSubModule(User user, Quiz egcQuiz)
+        private SubModuleItem ProcessSubModule(User user, Quiz egcQuiz, MoodleQuiz moodleQuiz)
         {
             var submodule = egcQuiz.IsTransient() ? new SubModuleItem() : egcQuiz.SubModuleItem;
 
@@ -721,8 +764,10 @@ namespace EdugameCloud.WCFService
             submodule.DateCreated = DateTime.Now;
             submodule.CreatedBy = user;
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByNameAndUser(user.Id, "moodle").Value
-                                          ?? new SubModuleCategory { CategoryName = "moodle", User = user };
+            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(moodleQuiz.LmsSubmoduleId).Value
+                                          ?? new SubModuleCategory { CategoryName =  moodleQuiz.LmsSubmoduleName, LmsCourseId = moodleQuiz.LmsSubmoduleId, 
+                                              User = user, DateModified = DateTime.Now, IsActive = true, ModifiedBy = user, 
+                                              SubModule = SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value};
             if (submodule.SubModuleCategory.IsTransient())
             {
                 subModuleCategoryModel.RegisterSave(submodule.SubModuleCategory);

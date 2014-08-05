@@ -68,6 +68,16 @@
         /// </summary>
         public virtual User User { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms course id.
+        /// </summary>
+        public virtual int? LmsCourseId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lms provider
+        /// </summary>
+        public virtual LmsProvider LmsProvider { get; set; }
+
         #endregion
     }
 }

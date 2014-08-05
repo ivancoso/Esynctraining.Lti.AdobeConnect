@@ -16,6 +16,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -273,13 +274,6 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private static int ConvertToUnixTimestamp(DateTime date)
-        {
-            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            TimeSpan diff = date.ToUniversalTime() - origin;
-            return (int)Math.Floor(diff.TotalSeconds);
-        }
-
         private string SendResultsToMoodle(IEnumerable<QuizQuestionResultDTO> results)
         {
             var toSend = new List<MoodleQuizResultDTO>();
@@ -288,18 +282,18 @@ namespace EdugameCloud.WCFService
             {
                 var m = new MoodleQuizResultDTO();
                 var quizResult = QuizResultModel.GetOneById(r.quizResultId).Value;
-                m.quizId = quizResult.Quiz.MoodleId ?? 0;
+                m.quizId = quizResult.Quiz.LmsQuizId ?? 0;
                 var question = QuestionModel.GetOneById(r.questionId).Value;
-                m.questionId = question.MoodleQuestionId;
+                m.questionId = question.LmsQuestionId ?? 0;
                 m.questionType = question.QuestionType.MoodleQuestionType;
                 m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
                 m.userId = quizResult.LmsId;
-                m.startTime = ConvertToUnixTimestamp(quizResult.StartTime);
+                m.startTime = quizResult.StartTime.ConvertToUnixTimestamp();
  
                 if (r.answerDistractors != null && r.answerDistractors.Count > 0) // multichoice
                 {
                     m.answers = question.Distractors.Where(q => r.answerDistractors.Contains(q.Id))
-                        .Select(q => q.MoodleAnswer)
+                        .Select(q => q.LmsAnswer)
                         .ToList();
                 }
                 else // truefalse

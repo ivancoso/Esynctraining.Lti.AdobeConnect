@@ -22,8 +22,9 @@
             this.References(x => x.SubModuleItem).Nullable();
             this.References(x => x.QuizFormat).Nullable();
             this.References(x => x.ScoreType).Nullable();
+            this.References(x => x.LmsProvider).Nullable();
 
-            this.Map(x => x.MoodleId).Nullable();
+            this.Map(x => x.LmsQuizId).Nullable();
         }
 
         #endregion
