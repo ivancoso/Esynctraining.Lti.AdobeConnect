@@ -25,6 +25,7 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.LmsAnswer).Length(100).Nullable();
+            this.Map(x => x.LmsAnswerId).Nullable();
             this.References(x => x.Question).Nullable();
             this.References(x => x.Image).Column("imageId").Nullable();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Distractor>(x => x.CreatedBy)));

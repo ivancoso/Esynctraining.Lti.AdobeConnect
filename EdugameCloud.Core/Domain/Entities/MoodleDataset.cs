@@ -5,34 +5,33 @@
     using NHibernate.Mapping;
 
     /// <summary>
-    /// The moodle quiz
+    /// Moodle dataset
     /// </summary>
-    public class MoodleQuiz
+    public class MoodleDataset
     {
         /// <summary>
         /// The id
         /// </summary>
         public string Id { get; set; }
+
         /// <summary>
         /// The name
         /// </summary>
         public string Name { get; set; }
+        
         /// <summary>
-        /// The intro
+        /// The min 
         /// </summary>
-        public string Intro { get; set; }
-        /// <summary>
-        /// The lms submodule id
-        /// </summary>
-        public int LmsSubmoduleId { get; set; }
-        /// <summary>
-        /// The lms submodule name
-        /// </summary>
-        public string LmsSubmoduleName { get; set; }
+        public string Min { get; set; }
 
         /// <summary>
-        /// The questions
+        /// The max
         /// </summary>
-        public List<MoodleQuestion> Questions { get; set; }
+        public string Max { get; set; }
+
+        /// <summary>
+        /// The moodle dataset items
+        /// </summary>
+        public List<MoodleDataSetItem> Items { get; set; }
     }
 }

@@ -136,6 +136,24 @@
         }
 
         /// <summary>
+        /// The get one by submodule item id and lms id.
+        /// </summary>
+        /// <param name="subModuleItemId">
+        /// The submodule item id.
+        /// </param>
+        /// <param name="lmsId">
+        /// The lms id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Question}"/>.
+        /// </returns>
+        public IFutureValue<Question> GetOneBySubmoduleItemIdAndLmsId(int subModuleItemId, int lmsId)
+        {
+            var queryOver = new DefaultQueryOver<Question, int>().GetQueryOver().Where(x => x.SubModuleItem.Id == subModuleItemId && x.LmsQuestionId == lmsId).Fetch(x => x.Image).Eager;
+            return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
         /// The get all by user id and sub module item id.
         /// </summary>
         /// <param name="userId">

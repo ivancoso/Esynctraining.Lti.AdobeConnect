@@ -86,6 +86,12 @@
         [DataMember]
         public List<int> answerDistractors { get; set; }
 
+        /// <summary>
+        /// Gets or sets the answers.
+        /// </summary>
+        [DataMember]
+        public List<string> answers { get; set; }
+
         #endregion
     }
 }

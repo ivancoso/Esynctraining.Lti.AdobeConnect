@@ -135,6 +135,24 @@ namespace EdugameCloud.Core.Business.Models
         }
 
         /// <summary>
+        /// The get one by question id and lms id.
+        /// </summary>
+        /// <param name="questionId">
+        /// The question id.
+        /// </param>
+        /// <param name="lmsId">
+        /// The lms id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Question}"/>.
+        /// </returns>
+        public IFutureValue<Distractor> GetOneByQuestionIdAndLmsId(int questionId, int lmsId)
+        {
+            var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver().Where(x => x.Question.Id == questionId && x.LmsAnswerId == lmsId).Fetch(x => x.Image).Eager;
+            return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
         /// The get all by question id.
         /// </summary>
         /// <param name="questionId">

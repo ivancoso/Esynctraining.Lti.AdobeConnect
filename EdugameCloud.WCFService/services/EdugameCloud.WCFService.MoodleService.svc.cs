@@ -14,6 +14,8 @@ namespace EdugameCloud.WCFService
     using System.Web.Script.Serialization;
     using System.Xml;
 
+    using Castle.Windsor.Configuration.AppDomain;
+
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
@@ -26,6 +28,8 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
+
+    using FluentNHibernate.Conventions.AcceptanceCriteria;
 
     /// <summary>
     ///     The moodle service.
@@ -222,7 +226,14 @@ namespace EdugameCloud.WCFService
                 var xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(resp);
 
-                var q = MoodleQuizParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
+                string errorMessage = string.Empty, error = string.Empty;
+                var q = MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref error);
+
+                if (q == null)
+                {
+                    serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage, error));
+                    continue;
+                }
 
                 if (q.Questions != null && q.Questions.Any())
                 {
@@ -300,7 +311,7 @@ namespace EdugameCloud.WCFService
                 var egcQuiz = QuizModel.GetOneByLmsQuizId(user.UserId, int.Parse(quiz.id), (int)LmsProviderEnum.Moodle).Value;
                 if (egcQuiz != null)
                 {
-                    quiz.lastModifiedEGC = egcQuiz.SubModuleItem.DateModified.ConvertToUnixTimestamp();
+                    quiz.lastModifiedEGC = egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp();
                 }
 
                 quiz.courseName = courseNames.ContainsKey(quiz.course) ? courseNames[quiz.course] : string.Empty;
@@ -501,7 +512,7 @@ namespace EdugameCloud.WCFService
                         this.ProcessFillInTheBlankDistractors(user, q, question, disctarctorModel);
                         break;
                     }
-
+                case (int)QuestionTypeEnum.ShortAnswer:
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                     {
                         this.ProcessSingleMultipleChoiceTextDistractors(user, q, question, disctarctorModel);
@@ -513,7 +524,72 @@ namespace EdugameCloud.WCFService
                         this.ProcessQuestionForTrueFalseDistractors(user, q, question, disctarctorModel);
                         break;
                     }
+
+                case (int)QuestionTypeEnum.Numerical:
+                    {
+                        this.ProcessNumericalDistractors(user, q, question, disctarctorModel);
+                        break;
+                    }
+
+                case (int)QuestionTypeEnum.Matching:
+                    {
+                        this.ProcessMatchingDistractors(user, q, question, disctarctorModel);
+                        break;
+                    }
+                case (int)QuestionTypeEnum.Calculated:
+                case (int)QuestionTypeEnum.CalculatedMultichoice:
+                    {
+                        this.ProcessCalculatedDistractors(user, q, question, disctarctorModel);
+                        break;
+                    }
             }
+        }
+
+        /// <summary>
+        /// The process fill in the blank question text.
+        /// </summary>
+        /// <param name="q">
+        /// The question.
+        /// </param>
+        private string ProcessFillInTheBlankQuestionText(MoodleQuestion q)
+        {
+            var i = 1;
+            var questionText = ClearName(q.QuestionText);
+            foreach (var a in q.Questions)
+            {
+                if (a.QuestionText == null) continue;
+                var index = a.QuestionText.IndexOf(":=");
+                if (index < 0) continue;
+                var text = a.QuestionText.Substring(index + 2, a.QuestionText.Length - index - 3);
+                questionText = questionText.Replace("{#" + (i++) + "}", text);
+            }
+
+            return questionText;
+        }
+
+        /// <summary>
+        /// The process calculated question text.
+        /// </summary>
+        /// <param name="q">
+        /// The question.
+        /// </param>
+        private string ProcessCalculatedQuestionText(MoodleQuestion q)
+        {
+            var i = 1;
+            var questionText = ClearName(q.QuestionText);
+            var values = new Dictionary<string, double>();
+            foreach (var a in q.Datasets)
+            {
+                if (!values.ContainsKey(a.Name))
+                    values.Add(a.Name, a.Items.First().Value);
+                var name = a.Name;
+                var value = a.Items.First().Value;
+                questionText = questionText.Replace("{" + name + "}", value.ToString());
+            }
+
+            questionText = MoodleExpressionParser.SimplifyExpression(questionText, values);
+
+            return questionText;
         }
 
         /// <summary>
@@ -537,23 +613,71 @@ namespace EdugameCloud.WCFService
             Question question, 
             DistractorModel distractorModel)
         {
-            foreach (var a in q.Answers)
+            string blankTrue = "<text id=\"0\" isBlank=\"true\">",
+                blankFalse = "<text id=\"0\" isBlank=\"false\">",
+                closing = "</text>";
+            var distractorText = ClearName(q.QuestionText);
+            if (!distractorText.StartsWith("{#"))
             {
-                var distractor = new Distractor
-                                     {
-                                         DateModified = DateTime.Now, 
-                                         DateCreated = DateTime.Now, 
-                                         CreatedBy = user, 
-                                         ModifiedBy = user, 
-                                         Question = question, 
-                                         DistractorName = ClearName(a.Answer), 
-                                         IsActive = true, 
-                                         DistractorType = null, 
-                                         IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0
-                                     };
-
-                distractorModel.RegisterSave(distractor);
+                distractorText = blankTrue + distractorText;
             }
+
+            distractorText = distractorText.Replace("{#", closing + blankTrue)
+                .Replace("}", closing + blankFalse);
+            if (distractorText.StartsWith(closing))
+            {
+                distractorText = "<data>" + distractorText.Substring(closing.Length);
+            }
+            else
+            {
+                distractorText = "<data>" + blankFalse + distractorText;
+            }
+
+            var i = 1;
+            foreach (var a in q.Questions)
+            {
+                if (a.QuestionText == null) continue;
+                var index = a.QuestionText.IndexOf(":=");
+                if (index < 0) continue;
+                var text = a.QuestionText.Substring(index + 2, a.QuestionText.Length - index - 3);
+                text = blankTrue + text + closing;
+                distractorText = distractorText.Replace(blankTrue + (i++) + closing, text);
+            }
+            if (distractorText.EndsWith(blankFalse))
+            {
+                distractorText = distractorText.Substring(0, distractorText.Length - blankFalse.Length);
+            }
+            if (distractorText.EndsWith(blankTrue))
+            {
+                distractorText = distractorText.Substring(0, distractorText.Length - blankTrue.Length);
+            }
+
+            if (!distractorText.EndsWith(closing))
+            {
+                distractorText = distractorText + closing;
+            }
+
+            distractorText = distractorText + "</data>";
+
+            var lmsId = int.Parse(q.Id);
+
+            var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+            distractor.DateModified = DateTime.Now;
+            distractor.ModifiedBy = user;
+            distractor.DistractorName = distractorText;
+            distractor.IsActive = true;
+            distractor.DistractorType = null;
+            distractor.IsCorrect = true;
+                
+            distractorModel.RegisterSave(distractor);
+
         }
 
         /// <summary>
@@ -577,19 +701,20 @@ namespace EdugameCloud.WCFService
             Question question, 
             DistractorModel distractorModel)
         {
-            this.QuestionForTrueFalseModel.RegisterSave(new QuestionForTrueFalse { Question = question });
-
-            var distractor = new Distractor
-                                 {
-                                     DateModified = DateTime.Now, 
-                                     DateCreated = DateTime.Now, 
-                                     CreatedBy = user, 
-                                     ModifiedBy = user, 
-                                     Question = question, 
-                                     DistractorName = "truefalse", 
-                                     IsActive = true, 
-                                     DistractorType = 1
-                                 };
+            var lmsId = int.Parse(q.Id);
+            var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+            distractor.DateModified = DateTime.Now;
+            distractor.ModifiedBy = user;
+            distractor.DistractorName = "truefalse";
+            distractor.IsActive = true;
+            distractor.DistractorType = 1;
 
             var isCorrect = false;
             foreach (var a in q.Answers)
@@ -604,6 +729,203 @@ namespace EdugameCloud.WCFService
 
             distractor.IsCorrect = isCorrect;
             distractorModel.RegisterSave(distractor);
+        }
+
+        /// <summary>
+        /// The process matching distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The moodle question.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractorModel">
+        /// The distractor model.
+        /// </param>
+        private void ProcessMatchingDistractors(
+            User user,
+            MoodleQuestion q,
+            Question question,
+            DistractorModel distractorModel)
+        {
+
+            foreach (var a in q.Questions)
+            {
+                var lmsId = int.Parse(a.Id);
+                var name = string.Format("{0}$${1}", ClearName(a.QuestionText), ClearName(a.AnswerText));
+                var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = true;
+
+
+                distractorModel.RegisterSave(distractor);
+            }
+        }
+
+        /// <summary>
+        /// The process numerical distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The moodle question.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractorModel">
+        /// The distractor model.
+        /// </param>
+        private void ProcessNumericalDistractors(
+            User user,
+            MoodleQuestion q,
+            Question question,
+            DistractorModel distractorModel)
+        {
+
+            foreach (var a in q.Answers)
+            {
+                var lmsId = int.Parse(a.Id);
+                var name = string.Format("{{\"min\":{0},\"error\":{1}, \"type\":\"Exact\"}}",
+                    a.Answer, a.Tolerance);
+                var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0;
+
+                distractorModel.RegisterSave(distractor);
+            }
+        }
+
+        /// <summary>
+        /// The process single multiple choice text distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The moodle question.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractorModel">
+        /// The distractor model.
+        /// </param>
+        private void ProcessSingleMultipleChoiceTextDistractors(
+            User user,
+            MoodleQuestion q,
+            Question question,
+            DistractorModel distractorModel)
+        {
+            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
+            foreach (var a in q.Answers)
+            {
+                var lmsId = int.Parse(a.Id);
+                var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = ClearName(a.Answer);
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0;
+                distractor.LmsAnswer = (answerNumber++).ToString();
+
+                distractorModel.RegisterSave(distractor);
+            }
+        }
+
+        /// <summary>
+        /// The process calculated distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The moodle question.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="distractorModel">
+        /// The distractor model.
+        /// </param>
+        private void ProcessCalculatedDistractors(
+            User user,
+            MoodleQuestion q,
+            Question question,
+            DistractorModel distractorModel)
+        {
+            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
+            foreach (var a in q.Answers)
+            {
+                var expression = new MoodleExpressionParser(ClearName(a.Answer));
+                foreach (var ds in q.Datasets)
+                {
+                    var variable = ds.Name;
+                    var value = ds.Items.First().Value;
+                    expression.SetValue(variable, value);
+                }
+
+                var result = expression.Calculate();
+
+                var name = question.QuestionType.Id == (int)QuestionTypeEnum.CalculatedMultichoice
+                    ? result.ToString() 
+                    : string.Format("{{\"val\":{0},\"error\":{1} }}",
+                    result, a.Tolerance);
+
+                var lmsId = int.Parse(a.Id);
+                var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0;
+                distractor.LmsAnswer = (answerNumber++).ToString();
+
+                distractorModel.RegisterSave(distractor);
+            }
         }
 
         /// <summary>
@@ -672,75 +994,69 @@ namespace EdugameCloud.WCFService
 
             foreach (var quizQuestion in quiz.Questions.Where(qs => qs.QuestionType != null))
             {
-                var questionType = qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null && qt.MoodleQuestionType.Equals(quizQuestion.QuestionType));
+                var questionType = qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null 
+                    && qt.MoodleQuestionType.Equals(quizQuestion.QuestionType.Equals("calculatedsimple") ? "calculated" : quizQuestion.QuestionType));
                 if (questionType == null)
                 {
                     continue;
                 }
 
-                var question = new Question
+                string questionText;
+                switch (questionType.Id)
+                {
+                    case (int)QuestionTypeEnum.FillInTheBlank:
+                        questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion);
+                        break;
+                    case (int)QuestionTypeEnum.Calculated:
+                    case (int)QuestionTypeEnum.CalculatedMultichoice:
+                        questionText = this.ProcessCalculatedQuestionText(quizQuestion);
+                        break;
+                    default:
+                        questionText = ClearName(quizQuestion.QuestionText);
+                        break;
+                }
+
+                var lmsQuestionId = int.Parse(quizQuestion.Id);
+
+                var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
+                        new Question
                                    {
-                                       SubModuleItem = submodule, 
-                                       QuestionName = ClearName(quizQuestion.QuestionText), 
-                                       QuestionType = questionType, 
-                                       DateModified = DateTime.Now, 
+                                       SubModuleItem = submodule,  
                                        DateCreated = DateTime.Now, 
                                        CreatedBy = user, 
-                                       ModifiedBy = user, 
-                                       IsActive = true, 
-                                       LmsQuestionId = int.Parse(quizQuestion.Id),
-                                       IsMoodleSingle = quizQuestion.IsSingle
+                                       LmsQuestionId = lmsQuestionId
                                    };
+                question.QuestionName = questionText;
+                question.QuestionType = questionType;
+                question.DateModified = DateTime.Now;
+                question.ModifiedBy = user;
+                question.IsActive = true;
+                question.IsMoodleSingle = quizQuestion.IsSingle;
+                var isTransient = question.Id == 0;
 
                 this.QuestionModel.RegisterSave(question);
+
+                if (isTransient)
+                {
+                    switch (question.QuestionType.Id)
+                    {
+                        case (int)QuestionTypeEnum.TrueFalse:
+                            this.QuestionForTrueFalseModel.RegisterSave(
+                                new QuestionForTrueFalse { Question = question });
+                            break;
+                        case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                            this.QuestionForSingleMultipleChoiceModel.RegisterSave(
+                                new QuestionForSingleMultipleChoice { Question = question });
+                            break;
+                    }
+                }
+
                 this.ProcessDistractors(user, questionType, quizQuestion, question);
             }
         }
 
-        /// <summary>
-        /// The process single multiple choice text distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The moodle question.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="distractorModel">
-        /// The distractor model.
-        /// </param>
-        private void ProcessSingleMultipleChoiceTextDistractors(
-            User user, 
-            MoodleQuestion q, 
-            Question question, 
-            DistractorModel distractorModel)
-        {
-            this.QuestionForSingleMultipleChoiceModel.RegisterSave(
-                new QuestionForSingleMultipleChoice { Question = question });
 
-            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
-            foreach (var a in q.Answers)
-            {
-                var distractor = new Distractor
-                                     {
-                                         DateModified = DateTime.Now, 
-                                         DateCreated = DateTime.Now, 
-                                         CreatedBy = user, 
-                                         ModifiedBy = user, 
-                                         Question = question, 
-                                         DistractorName = ClearName(a.Answer), 
-                                         IsActive = true, 
-                                         DistractorType = 1, 
-                                         IsCorrect = a.Fraction != null && double.Parse(a.Fraction) > 0,
-                                         LmsAnswer = (answerNumber++).ToString()
-                                     };
-
-                distractorModel.RegisterSave(distractor);
-            }
-        }
+ 
 
         /// <summary>
         /// The process sub module.
@@ -751,22 +1067,31 @@ namespace EdugameCloud.WCFService
         /// <param name="egcQuiz">
         /// The EGC quiz.
         /// </param>
+        /// <param name="moodleQuiz">
+        /// The Moodle quiz.
+        /// </param>
         /// <returns>
         /// The <see cref="SubModuleItem"/>.
         /// </returns>
         private SubModuleItem ProcessSubModule(User user, Quiz egcQuiz, MoodleQuiz moodleQuiz)
         {
-            var submodule = egcQuiz.IsTransient() ? new SubModuleItem() : egcQuiz.SubModuleItem;
+            var submodule = egcQuiz.IsTransient() ? 
+                new SubModuleItem()
+                {
+                    DateCreated = DateTime.Now,
+                    CreatedBy = user
+                } : 
+                egcQuiz.SubModuleItem;
 
             submodule.IsActive = true;
             submodule.IsShared = true;
             submodule.DateModified = DateTime.Now;
-            submodule.DateCreated = DateTime.Now;
-            submodule.CreatedBy = user;
+            submodule.ModifiedBy = user;
+
             var subModuleCategoryModel = this.SubModuleCategoryModel;
             submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(moodleQuiz.LmsSubmoduleId).Value
                                           ?? new SubModuleCategory { CategoryName =  moodleQuiz.LmsSubmoduleName, LmsCourseId = moodleQuiz.LmsSubmoduleId, 
-                                              User = user, DateModified = DateTime.Now, IsActive = true, ModifiedBy = user, 
+                                              User = user, DateModified = DateTime.Now, IsActive = true, ModifiedBy = user,
                                               SubModule = SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value};
             if (submodule.SubModuleCategory.IsTransient())
             {

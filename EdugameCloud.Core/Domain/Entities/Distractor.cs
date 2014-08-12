@@ -77,6 +77,11 @@
         public virtual string LmsAnswer { get; set; }
 
         /// <summary>
+        /// Gets or sets the lms answer id.
+        /// </summary>
+        public virtual int? LmsAnswerId { get; set; }
+
+        /// <summary>
         /// Gets or sets the lms provider
         /// </summary>
         public virtual LmsProvider LmsProvider { get; set; }

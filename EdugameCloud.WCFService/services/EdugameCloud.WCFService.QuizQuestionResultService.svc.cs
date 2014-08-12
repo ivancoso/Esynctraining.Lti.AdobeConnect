@@ -288,26 +288,57 @@ namespace EdugameCloud.WCFService
                 m.questionType = question.QuestionType.MoodleQuestionType;
                 m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
                 m.userId = quizResult.LmsId;
-                m.startTime = quizResult.StartTime.ConvertToUnixTimestamp();
- 
-                if (r.answerDistractors != null && r.answerDistractors.Count > 0) // multichoice
+                m.startTime = quizResult.StartTime.ConvertToUTCTimestamp();
+
+                switch (question.QuestionType.Id)
                 {
-                    m.answers = question.Distractors.Where(q => r.answerDistractors.Contains(q.Id))
+                    case (int)QuestionTypeEnum.TrueFalse:
+                        var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
+                        if (distractor != null)
+                        {
+                            var answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                                            || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
+                            m.answers = new List<string> { answer ? "true" : "false" };
+                        }
+                        break;
+                    case (int)QuestionTypeEnum.CalculatedMultichoice:
+                    case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                        m.answers = question.Distractors.Where(q => r.answers.Contains(q.Id.ToString()))
                         .Select(q => q.LmsAnswer)
                         .ToList();
-                }
-                else // truefalse
-                {
-                    var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
-                    if (distractor != null)
-                    {
-                        var answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
-                                      || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
-                        m.answers = new List<string> { answer ? "true" : "false" };
-                    }
+                        break;
+                    case (int)QuestionTypeEnum.Matching:
+                        var userAnswers = new Dictionary<string, string>();
+                        r.answers.ForEach(
+                            answer =>
+                            {
+                                var splitInd = answer.IndexOf("$$");
+                                if (splitInd > -1)
+                                {
+                                    string left = answer.Substring(0, splitInd),
+                                        right = answer.Substring(splitInd + 2, answer.Length - splitInd - 2);
+                                    if (!userAnswers.ContainsKey(left))
+                                    {
+                                        userAnswers.Add(left, right);
+                                    }
+
+                                }
+                            });
+                        
+                        m.answers = new List<string>();
+                        foreach (var d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))
+                        {
+                            var key = d.DistractorName.Substring(0, d.DistractorName.IndexOf("$$"));
+                            m.answers.Add(userAnswers.ContainsKey(key) ? userAnswers[key] : string.Empty);
+                        }
+
+
+                        break;
+                    default:
+                        m.answers = r.answers;
+                        break;
                 }
                 
-
                 if (m.userId > 0 & m.quizId > 0)
                     toSend.Add(m);
             }
@@ -337,16 +368,6 @@ namespace EdugameCloud.WCFService
                                                                     a.questionId,
                                                                     a.answers
                                                                 })
-                                                }),
-                                questionsInfo = 
-                                    s.GroupBy(u => new { u.questionId, u.questionType, u.isSingle })
-                                        .Select(
-                                            u => 
-                                                new
-                                                {
-                                                    u.Key.questionId, 
-                                                    u.Key.questionType, 
-                                                    u.Key.isSingle
                                                 })
                             });
 

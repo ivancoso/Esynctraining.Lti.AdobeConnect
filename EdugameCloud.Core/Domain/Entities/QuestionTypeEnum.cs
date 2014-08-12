@@ -63,11 +63,36 @@
         /// <summary>
         /// The rate scale likert .
         /// </summary>
-        RateScaleLikert = 13, 
+        RateScaleLikert = 13,
 
         /// <summary>
         /// The weighted bucket ratio.
         /// </summary>
-        WeightedBucketRatio = 14, 
+        WeightedBucketRatio = 14,
+
+        /// <summary>
+        /// The short answer.
+        /// </summary>
+        ShortAnswer = 15,
+
+        /// <summary>
+        /// The essay.
+        /// </summary>
+        Essay = 16,
+
+        /// <summary>
+        /// The numerical.
+        /// </summary>
+        Numerical = 17,
+
+        /// <summary>
+        /// The calculated.
+        /// </summary>
+        Calculated = 18,
+
+        /// <summary>
+        /// The calculated multichoice.
+        /// </summary>
+        CalculatedMultichoice = 19
     }
 }
