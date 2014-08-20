@@ -203,12 +203,35 @@ namespace EdugameCloud.WCFService
         /// <param name="userId">
         /// The id.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId)
+        public ServiceResponse<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId, bool? showLms)
         {
-            return new ServiceResponse<SurveyFromStoredProcedureDTO> { objects = this.SurveyModel.GetSurveysByUserId(userId).ToList() };
+            return new ServiceResponse<SurveyFromStoredProcedureDTO> { objects = this.SurveyModel.GetSurveysByUserId(userId, showLms ?? false).ToList() };
+        }
+
+        /// <summary>
+        /// The get lms quizzes.
+        /// </summary>
+        /// <param name="userId">
+        /// The id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id
+        /// </param>
+        /// <param name="provider">
+        /// The provider
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseId, string provider)
+        {
+            return new ServiceResponse<SurveyFromStoredProcedureDTO> { objects = this.SurveyModel.GetLmsSurveys(userId, courseId).ToList() };
         }
 
         /// <summary>

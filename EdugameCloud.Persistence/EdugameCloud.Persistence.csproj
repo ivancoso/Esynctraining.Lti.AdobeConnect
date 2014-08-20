@@ -118,6 +118,7 @@
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="ISessionSource.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
+    <Compile Include="Mappings\CanvasACMeetingMap.cs" />
     <Compile Include="Mappings\CompanyMap.cs" />
     <Compile Include="Mappings\AddressMap.cs" />
     <Compile Include="Mappings\ACSessionMap.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Mappings\CompanyThemeMap.cs" />
     <Compile Include="Mappings\LmsProviderMap.cs" />
     <Compile Include="Mappings\MoodleUserMap.cs" />
+    <Compile Include="Mappings\MoodleUserParametersMap.cs" />
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
     <Compile Include="Mappings\EmailHistoryMap.cs" />
     <Compile Include="Mappings\SubscriptionHistoryLogMap.cs" />

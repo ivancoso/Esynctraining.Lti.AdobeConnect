@@ -95,6 +95,12 @@
         [DataMember]
         public virtual int surveyGroupingTypeId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms survey id.
+        /// </summary>
+        [DataMember]
+        public virtual int? lmsSurveyId { get; set; }
+
         #endregion
     }
 }

@@ -105,11 +105,14 @@
         /// <param name="userId">
         /// The user subModuleId.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId);
+        ServiceResponse<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId, bool? showLms);
 
         /// <summary>
         /// The get shared surveys by user subModuleId.
@@ -122,6 +125,24 @@
         /// </returns>
         [OperationContract]
         ServiceResponse<SurveyFromStoredProcedureDTO> GetSharedSurveysByUserId(int userId);
+
+        /// <summary>
+        /// The get lms surveys.
+        /// </summary>
+        /// <param name="userId">
+        /// The id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id
+        /// </param>
+        /// <param name="provider">
+        /// The provider
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseId, string provider);
 
         /// <summary>
         /// The save.

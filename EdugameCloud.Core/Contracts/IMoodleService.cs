@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.ServiceModel;
 
+    using EdugameCloud.Core.Domain;
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -14,32 +15,19 @@
     public interface IMoodleService
     {
         #region Public Methods and Operators
-        
+
         /// <summary>
         /// The save.
         /// </summary>
-        /// <param name="user">
-        /// The user.
+        /// <param name="userInfo">
+        /// The user info
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        /*
-        [OperationContract]
-        ServiceResponse<MoodleUserDTO> Save(MoodleUserDTO user);
-        */
         /// <summary>
         /// The get quizes.
         /// </summary>
-        /// <param name="token">
-        /// The token.
-        /// </param>
-        /// <param name="username">
-        /// The token.
-        /// </param>
-        /// <param name="password">
-        /// The token.
-        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
@@ -47,16 +35,46 @@
         ServiceResponse<MoodleQuizInfoDTO> GetQuizzesForUser(MoodleUserInfoDTO userInfo);
 
         /// <summary>
-        /// The get quizes.
+        /// The get surveys for user
         /// </summary>
-        /// <param name="ids">
-        /// The ids.
+        /// <param name="userInfo">
+        /// The user info
+        /// </param>
+        /// <returns></returns>
+        [OperationContract]
+        ServiceResponse<MoodleQuizInfoDTO> GetSurveysForUser(MoodleUserInfoDTO userInfo);
+
+        /// <summary>
+        /// The convert quizes.
+        /// </summary>
+        /// <param name="quiz">
+        /// The quiz
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
         ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(MoodleQuizConvertDTO quiz);
+
+        /// <summary>
+        /// The convert surveys.
+        /// </summary>
+        /// <param name="survey">
+        /// The survey
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(MoodleQuizConvertDTO survey);
+
+        /// <summary>
+        /// The get authentication parameters by id
+        /// </summary>
+        /// <param name="id">The id</param>
+        /// <returns></returns>
+        [OperationContract]
+        ServiceResponse<MoodleUserParametersDTO> GetAuthenticationParametersById(string id);
 
         #endregion
     }

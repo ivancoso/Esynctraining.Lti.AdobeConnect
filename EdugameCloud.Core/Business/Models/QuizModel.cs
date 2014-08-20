@@ -358,7 +358,7 @@
         /// <param name="userId">
         /// The user id.
         /// </param>
-        /// <param name="courseId">
+        /// <param name="courseid">
         /// The course id.
         /// </param>
         /// <returns>

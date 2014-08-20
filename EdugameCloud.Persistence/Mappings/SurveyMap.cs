@@ -21,6 +21,9 @@
 
             this.References(x => x.SubModuleItem).Nullable();
             this.References(x => x.SurveyGroupingType).Not.Nullable();
+            this.References(x => x.LmsProvider).Nullable();
+
+            this.Map(x => x.LmsSurveyId).Nullable();
         }
 
         #endregion

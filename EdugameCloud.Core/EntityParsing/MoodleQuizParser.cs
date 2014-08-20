@@ -96,7 +96,8 @@
                         q.Id = quest.GetNodeValue("id");
                         q.Name = quest.GetNodeValue("name");
                         q.QuestionText = quest.GetNodeValue("questiontext");
-                        q.QuestionType = quest.GetNodeValue("qtype");
+                        q.QuestionType = quest.GetNodeValue("qtype") ?? quest.GetNodeValue("typ");
+                        q.Presentation = quest.GetNodeValue("presentation");
                         q.Datasets = new List<MoodleDataset>();
 
                         var datasetsSingle = quest.SelectNodes("KEY[@name='datasets']/MULTIPLE/SINGLE");

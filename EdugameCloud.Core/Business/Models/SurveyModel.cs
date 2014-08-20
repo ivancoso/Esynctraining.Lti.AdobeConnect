@@ -136,15 +136,57 @@ namespace EdugameCloud.Core.Business.Models
         }
 
         /// <summary>
+        /// The get one by moodle id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsSurveyId">
+        /// The lms quiz id.
+        /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms provider id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{Quiz}"/>.
+        /// </returns>
+        public IFutureValue<Survey> GetOneByLmsSurveyId(int userId, int lmsSurveyId, int lmsProviderId)
+        {
+            QueryOver<User, User> companyQuery =
+               new DefaultQueryOver<User, int>().GetQueryOver()
+                   .Where(x => x.Id == userId)
+                   .Select(res => res.Company.Id);
+            IFutureValue<int> id = this.userRepository.FindOne<int>(companyQuery);
+
+            Survey s = null;
+            SubModuleItem smi = null;
+            User u2 = null;
+
+            var query =
+                new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
+                    .WhereRestrictionOn(x => x.LmsSurveyId).IsNotNull
+                    .And(x => x.LmsSurveyId == lmsSurveyId)
+                    .And(x => x.LmsProvider.Id == lmsProviderId)
+                    .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                    .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
+                    .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
+                    .Take(1);
+            return this.Repository.FindOne(query);
+        }
+
+        /// <summary>
         /// The get surveys by user id.
         /// </summary>
         /// <param name="userId">
         /// The user id.
         /// </param>
+        /// <param name="showLms">
+        /// The show lms
+        /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{SurveyFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId)
+        public IEnumerable<SurveyFromStoredProcedureDTO> GetSurveysByUserId(int userId, bool showLms)
         {
 	        Survey s = null;
 	        SubModuleItem smi = null;
@@ -153,7 +195,7 @@ namespace EdugameCloud.Core.Business.Models
 	        User u2 = null;
 	        SurveyFromStoredProcedureDTO dto = null;
 	        var queryOver =new DefaultQueryOver<Survey, int>().GetQueryOver(()=>s)
-				.JoinQueryOver(x=>x.SubModuleItem, ()=>smi,JoinType.InnerJoin).Where(()=>smi.IsActive==true)
+                .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true).And(() => s.LmsSurveyId == null || showLms == true)
 				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
 				.JoinQueryOver(()=>smc.User, ()=>u,JoinType.InnerJoin)
  				.JoinQueryOver(()=>smi.CreatedBy, ()=>u2, JoinType.LeftOuterJoin)
@@ -165,6 +207,8 @@ namespace EdugameCloud.Core.Business.Models
 					.WithAlias(()=>dto.description)
 					.Select(()=>s.SurveyName)
 					.WithAlias(()=>dto.surveyName)
+                    .Select(() => s.LmsSurveyId)
+                    .WithAlias(() => dto.lmsSurveyId)
 					.Select(()=>s.Id)
 					.WithAlias(()=>dto.surveyId)
 					.Select(()=>u.LastName)
@@ -190,6 +234,76 @@ namespace EdugameCloud.Core.Business.Models
 					.TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
 	        var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
 	        return result;
+        }
+
+        /// <summary>
+        /// The get shared for user surveys by user id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{SurveyFromStoredProcedureDTO}"/>.
+        /// </returns>
+        public IEnumerable<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseId)
+        {
+            var query =
+                new DefaultQueryOver<User, int>().GetQueryOver()
+                    .Where(x => x.Id == userId)
+                    .Select(res =>
+                    res.Company.Id);
+            var id = this.userRepository.FindOne<int>(query);
+
+            Survey s = null;
+            SubModuleItem smi = null;
+            SubModuleCategory smc = null;
+            User u = null;
+            User u2 = null;
+            SurveyFromStoredProcedureDTO dto = null;
+            var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
+                .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                .Where(() => smi.IsActive == true && s.LmsSurveyId != null)
+                .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
+                .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
+                .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin).Where(() => (int)u2.Status == 1)
+                .Where(() => u2.Company.Id == id.Value)
+                .SelectList(res =>
+                res.Select(() => s.SurveyGroupingType.Id)
+                    .WithAlias(() => dto.surveyGroupingTypeId)
+                    .Select(() => s.Description)
+                    .WithAlias(() => dto.description)
+                    .Select(() => s.SurveyName)
+                    .WithAlias(() => dto.surveyName)
+                    .Select(() => s.LmsSurveyId)
+                    .WithAlias(() => dto.lmsSurveyId)
+                    .Select(() => s.Id)
+                    .WithAlias(() => dto.surveyId)
+                    .Select(() => u.LastName)
+                    .WithAlias(() => dto.lastName)
+                    .Select(() => u.FirstName)
+                    .WithAlias(() => dto.firstName)
+                    .Select(() => u.Id)
+                    .WithAlias(() => dto.userId)
+                    .Select(() => u2.LastName)
+                    .WithAlias(() => dto.createdByLastName)
+                    .Select(() => u2.FirstName)
+                    .WithAlias(() => dto.createdByName)
+                    .Select(() => smi.CreatedBy.Id)
+                    .WithAlias(() => dto.createdBy)
+                    .Select(() => smi.DateModified)
+                    .WithAlias(() => dto.dateModified)
+                    .Select(() => smi.Id)
+                    .WithAlias(() => dto.subModuleItemId)
+                    .Select(() => smc.CategoryName)
+                    .WithAlias(() => dto.categoryName)
+                    .Select(() => smc.Id)
+                    .WithAlias(() => dto.subModuleCategoryId))
+                    .TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
+            var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
+            return result;
         }
 
         /// <summary>
@@ -229,6 +343,8 @@ namespace EdugameCloud.Core.Business.Models
 					.WithAlias(() => dto.description)
 					.Select(() => s.SurveyName)
 					.WithAlias(() => dto.surveyName)
+                    .Select(() => s.LmsSurveyId)
+                    .WithAlias(() => dto.lmsSurveyId)
 					.Select(() => s.Id)
 					.WithAlias(() => dto.surveyId)
 					.Select(() => u.LastName)

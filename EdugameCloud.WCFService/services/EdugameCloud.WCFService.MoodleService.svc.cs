@@ -18,6 +18,7 @@ namespace EdugameCloud.WCFService
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
+    using EdugameCloud.Core.Domain;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.EntityParsing;
@@ -108,6 +109,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        ///     Gets the survey grouping type model.
+        /// </summary>
+        private SurveyGroupingTypeModel SurveyGroupingTypeModel
+        {
+            get
+            {
+                return IoC.Resolve<SurveyGroupingTypeModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private QuizFormatModel QuizFormatModel
@@ -130,13 +142,35 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the company model.
+        ///     Gets the user parameters model.
+        /// </summary>
+        private MoodleUserParametersModel MoodleUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<MoodleUserParametersModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the quiz model.
         /// </summary>
         private QuizModel QuizModel
         {
             get
             {
                 return IoC.Resolve<QuizModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the survey model.
+        /// </summary>
+        private SurveyModel SurveyModel
+        {
+            get
+            {
+                return IoC.Resolve<SurveyModel>();
             }
         }
 
@@ -257,6 +291,86 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Converts quiz items into EGC data.
+        /// </summary>
+        /// <param name="quizesInfo">
+        /// The quiz.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(MoodleQuizConvertDTO quizesInfo)
+        {
+            var serviceResponse = new ServiceResponse<SurveysAndSubModuleItemsDTO>();
+
+            if (quizesInfo.quizIds == null)
+            {
+                return serviceResponse;
+            }
+
+            var user = this.UserModel.GetOneById(quizesInfo.userId).Value;
+            var moodleUser = this.MoodleUserModel.GetOneByUserId(quizesInfo.userId);
+
+            if (moodleUser == null)
+            {
+                serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "TokenNotFound", "No user details were found"));
+                return serviceResponse;
+            }
+
+            var subModuleItemsQuizes = new Dictionary<int, int>();
+
+            foreach (var id in quizesInfo.quizIds)
+            {
+                var pairs = new NameValueCollection
+                                {
+                                    { "wsfunction", "mod_adobeconnect_get_survey_by_id" }, 
+                                    { "wstoken", moodleUser.Token }, 
+                                    { "surveyId", id.ToString(CultureInfo.InvariantCulture) }
+                                };
+
+                byte[] response;
+                using (var client = new WebClient())
+                {
+                    response = client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
+                }
+
+                var resp = Encoding.UTF8.GetString(response);
+
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(resp);
+
+                string errorMessage = string.Empty, error = string.Empty;
+                var q = MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref error);
+
+                if (q == null)
+                {
+                    serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage, error));
+                    continue;
+                }
+
+                if (q.Questions != null && q.Questions.Any())
+                {
+                    var res = this.ConvertAndSave(q, user, true);
+                    if (!subModuleItemsQuizes.ContainsKey(res.Item1))
+                    {
+                        subModuleItemsQuizes.Add(res.Item1, res.Item2);
+                    }
+                }
+            }
+
+            var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
+            var quizes = this.SurveyModel.GetLmsSurveys(user.Id, 0);
+
+            serviceResponse.@object = new SurveysAndSubModuleItemsDTO()
+            {
+                surveys = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.surveyId == x.Value)).ToList(),
+                subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
+            };
+
+            return serviceResponse;
+        }
+
+        /// <summary>
         /// Gets all quiz types for user from moodle.
         /// </summary>
         /// <param name="userInfo">
@@ -322,6 +436,87 @@ namespace EdugameCloud.WCFService
             return serviceResponse;
         }
 
+        /// <summary>
+        /// Gets all surveys for user from moodle.
+        /// </summary>
+        /// <param name="userInfo">
+        /// The userInfo.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<MoodleQuizInfoDTO> GetSurveysForUser(MoodleUserInfoDTO userInfo)
+        {
+            var serviceResponse = new ServiceResponse<MoodleQuizInfoDTO>();
+
+            var token = userInfo.token ?? this.GetToken(serviceResponse, userInfo.domain, userInfo.name, userInfo.password);
+
+            if (token == null)
+            {
+                return serviceResponse;
+            }
+
+            var user = this.MoodleUserModel.GetOneByUserIdAndToken(userInfo.userId, token)
+                ?? (userInfo.name != null ? this.MoodleUserModel.GetOneByUserIdAndUserName(userInfo.userId, userInfo.name) : null)
+                ?? this.ConvertDTO(userInfo);
+
+            user.DateModified = DateTime.Now;
+            user.Token = token;
+            this.MoodleUserModel.RegisterSave(user);
+
+            var pairs = new NameValueCollection
+                            {
+                                { "wsfunction", "mod_adobeconnect_get_total_survey_list" }, 
+                                { "wstoken", token },
+                                { "course", userInfo.courseId }
+                            };
+
+            byte[] response;
+            using (var client = new WebClient())
+            {
+                response = client.UploadValues(this.GetServicesUrl(user.Domain), pairs);
+            }
+
+            var resp = Encoding.UTF8.GetString(response);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(resp);
+
+            var courseNames = new Dictionary<string, string>();
+
+            var surveys = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"), ref courseNames);
+
+            foreach (var survey in surveys)
+            {
+                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.UserId, int.Parse(survey.id), (int)LmsProviderEnum.Moodle).Value;
+                if (egcSurvey != null)
+                {
+                    survey.lastModifiedEGC = egcSurvey.SubModuleItem.DateModified.ConvertToTimestamp();
+                }
+
+                survey.courseName = courseNames.ContainsKey(survey.course) ? courseNames[survey.course] : string.Empty;
+            }
+
+            serviceResponse.objects = surveys;
+
+            return serviceResponse;
+        }
+
+        public ServiceResponse<MoodleUserParametersDTO> GetAuthenticationParametersById(string id)
+        {
+            var result = new ServiceResponse<MoodleUserParametersDTO>();
+
+            var param = MoodleUserParametersModel.GetOneByAcId(id).Value;
+            result.@object = param != null ? new MoodleUserParametersDTO(param) : null;
+
+            if (param != null)
+            {
+                MoodleUserParametersModel.RegisterDelete(param);
+            }
+
+            return result;
+        }
+
         #endregion
 
         #region Methods
@@ -337,7 +532,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private static string ClearName(string name)
         {
-            return Regex.Replace(name, "<[^>]*(>|$)", string.Empty);
+            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty);
         }
 
         /// <summary>
@@ -349,20 +544,39 @@ namespace EdugameCloud.WCFService
         /// <param name="user">
         /// The user.
         /// </param>
-        private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user)
+        private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user, bool isSurvey = false)
         {
             Tuple<int, int> result;
             var moodleId = string.IsNullOrEmpty(quiz.Id) ? (int?)null : int.Parse(quiz.Id);
-            var egcQuiz = moodleId.HasValue
-                               ? this.QuizModel.GetOneByLmsQuizId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value ?? new Quiz()
-                               : new Quiz();
 
-            var submodule = this.ProcessSubModule(user, egcQuiz, quiz);
+            if (!isSurvey)
+            {
+                var egcQuiz = moodleId.HasValue
+                    ? this.QuizModel.GetOneByLmsQuizId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value
+                      ?? new Quiz()
+                    : new Quiz();
 
-            result = this.ProcessQuizData(quiz, egcQuiz, submodule);
+                var submodule = this.ProcessSubModule(user, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
 
-            this.ProcessQuizQuestions(quiz, user, submodule);
+                result = this.ProcessQuizData(quiz, egcQuiz, submodule);
 
+                this.ProcessQuizQuestions(quiz, user, submodule);
+            }
+            else
+            {
+                var egcSurvey = moodleId.HasValue
+                                    ? this.SurveyModel.GetOneByLmsSurveyId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value
+                                      ?? new Survey()
+                                    : new Survey();
+
+                egcSurvey.SurveyGroupingType = SurveyGroupingTypeModel.GetOneById(2).Value;
+
+                var submodule = this.ProcessSubModule(user, egcSurvey.IsTransient() ? null : egcSurvey.SubModuleItem, quiz);
+
+                result = this.ProcessSurveyData(quiz, egcSurvey, submodule);
+                
+                this.ProcessSurveyQuestions(quiz, user, submodule);
+            }
             return result;
         }
 
@@ -847,7 +1061,8 @@ namespace EdugameCloud.WCFService
             var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
             foreach (var a in q.Answers)
             {
-                var lmsId = int.Parse(a.Id);
+                var lmsId = int.Parse(a.Id ?? answerNumber.ToString());
+
                 var distractor = distractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
                     new Distractor
                     {
@@ -929,6 +1144,48 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The process survey data.
+        /// </summary>
+        /// <param name="quiz">
+        /// The quiz.
+        /// </param>
+        /// <param name="egcSurvey">
+        /// The EGC quiz.
+        /// </param>
+        /// <param name="submoduleItem">
+        /// The sub module.
+        /// </param>
+        private Tuple<int, int> ProcessSurveyData(MoodleQuiz quiz, Survey egcSurvey, SubModuleItem submoduleItem)
+        {
+            egcSurvey.LmsSurveyId = int.Parse(quiz.Id ?? "0");
+            egcSurvey.SurveyName = quiz.Name;
+            egcSurvey.SubModuleItem = submoduleItem;
+            egcSurvey.Description = Regex.Replace(quiz.Intro, "<[^>]*(>|$)", string.Empty);
+            egcSurvey.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Moodle).Value;
+            egcSurvey.SubModuleItem.IsShared = true;
+
+            this.SurveyModel.RegisterSave(egcSurvey, true);
+            var result = new Tuple<int, int>(submoduleItem.Id, egcSurvey.Id);
+            if (!egcSurvey.IsTransient())
+            {
+                var questionData = this.QuestionModel.GetAllBySubModuleItemId(submoduleItem.Id);
+                foreach (var question in questionData)
+                {
+                    question.IsActive = false;
+                    this.QuestionModel.RegisterSave(question);
+                    var questionsDistractors = this.DistractorModel.GetAllByQuestionId(question.Id);
+                    foreach (var d in questionsDistractors)
+                    {
+                        d.IsActive = false;
+                        this.DistractorModel.RegisterSave(d);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// The process quiz data.
         /// </summary>
         /// <param name="quiz">
@@ -984,9 +1241,6 @@ namespace EdugameCloud.WCFService
         /// </param>
         /// <param name="submodule">
         /// The sub module.
-        /// </param>
-        /// <param name="moodleId">
-        /// The moodle id.
         /// </param>
         private void ProcessQuizQuestions(MoodleQuiz quiz, User user, SubModuleItem submodule)
         {
@@ -1055,7 +1309,85 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// The process survey questions.
+        /// </summary>
+        /// <param name="quiz">
+        /// The quiz.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="submodule">
+        /// The sub module.
+        /// </param>
+        private void ProcessSurveyQuestions(MoodleQuiz quiz, User user, SubModuleItem submodule)
+        {
+            var qtypes = this.QuestionTypeModel.GetAllActive().ToList();
 
+            foreach (var quizQuestion in quiz.Questions.Where(qs => qs.QuestionType != null))
+            {
+                var questionType = qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null
+                    && qt.MoodleQuestionType.Equals(quizQuestion.QuestionType.Equals("calculatedsimple") ? "calculated" : quizQuestion.QuestionType));
+                if (questionType == null)
+                {
+                    continue;
+                }
+
+                var separatorIndex = quizQuestion.Presentation.IndexOf(">>>>>");
+                string questionText = quizQuestion.Name,
+                    answers = separatorIndex > 0
+                        ? quizQuestion.Presentation.Substring(separatorIndex + 5)
+                        : string.Empty,
+                    type = separatorIndex > 0 ? quizQuestion.Presentation.Substring(0, separatorIndex) : string.Empty;
+
+                quizQuestion.IsSingle = type.Equals("r");
+
+                quizQuestion.QuestionText = questionText;
+                quizQuestion.Answers = answers.Split('|').Select(a => new MoodleQuestionOptionAnswer()
+                                                                      {
+                                                                          Answer = a
+                                                                      }).ToList();
+                    
+
+                var lmsQuestionId = int.Parse(quizQuestion.Id);
+
+                var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
+                        new Question
+                        {
+                            SubModuleItem = submodule,
+                            DateCreated = DateTime.Now,
+                            CreatedBy = user,
+                            LmsQuestionId = lmsQuestionId
+                        };
+                question.QuestionName = questionText;
+                question.QuestionType = questionType;
+                question.DateModified = DateTime.Now;
+                question.ModifiedBy = user;
+                question.IsActive = true;
+                question.IsMoodleSingle = quizQuestion.IsSingle;
+                var isTransient = question.Id == 0;
+
+                this.QuestionModel.RegisterSave(question);
+
+                if (isTransient)
+                {
+                    switch (question.QuestionType.Id)
+                    {
+                        case (int)QuestionTypeEnum.TrueFalse:
+                            this.QuestionForTrueFalseModel.RegisterSave(
+                                new QuestionForTrueFalse { Question = question });
+                            break;
+                        case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                            this.QuestionForSingleMultipleChoiceModel.RegisterSave(
+                                new QuestionForSingleMultipleChoice { Question = question });
+                            break;
+                    }
+                }
+
+                this.ProcessDistractors(user, questionType, quizQuestion, question);
+            }
+        }
  
 
         /// <summary>
@@ -1064,8 +1396,8 @@ namespace EdugameCloud.WCFService
         /// <param name="user">
         /// The user.
         /// </param>
-        /// <param name="egcQuiz">
-        /// The EGC quiz.
+        /// <param name="item">
+        /// The submodule item.
         /// </param>
         /// <param name="moodleQuiz">
         /// The Moodle quiz.
@@ -1073,15 +1405,14 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="SubModuleItem"/>.
         /// </returns>
-        private SubModuleItem ProcessSubModule(User user, Quiz egcQuiz, MoodleQuiz moodleQuiz)
+        private SubModuleItem ProcessSubModule(User user, SubModuleItem item, MoodleQuiz moodleQuiz)
         {
-            var submodule = egcQuiz.IsTransient() ? 
+            var submodule = item ??
                 new SubModuleItem()
                 {
                     DateCreated = DateTime.Now,
                     CreatedBy = user
-                } : 
-                egcQuiz.SubModuleItem;
+                };
 
             submodule.IsActive = true;
             submodule.IsShared = true;

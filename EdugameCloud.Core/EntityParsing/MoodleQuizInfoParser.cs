@@ -30,7 +30,7 @@
                 return ret;
             }
 
-            var quizzes = single.SelectSingleNode("KEY[@name='quizzes']");
+            var quizzes = single.SelectSingleNode("KEY[@name='quizzes']") ?? single.SelectSingleNode("KEY[@name='surveys']");
 
             if (quizzes == null)
             {

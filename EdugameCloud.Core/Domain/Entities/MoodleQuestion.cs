@@ -35,6 +35,11 @@
         public string QuestionType { get; set; }
 
         /// <summary>
+        /// The presentation
+        /// </summary>
+        public string Presentation { get; set; }
+
+        /// <summary>
         /// Value representing if is single
         /// </summary>
         public bool? IsSingle { get; set; }

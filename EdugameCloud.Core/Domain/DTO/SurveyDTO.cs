@@ -70,6 +70,12 @@
         [DataMember]
         public virtual int surveyId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the moodle id.
+        /// </summary>
+        [DataMember]
+        public int lmsSurveyId { get; set; }
+
         #endregion
     }
 }
