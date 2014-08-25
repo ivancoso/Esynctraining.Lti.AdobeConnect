@@ -68,6 +68,21 @@
         }
 
         /// <summary>
+        /// The get all.
+        /// </summary>
+        /// <param name="expression">
+        /// The expression.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{T}"/>.
+        /// </returns>
+        public virtual IEnumerable<T> GetAll(System.Linq.Expressions.Expression<Func<T, bool>> expression)
+        {
+            QueryOver<T, T> defaultQuery = new DefaultQueryOver<T, TId>().GetQueryOver().Where(expression);
+            return this.Repository.FindAll(defaultQuery);
+        }
+
+        /// <summary>
         /// The get all by ids.
         /// </summary>
         /// <param name="ids">

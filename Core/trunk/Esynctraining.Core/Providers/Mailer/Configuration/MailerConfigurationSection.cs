@@ -87,6 +87,26 @@
         }
 
         /// <summary>
+        ///     Gets or sets the images folder path.
+        /// </summary>
+        /// <value>
+        ///     The templates folder path.
+        /// </value>
+        [ConfigurationProperty("imagesFolderPath", IsRequired = false)]
+        public string ImagesFolderPath
+        {
+            get
+            {
+                return (string)this["imagesFolderPath"];
+            }
+
+            set
+            {
+                this["imagesFolderPath"] = value;
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets the templates folder path.
         /// </summary>
         /// <value>

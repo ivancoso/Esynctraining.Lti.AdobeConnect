@@ -19,5 +19,16 @@
         /// <param name="templateName">Name of the template.</param>
         /// <returns>template  transformer</returns>
         ITemplateTransformer GetTemplate(string templateName);
+
+        /// <summary>
+        /// The get full path to image.
+        /// </summary>
+        /// <param name="imageFileName">
+        /// The image file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        string GetFullPathToImage(string imageFileName);
     }
 }

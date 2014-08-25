@@ -22,6 +22,11 @@
         private readonly string templatesDirectory;
 
         /// <summary>
+        /// The images directory.
+        /// </summary>
+        private readonly string imagesDirectory;
+
+        /// <summary>
         /// The templates directory.
         /// </summary>
         private readonly string asciiTemplatesDirectory;
@@ -36,6 +41,7 @@
         public TemplateProvider()
         {
             this.templatesDirectory = MailerConfigurationSection.Current.With(x => x.TemplatesFolderPath);
+            this.imagesDirectory = MailerConfigurationSection.Current.With(x => x.ImagesFolderPath);
             this.asciiTemplatesDirectory = MailerConfigurationSection.Current.With(x => x.AsciiTemplatesFolderPath);
         }
 
@@ -101,6 +107,40 @@
         private string GetDefaultTemplateFileName(string templateName)
         {
             return string.Format("{0}.html", templateName);
+        }
+
+        /// <summary>
+        /// The get full path to template.
+        /// </summary>
+        /// <param name="imageFileName">
+        /// The template file name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetFullPathToImage(string imageFileName)
+        {
+            if (HttpContext.Current != null)
+            {
+                return
+                    HttpContext.Current.Server.MapPath(VirtualPathUtility.Combine(this.imagesDirectory, imageFileName));
+            }
+
+            if (!Directory.Exists(this.imagesDirectory))
+            {
+                var callingAssembly = Assembly.GetCallingAssembly();
+
+                return
+                    Path.Combine(
+                        callingAssembly.Location.TrimEndStrings(
+                            callingAssembly.GetName().Name + ".exe",
+                            callingAssembly.GetName().Name + ".dll") + this.imagesDirectory,
+                        imageFileName);
+            }
+            else
+            {
+                return Path.Combine(this.imagesDirectory, imageFileName);
+            }
         }
 
         /// <summary>
