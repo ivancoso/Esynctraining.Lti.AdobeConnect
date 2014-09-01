@@ -30,6 +30,11 @@
         /// </summary>
         public string FirstName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the company name.
+        /// </summary>
+        public string CompanyName { get; set; }
+
         #endregion
     }
 }

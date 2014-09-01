@@ -6,6 +6,8 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
+    using System.Security.Policy;
+    using System.Text.RegularExpressions;
     using System.Threading;
 
     using Castle.Core.Logging;
@@ -20,6 +22,7 @@
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
+    using Esynctraining.Core.Providers.Mailer.Models;
     using Esynctraining.Core.Utils;
 
     using global::MailSender.Mail.Models;
@@ -119,6 +122,28 @@
         }
 
         /// <summary>
+        ///     Gets the email history model.
+        /// </summary>
+        protected EmailHistoryModel EmailHistoryModel
+        {
+            get
+            {
+                return IoC.Resolve<EmailHistoryModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the template provider.
+        /// </summary>
+        protected ITemplateProvider TemplateProvider
+        {
+            get
+            {
+                return IoC.Resolve<ITemplateProvider>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private ILogger Logger
@@ -199,8 +224,8 @@
         /// </param>
         private void SendMails(string imagesFolder, TrialWeeks trialWeek)
         {
-            var bcced = new List<MailAddress> { new MailAddress(EmailFrom, NameFrom) };
             var trialLicenses = this.CompanyLicenseModel.GetAllTrial().ToList();
+            var usedEmails = new HashSet<string>();
             foreach (CompanyLicense trialLicense in trialLicenses.Where(l => l.DateStart.AddDays((int)trialWeek).Date == DateTime.Today.Date).ToList())
             {
                 if (trialLicense.Company == null) continue;
@@ -211,6 +236,13 @@
 
                 foreach (var user in users)
                 {
+                    if (usedEmails.Contains(user.Email))
+                    {
+                        continue;
+                    }
+
+                    usedEmails.Add(user.Email);
+
                     var firstName = user.FirstName;
                     var email = user.Email;
 
@@ -220,32 +252,35 @@
                     switch (trialWeek)
                     {
                         case TrialWeeks.First:
+                            var model1 = new TrialFirstWeekModel(this.Settings)
+                                        {
+                                            FirstName = firstName,
+                                            MailSubject = Subject,
+                                            CompanyName = trialLicense.Company.CompanyName
+                                        };
                             this.MailModel.SendEmail(
                                 firstName,
                                 email,
                                 Subject,
-                                new TrialFirstWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                },
+                                model1,
                                 NameFrom,
-                                EmailFrom,
-                                bcced: bcced);
+                                EmailFrom);
+                            this.SaveHistory(firstName, user, Subject, model1, NameFrom, EmailFrom);
                             break;
                         case TrialWeeks.Second:
+                            var model2 = new TrialSecondWeekModel(this.Settings)
+                                        {
+                                            FirstName = firstName,
+                                            MailSubject = Subject
+                                        };
                             this.MailModel.SendEmail(
                                 firstName,
                                 email,
                                 Subject,
-                                new TrialSecondWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                }, 
+                                model2, 
                             NameFrom,
-                            EmailFrom, 
-                            bcced: bcced);
+                            EmailFrom);
+                            this.SaveHistory(firstName, user, Subject, model2, NameFrom, EmailFrom);
                         break;
                     case TrialWeeks.Third:
                         var imagelink = new LinkedResource(Path.Combine(imagesFolder, "img.png"), "image/png")
@@ -253,37 +288,90 @@
                             ContentId = "TrialThirdWeek",
                             TransferEncoding = System.Net.Mime.TransferEncoding.Base64
                         };
+                        var model3 = new TrialThirdWeekModel(this.Settings)
+                                {
+                                    FirstName = firstName,
+                                    MailSubject = Subject
+                                };
                         this.MailModel.SendEmail(
                             firstName,
                             email, 
                             Subject, 
-                            new TrialThirdWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                },
+                            model3,
                                 NameFrom,
                                 EmailFrom,
-                                bcced: bcced,
                                 linkedResources: new List<LinkedResource> { imagelink });
+                        this.SaveHistory(firstName, user, Subject, model3, NameFrom, EmailFrom);
                             break;
                         case TrialWeeks.Fourth:
+                            var model4 = new TrialFourthWeekModel(this.Settings)
+                                    {
+                                        FirstName = firstName,
+                                        MailSubject = Subject
+                                    };
                             this.MailModel.SendEmail(
                                 firstName,
                                 email,
                                 Subject,
-                                new TrialFourthWeekModel(this.Settings)
-                                {
-                                    FirstName = firstName, 
-                                    MailSubject = Subject
-                                },
+                                model4,
                                 NameFrom,
-                                EmailFrom,
-                                bcced: bcced);
+                                EmailFrom);
+                            this.SaveHistory(firstName, user, Subject, model4, NameFrom, EmailFrom);
                             break;
                     }
                 }
                 Thread.Sleep(3000);
+            }
+        }
+
+        private void SaveHistory<TModel>(string toName, User user, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        {
+            try
+            {
+
+                string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model), message = body;
+                if (message != null)
+                {
+                    message = Regex.Replace(message, "<[^>]*(>|$)", "");
+                    message = message.Replace("\r\n", "\n")
+                        .Replace("\r", "\n")
+                        .Replace("&nbsp;", " ")
+                        .Replace("&#39;", @"'");
+                    message = Regex.Replace(message, @"[ ]{2,}", " ");
+                    message = message.Replace("\n ", "\n");
+                    message = Regex.Replace(message, @"[\n]{2,}", "\n");
+                    while (message.StartsWith("\n")) message = message.Remove(0, 1);
+                }
+
+                var emailHistory = new EmailHistory()
+                                   {
+                                       SentTo = user.Email,
+                                       SentToName = toName,
+                                       SentFrom = fromEmail,
+                                       SentFromName = fromName,
+                                       Date = DateTime.Now,
+                                       SentBcc =
+                                           bcced != null
+                                               ? bcced.Select(ma => ma.Address)
+                                           .Aggregate((a1, a2) => a1 + ";" + a2)
+                                               : null,
+                                       SentCc =
+                                           cced != null
+                                               ? cced.Select(ma => ma.Address)
+                                           .Aggregate((a1, a2) => a1 + ";" + a2)
+                                               : null,
+                                       Subject = subject,
+                                       User = user,
+                                       Body = body,
+                                       Message = message
+                                   };
+
+                this.EmailHistoryModel.RegisterSave(emailHistory, true);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.StackTrace);
+                throw;
             }
         }
 
