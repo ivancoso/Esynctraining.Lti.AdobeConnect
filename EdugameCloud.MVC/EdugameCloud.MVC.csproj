@@ -69,6 +69,9 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
+    <Reference Include="Esynctraining.AC.Provider">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.0.15\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.4\lib\net40\Esynctraining.Core.dll</HintPath>
@@ -163,6 +166,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\SocialController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="ErrorController.generated.cs">
@@ -251,6 +255,10 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>DepositionConferencing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
+      <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

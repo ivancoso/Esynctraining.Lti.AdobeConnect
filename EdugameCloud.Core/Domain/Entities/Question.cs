@@ -158,6 +158,11 @@
         public virtual bool? IsMoodleSingle { get; set; }
 
         /// <summary>
+        /// Gets or sets the value indicating whether randomize answers.
+        /// </summary>
+        public virtual bool? RandomizeAnswers { get; set; }
+
+        /// <summary>
         /// Gets or sets the quiz question results.
         /// </summary>
         public virtual ISet<QuizQuestionResult> QuizQuestionResults

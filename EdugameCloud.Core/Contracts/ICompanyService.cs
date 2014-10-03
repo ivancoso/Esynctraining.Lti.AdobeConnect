@@ -156,6 +156,9 @@
         [OperationContract]
         ServiceResponse<CompanyThemeDTO> SaveTheme(CompanyThemeDTO companyThemeDTO);
 
+        [OperationContract]
+        ServiceResponse<CompanyLmsDTO> GetLMSHistoryByCompanyId(int companyId);
+
         #endregion
     }
 }

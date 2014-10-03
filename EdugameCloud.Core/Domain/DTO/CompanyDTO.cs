@@ -14,6 +14,7 @@
     [KnownType(typeof(UserDTO))]
     [KnownType(typeof(AddressDTO))]
     [KnownType(typeof(CompanyLicenseDTO))]
+    [KnownType(typeof(CompanyLmsDTO))]
     public class CompanyDTO
     {
         #region Constructors and Destructors
@@ -109,6 +110,12 @@
         /// </summary>
         [DataMember]
         public bool isActive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lms dto.
+        /// </summary>
+        [DataMember]
+        public CompanyLmsDTO lmsVO { get; set; }
 
         #endregion
     }

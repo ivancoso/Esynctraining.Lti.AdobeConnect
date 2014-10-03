@@ -303,27 +303,28 @@ namespace EdugameCloud.WCFService
                         break;
                     case (int)QuestionTypeEnum.CalculatedMultichoice:
                     case (int)QuestionTypeEnum.SingleMultipleChoiceText:
-                        m.answers = question.Distractors.Where(q => r.answers.Contains(q.Id.ToString()))
+                        m.answers = question.Distractors.Where(q => r.answers != null && r.answers.Contains(q.Id.ToString()))
                         .Select(q => q.LmsAnswer)
                         .ToList();
                         break;
                     case (int)QuestionTypeEnum.Matching:
                         var userAnswers = new Dictionary<string, string>();
-                        r.answers.ForEach(
-                            answer =>
-                            {
-                                var splitInd = answer.IndexOf("$$");
-                                if (splitInd > -1)
+                        if (r.answers != null)
+                            r.answers.ForEach(
+                                answer =>
                                 {
-                                    string left = answer.Substring(0, splitInd),
-                                        right = answer.Substring(splitInd + 2, answer.Length - splitInd - 2);
-                                    if (!userAnswers.ContainsKey(left))
+                                    var splitInd = answer.IndexOf("$$");
+                                    if (splitInd > -1)
                                     {
-                                        userAnswers.Add(left, right);
-                                    }
+                                        string left = answer.Substring(0, splitInd),
+                                            right = answer.Substring(splitInd + 2, answer.Length - splitInd - 2);
+                                        if (!userAnswers.ContainsKey(left))
+                                        {
+                                            userAnswers.Add(left, right);
+                                        }
 
-                                }
-                            });
+                                    }
+                                });
                         
                         m.answers = new List<string>();
                         foreach (var d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))

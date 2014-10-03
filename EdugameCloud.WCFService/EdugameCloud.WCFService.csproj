@@ -15,7 +15,7 @@
     <AssemblyName>EdugameCloud.WCFService</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <WcfConfigValidationEnabled>True</WcfConfigValidationEnabled>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -60,6 +60,9 @@
     <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="ClearUsernameBinding">
+      <HintPath>..\..\..\..\temp\ClearUsernameBinding-master\ClearUserPassBinding\obj\Release\ClearUsernameBinding.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -137,6 +140,7 @@
     <Content Include="Mail\Templates\LicenseUpgrade.html" />
     <Content Include="Mail\Templates\Enterprise.html" />
     <Content Include="Mail\Templates\Trial.html" />
+    <Content Include="services\EdugameCloud.WCFService.CompanyLmsService.svc" />
     <Content Include="services\EdugameCloud.WCFService.EmailService.svc" />
     <Content Include="services\EdugameCloud.WCFService.SocialService.svc" />
     <Content Include="services\EdugameCloud.WCFService.TestQuestionResultService.svc" />
@@ -173,15 +177,16 @@
     <Content Include="Global.asax" />
     <Content Include="log4net.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Mail\Templates\ChangePassword.html" />
     <Content Include="Mail\Templates\ActivationInvitation.html" />
     <Content Include="nhibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="services\EdugameCloud.WCFService.MoodleAuthorizationService.svc" />
+    <Content Include="services\EdugameCloud.ASMXService.MoodleAuthorization.asmx" />
     <Content Include="weborbconsole.html" />
   </ItemGroup>
   <ItemGroup>
@@ -198,6 +203,9 @@
     <Compile Include="Mail\Models\ErrorMailModel.cs" />
     <Compile Include="Mail\Models\LicenseUpgradeModel.cs" />
     <Compile Include="Mail\Models\TrialModel.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.CompanyLmsService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.CompanyLmsService.svc</DependentUpon>
+    </Compile>
     <Compile Include="services\EdugameCloud.WCFService.EmailService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.EmailService.svc</DependentUpon>
     </Compile>
@@ -315,6 +323,13 @@
     <Compile Include="Providers\ResourceProviderActivator.cs" />
     <Compile Include="Providers\WcfResourceProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="services\EdugameCloud.WCFService.MoodleAuthorizationService.svc.cs">
+      <DependentUpon>EdugameCloud.WCFService.MoodleAuthorizationService.svc</DependentUpon>
+    </Compile>
+    <Compile Include="services\EdugameCloud.ASMXService.MoodleAuthorization.asmx.cs">
+      <DependentUpon>EdugameCloud.ASMXService.MoodleAuthorization.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Streaming\HttpMultipart.cs" />
     <Compile Include="Streaming\HttpMultipartBoundary.cs" />
     <Compile Include="Streaming\HttpMultipartBuffer.cs" />
@@ -323,7 +338,10 @@
     <Compile Include="Validators\ACSessionDTOValidator.cs" />
     <Compile Include="Validators\AppletResultDTOValidator.cs" />
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
+    <Compile Include="Validators\CompanyLmsValidator.cs" />
+    <Compile Include="Validators\MoodleAuthenticationCredentialsValidator.cs" />
     <Compile Include="Validators\MoodleUserDTOValidator.cs" />
+    <Compile Include="Validators\MoodleUserParametersDTOValidator.cs" />
     <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
     <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
     <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />
@@ -382,17 +400,18 @@
     <Content Include="packages.config" />
     <Content Include="Applications\SocialNotifier\app.config" />
     <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
-    <None Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="weborb.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
@@ -441,7 +460,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2345</IISUrl>
+          <IISUrl>http://localhost:21647/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

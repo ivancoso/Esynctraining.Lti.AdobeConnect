@@ -141,7 +141,9 @@
     <Compile Include="Authentication\WebOrbAuthorizationHandler.cs" />
     <Compile Include="Authentication\WebOrbRolesProvider.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
-    <Compile Include="Business\Models\CanvasACMeetingModel.cs" />
+    <Compile Include="Business\Models\CanvasCourseMeetingModel.cs" />
+    <Compile Include="Business\Models\CanvasConnectCredentialsModel.cs" />
+    <Compile Include="Business\Models\CompanyLmsModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />
     <Compile Include="Business\Models\AppletResultModel.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="Business\Models\WebProxyModel.cs" />
     <Compile Include="Business\Queries\QueryOverCompany.cs" />
     <Compile Include="Business\Queries\QueryOverUser.cs" />
+    <Compile Include="Contracts\ICompanyLmsService.cs" />
     <Compile Include="Contracts\IEmailService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
@@ -231,7 +234,9 @@
     <Compile Include="Converters\CompanyThemeDTOConverter.cs" />
     <Compile Include="Converters\CompanyDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
+    <Compile Include="Domain\DTO\CompanyLmsDTO.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
+    <Compile Include="Domain\DTO\ConnectionInfoDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
     <Compile Include="Domain\DTO\MoodleCourseInfoDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizConvertDTO.cs" />
@@ -295,7 +300,9 @@
     <Compile Include="Domain\DTO\VersionDTO.cs" />
     <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
     <Compile Include="Domain\DTO\WebRequestDTO.cs" />
-    <Compile Include="Domain\Entities\CanvasACMeeting.cs" />
+    <Compile Include="Domain\Entities\CanvasCourseMeeting.cs" />
+    <Compile Include="Domain\Entities\CanvasConnectCredentials.cs" />
+    <Compile Include="Domain\Entities\CompanyLms.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />

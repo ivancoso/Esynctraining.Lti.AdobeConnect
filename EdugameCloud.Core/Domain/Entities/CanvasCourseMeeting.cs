@@ -5,12 +5,16 @@
     /// <summary>
     /// The canvas ac meeting
     /// </summary>
-    public class CanvasACMeeting : Entity
+    public class CanvasCourseMeeting : Entity
     {
         /// <summary>
-        /// The context id
+        /// The canvas connect credentials
         /// </summary>
-        public virtual string ContextId { get; set; }
+        public virtual int CanvasConnectCredentialsId { get; set; }
+        /// <summary>
+        /// The course id
+        /// </summary>
+        public virtual int CourseId { get; set; }
         /// <summary>
         /// The sco id
         /// </summary>

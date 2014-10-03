@@ -47,6 +47,28 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the company license model.
+        /// </summary>
+        private CompanyLmsModel CompanyLmsModel
+        {
+            get
+            {
+                return IoC.Resolve<CompanyLmsModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the company license model.
+        /// </summary>
+        private LmsProviderModel LmsProviderModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsProviderModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the company model.
         /// </summary>
         private CompanyThemeModel CompanyThemeModel
@@ -469,6 +491,23 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The get all.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse{T}"/>.
+        /// </returns>
+        public ServiceResponse<CompanyLmsDTO> GetLMSHistoryByCompanyId(int companyId)
+        {
+            return new ServiceResponse<CompanyLmsDTO>
+            {
+                objects =
+                    this.CompanyLmsModel.GetAllByCompanyId(companyId)
+                        .Select(x => new CompanyLmsDTO(x))
+                        .ToList()
+            };
+        }
+
+        /// <summary>
         /// The save.
         /// </summary>
         /// <param name="dto">
@@ -524,6 +563,28 @@ namespace EdugameCloud.WCFService
                         instance.Licenses.Add(license);
                         companyModel.RegisterSave(instance, false);
                     }
+                }
+
+                if (isTransient && dto.lmsVO != null)
+                {
+                    var lmses = CompanyLmsModel.GetAllByCompanyId(instance.Id);
+                    var lms = lmses.Any() ? lmses.First() : new CompanyLms();
+                    lms.AcPassword = dto.lmsVO.acPassword;
+                    lms.AcServer = dto.lmsVO.acServer;
+                    lms.AcUsername = dto.lmsVO.acUsername;
+                    lms.Company = CompanyModel.GetOneById(instance.Id).Value;
+                    //lms.ConsumerKey = dto.lmsVO.consumerKey;
+                    lms.CreatedBy = UserModel.GetOneById(dto.lmsVO.createdBy).Value;
+                    lms.DateCreated = dto.lmsVO.dateCreated;
+                    lms.DateModified = dto.lmsVO.dateModified;
+                    lms.LmsProvider = LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider);
+                    lms.ModifiedBy = UserModel.GetOneById(dto.lmsVO.modifiedBy).Value;
+                    //lms.SharedSecret = dto.lmsVO.sharedSecret;
+
+                    lms.ConsumerKey = Guid.NewGuid().ToString();
+                    lms.SharedSecret = Guid.NewGuid().ToString();
+
+                    CompanyLmsModel.RegisterSave(lms);
                 }
 
                 if ((!dto.primaryContactId.HasValue || dto.primaryContactId == default(int)) && dto.primaryContactVO != null)
@@ -602,6 +663,9 @@ namespace EdugameCloud.WCFService
 
                 IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
                 response.@object = new CompanyDTO(instance);
+
+                var lmss = CompanyLmsModel.GetAllByCompanyId(instance.Id);
+                response.@object.lmsVO = lmss.Any() ? new CompanyLmsDTO(lmss.Last()) : null;
                 return response;
             }
 

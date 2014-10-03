@@ -118,7 +118,9 @@
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="ISessionSource.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
-    <Compile Include="Mappings\CanvasACMeetingMap.cs" />
+    <Compile Include="Mappings\CanvasCourseMeetingMap.cs" />
+    <Compile Include="Mappings\CanvasConnectCredentialsMap.cs" />
+    <Compile Include="Mappings\CompanyLmsMap.cs" />
     <Compile Include="Mappings\CompanyMap.cs" />
     <Compile Include="Mappings\AddressMap.cs" />
     <Compile Include="Mappings\ACSessionMap.cs" />
@@ -195,7 +197,9 @@
     <Compile Include="WindsorContainerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

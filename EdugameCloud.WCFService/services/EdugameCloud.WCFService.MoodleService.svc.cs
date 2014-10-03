@@ -350,10 +350,18 @@ namespace EdugameCloud.WCFService
 
                 if (q.Questions != null && q.Questions.Any())
                 {
-                    var res = this.ConvertAndSave(q, user, true);
-                    if (!subModuleItemsQuizes.ContainsKey(res.Item1))
+                    try
                     {
-                        subModuleItemsQuizes.Add(res.Item1, res.Item2);
+                        var res = this.ConvertAndSave(q, user, true);
+                        if (!subModuleItemsQuizes.ContainsKey(res.Item1))
+                        {
+                            subModuleItemsQuizes.Add(res.Item1, res.Item2);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, 
+                            "Error during quiz export", "Quiz " + q.Name + " can not be exported: " + e.Message));
                     }
                 }
             }
@@ -794,10 +802,10 @@ namespace EdugameCloud.WCFService
             var values = new Dictionary<string, double>();
             foreach (var a in q.Datasets)
             {
+                var value = a.Items.Count > 0 ? a.Items.Count : double.Parse(a.Max ?? "0");
                 if (!values.ContainsKey(a.Name))
-                    values.Add(a.Name, a.Items.First().Value);
+                    values.Add(a.Name, value);
                 var name = a.Name;
-                var value = a.Items.First().Value;
                 questionText = questionText.Replace("{" + name + "}", value.ToString());
             }
 
@@ -1111,7 +1119,7 @@ namespace EdugameCloud.WCFService
                 foreach (var ds in q.Datasets)
                 {
                     var variable = ds.Name;
-                    var value = ds.Items.First().Value;
+                    var value = ds.Items.Count > 0 ? ds.Items.First().Value : double.Parse(ds.Max ?? "0");
                     expression.SetValue(variable, value);
                 }
 

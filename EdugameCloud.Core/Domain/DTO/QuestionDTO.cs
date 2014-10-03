@@ -57,6 +57,7 @@
             this.imageVO = question.Image.Return(x => new FileDTO(x), null);
             this.distractors = question.Distractors.Select(x => new DistractorDTO(x)).ToList();
             this.correctReference = question.CorrectReference;
+            this.randomizeAnswers = question.RandomizeAnswers;
 
             this.FillCustomProperties(instance);
         }
@@ -220,6 +221,12 @@
         /// </summary>
         [DataMember]
         public int? weightBucketType { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the value indicating whether randomize answers.
+        /// </summary>
+        [DataMember]
+        public bool? randomizeAnswers { get; set; }
 
         #endregion
 

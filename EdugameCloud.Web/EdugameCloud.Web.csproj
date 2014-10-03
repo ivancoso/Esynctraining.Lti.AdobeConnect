@@ -382,8 +382,12 @@
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="PublishProfiles\EdugameCloud.Web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
-    <Content Include="log4net.cfg.xml" />
-    <Content Include="nhibernate.cfg.xml" />
+    <Content Include="log4net.cfg.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="nhibernate.cfg.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Scripts\core.js" />
     <Content Include="Scripts\history.js" />
     <Content Include="Scripts\jquery-1.8.2.js" />
@@ -421,10 +425,12 @@
     <Content Include="Views\File\ImportQuestions.cshtml" />
     <Content Include="Views\Home\LogIn.cshtml" />
     <Content Include="Views\Social\LoggedIn.cshtml" />
+    <Content Include="Views\Home\Unsubscribed.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="App_GlobalResources\ViewModels\" />
+    <Folder Include="extjs\" />
     <Folder Include="Mail\Models\" />
     <Folder Include="Modules\" />
     <Folder Include="Validators\" />
@@ -439,6 +445,10 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
+      <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
       <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
@@ -478,9 +488,6 @@
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Index.designer.cs</LastGenOutput>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_GlobalResources\Emails.resx">
@@ -525,7 +532,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2345/</IISUrl>
+          <IISUrl>https://localhost:1443</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

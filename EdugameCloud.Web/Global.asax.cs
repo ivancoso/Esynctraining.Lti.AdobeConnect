@@ -15,6 +15,7 @@
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;
     using EdugameCloud.Persistence;
@@ -50,6 +51,7 @@
             var container = new WindsorContainer();
             IoC.Initialize(container);
             container.RegisterComponents(web: true);
+            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             RegisterLocalComponents(container);
             SetControllerFactory(container);
             AreaRegistration.RegisterAllAreas();

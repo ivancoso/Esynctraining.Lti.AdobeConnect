@@ -143,6 +143,12 @@
         [DataMember]
         public virtual int? y { get; set; }
 
+        /// <summary>
+        /// Gets or sets the value indicating whether randomize answers.
+        /// </summary>
+        [DataMember]
+        public virtual bool? randomizeAnswers { get; set; }
+
         #endregion
     }
 }
