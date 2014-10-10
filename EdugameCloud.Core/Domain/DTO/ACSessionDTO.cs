@@ -38,7 +38,7 @@
             this.scoId = result.ScoId;
             this.dateCreated = result.DateCreated;
             this.status = (int)result.Status;
-            this.includeACEmails = result.IncludeAcEmails;
+            this.includeACEmails = result.IncludeAcEmails ?? false;
         }
 
         #endregion
