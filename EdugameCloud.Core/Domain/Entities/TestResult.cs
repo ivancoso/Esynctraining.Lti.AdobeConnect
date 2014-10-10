@@ -23,6 +23,11 @@
         #region Public Properties
 
         /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
+        public virtual string ACEmail { get; set; }
+
+        /// <summary>
         ///     Gets or sets the ac session.
         /// </summary>
         public virtual int ACSessionId { get; set; }

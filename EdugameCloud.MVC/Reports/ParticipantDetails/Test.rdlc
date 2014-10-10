@@ -41,6 +41,14 @@
           <DataField>participantName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="participantEmail">
+          <DataField>participantEmail</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="showEmail">
+          <DataField>showEmail</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
         <Field Name="score">
           <DataField>score</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
@@ -128,16 +136,19 @@
                           <TablixBody>
                             <TablixColumns>
                               <TablixColumn>
-                                <Width>1.86548in</Width>
+                                <Width>1.49238in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.69091in</Width>
+                                <Width>1.49238in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.77813in</Width>
+                                <Width>1.31781in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.86548in</Width>
+                                <Width>1.40503in</Width>
+                              </TablixColumn>
+                              <TablixColumn>
+                                <Width>1.49238in</Width>
                               </TablixColumn>
                             </TablixColumns>
                             <TablixRows>
@@ -167,6 +178,44 @@
                                           </Paragraph>
                                         </Paragraphs>
                                         <rd:DefaultName>Textbox31</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Color>LightGrey</Color>
+                                            <Style>Solid</Style>
+                                          </Border>
+                                          <BackgroundColor>CornflowerBlue</BackgroundColor>
+                                          <VerticalAlign>Middle</VerticalAlign>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
+                                      <Textbox Name="Textbox1">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>Email</Value>
+                                                <Style>
+                                                  <FontFamily>Abel</FontFamily>
+                                                  <FontSize>12pt</FontSize>
+                                                  <Color>White</Color>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style>
+                                              <TextAlign>Center</TextAlign>
+                                            </Style>
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox1</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Color>LightGrey</Color>
@@ -303,6 +352,11 @@
                           <TablixColumnHierarchy>
                             <TablixMembers>
                               <TablixMember />
+                              <TablixMember>
+                                <Visibility>
+                                  <Hidden>=IIF(Fields!showEmail.Value, True,False)</Hidden>
+                                </Visibility>
+                              </TablixMember>
                               <TablixMember />
                               <TablixMember />
                               <TablixMember />
@@ -338,16 +392,19 @@
                           <TablixBody>
                             <TablixColumns>
                               <TablixColumn>
-                                <Width>1.86885in</Width>
+                                <Width>1.49508in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.68851in</Width>
+                                <Width>1.49508in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.77379in</Width>
+                                <Width>1.31474in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.86885in</Width>
+                                <Width>1.40002in</Width>
+                              </TablixColumn>
+                              <TablixColumn>
+                                <Width>1.49508in</Width>
                               </TablixColumn>
                             </TablixColumns>
                             <TablixRows>
@@ -393,11 +450,48 @@
                                   </TablixCell>
                                   <TablixCell>
                                     <CellContents>
+                                      <Textbox Name="Textbox4">
+                                        <CanGrow>true</CanGrow>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Trim(Fields!participantEmail.Value)</Value>
+                                                <Style>
+                                                  <FontFamily>Abel</FontFamily>
+                                                  <FontSize>12pt</FontSize>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style>
+                                              <TextAlign>Center</TextAlign>
+                                            </Style>
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <rd:DefaultName>Textbox4</rd:DefaultName>
+                                        <Style>
+                                          <Border>
+                                            <Color>White</Color>
+                                            <Style>Solid</Style>
+                                          </Border>
+                                          <BackgroundColor>#e3eeff</BackgroundColor>
+                                          <VerticalAlign>Middle</VerticalAlign>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixCell>
+                                  <TablixCell>
+                                    <CellContents>
                                       <Tablix Name="Tablix8">
                                         <TablixBody>
                                           <TablixColumns>
                                             <TablixColumn>
-                                              <Width>1.68851in</Width>
+                                              <Width>1.31474in</Width>
                                             </TablixColumn>
                                           </TablixColumns>
                                           <TablixRows>
@@ -453,7 +547,6 @@
                                                         <PaddingBottom>2pt</PaddingBottom>
                                                       </Style>
                                                     </Textbox>
-                                                    <rd:Selected>true</rd:Selected>
                                                   </CellContents>
                                                 </TablixCell>
                                               </TablixCells>
@@ -485,7 +578,7 @@
                                         <TablixBody>
                                           <TablixColumns>
                                             <TablixColumn>
-                                              <Width>1.77379in</Width>
+                                              <Width>1.40002in</Width>
                                             </TablixColumn>
                                           </TablixColumns>
                                           <TablixRows>
@@ -624,6 +717,11 @@
                           <TablixColumnHierarchy>
                             <TablixMembers>
                               <TablixMember />
+                              <TablixMember>
+                                <Visibility>
+                                  <Hidden>=IIF(Fields!showEmail.Value, True, False)</Hidden>
+                                </Visibility>
+                              </TablixMember>
                               <TablixMember />
                               <TablixMember />
                               <TablixMember />

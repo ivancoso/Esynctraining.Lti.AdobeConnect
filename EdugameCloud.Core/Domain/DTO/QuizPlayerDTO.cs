@@ -24,6 +24,12 @@
         public virtual DateTime endTime { get; set; }
 
         /// <summary>
+        /// Gets or sets the AC email.
+        /// </summary>
+        [DataMember]
+        public virtual string acEmail { get; set; }
+
+        /// <summary>
         /// Gets or sets the participant name.
         /// </summary>
         [DataMember]

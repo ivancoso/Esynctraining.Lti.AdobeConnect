@@ -18,6 +18,7 @@
             this.Map(x => x.Score).Not.Nullable();
             this.Map(x => x.IsArchive).Nullable();
             this.Map(x => x.Email).Nullable();
+            this.Map(x => x.ACEmail).Length(500).Nullable();
             this.Map(x => x.StartTime).Not.Nullable();
             this.Map(x => x.EndTime).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();

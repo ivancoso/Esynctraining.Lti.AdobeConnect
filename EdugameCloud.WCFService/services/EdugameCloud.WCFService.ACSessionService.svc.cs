@@ -185,6 +185,7 @@ namespace EdugameCloud.WCFService
         private ACSession ConvertDto(ACSessionDTO sessionDTO, ACSession instance)
         {
             instance = instance ?? new ACSession();
+            instance.IncludeAcEmails = sessionDTO.includeACEmails;
             instance.AccountId = sessionDTO.accountId;
             instance.MeetingUrl = sessionDTO.meetingURL;
             instance.DateCreated = sessionDTO.dateCreated == DateTime.MinValue ? DateTime.Now : sessionDTO.dateCreated;

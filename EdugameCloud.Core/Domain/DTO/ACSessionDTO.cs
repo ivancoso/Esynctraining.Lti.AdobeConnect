@@ -38,11 +38,18 @@
             this.scoId = result.ScoId;
             this.dateCreated = result.DateCreated;
             this.status = (int)result.Status;
+            this.includeACEmails = result.IncludeAcEmails;
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets a value indicating whether include ac emails.
+        /// </summary>
+        [DataMember]
+        public bool includeACEmails { get; set; }
 
         /// <summary>
         /// Gets or sets the status.

@@ -232,6 +232,7 @@ namespace EdugameCloud.WCFService
             instance.StartTime = resultDTO.startTime;
             instance.EndTime = resultDTO.endTime;
             instance.Email = resultDTO.email.With(x => x.Trim());
+            instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
             instance.IsArchive = resultDTO.isArchive;
             instance.DateCreated = resultDTO.dateCreated == DateTime.MinValue ? DateTime.Now : resultDTO.dateCreated;
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());

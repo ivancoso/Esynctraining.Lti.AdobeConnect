@@ -1075,6 +1075,7 @@
                                         startTime = p.startTime,// p.score > 0 ? p.startTime : DateTime.Today,
                                         endTime = p.endTime,// p.score > 0 ? p.endTime : DateTime.Today,
                                         p.participantName,
+                                        participantEmail = p.acEmail,
                                         totalQuestions = questions.Count,
                                         scorePercent = ((double)p.score / questions.Count).ToString("0.0%")
                                     }).ToList();
@@ -1461,6 +1462,7 @@
                                                 p.startTime,
                                                 p.endTime,
                                                 p.participantName,
+                                                participantEmail = p.acEmail,
                                                 totalScore = acSession.TotalScore,
                                                 scorePassed = p.scorePassed ? 1 : 0,
                                                 timePassed = p.timePassed ? 1 : 0,

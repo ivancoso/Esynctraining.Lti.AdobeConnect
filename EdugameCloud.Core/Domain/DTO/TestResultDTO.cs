@@ -40,11 +40,18 @@
             this.startTime = result.StartTime;
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
+            this.acEmail = result.ACEmail;
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the AC email.
+        /// </summary>
+        [DataMember]
+        public string acEmail { get; set; }
 
         /// <summary>
         /// Gets or sets the email.

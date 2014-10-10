@@ -41,6 +41,7 @@
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
             this.lmsId = result.LmsId;
+            this.acEmail = result.ACEmail;
         }
 
         #endregion
@@ -52,6 +53,12 @@
         /// </summary>
         [DataMember]
         public string email { get; set; }
+
+        /// <summary>
+        /// Gets or sets the AC email.
+        /// </summary>
+        [DataMember]
+        public string acEmail { get; set; }
 
         /// <summary>
         ///     Gets or sets the applet name.

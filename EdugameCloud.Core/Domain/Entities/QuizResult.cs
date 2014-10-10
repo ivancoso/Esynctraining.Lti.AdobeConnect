@@ -25,6 +25,11 @@
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
+        public virtual string ACEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the email.
+        /// </summary>
         public virtual string Email { get; set; }
 
         /// <summary>

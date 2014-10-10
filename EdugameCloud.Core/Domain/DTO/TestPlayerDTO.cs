@@ -42,6 +42,12 @@
         public virtual string participantName { get; set; }
 
         /// <summary>
+        /// Gets or sets the AC email.
+        /// </summary>
+        [DataMember]
+        public virtual string acEmail { get; set; }
+
+        /// <summary>
         /// Gets or sets the position.
         /// </summary>
         [DataMember]

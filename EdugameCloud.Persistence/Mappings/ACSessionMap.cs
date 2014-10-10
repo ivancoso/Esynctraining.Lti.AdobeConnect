@@ -18,6 +18,7 @@
             this.Map(x => x.MeetingUrl).Length(500).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.ScoId).Not.Nullable();
+            this.Map(x => x.IncludeAcEmails).Nullable();
             this.Map(x => x.Status).CustomType<ACSessionStatusEnum>().Not.Nullable().Default("1");
             this.References(x => x.SubModuleItem).Not.Nullable();
             this.References(x => x.ACUserMode).Not.Nullable();

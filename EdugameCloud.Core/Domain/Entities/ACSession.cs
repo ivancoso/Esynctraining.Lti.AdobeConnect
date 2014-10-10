@@ -74,6 +74,11 @@
         public virtual int ScoId { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether include ac emails.
+        /// </summary>
+        public virtual bool? IncludeAcEmails { get; set; }
+
+        /// <summary>
         /// Gets or sets the status.
         /// </summary>
         public virtual ACSessionStatusEnum Status { get; set; }
