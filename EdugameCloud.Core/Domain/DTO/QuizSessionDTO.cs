@@ -30,6 +30,12 @@
         public virtual int acSessionId { get; set; }
 
         /// <summary>
+        /// Gets or sets the include ac emails.
+        /// </summary>
+        [DataMember]
+        public virtual bool? includeAcEmails { get; set; }
+
+        /// <summary>
         /// Gets or sets the ac user mode id.
         /// </summary>
         [DataMember]

@@ -30,6 +30,12 @@
         public virtual int TotalScore { get; set; }
 
         /// <summary>
+        /// Gets or sets the include ac emails.
+        /// </summary>
+        [DataMember]
+        public virtual bool? includeAcEmails { get; set; }
+
+        /// <summary>
         /// Gets or sets the avg score.
         /// </summary>
         [DataMember]
