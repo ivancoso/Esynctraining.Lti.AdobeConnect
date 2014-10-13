@@ -139,13 +139,13 @@
                                 <Width>1.49238in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.49238in</Width>
+                                <Width>1.74238in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.31781in</Width>
+                                <Width>1.32614in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.40503in</Width>
+                                <Width>1.1467in</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>1.49238in</Width>
@@ -354,7 +354,7 @@
                               <TablixMember />
                               <TablixMember>
                                 <Visibility>
-                                  <Hidden>=IIF(Fields!showEmail.Value, True,False)</Hidden>
+                                  <Hidden>=IIF(Fields!showEmail.Value, False, True)</Hidden>
                                 </Visibility>
                               </TablixMember>
                               <TablixMember />
@@ -395,13 +395,13 @@
                                 <Width>1.49508in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.49508in</Width>
+                                <Width>1.73968in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.31474in</Width>
+                                <Width>1.32614in</Width>
                               </TablixColumn>
                               <TablixColumn>
-                                <Width>1.40002in</Width>
+                                <Width>1.14402in</Width>
                               </TablixColumn>
                               <TablixColumn>
                                 <Width>1.49508in</Width>
@@ -491,7 +491,7 @@
                                         <TablixBody>
                                           <TablixColumns>
                                             <TablixColumn>
-                                              <Width>1.31474in</Width>
+                                              <Width>1.32614in</Width>
                                             </TablixColumn>
                                           </TablixColumns>
                                           <TablixRows>
@@ -578,7 +578,7 @@
                                         <TablixBody>
                                           <TablixColumns>
                                             <TablixColumn>
-                                              <Width>1.40002in</Width>
+                                              <Width>1.14402in</Width>
                                             </TablixColumn>
                                           </TablixColumns>
                                           <TablixRows>
@@ -719,7 +719,7 @@
                               <TablixMember />
                               <TablixMember>
                                 <Visibility>
-                                  <Hidden>=IIF(Fields!showEmail.Value, True, False)</Hidden>
+                                  <Hidden>=IIF(Fields!showEmail.Value, False, True)</Hidden>
                                 </Visibility>
                               </TablixMember>
                               <TablixMember />
