@@ -28,8 +28,8 @@
 
             routes.MapLowercaseRoute(
                 name: "DefaultLti",
-                url: "Lti",
-                defaults: new { controller = "Lti", action = "Index", id = UrlParameter.Optional }
+                url: "Lti/{layout}",
+                defaults: new { controller = "Lti", action = "Index", layout = UrlParameter.Optional }
             );
 
             routes.MapLowercaseRoute("Default", "{action}", new { controller = "Home", action = "Admin" });
@@ -64,6 +64,11 @@
                 name: "getrecordings",
                 url: "Lti/Recording/GetAll",
                 defaults: new { controller = "Lti", action = "GetRecordings" }
+            );
+            routes.MapLowercaseRoute(
+                name: "joinrecording",
+                url: "Lti/Recording/Join/{recordingUrl}",
+                defaults: new { controller = "Lti", action = "JoinRecording", recordingUrl = UrlParameter.Optional }
             );
             routes.MapLowercaseRoute(
                 name: "gettemplates",

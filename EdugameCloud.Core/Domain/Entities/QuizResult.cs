@@ -93,6 +93,11 @@
         /// </summary>
         public virtual int LmsId { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the lms id.
+        /// </summary>
+        public virtual bool? isCompleted { get; set; }
+
         #endregion
     }
 }

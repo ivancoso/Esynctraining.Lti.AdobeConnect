@@ -255,7 +255,9 @@ namespace EdugameCloud.WCFService
                     response = client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
                 }
 
-                var resp = Encoding.UTF8.GetString(response);
+                //var resp = Encoding.UTF8.GetString(response);
+                var response2 = Encoding.Convert(Encoding.UTF8, Encoding.Unicode, response);
+                var resp = Encoding.Unicode.GetString(response2);
 
                 var xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(resp);
@@ -628,7 +630,7 @@ namespace EdugameCloud.WCFService
 
             if (((string)this.Settings.MoodleChangeUrl).ToLower().Equals("true"))
             {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG");
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "PRO_Moodle");
             }
 
             return domain;

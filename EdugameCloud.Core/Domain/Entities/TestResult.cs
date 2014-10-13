@@ -88,6 +88,11 @@
         /// </summary>
         public virtual DateTime StartTime { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the start time.
+        /// </summary>
+        public virtual bool? IsCompleted { get; set; }
+
         #endregion
     }
 }

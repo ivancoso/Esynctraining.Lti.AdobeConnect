@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<hibernate-configuration xmlns="urn:nhibernate-configuration-2.2">
+	<session-factory>
+		<property name="dialect">NHibernate.Dialect.MsSql2008Dialect</property>
+		<property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
+		<property name="connection.connection_string_name">Database</property>
+		<property name="default_schema">dbo</property>
+		<property name="adonet.batch_size">10</property>
+		<property name="hbm2ddl.keywords">auto-quote</property>
+		<property name="current_session_context_class">thread_static</property>
+	</session-factory>
+</hibernate-configuration>

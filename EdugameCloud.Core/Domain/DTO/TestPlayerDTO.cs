@@ -83,6 +83,12 @@
         [DataMember]
         public decimal? passingScore { get; set; }
 
+        /// <summary>
+        /// Gets or sets the start time.
+        /// </summary>
+        [DataMember]
+        public virtual bool isCompleted { get; set; }
+
         #endregion
     }
 }

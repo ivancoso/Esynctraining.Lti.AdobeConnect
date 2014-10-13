@@ -42,6 +42,7 @@
             this.email = result.Email;
             this.lmsId = result.LmsId;
             this.acEmail = result.ACEmail;
+            this.isCompleted = result.isCompleted ?? false;
         }
 
         #endregion
@@ -125,6 +126,12 @@
         /// </summary>
         [DataMember]
         public int lmsId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the quiz result id.
+        /// </summary>
+        [DataMember]
+        public bool isCompleted { get; set; }
 
         #endregion
     }

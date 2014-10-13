@@ -41,8 +41,7 @@ namespace EdugameCloud.Core.Business.Models
             var query = new DefaultQueryOver<LmsProvider, int>()
                 .GetQueryOver()
                 .WhereRestrictionOn(x => x.LmsProviderName)
-                .IsInsensitiveLike(name, MatchMode.Exact)
-                .Take(1);
+                .IsInsensitiveLike(name, MatchMode.Exact);
             return this.Repository.FindOne(query).Value;
         }
     }

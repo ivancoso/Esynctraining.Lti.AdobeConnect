@@ -25,6 +25,7 @@
             this.Map(x => x.ACSessionId).Not.Nullable();
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             this.References(x => x.Test).Not.Nullable();
+            this.Map(x => x.IsCompleted).Nullable();
         }
 
         #endregion

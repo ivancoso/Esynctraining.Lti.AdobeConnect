@@ -1,0 +1,116 @@
+﻿@using System.Web.Optimization
+@using System.Web.UI.WebControls
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AC</title>
+    @Styles.Render("~/Content/css")
+    <style>
+        #param-values { display: none; }
+        #param-values-hide { cursor: pointer; background: #eeeeee; }
+        .container>.row { padding: 5px; }
+        .container>.row>form>.row { margin: 5px; }
+        .container>.row>form>.row { margin-left: 10px; }
+        .container>.row>form>.row.input-group { margin-left: 5px; }
+        .vcenter {
+            line-height: 40px;
+        }
+    </style>
+</head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2 vcenter">
+                    <form action="@Url.Action("JoinTheMeeting")" target="_blank">
+                        @foreach (var p in Model.Params.Keys)
+                        {
+                            <input type="hidden" id="@p" name="@p" value="@Model.Params[p]" />
+                        }
+                        <input type="submit" class="btn btn-primary" value="Join the meeting" />                         
+                    </form>
+                </div>
+                
+                <div class="col-md-10 vcenter">
+                    Current room address: <a href="@Model.MeetingUrl">@Model.MeetingUrl</a> (@Model.MeetingName)
+                </div>
+            </div>
+            @if (Model.Params.ContainsKey("roles") && Model.Params["roles"] == "Instructor")
+            {
+                if (Model.Meetings != null)
+                {
+                    <div class="row">
+                        <form action="@Url.Action("Update")" >
+                            @foreach (var p in Model.Params.Keys)
+                            {
+                                <input type="hidden" id="@p" name="@p" value="@Model.Params[p]"/>
+                            }
+
+                            @foreach (var sco in Model.Meetings)
+                            {
+                                <div class="input-group row">
+                                    @if (Model.MeetingScoId == sco.ScoId)
+                                    {
+                                        <span class="input-group-addon">
+                                            <input type="radio" value="@sco.ScoId" id="s@sco.ScoId" name="meeting-sco-id" checked="true" />
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="input-group-addon">
+                                            <input type="radio" value="@sco.ScoId" id="s@sco.ScoId" name="meeting-sco-id" />
+                                        </span>
+                                    }
+                                    <input type="text" class="form-control" name="old-meeting-name" value="@sco.Name" />
+                                    <!--label for="s@sco.ScoId">@sco.Name</!--label-->
+                                </div>
+                            }
+                            <div class="input-group row">
+                                <span class="input-group-addon">
+                                    <input type="radio" value="0" name="meeting-sco-id">
+                                </span>
+                                <input type="text" class="form-control" name="new-meeting-name">
+                            </div>
+                            <div class="row">
+                                <input type="submit" class="btn" title="Update" name="Update" value="Update" />                                
+                            </div>
+
+                        </form>
+                    </div>
+                }
+
+            }
+
+            <div class="row" id="param-values-hide">...</div>
+            @if (Model.Params != null && Model.Params.Keys.Count > 0)
+            {
+                <div class="row" id="param-values">
+                    @foreach (var s in Model.Params.Keys)
+                    {
+                        <div class="row">@s : @Model.Params[s]</div>
+                    }
+                    <div class="row">
+                        <a href="@Model.Params["launch_presentation_return_url"]">redirect</a>
+                    </div>
+                    <div class="row">
+                        https://olga-pc:1443/content/config.xml
+                    </div>
+                </div>
+            }
+            
+        </div>
+    
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        <script>
+            $('#param-values-hide').click(function() {
+                $('#param-values').toggle();
+            })
+        </script>
+    </body>
+</html>

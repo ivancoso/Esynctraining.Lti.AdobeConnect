@@ -41,6 +41,7 @@
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
             this.acEmail = result.ACEmail;
+            this.isCompleted = result.IsCompleted ?? false;
         }
 
         #endregion
@@ -118,6 +119,12 @@
         /// </summary>
         [DataMember]
         public DateTime startTime { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the start time.
+        /// </summary>
+        [DataMember]
+        public bool isCompleted { get; set; }
 
         #endregion
     }

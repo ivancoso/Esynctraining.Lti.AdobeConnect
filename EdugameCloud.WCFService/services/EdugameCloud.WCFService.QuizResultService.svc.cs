@@ -24,6 +24,8 @@ namespace EdugameCloud.WCFService
 
     using Resources;
 
+    using Weborb.Client;
+
     /// <summary>
     ///     The account service.
     /// </summary>
@@ -239,6 +241,7 @@ namespace EdugameCloud.WCFService
             instance.Quiz = this.QuizModel.GetOneById(resultDTO.quizId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
             instance.LmsId = resultDTO.lmsId;
+            instance.isCompleted = resultDTO.isCompleted;
             return instance;
         }
 
