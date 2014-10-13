@@ -89,6 +89,7 @@
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
+    <Compile Include="DTO\QuizDTO.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

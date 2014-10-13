@@ -24,6 +24,10 @@
         
         public string lis_person_contact_email_primary { get; set; }
 
+        public string custom_canvas_user_login_id { get; set; }
+
         public string roles { get; set; }
+
+        public string layout { get; set; }
     }
 }
