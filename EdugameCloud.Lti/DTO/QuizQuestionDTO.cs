@@ -2,17 +2,55 @@
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// The quiz question DTO.
+    /// </summary>
     public class QuizQuestionDTO
     {
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizQuestionDTO"/> class.
+        /// </summary>
         public QuizQuestionDTO()
         {
-            answers = new List<AnswerDTO>();
+            this.answers = new List<AnswerDTO>();
         }
-        public int id { get; set; }
-        public int quiz_id { get; set; }
-        public string question_name { get; set; }
-        public string question_type { get; set; }
-        public string question_text { get; set; }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the answers.
+        /// </summary>
         public List<AnswerDTO> answers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id.
+        /// </summary>
+        public int id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question name.
+        /// </summary>
+        public string question_name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question text.
+        /// </summary>
+        public string question_text { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question type.
+        /// </summary>
+        public string question_type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the quiz id.
+        /// </summary>
+        public int quiz_id { get; set; }
+
+        #endregion
     }
 }

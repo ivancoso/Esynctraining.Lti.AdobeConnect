@@ -1,11 +1,9 @@
-﻿// ReSharper disable CheckNamespace
+﻿// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
-// ReSharper restore CheckNamespace
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
-    using System.IO;
+    using System.Globalization;
     using System.Linq;
     using System.Net;
     using System.ServiceModel;
@@ -22,7 +20,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -32,7 +29,7 @@ namespace EdugameCloud.WCFService
     /// <summary>
     ///     The account service.
     /// </summary>
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class QuizQuestionResultService : BaseService, IQuizQuestionResultService
@@ -40,40 +37,18 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
-        /// Gets the quiz result model.
+        ///     Gets the question model.
         /// </summary>
-        private QuizResultModel QuizResultModel
+        private MoodleUserModel MoodleUserModel
         {
             get
             {
-                return IoC.Resolve<QuizResultModel>();
+                return IoC.Resolve<MoodleUserModel>();
             }
         }
 
         /// <summary>
-        /// Gets the quiz question result model.
-        /// </summary>
-        private QuizQuestionResultModel QuizQuestionResultModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizQuestionResultModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
-        private QuestionTypeModel QuestionTypeModel
-        {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the question model.
+        ///     Gets the question model.
         /// </summary>
         private QuestionModel QuestionModel
         {
@@ -84,13 +59,35 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        /// Gets the question model.
+        ///     Gets the question type model.
         /// </summary>
-        private MoodleUserModel MoodleUserModel
+        private QuestionTypeModel QuestionTypeModel
         {
             get
             {
-                return IoC.Resolve<MoodleUserModel>();
+                return IoC.Resolve<QuestionTypeModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the quiz question result model.
+        /// </summary>
+        private QuizQuestionResultModel QuizQuestionResultModel
+        {
+            get
+            {
+                return IoC.Resolve<QuizQuestionResultModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the quiz result model.
+        /// </summary>
+        private QuizResultModel QuizResultModel
+        {
+            get
+            {
+                return IoC.Resolve<QuizResultModel>();
             }
         }
 
@@ -99,14 +96,82 @@ namespace EdugameCloud.WCFService
         #region Public Methods and Operators
 
         /// <summary>
-        ///   Gets all quiz questions results.
+        /// The delete by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<int> DeleteById(int id)
+        {
+            var result = new ServiceResponse<int>();
+            QuizQuestionResult quizResult;
+            QuizQuestionResultModel model = this.QuizQuestionResultModel;
+            if ((quizResult = model.GetOneById(id).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT, 
+                        ErrorsTexts.GetResultError_Subject, 
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                model.RegisterDelete(quizResult, true);
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = id;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Gets all quiz questions results.
         /// </summary>
         /// <returns>
         ///     The <see cref="ServiceResponse" />.
         /// </returns>
         public ServiceResponse<QuizQuestionResultDTO> GetAll()
         {
-            return new ServiceResponse<QuizQuestionResultDTO> { objects = this.QuizQuestionResultModel.GetAll().Select(x => new QuizQuestionResultDTO(x)).ToList() };
+            return new ServiceResponse<QuizQuestionResultDTO>
+                       {
+                           objects =
+                               this.QuizQuestionResultModel.GetAll()
+                               .Select(x => new QuizQuestionResultDTO(x))
+                               .ToList()
+                       };
+        }
+
+        /// <summary>
+        /// The get by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<QuizQuestionResultDTO> GetById(int id)
+        {
+            var result = new ServiceResponse<QuizQuestionResultDTO>();
+            QuizQuestionResult quizResult;
+            if ((quizResult = this.QuizQuestionResultModel.GetOneById(id).Value) == null)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT, 
+                        ErrorsTexts.GetResultError_Subject, 
+                        ErrorsTexts.GetResultError_NotFound));
+            }
+            else
+            {
+                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                result.@object = new QuizQuestionResultDTO(quizResult);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -124,16 +189,19 @@ namespace EdugameCloud.WCFService
             ValidationResult validationResult;
             if (this.IsValid(resultDto, out validationResult))
             {
-                var quizQuestionResultModel = this.QuizQuestionResultModel;
-                var isTransient = resultDto.quizQuestionResultId == 0;
-                var quizQuestionResult = isTransient ? null : quizQuestionResultModel.GetOneById(resultDto.quizQuestionResultId).Value;
+                QuizQuestionResultModel quizQuestionResultModel = this.QuizQuestionResultModel;
+                bool isTransient = resultDto.quizQuestionResultId == 0;
+                QuizQuestionResult quizQuestionResult = isTransient
+                                                            ? null
+                                                            : quizQuestionResultModel.GetOneById(
+                                                                resultDto.quizQuestionResultId).Value;
                 quizQuestionResult = this.ConvertDto(resultDto, quizQuestionResult);
                 quizQuestionResultModel.RegisterSave(quizQuestionResult);
                 result.@object = new QuizQuestionResultDTO(quizQuestionResult);
                 return result;
             }
 
-            result = (ServiceResponse<QuizQuestionResultDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }
@@ -152,14 +220,17 @@ namespace EdugameCloud.WCFService
             var result = new ServiceResponse<QuizQuestionResultDTO>();
             var faults = new List<string>();
             var created = new List<QuizQuestionResult>();
-            foreach (var appletResultDTO in results)
+            foreach (QuizQuestionResultDTO appletResultDTO in results)
             {
                 ValidationResult validationResult;
                 if (this.IsValid(appletResultDTO, out validationResult))
                 {
-                    var sessionModel = this.QuizQuestionResultModel;
-                    var isTransient = appletResultDTO.quizQuestionResultId == 0;
-                    var appletResult = isTransient ? null : sessionModel.GetOneById(appletResultDTO.quizQuestionResultId).Value;
+                    QuizQuestionResultModel sessionModel = this.QuizQuestionResultModel;
+                    bool isTransient = appletResultDTO.quizQuestionResultId == 0;
+                    QuizQuestionResult appletResult = isTransient
+                                                          ? null
+                                                          : sessionModel.GetOneById(
+                                                              appletResultDTO.quizQuestionResultId).Value;
                     appletResult = this.ConvertDto(appletResultDTO, appletResult);
                     sessionModel.RegisterSave(appletResult);
                     created.Add(appletResult);
@@ -179,70 +250,17 @@ namespace EdugameCloud.WCFService
             if (faults.Any())
             {
                 result.status = created.Any() ? Errors.CODE_RESULTTYPE_PARTIALSUCCESS : Errors.CODE_RESULTTYPE_ERROR;
-                result.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.EntityCreationError_Subject, ErrorsTexts.EntityCreation_PartialSuccessMessage, faults));
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_OBJECT, 
+                        ErrorsTexts.EntityCreationError_Subject, 
+                        ErrorsTexts.EntityCreation_PartialSuccessMessage, 
+                        faults));
             }
 
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
 
             this.SendResultsToMoodle(results);
-
-            return result;
-        }
-
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<QuizQuestionResultDTO> GetById(int id)
-        {
-            var result = new ServiceResponse<QuizQuestionResultDTO>();
-            QuizQuestionResult quizResult;
-            if ((quizResult = this.QuizQuestionResultModel.GetOneById(id).Value) == null)
-            {
-                result.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ErrorsTexts.GetResultError_Subject, ErrorsTexts.GetResultError_NotFound));
-            }
-            else
-            {
-                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
-                result.@object = new QuizQuestionResultDTO(quizResult);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// The delete by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<int> DeleteById(int id)
-        {
-            var result = new ServiceResponse<int>();
-            QuizQuestionResult quizResult;
-            var model = this.QuizQuestionResultModel;
-            if ((quizResult = model.GetOneById(id).Value) == null)
-            {
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                        ErrorsTexts.GetResultError_Subject,
-                        ErrorsTexts.GetResultError_NotFound));
-            }
-            else
-            {
-                model.RegisterDelete(quizResult, true);
-                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
-                result.@object = id;
-            }
 
             return result;
         }
@@ -274,127 +292,15 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        private string SendResultsToMoodle(IEnumerable<QuizQuestionResultDTO> results)
-        {
-            var toSend = new List<MoodleQuizResultDTO>();
-
-            foreach (var r in results)
-            {
-                var m = new MoodleQuizResultDTO();
-                var quizResult = QuizResultModel.GetOneById(r.quizResultId).Value;
-                m.quizId = quizResult.Quiz.LmsQuizId ?? 0;
-                var question = QuestionModel.GetOneById(r.questionId).Value;
-                m.questionId = question.LmsQuestionId ?? 0;
-                m.questionType = question.QuestionType.MoodleQuestionType;
-                m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
-                m.userId = quizResult.LmsId;
-                m.startTime = quizResult.StartTime.ConvertToUTCTimestamp();
-
-                switch (question.QuestionType.Id)
-                {
-                    case (int)QuestionTypeEnum.TrueFalse:
-                        var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
-                        if (distractor != null)
-                        {
-                            var answer = ((r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
-                                            || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault()));
-                            m.answers = new List<string> { answer ? "true" : "false" };
-                        }
-                        break;
-                    case (int)QuestionTypeEnum.CalculatedMultichoice:
-                    case (int)QuestionTypeEnum.SingleMultipleChoiceText:
-                        m.answers = question.Distractors.Where(q => r.answers != null && r.answers.Contains(q.Id.ToString()))
-                        .Select(q => q.LmsAnswer)
-                        .ToList();
-                        break;
-                    case (int)QuestionTypeEnum.Matching:
-                        var userAnswers = new Dictionary<string, string>();
-                        if (r.answers != null)
-                            r.answers.ForEach(
-                                answer =>
-                                {
-                                    var splitInd = answer.IndexOf("$$");
-                                    if (splitInd > -1)
-                                    {
-                                        string left = answer.Substring(0, splitInd),
-                                            right = answer.Substring(splitInd + 2, answer.Length - splitInd - 2);
-                                        if (!userAnswers.ContainsKey(left))
-                                        {
-                                            userAnswers.Add(left, right);
-                                        }
-
-                                    }
-                                });
-                        
-                        m.answers = new List<string>();
-                        foreach (var d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))
-                        {
-                            var key = d.DistractorName.Substring(0, d.DistractorName.IndexOf("$$"));
-                            m.answers.Add(userAnswers.ContainsKey(key) ? userAnswers[key] : string.Empty);
-                        }
-
-
-                        break;
-                    default:
-                        m.answers = r.answers;
-                        break;
-                }
-                
-                if (m.userId > 0 & m.quizId > 0)
-                    toSend.Add(m);
-            }
-
-            if (toSend.Count == 0) return string.Empty;
-
-            var ret =
-                toSend.GroupBy(s => s.quizId)
-                    .Select(
-                        s =>
-                            new
-                            {
-                                quizId = s.Key,
-                                usersResults =
-                                    s.GroupBy(u => new { u.userId, u.startTime })
-                                        .Select(
-                                            u =>
-                                                new
-                                                {
-                                                    u.Key.userId,
-                                                    u.Key.startTime,
-                                                    answers =
-                                                        u.Select(
-                                                            a =>
-                                                                new
-                                                                {
-                                                                    a.questionId,
-                                                                    a.answers
-                                                                })
-                                                })
-                            });
-
-            var json = new JavaScriptSerializer().Serialize(ret);
-
-            var moodleUser = MoodleUserModel.GetAll().OrderByDescending(u => u.DateModified).FirstOrDefault();
-            if (moodleUser == null) return "No Moodle user account set";
-
-            var pairs = new NameValueCollection()
-                {
-                    { "wsfunction", "mod_adobeconnect_save_external_quiz_report" },
-                    { "wstoken", moodleUser.Token },
-                    { "reportObject", json }
-                };
-
-            
-            byte[] response = null;
-            using (WebClient client = new WebClient())
-            {
-                response = client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
-            }
-            string resp = System.Text.Encoding.UTF8.GetString(response);
-
-            return resp;
-        }
-
+        /// <summary>
+        /// The fix domain.
+        /// </summary>
+        /// <param name="domain">
+        /// The domain.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string FixDomain(string domain)
         {
             if (domain.Last() != '/')
@@ -410,10 +316,147 @@ namespace EdugameCloud.WCFService
             return domain;
         }
 
+        /// <summary>
+        /// The get services url.
+        /// </summary>
+        /// <param name="domain">
+        /// The domain.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string GetServicesUrl(string domain)
         {
             var serviceUrl = (string)this.Settings.MoodleServiceUrl;
             return this.FixDomain(domain) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+        }
+
+        /// <summary>
+        /// The send results to moodle.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        private void SendResultsToMoodle(IEnumerable<QuizQuestionResultDTO> results)
+        {
+            var toSend = new List<MoodleQuizResultDTO>();
+
+            foreach (QuizQuestionResultDTO r in results)
+            {
+                var m = new MoodleQuizResultDTO();
+                QuizResult quizResult = this.QuizResultModel.GetOneById(r.quizResultId).Value;
+                m.quizId = quizResult.Quiz.LmsQuizId ?? 0;
+                Question question = this.QuestionModel.GetOneById(r.questionId).Value;
+                m.questionId = question.LmsQuestionId ?? 0;
+                m.questionType = question.QuestionType.MoodleQuestionType;
+                m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
+                m.userId = quizResult.LmsId;
+                m.startTime = quizResult.StartTime.ConvertToUTCTimestamp();
+
+                switch (question.QuestionType.Id)
+                {
+                    case (int)QuestionTypeEnum.TrueFalse:
+                        Distractor distractor = question.Distractors != null
+                                                    ? question.Distractors.FirstOrDefault()
+                                                    : null;
+                        if (distractor != null)
+                        {
+                            bool answer = (r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                                           || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                            m.answers = new List<string> { answer ? "true" : "false" };
+                        }
+
+                        break;
+                    case (int)QuestionTypeEnum.CalculatedMultichoice:
+                    case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                        m.answers =
+                            question.Distractors.Where(q => r.answers != null && r.answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)))
+                                .Select(q => q.LmsAnswer)
+                                .ToList();
+                        break;
+                    case (int)QuestionTypeEnum.Matching:
+                        var userAnswers = new Dictionary<string, string>();
+                        if (r.answers != null)
+                        {
+                            r.answers.ForEach(
+                                answer =>
+                                    {
+                                        int splitInd = answer.IndexOf("$$", System.StringComparison.Ordinal);
+                                        if (splitInd > -1)
+                                        {
+                                            string left = answer.Substring(0, splitInd), 
+                                                   right = answer.Substring(splitInd + 2, answer.Length - splitInd - 2);
+                                            if (!userAnswers.ContainsKey(left))
+                                            {
+                                                userAnswers.Add(left, right);
+                                            }
+                                        }
+                                    });
+                        }
+
+                        m.answers = new List<string>();
+                        foreach (Distractor d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))
+                        {
+                            string key = d.DistractorName.Substring(0, d.DistractorName.IndexOf("$$", System.StringComparison.Ordinal));
+                            m.answers.Add(userAnswers.ContainsKey(key) ? userAnswers[key] : string.Empty);
+                        }
+
+                        break;
+                    default:
+                        m.answers = r.answers;
+                        break;
+                }
+
+                if (m.userId > 0 & m.quizId > 0)
+                {
+                    toSend.Add(m);
+                }
+            }
+
+            if (toSend.Count == 0)
+            {
+                return;
+            }
+
+            var ret =
+                toSend.GroupBy(s => s.quizId)
+                    .Select(
+                        s =>
+                        new
+                            {
+                                quizId = s.Key, 
+                                usersResults =
+                            s.GroupBy(u => new { u.userId, u.startTime })
+                            .Select(
+                                u =>
+                                new
+                                    {
+                                        u.Key.userId, 
+                                        u.Key.startTime, 
+                                        answers = u.Select(a => new { a.questionId, a.answers })
+                                    })
+                            });
+
+            string json = new JavaScriptSerializer().Serialize(ret);
+
+            MoodleUser moodleUser =
+                this.MoodleUserModel.GetAll().OrderByDescending(u => u.DateModified).FirstOrDefault();
+            if (moodleUser == null)
+            {
+                return;
+            }
+
+            var pairs = new NameValueCollection
+                            {
+                                { "wsfunction", "mod_adobeconnect_save_external_quiz_report" }, 
+                                { "wstoken", moodleUser.Token }, 
+                                { "reportObject", json }
+                            };
+
+            using (var client = new WebClient())
+            {
+                client.UploadValues(this.GetServicesUrl(moodleUser.Domain), pairs);
+            }
         }
 
         #endregion

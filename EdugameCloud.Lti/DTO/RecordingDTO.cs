@@ -2,28 +2,56 @@
 {
     using System.Runtime.Serialization;
 
+    /// <summary>
+    /// The recording DTO.
+    /// </summary>
     [DataContract]
     public class RecordingDTO
     {
-        [DataMember]
-        public string id { get; set; }
+        #region Public Properties
 
-        [DataMember]
-        public string name { get; set; }
-
-        [DataMember]
-        public string description { get; set; }
-
+        /// <summary>
+        /// Gets or sets the begin date.
+        /// </summary>
         [DataMember]
         public string begin_date { get; set; }
 
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
         [DataMember]
-        public string end_date { get; set; }
+        public string description { get; set; }
 
+        /// <summary>
+        /// Gets or sets the duration.
+        /// </summary>
         [DataMember]
         public int duration { get; set; }
 
+        /// <summary>
+        /// Gets or sets the end date.
+        /// </summary>
+        [DataMember]
+        public string end_date { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id.
+        /// </summary>
+        [DataMember]
+        public string id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        [DataMember]
+        public string name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the url.
+        /// </summary>
         [DataMember]
         public string url { get; set; }
+
+        #endregion
     }
 }

@@ -1,11 +1,37 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
+    /// <summary>
+    /// The answer DTO.
+    /// </summary>
     public class AnswerDTO
     {
-        public int id { get; set; }
-        public string answer_text { get; set; }
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the answer_match_left.
+        /// </summary>
         public string answer_match_left { get; set; }
+
+        /// <summary>
+        /// Gets or sets the answer_match_right.
+        /// </summary>
         public string answer_match_right { get; set; }
+
+        /// <summary>
+        /// Gets or sets the answer_text.
+        /// </summary>
+        public string answer_text { get; set; }
+
+        /// <summary>
+        /// Gets or sets the exact.
+        /// </summary>
         public string exact { get; set; }
+
+        /// <summary>
+        /// Gets or sets the id.
+        /// </summary>
+        public int id { get; set; }
+
+        #endregion
     }
 }

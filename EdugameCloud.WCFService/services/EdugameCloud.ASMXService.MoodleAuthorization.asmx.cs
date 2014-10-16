@@ -1,5 +1,10 @@
-﻿namespace EdugameCloud.ASMXService
+﻿// ReSharper disable once CheckNamespace
+namespace EdugameCloud.ASMXService
 {
+    using System;
+    using System.Linq;
+    using System.Web.Services;
+
     using Castle.Core.Logging;
     using Castle.MicroKernel;
 
@@ -17,21 +22,15 @@
 
     using Resources;
 
-    using System;
-    using System.Linq;
-    using System.Web.Services;
-
     /// <summary>
-    /// Summary description for MoodleAuthorizationService
+    /// Moodle Authorization Service instance
     /// </summary>
+    ////    [System.Web.Script.Services.ScriptService]
     [WebService(Namespace = "http://dev.edugamecloud.com/")]
     [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
     [System.ComponentModel.ToolboxItem(false)]
-    // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-    // [System.Web.Script.Services.ScriptService]
     public class MoodleAuthorization : WebService
     {
-
         #region Properties
 
         /// <summary>
@@ -58,10 +57,31 @@
 
         #endregion
 
+        /// <summary>
+        /// The save.
+        /// </summary>
+        /// <param name="acId">
+        /// The AC id.
+        /// </param>
+        /// <param name="course">
+        /// The course.
+        /// </param>
+        /// <param name="domain">
+        /// The domain.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="wstoken">
+        /// The WS token.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MoodleUserParametersDTO"/>.
+        /// </returns>
         [WebMethod]
         public MoodleUserParametersDTO Save(string acId, int course, string domain, string provider, string wstoken)
         {
-            var dto = new MoodleUserParametersDTO()
+            var dto = new MoodleUserParametersDTO
                       {
                           acId = acId,
                           course = course,
@@ -73,20 +93,16 @@
             ValidationResult validationResult;
             if (this.IsValid(dto, out validationResult))
             {
-                var param = UserParametersModel.GetOneByAcId(dto.acId).Value;
+                var param = this.UserParametersModel.GetOneByAcId(dto.acId).Value;
                 param = this.ConvertDto(dto, param);
-                UserParametersModel.RegisterSave(param, true);
-
+                this.UserParametersModel.RegisterSave(param, true);
                 return new MoodleUserParametersDTO(param);
-
             }
 
             result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
-            return new MoodleUserParametersDTO() { errorMessage = result.error.errorMessage, errorDetails = result.error.errorDetail };
+            return new MoodleUserParametersDTO { errorMessage = result.error.errorMessage, errorDetails = result.error.errorDetail };
         }
-
-
 
         #region Methods
 
