@@ -49,6 +49,41 @@
             return this.Repository.FindAll(queryOver);
         }
 
+        /// <summary>
+        /// Gets one by domain
+        /// </summary>
+        /// <param name="domain">
+        /// The domain
+        /// </param>
+        /// <returns>
+        /// The canvas ac meeting
+        /// </returns>
+        public IFutureValue<CompanyLms> GetOneByDomain(string domain)
+        {
+            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+                .Where(x => x.LmsDomain == domain).Take(1);
+            return this.Repository.FindOne(defaultQuery);
+        }
+
+        /// <summary>
+        /// Gets one by domain
+        /// </summary>
+        /// <param name="domain">
+        /// The domain
+        /// </param>
+        /// <param name="consumerKey">
+        /// The consumer key
+        /// </param>
+        /// <returns>
+        /// The canvas ac meeting
+        /// </returns>
+        public IFutureValue<CompanyLms> GetOneByDomainOrConsumerKey(string domain, string consumerKey)
+        {
+            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+                .Where(x => (x.LmsDomain != null && x.LmsDomain == domain) || (x.ConsumerKey != null && x.ConsumerKey == consumerKey)).Take(1);
+            return this.Repository.FindOne(defaultQuery);
+        }
+
         #endregion
     }
 }

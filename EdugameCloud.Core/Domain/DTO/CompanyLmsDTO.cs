@@ -67,5 +67,14 @@
         [DataMember]
         public DateTime dateModified { get; set; }
 
+        [DataMember]
+        public string buttonColor { get; set; }
+
+        [DataMember]
+        public string primaryColor { get; set; }
+
+        [DataMember]
+        public string layout { get; set; }
+
     }
 }

@@ -219,6 +219,7 @@
     <Compile Include="Contracts\IEmailService.cs" />
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
+    <Compile Include="Contracts\ILmsService.cs" />
     <Compile Include="Contracts\IMoodle.cs" />
     <Compile Include="Contracts\IMoodleAuthorizationService.cs" />
     <Compile Include="Contracts\IMoodleService.cs" />
@@ -310,6 +311,7 @@
     <Compile Include="Domain\Entities\EmailHistory.cs" />
     <Compile Include="Domain\Entities\LmsProvider.cs" />
     <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
+    <Compile Include="Domain\Entities\LmsUser.cs" />
     <Compile Include="Domain\Entities\MoodleDataset.cs" />
     <Compile Include="Domain\Entities\MoodleDataSetItem.cs" />
     <Compile Include="Domain\Entities\MoodleQuestion.cs" />

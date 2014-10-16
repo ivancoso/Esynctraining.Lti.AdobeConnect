@@ -132,6 +132,7 @@
     <Compile Include="Mappings\BaseClassMapGuid.cs" />
     <Compile Include="Mappings\CompanyThemeMap.cs" />
     <Compile Include="Mappings\LmsProviderMap.cs" />
+    <Compile Include="Mappings\LmsUserMap.cs" />
     <Compile Include="Mappings\MoodleUserMap.cs" />
     <Compile Include="Mappings\MoodleUserParametersMap.cs" />
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />

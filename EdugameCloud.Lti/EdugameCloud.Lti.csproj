@@ -86,10 +86,15 @@
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\Canvas\CourseAPI.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
+    <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\QuizDTO.cs" />
+    <Compile Include="DTO\QuizQuestionDTO.cs" />
+    <Compile Include="DTO\QuizSubmissionDTO.cs" />
+    <Compile Include="DTO\QuizSubmissionQuestionDTO.cs" />
+    <Compile Include="DTO\QuizSubmissionResultDTO.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />

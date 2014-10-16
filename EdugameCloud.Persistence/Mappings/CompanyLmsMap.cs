@@ -15,6 +15,8 @@
             this.Map(x => x.AcPassword).Not.Nullable();
             this.Map(x => x.AcServer).Not.Nullable();
             this.Map(x => x.AcUsername).Not.Nullable();
+            this.Map(x => x.ACScoId).Nullable();
+            this.Map(x => x.ACTemplateScoId).Nullable();
             this.Map(x => x.ConsumerKey).Not.Nullable();
             this.References(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.Map(x => x.DateCreated).Not.Nullable();
@@ -22,6 +24,10 @@
             this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
             this.References(x => x.ModifiedBy).Nullable().Column("modifiedBy");
             this.Map(x => x.SharedSecret).Not.Nullable();
+            this.Map(x => x.PrimaryColor).Nullable();
+            this.Map(x => x.Layout).Nullable();
+            this.References(x => x.AdminUser).Column("AdminUserId").Nullable();
+            this.Map(x => x.LmsDomain).Nullable();
         }
 
         #endregion

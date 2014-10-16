@@ -66,6 +66,11 @@
                 defaults: new { controller = "Lti", action = "GetRecordings" }
             );
             routes.MapLowercaseRoute(
+                name: "deleterecording",
+                url: "Lti/Recording/Delete/{id}",
+                defaults: new { controller = "Lti", action = "DeleteRecording", id = UrlParameter.Optional }
+            );
+            routes.MapLowercaseRoute(
                 name: "joinrecording",
                 url: "Lti/Recording/Join/{recordingUrl}",
                 defaults: new { controller = "Lti", action = "JoinRecording", recordingUrl = UrlParameter.Optional }

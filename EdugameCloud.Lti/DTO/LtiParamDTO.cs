@@ -2,6 +2,8 @@
 {
     public class LtiParamDTO
     {
+        public string oauth_consumer_key { get; set; }
+
         public int custom_canvas_course_id { get; set; }
 
         public string custom_ac_folder_sco_id { get; set; }

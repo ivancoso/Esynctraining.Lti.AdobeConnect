@@ -404,7 +404,7 @@ namespace EdugameCloud.WCFService
 
             if (((string)this.Settings.MoodleChangeUrl).ToLower().Equals("true"))
             {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG");
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "PRO_Moodle");
             }
 
             return domain;

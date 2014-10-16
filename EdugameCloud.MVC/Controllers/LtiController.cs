@@ -4,6 +4,7 @@
     using System.Configuration;
     using System.Drawing;
     using System.Reflection;
+    using System.Threading;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
@@ -30,15 +31,15 @@
             }
         }
 
-        private CanvasConnectCredentials Credentials
+        private CompanyLms Credentials
         {
             get
             {
-                var creds = Session["Credentials"] as CanvasConnectCredentials;
+                var creds = Session["Credentials"] as CompanyLms;
 
                 if (creds == null && IsDebug)
                 {
-                    creds = canvasConnectCredentialsModel.GetOneByDomain("canvas.instructure.com").Value;
+                    creds = companyLmsModel.GetOneByDomain("canvas.instructure.com").Value;
                 }
 
                 if (creds == null)
@@ -92,11 +93,11 @@
             }
         }
 
-        private CanvasConnectCredentialsModel canvasConnectCredentialsModel
+        private CompanyLmsModel companyLmsModel
         {
             get
             {
-                return IoC.Resolve<CanvasConnectCredentialsModel>();
+                return IoC.Resolve<CompanyLmsModel>();
             }
         }
 
@@ -146,13 +147,19 @@
             rqIdField.SetValue(ssm, newId);
         }
 
+        public virtual ActionResult RedirectToErrorPage(string errorText)
+        {
+            ViewBag["Error"] = errorText;
+            return this.View("Error");
+        }
+
 
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public virtual void Index(string layout, LtiParamDTO model)
+        public virtual ViewResult Index(LtiParamDTO model)
         {
             //this.RegenerateId();
-
-            var credentials = canvasConnectCredentialsModel.GetOneByDomain(model.custom_canvas_api_domain).Value;
+             
+            var credentials = companyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
             if (credentials != null)
             {
                 Session["Param"] = model;
@@ -162,15 +169,25 @@
             }
             else if (!IsDebug)
             {
-                this.RedirectToError("Cannot log in.");
-                return;
+                ViewBag.Error =
+                    string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.",
+                    ConfigurationManager.AppSettings["EGCUrl"]);
+                return this.View("Error");
+            }
+            else
+            {
+                credentials = Credentials;
             }
 
-            //ViewBag["layout"] = model.layout;
-            //this.View("Index", model);
+            if (credentials.AdminUser == null)
+            {
+                ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
+                return this.View("Error");
+            }
 
             Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", Session.SessionID) { Domain = ConfigurationManager.AppSettings["CookieDomain"] });
-            Response.Redirect(String.Format("/extjs/index.html?layout={0}", layout ?? "")); //this.View("Index", model);
+            Response.Redirect(String.Format("/extjs/index.html?layout={0}&primaryColor={1}", credentials.Layout  ?? "", credentials.PrimaryColor ?? "" ));
+            return null;
         }
 
         public virtual ActionResult JoinMeeting()
@@ -191,6 +208,17 @@
 
             return this.Redirect(url);
         }
+
+        public virtual JsonResult DeleteRecording(string id)
+        {
+            var res = meetingSetup.RemoveRecording(
+                this.Credentials,
+                meetingSetup.GetProvider(this.Credentials),
+                this.Param.custom_canvas_course_id,
+                id);
+            return Json(new { removed = res });
+        }
+
 
         [HttpPost]
         public JsonResult UpdateUser(UserDTO user)

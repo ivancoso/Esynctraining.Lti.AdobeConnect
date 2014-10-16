@@ -15,6 +15,10 @@
         public virtual string AcUsername { get; set; }
 
         public virtual string AcPassword { get; set; }
+
+        public virtual string ACScoId { get; set; }
+
+        public virtual string ACTemplateScoId { get; set; }
         
         public virtual string ConsumerKey { get; set; }
 
@@ -27,6 +31,14 @@
         public virtual DateTime DateCreated { get; set; }
 
         public virtual DateTime DateModified { get; set; }
+
+        public virtual string Layout { get; set; }
+
+        public virtual string PrimaryColor { get; set; }
+
+        public virtual LmsUser AdminUser { get; set; }
+        
+        public virtual string LmsDomain { get; set; }
 
     }
 }

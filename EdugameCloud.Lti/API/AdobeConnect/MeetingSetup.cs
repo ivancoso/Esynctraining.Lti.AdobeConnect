@@ -36,11 +36,11 @@
             }
         }
 
-        private CanvasConnectCredentialsModel canvasConnectCredentialsModel
+        private CompanyLmsModel companyLmsModel
         {
             get
             {
-                return IoC.Resolve<CanvasConnectCredentialsModel>();
+                return IoC.Resolve<CompanyLmsModel>();
             }
         }
 
@@ -48,11 +48,11 @@
 
         #region Public Methods
 
-        public AdobeConnectProvider GetProvider(CanvasConnectCredentials credentials)
+        public AdobeConnectProvider GetProvider(CompanyLms credentials)
         {
             var connectionDetails = new ConnectionDetails()
             {
-                ServiceUrl = credentials.ACDomain + (credentials.ACDomain.EndsWith("/") ? string.Empty : "/")
+                ServiceUrl = credentials.AcServer + (credentials.AcServer.EndsWith("/") ? string.Empty : "/")
                     + "api/xml",
                 EventMaxParticipants = 10,
                 Proxy = new ProxyCredentials()
@@ -64,12 +64,12 @@
                 }
             };
             var provider = new AdobeConnectProvider(connectionDetails);
-            provider.Login(new UserCredentials(credentials.ACUsername, credentials.ACPassword));
+            provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
 
             return provider;
         }
         
-        public List<UserDTO> GetUsers(CanvasConnectCredentials credentials, AdobeConnectProvider provider, LtiParamDTO param,
+        public List<UserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param,
             IEnumerable<Principal> acUsers = null)
         {
             var users = this.GetCanvasUsers(credentials, param.custom_canvas_course_id);
@@ -151,7 +151,7 @@
         }
 
         public MeetingDTO SaveMeeting(
-            CanvasConnectCredentials credentials,
+            CompanyLms credentials,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             MeetingDTO meetingDTO)
@@ -181,7 +181,7 @@
 
             var updateItem = new MeetingUpdateItem() { ScoId = meeting.ScoId };
 
-            this.SetMeetingUpateItemFields(meetingDTO, updateItem, credentials.ACScoId, param.context_label);
+            this.SetMeetingUpateItemFields(meetingDTO, updateItem, credentials.ACScoId, param.context_label ?? "nolabel", param.custom_canvas_course_id);
 
             var result = meeting.ScoId != null ? provider.UpdateSco(updateItem) : provider.CreateSco(updateItem);
 
@@ -221,7 +221,7 @@
         }
 
 
-        public string JoinRecording(CanvasConnectCredentials credentials, LtiParamDTO param, string recordingUrl)
+        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, string recordingUrl)
         {
             var provider = this.GetProvider(credentials);
 
@@ -229,9 +229,9 @@
 
             string email = param.lis_person_contact_email_primary, login = param.custom_canvas_user_login_id;
 
-            var password = email != credentials.ACUsername ?
+            var password = email != credentials.AcUsername ?
                 System.Web.Security.Membership.GeneratePassword(8, 2) :
-                credentials.ACPassword;
+                credentials.AcPassword;
 
             var acUsers = provider.GetAllPrincipals().Values;
 
@@ -239,7 +239,7 @@
 
             if (registeredUser != null)
             {
-                if (email != credentials.ACUsername)
+                if (email != credentials.AcUsername)
                 {
                     provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
                 }
@@ -271,11 +271,11 @@
                 return param.launch_presentation_return_url;
             }
 
-            return credentials.ACDomain + (credentials.ACDomain != null && credentials.ACDomain.Last() == '/' ? "" : "/") 
+            return credentials.AcServer + (credentials.AcServer != null && credentials.AcServer.Last() == '/' ? "" : "/") 
                 + recordingUrl + "?session=" + breezeToken;
         }
 
-        public string JoinMeeting(CanvasConnectCredentials credentials, LtiParamDTO param)
+        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param)
         {
             var provider = this.GetProvider(credentials);
             
@@ -291,16 +291,16 @@
                 var currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
                 if (currentMeetingSco != null)
                 {
-                    meetingUrl = (credentials.ACDomain.EndsWith("/") ? credentials.ACDomain.Substring(0, credentials.ACDomain.Length - 1) : credentials.ACDomain)
+                    meetingUrl = (credentials.AcServer.EndsWith("/") ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1) : credentials.AcServer)
                         + currentMeetingSco.UrlPath;
                 }
             }
 
             string email = param.lis_person_contact_email_primary, login = param.custom_canvas_user_login_id;
 
-            var password = email != credentials.ACUsername ?
+            var password = email != credentials.AcUsername ?
                 System.Web.Security.Membership.GeneratePassword(8, 2) :
-                credentials.ACPassword;
+                credentials.AcPassword;
 
             var acUsers = provider.GetAllPrincipals().Values;
 
@@ -308,7 +308,7 @@
 
             if (registeredUser != null)
             {
-                if (email != credentials.ACUsername)
+                if (email != credentials.AcUsername)
                 {
                     provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
                 }
@@ -343,7 +343,7 @@
             return meetingUrl + "?session=" + breezeToken;
         }
 
-        public MeetingDTO GetMeeting(CanvasConnectCredentials credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
             var meeting = this.canvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
 
@@ -351,7 +351,7 @@
                 new MeetingDTO()
                 {
                     id = "0",
-                    connect_server = credentials.ACDomain,
+                    connect_server = credentials.AcServer,
                     is_editable = this.CanEdit(param)
                 };
 
@@ -364,7 +364,7 @@
                     new MeetingDTO()
                     {
                         id = "0",
-                        connect_server = credentials.ACDomain,
+                        connect_server = credentials.AcServer,
                         is_editable = this.CanEdit(param)
                     };
             }
@@ -376,7 +376,7 @@
             return meetingDTO;
         }
 
-        public List<UserDTO> UpdateUser(CanvasConnectCredentials credentials, AdobeConnectProvider provider, LtiParamDTO param, UserDTO user)
+        public List<UserDTO> UpdateUser(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, UserDTO user)
         {
             var meeting = this.canvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
             if (meeting == null)
@@ -438,7 +438,7 @@
             return this.GetUsers(credentials, provider, param, acUsers);
         }
 
-        public List<RecordingDTO> GetRecordings(CanvasConnectCredentials credentials, AdobeConnectProvider provider, int courseId)
+        public List<RecordingDTO> GetRecordings(CompanyLms credentials, AdobeConnectProvider provider, int courseId)
         {
             var meeting = this.canvasCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
 
@@ -447,6 +447,7 @@
             var result = provider.GetMeetingRecordings(new string[] { meeting.ScoId });
             return result.Values.Select(v => new RecordingDTO()
             {
+                id = v.ScoId,
                 name = v.Name,
                 description = v.Description,
                 begin_date = v.BeginDate.ToString("MM-dd-yy h:mm:ss tt"),
@@ -456,7 +457,21 @@
             }).ToList();
         }
 
-        public void SetupFolders(CanvasConnectCredentials credentials, AdobeConnectProvider provider)
+        public bool RemoveRecording(CompanyLms credentials, AdobeConnectProvider provider, int courseId, string recordingId)
+        {
+            var meeting = this.canvasCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
+
+            if (meeting == null) return false;
+
+            var result = provider.GetMeetingRecordings(new string[] { meeting.ScoId });
+
+            if (!result.Values.Any(v => v.ScoId == recordingId)) return false;
+
+            provider.DeleteSco(recordingId);
+            return true;
+        }
+
+        public void SetupFolders(CompanyLms credentials, AdobeConnectProvider provider)
         {
             string templatesSco = null;
             if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
@@ -492,7 +507,7 @@
                 var sharedMeetings = provider.GetContentsByType("meetings");
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
-                    var name = "Canvas for " + (credentials.CanvasDomain ?? "");
+                    var name = "Canvas for " + (credentials.LmsDomain ?? "");
                     var existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name == name && v.IsFolder);
                     if (existingFolder != null)
                     {
@@ -514,8 +529,8 @@
                 }
             }
 
-            canvasConnectCredentialsModel.RegisterSave(credentials);
-            canvasConnectCredentialsModel.Flush();
+            companyLmsModel.RegisterSave(credentials);
+            companyLmsModel.Flush();
         }
 
         public List<TemplateDTO> GetTemplates(AdobeConnectProvider provider, string templateFolder)
@@ -537,9 +552,9 @@
 
         #region Private Methods
 
-        private List<UserDTO> GetCanvasUsers(CanvasConnectCredentials credentials, int canvasCourseId)
+        private List<UserDTO> GetCanvasUsers(CompanyLms credentials, int canvasCourseId)
         {
-            var users = CourseAPI.GetUsersForCourse(credentials.CanvasDomain, credentials.CanvasToken, canvasCourseId);
+            var users = CourseAPI.GetUsersForCourse(credentials.LmsDomain, credentials.AdminUser.Token, canvasCourseId);
             users = users.GroupBy(u => u.id).Select(
                 ug =>
                 {
@@ -599,21 +614,21 @@
                               || param.roles.Contains("Administrator"));
         }
 
-        private void CreateAnnouncement(CanvasConnectCredentials credentials, LtiParamDTO param, string name, 
+        private void CreateAnnouncement(CompanyLms credentials, LtiParamDTO param, string name, 
             string startDate, string startTime, string duration)
         {
-            if (credentials.CanvasDomain.IndexOf("canvas") < 0 || String.IsNullOrEmpty(param.context_title)) return;
+            if (credentials.LmsDomain.IndexOf("canvas") < 0 || String.IsNullOrEmpty(param.context_title)) return;
 
             var rets = CourseAPI.CreateAnnouncement(
-                credentials.CanvasDomain,
-                credentials.CanvasToken,
+                credentials.LmsDomain,
+                credentials.AdminUser.Token,
                 param.custom_canvas_course_id,
                 String.Format("A new Adobe Connect room was created for course {0}", param.context_title),
                 String.Format("Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your Adobe Connect Conference section.",
                     name, startDate, startTime, duration));
         }
 
-        private void SetDefaultUsers(CanvasConnectCredentials credentials, AdobeConnectProvider provider, int canvasCourseId, string meetingScoId)
+        private void SetDefaultUsers(CompanyLms credentials, AdobeConnectProvider provider, int canvasCourseId, string meetingScoId)
         {
             var users = this.GetCanvasUsers(credentials, canvasCourseId);
 
@@ -666,20 +681,21 @@
 
         }
 
-        private MeetingDTO GetMeetingDTOByScoInfo(CanvasConnectCredentials credentials, AdobeConnectProvider provider, LtiParamDTO param,
+        private MeetingDTO GetMeetingDTOByScoInfo(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param,
             ScoInfo result, IEnumerable<PermissionInfo> permission)
         {
+            var bracketIndex = result.Name.IndexOf("]");
             var ret = new MeetingDTO()
             {
                 id = result.ScoId,
                 ac_room_url = result.UrlPath.Trim("/".ToCharArray()),
-                name = result.Name.Substring(result.Name.IndexOf("]") < 0 ? 0 : result.Name.IndexOf("]") + 2),
+                name = result.Name.Substring(bracketIndex < 0 || (bracketIndex + 2 > result.Name.Length) ? 0 : bracketIndex + 2),
                 summary = result.Description,
                 template = result.SourceScoId,
                 start_date = result.BeginDate.ToString("yyyy-MM-dd"),
                 start_time = result.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
                 duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"),
-                connect_server = credentials.ACDomain,
+                connect_server = credentials.AcServer,
                 access_level = permission != null && permission.FirstOrDefault() != null ?
                 permission.FirstOrDefault().PermissionId.ToString() : ""
             };
@@ -693,9 +709,13 @@
             return ret;
         }
 
-        private void SetMeetingUpateItemFields(MeetingDTO meetingDTO, MeetingUpdateItem updateItem, string folderSco, string contextLabel)
+        private void SetMeetingUpateItemFields(MeetingDTO meetingDTO, MeetingUpdateItem updateItem, string folderSco, string contextLabel, int courseId)
         {
-            updateItem.Name = String.Format("{0} [{1}] {2}", DateTime.Now.ToString("MM.dd.yy "), contextLabel, meetingDTO.name);
+            updateItem.Name = String.Format("{0} [{1}] {2}", courseId, contextLabel.Substring(0, Math.Min(contextLabel.Length, 10)), meetingDTO.name);
+            if (updateItem.Name.Length > 60)
+            {
+                updateItem.Name = updateItem.Name.Substring(0, 60);
+            }
             updateItem.Description = meetingDTO.summary;
             updateItem.UrlPath = meetingDTO.ac_room_url;
             updateItem.FolderId = folderSco;
@@ -716,7 +736,7 @@
                 }
             }
         }
-        
+
         #endregion
     }
 }

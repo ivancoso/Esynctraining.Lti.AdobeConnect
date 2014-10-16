@@ -6,6 +6,9 @@
     public class RecordingDTO
     {
         [DataMember]
+        public string id { get; set; }
+
+        [DataMember]
         public string name { get; set; }
 
         [DataMember]
