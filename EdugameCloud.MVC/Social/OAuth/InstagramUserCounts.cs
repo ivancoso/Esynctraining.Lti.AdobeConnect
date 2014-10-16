@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.MVC.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth
 {
     using System.Diagnostics.CodeAnalysis;
 

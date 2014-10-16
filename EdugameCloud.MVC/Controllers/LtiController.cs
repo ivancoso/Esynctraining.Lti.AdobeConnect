@@ -1,10 +1,7 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
-    using System;
-    using System.Configuration;
-    using System.Drawing;
+    using System.Collections.Generic;
     using System.Reflection;
-    using System.Threading;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
@@ -15,31 +12,70 @@
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.AC.Provider;
+    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
-    using Microsoft.Web.Infrastructure;
-
-    using NHibernate.Hql.Ast.ANTLR;
-
+    /// <summary>
+    /// The LTI controller.
+    /// </summary>
     public class LtiController : BaseController
     {
-        private bool IsDebug
+        #region Static Fields
+
+        /// <summary>
+        /// The is debug.
+        /// </summary>
+        private static bool? isDebug = false;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LtiController"/> class.
+        /// </summary>
+        public LtiController()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LtiController"/> class.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings.
+        /// </param>
+        public LtiController(ApplicationSettingsProvider settings)
+            : base(settings)
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the company LMS model.
+        /// </summary>
+        private CompanyLmsModel CompanyLmsModel
         {
             get
             {
-                return ConfigurationManager.AppSettings["IsDebug"] != null;
+                return IoC.Resolve<CompanyLmsModel>();
             }
         }
 
+        /// <summary>
+        /// Gets the credentials.
+        /// </summary>
         private CompanyLms Credentials
         {
             get
             {
-                var creds = Session["Credentials"] as CompanyLms;
+                var creds = this.Session["Credentials"] as CompanyLms;
 
-                if (creds == null && IsDebug)
+                if (creds == null && this.IsDebug)
                 {
-                    creds = companyLmsModel.GetOneByDomain("canvas.instructure.com").Value;
+                    creds = this.CompanyLmsModel.GetOneByDomain("canvas.instructure.com").Value;
                 }
 
                 if (creds == null)
@@ -52,35 +88,51 @@
             }
         }
 
-        private AdobeConnectProvider Provider
+        /// <summary>
+        /// Gets a value indicating whether is debug.
+        /// </summary>
+        private bool IsDebug
         {
             get
             {
-                var provider = Session["Provider"] as AdobeConnectProvider;
-
-                if (provider == null)
+                if (isDebug.HasValue)
                 {
-                    provider = meetingSetup.GetProvider(Credentials);
-                    Session["Provider"] = provider;
+                    return isDebug.Value;
                 }
 
-                return provider;
+                bool val;
+                isDebug = bool.TryParse(this.Settings.IsDebug, out val) && val;
+                return isDebug.Value;
             }
         }
 
+        /// <summary>
+        /// Gets the meeting setup.
+        /// </summary>
+        private MeetingSetup MeetingSetup
+        {
+            get
+            {
+                return IoC.Resolve<MeetingSetup>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the parameter.
+        /// </summary>
         private LtiParamDTO Param
         {
             get
             {
-                var model = Session["Param"] as LtiParamDTO;
+                var model = this.Session["Param"] as LtiParamDTO;
 
-                if (model == null && IsDebug)
+                if (model == null && this.IsDebug)
                 {
-                    model = new LtiParamDTO()
-                    {
-                        custom_canvas_course_id = 865831,
-                        lis_person_contact_email_primary = "mike@esynctraining.com"
-                    };
+                    model = new LtiParamDTO
+                                {
+                                    custom_canvas_course_id = 865831, 
+                                    lis_person_contact_email_primary = "mike@esynctraining.com"
+                                };
                 }
 
                 if (model == null)
@@ -93,113 +145,189 @@
             }
         }
 
-        private CompanyLmsModel companyLmsModel
+        /// <summary>
+        /// Gets the provider.
+        /// </summary>
+        private AdobeConnectProvider Provider
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                var provider = this.Session["Provider"] as AdobeConnectProvider;
+
+                if (provider == null)
+                {
+                    provider = this.MeetingSetup.GetProvider(this.Credentials);
+                    this.Session["Provider"] = provider;
+                }
+
+                return provider;
             }
         }
 
-        private MeetingSetup meetingSetup
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The delete recording.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult DeleteRecording(string id)
         {
-            get
-            {
-                return IoC.Resolve<MeetingSetup>();
-            }
+            bool res = this.MeetingSetup.RemoveRecording(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param.custom_canvas_course_id, 
+                id);
+            return this.Json(new { removed = res });
         }
 
-
-
-        private void RedirectToError(string errorText)
+        /// <summary>
+        /// The get meeting.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public JsonResult GetMeeting()
         {
-            Response.Clear();
-            Response.Write(String.Format("{{ \"error\": \"{0}\" }}", errorText));
-            Response.End();
-        }
-        private void RegenerateId()
-        {
-            var Context = System.Web.HttpContext.Current;
-            var manager = new SessionIDManager();
-            string oldId = manager.GetSessionID(Context);
-            string newId = manager.CreateSessionID(Context);
+            MeetingDTO meeting = this.MeetingSetup.GetMeeting(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param);
 
-            Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", newId) {Domain = ConfigurationManager.AppSettings["CookieDomain"]});
-
-            bool isAdd = false, isRedir = false;
-            manager.SaveSessionID(Context, newId, out isRedir, out isAdd);
-            HttpApplication ctx = (HttpApplication)Context.ApplicationInstance;
-            HttpModuleCollection mods = ctx.Modules;
-            System.Web.SessionState.SessionStateModule ssm = (SessionStateModule)mods.Get("Session");
-            System.Reflection.FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-            SessionStateStoreProviderBase store = null;
-            System.Reflection.FieldInfo rqIdField = null, rqLockIdField = null, rqStateNotFoundField = null;
-            foreach (System.Reflection.FieldInfo field in fields)
-            {
-                if (field.Name.Equals("_store")) store = (SessionStateStoreProviderBase)field.GetValue(ssm);
-                if (field.Name.Equals("_rqId")) rqIdField = field;
-                if (field.Name.Equals("_rqLockId")) rqLockIdField = field;
-                if (field.Name.Equals("_rqSessionStateNotFound")) rqStateNotFoundField = field;
-            }
-            object lockId = rqLockIdField.GetValue(ssm);
-            if ((lockId != null) && (oldId != null)) store.ReleaseItemExclusive(Context, oldId, lockId);
-            rqStateNotFoundField.SetValue(ssm, true);
-            rqIdField.SetValue(ssm, newId);
+            return this.Json(meeting);
         }
 
-        public virtual ActionResult RedirectToErrorPage(string errorText)
+        /// <summary>
+        /// The get recordings.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public JsonResult GetRecordings()
         {
-            ViewBag["Error"] = errorText;
-            return this.View("Error");
+            List<RecordingDTO> recordings = this.MeetingSetup.GetRecordings(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param.custom_canvas_course_id);
+
+            return this.Json(recordings);
         }
 
+        /// <summary>
+        /// The get templates.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public JsonResult GetTemplates()
+        {
+            List<TemplateDTO> templates = this.MeetingSetup.GetTemplates(
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Credentials.ACTemplateScoId);
 
+            return this.Json(templates);
+        }
+
+        /// <summary>
+        /// The get users.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public JsonResult GetUsers()
+        {
+            List<UserDTO> users = this.MeetingSetup.GetUsers(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param);
+
+            return this.Json(users);
+        }
+
+        /// <summary>
+        /// The index.
+        /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ViewResult"/>.
+        /// </returns>
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ViewResult Index(LtiParamDTO model)
         {
-            //this.RegenerateId();
-             
-            var credentials = companyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
+            // this.RegenerateId();
+            CompanyLms credentials =
+                this.CompanyLmsModel.GetOneByDomainOrConsumerKey(
+                    model.custom_canvas_api_domain, 
+                    model.oauth_consumer_key).Value;
             if (credentials != null)
             {
-                Session["Param"] = model;
-                Session["Credentials"] = credentials;
+                this.Session["Param"] = model;
+                this.Session["Credentials"] = credentials;
 
-                meetingSetup.SetupFolders(Credentials, Provider);
+                this.MeetingSetup.SetupFolders(this.Credentials, this.Provider);
             }
-            else if (!IsDebug)
+            else if (!this.IsDebug)
             {
-                ViewBag.Error =
-                    string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.",
-                    ConfigurationManager.AppSettings["EGCUrl"]);
+                this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", this.Settings.EGCUrl);
                 return this.View("Error");
             }
             else
             {
-                credentials = Credentials;
+                credentials = this.Credentials;
             }
 
             if (credentials.AdminUser == null)
             {
-                ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
+                this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
                 return this.View("Error");
             }
 
-            Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", Session.SessionID) { Domain = ConfigurationManager.AppSettings["CookieDomain"] });
-            Response.Redirect(String.Format("/extjs/index.html?layout={0}&primaryColor={1}", credentials.Layout  ?? "", credentials.PrimaryColor ?? "" ));
+            this.AddSessionCookie(this.Session.SessionID);
+            this.Response.Redirect(
+                string.Format(
+                    "/extjs/index.html?layout={0}&primaryColor={1}", 
+                    credentials.Layout ?? string.Empty, 
+                    credentials.PrimaryColor ?? string.Empty));
             return null;
         }
 
+        /// <summary>
+        /// The join meeting.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
         public virtual ActionResult JoinMeeting()
         {
-            var url = meetingSetup.JoinMeeting(this.Credentials, this.Param);
+            string url = this.MeetingSetup.JoinMeeting(this.Credentials, this.Param);
 
             return this.Redirect(url);
         }
 
+        /// <summary>
+        /// The join recording.
+        /// </summary>
+        /// <param name="recordingUrl">
+        /// The recording url.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
         public virtual ActionResult JoinRecording(string recordingUrl)
         {
-            var url = meetingSetup.JoinRecording(this.Credentials, this.Param, recordingUrl);
+            string url = this.MeetingSetup.JoinRecording(this.Credentials, this.Param, recordingUrl);
 
             if (url == null)
             {
@@ -209,63 +337,156 @@
             return this.Redirect(url);
         }
 
-        public virtual JsonResult DeleteRecording(string id)
+        /// <summary>
+        /// The redirect to error page.
+        /// </summary>
+        /// <param name="errorText">
+        /// The error text.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        public virtual ActionResult RedirectToErrorPage(string errorText)
         {
-            var res = meetingSetup.RemoveRecording(
-                this.Credentials,
-                meetingSetup.GetProvider(this.Credentials),
-                this.Param.custom_canvas_course_id,
-                id);
-            return Json(new { removed = res });
+            this.ViewBag["Error"] = errorText;
+            return this.View("Error");
         }
 
+        /// <summary>
+        /// The update meeting.
+        /// </summary>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public JsonResult UpdateMeeting(MeetingDTO meeting)
+        {
+            MeetingDTO ret = this.MeetingSetup.SaveMeeting(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param, 
+                meeting);
 
+            return this.Json(ret);
+        }
+
+        /// <summary>
+        /// The update user.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
         [HttpPost]
         public JsonResult UpdateUser(UserDTO user)
         {
-            var updatedUser = meetingSetup.UpdateUser(this.Credentials, meetingSetup.GetProvider(this.Credentials), this.Param, user);
+            List<UserDTO> updatedUser = this.MeetingSetup.UpdateUser(
+                this.Credentials, 
+                this.MeetingSetup.GetProvider(this.Credentials), 
+                this.Param, 
+                user);
 
             return this.Json(updatedUser);
         }
 
-        [HttpPost]
-        public JsonResult GetUsers()
-        {
-            var users = meetingSetup.GetUsers(this.Credentials, meetingSetup.GetProvider(this.Credentials), this.Param);
+        #endregion
 
-            return Json(users);
+        #region Methods
+
+        /// <summary>
+        /// The add session cookie.
+        /// </summary>
+        /// <param name="newId">
+        /// The new id.
+        /// </param>
+        private void AddSessionCookie(string newId)
+        {
+            this.Response.Cookies.Add(
+                new HttpCookie("ASP.NET_SessionId", newId) { Domain = this.Settings.CookieDomain });
         }
 
-        [HttpPost]
-        public JsonResult GetMeeting()
+        /// <summary>
+        /// The redirect to error.
+        /// </summary>
+        /// <param name="errorText">
+        /// The error text.
+        /// </param>
+        private void RedirectToError(string errorText)
         {
-            var meeting = meetingSetup.GetMeeting(this.Credentials, meetingSetup.GetProvider(this.Credentials), this.Param);
-
-            return Json(meeting);
+            this.Response.Clear();
+            this.Response.Write(string.Format("{{ \"error\": \"{0}\" }}", errorText));
+            this.Response.End();
         }
 
-        [HttpPost]
-        public JsonResult GetRecordings()
+        /// <summary>
+        /// The regenerate id.
+        /// </summary>
+        // ReSharper disable once UnusedMember.Local
+        private void RegenerateId()
         {
-            var recordings = meetingSetup.GetRecordings(this.Credentials, meetingSetup.GetProvider(this.Credentials), this.Param.custom_canvas_course_id);
+            var httpContext = System.Web.HttpContext.Current;
+            var manager = new SessionIDManager();
+            string oldId = manager.GetSessionID(httpContext);
+            string newId = manager.CreateSessionID(httpContext);
 
-            return Json(recordings);
+            this.AddSessionCookie(newId);
+
+            bool isAdd, isRedirected;
+            manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
+            var application = httpContext.ApplicationInstance;
+            var modules = application.Modules;
+            var ssm = (SessionStateModule)modules.Get("Session");
+            FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            SessionStateStoreProviderBase store = null;
+            FieldInfo requiredIdField = null, requiredLockIdField = null, requiredStateNotFoundField = null;
+            foreach (FieldInfo field in fields)
+            {
+                if (field.Name.Equals("_store"))
+                {
+                    store = (SessionStateStoreProviderBase)field.GetValue(ssm);
+                }
+
+                if (field.Name.Equals("_rqId"))
+                {
+                    requiredIdField = field;
+                }
+
+                if (field.Name.Equals("_rqLockId"))
+                {
+                    requiredLockIdField = field;
+                }
+
+                if (field.Name.Equals("_rqSessionStateNotFound"))
+                {
+                    requiredStateNotFoundField = field;
+                }
+            }
+
+            if (requiredLockIdField != null)
+            {
+                object lockId = requiredLockIdField.GetValue(ssm);
+                if (lockId != null && oldId != null && store != null)
+                {
+                    store.ReleaseItemExclusive(httpContext, oldId, lockId);
+                }
+            }
+
+            if (requiredStateNotFoundField != null)
+            {
+                requiredStateNotFoundField.SetValue(ssm, true);
+            }
+
+            if (requiredIdField != null)
+            {
+                requiredIdField.SetValue(ssm, newId);
+            }
         }
 
-        [HttpPost]
-        public JsonResult GetTemplates()
-        {
-            var templates = meetingSetup.GetTemplates(meetingSetup.GetProvider(this.Credentials), Credentials.ACTemplateScoId);
-
-            return Json(templates);
-        }
-
-        [HttpPost]
-        public JsonResult UpdateMeeting(MeetingDTO meeting)
-        {
-            var ret = meetingSetup.SaveMeeting(this.Credentials, meetingSetup.GetProvider(this.Credentials), this.Param, meeting);
-
-            return Json(ret);
-        }
+        #endregion
     }
 }

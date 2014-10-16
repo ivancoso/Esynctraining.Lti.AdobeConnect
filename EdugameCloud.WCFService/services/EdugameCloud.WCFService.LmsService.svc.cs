@@ -1,6 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -10,51 +11,67 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
 
-    using Weborb.Reader;
-
-    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
-    IncludeExceptionDetailInFaults = true)]
+    /// <summary>
+    /// The LMS service.
+    /// </summary>
+    [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
+        IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class LmsService : BaseService, ILmsService
     {
-        private const string teacherToken = "7~pgFFIztorj5U9PBmBwQpxG2vVF3aCZtFDIsmDCCfxcXWmXGyyBiNUbBpEqsb447F";
+        #region Constants
 
-        private const string studentToken = "7~D43gwxvbSqjZPJMrmd4s9tmzIOAYDdNZPrVOiPurEoglmDcg5n7KL0wZyVE3sPH2";
+        /// <summary>
+        /// The student token.
+        /// </summary>
+        private const string StudentToken = "7~D43gwxvbSqjZPJMrmd4s9tmzIOAYDdNZPrVOiPurEoglmDcg5n7KL0wZyVE3sPH2";
 
+        /// <summary>
+        /// The teacher token.
+        /// </summary>
+        private const string TeacherToken = "7~pgFFIztorj5U9PBmBwQpxG2vVF3aCZtFDIsmDCCfxcXWmXGyyBiNUbBpEqsb447F";
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The convert quizzes.
+        /// </summary>
         public void ConvertQuizzes()
         {
-            var q = CourseAPI.GetQuizzesForCourse("canvas.instructure.com", 
-                teacherToken,                
-                865831);
-
-
+            List<QuizDTO> quizzesForCourse = CourseAPI.GetQuizzesForCourse("canvas.instructure.com", TeacherToken, 865831);
         }
 
+        /// <summary>
+        /// The save answers.
+        /// </summary>
         public void SaveAnswers()
         {
+            List<QuizDTO> quizzes = CourseAPI.GetQuizzesForCourse("canvas.instructure.com", TeacherToken, 875207);
 
-            var quizzes = CourseAPI.GetQuizzesForCourse("canvas.instructure.com",
-                teacherToken,
-                875207);
-
-            foreach (var q in quizzes)
+            foreach (QuizDTO q in quizzes)
             {
-                var s = CourseAPI.GetSubmissionForQuiz(
-                    "canvas.instructure.com",
-                    studentToken,
-                    875207,
+                List<QuizSubmissionDTO> s = CourseAPI.GetSubmissionForQuiz(
+                    "canvas.instructure.com", 
+                    StudentToken, 
+                    875207, 
                     q.id);
-                foreach (var subm in s)
+                foreach (QuizSubmissionDTO subm in s)
                 {
-                    //subm.access_code = studentToken;
-                    foreach (var quest in q.questions)
+                    // subm.access_code = StudentToken;
+                    foreach (QuizQuestionDTO quest in q.questions)
                     {
-                        subm.quiz_questions.Add(new QuizSubmissionQuestionDTO(){ id = quest.id, answer = quest.answers.First().id });
+                        subm.quiz_questions.Add(
+                            new QuizSubmissionQuestionDTO { id = quest.id, answer = quest.answers.First().id });
                     }
-                    CourseAPI.AnswerQuestionsForQuiz("canvas.instructure.com", studentToken, subm);
-                    CourseAPI.ReturnSubmissionForQuiz("canvas.instructure.com", studentToken, 875207, subm);
+
+                    CourseAPI.AnswerQuestionsForQuiz("canvas.instructure.com", StudentToken, subm);
+                    CourseAPI.ReturnSubmissionForQuiz("canvas.instructure.com", StudentToken, 875207, subm);
                 }
             }
         }
+
+        #endregion
     }
 }

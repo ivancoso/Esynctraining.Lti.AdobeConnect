@@ -2,12 +2,15 @@
 {
     using EdugameCloud.Core.Domain.Entities;
 
+    /// <summary>
+    /// The LMS user map.
+    /// </summary>
     public class LmsUserMap : BaseClassMap<LmsUser>
     {
-         #region Constructors and Destructors
+        #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LmsUserMap"/> class.
+        ///     Initializes a new instance of the <see cref="LmsUserMap" /> class.
         /// </summary>
         public LmsUserMap()
         {

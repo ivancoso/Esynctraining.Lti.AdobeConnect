@@ -16,7 +16,7 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.MVC.HtmlHelpers;
-    using EdugameCloud.MVC.OAuth;
+    using EdugameCloud.MVC.Social.OAuth;
     using EdugameCloud.MVC.Social.Subscriptions;
     using EdugameCloud.MVC.ViewModels;
 

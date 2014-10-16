@@ -5,7 +5,12 @@
         /// <summary>
         /// Moodle.
         /// </summary>
-        Moodle = 1
+        Moodle = 1,
+
+        /// <summary>
+        /// Canvas.
+        /// </summary>
+        Canvas = 2
         
     }
 }

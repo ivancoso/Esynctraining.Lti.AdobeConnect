@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.MVC.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth
 {
     using System;
     using System.Collections.Generic;
@@ -111,8 +111,8 @@
             var oauth_callback = returnUrl.AbsoluteUri.Replace("localhost:2345", "app.edugamecloud.com");
             var resource_url = RequestTokenEndpoint;
             var oauth_version = "1.0";
-            var oauth_consumer_key = appId;
-            var oauth_consumer_secret = appSecret;
+            var oauth_consumer_key = this.appId;
+            var oauth_consumer_secret = this.appSecret;
             var oauth_signature_method = "HMAC-SHA1";
             var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
             var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

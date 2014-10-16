@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
-    using EdugameCloud.MVC.OAuth;
+
+    using EdugameCloud.MVC.Social.OAuth;
+
     using Microsoft.Web.WebPages.OAuth;
 
     /// <summary>

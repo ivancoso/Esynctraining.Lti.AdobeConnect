@@ -1,12 +1,10 @@
-﻿namespace EdugameCloud.Core.Domain
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Collections.Generic;
     using System.Runtime.Serialization;
 
-    using EdugameCloud.Core.Domain.DTO;
-
     /// <summary>
-    /// The surveys and sub module items dto.
+    /// The surveys and sub module items DTO.
     /// </summary>
     [DataContract]
     public class SurveysAndSubModuleItemsDTO
@@ -14,7 +12,7 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the quizes.
+        /// Gets or sets the surveys.
         /// </summary>
         [DataMember]
         public List<SurveyFromStoredProcedureDTO> surveys { get; set; }

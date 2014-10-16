@@ -1,6 +1,5 @@
-﻿namespace EdugameCloud.MVC.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
@@ -57,9 +56,9 @@
         /// </returns>
         public string GetTokenSecret(string token)
         {
-            if (cache.ContainsKey(token))
+            if (this.cache.ContainsKey(token))
             {
-                return cache[token];
+                return this.cache[token];
             }
 
             return string.Empty;
@@ -76,9 +75,9 @@
         /// </param>
         public void StoreRequestToken(string requestToken, string requestTokenSecret)
         {
-            if (!cache.ContainsKey(requestToken))
+            if (!this.cache.ContainsKey(requestToken))
             {
-                cache.Add(requestToken, requestTokenSecret);
+                this.cache.Add(requestToken, requestTokenSecret);
             }
         }
 
@@ -99,9 +98,9 @@
             string accessToken,
             string accessTokenSecret)
         {
-            if (cache.ContainsKey(requestToken))
+            if (this.cache.ContainsKey(requestToken))
             {
-                cache.Remove(requestToken);
+                this.cache.Remove(requestToken);
             }
 
             this.StoreRequestToken(accessToken, accessTokenSecret);

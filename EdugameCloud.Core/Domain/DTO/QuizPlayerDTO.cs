@@ -60,10 +60,11 @@
         public virtual DateTime startTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the start time.
+        /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
         public virtual bool isCompleted { get; set; }
+
 
         #endregion
     }

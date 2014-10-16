@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.WCFService", "EdugameCloud.WCFService\EdugameCloud.WCFService.csproj", "{1758C513-FDF1-47FA-842F-9C332DA85C17}"
 EndProject
@@ -21,6 +21,15 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.MailSender", "EdugameCloud.MailsSender\EdugameCloud.MailSender.csproj", "{7C9BF166-B714-4553-A5D0-8F7FD334F3A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.SocialSubscriptionHandler", "EdugameCloud.SocialSubscriptionHandler\EdugameCloud.SocialSubscriptionHandler.csproj", "{5650F53A-90F2-4585-929C-6B372464397C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti", "EdugameCloud.Lti\EdugameCloud.Lti.csproj", "{0654349B-3097-448F-A4B3-B412B9AB20D5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6F0B62BE-5521-4E4F-800B-B036DCB19EFE}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +71,10 @@ Global
 		{5650F53A-90F2-4585-929C-6B372464397C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0654349B-3097-448F-A4B3-B412B9AB20D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0654349B-3097-448F-A4B3-B412B9AB20D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0654349B-3097-448F-A4B3-B412B9AB20D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0654349B-3097-448F-A4B3-B412B9AB20D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

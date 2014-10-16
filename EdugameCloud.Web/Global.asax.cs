@@ -15,6 +15,7 @@
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Extensions;
+//    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;

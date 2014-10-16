@@ -3,7 +3,7 @@
     using EdugameCloud.Core.Domain.Entities;
 
     /// <summary>
-    /// The distrator item mapping
+    /// The LMS Provider item mapping
     /// </summary>
     public class LmsProviderMap : BaseClassMap<LmsProvider>
     {
@@ -15,7 +15,6 @@
         public LmsProviderMap()
         {
             this.Map(x => x.LmsProviderName).Nullable();
-
         }
 
         #endregion
