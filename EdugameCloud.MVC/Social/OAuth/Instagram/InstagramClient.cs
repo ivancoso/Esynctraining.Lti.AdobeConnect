@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.MVC.Social.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth.Instagram
 {
     using System;
     using System.Collections.Generic;
@@ -50,7 +50,10 @@
         /// </summary>
         private static readonly string[] UriRfc3986CharsToEscape = { "!", "*", "'", "(", ")" };
 
-        private static Dictionary<string, InstagramUser> userDataCache = new Dictionary<string, InstagramUser>();
+        /// <summary>
+        /// The user data cache.
+        /// </summary>
+        private static readonly Dictionary<string, InstagramUser> userDataCache = new Dictionary<string, InstagramUser>();
 
         #endregion
 
@@ -133,21 +136,27 @@
         {
             if (!userDataCache.ContainsKey(accessToken))
             {
-                InstagramUserData graphData;
+                InstagramUserData graphData = null;
                 var request = WebRequest.Create(UserEndpoint + this.EscapeUriDataStringRfc3986(accessToken));
                 using (var response = request.GetResponse())
                 {
                     using (var responseStream = response.GetResponseStream())
                     {
-                        using (var sr = new StreamReader(responseStream))
+                        if (responseStream != null)
                         {
-                            var data = sr.ReadToEnd();
-                            graphData = JsonConvert.DeserializeObject<InstagramUserData>(data);
+                            using (var sr = new StreamReader(responseStream))
+                            {
+                                var data = sr.ReadToEnd();
+                                graphData = JsonConvert.DeserializeObject<InstagramUserData>(data);
+                            }
                         }
                     }
                 }
 
-                userDataCache.Add(accessToken, graphData.data);
+                if (graphData != null)
+                {
+                    userDataCache.Add(accessToken, graphData.data);
+                }
             }
 
             var user = userDataCache[accessToken];
@@ -183,7 +192,7 @@
         {
             // Note: Facebook doesn't like us to url-encode the redirect_uri value
             var redirectUrl = returnUrl.AbsoluteUri;
-            var cleanUrl = redirectUrl.IndexOf("&code=") > 0 ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=")) : redirectUrl;
+            var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0 ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal)) : redirectUrl;
 
             var parameters = new NameValueCollection
                                  {
@@ -221,52 +230,24 @@
                 }
                 catch (WebException ex)
                 {
-                    var reader = new StreamReader(ex.Response.GetResponseStream());
-                    string line;
-                    var result = new StringBuilder();
-                    while ((line = reader.ReadLine()) != null)
+                    var response = ex.Response.GetResponseStream();
+                    if (response != null)
                     {
-                        result.Append(line);
+                        var reader = new StreamReader(response);
+                        string line;
+                        var result = new StringBuilder();
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            result.Append(line);
+                        }
+
+                        var error = result.ToString();
+                        throw new ApplicationException(error);
                     }
 
-                    var error = result.ToString();
-                    
-                    throw new ApplicationException(error);
+                    throw new ApplicationException(ex.ToString());
                 }
             }
-        }
-
-        /// <summary>
-        /// Converts any % encoded values in the URL to uppercase.
-        /// </summary>
-        /// <param name="url">
-        /// The URL string to normalize
-        /// </param>
-        /// <returns>
-        /// The normalized url
-        /// </returns>
-        /// <example>
-        /// NormalizeHexEncoding("Login.aspx?ReturnUrl=%2fAccount%2fManage.aspx") returns
-        ///     "Login.aspx?ReturnUrl=%2FAccount%2FManage.aspx"
-        /// </example>
-        /// <remarks>
-        /// There is an issue in Facebook whereby it will rejects the redirect_uri value if
-        ///     the url contains lowercase % encoded values.
-        /// </remarks>
-        private static string NormalizeHexEncoding(string url)
-        {
-            char[] chars = url.ToCharArray();
-            for (int i = 0; i < chars.Length - 2; i++)
-            {
-                if (chars[i] == '%')
-                {
-                    chars[i + 1] = char.ToUpperInvariant(chars[i + 1]);
-                    chars[i + 2] = char.ToUpperInvariant(chars[i + 2]);
-                    i += 2;
-                }
-            }
-
-            return new string(chars);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.MVC.Social.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth.Instagram
 {
     using System.Diagnostics.CodeAnalysis;
 

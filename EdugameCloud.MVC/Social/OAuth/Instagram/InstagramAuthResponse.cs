@@ -1,29 +1,24 @@
-﻿namespace EdugameCloud.MVC.Social.OAuth
+﻿namespace EdugameCloud.MVC.Social.OAuth.Instagram
 {
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    /// The Instagram user counts.
+    /// The Instagram auth response.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class InstagramUserCounts
+    public class InstagramAuthResponse
     {
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the followed by.
+        /// Gets or sets the access_token.
         /// </summary>
-        public int followed_by { get; set; }
+        public string access_token { get; set; }
 
         /// <summary>
-        /// Gets or sets the follows.
+        /// Gets or sets the user.
         /// </summary>
-        public int follows { get; set; }
-
-        /// <summary>
-        /// Gets or sets the media.
-        /// </summary>
-        public int media { get; set; }
+        public InstagramUser user { get; set; }
 
         #endregion
     }

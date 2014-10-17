@@ -1,31 +1,64 @@
 ﻿namespace EdugameCloud.MVC.Controllers
 {
+    using System;
     using System.Collections.Generic;
     using System.Reflection;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
 
+    using Castle.Core.Logging;
+
+    using DotNetOpenAuth.AspNet;
+
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.MVC.HtmlHelpers;
+    using EdugameCloud.MVC.Social.OAuth;
+    using EdugameCloud.MVC.ViewModels;
 
     using Esynctraining.AC.Provider;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
+    using Microsoft.Web.WebPages.OAuth;
+
+    using UserDTO = EdugameCloud.Lti.DTO.UserDTO;
+
     /// <summary>
-    /// The LTI controller.
+    ///     The LTI controller.
     /// </summary>
     public class LtiController : BaseController
     {
         #region Static Fields
 
         /// <summary>
-        /// The is debug.
+        ///     The is debug.
         /// </summary>
         private static bool? isDebug = false;
+
+        #endregion
+
+        #region Fields
+
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
+        /// The RTMP model.
+        /// </summary>
+        private readonly RTMPModel rtmpModel;
+
+        /// <summary>
+        /// The social user tokens model.
+        /// </summary>
+        private readonly SocialUserTokensModel socialUserTokensModel;
 
         #endregion
 
@@ -34,19 +67,28 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="LtiController"/> class.
         /// </summary>
-        public LtiController()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtiController"/> class.
-        /// </summary>
+        /// <param name="socialUserTokensModel">
+        /// The social User Tokens Model.
+        /// </param>
+        /// <param name="rtmpModel">
+        /// The rtmp Model.
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public LtiController(ApplicationSettingsProvider settings)
+        public LtiController(
+            SocialUserTokensModel socialUserTokensModel, 
+            RTMPModel rtmpModel, 
+            ILogger logger, 
+            ApplicationSettingsProvider settings)
             : base(settings)
         {
+            this.socialUserTokensModel = socialUserTokensModel;
+            this.rtmpModel = rtmpModel;
+            this.logger = logger;
         }
 
         #endregion
@@ -54,7 +96,7 @@
         #region Properties
 
         /// <summary>
-        /// Gets the company LMS model.
+        ///     Gets the company LMS model.
         /// </summary>
         private CompanyLmsModel CompanyLmsModel
         {
@@ -65,7 +107,7 @@
         }
 
         /// <summary>
-        /// Gets the credentials.
+        ///     Gets the credentials.
         /// </summary>
         private CompanyLms Credentials
         {
@@ -89,7 +131,7 @@
         }
 
         /// <summary>
-        /// Gets a value indicating whether is debug.
+        ///     Gets a value indicating whether is debug.
         /// </summary>
         private bool IsDebug
         {
@@ -107,7 +149,7 @@
         }
 
         /// <summary>
-        /// Gets the meeting setup.
+        ///     Gets the meeting setup.
         /// </summary>
         private MeetingSetup MeetingSetup
         {
@@ -118,7 +160,7 @@
         }
 
         /// <summary>
-        /// Gets the parameter.
+        ///     Gets the parameter.
         /// </summary>
         private LtiParamDTO Param
         {
@@ -146,7 +188,7 @@
         }
 
         /// <summary>
-        /// Gets the provider.
+        ///     Gets the provider.
         /// </summary>
         private AdobeConnectProvider Provider
         {
@@ -169,6 +211,71 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The authentication callback.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [ActionName("callback")]
+        [AllowAnonymous]
+        public virtual ActionResult AuthenticationCallback(string provider, string key)
+        {
+            string error;
+            try
+            {
+                AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication();
+                if (result.IsSuccessful)
+                {
+                    // name of the provider we just used
+                    provider = provider ?? result.Provider;
+
+                    // dictionary of values from identity provider
+                    IDictionary<string, string> extra = result.ExtraData;
+
+                    if (extra.ContainsKey("accesstoken"))
+                    {
+                        string token = extra["accesstoken"];
+                        string secret = string.Empty;
+
+                        if (!string.IsNullOrWhiteSpace(key))
+                        {
+                            SocialUserTokens tokens = this.socialUserTokensModel.GetOneByKey(key).Value;
+                            tokens = tokens ?? new SocialUserTokens();
+                            tokens.Key = key;
+                            tokens.Provider = provider;
+                            tokens.Token = token;
+                            tokens.Secret = secret;
+                            this.socialUserTokensModel.RegisterSave(tokens, true);
+                            try
+                            {
+                                this.rtmpModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
+                            }
+                            catch (Exception ex)
+                            {
+                            }
+                        }
+
+                        return this.Content("Login successful. Token:" + token);
+                    }
+                }
+
+                error = result.Error.Return(x => x.ToString(), "Generic fail");
+            }
+            catch (ApplicationException ex)
+            {
+                error = ex.Message;
+            }
+
+            return this.Content(error);
+        }
+
+        /// <summary>
         /// The delete recording.
         /// </summary>
         /// <param name="id">
@@ -188,10 +295,10 @@
         }
 
         /// <summary>
-        /// The get meeting.
+        ///     The get meeting.
         /// </summary>
         /// <returns>
-        /// The <see cref="JsonResult"/>.
+        ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
         public JsonResult GetMeeting()
@@ -205,10 +312,10 @@
         }
 
         /// <summary>
-        /// The get recordings.
+        ///     The get recordings.
         /// </summary>
         /// <returns>
-        /// The <see cref="JsonResult"/>.
+        ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
         public JsonResult GetRecordings()
@@ -222,10 +329,10 @@
         }
 
         /// <summary>
-        /// The get templates.
+        ///     The get templates.
         /// </summary>
         /// <returns>
-        /// The <see cref="JsonResult"/>.
+        ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
         public JsonResult GetTemplates()
@@ -238,10 +345,10 @@
         }
 
         /// <summary>
-        /// The get users.
+        ///     The get users.
         /// </summary>
         /// <returns>
-        /// The <see cref="JsonResult"/>.
+        ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
         public JsonResult GetUsers()
@@ -280,7 +387,10 @@
             }
             else if (!this.IsDebug)
             {
-                this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", this.Settings.EGCUrl);
+                this.ViewBag.Error =
+                    string.Format(
+                        "Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", 
+                        this.Settings.EGCUrl);
                 return this.View("Error");
             }
             else
@@ -304,10 +414,10 @@
         }
 
         /// <summary>
-        /// The join meeting.
+        ///     The join meeting.
         /// </summary>
         /// <returns>
-        /// The <see cref="ActionResult"/>.
+        ///     The <see cref="ActionResult" />.
         /// </returns>
         public virtual ActionResult JoinMeeting()
         {
@@ -335,6 +445,23 @@
             }
 
             return this.Redirect(url);
+        }
+
+        /// <summary>
+        /// The login with provider.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        [ActionName("login")]
+        [HttpGet]
+        public void LoginWithProvider(string provider, string key)
+        {
+            string login = this.Url.AbsoluteAction(EdugameCloudT4.Social.AuthenticationCallback(provider, key)) + "?key=" + key;
+            OAuthWebSecurity.RequestAuthentication(provider, login);
         }
 
         /// <summary>
@@ -424,12 +551,12 @@
         }
 
         /// <summary>
-        /// The regenerate id.
+        ///     The regenerate id.
         /// </summary>
         // ReSharper disable once UnusedMember.Local
         private void RegenerateId()
         {
-            var httpContext = System.Web.HttpContext.Current;
+            HttpContext httpContext = System.Web.HttpContext.Current;
             var manager = new SessionIDManager();
             string oldId = manager.GetSessionID(httpContext);
             string newId = manager.CreateSessionID(httpContext);
@@ -438,8 +565,8 @@
 
             bool isAdd, isRedirected;
             manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
-            var application = httpContext.ApplicationInstance;
-            var modules = application.Modules;
+            HttpApplication application = httpContext.ApplicationInstance;
+            HttpModuleCollection modules = application.Modules;
             var ssm = (SessionStateModule)modules.Get("Session");
             FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
             SessionStateStoreProviderBase store = null;
