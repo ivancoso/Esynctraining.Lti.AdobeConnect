@@ -55,6 +55,12 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult Index()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.Index);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult JoinRecording()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.JoinRecording);
@@ -149,6 +155,14 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionParamsClass_DeleteRecording
         {
             public readonly string id = "id";
+        }
+        static readonly ActionParamsClass_Index s_params_Index = new ActionParamsClass_Index();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Index IndexParams { get { return s_params_Index; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Index
+        {
+            public readonly string model = "model";
         }
         static readonly ActionParamsClass_JoinRecording s_params_JoinRecording = new ActionParamsClass_JoinRecording();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -252,9 +266,10 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult Index()
+        public override System.Web.Mvc.ActionResult Index(EdugameCloud.Lti.DTO.LtiParamDTO model)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Index);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             return callInfo;
         }
 
