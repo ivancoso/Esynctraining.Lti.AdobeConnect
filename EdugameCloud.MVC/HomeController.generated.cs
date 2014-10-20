@@ -47,6 +47,12 @@ namespace EdugameCloud.MVC.Controllers
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.Activate);
         }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult Unsubscribe()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.Unsubscribe);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public HomeController Actions { get { return EdugameCloudT4.Home; } }
@@ -68,6 +74,7 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string Cookies = "Cookies";
             public readonly string LogIn = "LogIn";
             public readonly string Activate = "Activate";
+            public readonly string Unsubscribe = "Unsubscribe";
             public readonly string Config = "Config";
             public readonly string History = "History";
         }
@@ -80,6 +87,7 @@ namespace EdugameCloud.MVC.Controllers
             public const string Cookies = "Cookies";
             public const string LogIn = "LogIn";
             public const string Activate = "Activate";
+            public const string Unsubscribe = "Unsubscribe";
             public const string Config = "Config";
             public const string History = "History";
         }
@@ -110,6 +118,14 @@ namespace EdugameCloud.MVC.Controllers
         {
             public readonly string code = "code";
         }
+        static readonly ActionParamsClass_Unsubscribe s_params_Unsubscribe = new ActionParamsClass_Unsubscribe();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Unsubscribe UnsubscribeParams { get { return s_params_Unsubscribe; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Unsubscribe
+        {
+            public readonly string code = "code";
+        }
         static readonly ActionParamsClass_Config s_params_Config = new ActionParamsClass_Config();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_Config ConfigParams { get { return s_params_Config; } }
@@ -131,10 +147,12 @@ namespace EdugameCloud.MVC.Controllers
                 public readonly string Admin = "Admin";
                 public readonly string History = "History";
                 public readonly string LogIn = "LogIn";
+                public readonly string Unsubscribed = "Unsubscribed";
             }
             public readonly string Admin = "~/Views/Home/Admin.cshtml";
             public readonly string History = "~/Views/Home/History.cshtml";
             public readonly string LogIn = "~/Views/Home/LogIn.cshtml";
+            public readonly string Unsubscribed = "~/Views/Home/Unsubscribed.cshtml";
         }
     }
 
@@ -179,6 +197,13 @@ namespace EdugameCloud.MVC.Controllers
         public override System.Web.Mvc.ActionResult Activate(string code)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Activate);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult Unsubscribe(string code)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Unsubscribe);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             return callInfo;
         }

@@ -9,6 +9,8 @@
 
     using Castle.Core.Logging;
 
+    using DocumentFormat.OpenXml.InkML;
+
     using DotNetOpenAuth.AspNet;
 
     using EdugameCloud.Core.Business.Models;
@@ -17,8 +19,7 @@
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.MVC.HtmlHelpers;
-    using EdugameCloud.MVC.Social.OAuth;
-    using EdugameCloud.MVC.ViewModels;
+    using EdugameCloud.MVC.Social.OAuth.Canvas;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.Core.Extensions;
@@ -32,7 +33,7 @@
     /// <summary>
     ///     The LTI controller.
     /// </summary>
-    public class LtiController : BaseController
+    public partial class LtiController : BaseController
     {
         #region Static Fields
 
@@ -301,7 +302,7 @@
         ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
-        public JsonResult GetMeeting()
+        public virtual JsonResult GetMeeting()
         {
             MeetingDTO meeting = this.MeetingSetup.GetMeeting(
                 this.Credentials, 
@@ -318,7 +319,7 @@
         ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
-        public JsonResult GetRecordings()
+        public virtual JsonResult GetRecordings()
         {
             List<RecordingDTO> recordings = this.MeetingSetup.GetRecordings(
                 this.Credentials, 
@@ -335,7 +336,7 @@
         ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
-        public JsonResult GetTemplates()
+        public virtual JsonResult GetTemplates()
         {
             List<TemplateDTO> templates = this.MeetingSetup.GetTemplates(
                 this.MeetingSetup.GetProvider(this.Credentials), 
@@ -351,7 +352,7 @@
         ///     The <see cref="JsonResult" />.
         /// </returns>
         [HttpPost]
-        public JsonResult GetUsers()
+        public virtual JsonResult GetUsers()
         {
             List<UserDTO> users = this.MeetingSetup.GetUsers(
                 this.Credentials, 
@@ -364,20 +365,13 @@
         /// <summary>
         /// The index.
         /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
         /// <returns>
         /// The <see cref="ViewResult"/>.
         /// </returns>
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public virtual ViewResult Index(LtiParamDTO model)
+        public virtual ActionResult Index(LtiParamDTO model)
         {
-            // this.RegenerateId();
-            CompanyLms credentials =
-                this.CompanyLmsModel.GetOneByDomainOrConsumerKey(
-                    model.custom_canvas_api_domain, 
-                    model.oauth_consumer_key).Value;
+            CompanyLms credentials = this.CompanyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
             if (credentials != null)
             {
                 this.Session["Param"] = model;
@@ -387,10 +381,7 @@
             }
             else if (!this.IsDebug)
             {
-                this.ViewBag.Error =
-                    string.Format(
-                        "Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", 
-                        this.Settings.EGCUrl);
+                this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", this.Settings.EGCUrl);
                 return this.View("Error");
             }
             else
@@ -405,11 +396,16 @@
             }
 
             this.AddSessionCookie(this.Session.SessionID);
-            this.Response.Redirect(
-                string.Format(
-                    "/extjs/index.html?layout={0}&primaryColor={1}", 
-                    credentials.Layout ?? string.Empty, 
-                    credentials.PrimaryColor ?? string.Empty));
+
+            if (credentials != null)
+            {
+                return this.Redirect(
+                    string.Format(
+                        "/extjs/index.html?layout={0}&primaryColor={1}",
+                        credentials.Layout ?? string.Empty,
+                        credentials.PrimaryColor ?? string.Empty));
+            }
+
             return null;
         }
 
@@ -456,12 +452,46 @@
         /// <param name="key">
         /// The key.
         /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
         [ActionName("login")]
-        [HttpGet]
-        public void LoginWithProvider(string provider, string key)
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
+        public virtual ActionResult LoginWithProvider(string provider, string key, LtiParamDTO model)
         {
-            string login = this.Url.AbsoluteAction(EdugameCloudT4.Social.AuthenticationCallback(provider, key)) + "?key=" + key;
-            OAuthWebSecurity.RequestAuthentication(provider, login);
+            CompanyLms credentials = this.CompanyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
+            if (credentials != null)
+            {
+                this.Session["Param"] = model;
+                this.Session["Credentials"] = credentials;
+
+                this.MeetingSetup.SetupFolders(this.Credentials, this.Provider);
+            }
+            else if (!this.IsDebug)
+            {
+                this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", this.Settings.EGCUrl);
+                return this.View("Error");
+            }
+            else
+            {
+                credentials = this.Credentials;
+            }
+
+            if (credentials.AdminUser == null)
+            {
+                this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
+                return this.View("Error");
+            }
+
+            this.AddSessionCookie(this.Session.SessionID);
+            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider, key)) + "?key=" + key;
+            returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(returnUrl, string.IsNullOrWhiteSpace(model.launch_presentation_return_url) ? "https://" + model.custom_canvas_api_domain : new Uri(model.launch_presentation_return_url).GetLeftPart(UriPartial.Authority));
+            OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+
+            return null;
         }
 
         /// <summary>
@@ -489,7 +519,7 @@
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public JsonResult UpdateMeeting(MeetingDTO meeting)
+        public virtual JsonResult UpdateMeeting(MeetingDTO meeting)
         {
             MeetingDTO ret = this.MeetingSetup.SaveMeeting(
                 this.Credentials, 
@@ -510,7 +540,7 @@
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public JsonResult UpdateUser(UserDTO user)
+        public virtual JsonResult UpdateUser(UserDTO user)
         {
             List<UserDTO> updatedUser = this.MeetingSetup.UpdateUser(
                 this.Credentials, 
@@ -533,8 +563,7 @@
         /// </param>
         private void AddSessionCookie(string newId)
         {
-            this.Response.Cookies.Add(
-                new HttpCookie("ASP.NET_SessionId", newId) { Domain = this.Settings.CookieDomain });
+            this.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", newId) { Domain = this.Settings.CookieDomain });
         }
 
         /// <summary>

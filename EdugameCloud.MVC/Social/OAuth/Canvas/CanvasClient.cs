@@ -33,12 +33,12 @@
         /// <summary>
         ///     The authorization endpoint.
         /// </summary>
-        private const string AuthorizationEndpoint = "https://{0}/login/oauth2/auth";
+        private const string AuthorizationEndpoint = "{0}/login/oauth2/auth";
 
         /// <summary>
         ///     The token endpoint.
         /// </summary>
-        private const string TokenEndpoint = "https://{0}/login/oauth2/token";
+        private const string TokenEndpoint = "{0}/login/oauth2/token";
 
         #endregion
 
@@ -95,6 +95,17 @@
         #region Methods
 
         /// <summary>
+        /// Add canvas url to return url
+        /// </summary>
+        /// <param name="returnUrl">Return url</param>
+        /// <param name="canvasUrl">Canvas url</param>
+        /// <returns></returns>
+        public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
+        {
+            return string.Format("{0}&{1}={2}", returnUrl, ReturnUriExtensionQueryParameterName, canvasUrl);
+        }
+
+        /// <summary>
         /// The get service login url.
         /// </summary>
         /// <param name="returnUrl">
@@ -109,24 +120,13 @@
             if (collection.HasKey(ReturnUriExtensionQueryParameterName))
             {
                 var canvasUrl = collection[ReturnUriExtensionQueryParameterName];
-                var returnUrlBuilder = new UriBuilder(returnUrl.AbsolutePath);
-                foreach (var keyObject in collection.Keys)
-                {
-                    if (keyObject != null)
-                    {
-                        var key = keyObject.ToString();
-                        if (!key.Equals(ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            returnUrlBuilder.AppendQueryArgument(key, collection[key]);
-                        }
-                    }
-                }
+                var returnUri = ClearReturnUrl(returnUrl, collection);
 
                 var builder = new UriBuilder(string.Format(AuthorizationEndpoint, canvasUrl));
                 var parameters = new Dictionary<string, string>
                                      {
                                          { "client_id", this.appId },
-                                         { "redirect_uri", returnUrlBuilder.Uri.AbsoluteUri },
+                                         { "redirect_uri", returnUri.AbsoluteUri },
                                          { "response_type", "code" },
                                          { "scopes", "code" },
                                          { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes(canvasUrl)) }
@@ -141,6 +141,36 @@
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The clear return url.
+        /// </summary>
+        /// <param name="returnUrl">
+        /// The return url.
+        /// </param>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Uri"/>.
+        /// </returns>
+        private static Uri ClearReturnUrl(Uri returnUrl, NameValueCollection collection)
+        {
+            var returnUrlBuilder = new UriBuilder(returnUrl.GetLeftPart(UriPartial.Authority));
+            foreach (var keyObject in collection.Keys)
+            {
+                if (keyObject != null)
+                {
+                    var key = keyObject.ToString();
+                    if (!key.Equals(ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        returnUrlBuilder.AppendQueryArgument(key, collection[key]);
+                    }
+                }
+            }
+
+            return returnUrlBuilder.Uri;
         }
 
         /// <summary>

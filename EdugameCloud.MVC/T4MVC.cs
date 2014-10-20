@@ -27,6 +27,7 @@ public static class EdugameCloudT4
     public static EdugameCloud.MVC.Controllers.ErrorController Error = new EdugameCloud.MVC.Controllers.T4MVC_ErrorController();
     public static EdugameCloud.MVC.Controllers.FileController File = new EdugameCloud.MVC.Controllers.T4MVC_FileController();
     public static EdugameCloud.MVC.Controllers.HomeController Home = new EdugameCloud.MVC.Controllers.T4MVC_HomeController();
+    public static EdugameCloud.MVC.Controllers.LtiController Lti = new EdugameCloud.MVC.Controllers.T4MVC_LtiController();
     public static EdugameCloud.MVC.Controllers.SocialController Social = new EdugameCloud.MVC.Controllers.T4MVC_SocialController();
     public static EdugameCloud.MVC.SharedController Shared = new EdugameCloud.MVC.SharedController();
 }
@@ -54,6 +55,19 @@ public class T4MVC_ActionResult : System.Web.Mvc.ActionResult, IT4MVCActionResul
     }
      
     public override void ExecuteResult(System.Web.Mvc.ControllerContext context) { }
+    
+    public string Controller { get; set; }
+    public string Action { get; set; }
+    public string Protocol { get; set; }
+    public RouteValueDictionary RouteValueDictionary { get; set; }
+}
+[GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+public class T4MVC_JsonResult : System.Web.Mvc.JsonResult, IT4MVCActionResult
+{
+    public T4MVC_JsonResult(string area, string controller, string action, string protocol = null): base()
+    {
+        this.InitMVCT4Result(area, controller, action, protocol);
+    }
     
     public string Controller { get; set; }
     public string Action { get; set; }

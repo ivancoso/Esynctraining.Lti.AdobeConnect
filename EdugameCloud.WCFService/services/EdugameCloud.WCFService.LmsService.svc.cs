@@ -62,8 +62,7 @@ namespace EdugameCloud.WCFService
                     // subm.access_code = StudentToken;
                     foreach (QuizQuestionDTO quest in q.questions)
                     {
-                        subm.quiz_questions.Add(
-                            new QuizSubmissionQuestionDTO { id = quest.id, answer = quest.answers.First().id });
+                        subm.quiz_questions.Add(new QuizSubmissionQuestionDTO { id = quest.id, answer = quest.answers.First().id });
                     }
 
                     CourseAPI.AnswerQuestionsForQuiz("canvas.instructure.com", StudentToken, subm);

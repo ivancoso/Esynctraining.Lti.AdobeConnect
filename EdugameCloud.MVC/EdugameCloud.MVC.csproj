@@ -186,6 +186,9 @@
     <Compile Include="HtmlHelpers\ElementFocusExtention.cs" />
     <Compile Include="HtmlHelpers\UrlExtensions.cs" />
     <Compile Include="HtmlHelpers\ValidatedLabelExtensions.cs" />
+    <Compile Include="LtiController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Modules\HttpErrorModule.cs" />
