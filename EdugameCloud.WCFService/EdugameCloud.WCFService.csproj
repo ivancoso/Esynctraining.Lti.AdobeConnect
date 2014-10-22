@@ -342,7 +342,7 @@
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
     <Compile Include="Validators\CompanyLmsValidator.cs" />
     <Compile Include="Validators\MoodleUserDTOValidator.cs" />
-    <Compile Include="Validators\MoodleUserParametersDTOValidator.cs" />
+    <Compile Include="Validators\LmsUserParametersDTOValidator.cs" />
     <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
     <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
     <Compile Include="Validators\CompanyLicenseDTOValidator.cs" />

@@ -2,17 +2,24 @@
 {
     using Esynctraining.Core.Domain.Entities;
 
+    using Iesi.Collections.Generic;
+
     /// <summary>
     /// The LMS user.
     /// </summary>
     public class LmsUser : Entity
     {
+        /// <summary>
+        /// The LMS user parameters.
+        /// </summary>
+        private ISet<LmsUserParameters> lmsUserParameters = new HashedSet<LmsUserParameters>();
+
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the company LMS id.
+        /// Gets or sets the company LMS;
         /// </summary>
-        public virtual int CompanyLmsId { get; set; }
+        public virtual CompanyLms CompanyLms { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
@@ -33,6 +40,22 @@
         /// Gets or sets the username.
         /// </summary>
         public virtual string Username { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS user parameters.
+        /// </summary>
+        public virtual ISet<LmsUserParameters> LmsUserParameters
+        {
+            get
+            {
+                return this.lmsUserParameters;
+            }
+
+            set
+            {
+                this.lmsUserParameters = value;
+            }
+        }
 
         #endregion
     }

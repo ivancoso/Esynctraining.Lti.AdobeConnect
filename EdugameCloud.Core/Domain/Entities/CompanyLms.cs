@@ -4,11 +4,18 @@
 
     using Esynctraining.Core.Domain.Entities;
 
+    using Iesi.Collections.Generic;
+
     /// <summary>
     /// The company LMS.
     /// </summary>
     public class CompanyLms : Entity
     {
+        /// <summary>
+        /// The LMS users.
+        /// </summary>
+        private ISet<LmsUser> lmsUsers = new HashedSet<LmsUser>();
+
         #region Public Properties
 
         /// <summary>
@@ -95,6 +102,22 @@
         /// Gets or sets the shared secret.
         /// </summary>
         public virtual string SharedSecret { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS users.
+        /// </summary>
+        public virtual ISet<LmsUser> LmsUsers
+        {
+            get
+            {
+                return this.lmsUsers;
+            }
+
+            set
+            {
+                this.lmsUsers = value;
+            }
+        }
 
         #endregion
     }

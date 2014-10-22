@@ -144,11 +144,11 @@ namespace EdugameCloud.WCFService
         /// <summary>
         ///     Gets the user parameters model.
         /// </summary>
-        private MoodleUserParametersModel MoodleUserParametersModel
+        private LmsUserParametersModel LmsUserParametersModel
         {
             get
             {
-                return IoC.Resolve<MoodleUserParametersModel>();
+                return IoC.Resolve<LmsUserParametersModel>();
             }
         }
 
@@ -512,16 +512,16 @@ namespace EdugameCloud.WCFService
             return serviceResponse;
         }
 
-        public ServiceResponse<MoodleUserParametersDTO> GetAuthenticationParametersById(string id)
+        public ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id)
         {
-            var result = new ServiceResponse<MoodleUserParametersDTO>();
+            var result = new ServiceResponse<LmsUserParametersDTO>();
 
-            var param = MoodleUserParametersModel.GetOneByAcId(id).Value;
-            result.@object = param != null ? new MoodleUserParametersDTO(param) : null;
+            var param = this.LmsUserParametersModel.GetOneByAcId(id).Value;
+            result.@object = param != null ? new LmsUserParametersDTO(param) : null;
 
             if (param != null)
             {
-                MoodleUserParametersModel.RegisterDelete(param);
+                this.LmsUserParametersModel.RegisterDelete(param);
             }
 
             return result;

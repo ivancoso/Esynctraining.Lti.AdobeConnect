@@ -9,10 +9,15 @@
     [dateCreated]     DATETIME       CONSTRAINT [DF_QuizResult_dateCreated] DEFAULT (getdate()) NOT NULL,
     [isArchive]       BIT            NULL,
     [email]           NVARCHAR (500) NULL,
+    [lmsId]           INT            NULL,
+    [acEmail]         NVARCHAR (500) NULL,
+    [isCompleted]     BIT            NULL,
     CONSTRAINT [PK_QuizResult] PRIMARY KEY CLUSTERED ([quizResultId] ASC),
     CONSTRAINT [FK_QuizResult_ACSession] FOREIGN KEY ([acSessionId]) REFERENCES [dbo].[ACSession] ([acSessionId]),
     CONSTRAINT [FK_QuizResult_Quiz] FOREIGN KEY ([quizId]) REFERENCES [dbo].[Quiz] ([quizId])
 );
+
+
 
 
 

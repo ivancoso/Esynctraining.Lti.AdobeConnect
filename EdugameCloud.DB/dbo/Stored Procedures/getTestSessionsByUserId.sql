@@ -3,7 +3,7 @@
 
 -- =============================================
 -- Author:		Eugene Baranovsky
--- Create date: 11.19.2013
+-- Create date: 10.10.2014
 -- Usage:		Admin
 -- Description:	is used to get a list of test sessions 
 --              by userId for Admin Reporting
@@ -18,6 +18,7 @@ SELECT LNG.[language],
 	   (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
 	   ACS.subModuleItemId, 
 	   ACS.dateCreated,
+	   ACS.includeAcEmails,
 	   SMC.categoryName,
 	   ACUM.acUserModeId,
 	   AI.testName,	 
@@ -41,7 +42,7 @@ FROM   ACSession ACS INNER JOIN
        SubModuleCategory SMC ON SMI.subModuleCategoryId = SMC.subModuleCategoryId INNER JOIN
        [User] ON ACS.userId = [User].userId
        
-GROUP BY LNG.[language],  TR.acSessionId, ACS.subModuleItemId, ACS.dateCreated, AI.testName, AI.passingScore, SMC.categoryName, ACUM.acUserModeId, [User].userId, ACS.acSessionId
+GROUP BY LNG.[language],  TR.acSessionId, ACS.subModuleItemId, ACS.dateCreated, ACS.includeAcEmails, AI.testName, AI.passingScore, SMC.categoryName, ACUM.acUserModeId, [User].userId, ACS.acSessionId
 
 HAVING      ([User].userId = @userId)
 

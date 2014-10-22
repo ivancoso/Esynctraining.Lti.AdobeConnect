@@ -1,0 +1,50 @@
+﻿namespace EdugameCloud.Core.Business.Models
+{
+    using EdugameCloud.Core.Domain.Entities;
+
+    using Esynctraining.Core.Business;
+    using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+
+    using NHibernate;
+
+    /// <summary>
+    /// The LMS user parameters model
+    /// </summary>
+    public class LmsUserParametersModel : BaseModel<LmsUserParameters, int>
+    {
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LmsUserParametersModel"/> class. 
+        /// </summary>
+        /// <param name="repository">
+        /// The repository.
+        /// </param>
+        public LmsUserParametersModel(IRepository<LmsUserParameters, int> repository)
+            : base(repository)
+        {
+        }
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// The get one by ac id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{LmsUserParameters}"/>.
+        /// </returns>
+        public IFutureValue<LmsUserParameters> GetOneByAcId(string id)
+        {
+            var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver().Where(x => x.AcId == id);
+            return this.Repository.FindOne(queryOver);
+        }
+
+        #endregion
+    }
+}

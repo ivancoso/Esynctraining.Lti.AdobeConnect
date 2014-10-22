@@ -146,7 +146,6 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionParamsClass_AuthenticationCallback
         {
             public readonly string provider = "provider";
-            public readonly string key = "key";
         }
         static readonly ActionParamsClass_DeleteRecording s_params_DeleteRecording = new ActionParamsClass_DeleteRecording();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -178,8 +177,7 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_LoginWithProvider
         {
-            public readonly string provider = "provider";
-            public readonly string key = "key";
+            public readonly string __provider__ = "__provider__";
             public readonly string model = "model";
         }
         static readonly ActionParamsClass_RedirectToErrorPage s_params_RedirectToErrorPage = new ActionParamsClass_RedirectToErrorPage();
@@ -227,11 +225,10 @@ namespace EdugameCloud.MVC.Controllers
     {
         public T4MVC_LtiController() : base(Dummy.Instance) { }
 
-        public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider, string key)
+        public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.AuthenticationCallback);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "key", key);
             return callInfo;
         }
 
@@ -286,11 +283,10 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult LoginWithProvider(string provider, string key, EdugameCloud.Lti.DTO.LtiParamDTO model)
+        public override System.Web.Mvc.ActionResult LoginWithProvider(string __provider__, EdugameCloud.Lti.DTO.LtiParamDTO model)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.LoginWithProvider);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "key", key);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__provider__", __provider__);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             return callInfo;
         }

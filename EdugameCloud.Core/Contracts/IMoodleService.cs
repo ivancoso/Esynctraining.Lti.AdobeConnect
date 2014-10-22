@@ -74,7 +74,7 @@
         /// <param name="id">The id</param>
         /// <returns></returns>
         [OperationContract]
-        ServiceResponse<MoodleUserParametersDTO> GetAuthenticationParametersById(string id);
+        ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id);
 
         #endregion
     }

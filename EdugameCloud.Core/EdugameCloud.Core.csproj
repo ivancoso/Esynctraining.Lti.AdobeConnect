@@ -157,8 +157,9 @@
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
+    <Compile Include="Business\Models\LmsUserModel.cs" />
     <Compile Include="Business\Models\MoodleUserModel.cs" />
-    <Compile Include="Business\Models\MoodleUserParametersModel.cs" />
+    <Compile Include="Business\Models\LmsUserParametersModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
@@ -247,7 +248,7 @@
     <Compile Include="Domain\DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="Domain\DTO\MoodleTokenDTO.cs" />
     <Compile Include="Domain\DTO\MoodleUserInfoDTO.cs" />
-    <Compile Include="Domain\DTO\MoodleUserParametersDTO.cs" />
+    <Compile Include="Domain\DTO\LmsUserParametersDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\QuizesAndSubModuleItemsDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
@@ -321,7 +322,7 @@
     <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
     <Compile Include="Domain\Entities\MoodleQuiz.cs" />
     <Compile Include="Domain\Entities\MoodleUser.cs" />
-    <Compile Include="Domain\Entities\MoodleUserParameters.cs" />
+    <Compile Include="Domain\Entities\LmsUserParameters.cs" />
     <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />

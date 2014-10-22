@@ -30,7 +30,7 @@ FROM   ACSession ACS INNER JOIN
 	   [Language] LNG  ON ACS.languageId = LNG.languageId LEFT OUTER JOIN
 	   SNGroupDiscussion SNG ON SNG.acSessionId = ACS.acSessionId INNER JOIN
        SNMember SNM ON ACS.acSessionId = SNM.acSessionId INNER JOIN
-       ACUserMode ACUM ON ACUM.acUserModeId = ACS.acUserModeId INNER JOIN
+       ACUserMode ACUM ON ACUM.acUserModeId = ACS.acUserModeId LEFT OUTER JOIN
 	   SNProfile SNP ON SNP.subModuleItemId = ACS.subModuleItemId INNER JOIN
        SubModuleItem SMI ON ACS.subModuleItemId = SMI.subModuleItemId INNER JOIN
        SubModuleCategory SMC ON SMI.subModuleCategoryId = SMC.subModuleCategoryId INNER JOIN

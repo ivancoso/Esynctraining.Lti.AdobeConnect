@@ -36,11 +36,22 @@ namespace EdugameCloud.ASMXService
         /// <summary>
         ///     Gets the user parameters model.
         /// </summary>
-        private MoodleUserParametersModel UserParametersModel
+        private LmsUserParametersModel LmsUserParametersModel
         {
             get
             {
-                return IoC.Resolve<MoodleUserParametersModel>();
+                return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the user model.
+        /// </summary>
+        private LmsUserModel LmsUserModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserModel>();
             }
         }
 
@@ -76,12 +87,12 @@ namespace EdugameCloud.ASMXService
         /// The WS token.
         /// </param>
         /// <returns>
-        /// The <see cref="MoodleUserParametersDTO"/>.
+        /// The <see cref="LmsUserParametersDTO"/>.
         /// </returns>
         [WebMethod]
-        public MoodleUserParametersDTO Save(string acId, int course, string domain, string provider, string wstoken)
+        public LmsUserParametersDTO Save(string acId, int course, string domain, string provider, string wstoken)
         {
-            var dto = new MoodleUserParametersDTO
+            var dto = new LmsUserParametersDTO
                       {
                           acId = acId,
                           course = course,
@@ -89,19 +100,19 @@ namespace EdugameCloud.ASMXService
                           provider = provider,
                           wstoken = wstoken
                       };
-            var result = new ServiceResponse<MoodleUserParametersDTO>();
+            var result = new ServiceResponse<LmsUserParametersDTO>();
             ValidationResult validationResult;
             if (this.IsValid(dto, out validationResult))
             {
-                var param = this.UserParametersModel.GetOneByAcId(dto.acId).Value;
+                var param = this.LmsUserParametersModel.GetOneByAcId(dto.acId).Value;
                 param = this.ConvertDto(dto, param);
-                this.UserParametersModel.RegisterSave(param, true);
-                return new MoodleUserParametersDTO(param);
+                this.LmsUserParametersModel.RegisterSave(param, true);
+                return new LmsUserParametersDTO(param);
             }
 
             result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
-            return new MoodleUserParametersDTO { errorMessage = result.error.errorMessage, errorDetails = result.error.errorDetail };
+            return new LmsUserParametersDTO { errorMessage = result.error.errorMessage, errorDetails = result.error.errorDetail };
         }
 
         #region Methods
@@ -216,16 +227,19 @@ namespace EdugameCloud.ASMXService
         /// The instance.
         /// </param>
         /// <returns>
-        /// The <see cref="MoodleUserParameters"/>.
+        /// The <see cref="LmsUserParameters"/>.
         /// </returns>
-        private MoodleUserParameters ConvertDto(MoodleUserParametersDTO q, MoodleUserParameters instance)
+        private LmsUserParameters ConvertDto(LmsUserParametersDTO q, LmsUserParameters instance)
         {
-            instance = instance ?? new MoodleUserParameters();
+            instance = instance ?? new LmsUserParameters();
             instance.AcId = q.acId;
             instance.Course = q.course;
             instance.Domain = q.domain;
             instance.Provider = q.provider;
             instance.Wstoken = q.wstoken;
+            instance.LmsUser = q.lmsUserId.HasValue && q.lmsUserId.Value != 0
+                                   ? this.LmsUserModel.GetOneById(q.lmsUserId.Value).Value
+                                   : null;
 
             return instance;
         }

@@ -22,6 +22,7 @@ SELECT   Q.questionId,
 		 Q.hint,
 		 Q.imageId,
 		 Q.scoreValue,
+		 Q.randomizeAnswers,
 		 CASE 
 		    WHEN Q.questionTypeId = 12 THEN qr.restrictions 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.restrictions 

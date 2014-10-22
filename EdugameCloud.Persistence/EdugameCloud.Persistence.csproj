@@ -136,7 +136,7 @@
     <Compile Include="Mappings\LmsProviderMap.cs" />
     <Compile Include="Mappings\LmsUserMap.cs" />
     <Compile Include="Mappings\MoodleUserMap.cs" />
-    <Compile Include="Mappings\MoodleUserParametersMap.cs" />
+    <Compile Include="Mappings\LmsUserParametersMap.cs" />
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
     <Compile Include="Mappings\EmailHistoryMap.cs" />
     <Compile Include="Mappings\SubscriptionHistoryLogMap.cs" />

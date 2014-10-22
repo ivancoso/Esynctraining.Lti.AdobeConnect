@@ -102,7 +102,9 @@
         /// <returns></returns>
         public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
         {
-            return string.Format("{0}&{1}={2}", returnUrl, ReturnUriExtensionQueryParameterName, canvasUrl);
+            var builder = new UriBuilder(returnUrl);
+            builder.AppendQueryArgument(ReturnUriExtensionQueryParameterName, canvasUrl);
+            return builder.Uri.AbsoluteUri;
         }
 
         /// <summary>
@@ -242,14 +244,15 @@
                 var canvasUrl = Encoding.ASCII.GetString(Convert.FromBase64String(collection["state"]));
                 
                 var redirectUrl = returnUrl.AbsoluteUri;
-                var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0
-                                   ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal))
-                                   : redirectUrl;
+                var anotherTry = "https://app.edugamecloud.com";
+//                var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0
+//                                   ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal))
+//                                   : redirectUrl;
 
                 var parameters = new NameValueCollection
                                      {
                                          { "client_id", this.appId },
-                                         { "redirect_uri", cleanUrl },
+//                                         { "redirect_uri", anotherTry },
                                          { "client_secret", this.appSecret },
                                          { "code", authorizationCode },
                                      };
@@ -258,7 +261,8 @@
                 {
                     try
                     {
-                        var response = client.UploadValues(string.Format(TokenEndpoint, canvasUrl), "POST", parameters);
+                        var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
+                        var response = client.UploadValues(canvasGetTokenUrl, "POST", parameters);
                         var data = Encoding.Default.GetString(response);
                         if (string.IsNullOrEmpty(data))
                         {

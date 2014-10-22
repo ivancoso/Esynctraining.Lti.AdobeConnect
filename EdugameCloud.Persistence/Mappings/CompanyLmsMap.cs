@@ -2,6 +2,8 @@
 {
     using EdugameCloud.Core.Domain.Entities;
 
+    using FluentNHibernate.Utils;
+
     /// <summary>
     /// The company LMS map.
     /// </summary>
@@ -32,6 +34,8 @@
             this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
             this.References(x => x.ModifiedBy).Nullable().Column("modifiedBy");
             this.References(x => x.AdminUser).Column("AdminUserId").Nullable();
+
+            this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
         }
 
         #endregion

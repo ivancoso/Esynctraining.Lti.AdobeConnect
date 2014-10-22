@@ -18,7 +18,10 @@
             this.Map(x => x.Username).Nullable();
             this.Map(x => x.Password).Nullable();
             this.Map(x => x.Token).Nullable();
-            this.Map(x => x.CompanyLmsId).Nullable();
+
+            this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
+
+            this.HasMany(x => x.LmsUserParameters).KeyColumn("lmsUserId").Cascade.Delete().Inverse();
         }
 
         #endregion

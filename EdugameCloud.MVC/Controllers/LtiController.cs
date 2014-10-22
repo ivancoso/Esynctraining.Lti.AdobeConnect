@@ -217,16 +217,14 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="key">
-        /// The key.
-        /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
         [ActionName("callback")]
         [AllowAnonymous]
-        public virtual ActionResult AuthenticationCallback(string provider, string key)
+        public virtual ActionResult AuthenticationCallback(string __provider__)
         {
+            var provider = __provider__;
             string error;
             try
             {
@@ -244,23 +242,23 @@
                         string token = extra["accesstoken"];
                         string secret = string.Empty;
 
-                        if (!string.IsNullOrWhiteSpace(key))
-                        {
-                            SocialUserTokens tokens = this.socialUserTokensModel.GetOneByKey(key).Value;
-                            tokens = tokens ?? new SocialUserTokens();
-                            tokens.Key = key;
-                            tokens.Provider = provider;
-                            tokens.Token = token;
-                            tokens.Secret = secret;
-                            this.socialUserTokensModel.RegisterSave(tokens, true);
-                            try
-                            {
-                                this.rtmpModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
-                            }
-                            catch (Exception ex)
-                            {
-                            }
-                        }
+//                        if (!string.IsNullOrWhiteSpace(key))
+//                        {
+//                            SocialUserTokens tokens = this.socialUserTokensModel.GetOneByKey(key).Value;
+//                            tokens = tokens ?? new SocialUserTokens();
+//                            tokens.Key = key;
+//                            tokens.Provider = provider;
+//                            tokens.Token = token;
+//                            tokens.Secret = secret;
+//                            this.socialUserTokensModel.RegisterSave(tokens, true);
+//                            try
+//                            {
+//                                this.rtmpModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
+//                            }
+//                            catch (Exception ex)
+//                            {
+//                            }
+//                        }
 
                         return this.Content("Login successful. Token:" + token);
                     }
@@ -446,11 +444,8 @@
         /// <summary>
         /// The login with provider.
         /// </summary>
-        /// <param name="provider">
+        /// <param name="__provider__">
         /// The provider.
-        /// </param>
-        /// <param name="key">
-        /// The key.
         /// </param>
         /// <param name="model">
         /// The model.
@@ -460,8 +455,10 @@
         /// </returns>
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public virtual ActionResult LoginWithProvider(string provider, string key, LtiParamDTO model)
+        // ReSharper disable once InconsistentNaming
+        public virtual ActionResult LoginWithProvider(string __provider__, LtiParamDTO model)
         {
+            var provider = __provider__;
             CompanyLms credentials = this.CompanyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
             if (credentials != null)
             {
@@ -487,7 +484,7 @@
             }
 
             this.AddSessionCookie(this.Session.SessionID);
-            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider, key)) + "?key=" + key;
+            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider));
             returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(returnUrl, string.IsNullOrWhiteSpace(model.launch_presentation_return_url) ? "https://" + model.custom_canvas_api_domain : new Uri(model.launch_presentation_return_url).GetLeftPart(UriPartial.Authority));
             OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
 

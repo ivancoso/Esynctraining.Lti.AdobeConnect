@@ -18,7 +18,7 @@
         /// <param name="param">The user parameters</param>
         /// <returns></returns>
         [OperationContract(Action = "Save")]
-        ServiceResponse<MoodleUserParametersDTO> Save(MoodleUserParametersDTO param);
+        ServiceResponse<LmsUserParametersDTO> Save(LmsUserParametersDTO param);
 
     }
 }

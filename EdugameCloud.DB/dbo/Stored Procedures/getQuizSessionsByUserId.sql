@@ -1,8 +1,8 @@
 ﻿
 
 -- =============================================
--- Author:		Anju Singh
--- Create date: 02.18.2013
+-- Author:		Eugene Baranovsky
+-- Create date: 10.10.2014
 -- Usage:		Admin
 -- Description:	is used to get a list of quiz sessions 
 --              by userId for Admin Reporting
@@ -17,6 +17,7 @@ SELECT LNG.[language],
 	   (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
 	   ACS.subModuleItemId, 
 	   ACS.dateCreated,
+	   ACS.includeAcEmails,
 	   SMC.categoryName,
 	   ACUM.acUserModeId,
 	   AI.quizName,	 
@@ -37,7 +38,7 @@ FROM   ACSession ACS INNER JOIN
        SubModuleCategory SMC ON SMI.subModuleCategoryId = SMC.subModuleCategoryId INNER JOIN
        [User] ON ACS.userId = [User].userId
        
-GROUP BY LNG.[language],  QR.acSessionId, ACS.subModuleItemId, ACS.dateCreated, AI.quizName, SMC.categoryName, ACUM.acUserModeId, [User].userId, ACS.acSessionId
+GROUP BY LNG.[language],  QR.acSessionId, ACS.subModuleItemId, ACS.dateCreated, ACS.includeAcEmails, AI.quizName, SMC.categoryName, ACUM.acUserModeId, [User].userId, ACS.acSessionId
 
 HAVING      ([User].userId = @userId)
 
