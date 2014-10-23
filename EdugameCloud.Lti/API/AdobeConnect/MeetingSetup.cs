@@ -50,6 +50,28 @@
             }
         }
 
+        /// <summary>
+        /// Gets the LMS user parameters model.
+        /// </summary>
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the LMS user parameters.
+        /// </summary>
+        private LmsUserModel LmsUserModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -325,8 +347,7 @@
             string breezeToken, meetingUrl = string.Empty;
 
             this.СanvasCourseMeetingModel.Flush();
-            CanvasCourseMeeting currentMeeting =
-                this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            CanvasCourseMeeting currentMeeting = this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
 
             string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
 
@@ -347,11 +368,9 @@
                                   ? Membership.GeneratePassword(8, 2)
                                   : credentials.AcPassword;
 
-            IEnumerable<Principal> acUsers = provider.GetAllPrincipals().Values;
+            var adobeConnectUsers = provider.GetAllPrincipals().Values;
 
-            Principal registeredUser =
-                acUsers.FirstOrDefault(
-                    ac => (email != null && ac.Email == email) || (login != null && ac.Login == login));
+            Principal registeredUser = adobeConnectUsers.FirstOrDefault(ac => (email != null && ac.Email == email) || (login != null && ac.Login == login));
 
             if (registeredUser != null)
             {
@@ -360,8 +379,7 @@
                     provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
                 }
 
-                provider.PrincipalUpdate(
-                    new PrincipalSetup
+                provider.PrincipalUpdate(new PrincipalSetup 
                         {
                             PrincipalId = registeredUser.PrincipalId, 
                             FirstName = param.lis_person_name_given, 
@@ -379,8 +397,7 @@
                 }
                 else
                 {
-                    LoginResult resultByEmail =
-                        provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
+                    LoginResult resultByEmail = provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
                     breezeToken = resultByEmail.Status.SessionInfo;
                 }
             }
@@ -389,7 +406,41 @@
                 return param.launch_presentation_return_url;
             }
 
+            this.SaveLMSUserParameters(param, registeredUser.PrincipalId);
+
             return meetingUrl + "?session=" + breezeToken;
+        }
+
+        /// <summary>
+        /// The save LMS user parameters.
+        /// </summary>
+        /// <param name="lmsCourseId">
+        /// The LMS Course Id.
+        /// </param>
+        /// <param name="domain">
+        /// The domain.
+        /// </param>
+        /// <param name="lmsUserId">
+        /// The LMS User Id.
+        /// </param>
+        /// <param name="adobeConnectUserId">
+        /// The current user AC id.
+        /// </param>
+        public void SaveLMSUserParameters(int lmsCourseId, string domain, int lmsUserId, string adobeConnectUserId)
+        {
+            var existing = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndLmsUserId(adobeConnectUserId, lmsCourseId, lmsUserId).Value;
+            if (existing == null)
+            {
+                var lmsUserParameters = new LmsUserParameters
+                                            {
+                                                AcId = adobeConnectUserId,
+                                                Course = lmsCourseId,
+                                                Domain = domain,
+                                                LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value,
+                                                Provider = "canvas"
+                                            };
+                this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
+            }
         }
 
         /// <summary>
@@ -773,6 +824,21 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The save LMS user parameters.
+        /// </summary>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="adobeConnectUserId">
+        /// The current AC user SCO id.
+        /// </param>
+        private void SaveLMSUserParameters(LtiParamDTO param, string adobeConnectUserId)
+        {
+            int canvasUserId;
+            this.SaveLMSUserParameters(param.custom_canvas_course_id, param.custom_canvas_api_domain, int.TryParse(param.custom_canvas_user_id, out canvasUserId) ? canvasUserId : 0, adobeConnectUserId);
+        }
 
         /// <summary>
         /// The can edit.

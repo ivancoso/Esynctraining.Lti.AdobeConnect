@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.MVC.Routes
 {
+    using System;
     using System.Web.Routing;
 
     /// <summary>
@@ -111,7 +112,17 @@
 
             if (path != null)
             {
-                path.VirtualPath = path.VirtualPath.ToLowerInvariant();
+                var queryIndex = path.VirtualPath.LastIndexOf('?');
+                if (queryIndex > -1)
+                {
+                    var query = path.VirtualPath.Substring(queryIndex);
+                    path.VirtualPath = path.VirtualPath.Replace(query, string.Empty).ToLowerInvariant() + query;
+                }
+                else
+                {
+                    path.VirtualPath = path.VirtualPath.ToLowerInvariant();
+                }
+                
             }
 
             return path;

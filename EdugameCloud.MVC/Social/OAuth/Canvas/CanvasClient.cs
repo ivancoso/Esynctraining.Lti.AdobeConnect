@@ -5,6 +5,7 @@
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Text;
     using System.Web;
@@ -123,15 +124,16 @@
             {
                 var canvasUrl = collection[ReturnUriExtensionQueryParameterName];
                 var returnUri = ClearReturnUrl(returnUrl, collection);
+                var returnUrlFixed = returnUri.AbsoluteUri;
 
                 var builder = new UriBuilder(string.Format(AuthorizationEndpoint, canvasUrl));
                 var parameters = new Dictionary<string, string>
                                      {
                                          { "client_id", this.appId },
-                                         { "redirect_uri", returnUri.AbsoluteUri },
+                                         { "redirect_uri", Uri.EscapeDataString(returnUrlFixed) },
                                          { "response_type", "code" },
                                          { "scopes", "code" },
-                                         { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes(canvasUrl)) }
+                                         { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes(canvasUrl + "&&&ru=" + Uri.EscapeDataString(returnUrlFixed))) }
                                      };
 
                 foreach (var key in parameters.Keys)
@@ -159,7 +161,7 @@
         /// </returns>
         private static Uri ClearReturnUrl(Uri returnUrl, NameValueCollection collection)
         {
-            var returnUrlBuilder = new UriBuilder(returnUrl.GetLeftPart(UriPartial.Authority));
+            var returnUrlBuilder = new UriBuilder(returnUrl.GetLeftPart(UriPartial.Path));
             foreach (var keyObject in collection.Keys)
             {
                 if (keyObject != null)
@@ -224,6 +226,10 @@
             return new Dictionary<string, string>();
         }
 
+        //                var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0
+        //                                   ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal))
+        //                                   : redirectUrl;
+
         /// <summary>
         /// Obtains an access token given an authorization code and callback URL.
         /// </summary>
@@ -241,18 +247,17 @@
             var collection = HttpUtility.ParseQueryString(returnUrl.Query);
             if (collection.HasKey("state"))
             {
-                var canvasUrl = Encoding.ASCII.GetString(Convert.FromBase64String(collection["state"]));
-                
-                var redirectUrl = returnUrl.AbsoluteUri;
+                var canvasUrlAndReturnUrl = Encoding.ASCII.GetString(Convert.FromBase64String(collection["state"]));
+                var urls = canvasUrlAndReturnUrl.Split(new[] { "&&&ru=" }, StringSplitOptions.RemoveEmptyEntries);
+                var canvasUrl = urls.FirstOrDefault();
+                var redirectUrl = urls.ElementAtOrDefault(1).Return(x => x, returnUrl.AbsoluteUri);
                 var anotherTry = "https://app.edugamecloud.com";
-//                var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0
-//                                   ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal))
-//                                   : redirectUrl;
+
 
                 var parameters = new NameValueCollection
                                      {
                                          { "client_id", this.appId },
-//                                         { "redirect_uri", anotherTry },
+                                         { "redirect_uri", redirectUrl },
                                          { "client_secret", this.appSecret },
                                          { "code", authorizationCode },
                                      };
@@ -264,6 +269,8 @@
                         var canvasGetTokenUrl = string.Format(TokenEndpoint, canvasUrl);
                         var response = client.UploadValues(canvasGetTokenUrl, "POST", parameters);
                         var data = Encoding.Default.GetString(response);
+
+                        throw new ApplicationException("works: " + data);
                         if (string.IsNullOrEmpty(data))
                         {
                             return null;

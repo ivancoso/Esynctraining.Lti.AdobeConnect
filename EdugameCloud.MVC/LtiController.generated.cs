@@ -145,7 +145,10 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_AuthenticationCallback
         {
-            public readonly string provider = "provider";
+            public readonly string __provider__ = "__provider__";
+            public readonly string __sid__ = "__sid__";
+            public readonly string code = "code";
+            public readonly string state = "state";
         }
         static readonly ActionParamsClass_DeleteRecording s_params_DeleteRecording = new ActionParamsClass_DeleteRecording();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -177,7 +180,7 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_LoginWithProvider
         {
-            public readonly string __provider__ = "__provider__";
+            public readonly string provider = "provider";
             public readonly string model = "model";
         }
         static readonly ActionParamsClass_RedirectToErrorPage s_params_RedirectToErrorPage = new ActionParamsClass_RedirectToErrorPage();
@@ -225,10 +228,13 @@ namespace EdugameCloud.MVC.Controllers
     {
         public T4MVC_LtiController() : base(Dummy.Instance) { }
 
-        public override System.Web.Mvc.ActionResult AuthenticationCallback(string provider)
+        public override System.Web.Mvc.ActionResult AuthenticationCallback(string __provider__, string __sid__, string code, string state)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.AuthenticationCallback);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__provider__", __provider__);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__sid__", __sid__);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "state", state);
             return callInfo;
         }
 
@@ -283,10 +289,10 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult LoginWithProvider(string __provider__, EdugameCloud.Lti.DTO.LtiParamDTO model)
+        public override System.Web.Mvc.ActionResult LoginWithProvider(string provider, EdugameCloud.Lti.DTO.LtiParamDTO model)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.LoginWithProvider);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__provider__", __provider__);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "provider", provider);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
             return callInfo;
         }

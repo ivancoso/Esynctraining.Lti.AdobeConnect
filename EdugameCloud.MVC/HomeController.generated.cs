@@ -101,6 +101,9 @@ namespace EdugameCloud.MVC.Controllers
         {
             public readonly string view = "view";
             public readonly string code = "code";
+            public readonly string __provider__ = "__provider__";
+            public readonly string __sid__ = "__sid__";
+            public readonly string state = "state";
         }
         static readonly ActionParamsClass_LogIn s_params_LogIn = new ActionParamsClass_LogIn();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -161,11 +164,14 @@ namespace EdugameCloud.MVC.Controllers
     {
         public T4MVC_HomeController() : base(Dummy.Instance) { }
 
-        public override System.Web.Mvc.ActionResult Admin(string view, string code)
+        public override System.Web.Mvc.ActionResult Admin(string view, string code, string __provider__, string __sid__, string state)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Admin);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "view", view);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__provider__", __provider__);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__sid__", __sid__);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "state", state);
             return callInfo;
         }
 

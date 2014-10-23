@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
     using System.Web.Mvc;
@@ -9,6 +10,8 @@
     using System.Web.UI;
 
     using Castle.Core.Logging;
+
+    using DocumentFormat.OpenXml.Math;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -76,14 +79,36 @@
         /// <param name="code">
         /// The code.
         /// </param>
+        /// <param name="__provider__">
+        /// The provider.
+        /// </param>
+        /// <param name="__sid__">
+        /// The SID.
+        /// </param>
+        /// <param name="state">
+        /// The state.
+        /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        [HttpGet]
-        public virtual ActionResult Admin(string view = null, string code = null)
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."), HttpGet]
+        public virtual ActionResult Admin(string view = null, string code = null, string __provider__ = null, string __sid__ = null, string state = null)
         {
-            string versionFileSwf = this.ProcessVersion("~/Content/swf/admin", (string)this.Settings.BuildSelector);
-            return this.View(EdugameCloudT4.Home.Views.Admin, new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });
+            if (__provider__ == "canvas" 
+                && !string.IsNullOrWhiteSpace(__sid__) 
+                && !string.IsNullOrWhiteSpace(code)
+                && !string.IsNullOrWhiteSpace(state))
+            {
+                //// crazy hack for canvas OAuth callback 
+                return this.RedirectToAction(EdugameCloudT4.Lti.AuthenticationCallback(__provider__, __sid__, code, state));
+            }
+            else
+            {
+                string versionFileSwf = this.ProcessVersion("~/Content/swf/admin", (string)this.Settings.BuildSelector);
+                return this.View(
+                    EdugameCloudT4.Home.Views.Admin,
+                    new HomeViewModel(this) { BuildUrl = Links.Content.swf.admin.Url(versionFileSwf) });
+            }
         }
 
         /// <summary>

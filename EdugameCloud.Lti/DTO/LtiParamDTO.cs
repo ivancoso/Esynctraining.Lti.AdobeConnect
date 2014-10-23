@@ -43,6 +43,11 @@
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
+        /// Gets or sets the custom canvas user id.
+        /// </summary>
+        public string custom_canvas_user_id { get; set; }
+
+        /// <summary>
         /// Gets or sets the launch presentation return url.
         /// </summary>
         public string launch_presentation_return_url { get; set; }

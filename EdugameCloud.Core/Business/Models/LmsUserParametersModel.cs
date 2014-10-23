@@ -31,7 +31,7 @@
         #region Constructors and Destructors
 
         /// <summary>
-        /// The get one by ac id.
+        /// The get one by AC id.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -46,5 +46,28 @@
         }
 
         #endregion
+
+        /// <summary>
+        /// The get one by AC id course id and LMS user id.
+        /// </summary>
+        /// <param name="adobeConnectUserId">
+        /// The adobe connect user id.
+        /// </param>
+        /// <param name="lmsCourseId">
+        /// The LMS course id.
+        /// </param>
+        /// <param name="lmsUserId">
+        /// The LMS user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue{LmsUserParameters}"/>.
+        /// </returns>
+        public IFutureValue<LmsUserParameters> GetOneByAcIdCourseIdAndLmsUserId(string adobeConnectUserId, int lmsCourseId, int lmsUserId)
+        {
+            var queryOver =
+                new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
+                .Where(x => x.AcId == adobeConnectUserId && x.Course == lmsCourseId && x.LmsUser.Id == lmsUserId).Take(1);
+            return this.Repository.FindOne(queryOver);
+        }
     }
 }

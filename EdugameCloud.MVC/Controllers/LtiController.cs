@@ -222,7 +222,7 @@
         /// </returns>
         [ActionName("callback")]
         [AllowAnonymous]
-        public virtual ActionResult AuthenticationCallback(string __provider__)
+        public virtual ActionResult AuthenticationCallback(string __provider__, string __sid__ = null, string code = null, string state = null)
         {
             var provider = __provider__;
             string error;
@@ -444,7 +444,7 @@
         /// <summary>
         /// The login with provider.
         /// </summary>
-        /// <param name="__provider__">
+        /// <param name="provider">
         /// The provider.
         /// </param>
         /// <param name="model">
@@ -455,10 +455,8 @@
         /// </returns>
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        // ReSharper disable once InconsistentNaming
-        public virtual ActionResult LoginWithProvider(string __provider__, LtiParamDTO model)
+        public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
         {
-            var provider = __provider__;
             CompanyLms credentials = this.CompanyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
             if (credentials != null)
             {

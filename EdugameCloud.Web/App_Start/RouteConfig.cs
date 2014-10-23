@@ -25,8 +25,8 @@
             routes.MapLowercaseRoute("OAuthCallback", "social/{provider}-callback", new { controller = "Social", action = "callback" });
             routes.MapLowercaseRoute("SubscriptionCallback", "social/{provider}-realtime", new { controller = "Social", action = "realtime-callback" });
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
-            routes.MapLowercaseRoute("LtiOAuthLogin", "lti/{__provider__}-login", new { controller = "Lti", action = "login" });
-            routes.MapLowercaseRoute("LtiOAuthCallback", "lti/{__provider__}-callback", new { controller = "Lti", action = "callback" });
+            routes.MapLowercaseRoute("LtiOAuthLogin", "lti/{provider}-login", new { controller = "Lti", action = "login" });
+            routes.MapLowercaseRoute("LtiOAuthCallback", "lti/oauth-callback", new { controller = "Lti", action = "callback" });
 
             routes.MapLowercaseRoute(
                 name: "DefaultLti",
