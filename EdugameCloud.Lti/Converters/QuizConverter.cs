@@ -351,9 +351,9 @@
         private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
             egcQuiz.LmsQuizId = quiz.id;
-            egcQuiz.QuizName = quiz.title;
+            egcQuiz.QuizName = ClearName(quiz.title);
             egcQuiz.SubModuleItem = submoduleItem;
-            egcQuiz.Description = Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty);
+            egcQuiz.Description = ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
             egcQuiz.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value;
@@ -378,6 +378,20 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// The clear name.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ClearName(string name)
+        {
+            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty);
         }
 
         /// <summary>
@@ -414,7 +428,8 @@
                             CreatedBy = user,
                             LmsQuestionId = lmsQuestionId
                         };
-                question.QuestionName = quizQuestion.question_text;
+                question.IsMoodleSingle = !questionType.LmsQuestionTypeName.Equals("multiple_answers_question"); 
+                question.QuestionName = this.ClearName(quizQuestion.question_text);
                 question.QuestionType = questionType.QuestionType;
                 question.DateModified = DateTime.Now;
                 question.ModifiedBy = user;
@@ -498,7 +513,6 @@
             Question question,
             DistractorModel distractorModel)
         {
-            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
             foreach (var a in q.answers)
             {
                 var lmsId = a.id;
@@ -513,11 +527,11 @@
                     };
                 distractor.DateModified = DateTime.Now;
                 distractor.ModifiedBy = user;
-                distractor.DistractorName = a.text;
+                distractor.DistractorName = this.ClearName(a.text);
                 distractor.IsActive = true;
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = a.weight > 0;
-                distractor.LmsAnswer = (answerNumber++).ToString();
+                distractor.LmsAnswer = a.id.ToString();
 
                 distractorModel.RegisterSave(distractor);
             }
@@ -563,6 +577,15 @@
             foreach (var a in q.answers)
             {
                 var isCorrectAnswer = a.weight > 0;
+                if (a.text != null && a.text.ToLower().Equals("true"))
+                {
+                    distractor.LmsAnswer = a.id.ToString();
+                }
+                else
+                {
+                    distractor.LmsAnswerId = a.id;
+                }
+
                 if (a.text != null && a.text.ToLower().Equals("true") && isCorrectAnswer)
                 {
                     isCorrect = true;

@@ -967,7 +967,7 @@
             string startTime, 
             string duration)
         {
-            if (credentials.LmsDomain.IndexOf("canvas", StringComparison.Ordinal) < 0 || string.IsNullOrEmpty(param.context_title))
+            if (!credentials.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
             {
                 return;
             }
@@ -976,8 +976,8 @@
                 credentials.LmsDomain, 
                 credentials.AdminUser.Token, 
                 param.custom_canvas_course_id, 
-                string.Format("A new Adobe Connect room was created for course {0}", param.context_title), 
-                string.Format("Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your Adobe Connect Conference section.", name, startDate, startTime, duration));
+                string.Format("A new Adobe Connect room was created for course {0}", param.context_title),
+                string.Format("Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.", name, startDate, startTime, duration, param.Referer ?? string.Empty));
         }
 
         /// <summary>

@@ -27,6 +27,7 @@
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             this.References(x => x.Quiz).Not.Nullable();
             this.Map(x => x.isCompleted).Nullable();
+            this.References(x => x.LmsUserParameters).Nullable();
         }
 
         #endregion

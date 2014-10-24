@@ -26,6 +26,7 @@
             this.Map(x => x.PrimaryColor).Nullable();
             this.Map(x => x.Layout).Nullable();
             this.Map(x => x.LmsDomain).Nullable();
+            this.Map(x => x.ShowAnnouncements).Nullable();
 
             this.References(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.References(x => x.Company).Not.Nullable().Column("companyId");

@@ -286,7 +286,7 @@ namespace EdugameCloud.WCFService
 
             serviceResponse.@object = new QuizesAndSubModuleItemsDTO
                                           {
-                                              quizes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
+                                              quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
                                               subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
                                           };
             return serviceResponse;
@@ -533,8 +533,11 @@ namespace EdugameCloud.WCFService
                 this.LmsUserParametersModel.RegisterDelete(param);
             }
 
-            result.@object.provider = "Moodle";
-            result.@object.domain = "http://64.27.12.60";
+            if (result.@object != null)
+            {
+                result.@object.provider = "Moodle";
+                result.@object.domain = "http://64.27.12.60";
+            }
 
             return result;
         }

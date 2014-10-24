@@ -45,6 +45,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
         /// <summary>
         /// Gets the QuizFormat model.
         /// </summary>
@@ -229,20 +237,19 @@ namespace EdugameCloud.WCFService
         /// The get lms quizzes.
         /// </summary>
         /// <param name="userId">
-        /// The id.
+        /// The user id.
         /// </param>
-        /// <param name="courseId">
-        /// The course id
-        /// </param>
-        /// <param name="provider">
-        /// The provider
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int courseId, string provider)
+        public ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int lmsUserParametersId)
         {
-            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetLMSQuizzes(userId, courseId).ToList() };
+            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
+
+            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.LmsProvider.Id).ToList() };
         }
 
         /// <summary>

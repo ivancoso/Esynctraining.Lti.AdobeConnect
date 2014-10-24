@@ -189,26 +189,32 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The convert quizzes.
         /// </summary>
-        /// <param name="quizzesInfo">
-        /// The quizzes info.
+        /// <param name="userId">
+        /// The user Id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms User Parameters Id.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz Ids.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(LmsQuizConvertDTO quizzesInfo)
+        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, List<int> quizIds)
         {
             var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
-            if (quizzesInfo.quizIds == null)
+            if (quizIds == null)
             {
                 return serviceResponse;
             }
             
-            var lmsUserParameters = LmsUserParametersModel.GetOneById(quizzesInfo.lmsUserParametersId).Value;
+            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
 
             if (lmsUserParameters != null)
             {
-                var user = UserModel.GetOneById(quizzesInfo.userId).Value;
+                var user = UserModel.GetOneById(userId).Value;
                 var companyLms = lmsUserParameters.CompanyLms;
                 var course = CourseAPI.GetCourse(
                     companyLms.LmsDomain,
@@ -221,7 +227,7 @@ namespace EdugameCloud.WCFService
                     companyLms.AdminUser.Token, 
                     lmsUserParameters.Course);
 
-                quizzes = quizzes.Where(q => quizzesInfo.quizIds.Contains(q.id));
+                quizzes = quizzes.Where(q => quizIds.Contains(q.id));
 
                 var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, course, user);
 
@@ -230,7 +236,7 @@ namespace EdugameCloud.WCFService
 
                 serviceResponse.@object = new QuizesAndSubModuleItemsDTO
                 {
-                    quizes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
+                    quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
                     subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
                 };
             }

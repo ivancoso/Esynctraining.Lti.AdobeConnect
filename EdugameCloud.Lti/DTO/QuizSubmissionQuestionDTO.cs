@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets or sets the answer.
         /// </summary>
-        public int answer { get; set; }
+        public object answer { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

@@ -29,6 +29,7 @@
         /// </param>
         public LmsUserParametersDTO(LmsUserParameters param)
         {
+            this.lmsUserParametersId = param.Id;
             this.acId = param.AcId;
             this.course = param.Course;
             this.domain = param.CompanyLms.LmsDomain;
@@ -40,6 +41,12 @@
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the lms user parameters id.
+        /// </summary>
+        [DataMember]
+        public int lmsUserParametersId { get; set; }
 
         /// <summary>
         /// Gets or sets the ac id.

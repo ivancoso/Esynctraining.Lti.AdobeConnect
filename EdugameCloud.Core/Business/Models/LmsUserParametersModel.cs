@@ -42,7 +42,7 @@
         /// </returns>
         public IFutureValue<LmsUserParameters> GetOneByAcId(string id)
         {
-            var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver().Where(x => x.AcId == id);
+            var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver().Where(x => x.AcId == id && x.CompanyLms == null);
             return this.Repository.FindOne(queryOver);
         }
 

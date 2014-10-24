@@ -365,6 +365,9 @@
         /// <summary>
         /// The index.
         /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
         /// <returns>
         /// The <see cref="ViewResult"/>.
         /// </returns>
@@ -374,6 +377,7 @@
             CompanyLms credentials = this.CompanyLmsModel.GetOneByDomainOrConsumerKey(model.custom_canvas_api_domain, model.oauth_consumer_key).Value;
             if (credentials != null)
             {
+                model.Referer = Request.Headers["Referer"];
                 this.Session["Param"] = model;
                 this.Session["Credentials"] = credentials;
 

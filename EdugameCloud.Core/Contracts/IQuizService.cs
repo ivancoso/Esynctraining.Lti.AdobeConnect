@@ -88,19 +88,16 @@
         /// The get lms quizzes.
         /// </summary>
         /// <param name="userId">
-        /// The id.
+        /// The user id.
         /// </param>
-        /// <param name="courseId">
-        /// The course id
-        /// </param>
-        /// <param name="provider">
-        /// The provider
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int courseId, string provider);
+        ServiceResponse<QuizFromStoredProcedureDTO> GetLmsQuizzes(int userId, int lmsUserParametersId);
 
         /// <summary>
         /// The get quiz sm items by user subModuleId.

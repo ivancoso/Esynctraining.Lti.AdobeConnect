@@ -77,6 +77,11 @@
         /// </summary>
         public string roles { get; set; }
 
+        /// <summary>
+        /// Gets or sets the referer.
+        /// </summary>
+        public string Referer { get; set; }
+
         #endregion
     }
 }

@@ -15,7 +15,7 @@
         /// Gets or sets the quizes.
         /// </summary>
         [DataMember]
-        public List<QuizFromStoredProcedureDTO> quizes { get; set; }
+        public List<QuizFromStoredProcedureDTO> quizzes { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module items.

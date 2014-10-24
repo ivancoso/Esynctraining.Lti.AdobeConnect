@@ -70,6 +70,8 @@
                 Component.For<CourseAPI>().ImplementedBy<CourseAPI>());
             IoC.Container.Register(
                 Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
+            IoC.Container.Register(
+                Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
             try
             {
                 // Initialize WebORB configuration before starting messaging server

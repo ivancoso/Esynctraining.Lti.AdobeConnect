@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
+    using System.Collections.Generic;
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;
@@ -49,13 +50,19 @@
         /// <summary>
         /// The convert quizzes.
         /// </summary>
-        /// <param name="quizzesInfo">
-        /// The quizzes info.
+        /// <param name="userId">
+        /// The user Id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms User Parameters Id.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz Ids.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(LmsQuizConvertDTO quizzesInfo);
+        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, List<int> quizIds);
     }
 }
