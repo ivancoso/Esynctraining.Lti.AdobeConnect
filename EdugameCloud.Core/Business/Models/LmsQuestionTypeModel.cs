@@ -1,27 +1,27 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
+
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
 
-    using NHibernate.Criterion;
-
     /// <summary>
-    /// The lms provider model.
+    /// The lms question type model.
     /// </summary>
-    public class LmsProviderModel : BaseModel<LmsProvider, int>
+    public class LmsQuestionTypeModel : BaseModel<LmsQuestionType, int>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LmsProviderModel"/> class. 
+        /// Initializes a new instance of the <see cref="LmsQuestionTypeModel"/> class.
         /// </summary>
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public LmsProviderModel(IRepository<LmsProvider, int> repository)
+        public LmsQuestionTypeModel(IRepository<LmsQuestionType, int> repository)
             : base(repository)
         {
         }
@@ -31,19 +31,16 @@
         /// <summary>
         /// The get all active.
         /// </summary>
-        /// <param name="name">
-        /// The name.
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
         /// </param>
         /// <returns>
-        /// The <see cref="LmsProvider"/>.
+        /// The <see cref="IEnumerable{QuestionType}"/>.
         /// </returns>
-        public LmsProvider GetOneByName(string name)
+        public IEnumerable<LmsQuestionType> GetAllByProvider(int lmsProviderId)
         {
-            var query = new DefaultQueryOver<LmsProvider, int>()
-                .GetQueryOver()
-                .WhereRestrictionOn(x => x.LmsProviderName)
-                .IsInsensitiveLike(name, MatchMode.Exact);
-            return this.Repository.FindOne(query).Value;
+            var query = new DefaultQueryOver<LmsQuestionType, int>().GetQueryOver().Where(x => x.LmsProvider.Id == lmsProviderId);
+            return this.Repository.FindAll(query);
         }
     }
 }

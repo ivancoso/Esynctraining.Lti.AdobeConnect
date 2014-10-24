@@ -54,7 +54,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(MoodleQuizConvertDTO quiz);
+        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(LmsQuizConvertDTO quiz);
 
         /// <summary>
         /// The convert surveys.
@@ -66,13 +66,17 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(MoodleQuizConvertDTO survey);
+        ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(LmsQuizConvertDTO survey);
 
         /// <summary>
         /// The get authentication parameters by id
         /// </summary>
-        /// <param name="id">The id</param>
-        /// <returns></returns>
+        /// <param name="id">
+        /// The id
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract]
         ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id);
 

@@ -3,6 +3,7 @@
 namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     using EdugameCloud.Core.Domain.DTO;
@@ -54,7 +55,8 @@ namespace EdugameCloud.Core.Business.Models
 	    /// <param name="repository">
 	    /// The repository.
 	    /// </param>
-	    public SurveyModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Survey, int> repository)
+		[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1027:TabsMustNotBeUsed", Justification = "Reviewed. Suppression is OK here.")]
+		public SurveyModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Survey, int> repository)
             : base(repository)
         {
             this.fileModel = fileModel;

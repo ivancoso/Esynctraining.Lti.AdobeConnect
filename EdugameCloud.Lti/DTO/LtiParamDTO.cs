@@ -23,11 +23,6 @@
         public string context_title { get; set; }
 
         /// <summary>
-        /// Gets or sets the custom AC folder SCO id.
-        /// </summary>
-        public string custom_ac_folder_sco_id { get; set; }
-
-        /// <summary>
         /// Gets or sets the custom canvas API domain.
         /// </summary>
         public string custom_canvas_api_domain { get; set; }
@@ -45,17 +40,12 @@
         /// <summary>
         /// Gets or sets the custom canvas user id.
         /// </summary>
-        public string custom_canvas_user_id { get; set; }
+        public int custom_canvas_user_id { get; set; }
 
         /// <summary>
         /// Gets or sets the launch presentation return url.
         /// </summary>
         public string launch_presentation_return_url { get; set; }
-
-        /// <summary>
-        /// Gets or sets the layout.
-        /// </summary>
-        public string layout { get; set; }
 
         /// <summary>
         /// Gets or sets the LIS person contact email primary.

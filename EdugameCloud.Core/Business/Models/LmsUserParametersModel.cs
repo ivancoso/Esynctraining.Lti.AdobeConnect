@@ -7,6 +7,7 @@
     using Esynctraining.Core.Business.Queries;
 
     using NHibernate;
+    using NHibernate.SqlCommand;
 
     /// <summary>
     /// The LMS user parameters model
@@ -42,6 +43,31 @@
         public IFutureValue<LmsUserParameters> GetOneByAcId(string id)
         {
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver().Where(x => x.AcId == id);
+            return this.Repository.FindOne(queryOver);
+        }
+
+        /// <summary>
+        /// The get one for login.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <param name="acDomain">
+        /// The ac domain.
+        /// </param>
+        /// <param name="courseId">
+        /// The course Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue"/>.
+        /// </returns>
+        public IFutureValue<LmsUserParameters> GetOneForLogin(string id, string acDomain, int courseId)
+        {
+            CompanyLms clms = null;
+            var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
+                .Where(x => x.AcId == id && x.Course == courseId)
+                .JoinQueryOver(x => x.CompanyLms, () => clms, JoinType.InnerJoin)
+                .Where(x => clms.AcServer == acDomain);
             return this.Repository.FindOne(queryOver);
         }
 

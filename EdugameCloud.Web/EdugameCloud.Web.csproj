@@ -432,6 +432,7 @@
     <Content Include="Views\Social\LoggedIn.cshtml" />
     <Content Include="Views\Home\Unsubscribed.cshtml" />
     <Content Include="Views\Lti\Error.cshtml" />
+    <Content Include="Views\Lti\Redirect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -538,7 +539,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost</IISUrl>
+          <IISUrl>http://localhost:2345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

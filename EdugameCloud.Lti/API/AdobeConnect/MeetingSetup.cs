@@ -31,11 +31,11 @@
         /// <summary>
         /// Gets the canvas course meeting model.
         /// </summary>
-        private CanvasCourseMeetingModel СanvasCourseMeetingModel
+        private LmsCourseMeetingModel LmsCourseMeetingModel
         {
             get
             {
-                return IoC.Resolve<CanvasCourseMeetingModel>();
+                return IoC.Resolve<LmsCourseMeetingModel>();
             }
         }
 
@@ -93,8 +93,8 @@
         /// </returns>
         public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
-            CanvasCourseMeeting meeting =
-                this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            LmsCourseMeeting meeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
 
             if (meeting == null)
             {
@@ -109,8 +109,8 @@
             ScoInfoResult result = provider.GetScoInfo(meeting.ScoId);
             if (!result.Success || result.ScoInfo == null)
             {
-                this.СanvasCourseMeetingModel.RegisterDelete(meeting);
-                this.СanvasCourseMeetingModel.Flush();
+                this.LmsCourseMeetingModel.RegisterDelete(meeting);
+                this.LmsCourseMeetingModel.Flush();
                 return new MeetingDTO
                            {
                                id = "0", 
@@ -182,7 +182,7 @@
         /// </returns>
         public List<RecordingDTO> GetRecordings(CompanyLms credentials, AdobeConnectProvider provider, int courseId)
         {
-            CanvasCourseMeeting meeting = this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
 
             if (meeting == null)
             {
@@ -255,8 +255,8 @@
         {
             List<UserDTO> users = this.GetCanvasUsers(credentials, param.custom_canvas_course_id);
 
-            CanvasCourseMeeting meeting =
-                this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            LmsCourseMeeting meeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
             if (meeting == null)
             {
                 return users;
@@ -303,10 +303,10 @@
                     user.ac_role = "Presenter";
                     presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
                 }
-                else if (presenters.Any(v => v.PrincipalId == user.ac_id))
+                else if (participants.Any(v => v.PrincipalId == user.ac_id))
                 {
                     user.ac_role = "Participant";
-                    presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+                    participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
                 }
             }
 
@@ -320,7 +320,7 @@
                 users.Add(new UserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Presenter" });
             }
 
-            foreach (var permissionInfo in presenters.Where(h => !h.HasChildren))
+            foreach (var permissionInfo in participants.Where(h => !h.HasChildren))
             {
                 users.Add(new UserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Participant" });
             }
@@ -346,8 +346,9 @@
 
             string breezeToken, meetingUrl = string.Empty;
 
-            this.СanvasCourseMeetingModel.Flush();
-            CanvasCourseMeeting currentMeeting = this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            this.LmsCourseMeetingModel.Flush();
+            LmsCourseMeeting currentMeeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
 
             string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
 
@@ -400,13 +401,27 @@
                     LoginResult resultByEmail = provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
                     breezeToken = resultByEmail.Status.SessionInfo;
                 }
+
+                var userParameters = LmsUserParametersModel.GetOneForLogin(
+                    registeredUser.PrincipalId,
+                    credentials.AcServer,
+                    param.custom_canvas_course_id).Value
+                    ?? new LmsUserParameters()
+                           {
+                               AcId = registeredUser.PrincipalId,
+                               Course = param.custom_canvas_course_id,
+                               CompanyLms = credentials
+                           };
+                userParameters.LmsUser = LmsUserModel.GetOneByUserId(param.custom_canvas_user_id).Value;
+
+                LmsUserParametersModel.RegisterSave(userParameters);
             }
             else
             {
                 return param.launch_presentation_return_url;
             }
 
-            this.SaveLMSUserParameters(param, registeredUser.PrincipalId);
+            //this.SaveLMSUserParameters(param, registeredUser.PrincipalId);
 
             return meetingUrl + "?session=" + breezeToken;
         }
@@ -435,9 +450,7 @@
                                             {
                                                 AcId = adobeConnectUserId,
                                                 Course = lmsCourseId,
-                                                Domain = domain,
-                                                LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value,
-                                                Provider = "canvas"
+                                                LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value
                                             };
                 this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
             }
@@ -541,7 +554,7 @@
             int courseId, 
             string recordingId)
         {
-            CanvasCourseMeeting meeting = this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
 
             if (meeting == null)
             {
@@ -598,11 +611,11 @@
             }
 
             // end fix meeting dto
-            CanvasCourseMeeting meeting =
-                this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value
-                ?? new CanvasCourseMeeting
+            LmsCourseMeeting meeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value
+                ?? new LmsCourseMeeting
                        {
-                           CanvasConnectCredentialsId = credentials.Id, 
+                           CompanyLmsId = credentials.Id, 
                            CourseId = param.custom_canvas_course_id
                        };
 
@@ -629,7 +642,7 @@
             {
                 // newly created meeting
                 meeting.ScoId = result.ScoInfo.ScoId;
-                this.СanvasCourseMeetingModel.RegisterSave(meeting);
+                this.LmsCourseMeetingModel.RegisterSave(meeting);
 
                 this.SetDefaultUsers(credentials, provider, meeting.CourseId, result.ScoInfo.ScoId);
 
@@ -758,8 +771,8 @@
             LtiParamDTO param, 
             UserDTO user)
         {
-            CanvasCourseMeeting meeting =
-                this.СanvasCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            LmsCourseMeeting meeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
             if (meeting == null)
             {
                 return this.GetUsers(credentials, provider, param);
@@ -836,8 +849,7 @@
         /// </param>
         private void SaveLMSUserParameters(LtiParamDTO param, string adobeConnectUserId)
         {
-            int canvasUserId;
-            this.SaveLMSUserParameters(param.custom_canvas_course_id, param.custom_canvas_api_domain, int.TryParse(param.custom_canvas_user_id, out canvasUserId) ? canvasUserId : 0, adobeConnectUserId);
+            this.SaveLMSUserParameters(param.custom_canvas_course_id, param.custom_canvas_api_domain, param.custom_canvas_user_id, adobeConnectUserId);
         }
 
         /// <summary>

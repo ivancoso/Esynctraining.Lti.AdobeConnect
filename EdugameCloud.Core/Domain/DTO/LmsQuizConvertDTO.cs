@@ -4,27 +4,27 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The moodle course info dto.
+    /// The lms quiz convert dto
     /// </summary>
     [DataContract]
-    public class MoodleCourseInfoDTO
+    public class LmsQuizConvertDTO
     {
         /// <summary>
-        /// Gets or sets the id.
+        /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public string id { get; set; }
+        public virtual int userId { get; set; }
 
         /// <summary>
-        /// Gets or sets the fullname.
+        /// Gets or sets the lms user parameters id.
         /// </summary>
         [DataMember]
-        public string fullname { get; set; }
+        public virtual int lmsUserParametersId { get; set; }
 
         /// <summary>
-        /// Gets or sets the quizzes.
+        /// Gets or sets the quiz ids.
         /// </summary>
         [DataMember]
-        public List<MoodleQuizInfoDTO> quizzes { get; set; }
+        public virtual List<int> quizIds { get; set; }
     }
 }

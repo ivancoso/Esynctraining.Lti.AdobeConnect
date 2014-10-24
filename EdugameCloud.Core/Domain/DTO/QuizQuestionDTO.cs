@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Collections.Generic;
 

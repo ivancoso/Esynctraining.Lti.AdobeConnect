@@ -10,19 +10,19 @@
     using NHibernate;
 
     /// <summary>
-    /// 
+    /// The lms course meeting model.
     /// </summary>
-    public class CanvasCourseMeetingModel :BaseModel<CanvasCourseMeeting, int>
+    public class LmsCourseMeetingModel : BaseModel<LmsCourseMeeting, int>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CanvasCourseMeetingModel"/> class. 
+        /// Initializes a new instance of the <see cref="LmsCourseMeetingModel"/> class. 
         /// </summary>
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public CanvasCourseMeetingModel(IRepository<CanvasCourseMeeting, int> repository)
+        public LmsCourseMeetingModel(IRepository<LmsCourseMeeting, int> repository)
             : base(repository)
         {
         }
@@ -32,17 +32,18 @@
         /// <summary>
         /// Gets one by course id
         /// </summary>
-        /// <param name="credentialsId">The credentials id</param>
+        /// <param name="companyLmsId">
+        /// The company lms id</param>
         /// <param name="courseId">
         /// The course id
         /// </param>
         /// <returns>
         /// The canvas ac meeting
         /// </returns>
-        public IFutureValue<CanvasCourseMeeting> GetOneByCourseId(int credentialsId, int courseId)
+        public IFutureValue<LmsCourseMeeting> GetOneByCourseId(int companyLmsId, int courseId)
         {
-            var defaultQuery = new DefaultQueryOver<CanvasCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.CanvasConnectCredentialsId == credentialsId && x.CourseId == courseId).Take(1);
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
+                .Where(x => x.CompanyLmsId == companyLmsId && x.CourseId == courseId).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
     }

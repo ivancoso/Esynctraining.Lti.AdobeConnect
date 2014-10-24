@@ -2,6 +2,9 @@
 {
     using System.Runtime.Serialization;
 
+    /// <summary>
+    /// The moodle token dto.
+    /// </summary>
     [DataContract]
     public class MoodleTokenDTO
     {
@@ -29,7 +32,6 @@
         /// </summary>
         [DataMember]
         public virtual string token { get; set; }
-
 
         #endregion
     }

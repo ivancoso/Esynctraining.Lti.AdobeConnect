@@ -9,10 +9,13 @@
 
     using FluentValidation;
 
+    /// <summary>
+    /// The company lms validator.
+    /// </summary>
     public class CompanyLmsValidator : AbstractValidator<CompanyLmsDTO>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FileDtoValidator"/> class.
+        /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.
         /// </summary>
         public CompanyLmsValidator()
         {

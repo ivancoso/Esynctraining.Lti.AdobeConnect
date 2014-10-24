@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
     /// <summary>
     /// The answer DTO.
@@ -20,7 +20,12 @@
         /// <summary>
         /// Gets or sets the answer_text.
         /// </summary>
-        public string answer_text { get; set; }
+        public string text { get; set; }
+
+        /// <summary>
+        /// Gets or sets the answer_weight.
+        /// </summary>
+        public int weight { get; set; }
 
         /// <summary>
         /// Gets or sets the exact.

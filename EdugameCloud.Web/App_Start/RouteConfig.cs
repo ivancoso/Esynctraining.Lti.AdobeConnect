@@ -27,11 +27,17 @@
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
             routes.MapLowercaseRoute("LtiOAuthLogin", "lti/{provider}-login", new { controller = "Lti", action = "login" });
             routes.MapLowercaseRoute("LtiOAuthCallback", "lti/oauth-callback", new { controller = "Lti", action = "callback" });
-
+            
             routes.MapLowercaseRoute(
                 name: "DefaultLti",
-                url: "Lti/{layout}",
-                defaults: new { controller = "Lti", action = "Index", layout = UrlParameter.Optional }
+                url: "Lti",
+                defaults: new { controller = "Lti", action = "Index" }
+            );
+
+            routes.MapLowercaseRoute(
+                name: "DefaultLtitabbed",
+                url: "Lti/tabbed",
+                defaults: new { controller = "Lti", action = "Index" }
             );
 
             routes.MapLowercaseRoute("Default", "{action}", new { controller = "Home", action = "Admin" });
@@ -81,6 +87,12 @@
                 name: "gettemplates",
                 url: "Lti/Template/GetAll",
                 defaults: new { controller = "Lti", action = "GetTemplates" }
+            );
+
+            routes.MapLowercaseRoute(
+                name: "DefaultLtiAction",
+                url: "Lti/{action}",
+                defaults: new { controller = "Lti" }
             );
         }
     }

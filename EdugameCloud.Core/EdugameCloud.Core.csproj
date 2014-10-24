@@ -143,8 +143,7 @@
     <Compile Include="Authentication\WebOrbAuthorizationHandler.cs" />
     <Compile Include="Authentication\WebOrbRolesProvider.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
-    <Compile Include="Business\Models\CanvasCourseMeetingModel.cs" />
-    <Compile Include="Business\Models\CanvasConnectCredentialsModel.cs" />
+    <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
     <Compile Include="Business\Models\CompanyLmsModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
+    <Compile Include="Business\Models\LmsQuestionTypeModel.cs" />
     <Compile Include="Business\Models\LmsUserModel.cs" />
     <Compile Include="Business\Models\MoodleUserModel.cs" />
     <Compile Include="Business\Models\LmsUserParametersModel.cs" />
@@ -223,7 +223,6 @@
     <Compile Include="Contracts\IExportService.cs" />
     <Compile Include="Contracts\IImportService.cs" />
     <Compile Include="Contracts\ILmsService.cs" />
-    <Compile Include="Contracts\IMoodle.cs" />
     <Compile Include="Contracts\IMoodleAuthorizationService.cs" />
     <Compile Include="Contracts\IMoodleService.cs" />
     <Compile Include="Contracts\ISocialService.cs" />
@@ -238,12 +237,15 @@
     <Compile Include="Converters\CompanyThemeDTOConverter.cs" />
     <Compile Include="Converters\CompanyDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
+    <Compile Include="Domain\DTO\AnswerDTO.cs" />
     <Compile Include="Domain\DTO\CompanyLmsDTO.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\ConnectionInfoDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\LmsAuthenticationParametersDTO.cs" />
+    <Compile Include="Domain\DTO\LmsQuizDTO.cs" />
     <Compile Include="Domain\DTO\MoodleCourseInfoDTO.cs" />
-    <Compile Include="Domain\DTO\MoodleQuizConvertDTO.cs" />
+    <Compile Include="Domain\DTO\LmsQuizConvertDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="Domain\DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="Domain\DTO\MoodleTokenDTO.cs" />
@@ -251,6 +253,7 @@
     <Compile Include="Domain\DTO\LmsUserParametersDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
     <Compile Include="Domain\DTO\QuizesAndSubModuleItemsDTO.cs" />
+    <Compile Include="Domain\DTO\QuizQuestionDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
     <Compile Include="Domain\DTO\SessionDTO.cs" />
@@ -304,7 +307,7 @@
     <Compile Include="Domain\DTO\VersionDTO.cs" />
     <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
     <Compile Include="Domain\DTO\WebRequestDTO.cs" />
-    <Compile Include="Domain\Entities\CanvasCourseMeeting.cs" />
+    <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
     <Compile Include="Domain\Entities\CanvasConnectCredentials.cs" />
     <Compile Include="Domain\Entities\CompanyLms.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
@@ -314,11 +317,11 @@
     <Compile Include="Domain\Entities\EmailHistory.cs" />
     <Compile Include="Domain\Entities\LmsProvider.cs" />
     <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
+    <Compile Include="Domain\Entities\LmsQuestionType.cs" />
     <Compile Include="Domain\Entities\LmsUser.cs" />
     <Compile Include="Domain\Entities\MoodleDataset.cs" />
     <Compile Include="Domain\Entities\MoodleDataSetItem.cs" />
     <Compile Include="Domain\Entities\MoodleQuestion.cs" />
-    <Compile Include="Domain\Entities\MoodleQuestionOption.cs" />
     <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
     <Compile Include="Domain\Entities\MoodleQuiz.cs" />
     <Compile Include="Domain\Entities\MoodleUser.cs" />

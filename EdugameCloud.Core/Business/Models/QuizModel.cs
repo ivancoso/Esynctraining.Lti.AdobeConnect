@@ -364,7 +364,7 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid)
+        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid, int lmsProviderId = 1)
         {
             QueryOver<User, User> query =
                new DefaultQueryOver<User, int>().GetQueryOver()
@@ -384,7 +384,7 @@
                     .Where(() => smi.IsActive == true && q.LmsQuizId != null)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
-                    .And(() => courseid == 0 || smc.LmsCourseId == courseid)
+                    .And(() => courseid == 0 || (smc.LmsCourseId == courseid && lmsProviderId == smc.LmsProvider.Id))
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)

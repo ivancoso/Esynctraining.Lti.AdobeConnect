@@ -31,8 +31,8 @@
         {
             this.acId = param.AcId;
             this.course = param.Course;
-            this.domain = param.Domain;
-            this.provider = param.Provider;
+            this.domain = param.CompanyLms.LmsDomain;
+            this.provider = param.CompanyLms.LmsProvider.LmsProviderName;
             this.wstoken = param.Wstoken;
             this.lmsUserId = param.LmsUser.Return(x => x.Id, (int?)null);
         }

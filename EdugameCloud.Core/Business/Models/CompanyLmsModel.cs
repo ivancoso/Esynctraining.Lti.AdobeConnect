@@ -13,12 +13,15 @@
 
     using NHibernate;
 
+    /// <summary>
+    /// The company lms model.
+    /// </summary>
     public class CompanyLmsModel : BaseModel<CompanyLms, int>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompanyLicenseModel"/> class.
+        /// Initializes a new instance of the <see cref="CompanyLmsModel"/> class.
         /// </summary>
         /// <param name="repository">
         /// The repository.

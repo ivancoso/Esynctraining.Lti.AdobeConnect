@@ -10,6 +10,8 @@
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.Converters;
     using EdugameCloud.Persistence;
     using EdugameCloud.WCFService.Providers;
 
@@ -64,6 +66,10 @@
                 Component.For<IResourceProvider>()
                          .ImplementedBy<WcfResourceProvider>()
                          .Activator<ResourceProviderActivator>());
+            IoC.Container.Register(
+                Component.For<CourseAPI>().ImplementedBy<CourseAPI>());
+            IoC.Container.Register(
+                Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
             try
             {
                 // Initialize WebORB configuration before starting messaging server

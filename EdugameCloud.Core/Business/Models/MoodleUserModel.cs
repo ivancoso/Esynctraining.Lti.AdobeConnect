@@ -15,7 +15,7 @@
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserModel"/> class.
+        /// Initializes a new instance of the <see cref="MoodleUserModel"/> class.
         /// </summary>
         /// <param name="repository">
         /// The repository.

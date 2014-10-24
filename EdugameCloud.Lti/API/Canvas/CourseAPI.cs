@@ -2,9 +2,12 @@
 {
     using System.Collections.Generic;
 
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
 
     using RestSharp;
+
+    using UserDTO = EdugameCloud.Lti.DTO.UserDTO;
 
     /// <summary>
     /// The course API.
@@ -17,7 +20,7 @@
         /// <summary>
         /// The canvas roles.
         /// </summary>
-        private static readonly string[] canvasRoles = { "Teacher", "Ta", "Student", "Observer", "Designer" };
+        private static readonly string[] CanvasRoles = { "Teacher", "Ta", "Student", "Observer", "Designer" };
 
         #endregion
 
@@ -77,7 +80,7 @@
             request.RequestFormat = DataFormat.Json;
             request.AddBody(submission);
 
-            client.Execute(request);
+            var res = client.Execute(request);
         }
 
         /// <summary>
@@ -162,6 +165,9 @@
         /// <summary>
         /// The get quizzes for course.
         /// </summary>
+        /// <param name="detailed">
+        /// The detailed.
+        /// </param>
         /// <param name="api">
         /// The API.
         /// </param>
@@ -174,9 +180,9 @@
         /// <returns>
         /// The <see cref="List{QuizDTO}"/>.
         /// </returns>
-        public static List<QuizDTO> GetQuizzesForCourse(string api, string usertoken, int courseid)
+        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(bool detailed, string api, string usertoken, int courseid)
         {
-            var ret = new List<QuizDTO>();
+            var ret = new List<LmsQuizDTO>();
             var client = CreateRestClient(api);
 
             RestRequest request = CreateRequest(
@@ -185,16 +191,54 @@
                 Method.GET, 
                 usertoken);
 
-            IRestResponse<List<QuizDTO>> response = client.Execute<List<QuizDTO>>(request);
+            IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
 
-            foreach (QuizDTO q in response.Data)
+            if (detailed)
             {
-                q.questions = GetQuestionsForQuiz(api, usertoken, courseid, q.id).ToArray();
+                foreach (LmsQuizDTO q in response.Data)
+                {
+                    q.questions = GetQuestionsForQuiz(api, usertoken, courseid, q.id).ToArray();
+                }
             }
 
             ret.AddRange(response.Data);
 
             return ret;
+        }
+
+        /// <summary>
+        /// The get quiz by id.
+        /// </summary>
+        /// <param name="api">
+        /// The api.
+        /// </param>
+        /// <param name="usertoken">
+        /// The usertoken.
+        /// </param>
+        /// <param name="courseid">
+        /// The courseid.
+        /// </param>
+        /// <param name="quizid">
+        /// The quizid.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LmsQuizDTO"/>.
+        /// </returns>
+        public static LmsQuizDTO GetQuizById(string api, string usertoken, int courseid, string quizid)
+        {
+            var client = CreateRestClient(api);
+
+            RestRequest request = CreateRequest(
+                api,
+                string.Format("/api/v1/courses/{0}/quizzes/{1}", courseid, quizid),
+                Method.GET,
+                usertoken);
+
+            IRestResponse<LmsQuizDTO> response = client.Execute<LmsQuizDTO>(request);
+
+            response.Data.questions = GetQuestionsForQuiz(api, usertoken, courseid, response.Data.id).ToArray();
+
+            return response.Data;
         }
 
         /// <summary>
@@ -257,7 +301,7 @@
             var ret = new List<UserDTO>();
             var client = CreateRestClient(api);
 
-            foreach (string role in canvasRoles)
+            foreach (string role in CanvasRoles)
             {
                 RestRequest request = CreateRequest(
                     api, 

@@ -1,9 +1,9 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
     /// <summary>
     /// The quiz DTO.
     /// </summary>
-    public class QuizDTO
+    public class LmsQuizDTO
     {
         #region Public Properties
 

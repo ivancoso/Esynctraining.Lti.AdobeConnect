@@ -58,7 +58,7 @@ namespace EdugameCloud.ASMXService
         /// <summary>
         ///     Gets the logger.
         /// </summary>
-        private ILogger logger
+        private ILogger Logger
         {
             get
             {
@@ -206,7 +206,7 @@ namespace EdugameCloud.ASMXService
         {
             if (result != null && result.error != null)
             {
-                this.logger.Error(
+                this.Logger.Error(
                     string.Format(
                         "{4}. Error result for user: {0}, Error code: {1}, Error Message: {2}, Error Details: {3}",
                         userName,
@@ -234,8 +234,6 @@ namespace EdugameCloud.ASMXService
             instance = instance ?? new LmsUserParameters();
             instance.AcId = q.acId;
             instance.Course = q.course;
-            instance.Domain = q.domain;
-            instance.Provider = q.provider;
             instance.Wstoken = q.wstoken;
             instance.LmsUser = q.lmsUserId.HasValue && q.lmsUserId.Value != 0
                                    ? this.LmsUserModel.GetOneById(q.lmsUserId.Value).Value

@@ -40,7 +40,7 @@
         /// <summary>
         ///     The is debug.
         /// </summary>
-        private static bool? isDebug = false;
+        private static bool? isDebug = null;
 
         #endregion
 
@@ -174,7 +174,9 @@
                     model = new LtiParamDTO
                                 {
                                     custom_canvas_course_id = 865831, 
-                                    lis_person_contact_email_primary = "mike@esynctraining.com"
+                                    lis_person_contact_email_primary = "mike@esynctraining.com",
+                                    roles = "Administrator",
+                                    custom_canvas_user_id = 3969969
                                 };
                 }
 
@@ -397,14 +399,29 @@
 
             if (credentials != null)
             {
-                return this.Redirect(
+                this.ViewBag.RedirectUrl = 
                     string.Format(
                         "/extjs/index.html?layout={0}&primaryColor={1}",
                         credentials.Layout ?? string.Empty,
-                        credentials.PrimaryColor ?? string.Empty));
+                        credentials.PrimaryColor ?? string.Empty);
+                return this.View("Redirect");
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The get html page.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        public ActionResult GetHtmlPage(string path)
+        {
+            return new FilePathResult(path, "text/html");
         }
 
         /// <summary>
@@ -558,7 +575,9 @@
         /// </param>
         private void AddSessionCookie(string newId)
         {
-            this.Response.Cookies.Add(new HttpCookie("ASP.NET_SessionId", newId) { Domain = this.Settings.CookieDomain });
+
+            this.Response.Cookies.Add(
+                new HttpCookie(this.Settings.SessionCookieName, newId) { Domain = this.Settings.CookieDomain, Secure = true, Path = this.Settings.CookiePath });
         }
 
         /// <summary>

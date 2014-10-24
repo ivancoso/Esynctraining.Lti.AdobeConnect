@@ -3,6 +3,9 @@
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+
+    using NHibernate;
 
     /// <summary>
     /// The LMS user model
@@ -22,5 +25,26 @@
         }
 
         #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The get one by user id.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue"/>.
+        /// </returns>
+        public IFutureValue<LmsUser> GetOneByUserId(int userId)
+        {
+            var queryOver =
+                new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId);
+            return this.Repository.FindOne(queryOver);
+        }
+
+        #endregion
+
     }
 }

@@ -220,7 +220,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(MoodleQuizConvertDTO quizesInfo)
+        public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(LmsQuizConvertDTO quizesInfo)
         {
             var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
@@ -301,7 +301,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        public ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(MoodleQuizConvertDTO quizesInfo)
+        public ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(LmsQuizConvertDTO quizesInfo)
         {
             var serviceResponse = new ServiceResponse<SurveysAndSubModuleItemsDTO>();
 
@@ -512,6 +512,15 @@ namespace EdugameCloud.WCFService
             return serviceResponse;
         }
 
+        /// <summary>
+        /// The get authentication parameters by id.
+        /// </summary>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         public ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id)
         {
             var result = new ServiceResponse<LmsUserParametersDTO>();
@@ -523,6 +532,9 @@ namespace EdugameCloud.WCFService
             {
                 this.LmsUserParametersModel.RegisterDelete(param);
             }
+
+            result.@object.provider = "Moodle";
+            result.@object.domain = "http://64.27.12.60";
 
             return result;
         }
@@ -554,6 +566,12 @@ namespace EdugameCloud.WCFService
         /// <param name="user">
         /// The user.
         /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Tuple"/>.
+        /// </returns>
         private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user, bool isSurvey = false)
         {
             Tuple<int, int> result;
@@ -775,6 +793,9 @@ namespace EdugameCloud.WCFService
         /// <param name="q">
         /// The question.
         /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ProcessFillInTheBlankQuestionText(MoodleQuestion q)
         {
             var i = 1;
@@ -797,6 +818,9 @@ namespace EdugameCloud.WCFService
         /// <param name="q">
         /// The question.
         /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         private string ProcessCalculatedQuestionText(MoodleQuestion q)
         {
             var i = 1;

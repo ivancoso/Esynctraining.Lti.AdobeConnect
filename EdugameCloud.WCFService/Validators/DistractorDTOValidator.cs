@@ -19,6 +19,5 @@
         {
             this.RuleFor(model => model.distractor).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Distractor text is empty");
         }
-
     }
 }

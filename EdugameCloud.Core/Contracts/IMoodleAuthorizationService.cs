@@ -15,8 +15,12 @@
         /// <summary>
         /// The save
         /// </summary>
-        /// <param name="param">The user parameters</param>
-        /// <returns></returns>
+        /// <param name="param">
+        /// The user parameters
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
         [OperationContract(Action = "Save")]
         ServiceResponse<LmsUserParametersDTO> Save(LmsUserParametersDTO param);
 

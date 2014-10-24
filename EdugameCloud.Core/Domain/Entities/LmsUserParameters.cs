@@ -20,29 +20,19 @@
         public virtual int Course { get; set; }
 
         /// <summary>
-        /// Gets or sets the domain.
-        /// </summary>
-        public virtual string Domain { get; set; }
-
-        /// <summary>
         /// Gets or sets the LMS user.
         /// </summary>
         public virtual LmsUser LmsUser { get; set; }
 
         /// <summary>
-        /// Gets or sets the provider.
-        /// </summary>
-        public virtual string Provider { get; set; }
-
-        /// <summary>
-        /// Gets or sets the session.
-        /// </summary>
-        public virtual string Session { get; set; }
-
-        /// <summary>
         /// Gets or sets the WS token.
         /// </summary>
         public virtual string Wstoken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the company lms.
+        /// </summary>
+        public virtual CompanyLms CompanyLms { get; set; }
 
         #endregion
     }

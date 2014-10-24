@@ -33,7 +33,7 @@
             this.References(x => x.Company).Not.Nullable().Column("companyId");
             this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
             this.References(x => x.ModifiedBy).Nullable().Column("modifiedBy");
-            this.References(x => x.AdminUser).Column("AdminUserId").Nullable();
+            this.References(x => x.AdminUser).Column("AdminUserId").Not.LazyLoad().Nullable();
 
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
         }
