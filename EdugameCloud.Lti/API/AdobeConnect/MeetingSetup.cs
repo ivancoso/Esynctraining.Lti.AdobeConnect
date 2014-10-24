@@ -414,7 +414,7 @@
                                             };
             }
 
-            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value;
+            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
 

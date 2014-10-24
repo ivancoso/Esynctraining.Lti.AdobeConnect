@@ -1452,7 +1452,7 @@ namespace EdugameCloud.WCFService
             submodule.ModifiedBy = user;
 
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(moodleQuiz.LmsSubmoduleId).Value
+            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(moodleQuiz.LmsSubmoduleId, (int)LmsProviderEnum.Moodle).Value
                                           ?? new SubModuleCategory
                                                  {
                                                      CategoryName = moodleQuiz.LmsSubmoduleName,

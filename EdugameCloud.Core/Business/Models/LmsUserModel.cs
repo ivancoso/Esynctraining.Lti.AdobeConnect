@@ -34,13 +34,16 @@
         /// <param name="userId">
         /// The user id.
         /// </param>
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
+        /// </param>
         /// <returns>
         /// The <see cref="IFutureValue"/>.
         /// </returns>
-        public IFutureValue<LmsUser> GetOneByUserId(int userId)
+        public IFutureValue<LmsUser> GetOneByUserIdAndCompanyLms(int userId, int companyLmsId)
         {
             var queryOver =
-                new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId);
+                new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId && u.CompanyLms.Id == companyLmsId);
             return this.Repository.FindOne(queryOver);
         }
 

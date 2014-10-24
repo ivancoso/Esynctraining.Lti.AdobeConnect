@@ -65,19 +65,19 @@ namespace EdugameCloud.Core.Business.Models
         /// <summary>
         /// The get one by name and user.
         /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
         /// <param name="lmsCourseId">
         /// The lms id.
+        /// </param>
+        /// <param name="providerId">
+        /// The provider Id.
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{SubModuleCategory}"/>.
         /// </returns>
-        public IFutureValue<SubModuleCategory> GetOneByLmsCourseId(int lmsCourseId)
+        public IFutureValue<SubModuleCategory> GetOneByLmsCourseIdAndProvider(int lmsCourseId, int providerId)
         {
             var query =
-                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver().Where(x => x.LmsCourseId == lmsCourseId);
+                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver().Where(x => x.LmsCourseId == lmsCourseId && x.LmsProvider != null && x.LmsProvider.Id == providerId);
             return this.Repository.FindOne(query);
         }
 

@@ -276,7 +276,7 @@
         private SubModuleCategory ProcessSubModuleCategory(CourseDTO course, User user)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(course.id).Value
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(course.id, (int)LmsProviderEnum.Canvas).Value
                                           ?? new SubModuleCategory
                                           {
                                               LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value,
