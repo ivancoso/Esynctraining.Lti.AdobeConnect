@@ -1441,12 +1441,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private SubModuleItem ProcessSubModule(User user, SubModuleItem item, MoodleQuiz moodleQuiz)
         {
-            var submodule = item ??
-                new SubModuleItem()
-                {
-                    DateCreated = DateTime.Now,
-                    CreatedBy = user
-                };
+            var submodule = item ?? new SubModuleItem() { DateCreated = DateTime.Now, CreatedBy = user };
 
             submodule.IsActive = true;
             submodule.IsShared = true;
@@ -1455,9 +1450,21 @@ namespace EdugameCloud.WCFService
 
             var subModuleCategoryModel = this.SubModuleCategoryModel;
             submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(moodleQuiz.LmsSubmoduleId).Value
-                                          ?? new SubModuleCategory { CategoryName =  moodleQuiz.LmsSubmoduleName, LmsCourseId = moodleQuiz.LmsSubmoduleId, 
-                                              User = user, DateModified = DateTime.Now, IsActive = true, ModifiedBy = user,
-                                              SubModule = SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value};
+                                          ?? new SubModuleCategory
+                                                 {
+                                                     CategoryName = moodleQuiz.LmsSubmoduleName,
+                                                     LmsCourseId = moodleQuiz.LmsSubmoduleId,
+                                                     User = user,
+                                                     DateModified = DateTime.Now,
+                                                     IsActive = true,
+                                                     ModifiedBy = user,
+                                                     SubModule =
+                                                         SubModuleModel.GetOneById(
+                                                             (int)SubModuleItemType.Quiz).Value,
+                                                     LmsProvider =
+                                                         LmsProviderModel.GetOneById(
+                                                             (int)LmsProviderEnum.Moodle).Value
+                                                 };
             if (submodule.SubModuleCategory.IsTransient())
             {
                 subModuleCategoryModel.RegisterSave(submodule.SubModuleCategory);

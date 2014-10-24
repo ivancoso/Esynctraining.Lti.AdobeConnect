@@ -46,5 +46,24 @@
                 .Where(x => x.CompanyLmsId == companyLmsId && x.CourseId == courseId).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
+
+        /// <summary>
+        /// The get one by meeting id.
+        /// </summary>
+        /// <param name="companyLmsId">
+        /// The company lms id.
+        /// </param>
+        /// <param name="meetingId">
+        /// The meeting id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue"/>.
+        /// </returns>
+        public IFutureValue<LmsCourseMeeting> GetOneByMeetingId(int companyLmsId, string meetingId)
+        {
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
+                .Where(x => x.CompanyLmsId == companyLmsId && x.ScoId == meetingId).Take(1);
+            return this.Repository.FindOne(defaultQuery);
+        }
     }
 }

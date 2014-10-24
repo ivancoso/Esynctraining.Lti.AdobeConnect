@@ -361,6 +361,9 @@
         /// <param name="courseid">
         /// The course id.
         /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms provider id
+        /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
@@ -384,7 +387,7 @@
                     .Where(() => smi.IsActive == true && q.LmsQuizId != null)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
-                    .And(() => courseid == 0 || (smc.LmsCourseId == courseid && lmsProviderId == smc.LmsProvider.Id))
+                    .And(() => (smc.LmsProvider == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.LmsProvider != null && smc.LmsProvider.Id == lmsProviderId))
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)

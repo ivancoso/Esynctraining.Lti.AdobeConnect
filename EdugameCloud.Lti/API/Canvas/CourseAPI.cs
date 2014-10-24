@@ -163,6 +163,36 @@
         }
 
         /// <summary>
+        /// The get course.
+        /// </summary>
+        /// <param name="api">
+        /// The api.
+        /// </param>
+        /// <param name="usertoken">
+        /// The usertoken.
+        /// </param>
+        /// <param name="courseid">
+        /// The courseid.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CourseDTO"/>.
+        /// </returns>
+        public static CourseDTO GetCourse(string api, string usertoken, int courseid)
+        {
+            var client = CreateRestClient(api);
+
+            RestRequest request = CreateRequest(
+                api,
+                string.Format("/api/v1/courses/{0}", courseid),
+                Method.GET,
+                usertoken);
+
+            IRestResponse<CourseDTO> response = client.Execute<CourseDTO>(request);
+
+            return response.Data;
+        }
+
+        /// <summary>
         /// The get quizzes for course.
         /// </summary>
         /// <param name="detailed">

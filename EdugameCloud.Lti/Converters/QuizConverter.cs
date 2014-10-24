@@ -202,18 +202,33 @@
         /// <param name="quizzes">
         /// The quizzes.
         /// </param>
+        /// <param name="course">
+        /// The course.
+        /// </param>
         /// <param name="user">
         /// The user.
         /// </param>
-        public void ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, User user)
+        /// <returns>
+        /// The <see cref="Dictionary"/>.
+        /// </returns>
+        public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, CourseDTO course, User user)
         {
+            var submoduleQuiz = new Dictionary<int, int>();
+            var submoduleCategory = this.ProcessSubModuleCategory(course, user);
+
             foreach (var quiz in quizzes)
             {
                 if (quiz.questions.Length > 0)
                 {
-                    this.ConvertQuiz(quiz, user);
+                    var item = this.ConvertQuiz(quiz, user, submoduleCategory);
+                    if (!submoduleQuiz.ContainsKey(item.Item1))
+                    {
+                        submoduleQuiz.Add(item.Item1, item.Item2);
+                    }
                 }
             }
+
+            return submoduleQuiz;
         }
 
         /// <summary>
@@ -225,16 +240,60 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        private void ConvertQuiz(LmsQuizDTO quiz, User user)
+        /// <param name="subModuleCategory">
+        /// The sub Module Category.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Tuple"/>.
+        /// </returns>
+        private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory)
         {
             var egcQuiz = this.QuizModel.GetOneByLmsQuizId(user.Id, quiz.id, (int)LmsProviderEnum.Canvas).Value
                       ?? new Quiz();
 
-            var submodule = this.ProcessSubModule(user, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
+
+            var submodule = this.ProcessSubModule(user, subModuleCategory, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
 
             var result = this.ProcessQuizData(quiz, egcQuiz, submodule);
 
             this.ProcessQuizQuestions(quiz, user, submodule);
+
+            return result;
+        }
+
+        /// <summary>
+        /// The process sub module category.
+        /// </summary>
+        /// <param name="course">
+        /// The course.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="SubModuleCategory"/>.
+        /// </returns>
+        private SubModuleCategory ProcessSubModuleCategory(CourseDTO course, User user)
+        {
+            var subModuleCategoryModel = this.SubModuleCategoryModel;
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(course.id).Value
+                                          ?? new SubModuleCategory
+                                          {
+                                              LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value,
+                                              CategoryName = course.name,
+                                              LmsCourseId = course.id,
+                                              User = user,
+                                              DateModified = DateTime.Now,
+                                              IsActive = true,
+                                              ModifiedBy = user,
+                                              SubModule = SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value
+                                          };
+            if (subModuleCategory.IsTransient())
+            {
+                subModuleCategoryModel.RegisterSave(subModuleCategory);
+            }
+
+            return subModuleCategory;
         }
 
         /// <summary>
@@ -242,6 +301,9 @@
         /// </summary>
         /// <param name="user">
         /// The user.
+        /// </param>
+        /// <param name="subModuleCategory">
+        /// The sub Module Category.
         /// </param>
         /// <param name="item">
         /// The item.
@@ -252,7 +314,7 @@
         /// <returns>
         /// The <see cref="SubModuleItem"/>.
         /// </returns>
-        private SubModuleItem ProcessSubModule(User user, SubModuleItem item, LmsQuizDTO lmsQuiz)
+        private SubModuleItem ProcessSubModule(User user, SubModuleCategory subModuleCategory, SubModuleItem item, LmsQuizDTO lmsQuiz)
         {
             var submodule = item ??
                 new SubModuleItem()
@@ -265,23 +327,7 @@
             submodule.IsShared = true;
             submodule.DateModified = DateTime.Now;
             submodule.ModifiedBy = user;
-
-            var subModuleCategoryModel = this.SubModuleCategoryModel;
-            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseId(lmsQuiz.id).Value
-                                          ?? new SubModuleCategory
-                                          {
-                                              CategoryName = lmsQuiz.title,
-                                              LmsCourseId = lmsQuiz.id,
-                                              User = user,
-                                              DateModified = DateTime.Now,
-                                              IsActive = true,
-                                              ModifiedBy = user,
-                                              SubModule = SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value
-                                          };
-            if (submodule.SubModuleCategory.IsTransient())
-            {
-                subModuleCategoryModel.RegisterSave(submodule.SubModuleCategory);
-            }
+            submodule.SubModuleCategory = subModuleCategory;
 
             this.SubModuleItemModel.RegisterSave(submodule);
             return submodule;

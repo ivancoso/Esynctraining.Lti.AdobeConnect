@@ -69,6 +69,22 @@
         }
 
         /// <summary>
+        /// The get one by ac domain.
+        /// </summary>
+        /// <param name="acDomain">
+        /// The ac domain.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IFutureValue"/>.
+        /// </returns>
+        public IFutureValue<CompanyLms> GetOneByAcDomain(string acDomain)
+        {
+            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+                .Where(x => x.AcServer == acDomain).Take(1);
+            return this.Repository.FindOne(defaultQuery);
+        }
+
+        /// <summary>
         /// Gets one by domain
         /// </summary>
         /// <param name="domain">

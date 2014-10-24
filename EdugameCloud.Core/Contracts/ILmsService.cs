@@ -3,6 +3,7 @@
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;
+    using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Domain.Contracts;
 
@@ -25,19 +26,25 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<LmsQuizDTO> GetQuizzesForUser(int userId, int lmsUserParametersId);
+        ServiceResponse<LmsQuizInfoDTO> GetQuizzesForUser(int userId, int lmsUserParametersId);
 
         /// <summary>
         /// The get authentication parameters by id.
         /// </summary>
-        /// <param name="parameters">
-        /// The parameters.
+        /// <param name="acId">
+        /// The ac id.
+        /// </param>
+        /// <param name="acDomain">
+        /// The ac domain.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(LmsAuthenticationParametersDTO parameters);
+        ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string acId, string acDomain, string scoId);
 
         /// <summary>
         /// The convert quizzes.

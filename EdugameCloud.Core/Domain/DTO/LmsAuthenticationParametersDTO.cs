@@ -6,15 +6,17 @@
     public class LmsAuthenticationParametersDTO
     {
         /// <summary>
-        /// The ac id
+        /// Gets or sets the ac id.
         /// </summary>
         public string acId { get; set; }
+
         /// <summary>
-        /// The ac domain
+        /// Gets or sets the ac domain.
         /// </summary>
         public string acDomain { get; set; }
+
         /// <summary>
-        /// The meeting sco id
+        /// Gets or sets the meeting sco id.
         /// </summary>
         public string meetingScoId { get; set; }
     }

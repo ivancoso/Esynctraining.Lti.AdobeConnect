@@ -318,6 +318,7 @@
     <Compile Include="Domain\Entities\LmsProvider.cs" />
     <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
     <Compile Include="Domain\Entities\LmsQuestionType.cs" />
+    <Compile Include="Domain\Entities\LmsQuizInfoDTO.cs" />
     <Compile Include="Domain\Entities\LmsUser.cs" />
     <Compile Include="Domain\Entities\MoodleDataset.cs" />
     <Compile Include="Domain\Entities\MoodleDataSetItem.cs" />
