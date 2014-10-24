@@ -52,22 +52,22 @@
         /// <param name="id">
         /// The id.
         /// </param>
-        /// <param name="acDomain">
+        /// <param name="adobeConectDomain">
         /// The ac domain.
         /// </param>
         /// <param name="courseId">
         /// The course Id.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue"/>.
+        /// The <see cref="IFutureValue{LmsUserParameters}"/>.
         /// </returns>
-        public IFutureValue<LmsUserParameters> GetOneForLogin(string id, string acDomain, int courseId)
+        public IFutureValue<LmsUserParameters> GetOneForLogin(string id, string adobeConectDomain, int courseId)
         {
             CompanyLms clms = null;
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
                 .Where(x => x.AcId == id && x.Course == courseId)
                 .JoinQueryOver(x => x.CompanyLms, () => clms, JoinType.InnerJoin)
-                .Where(x => clms.AcServer == acDomain);
+                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain);
             return this.Repository.FindOne(queryOver);
         }
 

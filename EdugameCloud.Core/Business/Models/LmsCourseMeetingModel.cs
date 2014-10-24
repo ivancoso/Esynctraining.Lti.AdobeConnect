@@ -43,7 +43,7 @@
         public IFutureValue<LmsCourseMeeting> GetOneByCourseId(int companyLmsId, int courseId)
         {
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.CompanyLmsId == companyLmsId && x.CourseId == courseId).Take(1);
+                .Where(x => x.CompanyLms.Id == companyLmsId && x.CourseId == courseId).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 

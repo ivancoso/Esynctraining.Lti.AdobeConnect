@@ -308,7 +308,6 @@
     <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
     <Compile Include="Domain\DTO\WebRequestDTO.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
-    <Compile Include="Domain\Entities\CanvasConnectCredentials.cs" />
     <Compile Include="Domain\Entities\CompanyLms.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />

@@ -3,7 +3,7 @@
     using EdugameCloud.Core.Domain.Entities;
 
     /// <summary>
-    /// The canvas ac meeting map
+    /// The canvas AC meeting map
     /// </summary>
     public class LmsCourseMeetingMap : BaseClassMap<LmsCourseMeeting>
     {
@@ -16,7 +16,8 @@
         {
             this.Map(x => x.CourseId).Not.Nullable();
             this.Map(x => x.ScoId).Not.Nullable();
-            this.Map(x => x.CompanyLmsId).Nullable();
+
+            this.References(x => x.CompanyLms).Nullable();
         }
 
         #endregion

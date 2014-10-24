@@ -121,7 +121,6 @@
     <Compile Include="ISessionSource.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
     <Compile Include="Mappings\LmsCourseMeetingMap.cs" />
-    <Compile Include="Mappings\CanvasConnectCredentialsMap.cs" />
     <Compile Include="Mappings\CompanyLmsMap.cs" />
     <Compile Include="Mappings\CompanyMap.cs" />
     <Compile Include="Mappings\AddressMap.cs" />

@@ -170,11 +170,9 @@
     <Build Include="dbo\Tables\LmsProvider.sql" />
     <Build Include="dbo\Tables\EmailHistory_1.sql" />
     <Build Include="dbo\Tables\CompanyLms.sql" />
-    <Build Include="dbo\Tables\CanvasUser.sql" />
-    <Build Include="dbo\Tables\CanvasCourseMeeting.sql" />
-    <Build Include="dbo\Tables\CanvasConnectCredentials.sql" />
-    <Build Include="dbo\Tables\CanvasACMeeting.sql" />
     <Build Include="dbo\Tables\LmsUserParameters.sql" />
+    <Build Include="dbo\Tables\LmsQuestionType.sql" />
+    <Build Include="dbo\Tables\LmsCourseMeeting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />

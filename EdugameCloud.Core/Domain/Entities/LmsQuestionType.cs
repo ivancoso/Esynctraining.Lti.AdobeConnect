@@ -3,12 +3,12 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    /// The lms question type.
+    /// The LMS question type.
     /// </summary>
     public class LmsQuestionType : Entity
     {
         /// <summary>
-        /// Gets or sets the lms provider.
+        /// Gets or sets the LMS provider.
         /// </summary>
         public virtual LmsProvider LmsProvider { get; set; }
 
@@ -18,7 +18,7 @@
         public virtual QuestionType QuestionType { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms question type name.
+        /// Gets or sets the LMS question type name.
         /// </summary>
         public virtual string LmsQuestionTypeName { get; set; }
     }

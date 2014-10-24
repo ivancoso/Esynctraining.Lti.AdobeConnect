@@ -142,13 +142,13 @@
         /// </returns>
         public AdobeConnectProvider GetProvider(CompanyLms credentials)
         {
+            var apiUrl = credentials.AcServer + (credentials.AcServer.EndsWith("/") ? string.Empty : "/");
+
+            apiUrl = apiUrl.EndsWith("api/xml/", StringComparison.OrdinalIgnoreCase) ? apiUrl.TrimEnd('/') : apiUrl + "api/xml";
+
             var connectionDetails = new ConnectionDetails
                                         {
-                                            ServiceUrl =
-                                                credentials.AcServer
-                                                + (credentials.AcServer.EndsWith("/")
-                                                       ? string.Empty
-                                                       : "/") + "api/xml", 
+                                            ServiceUrl = apiUrl,
                                             EventMaxParticipants = 10, 
                                             Proxy =
                                                 new ProxyCredentials
@@ -375,53 +375,13 @@
 
             if (registeredUser != null)
             {
-                if (email != credentials.AcUsername)
-                {
-                    provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
-                }
-
-                provider.PrincipalUpdate(new PrincipalSetup 
-                        {
-                            PrincipalId = registeredUser.PrincipalId, 
-                            FirstName = param.lis_person_name_given, 
-                            LastName = param.lis_person_name_family, 
-                            Name = registeredUser.Name, 
-                            Login = registeredUser.Login, 
-                            Email = registeredUser.Email, 
-                            HasChildren = registeredUser.HasChildren
-                        });
-
-                LoginResult resultByLogin = provider.Login(new UserCredentials(HttpUtility.UrlEncode(login), password));
-                if (resultByLogin.Success)
-                {
-                    breezeToken = resultByLogin.Status.SessionInfo;
-                }
-                else
-                {
-                    LoginResult resultByEmail = provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
-                    breezeToken = resultByEmail.Status.SessionInfo;
-                }
-
-                var userParameters = LmsUserParametersModel.GetOneForLogin(
-                    registeredUser.PrincipalId,
-                    credentials.AcServer,
-                    param.custom_canvas_course_id).Value
-                    ?? new LmsUserParameters()
-                           {
-                               AcId = registeredUser.PrincipalId,
-                               Course = param.custom_canvas_course_id,
-                               CompanyLms = credentials
-                           };
-                userParameters.LmsUser = LmsUserModel.GetOneByUserId(param.custom_canvas_user_id).Value;
-
-                LmsUserParametersModel.RegisterSave(userParameters);
+                breezeToken = this.LoginIntoAC(credentials, param, registeredUser,  email, login, password, provider);
+                this.SaveLMSUserParameters(param, credentials, registeredUser.PrincipalId);
             }
             else
             {
                 return param.launch_presentation_return_url;
             }
-
-            //this.SaveLMSUserParameters(param, registeredUser.PrincipalId);
 
             return meetingUrl + "?session=" + breezeToken;
         }
@@ -432,8 +392,8 @@
         /// <param name="lmsCourseId">
         /// The LMS Course Id.
         /// </param>
-        /// <param name="domain">
-        /// The domain.
+        /// <param name="lmsCompany">
+        /// The LMS Company.
         /// </param>
         /// <param name="lmsUserId">
         /// The LMS User Id.
@@ -441,19 +401,21 @@
         /// <param name="adobeConnectUserId">
         /// The current user AC id.
         /// </param>
-        public void SaveLMSUserParameters(int lmsCourseId, string domain, int lmsUserId, string adobeConnectUserId)
+        public void SaveLMSUserParameters(int lmsCourseId, CompanyLms lmsCompany, int lmsUserId, string adobeConnectUserId)
         {
-            var existing = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndLmsUserId(adobeConnectUserId, lmsCourseId, lmsUserId).Value;
-            if (existing == null)
+            var lmsUserParameters = this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsUserId).Value;
+            if (lmsUserParameters == null)
             {
-                var lmsUserParameters = new LmsUserParameters
+                lmsUserParameters = new LmsUserParameters
                                             {
                                                 AcId = adobeConnectUserId,
                                                 Course = lmsCourseId,
-                                                LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value
+                                                CompanyLms = lmsCompany
                                             };
-                this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
             }
+
+            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneById(lmsUserId).Value;
+            this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
 
         /// <summary>
@@ -615,7 +577,7 @@
                 this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value
                 ?? new LmsCourseMeeting
                        {
-                           CompanyLmsId = credentials.Id, 
+                           CompanyLms = credentials, 
                            CourseId = param.custom_canvas_course_id
                        };
 
@@ -839,17 +801,88 @@
         #region Methods
 
         /// <summary>
+        /// The login into AC.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="registeredUser">
+        /// The registered user.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string LoginIntoAC(
+            CompanyLms credentials,
+            LtiParamDTO param,
+            Principal registeredUser,
+            string email,
+            string login,
+            string password,
+            AdobeConnectProvider provider)
+        {
+            string breezeToken;
+            if (email != credentials.AcUsername)
+            {
+                provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
+            }
+
+            provider.PrincipalUpdate(
+                new PrincipalSetup
+                {
+                    PrincipalId = registeredUser.PrincipalId,
+                    FirstName = param.lis_person_name_given,
+                    LastName = param.lis_person_name_family,
+                    Name = registeredUser.Name,
+                    Login = registeredUser.Login,
+                    Email = registeredUser.Email,
+                    HasChildren = registeredUser.HasChildren
+                });
+
+            LoginResult resultByLogin = provider.Login(new UserCredentials(HttpUtility.UrlEncode(login), password));
+            if (resultByLogin.Success)
+            {
+                breezeToken = resultByLogin.Status.SessionInfo;
+            }
+            else
+            {
+                LoginResult resultByEmail = provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
+                breezeToken = resultByEmail.Status.SessionInfo;
+            }
+
+            return breezeToken;
+        }
+
+        /// <summary>
         /// The save LMS user parameters.
         /// </summary>
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="lmsCompany">
+        /// The LMS Company.
+        /// </param>
         /// <param name="adobeConnectUserId">
         /// The current AC user SCO id.
         /// </param>
-        private void SaveLMSUserParameters(LtiParamDTO param, string adobeConnectUserId)
+        private void SaveLMSUserParameters(LtiParamDTO param, CompanyLms lmsCompany, string adobeConnectUserId)
         {
-            this.SaveLMSUserParameters(param.custom_canvas_course_id, param.custom_canvas_api_domain, param.custom_canvas_user_id, adobeConnectUserId);
+            this.SaveLMSUserParameters(param.custom_canvas_course_id, lmsCompany, param.custom_canvas_user_id, adobeConnectUserId);
         }
 
         /// <summary>

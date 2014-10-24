@@ -3,7 +3,7 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    /// The lms ac meeting
+    /// The LMS AC meeting
     /// </summary>
     public class LmsCourseMeeting : Entity
     {
@@ -13,13 +13,13 @@
         public virtual int CourseId { get; set; }
 
         /// <summary>
-        /// Gets or sets the sco id.
+        /// Gets or sets the SCO id.
         /// </summary>
         public virtual string ScoId { get; set; }
 
         /// <summary>
-        /// Gets or sets the company lms id.
+        /// Gets or sets the company LMS.
         /// </summary>
-        public virtual int CompanyLmsId { get; set; }
+        public virtual CompanyLms CompanyLms { get; set; }
     }
 }

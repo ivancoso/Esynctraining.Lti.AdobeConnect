@@ -16,6 +16,11 @@
         /// </summary>
         private ISet<LmsUser> lmsUsers = new HashedSet<LmsUser>();
 
+        /// <summary>
+        /// The LMS course meetings.
+        /// </summary>
+        private ISet<LmsCourseMeeting> lmsCourseMeetings = new HashedSet<LmsCourseMeeting>();
+
         #region Public Properties
 
         /// <summary>
@@ -116,6 +121,22 @@
             set
             {
                 this.lmsUsers = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the LMS course meetings.
+        /// </summary>
+        public virtual ISet<LmsCourseMeeting> LmsCourseMeetings
+        {
+            get
+            {
+                return this.lmsCourseMeetings;
+            }
+
+            set
+            {
+                this.lmsCourseMeetings = value;
             }
         }
 
