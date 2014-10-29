@@ -14,11 +14,11 @@
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.MVC.HtmlHelpers;
+    using EdugameCloud.MVC.Social.OAuth.BrainHoney;
     using EdugameCloud.MVC.Social.OAuth.Canvas;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
 
     using Microsoft.Web.WebPages.OAuth;
 
@@ -63,6 +63,11 @@
         /// </summary>
         private readonly LmsUserModel lmsUserModel;
 
+        /// <summary>
+        /// The Meeting setup.
+        /// </summary>
+        private readonly MeetingSetup meetingSetup;
+
         #endregion
 
         #region Constructors and Destructors
@@ -70,16 +75,24 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="LtiController"/> class.
         /// </summary>
-        /// <param name="companyLmsModel">Company LMS model</param>
-        /// <param name="lmsUserModel">LMS user model</param>
+        /// <param name="companyLmsModel">
+        /// Company LMS model
+        /// </param>
+        /// <param name="lmsUserModel">
+        /// LMS user model
+        /// </param>
+        /// <param name="meetingSetup">
+        /// The meeting Setup.
+        /// </param>
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public LtiController(CompanyLmsModel companyLmsModel, LmsUserModel lmsUserModel, ApplicationSettingsProvider settings)
+        public LtiController(CompanyLmsModel companyLmsModel, LmsUserModel lmsUserModel, MeetingSetup meetingSetup, ApplicationSettingsProvider settings)
             : base(settings)
         {
             this.companyLmsModel = companyLmsModel;
             this.lmsUserModel = lmsUserModel;
+            this.meetingSetup = meetingSetup;
         }
 
         #endregion
@@ -133,7 +146,7 @@
         {
             get
             {
-                return IoC.Resolve<MeetingSetup>();
+                return this.meetingSetup;
             }
         }
 
@@ -421,11 +434,10 @@
             string providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
                                       ? provider
                                       : model.tool_consumer_info_product_family_code.ToLower();
-            //// todo: we need to check keys and secrets here var result = BltiProviderHelper.VerifyBltiRequest(this.Request);
+            //// todo: we need to check keys and secrets here var result = ;
 
-            CompanyLms credentials =
-                this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
-                    model.tool_consumer_info_product_family_code, 
+            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
+                    providerName, 
                     model.lms_domain, 
                     model.oauth_consumer_key).Value;
             if (credentials != null)
@@ -456,19 +468,24 @@
             switch (providerName.ToLower())
             {
                 case LmsProviderNames.Canvas:
-                    string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider));
-                    returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(
-                    returnUrl,
-                    string.IsNullOrWhiteSpace(model.launch_presentation_return_url) ? "https://" + model.lms_domain : new Uri(model.launch_presentation_return_url).GetLeftPart(UriPartial.Authority));
-                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+                    if (!this.IsDebug)
+                    {
+                        this.StartOAuth2Authentication(provider, model);
+                    }
+                    else
+                    {
+                        return this.RedirectToExtJs(credentials, providerName);
+                    }
+
                     break;
                 case LmsProviderNames.BrainHoney:
-                    this.ViewBag.RedirectUrl = string.Format(
-                        "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
-                        credentials.Layout ?? string.Empty, 
-                        credentials.PrimaryColor ?? string.Empty,
-                        providerName);
-                    return this.View("Redirect");
+                    if (this.IsDebug || BltiProviderHelper.VerifyBltiRequest(this.Request))
+                    {
+                        return this.RedirectToExtJs(credentials, providerName);
+                    }
+
+                    this.ViewBag.Error = "Invalid LTI request";
+                    return this.View("Error");
             }
             
             return null;
@@ -544,6 +561,46 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The start OAUTH2 authentication.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        private void StartOAuth2Authentication(string provider, LtiParamDTO model)
+        {
+            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider));
+            returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(
+                returnUrl,
+                string.IsNullOrWhiteSpace(model.launch_presentation_return_url) ? "https://" + model.lms_domain : new Uri(model.launch_presentation_return_url).GetLeftPart(UriPartial.Authority));
+            OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+        }
+
+        /// <summary>
+        /// The redirect to EXT JS.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="providerName">
+        /// The provider name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        private ActionResult RedirectToExtJs(CompanyLms credentials, string providerName)
+        {
+            this.ViewBag.RedirectUrl = string.Format(
+                "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
+                credentials.Layout ?? string.Empty,
+                credentials.PrimaryColor ?? string.Empty,
+                providerName);
+            return this.View("Redirect");
+        }
 
         /// <summary>
         /// The add session cookie.

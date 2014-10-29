@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
+    <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CourseAPI.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
