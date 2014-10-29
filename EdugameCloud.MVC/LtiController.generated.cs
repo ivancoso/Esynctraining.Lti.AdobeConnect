@@ -55,9 +55,45 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult GetHtmlPage()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.GetHtmlPage);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetMeeting()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetMeeting);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetRecordings()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetRecordings);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetTemplates()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetTemplates);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetUsers()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetUsers);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult Index()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.Index);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult JoinMeeting()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.JoinMeeting);
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -107,6 +143,7 @@ namespace EdugameCloud.MVC.Controllers
         {
             public readonly string AuthenticationCallback = "callback";
             public readonly string DeleteRecording = "DeleteRecording";
+            public readonly string GetHtmlPage = "GetHtmlPage";
             public readonly string GetMeeting = "GetMeeting";
             public readonly string GetRecordings = "GetRecordings";
             public readonly string GetTemplates = "GetTemplates";
@@ -125,6 +162,7 @@ namespace EdugameCloud.MVC.Controllers
         {
             public const string AuthenticationCallback = "callback";
             public const string DeleteRecording = "DeleteRecording";
+            public const string GetHtmlPage = "GetHtmlPage";
             public const string GetMeeting = "GetMeeting";
             public const string GetRecordings = "GetRecordings";
             public const string GetTemplates = "GetTemplates";
@@ -156,7 +194,48 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_DeleteRecording
         {
+            public readonly string lmsProviderName = "lmsProviderName";
             public readonly string id = "id";
+        }
+        static readonly ActionParamsClass_GetHtmlPage s_params_GetHtmlPage = new ActionParamsClass_GetHtmlPage();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetHtmlPage GetHtmlPageParams { get { return s_params_GetHtmlPage; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetHtmlPage
+        {
+            public readonly string path = "path";
+        }
+        static readonly ActionParamsClass_GetMeeting s_params_GetMeeting = new ActionParamsClass_GetMeeting();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetMeeting GetMeetingParams { get { return s_params_GetMeeting; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetMeeting
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
+        static readonly ActionParamsClass_GetRecordings s_params_GetRecordings = new ActionParamsClass_GetRecordings();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetRecordings GetRecordingsParams { get { return s_params_GetRecordings; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetRecordings
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
+        static readonly ActionParamsClass_GetTemplates s_params_GetTemplates = new ActionParamsClass_GetTemplates();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetTemplates GetTemplatesParams { get { return s_params_GetTemplates; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetTemplates
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
+        static readonly ActionParamsClass_GetUsers s_params_GetUsers = new ActionParamsClass_GetUsers();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetUsers GetUsersParams { get { return s_params_GetUsers; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetUsers
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
         }
         static readonly ActionParamsClass_Index s_params_Index = new ActionParamsClass_Index();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -166,12 +245,21 @@ namespace EdugameCloud.MVC.Controllers
         {
             public readonly string model = "model";
         }
+        static readonly ActionParamsClass_JoinMeeting s_params_JoinMeeting = new ActionParamsClass_JoinMeeting();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_JoinMeeting JoinMeetingParams { get { return s_params_JoinMeeting; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_JoinMeeting
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
         static readonly ActionParamsClass_JoinRecording s_params_JoinRecording = new ActionParamsClass_JoinRecording();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_JoinRecording JoinRecordingParams { get { return s_params_JoinRecording; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_JoinRecording
         {
+            public readonly string lmsProviderName = "lmsProviderName";
             public readonly string recordingUrl = "recordingUrl";
         }
         static readonly ActionParamsClass_LoginWithProvider s_params_LoginWithProvider = new ActionParamsClass_LoginWithProvider();
@@ -197,6 +285,7 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_UpdateMeeting
         {
+            public readonly string lmsProviderName = "lmsProviderName";
             public readonly string meeting = "meeting";
         }
         static readonly ActionParamsClass_UpdateUser s_params_UpdateUser = new ActionParamsClass_UpdateUser();
@@ -205,6 +294,7 @@ namespace EdugameCloud.MVC.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_UpdateUser
         {
+            public readonly string lmsProviderName = "lmsProviderName";
             public readonly string user = "user";
         }
         static readonly ViewsClass s_views = new ViewsClass();
@@ -218,8 +308,10 @@ namespace EdugameCloud.MVC.Controllers
             public class _ViewNamesClass
             {
                 public readonly string Error = "Error";
+                public readonly string Redirect = "Redirect";
             }
             public readonly string Error = "~/Views/Lti/Error.cshtml";
+            public readonly string Redirect = "~/Views/Lti/Redirect.cshtml";
         }
     }
 
@@ -238,34 +330,46 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult DeleteRecording(string id)
+        public override System.Web.Mvc.JsonResult DeleteRecording(string lmsProviderName, string id)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.DeleteRecording);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult GetMeeting()
+        public override System.Web.Mvc.ActionResult GetHtmlPage(string path)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetHtmlPage);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "path", path);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult GetMeeting(string lmsProviderName)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetMeeting);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult GetRecordings()
+        public override System.Web.Mvc.JsonResult GetRecordings(string lmsProviderName)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetRecordings);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult GetTemplates()
+        public override System.Web.Mvc.JsonResult GetTemplates(string lmsProviderName)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetTemplates);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult GetUsers()
+        public override System.Web.Mvc.JsonResult GetUsers(string lmsProviderName)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetUsers);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
@@ -276,15 +380,17 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult JoinMeeting()
+        public override System.Web.Mvc.ActionResult JoinMeeting(string lmsProviderName)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.JoinMeeting);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult JoinRecording(string recordingUrl)
+        public override System.Web.Mvc.ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.JoinRecording);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "recordingUrl", recordingUrl);
             return callInfo;
         }
@@ -304,16 +410,18 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult UpdateMeeting(EdugameCloud.Lti.DTO.MeetingDTO meeting)
+        public override System.Web.Mvc.JsonResult UpdateMeeting(string lmsProviderName, EdugameCloud.Lti.DTO.MeetingDTO meeting)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.UpdateMeeting);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "meeting", meeting);
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult UpdateUser(EdugameCloud.Lti.DTO.LmsUserDTO user)
+        public override System.Web.Mvc.JsonResult UpdateUser(string lmsProviderName, EdugameCloud.Lti.DTO.LmsUserDTO user)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "user", user);
             return callInfo;
         }

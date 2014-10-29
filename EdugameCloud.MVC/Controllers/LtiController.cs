@@ -251,7 +251,7 @@
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        public ActionResult GetHtmlPage(string path)
+        public virtual ActionResult GetHtmlPage(string path)
         {
             return new FilePathResult(path, "text/html");
         }
@@ -420,7 +420,7 @@
         {
             string providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
                                       ? provider
-                                      : model.tool_consumer_info_product_family_code;
+                                      : model.tool_consumer_info_product_family_code.ToLower();
             //// todo: we need to check keys and secrets here var result = BltiProviderHelper.VerifyBltiRequest(this.Request);
 
             CompanyLms credentials =
@@ -628,14 +628,12 @@
                     case LmsProviderNames.BrainHoney:
                         model = new LtiParamDTO
                                     {
-                                        // todo get real
-                                        context_id = "865831", 
-                                        user_id = 3969969, 
+                                        context_id = "24955426",
+                                        user_id = 24955385, 
                                         lis_person_contact_email_primary = "mike@esynctraining.com", 
                                         roles = "Administrator", 
                                         tool_consumer_info_product_family_code = "BrainHoney", 
-                                        tool_consumer_instance_guid =
-                                            "pacybersandbox-connect.brainhoney.com"
+                                        tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com"
                                     };
                         break;
                 }
