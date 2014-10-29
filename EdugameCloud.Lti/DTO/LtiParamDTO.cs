@@ -49,11 +49,24 @@
         {
             get
             {
-                return string.IsNullOrWhiteSpace(this.custom_canvas_api_domain)
-                           ? (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
-                                  ? (string.IsNullOrWhiteSpace(this.referer) ? string.Empty : new Uri(this.referer).GetLeftPart(UriPartial.Authority))
-                                  : this.tool_consumer_instance_guid)
-                           : this.custom_canvas_api_domain;
+                if (string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
+                {
+                    if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid))
+                    {
+                        if (string.IsNullOrWhiteSpace(this.referer))
+                        {
+                            return string.IsNullOrWhiteSpace(this.launch_presentation_return_url)
+                                       ? string.Empty
+                                       : new Uri(this.launch_presentation_return_url).GetLeftPart(UriPartial.Authority);
+                        }
+
+                        return new Uri(this.referer).GetLeftPart(UriPartial.Authority);
+                    }
+
+                    return this.tool_consumer_instance_guid;
+                }
+
+                return this.custom_canvas_api_domain;
             }
         }
 

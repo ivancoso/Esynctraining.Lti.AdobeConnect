@@ -8,7 +8,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    /// The company lms dto.
+    /// The company LMS DTO.
     /// </summary>
     [DataContract]
     public class CompanyLmsDTO
@@ -40,6 +40,8 @@
             this.dateModified = instance.DateModified;
             this.lmsProvider = instance.LmsProvider.Return(x => x.LmsProviderName, string.Empty);
             this.sharedSecret = instance.SharedSecret;
+            this.lmsAdmin = instance.AdminUser.With(x => x.Username);
+            this.lmsDomain = instance.LmsDomain;
         }
 
         /// <summary>
@@ -55,25 +57,43 @@
         public int companyId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms provider.
+        /// Gets or sets the LMS admin.
+        /// </summary>
+        [DataMember]
+        public string lmsAdmin { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS domain.
+        /// </summary>
+        [DataMember]
+        public string lmsDomain { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS admin password.
+        /// </summary>
+        [DataMember]
+        public string lmsAdminPassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS provider.
         /// </summary>
         [DataMember]
         public string lmsProvider { get; set; }
 
         /// <summary>
-        /// Gets or sets the ac server.
+        /// Gets or sets the AC server.
         /// </summary>
         [DataMember]
         public string acServer { get; set; }
 
         /// <summary>
-        /// Gets or sets the ac username.
+        /// Gets or sets the AC username.
         /// </summary>
         [DataMember]
         public string acUsername { get; set; }
 
         /// <summary>
-        /// Gets or sets the ac password.
+        /// Gets or sets the AC password.
         /// </summary>
         [DataMember]
         public string acPassword { get; set; }

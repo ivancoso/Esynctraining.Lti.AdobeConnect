@@ -5,6 +5,7 @@
     using System.Security.Cryptography;
     using System.Text;
     using System.Web;
+    using EdugameCloud.Core.Domain.Entities;
 
     /// <summary>
     /// The BLTI provider helper.
@@ -37,15 +38,19 @@
         /// <summary>
         /// This method takes a HttpRequest representing a BLTI request and checks to see if the request is valid.
         /// </summary>
-        /// <param name="request">
-        /// Http request
+        /// <param name="credentials">
+        /// Credentials company
+        /// </param>
+        /// <param name="validateLmsCaller">
+        /// Validate LMS caller function
         /// </param>
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(HttpRequestBase request)
+        public static bool VerifyBltiRequest(CompanyLms credentials, Func<bool> validateLmsCaller)
         {
-            // First check the nonce to make sure it has not been used
+            var request = HttpContext.Current.Request;
+            //// First check the nonce to make sure it has not been used
             var nonce = new NonceData(request.Form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
             {
@@ -108,7 +113,12 @@
             signatureBase.AppendFormat("{0}", normalizedRequestParameters.OAuthUrlEncode());
 
             // Look up the secret using oauth_consumer_key
-            string secret = RetrieveSecretForKey(request.Form["oauth_consumer_key"]);
+            string secret = RetrieveSecretForKey(request.Form["oauth_consumer_key"], credentials);
+
+            if (string.IsNullOrWhiteSpace(secret))
+            {
+                return false;
+            }
 
             var hmacsha1 = new HMACSHA1();
             hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", secret.OAuthUrlEncode(), string.Empty /*tokenSecret not used in BLTI*/));
@@ -121,7 +131,7 @@
             // Check to make sure the signature matches what was passed in oauth_signature
             if (signature == request.Form["oauth_signature"])
             {
-                return true;
+                return validateLmsCaller();
             }
 
             return false;
@@ -135,7 +145,10 @@
         /// The retrieve secret for key.
         /// </summary>
         /// <param name="key">
-        /// The key.
+        ///     The key.
+        /// </param>
+        /// <param name="credentials">
+        ///     The credentials
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
@@ -143,23 +156,18 @@
         /// <exception cref="InvalidOperationException">
         /// If secret is not associated with the key
         /// </exception>
-        private static string RetrieveSecretForKey(string key)
+        private static string RetrieveSecretForKey(string key, CompanyLms credentials)
         {
             // Use this method to return back the secret associated with this key.
             // In this example I am using the key/secret pair { "MyKey", "Secret12345" }
             // You will need to create your own key/secret pair and replace the code below with the key/secret pair that you create.
             // The domain in BrainHoney that contains your blti links will then need to be customized with your key/secret pair.
-            if (key == "MyKey")
+            if (credentials.ConsumerKey == key)
             {
-                return "Secret12345";
+                return credentials.SharedSecret;
             }
 
-            if (key == "MyKey2")
-            {
-                return "Secret123452";
-            }
-
-            throw new InvalidOperationException("No secret associated with key: " + key);
+            return null;
         }
 
         #endregion

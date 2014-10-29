@@ -567,22 +567,20 @@ namespace EdugameCloud.WCFService
 
                 if (isTransient && dto.lmsVO != null)
                 {
-                    var lmses = CompanyLmsModel.GetAllByCompanyId(instance.Id);
-                    var lms = lmses.Any() ? lmses.First() : new CompanyLms();
-                    lms.AcPassword = dto.lmsVO.acPassword;
-                    lms.AcServer = dto.lmsVO.acServer;
-                    lms.AcUsername = dto.lmsVO.acUsername;
-                    lms.Company = CompanyModel.GetOneById(instance.Id).Value;
-                    //lms.ConsumerKey = dto.lmsVO.consumerKey;
-                    lms.CreatedBy = UserModel.GetOneById(dto.lmsVO.createdBy).Value;
-                    lms.DateCreated = dto.lmsVO.dateCreated;
-                    lms.DateModified = dto.lmsVO.dateModified;
-                    lms.LmsProvider = LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider);
-                    lms.ModifiedBy = UserModel.GetOneById(dto.lmsVO.modifiedBy).Value;
-                    //lms.SharedSecret = dto.lmsVO.sharedSecret;
-
-                    lms.ConsumerKey = Guid.NewGuid().ToString();
-                    lms.SharedSecret = Guid.NewGuid().ToString();
+                    var lms = new CompanyLms
+                                  {
+                                      AcPassword = dto.lmsVO.acPassword,
+                                      AcServer = dto.lmsVO.acServer,
+                                      AcUsername = dto.lmsVO.acUsername,
+                                      Company = this.CompanyModel.GetOneById(instance.Id).Value,
+                                      CreatedBy = this.UserModel.GetOneById(dto.lmsVO.createdBy).Value,
+                                      DateCreated = dto.lmsVO.dateCreated,
+                                      DateModified = dto.lmsVO.dateModified,
+                                      LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider),
+                                      ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value,
+                                      ConsumerKey = Guid.NewGuid().ToString(),
+                                      SharedSecret = Guid.NewGuid().ToString()
+                                  };
 
                     CompanyLmsModel.RegisterSave(lms);
                 }

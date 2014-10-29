@@ -455,6 +455,7 @@
             else
             {
                 credentials = this.GetCredentials(providerName);
+                this.SetDebugModelValues(model, providerName);
             }
 
             if (credentials.AdminUser == null)
@@ -468,27 +469,32 @@
             switch (providerName.ToLower())
             {
                 case LmsProviderNames.Canvas:
-                    if (!this.IsDebug)
+                    if (BltiProviderHelper.VerifyBltiRequest(
+                        credentials,
+                        () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
                     {
-                        this.StartOAuth2Authentication(provider, model);
-                    }
-                    else
-                    {
+                        var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
+                        {
+                            this.StartOAuth2Authentication(provider, model);
+                            return null;
+                        }
+
                         return this.RedirectToExtJs(credentials, providerName);
                     }
 
                     break;
                 case LmsProviderNames.BrainHoney:
-                    if (this.IsDebug || BltiProviderHelper.VerifyBltiRequest(this.Request))
+                    if (BltiProviderHelper.VerifyBltiRequest(credentials, () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
                     {
                         return this.RedirectToExtJs(credentials, providerName);
                     }
 
-                    this.ViewBag.Error = "Invalid LTI request";
-                    return this.View("Error");
+                    break;
             }
-            
-            return null;
+
+            this.ViewBag.Error = "Invalid LTI request";
+            return this.View("Error");
         }
 
         /// <summary>
@@ -563,6 +569,52 @@
         #region Methods
 
         /// <summary>
+        /// The set debug model values.
+        /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <param name="providerName">
+        /// The provider name.
+        /// </param>
+        private void SetDebugModelValues(LtiParamDTO model, string providerName)
+        {
+            switch (providerName.ToLower())
+            {
+                case LmsProviderNames.Canvas:
+                    model.custom_canvas_api_domain = "canvas.instructure.com";
+                    break;
+                case LmsProviderNames.BrainHoney:
+                    model.tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com";
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// The validate LMS domain and save if needed.
+        /// </summary>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool ValidateLMSDomainAndSaveIfNeeded(LtiParamDTO param, CompanyLms credentials)
+        {
+            if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
+            {
+                credentials.LmsDomain = param.lms_domain;
+                this.CompanyLmsModel.RegisterSave(credentials, true);
+                return true;
+            }
+
+            return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
         /// The start OAUTH2 authentication.
         /// </summary>
         /// <param name="provider">
@@ -574,9 +626,7 @@
         private void StartOAuth2Authentication(string provider, LtiParamDTO model)
         {
             string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider));
-            returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(
-                returnUrl,
-                string.IsNullOrWhiteSpace(model.launch_presentation_return_url) ? "https://" + model.lms_domain : new Uri(model.launch_presentation_return_url).GetLeftPart(UriPartial.Authority));
+            returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(returnUrl, "https://" + model.lms_domain);
             OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
         }
 
