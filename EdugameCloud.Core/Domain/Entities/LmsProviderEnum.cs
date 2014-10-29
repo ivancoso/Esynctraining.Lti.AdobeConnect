@@ -1,19 +1,24 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     /// <summary>
-    /// The lms provider enum.
+    /// The LMS provider enum.
     /// </summary>
-    public enum LmsProviderEnum : int
+    public enum LmsProviderEnum 
     {
         /// <summary>
-        /// Moodle
+        /// The Moodle
         /// </summary>
         Moodle = 1,
 
         /// <summary>
-        /// Canvas
+        /// The Canvas
         /// </summary>
-        Canvas = 2
+        Canvas = 2,
+
+        /// <summary>
+        /// Brain Honey
+        /// </summary>
+        BrainHoney = 3
         
     }
 }

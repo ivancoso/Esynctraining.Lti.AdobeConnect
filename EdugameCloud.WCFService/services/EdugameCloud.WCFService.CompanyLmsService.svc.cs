@@ -40,6 +40,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        ///     Gets the LMS User model.
+        /// </summary>
+        private LmsUserModel LmsUserModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private CompanyModel CompanyModel
@@ -90,6 +101,20 @@ namespace EdugameCloud.WCFService
                 }
 
                 this.CompanyLmsModel.RegisterSave(entity);
+                if (isTransient && entity.LmsProvider.Id == (int)LmsProviderEnum.BrainHoney)
+                {
+                    var lmsUser = new LmsUser
+                    {
+                        CompanyLms = entity,
+                        Username = resultDto.lmsAdmin,
+                        Password = resultDto.lmsAdminPassword,
+                        UserId = 0
+                    };
+                    LmsUserModel.RegisterSave(lmsUser, true);
+                    entity.AdminUser = lmsUser;
+                    CompanyLmsModel.RegisterSave(entity);
+                }
+
                 result.@object = new CompanyLmsDTO(entity);
                 return result;
             }
@@ -144,9 +169,13 @@ namespace EdugameCloud.WCFService
             instance.CreatedBy = this.UserModel.GetOneById(dto.createdBy).Value;
             instance.DateCreated = dto.dateCreated;
             instance.DateModified = dto.dateModified;
-            instance.LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider);
+            instance.LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value;
             instance.SharedSecret = dto.sharedSecret;
+            if (instance.IsTransient() && !string.IsNullOrWhiteSpace(dto.lmsDomain))
+            {
+                instance.LmsDomain = dto.lmsDomain;
+            }
 
             return instance;
         }

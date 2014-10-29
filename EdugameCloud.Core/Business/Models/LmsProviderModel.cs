@@ -6,10 +6,11 @@
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
 
+    using NHibernate;
     using NHibernate.Criterion;
 
     /// <summary>
-    /// The lms provider model.
+    /// The LMS provider model.
     /// </summary>
     public class LmsProviderModel : BaseModel<LmsProvider, int>
     {
@@ -37,13 +38,13 @@
         /// <returns>
         /// The <see cref="LmsProvider"/>.
         /// </returns>
-        public LmsProvider GetOneByName(string name)
+        public IFutureValue<LmsProvider> GetOneByName(string name)
         {
             var query = new DefaultQueryOver<LmsProvider, int>()
                 .GetQueryOver()
                 .WhereRestrictionOn(x => x.LmsProviderName)
                 .IsInsensitiveLike(name, MatchMode.Exact);
-            return this.Repository.FindOne(query).Value;
+            return this.Repository.FindOne(query);
         }
     }
 }

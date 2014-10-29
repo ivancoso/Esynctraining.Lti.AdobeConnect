@@ -221,7 +221,7 @@
                     this.ViewBag.Error = string.Format("Credentials not found");
                 }
 
-                this.ViewBag.Error = string.Format("Generic OAuth2 fail");
+                this.ViewBag.Error = string.Format("Generic OAuth fail");
             }
             catch (ApplicationException ex)
             {

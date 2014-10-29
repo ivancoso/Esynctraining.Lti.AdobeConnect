@@ -28,20 +28,23 @@
         /// </param>
         public CompanyLmsDTO(CompanyLms instance)
         {
-            this.id = instance.Id;
-            this.acPassword = instance.AcPassword;
-            this.acServer = instance.AcServer;
-            this.acUsername = instance.AcUsername;
-            this.companyId = instance.Company.Return(x => x.Id, 0);
-            this.consumerKey = instance.ConsumerKey;
-            this.createdBy = instance.CreatedBy.Return(x => x.Id, 0);
-            this.modifiedBy = instance.ModifiedBy.Return(x => x.Id, 0);
-            this.dateCreated = instance.DateCreated;
-            this.dateModified = instance.DateModified;
-            this.lmsProvider = instance.LmsProvider.Return(x => x.LmsProviderName, string.Empty);
-            this.sharedSecret = instance.SharedSecret;
-            this.lmsAdmin = instance.AdminUser.With(x => x.Username);
-            this.lmsDomain = instance.LmsDomain;
+            if (instance != null)
+            {
+                this.id = instance.Id;
+                this.acPassword = instance.AcPassword;
+                this.acServer = instance.AcServer;
+                this.acUsername = instance.AcUsername;
+                this.companyId = instance.Company.Return(x => x.Id, 0);
+                this.consumerKey = instance.ConsumerKey;
+                this.createdBy = instance.CreatedBy.Return(x => x.Id, 0);
+                this.modifiedBy = instance.ModifiedBy.Return(x => x.Id, 0);
+                this.dateCreated = instance.DateCreated;
+                this.dateModified = instance.DateModified;
+                this.lmsProvider = instance.LmsProvider.Return(x => x.LmsProviderName, string.Empty);
+                this.sharedSecret = instance.SharedSecret;
+                this.lmsAdmin = instance.AdminUser.With(x => x.Username);
+                this.lmsDomain = instance.LmsDomain;
+            }
         }
 
         /// <summary>
@@ -151,6 +154,5 @@
         /// </summary>
         [DataMember]
         public string layout { get; set; }
-
     }
 }

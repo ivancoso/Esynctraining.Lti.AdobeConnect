@@ -2,6 +2,7 @@
 {
     using System;
 
+    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
 
@@ -18,13 +19,15 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.
         /// </summary>
-        public CompanyLmsValidator()
+        public CompanyLmsValidator(LmsProviderModel lmsProviderModel)
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
             this.RuleFor(x => x.acPassword).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect password is empty");
             this.RuleFor(x => x.acUsername).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect username is empty");
             this.RuleFor(x => x.acServer).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect server is empty");
             this.RuleFor(x => x.lmsProvider).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Lms provider is empty")
+                .Must(x => lmsProviderModel.GetOneByName(x).Value != null)
+                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
                 .Must((model, x) => !x.Equals(LmsProviderNames.BrainHoney, StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid Brain Honey setup. Please provide with LMS Admin and Password"); 
         }

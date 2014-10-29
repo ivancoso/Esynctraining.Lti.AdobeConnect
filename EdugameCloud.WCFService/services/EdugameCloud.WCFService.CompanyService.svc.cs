@@ -3,6 +3,7 @@ namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -69,6 +70,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the LMS user model.
+        /// </summary>
+        private LmsUserModel LmsUserModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserModel>();
+            }
+        }
+
+        /// <summary>
         /// Gets the company model.
         /// </summary>
         private CompanyThemeModel CompanyThemeModel
@@ -87,28 +99,6 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<CompanyLicenseModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the company model.
-        /// </summary>
-        private CountryModel CountryModel
-        {
-            get
-            {
-                return IoC.Resolve<CountryModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the state model.
-        /// </summary>
-        private StateModel StateModel
-        {
-            get
-            {
-                return IoC.Resolve<StateModel>();
             }
         }
 
@@ -493,6 +483,9 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The get all.
         /// </summary>
+        /// <param name="companyId">
+        /// The company Id.
+        /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse{T}"/>.
         /// </returns>
@@ -572,17 +565,32 @@ namespace EdugameCloud.WCFService
                                       AcPassword = dto.lmsVO.acPassword,
                                       AcServer = dto.lmsVO.acServer,
                                       AcUsername = dto.lmsVO.acUsername,
-                                      Company = this.CompanyModel.GetOneById(instance.Id).Value,
+                                      Company = instance,
                                       CreatedBy = this.UserModel.GetOneById(dto.lmsVO.createdBy).Value,
                                       DateCreated = dto.lmsVO.dateCreated,
                                       DateModified = dto.lmsVO.dateModified,
-                                      LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider),
+                                      LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider).Value,
                                       ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value,
                                       ConsumerKey = Guid.NewGuid().ToString(),
-                                      SharedSecret = Guid.NewGuid().ToString()
+                                      SharedSecret = Guid.NewGuid().ToString(),
+                                      LmsDomain = dto.lmsVO.lmsDomain
                                   };
 
                     CompanyLmsModel.RegisterSave(lms);
+
+                    if (lms.LmsProvider.Id == (int)LmsProviderEnum.BrainHoney)
+                    {
+                        var lmsUser = new LmsUser
+                                          {
+                                              CompanyLms = lms,
+                                              Username = dto.lmsVO.lmsAdmin,
+                                              Password = dto.lmsVO.lmsAdminPassword,
+                                              UserId = 0
+                                          };
+                        LmsUserModel.RegisterSave(lmsUser, true);
+                        lms.AdminUser = lmsUser;
+                        CompanyLmsModel.RegisterSave(lms);
+                    }
                 }
 
                 if ((!dto.primaryContactId.HasValue || dto.primaryContactId == default(int)) && dto.primaryContactVO != null)
@@ -662,38 +670,14 @@ namespace EdugameCloud.WCFService
                 IoC.Resolve<RTMPModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
                 response.@object = new CompanyDTO(instance);
 
-                var lmss = CompanyLmsModel.GetAllByCompanyId(instance.Id);
-                response.@object.lmsVO = lmss.Any() ? new CompanyLmsDTO(lmss.Last()) : null;
+                var lmses = isTransient ? CompanyLmsModel.GetAllByCompanyId(instance.Id).ToList() : new List<CompanyLms>();
+                response.@object.lmsVO = new CompanyLmsDTO(lmses.FirstOrDefault());
                 return response;
             }
 
             response = this.UpdateResult(response, result);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, response, string.Empty);
             return response;
-        }
-
-        /// <summary>
-        /// The get license status.
-        /// </summary>
-        /// <param name="licenseVo">
-        /// The license vo.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLicenseStatus"/>.
-        /// </returns>
-        private CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
-        {
-            if (licenseVo.isTrial)
-            {
-                return CompanyLicenseStatus.Trial;
-            }
-            
-            if (licenseVo.isEnterprise)
-            {
-                return CompanyLicenseStatus.Enterprise;
-            }
-
-            return CompanyLicenseStatus.Pro;
         }
 
         #endregion
