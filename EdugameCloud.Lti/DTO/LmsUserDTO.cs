@@ -8,7 +8,7 @@
     /// The user DTO.
     /// </summary>
     [DataContract]
-    public class UserDTO
+    public class LmsUserDTO
     {
         #region Public Properties
 

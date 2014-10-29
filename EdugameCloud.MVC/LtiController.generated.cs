@@ -311,7 +311,7 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult UpdateUser(EdugameCloud.Lti.DTO.UserDTO user)
+        public override System.Web.Mvc.JsonResult UpdateUser(EdugameCloud.Lti.DTO.LmsUserDTO user)
         {
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "user", user);

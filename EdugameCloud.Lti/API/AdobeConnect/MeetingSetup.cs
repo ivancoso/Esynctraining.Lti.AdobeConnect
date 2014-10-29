@@ -93,8 +93,7 @@
         /// </returns>
         public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
 
             if (meeting == null)
             {
@@ -244,19 +243,18 @@
         /// The ac users.
         /// </param>
         /// <returns>
-        /// The <see cref="List{UserDTO}"/>.
+        /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        public List<UserDTO> GetUsers(
+        public List<LmsUserDTO> GetUsers(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             IEnumerable<Principal> acUsers = null)
         {
-            List<UserDTO> users = this.GetCanvasUsers(credentials, param.custom_canvas_course_id);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.course_id);
 
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
                 return users;
@@ -277,7 +275,7 @@
 
             var adobeConnectUsers = acUsers.ToList();
 
-            foreach (UserDTO user in users)
+            foreach (LmsUserDTO user in users)
             {
                 string email = user.Email, login = user.Login;
                 Principal acUser = adobeConnectUsers.FirstOrDefault(ac => login != null && ac.Login == login);
@@ -312,17 +310,17 @@
 
             foreach (var permissionInfo in hosts.Where(h => !h.HasChildren))
             {
-                users.Add(new UserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host" });
+                users.Add(new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host" });
             }
 
             foreach (var permissionInfo in presenters.Where(h => !h.HasChildren))
             {
-                users.Add(new UserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Presenter" });
+                users.Add(new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Presenter" });
             }
 
             foreach (var permissionInfo in participants.Where(h => !h.HasChildren))
             {
-                users.Add(new UserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Participant" });
+                users.Add(new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Participant" });
             }
 
             return users;
@@ -348,7 +346,7 @@
 
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
 
             string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
 
@@ -574,11 +572,11 @@
 
             // end fix meeting dto
             LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value
                 ?? new LmsCourseMeeting
                        {
-                           CompanyLms = credentials, 
-                           CourseId = param.custom_canvas_course_id
+                           CompanyLms = credentials,
+                           CourseId = param.course_id
                        };
 
             var updateItem = new MeetingUpdateItem { ScoId = meeting.ScoId };
@@ -587,8 +585,8 @@
                 meetingDTO, 
                 updateItem, 
                 credentials.ACScoId, 
-                param.context_label ?? "nolabel", 
-                param.custom_canvas_course_id);
+                param.context_label ?? "nolabel",
+                param.course_id);
 
             ScoInfoResult result = meeting.ScoId != null
                                        ? provider.UpdateSco(updateItem)
@@ -647,6 +645,7 @@
         /// </param>
         public void SetupFolders(CompanyLms credentials, AdobeConnectProvider provider)
         {
+            var ltiProvider = credentials.LmsProvider.LmsProviderName;
             string templatesSco = null;
             if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
             {
@@ -681,7 +680,7 @@
                 ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
-                    string name = "Canvas for " + (credentials.LmsDomain ?? string.Empty);
+                    string name = string.Format("{0} for {1}", ltiProvider, credentials.LmsDomain ?? string.Empty);
                     ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name == name && v.IsFolder);
                     if (existingFolder != null)
                     {
@@ -725,16 +724,16 @@
         /// The user.
         /// </param>
         /// <returns>
-        /// The <see cref="List{UserDTO}"/>.
+        /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        public List<UserDTO> UpdateUser(
+        public List<LmsUserDTO> UpdateUser(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
-            UserDTO user)
+            LmsUserDTO user)
         {
             LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.custom_canvas_course_id).Value;
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
                 return this.GetUsers(credentials, provider, param);
@@ -882,7 +881,7 @@
         /// </param>
         private void SaveLMSUserParameters(LtiParamDTO param, CompanyLms lmsCompany, string adobeConnectUserId)
         {
-            this.SaveLMSUserParameters(param.custom_canvas_course_id, lmsCompany, param.custom_canvas_user_id, adobeConnectUserId);
+            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId);
         }
 
         /// <summary>
@@ -974,10 +973,35 @@
 
             CourseAPI.CreateAnnouncement(
                 credentials.LmsDomain, 
-                credentials.AdminUser.Token, 
-                param.custom_canvas_course_id, 
+                credentials.AdminUser.Token,
+                param.course_id, 
                 string.Format("A new Adobe Connect room was created for course {0}", param.context_title),
-                string.Format("Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.", name, startDate, startTime, duration, param.Referer ?? string.Empty));
+                string.Format("Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.", name, startDate, startTime, duration, param.referer ?? string.Empty));
+        }
+
+        /// <summary>
+        /// The get canvas users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, int courseId)
+        {
+            switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
+            {
+                case LmsProviderNames.Canvas:
+                    return this.GetCanvasUsers(credentials, courseId);
+                case LmsProviderNames.BrainHoney:
+                    return this.GetBrainHoneyUsers(credentials, courseId);
+            }
+
+            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -990,45 +1014,58 @@
         /// The canvas course id.
         /// </param>
         /// <returns>
-        /// The <see cref="List{UserDTO}"/>.
+        /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<UserDTO> GetCanvasUsers(CompanyLms credentials, int canvasCourseId)
+        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, int canvasCourseId)
         {
-            List<UserDTO> users = CourseAPI.GetUsersForCourse(
-                credentials.LmsDomain, 
-                credentials.AdminUser.Token, 
+            List<LmsUserDTO> users = CourseAPI.GetUsersForCourse(
+                credentials.LmsDomain,
+                credentials.AdminUser.Token,
                 canvasCourseId);
             users = users.GroupBy(u => u.id).Select(
                 ug =>
+                {
+                    var teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("teacher", StringComparison.OrdinalIgnoreCase));
+                    if (teacher != null)
                     {
-                        var teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("teacher", StringComparison.OrdinalIgnoreCase));
-                        if (teacher != null)
-                        {
-                            return teacher;
-                        }
+                        return teacher;
+                    }
 
-                        teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("ta", StringComparison.OrdinalIgnoreCase));
-                        if (teacher != null)
-                        {
-                            return teacher;
-                        }
+                    teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("ta", StringComparison.OrdinalIgnoreCase));
+                    if (teacher != null)
+                    {
+                        return teacher;
+                    }
 
-                        teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("designer", StringComparison.OrdinalIgnoreCase));
-                        if (teacher != null)
-                        {
-                            return teacher;
-                        }
+                    teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("designer", StringComparison.OrdinalIgnoreCase));
+                    if (teacher != null)
+                    {
+                        return teacher;
+                    }
 
-                        teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("student", StringComparison.OrdinalIgnoreCase));
-                        if (teacher != null)
-                        {
-                            return teacher;
-                        }
-
-                        return ug.First();
-                    }).ToList();
+                    teacher = ug.FirstOrDefault(u => u.canvas_role.Equals("student", StringComparison.OrdinalIgnoreCase));
+                    return teacher ?? ug.First();
+                }).ToList();
 
             return users;
+        }
+
+        /// <summary>
+        /// The get brain honey users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="brainHoneyCourseId">
+        /// The brain honey course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId)
+        {
+            //// todo implement API call
+            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -1140,11 +1177,11 @@
             int canvasCourseId, 
             string meetingScoId)
         {
-            List<UserDTO> users = this.GetCanvasUsers(credentials, canvasCourseId);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, canvasCourseId);
 
             var acUsers = provider.GetAllPrincipals().Values.Return(x => x.ToList(), new List<Principal>());
 
-            foreach (UserDTO u in users)
+            foreach (LmsUserDTO u in users)
             {
                 string email = u.Email, login = u.Login;
                 Principal acUser = acUsers.FirstOrDefault(ac => login != null && ac.Login == login);

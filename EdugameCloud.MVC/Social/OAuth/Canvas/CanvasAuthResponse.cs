@@ -15,6 +15,11 @@
         /// </summary>
         public string access_token { get; set; }
 
+        /// <summary>
+        /// Gets or sets the user.
+        /// </summary>
+        public CanvasUser user { get; set; }
+
         #endregion
     }
 }

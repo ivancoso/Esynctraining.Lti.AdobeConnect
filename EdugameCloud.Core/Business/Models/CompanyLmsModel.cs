@@ -1,10 +1,6 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
-    using System.Collections;
     using System.Collections.Generic;
-
-    using DocumentFormat.OpenXml.Spreadsheet;
-
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
@@ -14,7 +10,7 @@
     using NHibernate;
 
     /// <summary>
-    /// The company lms model.
+    /// The company LMS model.
     /// </summary>
     public class CompanyLmsModel : BaseModel<CompanyLms, int>
     {
@@ -71,22 +67,25 @@
         /// <summary>
         /// The get one by ac domain.
         /// </summary>
-        /// <param name="acDomain">
+        /// <param name="adobeConnectDomain">
         /// The ac domain.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue"/>.
+        /// The <see cref="IFutureValue{CompanyLms}"/>.
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByAcDomain(string acDomain)
+        public IFutureValue<CompanyLms> GetOneByAcDomain(string adobeConnectDomain)
         {
             var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
-                .Where(x => x.AcServer == acDomain).Take(1);
+                .Where(x => x.AcServer == adobeConnectDomain).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 
         /// <summary>
-        /// Gets one by domain
+        /// The get one by provider and domain or consumer key.
         /// </summary>
+        /// <param name="providerName">
+        /// The provider Name.
+        /// </param>
         /// <param name="domain">
         /// The domain
         /// </param>
@@ -94,12 +93,14 @@
         /// The consumer key
         /// </param>
         /// <returns>
-        /// The canvas ac meeting
+        /// The canvas AC meeting
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByDomainOrConsumerKey(string domain, string consumerKey)
+        public IFutureValue<CompanyLms> GetOneByProviderAndDomainOrConsumerKey(string providerName, string domain, string consumerKey)
         {
             var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
-                .Where(x => (x.LmsDomain != null && x.LmsDomain == domain) || (x.ConsumerKey != null && x.ConsumerKey == consumerKey)).Take(1);
+                .Where(x => (x.LmsDomain != null && x.LmsDomain == domain) || (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
+                .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.LmsProviderName).IsInsensitiveLike(providerName)
+                .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 

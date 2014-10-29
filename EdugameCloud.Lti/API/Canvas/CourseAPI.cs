@@ -7,8 +7,6 @@
 
     using RestSharp;
 
-    using UserDTO = EdugameCloud.Lti.DTO.UserDTO;
-
     /// <summary>
     /// The course API.
     /// </summary>
@@ -38,7 +36,7 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        public static void AddMoreDetailsForUser(string api, string usertoken, UserDTO user)
+        public static void AddMoreDetailsForUser(string api, string usertoken, LmsUserDTO user)
         {
             var client = CreateRestClient(api);
 
@@ -48,7 +46,7 @@
                 Method.GET, 
                 usertoken);
 
-            IRestResponse<UserDTO> response = client.Execute<UserDTO>(request);
+            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
 
             if (response.Data != null)
             {
@@ -324,11 +322,11 @@
         /// The course id.
         /// </param>
         /// <returns>
-        /// The <see cref="List{UserDTO}"/>.
+        /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        public static List<UserDTO> GetUsersForCourse(string api, string usertoken, int courseid)
+        public static List<LmsUserDTO> GetUsersForCourse(string api, string usertoken, int courseid)
         {
-            var ret = new List<UserDTO>();
+            var ret = new List<LmsUserDTO>();
             var client = CreateRestClient(api);
 
             foreach (string role in CanvasRoles)
@@ -340,9 +338,9 @@
                     usertoken);
                 request.AddParameter("enrollment_type", role);
 
-                IRestResponse<List<UserDTO>> response = client.Execute<List<UserDTO>>(request);
+                IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
 
-                List<UserDTO> us = response.Data;
+                List<LmsUserDTO> us = response.Data;
                 us.ForEach(
                     u =>
                         {

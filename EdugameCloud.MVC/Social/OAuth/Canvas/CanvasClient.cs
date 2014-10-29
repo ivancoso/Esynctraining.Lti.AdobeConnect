@@ -41,6 +41,16 @@
         /// </summary>
         private const string TokenEndpoint = "{0}/login/oauth2/token";
 
+        /// <summary>
+        /// The return url delimiter.
+        /// </summary>
+        private const string ReturnUrlDelimiter = "&&&ru=";
+
+        /// <summary>
+        /// The state query key.
+        /// </summary>
+        private const string StateQueryKey = "state";
+
         #endregion
 
         #region Static Fields
@@ -100,7 +110,9 @@
         /// </summary>
         /// <param name="returnUrl">Return url</param>
         /// <param name="canvasUrl">Canvas url</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Cleaned url
+        /// </returns>
         public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
         {
             var builder = new UriBuilder(returnUrl);
@@ -130,10 +142,9 @@
                 var parameters = new Dictionary<string, string>
                                      {
                                          { "client_id", this.appId },
-                                         { "redirect_uri", Uri.EscapeDataString(returnUrlFixed) },
+                                         { "redirect_uri", returnUrlFixed },
                                          { "response_type", "code" },
-                                         { "scopes", "code" },
-                                         { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes(canvasUrl + "&&&ru=" + Uri.EscapeDataString(returnUrlFixed))) }
+                                         { "state", Convert.ToBase64String(Encoding.ASCII.GetBytes(canvasUrl + ReturnUrlDelimiter  + returnUrlFixed)) }
                                      };
 
                 foreach (var key in parameters.Keys)
@@ -145,36 +156,6 @@
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// The clear return url.
-        /// </summary>
-        /// <param name="returnUrl">
-        /// The return url.
-        /// </param>
-        /// <param name="collection">
-        /// The collection.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Uri"/>.
-        /// </returns>
-        private static Uri ClearReturnUrl(Uri returnUrl, NameValueCollection collection)
-        {
-            var returnUrlBuilder = new UriBuilder(returnUrl.GetLeftPart(UriPartial.Path));
-            foreach (var keyObject in collection.Keys)
-            {
-                if (keyObject != null)
-                {
-                    var key = keyObject.ToString();
-                    if (!key.Equals(ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        returnUrlBuilder.AppendQueryArgument(key, collection[key]);
-                    }
-                }
-            }
-
-            return returnUrlBuilder.Uri;
         }
 
         /// <summary>
@@ -226,10 +207,6 @@
             return new Dictionary<string, string>();
         }
 
-        //                var cleanUrl = redirectUrl.IndexOf("&code=", StringComparison.Ordinal) > 0
-        //                                   ? redirectUrl.Substring(0, redirectUrl.IndexOf("&code=", StringComparison.Ordinal))
-        //                                   : redirectUrl;
-
         /// <summary>
         /// Obtains an access token given an authorization code and callback URL.
         /// </summary>
@@ -245,14 +222,12 @@
         protected override string QueryAccessToken(Uri returnUrl, string authorizationCode)
         {
             var collection = HttpUtility.ParseQueryString(returnUrl.Query);
-            if (collection.HasKey("state"))
+            if (collection.HasKey(StateQueryKey))
             {
-                var canvasUrlAndReturnUrl = Encoding.ASCII.GetString(Convert.FromBase64String(collection["state"]));
-                var urls = canvasUrlAndReturnUrl.Split(new[] { "&&&ru=" }, StringSplitOptions.RemoveEmptyEntries);
+                var canvasUrlAndReturnUrl = Encoding.ASCII.GetString(Convert.FromBase64String(collection[StateQueryKey]));
+                var urls = canvasUrlAndReturnUrl.Split(new[] { ReturnUrlDelimiter }, StringSplitOptions.RemoveEmptyEntries);
                 var canvasUrl = urls.FirstOrDefault();
                 var redirectUrl = urls.ElementAtOrDefault(1).Return(x => x, returnUrl.AbsoluteUri);
-                var anotherTry = "https://app.edugamecloud.com";
-
 
                 var parameters = new NameValueCollection
                                      {
@@ -270,25 +245,29 @@
                         var response = client.UploadValues(canvasGetTokenUrl, "POST", parameters);
                         var data = Encoding.Default.GetString(response);
 
-                        throw new ApplicationException("works: " + data);
                         if (string.IsNullOrEmpty(data))
                         {
                             return null;
                         }
 
-                        var graphData = JsonConvert.DeserializeObject<CanvasAuthResponse>(data);
+                        var authResponse = JsonConvert.DeserializeObject<CanvasAuthResponse>(data);
 
-                        if (graphData == null)
+                        if (authResponse == null)
                         {
                             return null;
                         }
 
-                        if (!userCanvasUrlCache.ContainsKey(graphData.access_token))
+                        if (!userCanvasUrlCache.ContainsKey(authResponse.access_token))
                         {
-                            userCanvasUrlCache.Add(graphData.access_token, canvasUrl);
+                            userCanvasUrlCache.Add(authResponse.access_token, canvasUrl);
                         }
 
-                        return graphData.access_token;
+                        if (authResponse.user != null && !userDataCache.ContainsKey(authResponse.access_token))
+                        {
+                            userDataCache.Add(authResponse.access_token, authResponse.user);
+                        }
+
+                        return authResponse.access_token;
                     }
                     catch (WebException ex)
                     {
@@ -318,6 +297,36 @@
             }
 
             throw new ApplicationException("Invalid response from server");
+        }
+
+        /// <summary>
+        /// The clear return url.
+        /// </summary>
+        /// <param name="returnUrl">
+        /// The return url.
+        /// </param>
+        /// <param name="collection">
+        /// The collection.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Uri"/>.
+        /// </returns>
+        private static Uri ClearReturnUrl(Uri returnUrl, NameValueCollection collection)
+        {
+            var returnUrlBuilder = new UriBuilder(returnUrl.GetLeftPart(UriPartial.Path));
+            foreach (var keyObject in collection.Keys)
+            {
+                if (keyObject != null)
+                {
+                    var key = keyObject.ToString();
+                    if (!key.Equals(ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        returnUrlBuilder.AppendQueryArgument(key, collection[key]);
+                    }
+                }
+            }
+
+            return returnUrlBuilder.Uri;
         }
 
         #endregion

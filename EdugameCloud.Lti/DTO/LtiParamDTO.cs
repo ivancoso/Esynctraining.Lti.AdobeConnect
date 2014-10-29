@@ -1,10 +1,20 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Web;
+
     /// <summary>
     /// The LTI parameter DTO.
     /// </summary>
     public class LtiParamDTO
     {
+        /// <summary>
+        /// The referer.
+        /// </summary>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private string refererField;
+
         #region Public Properties
 
         /// <summary>
@@ -28,6 +38,43 @@
         public string custom_canvas_api_domain { get; set; }
 
         /// <summary>
+        /// Gets or sets the custom brain honey domain.
+        /// </summary>
+        public string tool_consumer_instance_guid { get; set; }
+
+        /// <summary>
+        /// Gets the LMS domain.
+        /// </summary>
+        public string lms_domain
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.custom_canvas_api_domain)
+                           ? (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
+                                  ? (string.IsNullOrWhiteSpace(this.referer) ? string.Empty : new Uri(this.referer).GetLeftPart(UriPartial.Authority))
+                                  : this.tool_consumer_instance_guid)
+                           : this.custom_canvas_api_domain;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the tool consumer info product family code.
+        /// </summary>
+        public string tool_consumer_info_product_family_code { get; set; }
+
+        /// <summary>
+        /// Gets the course id.
+        /// </summary>
+        public int course_id
+        {
+            get
+            {
+                int courseId;
+                return this.custom_canvas_course_id == 0 ? int.TryParse(this.context_id, out courseId) ? courseId : 0 : this.custom_canvas_course_id;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the custom canvas course id.
         /// </summary>
         public int custom_canvas_course_id { get; set; }
@@ -38,9 +85,36 @@
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
+        /// Gets the LMS user login id.
+        /// </summary>
+        public string lms_user_login
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.custom_canvas_user_login_id) ? this.lis_person_sourcedid : this.custom_canvas_user_login_id;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the custom canvas user id.
         /// </summary>
         public int custom_canvas_user_id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user id.
+        /// </summary>
+        public int user_id { get; set; }
+
+        /// <summary>
+        /// Gets the LMS user id.
+        /// </summary>
+        public int lms_user_id
+        {
+            get
+            {
+                return this.custom_canvas_user_id == 0 ? this.user_id : this.custom_canvas_user_id;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the launch presentation return url.
@@ -68,6 +142,11 @@
         public string lis_person_name_given { get; set; }
 
         /// <summary>
+        /// Gets or sets the LIS person source ID.
+        /// </summary>
+        public string lis_person_sourcedid { get; set; }
+
+        /// <summary>
         /// Gets or sets the OAUTH consumer key.
         /// </summary>
         public string oauth_consumer_key { get; set; }
@@ -80,7 +159,19 @@
         /// <summary>
         /// Gets or sets the referer.
         /// </summary>
-        public string Referer { get; set; }
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        public string referer
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.refererField) ? HttpContext.Current.Request.Headers["Referer"] : this.refererField;
+            }
+
+            set
+            {
+                this.refererField = value;
+            }
+        }
 
         #endregion
     }

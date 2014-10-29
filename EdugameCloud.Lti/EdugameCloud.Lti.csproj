@@ -99,7 +99,7 @@
     <Compile Include="DTO\QuizSubmissionResultDTO.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
-    <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="DTO\LmsUserDTO.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
