@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ResultBase.cs" company="eSyncTraining">
-//   eSyncTraining
-// </copyright>
-// <summary>
-//   The result base.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Esynctraining.AC.Provider.DataObjects.Results
+﻿namespace Esynctraining.AC.Provider.DataObjects.Results
 {
     using Esynctraining.AC.Provider.Entities;
 

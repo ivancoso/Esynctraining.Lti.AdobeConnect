@@ -238,10 +238,10 @@
         }
 
         /// <summary>
-        /// The search SCO by name.
+        /// The search SCO by description.
         /// </summary>
-        /// <param name="name">
-        /// The name.
+        /// <param name="description">
+        /// The description.
         /// </param>
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
@@ -449,6 +449,153 @@
         }
 
         /// <summary>
+        /// Reports curriculum taker results.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CurriculumTakerCollectionResult"/>.
+        /// </returns>
+        public CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Curriculum.ReportCurriculumTaker, string.Format(CommandParams.ScoIdAndUserId, scoId, principalId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new CurriculumTakerCollectionResult(status, CurriculumTakerCollectionParser.Parse(scos), scoId)
+                : new CurriculumTakerCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The learning path info.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LearningPathCollectionResult"/>.
+        /// </returns>
+        public LearningPathCollectionResult LearningPathInfo(string scoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Curriculum.LearningPathInfo, string.Format(CommandParams.CurriculumIdAndScoId, scoId, scoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new LearningPathCollectionResult(status, LearningPathCollectionParser.Parse(scos), scoId)
+                : new LearningPathCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The learning path info.
+        /// </summary>
+        /// <param name="u">
+        /// The u.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LearningPathCollectionResult"/>.
+        /// </returns>
+        public GenericResult LearningPathUpdate(LearningPathItem u)
+        {
+            StatusInfo status;
+            this.requestProcessor.Process(Commands.Curriculum.LearningPathUpdate, string.Format(CommandParams.LearningPathUpdate, u.CurriculumId, u.CurrentScoId, u.TargetScoId, u.PathType), out status);
+            return new GenericResult(status);
+        }
+
+        /// <summary>
+        /// The get contents by SCO id.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="format">
+        /// The format.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
+        public byte[] GetContent(string scoId, out string error, string format = "zip")
+        {
+            var res = this.GetScoInfo(scoId);
+            if (res.Success && res.ScoInfo != null && !string.IsNullOrEmpty(res.ScoInfo.UrlPath))
+            {
+                return this.GetContentByUrlPath(res.ScoInfo.UrlPath, format, out error);
+            }
+
+            error = res.Status == null
+                        ? "Result is null"
+                        : (string.IsNullOrWhiteSpace(res.Status.InnerXml)
+                               ? res.Status.UnderlyingExceptionInfo.ToString()
+                               : res.Status.InnerXml);
+            return null;
+        }
+
+        /// <summary>
+        /// The get content by url path.
+        /// </summary>
+        /// <param name="urlPath">
+        /// The url path.
+        /// </param>
+        /// <param name="format">
+        /// The format.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="byte"/>.
+        /// </returns>
+        public byte[] GetContentByUrlPath(string urlPath, string format, out string error)
+        {
+            var downloadName = urlPath.Trim('/');
+            return this.requestProcessor.DownloadData(downloadName, format, out error);
+        }
+
+        /// <summary>
+        /// Uploads contents by SCO id.
+        /// </summary>
+        /// <param name="uploadScoInfo">
+        /// The upload SCO Info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
+        {
+            StatusInfo status;
+            this.requestProcessor.ProcessUpload(Commands.Sco.Upload, string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, uploadScoInfo.summary, uploadScoInfo.title), uploadScoInfo, out status);
+            return status;
+        }
+
+        /// <summary>
+        /// The get Curriculum contents by SCO id.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public CurriculumContentCollectionResult GetCurriculumContentsByScoId(string scoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Curriculum.Contents, string.Format(CommandParams.ScoId, scoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new CurriculumContentCollectionResult(status, CurriculumContentCollectionParser.Parse(scos), scoId)
+                : new CurriculumContentCollectionResult(status);
+        }
+
+        /// <summary>
         /// Gets the type of the contents by.
         /// </summary>
         /// <param name="type">The type.</param>
@@ -619,6 +766,94 @@
         /// <summary>
         /// Gets Group by name.
         /// </summary>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <param name="typeName">
+        /// The type Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public bool AddToGroupByType(string principalId, string typeName)
+        {
+            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
+            if (group != null)
+            {
+                return ResponseIsOk(this.AddToGroup(principalId, group.PrincipalId));
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets Group by name.
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <param name="typeName">
+        /// The type Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public bool RemoveFromGroupByType(string principalId, string typeName)
+        {
+            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
+            if (group != null)
+            {
+                return ResponseIsOk(this.RemoveFromGroup(principalId, group.PrincipalId));
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The add to group.
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal id.
+        /// </param>
+        /// <param name="groupId">
+        /// The group id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="StatusInfo"/>.
+        /// </returns>
+        public StatusInfo AddToGroup(string principalId, string groupId)
+        {
+            StatusInfo status;
+
+            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "true"), out status);
+            
+            return status;
+        }
+
+        /// <summary>
+        /// The remove from group.
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal id.
+        /// </param>
+        /// <param name="groupId">
+        /// The group id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="StatusInfo"/>.
+        /// </returns>
+        public StatusInfo RemoveFromGroup(string principalId, string groupId)
+        {
+            StatusInfo status;
+
+            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "false"), out status);
+
+            return status;
+        }
+
+        /// <summary>
+        /// Gets Group by name.
+        /// </summary>
         /// <param name="groupName">
         /// The group id.
         /// </param>
@@ -627,21 +862,40 @@
         /// </returns>
         public PrincipalResult GetGroupByName(string groupName)
         {
-            // act: "principal-list"
-            StatusInfo status;
-
-            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-type=group", out status);
-            if (ResponseIsOk(principals, status))
+            var groupsResult = this.GetGroupsByType("group");
+            var status = groupsResult.Item1;
+            var groups = groupsResult.Item2;
+            var group = groups.FirstOrDefault(
+                g => g.Name.Equals(groupName, StringComparison.InvariantCultureIgnoreCase));
+            if (null != group)
             {
-                var groups = PrincipalCollectionParser.Parse(principals);
-                var group = groups.FirstOrDefault(g => g.Name.Equals(groupName, StringComparison.InvariantCultureIgnoreCase));
-                if (null != group)
-                {
-                    return new PrincipalResult(status, group);
-                }
+                return new PrincipalResult(status, group);
             }
 
             return new PrincipalResult(status);
+        }
+
+        /// <summary>
+        /// Gets Group by name.
+        /// </summary>
+        /// <param name="type">
+        /// The group type.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type)
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-type=" + type, out status);
+            if (ResponseIsOk(principals, status))
+            {
+                return new Tuple<StatusInfo, IEnumerable<Principal>>(status, PrincipalCollectionParser.Parse(principals));
+            }
+
+            return new Tuple<StatusInfo, IEnumerable<Principal>>(status, new List<Principal>());
         }
 
         /// <summary>
@@ -714,6 +968,29 @@
                 : new ScoContentResult(status);
         }
 
+        /// <summary>
+        /// The get contents by SCO id.
+        /// </summary>
+        /// <param name="scoId">
+        /// The SCO id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
+        public ScoContentCollectionResult GetScoExpandedContent(string scoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.ExpandedContents, string.Format(CommandParams.ScoId, scoId), out status);
+
+            // ReSharper disable once InconsistentNaming
+            const string scoPath = "//expanded-scos/sco";
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos, scoPath), scoId)
+                : new ScoContentCollectionResult(status);
+        }
 
         /// <summary>
         /// The get meetings by SCO id.
@@ -730,6 +1007,26 @@
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.Meetings, folderScoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
+                : new ScoContentCollectionResult(status);
+        }
+
+        /// <summary>
+        /// The get curriculum by folder SCO id.
+        /// </summary>
+        /// <param name="folderScoId">
+        /// The folder SCO Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ScoContentCollectionResult"/>.
+        /// </returns>
+        public ScoContentCollectionResult GetCurriculumsByFolder(string folderScoId)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.FolderCurriculums, folderScoId), out status);
 
             return ResponseIsOk(scos, status)
                 ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
@@ -1101,6 +1398,20 @@
         private static bool ResponseIsOk(XmlNode xml, StatusInfo status)
         {
             return status.Code == StatusCodes.ok && xml != null && xml.HasChildNodes;
+        }
+
+        /// <summary>
+        /// The response is ok.
+        /// </summary>
+        /// <param name="status">
+        /// The status.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private static bool ResponseIsOk(StatusInfo status)
+        {
+            return status.Code == StatusCodes.ok;
         }
 
         #endregion

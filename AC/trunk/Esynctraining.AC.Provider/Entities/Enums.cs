@@ -119,7 +119,8 @@
         link,
         meeting,
         session,
-        tree
+        tree,
+        external_event
     }
 
     public enum PrincipalTypes

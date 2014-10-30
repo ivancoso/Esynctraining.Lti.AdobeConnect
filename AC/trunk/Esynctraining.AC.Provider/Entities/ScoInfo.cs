@@ -55,6 +55,18 @@ namespace Esynctraining.AC.Provider.Entities
         public ScoType Type { get; set; }
 
         /// <summary>
+        /// Gets or sets the external url.
+        /// </summary>
+        [XmlElement("external-url")]
+        public string ExternalUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the external url.
+        /// </summary>
+        [XmlElement("max-score")]
+        public int MaxScore { get; set; }
+
+        /// <summary>
         /// Gets or sets the begin date.
         /// </summary>
         [XmlElement("date-begin")]

@@ -6,6 +6,7 @@
     using System.Xml.Serialization;
 
     using Esynctraining.AC.Provider.Constants;
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
 
     /// <summary>

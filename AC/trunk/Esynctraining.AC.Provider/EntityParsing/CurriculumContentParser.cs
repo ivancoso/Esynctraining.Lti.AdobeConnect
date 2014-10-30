@@ -6,16 +6,16 @@
     using Esynctraining.AC.Provider.Extensions;
 
     /// <summary>
-    /// The SCO Content parser.
+    /// The Curriculum Content parser.
     /// </summary>
-    internal static class ScoContentParser
+    internal static class CurriculumContentParser
     {
         /// <summary>
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
         /// <returns>SCO Content.</returns>
-        public static ScoContent Parse(XmlNode xml)
+        public static CurriculumContent Parse(XmlNode xml)
         {
             if (xml == null || xml.Attributes == null)
             {
@@ -24,8 +24,15 @@
 
             try
             {
-                return new ScoContent
+
+                return new CurriculumContent
                            {
+                               Depth = xml.ParseAttributeInt("depth"),
+                               Lang = xml.SelectAttributeValue("lang"),
+                               ContentSourceScoIcon =
+                                   xml.SelectAttributeValue("content-source-sco-icon"),
+                               SourceScoIcon = xml.SelectAttributeValue("source-sco-icon"),
+                               SourceScoType = xml.SelectAttributeValue("source-sco-type"),
                                ScoId = xml.SelectAttributeValue("sco-id"),
                                SourceScoId = xml.SelectAttributeValue("source-sco-id"),
                                FolderId = xml.ParseAttributeInt("folder-id"),
@@ -40,7 +47,8 @@
                                BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                                EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
                                DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now),
-                               DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
+                               DateModified =
+                                   xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
                                IsSeminar = xml.ParseNodeBool("is-seminar/text()", default(bool)),
                            };
             }

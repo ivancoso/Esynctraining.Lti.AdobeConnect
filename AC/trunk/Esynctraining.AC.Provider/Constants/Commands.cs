@@ -81,9 +81,19 @@
             public const string Info = "sco-info";
 
             /// <summary>
+            /// The expanded contents.
+            /// </summary>
+            public const string ExpandedContents = "sco-expanded-contents";
+
+            /// <summary>
             /// The update.
             /// </summary>
             public const string Update = "sco-update";
+
+            /// <summary>
+            /// The update.
+            /// </summary>
+            public const string Upload = "sco-upload";
 
             /// <summary>
             /// The delete.
@@ -117,6 +127,32 @@
         }
 
         /// <summary>
+        /// The curriculum.
+        /// </summary>
+        internal static class Curriculum
+        {
+            /// <summary>
+            /// The contents.
+            /// </summary>
+            public const string Contents = "curriculum-contents";
+
+            /// <summary>
+            /// The contents.
+            /// </summary>
+            public const string LearningPathInfo = "learning-path-info";
+
+            /// <summary>
+            /// The contents.
+            /// </summary>
+            public const string LearningPathUpdate = "learning-path-update";
+
+            /// <summary>
+            /// The report curriculum taker.
+            /// </summary>
+            public const string ReportCurriculumTaker = "report-curriculum-taker";
+        }
+
+        /// <summary>
         /// Permission commands.
         /// </summary>
         internal static class Permissions
@@ -137,6 +173,11 @@
         /// </summary>
         internal static class Principal
         {
+            /// <summary>
+            /// The group membership update.
+            /// </summary>
+            public const string GroupMembershipUpdate = "group-membership-update";
+
             /// <summary>
             /// The info.
             /// </summary>

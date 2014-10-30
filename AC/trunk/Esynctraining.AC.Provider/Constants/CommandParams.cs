@@ -16,6 +16,26 @@
         public const string ScoId = "sco-id={0}";
 
         /// <summary>
+        /// The SCO upload id.
+        /// </summary>
+        public const string ScoUpload = "sco-id={0}&summary={1}&title={2}";
+
+        /// <summary>
+        /// The curriculum id and SCO id.
+        /// </summary>
+        public const string CurriculumIdAndScoId = "curriculum-id={0}&sco-id={1}";
+
+        /// <summary>
+        /// The learning path update.
+        /// </summary>
+        public const string LearningPathUpdate = "curriculum-id={0}&current-sco-id={1}&target-sco-id={2}&path-type={3}";
+
+        /// <summary>
+        /// The SCO id and user id.
+        /// </summary>
+        public const string ScoIdAndUserId = "sco-id={0}&user-id={1}";
+
+        /// <summary>
         /// The SCO id.
         /// </summary>
         public const string FieldAndQuery = "field={0}&query={1}";
@@ -59,6 +79,16 @@
         /// The meeting archives.
         /// </summary>
         public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
+
+        /// <summary>
+        /// The group membership.
+        /// </summary>
+        public const string GroupMembership = "group-id={0}&principal-id={1}&is-member={2}";
+
+        /// <summary>
+        /// The folder curriculum.
+        /// </summary>
+        public const string FolderCurriculums = "sco-id={0}&filter-type=curriculum";
 
         /// <summary>
         /// The meeting archives.

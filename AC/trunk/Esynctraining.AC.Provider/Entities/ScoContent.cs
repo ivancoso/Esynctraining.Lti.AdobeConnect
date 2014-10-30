@@ -58,6 +58,12 @@ namespace Esynctraining.AC.Provider.Entities
         public bool IsFolder { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether is folder.
+        /// </summary>
+        [XmlAttribute("is-seminar")]
+        public bool IsSeminar { get; set; }
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [XmlElement("name")]

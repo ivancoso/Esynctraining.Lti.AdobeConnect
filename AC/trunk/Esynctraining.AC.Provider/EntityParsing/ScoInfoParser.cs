@@ -39,7 +39,9 @@
                            UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
                            PassingScore = xml.ParseNodeInt("passing-score/text()"),
                            Duration = xml.ParseNodeInt("duration/text()"),
-                           SectionCount = xml.ParseNodeInt("section-count/text()")
+                           SectionCount = xml.ParseNodeInt("section-count/text()"),
+                           ExternalUrl = xml.SelectSingleNodeValue("external-url/text()"),
+                           MaxScore = xml.ParseNodeInt("max-score/text()"),
                        };
         }
     }
