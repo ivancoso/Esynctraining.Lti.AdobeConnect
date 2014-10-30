@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.API.Canvas
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
@@ -205,10 +206,13 @@
         /// <param name="courseid">
         /// The course id.
         /// </param>
+        /// <param name="quizIds">
+        /// The quiz Ids.
+        /// </param>
         /// <returns>
         /// The <see cref="List{QuizDTO}"/>.
         /// </returns>
-        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(bool detailed, string api, string usertoken, int courseid)
+        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(bool detailed, string api, string usertoken, int courseid, IEnumerable<int> quizIds)
         {
             var ret = new List<LmsQuizDTO>();
             var client = CreateRestClient(api);
@@ -220,6 +224,11 @@
                 usertoken);
 
             IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
+
+            if (quizIds != null)
+            {
+                response.Data = response.Data.Where(q => quizIds.Contains(q.id)).ToList();
+            }
 
             if (detailed)
             {

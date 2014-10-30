@@ -44,6 +44,8 @@
                 this.sharedSecret = instance.SharedSecret;
                 this.lmsAdmin = instance.AdminUser.With(x => x.Username);
                 this.lmsDomain = instance.LmsDomain;
+                this.primaryColor = instance.PrimaryColor;
+                this.layout = instance.Layout;
             }
         }
 
@@ -136,12 +138,6 @@
         /// </summary>
         [DataMember]
         public DateTime dateModified { get; set; }
-
-        /// <summary>
-        /// Gets or sets the button color.
-        /// </summary>
-        [DataMember]
-        public string buttonColor { get; set; }
 
         /// <summary>
         /// Gets or sets the primary color.

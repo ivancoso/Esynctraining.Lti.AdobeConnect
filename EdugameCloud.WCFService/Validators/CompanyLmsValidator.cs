@@ -22,7 +22,6 @@
         public CompanyLmsValidator(LmsProviderModel lmsProviderModel)
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
-            this.RuleFor(x => x.acPassword).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect password is empty");
             this.RuleFor(x => x.acUsername).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect username is empty");
             this.RuleFor(x => x.acServer).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Adobe Connect server is empty");
             this.RuleFor(x => x.lmsProvider).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Lms provider is empty")

@@ -46,6 +46,12 @@
         [DataMember]
         public SplashScreenDTO splashScreen { get; set; }
 
+        /// <summary>
+        /// Gets or sets the company lms.
+        /// </summary>
+        [DataMember]
+        public CompanyLmsDTO[] companyLms { get; set; }
+
         #endregion
     }
 }

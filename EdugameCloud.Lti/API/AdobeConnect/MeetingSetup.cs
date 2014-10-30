@@ -401,7 +401,7 @@
         /// </param>
         public void SaveLMSUserParameters(int lmsCourseId, CompanyLms lmsCompany, int lmsUserId, string adobeConnectUserId)
         {
-            var lmsUserParameters = this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsUserId).Value;
+            var lmsUserParameters = this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsCourseId).Value;
             if (lmsUserParameters == null)
             {
                 lmsUserParameters = new LmsUserParameters

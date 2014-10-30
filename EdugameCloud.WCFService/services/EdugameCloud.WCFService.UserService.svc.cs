@@ -104,6 +104,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the company lms model.
+        /// </summary>
+        private CompanyLmsModel CompanyLmsModel
+        {
+            get
+            {
+                return IoC.Resolve<CompanyLmsModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the social user tokens
         /// </summary>
         protected SocialUserTokensModel SocialUserTokensModel
@@ -681,6 +692,9 @@ namespace EdugameCloud.WCFService
                             reports = this.GetBaseSplashScreenReports(user.Id, 1, 5).objects.ToList()
                         };
                 }
+
+                var companyLms = CompanyLmsModel.GetAllByCompanyId(user.Company.Id);
+                result.@object.companyLms = companyLms.Select(c => new CompanyLmsDTO(c)).ToArray();
             }
 
             return result;

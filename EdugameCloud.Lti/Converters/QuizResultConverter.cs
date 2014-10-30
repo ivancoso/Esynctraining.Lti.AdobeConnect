@@ -142,7 +142,10 @@
                                 {
                                     answers = multAnswers;
                                 }
-
+                                
+                                break;
+                            default:
+                                answers = answer.answers.FirstOrDefault();
                                 break;
                         }
 

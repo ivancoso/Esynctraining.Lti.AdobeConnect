@@ -573,7 +573,9 @@ namespace EdugameCloud.WCFService
                                       ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value,
                                       ConsumerKey = Guid.NewGuid().ToString(),
                                       SharedSecret = Guid.NewGuid().ToString(),
-                                      LmsDomain = dto.lmsVO.lmsDomain
+                                      LmsDomain = dto.lmsVO.lmsDomain,
+                                      PrimaryColor = dto.lmsVO.primaryColor,
+                                      Layout = dto.lmsVO.layout
                                   };
 
                     CompanyLmsModel.RegisterSave(lms);

@@ -161,7 +161,10 @@ namespace EdugameCloud.WCFService
         private CompanyLms ConvertDto(CompanyLmsDTO dto, CompanyLms instance)
         {
             instance = instance ?? new CompanyLms();
-            instance.AcPassword = dto.acPassword;
+            if (!string.IsNullOrEmpty(dto.acPassword)) 
+            {
+                instance.AcPassword = dto.acPassword;
+            }
             instance.AcServer = dto.acServer;
             instance.AcUsername = dto.acUsername;
             instance.Company = this.CompanyModel.GetOneById(dto.companyId).Value;
@@ -172,11 +175,13 @@ namespace EdugameCloud.WCFService
             instance.LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value;
             instance.SharedSecret = dto.sharedSecret;
+            instance.PrimaryColor = dto.primaryColor;
+            instance.Layout = dto.layout;
             if (instance.IsTransient() && !string.IsNullOrWhiteSpace(dto.lmsDomain))
             {
                 instance.LmsDomain = dto.lmsDomain;
             }
-
+            
             return instance;
         }
 

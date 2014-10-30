@@ -119,7 +119,8 @@ namespace EdugameCloud.WCFService
                     false, 
                     companyLms.LmsDomain, 
                     lmsUserParameters.Value.LmsUser.Token, 
-                    lmsUserParameters.Value.Course);
+                    lmsUserParameters.Value.Course,
+                    null);
 
                 ret.objects = quizzesForCourse.Select(
                     q =>
@@ -225,10 +226,9 @@ namespace EdugameCloud.WCFService
                     true, 
                     companyLms.LmsDomain, 
                     companyLms.AdminUser.Token, 
-                    lmsUserParameters.Course);
-
-                quizzes = quizzes.Where(q => quizIds.Contains(q.id));
-
+                    lmsUserParameters.Course,
+                    quizIds);
+                
                 var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, course, user);
 
                 var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
