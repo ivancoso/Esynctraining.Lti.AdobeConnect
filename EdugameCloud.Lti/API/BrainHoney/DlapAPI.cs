@@ -1,45 +1,44 @@
-﻿namespace EdugameCloud.Lti.API.Canvas
+﻿namespace EdugameCloud.Lti.API.BrainHoney
 {
     using System;
     using System.Collections.Generic;
+    using System.Web;
+    using System.Web.SessionState;
     using System.Xml.Linq;
     using System.Xml.XPath;
 
     using Castle.Core.Logging;
 
-    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
 
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     using RestSharp;
 
     /// <summary>
-    /// The course API.
+    ///     The course API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
     public class DlapAPI
     {
-        /// <summary>
-        /// The settings.
-        /// </summary>
-        private readonly dynamic settings;
+        #region Fields
 
         /// <summary>
-        /// The logger.
+        ///     The logger.
         /// </summary>
         private readonly ILogger logger;
 
-        private string domainId;
-
-        #region Static Fields
-
         /// <summary>
-        /// The canvas roles.
+        ///     The settings.
         /// </summary>
-        private static readonly string[] CanvasRoles = { "Teacher", "Ta", "Student", "Observer", "Designer" };
+        private readonly dynamic settings;
+
+        #endregion
+
+        #region Constructors and Destructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DlapAPI"/> class.
@@ -59,6 +58,187 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The create rest client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="lmsUser">
+        /// The LMS User.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RestClient"/>.
+        /// </returns>
+        public Session BeginBatch(out string error, LmsUser lmsUser = null)
+        {
+            if (lmsUser == null)
+            {
+                HttpSessionState session = HttpContext.Current.With(x => x.Session);
+                string companyKey = string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, "brainhoney");
+                if (session != null && session[companyKey] != null)
+                {
+                    var companyLms = session[companyKey] as CompanyLms;
+                    lmsUser = companyLms.With(x => x.AdminUser);
+                }
+            }
+
+            if (lmsUser != null)
+            {
+                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
+                var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
+                string userPrefix = lmsDomain.ToLower()
+                    .Replace(".brainhoney.com", string.Empty)
+                    .Replace("www.", string.Empty);
+
+                XElement result = session.Login(userPrefix, lmsUser.Username, lmsUser.Password);
+                if (!Session.IsSuccess(result))
+                {
+                    error = "DLAP. Unable to login: " + Session.GetMessage(result);
+                    this.logger.Error(error);
+                    return null;
+                }
+
+                error = null;
+                session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
+                return session;
+            }
+
+            error = "ASP.NET Session is expired";
+            return null;
+        }
+
+        /// <summary>
+        /// The get users for course.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="courseid">
+        /// The course id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        public List<LmsUserDTO> GetUsersForCourse(
+            CompanyLms company, 
+            int courseid, 
+            out string error, 
+            Session session = null)
+        {
+            var result = new List<LmsUserDTO>();
+            XElement enrollmentsResult = this.LoginIfNecessary(
+                session, 
+                s =>
+                s.Get(
+                    Commands.Enrollments.List, 
+                    string.Format(Parameters.Enrollments.List, s.DomainId, courseid).ToParams()), 
+                out error);
+            if (enrollmentsResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive result from API";
+                return result;
+            }
+
+            if (!Session.IsSuccess(enrollmentsResult))
+            {
+                error = "DLAP. Unable to create user: " + Session.GetMessage(enrollmentsResult);
+                this.logger.Error(error);
+            }
+
+            IEnumerable<XElement> enrollments = enrollmentsResult.XPathSelectElements("/enrollments/enrollment");
+            foreach (XElement enrollment in enrollments)
+            {
+                string role = Roles.Student;
+                string privileges = enrollment.XPathEvaluate("string(@privileges)").ToString();
+                XElement user = enrollment.XPathSelectElement("user");
+                if (!string.IsNullOrWhiteSpace(privileges) && user != null)
+                {
+                    long privilegesVal;
+                    if (long.TryParse(privileges, out privilegesVal))
+                    {
+                        if (CheckRole(privilegesVal, RightsFlags.ControlCourse))
+                        {
+                            role = Roles.Owner;
+                        }
+                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                                 && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                                 && CheckRole(privilegesVal, RightsFlags.GradeAssignment)
+                                 && CheckRole(privilegesVal, RightsFlags.GradeForum)
+                                 && CheckRole(privilegesVal, RightsFlags.GradeExam)
+                                 && CheckRole(privilegesVal, RightsFlags.SetupGradebook)
+                                 && CheckRole(privilegesVal, RightsFlags.ReadGradebook)
+                                 && CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
+                                 && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                        {
+                            role = Roles.Teacher;
+                        }
+                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                                 && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                                 && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                        {
+                            role = Roles.Author;
+                        }
+                        else if (CheckRole(privilegesVal, RightsFlags.Participate)
+                                 && CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                        {
+                            role = Roles.Student;
+                        }
+                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                        {
+                            role = Roles.Reader;
+                        }
+                    }
+
+                    string userId = user.XPathEvaluate("string(@id)").ToString();
+                    string firstName = user.XPathEvaluate("string(@firstname)").ToString();
+                    string lastName = user.XPathEvaluate("string(@lastname)").ToString();
+                    string userName = user.XPathEvaluate("string(@username)").ToString();
+                    string email = user.XPathEvaluate("string(@email)").ToString();
+                    result.Add(
+                        new LmsUserDTO
+                            {
+                                lms_role = role, 
+                                primary_email = email, 
+                                login_id = userName, 
+                                id = userId, 
+                                name = firstName + " " + lastName, 
+                            });
+                }
+            }
+
+            return result;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The check role.
+        /// </summary>
+        /// <param name="privilegesVal">
+        /// The privileges val.
+        /// </param>
+        /// <param name="roleToCheck">
+        /// The role to check.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private static bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
+        {
+            return ((RightsFlags)privilegesVal & roleToCheck) == roleToCheck;
+        }
+
+        /*
 
         /// <summary>
         /// The add more details for user.
@@ -345,50 +525,7 @@
             return ret;
         }
 
-        /// <summary>
-        /// The get users for course.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        public static List<LmsUserDTO> GetUsersForCourse(string api, string usertoken, int courseid)
-        {
-            var ret = new List<LmsUserDTO>();
-            var client = CreateRestClient(api);
-
-            foreach (string role in CanvasRoles)
-            {
-                RestRequest request = CreateRequest(
-                    api, 
-                    string.Format("/api/v1/courses/{0}/users", courseid), 
-                    Method.GET, 
-                    usertoken);
-                request.AddParameter("enrollment_type", role);
-
-                IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
-
-                List<LmsUserDTO> us = response.Data;
-                us.ForEach(
-                    u =>
-                        {
-                            u.canvas_role = role;
-                            AddMoreDetailsForUser(api, usertoken, u);
-                        });
-
-                ret.AddRange(us);
-            }
-
-            return ret;
-        }
+        
 
         /// <summary>
         /// The return submission for quiz.
@@ -422,65 +559,191 @@
             request.AddParameter("validation_token", submission.validation_token);
 
             client.Execute(request);
-        }
-
-        #endregion
-
-        #region Methods
+        } */
 
         /// <summary>
-        /// The create rest client.
+        /// The login if necessary.
         /// </summary>
-        /// <param name="lmsUser">
-        /// The lms User.
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        private void LoginIfNecessary(Session session, Action<Session> action)
+        {
+            string error = null;
+            session = session ?? this.BeginBatch(out error);
+            action(session);
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
         /// </param>
         /// <returns>
-        /// The <see cref="RestClient"/>.
+        /// The <see cref="bool"/>.
         /// </returns>
-        public Session BeginBatch(LmsUser lmsUser)
+        private T LoginIfNecessary<T>(Session session, Func<Session, T> action)
         {
-            var lmsDomain = lmsUser.CompanyLms.LmsDomain;
-            var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
-            var userPrefix = lmsDomain.ToLower().Replace(".brainhoney.com", string.Empty).Replace("www.", string.Empty);
-
-            XElement result = session.Login(userPrefix, lmsUser.Username, lmsUser.Password);
-            if (!Session.IsSuccess(result))
+            string error = null;
+            session = session ?? this.BeginBatch(out error);
+            if (session != null)
             {
-                this.logger.Error("Unable to login: " + Session.GetMessage(result));
-                return null;
+                return action(session);
             }
 
-            session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
-
-            return session;
+            return default(T);
         }
 
         /// <summary>
-        /// The create request.
+        /// The login if necessary.
         /// </summary>
-        /// <param name="api">
-        /// The API.
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
         /// </param>
-        /// <param name="resource">
-        /// The resource.
+        /// <param name="action">
+        /// The action.
         /// </param>
-        /// <param name="method">
-        /// The method.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
+        /// <param name="error">
+        /// The error.
         /// </param>
         /// <returns>
-        /// The <see cref="RestRequest"/>.
+        /// The <see cref="bool"/>.
         /// </returns>
-        // ReSharper disable once UnusedParameter.Local
-        private static RestRequest CreateRequest(string api, string resource, Method method, string usertoken)
+        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, out string error)
         {
-            var request = new RestRequest(resource, method);
-            request.AddHeader("Authorization", "Bearer " + usertoken);
-            return request;
+            error = null;
+            session = session ?? this.BeginBatch(out error);
+            if (session != null)
+            {
+                return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private T LoginIfNecessary<T>(Session session, Func<Session, Tuple<T, string>> action, out string error)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error);
+            if (session != null)
+            {
+                Tuple<T, string> resTuple = action(session);
+                error = resTuple.Item2;
+                return resTuple.Item1;
+            }
+
+            error = error ?? "DLAP. Session is null";
+            return default(T);
         }
 
         #endregion
+
+        /// <summary>
+        ///     The commands.
+        /// </summary>
+        protected class Commands
+        {
+            /// <summary>
+            ///     The enrollments.
+            /// </summary>
+            public class Enrollments
+            {
+                #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "listenrollments";
+
+                #endregion
+            }
+        }
+
+        /// <summary>
+        /// The parameters.
+        /// </summary>
+        protected class Parameters
+        {
+            /// <summary>
+            /// The enrollments.
+            /// </summary>
+            public class Enrollments
+            {
+                #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "domainid={0}&limit=0&coursequery=%2Fid%3D{1}&select=user";
+
+                #endregion
+            }
+        }
+
+        /// <summary>
+        /// The roles.
+        /// </summary>
+        protected class Roles
+        {
+            #region Constants
+
+            /// <summary>
+            /// The author.
+            /// </summary>
+            public const string Author = "author";
+
+            /// <summary>
+            /// The owner.
+            /// </summary>
+            public const string Owner = "owner";
+
+            /// <summary>
+            /// The reader.
+            /// </summary>
+            public const string Reader = "reader";
+
+            /// <summary>
+            /// The student.
+            /// </summary>
+            public const string Student = "student";
+
+            /// <summary>
+            /// The teacher.
+            /// </summary>
+            public const string Teacher = "teacher";
+
+            #endregion
+        }
     }
 }

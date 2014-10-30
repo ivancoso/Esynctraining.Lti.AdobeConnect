@@ -353,7 +353,7 @@
                 us.ForEach(
                     u =>
                         {
-                            u.canvas_role = role;
+                            u.lms_role = role;
                             AddMoreDetailsForUser(api, usertoken, u);
                         });
 

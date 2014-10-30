@@ -17,6 +17,7 @@
     using EdugameCloud.Core.Extensions;
 //    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;
     using EdugameCloud.Persistence;
@@ -52,6 +53,7 @@
             var container = new WindsorContainer();
             IoC.Initialize(container);
             container.RegisterComponents(web: true);
+            container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             RegisterLocalComponents(container);
             SetControllerFactory(container);

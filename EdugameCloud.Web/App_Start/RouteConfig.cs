@@ -27,73 +27,20 @@
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
             routes.MapLowercaseRoute("LtiOAuthLogin", "lti/{provider}-login", new { controller = "Lti", action = "login" });
             routes.MapLowercaseRoute("LtiOAuthCallback", "lti/oauth-callback", new { controller = "Lti", action = "callback" });
-            
-            routes.MapLowercaseRoute(
-                name: "DefaultLti",
-                url: "Lti",
-                defaults: new { controller = "Lti", action = "Index" }
-            );
-
-            routes.MapLowercaseRoute(
-                name: "DefaultLtitabbed",
-                url: "Lti/tabbed",
-                defaults: new { controller = "Lti", action = "Index" }
-            );
-
             routes.MapLowercaseRoute("Default", "{action}", new { controller = "Home", action = "Admin" });
+            routes.MapLowercaseRoute("DefaultLti", "Lti", new { controller = "Lti", action = "Index" });
+            routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });
 
-
-            routes.MapLowercaseRoute(
-                name: "getusers",
-                url: "Lti/User/GetAll",
-                defaults: new { controller = "Lti", action = "GetUsers" }
-            );
-            routes.MapLowercaseRoute(
-                name: "updateuser",
-                url: "Lti/User/Update",
-                defaults: new { controller = "Lti", action = "UpdateUser" }
-            );
-            routes.MapLowercaseRoute(
-                name: "getmeeting",
-                url: "Lti/Meeting/Get",
-                defaults: new { controller = "Lti", action = "GetMeeting" }
-            );
-            routes.MapLowercaseRoute(
-                name: "updatemeeting",
-                url: "Lti/Meeting/Update",
-                defaults: new { controller = "Lti", action = "UpdateMeeting" }
-            );
-            routes.MapLowercaseRoute(
-                name: "joinmeeting",
-                url: "Lti/Meeting/Join",
-                defaults: new { controller = "Lti", action = "JoinMeeting" }
-            );
-            routes.MapLowercaseRoute(
-                name: "getrecordings",
-                url: "Lti/Recording/GetAll",
-                defaults: new { controller = "Lti", action = "GetRecordings" }
-            );
-            routes.MapLowercaseRoute(
-                name: "deleterecording",
-                url: "Lti/Recording/Delete/{id}",
-                defaults: new { controller = "Lti", action = "DeleteRecording", id = UrlParameter.Optional }
-            );
-            routes.MapLowercaseRoute(
-                name: "joinrecording",
-                url: "Lti/Recording/Join/{recordingUrl}",
-                defaults: new { controller = "Lti", action = "JoinRecording", recordingUrl = UrlParameter.Optional }
-            );
-            routes.MapLowercaseRoute(
-                name: "gettemplates",
-                url: "Lti/Template/GetAll",
-                defaults: new { controller = "Lti", action = "GetTemplates" }
-            );
-
-            routes.MapLowercaseRoute(
-                name: "DefaultLtiAction",
-                url: "Lti/{action}",
-                defaults: new { controller = "Lti" }
-            );
+            routes.MapLowercaseRoute("getusers", "Lti/User/GetAll", new { controller = "Lti", action = "GetUsers" });
+            routes.MapLowercaseRoute("updateuser", "Lti/User/Update", new { controller = "Lti", action = "UpdateUser" });
+            routes.MapLowercaseRoute("getmeeting", "Lti/Meeting/Get", new { controller = "Lti", action = "GetMeeting" });
+            routes.MapLowercaseRoute("updatemeeting", "Lti/Meeting/Update", new { controller = "Lti", action = "UpdateMeeting" });
+            routes.MapLowercaseRoute("joinmeeting", "Lti/Meeting/Join", new { controller = "Lti", action = "JoinMeeting" }); 
+            routes.MapLowercaseRoute("getrecordings", "Lti/Recording/GetAll", new { controller = "Lti", action = "GetRecordings" });
+            routes.MapLowercaseRoute("deleterecording", "Lti/Recording/Delete/{id}", new { controller = "Lti", action = "DeleteRecording", id = UrlParameter.Optional });
+            routes.MapLowercaseRoute("joinrecording", "Lti/Recording/Join/{recordingUrl}", new { controller = "Lti", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
+            routes.MapLowercaseRoute("gettemplates", "Lti/Template/GetAll", new { controller = "Lti", action = "GetTemplates" }); 
+            routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });
         }
     }
 }

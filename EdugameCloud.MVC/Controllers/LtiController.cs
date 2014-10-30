@@ -7,14 +7,16 @@
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
+
     using DotNetOpenAuth.AspNet;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.OAuth;
     using EdugameCloud.MVC.HtmlHelpers;
-    using EdugameCloud.MVC.Social.OAuth.BrainHoney;
     using EdugameCloud.MVC.Social.OAuth.Canvas;
 
     using Esynctraining.AC.Provider;
@@ -27,25 +29,6 @@
     /// </summary>
     public partial class LtiController : BaseController
     {
-        #region Constants
-
-        /// <summary>
-        ///     The credentials session key pattern.
-        /// </summary>
-        private const string CredentialsSessionKeyPattern = "{0}Credentials";
-
-        /// <summary>
-        ///     The parameter session key pattern.
-        /// </summary>
-        private const string ParamSessionKeyPattern = "{0}Param";
-
-        /// <summary>
-        ///     The provider session key pattern.
-        /// </summary>
-        private const string ProviderSessionKeyPattern = "{0}Provider";
-
-        #endregion
-
         #region Static Fields
 
         /// <summary>
@@ -680,7 +663,7 @@
         /// </returns>
         private CompanyLms GetCredentials(string providerName)
         {
-            var creds = this.Session[string.Format(CredentialsSessionKeyPattern, providerName)] as CompanyLms;
+            var creds = this.Session[string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, providerName)] as CompanyLms;
 
             if (creds == null && this.IsDebug)
             {
@@ -715,7 +698,7 @@
         /// </returns>
         private LtiParamDTO GetParam(string providerName)
         {
-            var model = this.Session[string.Format(ParamSessionKeyPattern, providerName)] as LtiParamDTO;
+            var model = this.Session[string.Format(LtiSessionKeys.ParamSessionKeyPattern, providerName)] as LtiParamDTO;
 
             if (model == null && this.IsDebug)
             {
@@ -766,7 +749,7 @@
         /// </returns>
         private AdobeConnectProvider GetProvider(string providerName)
         {
-            var provider = this.Session[string.Format(ProviderSessionKeyPattern, providerName)] as AdobeConnectProvider;
+            var provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, providerName)] as AdobeConnectProvider;
 
             if (provider == null)
             {
@@ -865,7 +848,7 @@
         /// </param>
         private void SetCredentials(string providerName, CompanyLms credentials)
         {
-            this.Session[string.Format(CredentialsSessionKeyPattern, providerName)] = credentials;
+            this.Session[string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, providerName)] = credentials;
         }
 
         /// <summary>
@@ -879,7 +862,7 @@
         /// </param>
         private void SetParam(string providerName, LtiParamDTO param)
         {
-            this.Session[string.Format(ParamSessionKeyPattern, providerName)] = param;
+            this.Session[string.Format(LtiSessionKeys.ParamSessionKeyPattern, providerName)] = param;
         }
 
         /// <summary>
@@ -893,7 +876,7 @@
         /// </param>
         private void SetProvider(string providerName, AdobeConnectProvider acp)
         {
-            this.Session[string.Format(ProviderSessionKeyPattern, providerName)] = acp;
+            this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, providerName)] = acp;
         }
 
         #endregion

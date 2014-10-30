@@ -74,7 +74,7 @@
                 int index = this.name.IndexOf(" ", StringComparison.Ordinal);
                 if (index < 0)
                 {
-                    return this.canvas_role;
+                    return this.lms_role;
                 }
 
                 return this.name.Substring(index);
@@ -110,10 +110,10 @@
         public string ac_role { get; set; }
 
         /// <summary>
-        /// Gets or sets the canvas_role.
+        /// Gets or sets the lms_role.
         /// </summary>
         [DataMember]
-        public string canvas_role { get; set; }
+        public string lms_role { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

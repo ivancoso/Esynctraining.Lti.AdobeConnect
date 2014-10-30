@@ -86,8 +86,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
+    <Compile Include="API\BrainHoney\DlapAPI.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="API\BrainHoney\DlapExtensions.cs" />
+    <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CourseAPI.cs" />
+    <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
@@ -101,6 +107,11 @@
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\LmsUserDTO.cs" />
+    <Compile Include="OAuth\BltiProviderHelper.cs" />
+    <Compile Include="OAuth\NonceData.cs" />
+    <Compile Include="OAuth\OAuthExtensions.cs" />
+    <Compile Include="OAuth\QueryParameter.cs" />
+    <Compile Include="OAuth\QueryParameterComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

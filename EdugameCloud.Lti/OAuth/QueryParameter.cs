@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.MVC.Social.OAuth.BrainHoney
+﻿namespace EdugameCloud.Lti.OAuth
 {
     /// <summary>
     /// The query parameter.

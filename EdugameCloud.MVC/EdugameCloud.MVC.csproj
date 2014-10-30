@@ -192,11 +192,6 @@
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Modules\HttpErrorModule.cs" />
-    <Compile Include="Social\OAuth\BrainHoney\BltiProviderHelper.cs" />
-    <Compile Include="Social\OAuth\BrainHoney\NonceData.cs" />
-    <Compile Include="Social\OAuth\BrainHoney\OAuthExtensions.cs" />
-    <Compile Include="Social\OAuth\BrainHoney\QueryParameter.cs" />
-    <Compile Include="Social\OAuth\BrainHoney\QueryParameterComparer.cs" />
     <Compile Include="Social\OAuth\Canvas\CanvasAuthResponse.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramUserData.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramAuthResponse.cs" />
