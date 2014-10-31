@@ -31,7 +31,7 @@
             if (instance != null)
             {
                 this.id = instance.Id;
-                this.acPassword = instance.AcPassword;
+//                this.acPassword = instance.AcPassword;
                 this.acServer = instance.AcServer;
                 this.acUsername = instance.AcUsername;
                 this.companyId = instance.Company.Return(x => x.Id, 0);
