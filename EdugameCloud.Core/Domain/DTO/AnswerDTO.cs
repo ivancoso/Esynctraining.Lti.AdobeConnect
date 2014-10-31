@@ -37,6 +37,11 @@
         /// </summary>
         public int id { get; set; }
 
+        /// <summary>
+        /// Gets or sets the blank_id.
+        /// </summary>
+        public string blank_id { get; set; }
+
         #endregion
     }
 }

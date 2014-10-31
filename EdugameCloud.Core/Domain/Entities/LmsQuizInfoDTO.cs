@@ -34,5 +34,10 @@
         /// Gets or sets the last modified egc.
         /// </summary>
         public int lastModifiedEGC { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is published.
+        /// </summary>
+        public bool isPublished { get; set; }
     }
 }

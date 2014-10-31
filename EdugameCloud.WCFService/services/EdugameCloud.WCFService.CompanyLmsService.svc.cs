@@ -177,6 +177,7 @@ namespace EdugameCloud.WCFService
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;
             instance.Layout = dto.layout;
+            instance.Title = dto.title;
             if (instance.IsTransient() && !string.IsNullOrWhiteSpace(dto.lmsDomain))
             {
                 instance.LmsDomain = dto.lmsDomain;

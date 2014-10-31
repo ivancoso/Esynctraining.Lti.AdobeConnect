@@ -133,7 +133,8 @@ namespace EdugameCloud.WCFService
                                            name = q.title,
                                            course = course.id,
                                            courseName = course.name,
-                                           lastModifiedEGC = egcQuiz != null ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp() : 0
+                                           lastModifiedEGC = egcQuiz != null ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp() : 0,
+                                           isPublished = q.published
                                        };
                         });
             }

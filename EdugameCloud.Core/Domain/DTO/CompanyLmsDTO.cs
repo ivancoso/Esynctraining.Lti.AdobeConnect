@@ -46,6 +46,7 @@
                 this.lmsDomain = instance.LmsDomain;
                 this.primaryColor = instance.PrimaryColor;
                 this.layout = instance.Layout;
+                this.title = instance.Title;
             }
         }
 
@@ -150,5 +151,11 @@
         /// </summary>
         [DataMember]
         public string layout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        [DataMember]
+        public string title { get; set; }
     }
 }

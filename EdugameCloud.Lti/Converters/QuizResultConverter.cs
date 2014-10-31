@@ -3,15 +3,20 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Xml;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Utils;
+
+    using Newtonsoft.Json;
+
+    using RestSharp;
+    using RestSharp.Deserializers;
 
     /// <summary>
     /// The quiz result converter.
@@ -113,10 +118,12 @@
 
                         object answers = null;
 
+                        Distractor distractor;
+
                         switch (question.QuestionType.Id)
                         {
                             case (int)QuestionTypeEnum.TrueFalse:
-                                Distractor distractor = question.Distractors != null
+                                distractor = question.Distractors != null
                                                     ? question.Distractors.FirstOrDefault()
                                                     : null;
 
@@ -144,6 +151,67 @@
                                 }
                                 
                                 break;
+                            case (int)QuestionTypeEnum.MultipleDropdowns:
+                            case (int)QuestionTypeEnum.FillInTheBlank:
+                                {
+                                    distractor = question.Distractors != null
+                                                    ? question.Distractors.FirstOrDefault()
+                                                    : null;
+
+                                    if (distractor == null || distractor.LmsAnswer == null)
+                                    {
+                                        break;
+                                    }
+
+                                    var answersDict =
+                                        JsonConvert.DeserializeObject<List<KeyValuePair<string, int>>>(
+                                            distractor.LmsAnswer) as List<KeyValuePair<string, int>>;
+                                    
+                                    JsonObject obj = new JsonObject();
+
+                                    foreach (var key in answersDict)
+                                    {
+                                        var order = key.Value;
+                                        if (answer.answers.Count > order)
+                                        {
+                                            var userText = answer.answers[order];
+                                            /*
+                                            var optionstart =
+                                                distractor.DistractorName.IndexOf(
+                                                    "name=\"" + userText + ""\,
+                                                    System.StringComparison.Ordinal);
+
+                                            if (optionstart > -1)
+                                            {
+                                                var text = distractor.DistractorName.Substring(optionstart);
+                                                var 
+                                            }
+                                            */
+                                            var xmlDoc = new XmlDocument();
+                                            xmlDoc.LoadXml(distractor.DistractorName);
+                                            var optionTag = xmlDoc.SelectSingleNode(
+                                                string.Format("data//options//option[@name='{0}']", userText));
+                                            int lmsId = 0;
+                                            if (optionTag != null && optionTag.Attributes["lmsid"] != null)
+                                            {
+                                                lmsId = int.Parse(optionTag.Attributes["lmsid"].Value);
+                                            }
+
+                                            if (lmsId == 0)
+                                            {
+                                                obj.Add(key.Key, userText);
+                                            }
+                                            else
+                                            {
+                                                obj.Add(key.Key, lmsId);
+                                            }
+                                        }
+                                    }
+
+                                    answers = obj;
+
+                                    break;
+                                }
                             default:
                                 answers = answer.answers.FirstOrDefault();
                                 break;

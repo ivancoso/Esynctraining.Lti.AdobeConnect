@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Text.RegularExpressions;
 
     using EdugameCloud.Core.Business.Models;
@@ -13,7 +14,12 @@
 
     using Esynctraining.Core.Utils;
 
+    using Newtonsoft.Json;
+
     using NHibernate.Mapping;
+
+    using RestSharp;
+    using RestSharp.Serializers;
 
     /// <summary>
     /// The quiz converter.
@@ -428,8 +434,21 @@
                             CreatedBy = user,
                             LmsQuestionId = lmsQuestionId
                         };
+
+                string questionText = null;
+
+                if (questionType.QuestionType.Id == (int)QuestionTypeEnum.MultipleDropdowns
+                    || questionType.QuestionType.Id == (int)QuestionTypeEnum.FillInTheBlank)
+                {
+                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion);
+                }
+                else
+                {
+                    questionText = this.ClearName(quizQuestion.question_text);
+                }
+
                 question.IsMoodleSingle = !questionType.LmsQuestionTypeName.Equals("multiple_answers_question"); 
-                question.QuestionName = this.ClearName(quizQuestion.question_text);
+                question.QuestionName = questionText;
                 question.QuestionType = questionType.QuestionType;
                 question.DateModified = DateTime.Now;
                 question.ModifiedBy = user;
@@ -477,21 +496,155 @@
             var disctarctorModel = this.DistractorModel;
             switch (qtype.Id)
             {
+                case (int)QuestionTypeEnum.ShortAnswer:
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                     {
                         this.ProcessSingleMultipleChoiceTextDistractors(user, q, question, disctarctorModel);
                         break;
                     }
 
+                case (int)QuestionTypeEnum.MultipleDropdowns:
+                    {
+                        this.ProcessFillInTheBlankDistractors(user, q, question, true);
+                        break;
+                    }
+                case (int)QuestionTypeEnum.FillInTheBlank:
+                    {
+                        this.ProcessFillInTheBlankDistractors(user, q, question, false);
+                        break;
+                    }
                 case (int)QuestionTypeEnum.TrueFalse:
                     {
                         this.ProcessQuestionForTrueFalseDistractors(user, q, question, disctarctorModel);
                         break;
                     }
-
             }
         }
 
+        /// <summary>
+        /// The process fill in the blank question text.
+        /// </summary>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessFillInTheBlankQuestionText(QuizQuestionDTO q)
+        {
+            var questionText = this.ClearName(q.question_text);
+            foreach (var a in q.answers)
+            {
+                if (a.weight < 100)
+                {
+                    continue;
+                }
+
+                var placeholder = string.Format("[{0}]", a.blank_id);
+                questionText = questionText.Replace(placeholder, a.text);
+            }
+
+            return questionText;
+        }
+
+
+        private void ProcessFillInTheBlankDistractors(
+            User user,
+            QuizQuestionDTO q,
+            Question question,
+            bool option)
+        {
+            var splitText = new List<string>();
+            var questionText = this.ClearName(q.question_text);
+            while (questionText.Length > 0)
+            {
+                int nextPlaceholderStart = questionText.IndexOf("["), nextPlaceholderEnd = questionText.IndexOf("]");
+                if (nextPlaceholderEnd < 0 || nextPlaceholderStart < 0)
+                {
+                    splitText.Add(questionText);
+                    break;
+                }
+                if (nextPlaceholderStart > 0)
+                {
+                    splitText.Add(questionText.Substring(0, nextPlaceholderStart));
+                    questionText = questionText.Substring(nextPlaceholderStart);
+                }
+                splitText.Add(questionText.Substring(0, nextPlaceholderEnd - nextPlaceholderStart + 1));
+                questionText = questionText.Substring(nextPlaceholderEnd - nextPlaceholderStart + 1);
+            }
+
+            var distractorText = new StringBuilder("<data>");
+            var lmsText = new StringBuilder();
+            var keys = new Dictionary<string, int>();
+            int textId = 0, optionId = 0;
+            
+            foreach (var textPart in splitText)
+            {
+                if (textPart.StartsWith("[") && textPart.EndsWith("]"))
+                {
+                    var blank = textPart.Substring(1, textPart.Length - 2);
+                    var options = q.answers.Where(a => a.blank_id != null && a.blank_id.Equals(blank)).ToList();
+                    var correct = options.FirstOrDefault(o => o.weight == 100);
+                    if (correct == null)
+                    {
+                        correct = options.FirstOrDefault();
+                    }
+                    if (correct != null)
+                    {
+                        distractorText.AppendFormat(
+                            "<text id=\"{0}\" isBlank=\"true\">{1}</text>",
+                            textId,
+                            correct.text);
+                    }
+
+                    if (option)
+                    {    
+                        distractorText.AppendFormat("<options id=\"{0}\">", textId);
+                        foreach (var o in options)
+                        {
+                            distractorText.AppendFormat(
+                                "<option name=\"{0}\" lmsid=\"{1}\" />",
+                                o.text,
+                                o.id);
+                        }
+                        distractorText.Append("</options>");
+                    }
+                    keys.Add(blank, optionId++);
+
+                    textId++;
+                }
+                else
+                {
+                    if (option)
+                    {
+                        distractorText.AppendFormat("<options id=\"{0}\" />", textId);
+                    }
+                    distractorText.AppendFormat("<text id=\"{0}\" isBlank=\"false\">{1}</text>", textId, textPart);
+                    textId++;
+                }
+            }
+            distractorText.Append("</data>");
+
+            var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, question.LmsQuestionId.GetValueOrDefault()).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = question.LmsQuestionId.GetValueOrDefault()
+                    };
+            distractor.DateModified = DateTime.Now;
+            distractor.ModifiedBy = user;
+            distractor.DistractorName = distractorText.ToString();
+            distractor.IsActive = true;
+            distractor.DistractorType = null;
+            distractor.IsCorrect = true;
+            distractor.LmsAnswer = JsonConvert.SerializeObject(keys);
+
+            DistractorModel.RegisterSave(distractor);
+            DistractorModel.Flush();
+        }
+        
         /// <summary>
         /// The process single multiple choice text distractors.
         /// </summary>
@@ -532,6 +685,7 @@
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = a.weight > 0;
                 distractor.LmsAnswer = a.id.ToString();
+                distractor.LmsAnswerId = a.id;
 
                 distractorModel.RegisterSave(distractor);
             }

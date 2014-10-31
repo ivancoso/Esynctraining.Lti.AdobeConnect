@@ -575,7 +575,8 @@ namespace EdugameCloud.WCFService
                                       SharedSecret = Guid.NewGuid().ToString(),
                                       LmsDomain = dto.lmsVO.lmsDomain,
                                       PrimaryColor = dto.lmsVO.primaryColor,
-                                      Layout = dto.lmsVO.layout
+                                      Layout = dto.lmsVO.layout,
+                                      Title = dto.lmsVO.title
                                   };
 
                     CompanyLmsModel.RegisterSave(lms);

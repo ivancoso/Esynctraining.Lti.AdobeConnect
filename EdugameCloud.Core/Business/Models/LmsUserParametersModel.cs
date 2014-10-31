@@ -67,7 +67,7 @@
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
                 .Where(x => x.AcId == id && x.Course == courseId)
                 .JoinQueryOver(x => x.CompanyLms, () => clms, JoinType.InnerJoin)
-                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain);
+                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain + "%");
             return this.Repository.FindOne(queryOver);
         }
 

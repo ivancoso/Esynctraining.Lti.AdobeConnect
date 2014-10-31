@@ -370,6 +370,9 @@
     <Content Include="Content\swf\admin\resources\images\swfIcon.png" />
     <Content Include="Content\swf\admin\resources\images\videoHelpThumb.jpg" />
     <Content Include="Content\swf\admin\resources\images\wordsbg.png" />
+    <Content Include="Content\lti-config\index.html" />
+    <Content Include="Content\lti-config\brainhoney.xml" />
+    <Content Include="Content\lti-config\canvas.xml" />
     <Content Include="Content\swf\playerProductInstall.swf" />
     <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="crossdomain.xml" />
@@ -539,7 +542,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost</IISUrl>
+          <IISUrl>http://localhost:2345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

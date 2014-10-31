@@ -27,6 +27,11 @@
         /// </summary>
         public string title { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether published.
+        /// </summary>
+        public bool published { get; set; }
+
         #endregion
     }
 }

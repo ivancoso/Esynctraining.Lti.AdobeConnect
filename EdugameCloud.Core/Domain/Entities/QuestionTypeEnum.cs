@@ -93,6 +93,11 @@
         /// <summary>
         /// The calculated multichoice.
         /// </summary>
-        CalculatedMultichoice = 19
+        CalculatedMultichoice = 19,
+
+        /// <summary>
+        /// The multiple dropdowns.
+        /// </summary>
+        MultipleDropdowns = 20
     }
 }

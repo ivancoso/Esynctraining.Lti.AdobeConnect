@@ -114,6 +114,11 @@
         public virtual bool? ShowAnnouncements { get; set; }
 
         /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        public virtual string Title { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers
