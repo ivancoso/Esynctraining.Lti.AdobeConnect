@@ -7,7 +7,7 @@
     using Esynctraining.Core.Domain.Contracts;
 
     /// <summary>
-    /// The CompanyLmsService interface.
+    /// The Company LMS Service interface.
     /// </summary>
     [ServiceContract]
     public interface ICompanyLmsService
@@ -16,7 +16,7 @@
         /// The save.
         /// </summary>
         /// <param name="resultDto">
-        /// The result dto.
+        /// The result DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -28,12 +28,12 @@
         /// The test connection.
         /// </summary>
         /// <param name="resultDto">
-        /// The result dto.
+        /// The result DTO.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<ConnectionInfoDTO> TestConnection(CompanyLmsDTO resultDto);
+        ServiceResponse<ConnectionInfoDTO> TestConnection(ConnectionTestDTO resultDto);
     }
 }

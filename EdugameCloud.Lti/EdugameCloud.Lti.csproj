@@ -45,14 +45,12 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.5\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.6\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.9\lib\net40\Esynctraining.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentValidation">
-      <HintPath>..\..\packages\FluentValidation.3.4.6.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
@@ -100,11 +98,14 @@
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
+    <Compile Include="DTO\ACSessionDTO.cs" />
+    <Compile Include="DTO\ACSessionParticipantDTO.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\CourseDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
+    <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
     <Compile Include="DTO\QuizSubmissionDTO.cs" />
     <Compile Include="DTO\QuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\QuizSubmissionResultDTO.cs" />

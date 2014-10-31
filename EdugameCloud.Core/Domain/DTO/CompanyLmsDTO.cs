@@ -43,6 +43,7 @@
                 this.lmsProvider = instance.LmsProvider.Return(x => x.LmsProviderName, string.Empty);
                 this.sharedSecret = instance.SharedSecret;
                 this.lmsAdmin = instance.AdminUser.With(x => x.Username);
+                this.lmsAdminToken = instance.AdminUser.With(x => x.Token);
                 this.lmsDomain = instance.LmsDomain;
                 this.primaryColor = instance.PrimaryColor;
                 this.layout = instance.Layout;
@@ -79,6 +80,12 @@
         /// </summary>
         [DataMember]
         public string lmsAdminPassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets the LMS admin token.
+        /// </summary>
+        [DataMember]
+        public string lmsAdminToken { get; set; }
 
         /// <summary>
         /// Gets or sets the LMS provider.

@@ -63,8 +63,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="ClearUsernameBinding">
-      <HintPath>..\..\..\..\temp\ClearUsernameBinding-master\ClearUserPassBinding\obj\Release\ClearUsernameBinding.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.6, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.6\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
@@ -23,6 +24,8 @@
     using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
 
+    using Esynctraining.AC.Provider.DataObjects.Results;
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Contracts;
@@ -45,6 +48,11 @@
     public abstract class BaseService
     {
         #region Fields
+
+        /// <summary>
+        ///     The error message title.
+        /// </summary>
+        protected const string ACErrorMessageTitle = "Adobe Connect Error";
 
         /// <summary>
         ///     The authentication header name.
@@ -251,6 +259,67 @@
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The format error from AC.
+        /// </summary>
+        /// <param name="res">
+        /// The res.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines",
+            Justification = "Reviewed. Suppression is OK here.")]
+        protected ServiceResponse FormatErrorFromAC(ResultBase res)
+        {
+            return this.FormatErrorFromAC(res, new ServiceResponse());
+        }
+
+        /// <summary>
+        /// The format error from ac.
+        /// </summary>
+        /// <param name="res">
+        /// The res.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <typeparam name="T">
+        /// The service response
+        /// </typeparam>
+        /// <returns>
+        /// The <see cref="T"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines",
+            Justification = "Reviewed. Suppression is OK here.")]
+        protected T FormatErrorFromAC<T>(ResultBase res, T result) where T : ServiceResponse
+        {
+            if (res != null && res.Status != null)
+            {
+                string field = res.Status.InvalidField;
+                StatusCodes errorCode = res.Status.Code;
+                StatusSubCodes errorSubCode = res.Status.SubCode;
+                string message = string.Empty;
+                if (field == "login" && errorCode == StatusCodes.invalid && errorSubCode == StatusSubCodes.duplicate)
+                {
+                    message = "User already exists in Adobe Connect.";
+                }
+                else
+                {
+                    message = string.Format(
+                        "Adobe Connect error: {0}{1}{2}",
+                        field,
+                        errorCode == StatusCodes.not_set ? string.Empty : " is " + errorCode,
+                        errorSubCode == StatusSubCodes.not_set
+                            ? string.Empty
+                            : string.Format(" (reason : {0})", errorSubCode));
+                }
+                result.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ACErrorMessageTitle, message));
+            }
+
+            return result;
         }
 
         /// <summary>

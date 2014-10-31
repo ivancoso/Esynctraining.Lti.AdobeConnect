@@ -42,7 +42,7 @@
         /// Initializes a new instance of the <see cref="MeetingSetup"/> class.
         /// </summary>
         /// <param name="dlapApi">
-        /// The dlap api.
+        /// The DLAP API.
         /// </param>
         public MeetingSetup(DlapAPI dlapApi)
         {
@@ -267,24 +267,16 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
-        /// <param name="acUsers">
-        /// The ac users.
-        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", 
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<LmsUserDTO> GetUsers(
-            CompanyLms credentials, 
-            AdobeConnectProvider provider, 
-            LtiParamDTO param, 
-            IEnumerable<Principal> acUsers = null)
+        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
             List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.course_id);
 
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
                 return users;
@@ -293,33 +285,18 @@
             List<PermissionInfo> hosts, participants, presenters;
             this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants);
 
-            if (acUsers == null)
-            {
-                acUsers = provider.GetAllPrincipals().Values;
-            }
-
-            if (acUsers == null)
-            {
-                return users;
-            }
-
-            List<Principal> adobeConnectUsers = acUsers.ToList();
-
             foreach (LmsUserDTO user in users)
             {
                 string email = user.Email, login = user.Login;
-                Principal acUser = adobeConnectUsers.FirstOrDefault(ac => login != null && ac.Login == login);
-                if (acUser == null)
-                {
-                    acUser = adobeConnectUsers.FirstOrDefault(ac => email != null && ac.Email == email);
-                }
 
-                if (acUser == null)
+                var principal = this.GetACUser(provider, login, email);
+
+                if (principal == null)
                 {
                     continue;
                 }
 
-                user.ac_id = acUser.PrincipalId;
+                user.ac_id = principal.PrincipalId;
 
                 if (hosts.Any(v => v.PrincipalId == user.ac_id))
                 {
@@ -338,16 +315,16 @@
                 }
             }
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
             {
-                users.Add(
-                    new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host" });
+                users.Add(new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host" });
             }
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in presenters.Where(h => !h.HasChildren))
             {
-                users.Add(
-                    new LmsUserDTO
+                users.Add(new LmsUserDTO
                         {
                             ac_id = permissionInfo.PrincipalId, 
                             name = permissionInfo.Name, 
@@ -355,6 +332,7 @@
                         });
             }
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in participants.Where(h => !h.HasChildren))
             {
                 users.Add(
@@ -367,6 +345,76 @@
             }
 
             return users;
+        }
+
+        /// <summary>
+        /// The get users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
+            Justification = "Reviewed. Suppression is OK here.")]
+        public List<ACSessionDTO> GetSessionsReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, int startIndex = 0, int limit = 0)
+        {
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+
+            if (meeting == null)
+            {
+                return new List<ACSessionDTO>();
+            }
+
+            return this.GetSessionsWithParticipants(meeting.ScoId, provider, startIndex, limit);
+        }
+
+        /// <summary>
+        /// The get users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
+            Justification = "Reviewed. Suppression is OK here.")]
+        public List<ACSessionParticipantDTO> GetAttendanceReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, int startIndex = 0, int limit = 0)
+        {
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+
+            if (meeting == null)
+            {
+                return new List<ACSessionParticipantDTO>();
+            }
+
+            return this.GetAttendanceReport(meeting.ScoId, provider, startIndex, limit);
         }
 
         /// <summary>
@@ -780,24 +828,17 @@
             LtiParamDTO param, 
             LmsUserDTO user)
         {
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
                 return this.GetUsers(credentials, provider, param);
             }
 
-            List<Principal> adobeConnectUsers = provider.GetAllPrincipals().Values.With(x => x.ToList());
-
             if (user.ac_id == null || user.ac_id == "0")
             {
                 string email = user.Email, login = user.Login;
 
-                Principal principal = adobeConnectUsers.FirstOrDefault(ac => login != null && ac.Login == login);
-                if (principal == null)
-                {
-                    principal = adobeConnectUsers.FirstOrDefault(ac => email != null && ac.Email == email);
-                }
+                var principal = this.GetACUser(provider, login, email);
 
                 if (principal == null)
                 {
@@ -840,12 +881,40 @@
 
             provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, permission);
 
-            return this.GetUsers(credentials, provider, param, adobeConnectUsers);
+            return this.GetUsers(credentials, provider, param);
         }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The get AC user.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Principal"/>.
+        /// </returns>
+        private Principal GetACUser(AdobeConnectProvider provider, string login, string email)
+        {
+            var principal = string.IsNullOrWhiteSpace(login)
+                                   ? null
+                                   : provider.GetAllByLogin(login).Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            if (principal == null && !string.IsNullOrWhiteSpace(email))
+            {
+                principal = provider.GetAllByEmail(email).Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            }
+
+            return principal;
+        }
 
         /// <summary>
         /// The can edit.
@@ -934,18 +1003,38 @@
                 return;
             }
 
-            CourseAPI.CreateAnnouncement(
-                credentials.LmsDomain, 
-                credentials.AdminUser.Token, 
-                param.course_id, 
-                string.Format("A new Adobe Connect room was created for course {0}", param.context_title), 
-                string.Format(
-                    "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.", 
-                    name, 
-                    startDate, 
-                    startTime, 
-                    duration, 
-                    param.referer ?? string.Empty));
+            var announcementTitle = string.Format(
+                "A new Adobe Connect room was created for course {0}",
+                param.context_title);
+            const string AnnouncementMessagePattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
+            var announcementMessage = string.Format(
+                AnnouncementMessagePattern,
+                name,
+                startDate,
+                startTime,
+                duration,
+                param.referer ?? string.Empty);
+
+            switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
+            {
+                case LmsProviderNames.Canvas:
+                    CourseAPI.CreateAnnouncement(
+                        credentials.LmsDomain,
+                        credentials.AdminUser.Token,
+                        param.course_id,
+                        announcementTitle,
+                        announcementMessage);
+                    break;
+                case LmsProviderNames.BrainHoney:
+                    string error;
+//                    this.dlapApi.CreateAnnouncement(
+//                        credentials,
+//                        param.course_id,
+//                        announcementTitle,
+//                        announcementMessage, 
+//                        out error);
+                    break;
+            }
         }
 
         /// <summary>
@@ -978,7 +1067,7 @@
         /// </returns>
         private List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
-            var order = new List<string>() { "owner", "author", "teacher", "ta", "designer", "student", "reader", };
+            var order = new List<string> { "owner", "author", "teacher", "ta", "designer", "student", "reader", };
             users = users.GroupBy(u => u.id).Select(
                 ug =>
                     {
@@ -1074,6 +1163,157 @@
             hosts = hostsResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
             presenters = presentersResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
             participants = participantsResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
+        }
+
+        /// <summary>
+        /// The get attendance Report.
+        /// </summary>
+        /// <param name="meetingId">
+        /// The meeting Id.
+        /// </param>
+        /// <param name="acp">
+        /// The ACP.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{ACSessionParticipantDTO}"/>.
+        /// </returns>
+        private List<ACSessionParticipantDTO> GetAttendanceReport(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                {
+                    var meetingAttendees = acp.ReportMettingAttendance(meetingId, startIndex, limit).Values.ToList();
+                    return meetingAttendees.Select(
+                            us =>
+                            new ACSessionParticipantDTO
+                            {
+                                firstName = us.SessionName,
+                                login = us.Login,
+                                dateTimeEntered = us.DateCreated,
+                                dateTimeLeft = us.DateEnd,
+                                durationInHours = (float)us.Duration.TotalHours,
+                                transcriptId = int.Parse(us.TranscriptId)
+                            }).OrderByDescending(x => x.dateTimeEntered).ToList();
+                }
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
+
+            return new List<ACSessionParticipantDTO>();
+        }
+
+        /// <summary>
+        /// Gets sessions with participants.
+        /// </summary>
+        /// <param name="meetingId">
+        /// The meeting Id.
+        /// </param>
+        /// <param name="acp">
+        /// The ACP.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{ACSessionDTO}"/>.
+        /// </returns>
+        private List<ACSessionDTO> GetSessionsWithParticipants(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                {
+                    var meetingAttendees = acp.ReportMettingAttendance(meetingId).Values.ToList();
+                    var userSessions = meetingAttendees.GroupBy(v => v.AssetId, v => v).ToDictionary(g => int.Parse(g.Key), g => g.ToList());
+
+                    var sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
+
+                    var sessionList =
+                        (from asset in userSessions.Keys.Except(sessions.ConvertAll(s => int.Parse(s.AssetId)))
+                         let index =
+                             sessions.Any(s => !string.IsNullOrEmpty(s.Version))
+                                 ? sessions.Max(s => int.Parse(s.Version)) + 1
+                                 : 0
+                         select
+                             new ACSessionDTO
+                             {
+                                 assetId = asset,
+                                 sessionNumber = index,
+                                 sessionName = index.ToString(CultureInfo.CurrentCulture)
+                             }).ToList();
+                    sessions.AddRange(sessionList.Select(s => new MeetingSession { AssetId = s.assetId.ToString(CultureInfo.CurrentCulture) }));
+
+                    foreach (var sco in sessions)
+                    {
+                        var session = sessionList.FirstOrDefault(s => s.assetId == int.Parse(sco.AssetId));
+                        if (null == session)
+                        {
+                            session = new ACSessionDTO
+                            {
+                                scoId = int.Parse(sco.ScoId),
+                                assetId = int.Parse(sco.AssetId),
+                                dateStarted = sco.DateCreated,
+                                dateEnded = sco.DateEnd,
+                                sessionNumber = int.Parse(sco.Version),
+                                sessionName = sco.Version,
+                                participants = new List<ACSessionParticipantDTO>()
+                            };
+
+                            sessionList.Add(session);
+                        }
+
+                        foreach (var us in userSessions[session.assetId])
+                        {
+                            var participant = new ACSessionParticipantDTO
+                            {
+                                firstName = us.SessionName,
+                                login = us.Login,
+                                dateTimeEntered = us.DateCreated,
+                                dateTimeLeft = us.DateEnd,
+                                durationInHours =
+                                    (float)us.Duration.TotalHours,
+                                transcriptId = int.Parse(us.TranscriptId)
+                            };
+
+                            session.meetingName = us.ScoName;
+                            session.participants.Add(participant);
+                        }
+
+                        if (!session.dateStarted.HasValue)
+                        {
+                            session.dateStarted = session.participants.Min(p => p.dateTimeEntered);
+                        }
+                    }
+
+                    foreach (var session in sessionList)
+                    {
+                        var singleAttendance = session.participants.GroupBy(p => p.login)
+                            .ToDictionary(g => g.Key, g => g.ToList());
+                        foreach (
+                            var attendance in
+                                singleAttendance.Where(a => !string.IsNullOrWhiteSpace(a.Key) && a.Value.Count > 1))
+                        {
+                            attendance.Value.Skip(1).ToList().ForEach(p => session.participants.Remove(p));
+                            var attendee = attendance.Value.First();
+                            attendee.dateTimeEntered = attendance.Value.Min(p => p.dateTimeEntered);
+                            attendee.dateTimeLeft = attendance.Value.Max(p => p.dateTimeLeft);
+                            attendee.durationInHours = attendance.Value.Sum(p => p.durationInHours);
+                        }
+                    }
+
+                   return sessionList.OrderBy(s => s.sessionNumber).ToList();
+                }
+            }
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch 
+            {
+            }
+
+            return new List<ACSessionDTO>();
         }
 
         /// <summary>

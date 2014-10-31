@@ -28,7 +28,9 @@
                 .Must(x => lmsProviderModel.GetOneByName(x).Value != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
                 .Must((model, x) => !x.Equals(LmsProviderNames.BrainHoney, StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword)))
-                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid Brain Honey setup. Please provide with LMS Admin and Password"); 
+                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid Brain Honey setup. Please provide with LMS Admin and Password")
+                .Must((model, x) => !x.Equals(LmsProviderNames.Moodle, StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrWhiteSpace(model.lmsAdminToken)))
+                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid Moodle setup. Please provide with LMS Admin Token"); 
         }
     }
 }

@@ -241,6 +241,7 @@
     <Compile Include="Domain\DTO\AnswerDTO.cs" />
     <Compile Include="Domain\DTO\CompanyLmsDTO.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
+    <Compile Include="Domain\DTO\ConnectionTestDTO.cs" />
     <Compile Include="Domain\DTO\ConnectionInfoDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
     <Compile Include="Domain\DTO\LmsAuthenticationParametersDTO.cs" />

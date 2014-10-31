@@ -8,6 +8,11 @@
         /// <summary>
         /// The canvas.
         /// </summary>
+        public const string Moodle = "moodle";
+
+        /// <summary>
+        /// The canvas.
+        /// </summary>
         public const string Canvas = "canvas";
 
         /// <summary>

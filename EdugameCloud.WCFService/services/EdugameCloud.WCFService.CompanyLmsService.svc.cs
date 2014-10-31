@@ -9,9 +9,13 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.WCFService.Base;
 
+    using Esynctraining.AC.Provider;
+    using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentValidation.Results;
@@ -36,6 +40,17 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<CompanyLmsModel>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the DLAP API.
+        /// </summary>
+        private DlapAPI DlapAPI
+        {
+            get
+            {
+                return IoC.Resolve<DlapAPI>();
             }
         }
 
@@ -101,13 +116,16 @@ namespace EdugameCloud.WCFService
                 }
 
                 this.CompanyLmsModel.RegisterSave(entity);
-                if (isTransient && entity.LmsProvider.Id == (int)LmsProviderEnum.BrainHoney)
+                if (isTransient && 
+                    (entity.LmsProvider.Id == (int)LmsProviderEnum.BrainHoney 
+                    || entity.LmsProvider.Id == (int)LmsProviderEnum.Moodle))
                 {
                     var lmsUser = new LmsUser
                     {
                         CompanyLms = entity,
                         Username = resultDto.lmsAdmin,
                         Password = resultDto.lmsAdminPassword,
+                        Token = resultDto.lmsAdminToken,
                         UserId = 0
                     };
                     LmsUserModel.RegisterSave(lmsUser, true);
@@ -127,19 +145,112 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// The save.
         /// </summary>
-        /// <param name="resultDto">
-        /// The result DTO.
+        /// <param name="test">
+        /// The test.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse{T}"/>.
+        /// The <see cref="ServiceResponse{ConnectionInfoDTO}"/>.
         /// </returns>
-        public ServiceResponse<ConnectionInfoDTO> TestConnection(CompanyLmsDTO resultDto)
+        public ServiceResponse<ConnectionInfoDTO> TestConnection(ConnectionTestDTO test)
         {
             var result = new ServiceResponse<ConnectionInfoDTO>();
+            bool success = false;
+            string info = string.Empty;
+            switch (test.type.ToLowerInvariant())
+            {
+                case "ac":
+                    success = this.TestACConnection(test, out info);
+                    break;
+                case "brainhoney":
+                    success = this.TestBrainHoneyConnection(test, out info);
+                    break;
+                case "moodle":
+                    success = this.TestMoodleConnection(test, out info);
+                    break;
+            }
 
-            result.@object = new ConnectionInfoDTO { status = "Connected successfully", info = "some info here..." };
+            result.@object = new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
 
             return result;
+        }
+
+        /// <summary>
+        /// The test MOODLE connection.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
+        {
+            //// todo
+            info = "Moodle connection test is not yet implemented";
+            return false;
+        }
+
+        /// <summary>
+        /// The test brain honey connection.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
+        {
+            var session = this.DlapAPI.LoginAndCreateASession(out info, test.domain, test.login, test.password);
+            return session != null;
+        }
+
+        /// <summary>
+        /// The test AC connection.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool TestACConnection(ConnectionTestDTO test, out string info)
+        {
+            info = string.Empty;
+            var domainUrl = test.domain.ToLowerInvariant();
+            if (!domainUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                && !domainUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                info = "Adobe Connect Domain url should start with http or https";
+                return false;
+            }
+
+            var fixedUrl = domainUrl.EndsWith("/") ? domainUrl : string.Format("{0}/", domainUrl);
+            fixedUrl = fixedUrl.EndsWith("api/xml/") ? fixedUrl : string.Format("{0}api/xml/", fixedUrl);
+
+            var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = fixedUrl });
+
+            var result = provider.Login(new UserCredentials(test.login, test.password));
+
+            if (!result.Success)
+            {
+                var error = FormatErrorFromAC(result).With(x => x.error);
+                if (error != null)
+                {
+                    info = error.errorMessage;
+                }
+            }
+
+            return result.Success;
         }
 
         #endregion
@@ -165,6 +276,7 @@ namespace EdugameCloud.WCFService
             {
                 instance.AcPassword = dto.acPassword;
             }
+
             instance.AcServer = dto.acServer;
             instance.AcUsername = dto.acUsername;
             instance.Company = this.CompanyModel.GetOneById(dto.companyId).Value;

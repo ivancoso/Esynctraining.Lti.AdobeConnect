@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web;
     using System.Web.SessionState;
     using System.Xml.Linq;
@@ -87,26 +88,138 @@
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.CompanyLms.LmsDomain;
-                var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
-                string userPrefix = lmsDomain.ToLower()
-                    .Replace(".brainhoney.com", string.Empty)
-                    .Replace("www.", string.Empty);
-
-                XElement result = session.Login(userPrefix, lmsUser.Username, lmsUser.Password);
-                if (!Session.IsSuccess(result))
-                {
-                    error = "DLAP. Unable to login: " + Session.GetMessage(result);
-                    this.logger.Error(error);
-                    return null;
-                }
-
-                error = null;
-                session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
-                return session;
+                return this.LoginAndCreateASession(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
             return null;
+        }
+
+        /// <summary>
+        /// The login and create a session.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="userName">
+        /// The user name.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Session"/>.
+        /// </returns>
+        public Session LoginAndCreateASession(out string error, string lmsDomain, string userName, string password)
+        {
+            var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
+            string userPrefix = lmsDomain.ToLower().Replace(".brainhoney.com", string.Empty).Replace("www.", string.Empty);
+
+            XElement result = session.Login(userPrefix, userName, password);
+            if (!Session.IsSuccess(result))
+            {
+                error = "DLAP. Unable to login: " + Session.GetMessage(result);
+                this.logger.Error(error);
+                return null;
+            }
+
+            error = null;
+            session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
+            return session;
+        }
+
+        /// <summary>
+        /// The create announcement.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <param name="announcementTitle">
+        /// The announcement title.
+        /// </param>
+        /// <param name="announcementMessage">
+        /// The announcement message.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        public void CreateAnnouncement(CompanyLms credentials, int courseId, string announcementTitle, string announcementMessage, out string error, Session session = null)
+        {
+            XElement courseResult = this.LoginIfNecessary(
+                session,
+                s =>
+                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
+                out error);
+            if (courseResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive course from API";
+                return;
+            }
+
+            if (!Session.IsSuccess(courseResult))
+            {
+                error = "DLAP. Unable to get course: " + Session.GetMessage(courseResult);
+                this.logger.Error(error);
+            }
+
+            if (session != null)
+            {
+                /*[<roles>
+                When entityid refers to a course or section, the recipient roles within the course or section for this announcement.
+                <role flags="enum" />
+                . . .
+                </roles>]*/
+                var course = courseResult.XPathSelectElement("/course");
+                var courseName = course.XPathEvaluate("string(@title)").ToString();
+                var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
+                var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
+                var announcementName = Guid.NewGuid().ToString("N") + ".zip";
+                //var groupsXml = this.FormatGroupsXml(session, courseId);
+
+                XElement announcementResult = session.Post(
+                    Commands.Announcements.Put + "&"
+                    + string.Format(Parameters.Announcements.Put, courseId, announcementName),
+                    new XElement(
+                        "announcement",
+                        new XAttribute("to", courseName),
+                        new XAttribute("entityid", courseId),
+                        new XAttribute("title", announcementTitle),
+                        new XAttribute("startdate", courseStartDate),
+                        new XAttribute("enddate", courseEndDate),
+                        new XAttribute("recurse", "false"),
+                        new XElement("body", new XCData(announcementMessage))));
+            }
+        }
+
+        private string FormatGroupsXml(Session session, int courseId)
+        {
+            var xml = "<groups/>";
+            var groupsResult = session.Get(Commands.Groups.List, string.Format(Parameters.Groups.List, courseId));
+            if (groupsResult != null)
+            {
+                var groups = groupsResult.XPathSelectElements("/enrollments/enrollment").ToList();
+                if (groups.Any())
+                {
+                    xml = "<groups>";
+                    foreach (XElement group in groups)
+                    {
+                        string groupId = group.XPathEvaluate("string(@id)").ToString();
+                        xml += string.Format(@"<group id=""{0}"" />", groupId);
+                    }
+                    xml += "</groups>";
+                }
+            }
+
+            return xml;
         }
 
         /// <summary>
@@ -688,6 +801,51 @@
 
                 #endregion
             }
+
+            /// <summary>
+            ///     The groups.
+            /// </summary>
+            public class Groups
+            {
+                #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "getgrouplist";
+
+                #endregion
+            }
+
+            /// <summary>
+            ///     The courses.
+            /// </summary>
+            public class Courses
+            {
+                #region Constants
+
+                /// <summary>
+                /// The get one.
+                /// </summary>
+                public const string GetOne = "getcourse2";
+
+                #endregion
+            }
+
+            /// <summary>
+            ///     The announcements.
+            /// </summary>
+            public class Announcements
+            {
+                #region Constants
+
+                /// <summary>
+                /// The put.
+                /// </summary>
+                public const string Put = "putannouncement";
+
+                #endregion
+            }
         }
 
         /// <summary>
@@ -706,6 +864,49 @@
                 /// The list.
                 /// </summary>
                 public const string List = "domainid={0}&limit=0&coursequery=%2Fid%3D{1}&select=user";
+
+                #endregion
+            }
+
+            /// <summary>
+            /// The enrollments.
+            /// </summary>
+            public class Courses
+            {
+                #region Constants
+
+                /// <summary>
+                /// The get one.
+                /// </summary>
+                public const string GetOne = "courseid={0}";
+
+                #endregion
+            }
+
+            public class Groups
+            {
+                 #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "ownerid={0}";
+
+                #endregion
+            }
+
+
+            /// <summary>
+            ///     The announcements.
+            /// </summary>
+            public class Announcements
+            {
+                #region Constants
+
+                /// <summary>
+                /// The put.
+                /// </summary>
+                public const string Put = "entityid={0}&path={1}";
 
                 #endregion
             }
@@ -745,5 +946,7 @@
 
             #endregion
         }
+
+        
     }
 }

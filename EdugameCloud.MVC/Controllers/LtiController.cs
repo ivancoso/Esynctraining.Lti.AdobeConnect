@@ -339,6 +339,52 @@
         }
 
         /// <summary>
+        /// The get attendance report.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS Provider Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult GetAttendanceReport(string lmsProviderName, int startIndex = 0, int limit = 0)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var report = this.MeetingSetup.GetAttendanceReport(
+                credentials,
+                this.MeetingSetup.GetProvider(credentials),
+                param, 
+                startIndex, 
+                limit);
+
+            return this.Json(report, this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+        }
+
+        /// <summary>
+        /// The get sessions report.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS Provider Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult GetSessionsReport(string lmsProviderName, int startIndex = 0, int limit = 0)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var report = this.MeetingSetup.GetSessionsReport(
+                credentials,
+                this.MeetingSetup.GetProvider(credentials),
+                param,
+                startIndex,
+                limit);
+
+            return this.Json(report, this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+        }
+
+        /// <summary>
         /// The index.
         /// </summary>
         /// <param name="model">
@@ -881,4 +927,5 @@
 
         #endregion
     }
+
 }
