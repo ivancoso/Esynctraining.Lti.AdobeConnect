@@ -202,15 +202,21 @@
         /// <param name="scoId">
         /// The SCO Id.
         /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
         /// </returns>
-        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId)
+        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-objects"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
                        ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
@@ -263,15 +269,21 @@
         /// <param name="scoId">
         /// The SCO Id.
         /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
         /// </returns>
-        public QuizResponseCollectionResult ReportQuizInteractions(string scoId)
+        public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
         {
             // act: "report-quiz-interactions"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions, string.Format(CommandParams.ScoId, scoId), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
                        ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
@@ -305,15 +317,21 @@
         /// <param name="scoId">
         /// The SCO Id.
         /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingSessionCollectionResult"/>.
         /// </returns>
-        public MeetingSessionCollectionResult ReportMettingSessions(string scoId)
+        public MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-objects"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions, string.Format(CommandParams.ScoId, scoId), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
                        ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
@@ -328,13 +346,21 @@
         /// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
         /// with the SCO id to list all events.
         /// </summary>
-        /// <returns><see cref="EventInfo">EventInfo array</see></returns>
-        public EventCollectionResult ReportMyEvents()
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// <see cref="EventInfo">EventInfo array</see>
+        /// </returns>
+        public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
         {
             // act: "report-my-events"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMyEvents, null, out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMyEvents, string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
 
             return ResponseIsOk(doc, status)
                 ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
@@ -349,13 +375,21 @@
         /// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
         /// with the SCO id to list all events.
         /// </summary>
-        /// <returns><see cref="EventInfo">EventInfo array</see></returns>
-        public MeetingItemCollectionResult ReportMyMeetings()
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// <see cref="EventInfo">EventInfo array</see>
+        /// </returns>
+        public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
         {
             // act: "report-my-meetings"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, null, out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
 
             return ResponseIsOk(doc, status)
                 ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
@@ -720,6 +754,27 @@
         }
 
         /// <summary>
+        /// Provides a list of users by email
+        /// </summary>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalCollectionResult GetAllByLogin(string login)
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Format(CommandParams.PrincipalByLogin, login), out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
+        /// <summary>
         /// Gets all principals if no Group Id specified.
         /// Otherwise gets only users of the specified Group.
         /// </summary>
@@ -904,15 +959,21 @@
         /// <param name="meetingId">
         /// The meeting id.
         /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="TransactionCollectionResult"/>.
         /// </returns>
-        public TransactionCollectionResult ReportMeetingTransactions(string meetingId)
+        public TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-consolidated-transactions"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions, string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions, string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
                 ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
@@ -922,15 +983,21 @@
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
-        public ScoContentCollectionResult ReportRecordings()
+        public ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-objects"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Recording, out status);
+            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded(startIndex, limit), out status);
 
             if (ResponseIsOk(doc, status))
             {

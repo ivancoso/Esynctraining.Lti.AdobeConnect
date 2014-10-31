@@ -35,6 +35,36 @@
         }
 
         /// <summary>
+        /// The append paging if needed.
+        /// </summary>
+        /// <param name="parameters">
+        /// The parameters.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string AppendPagingIfNeeded(this string parameters, int startIndex, int limit)
+        {
+            if (startIndex != 0)
+            {
+                parameters += "&filter-start=" + startIndex;
+            }
+
+            if (limit != 0)
+            {
+                parameters += "&filter-rows=" + limit;
+            }
+
+            return parameters;
+        }
+
+        /// <summary>
         /// The parse date time with default.
         /// </summary>
         /// <param name="stringValue">

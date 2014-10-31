@@ -66,6 +66,11 @@
         public const string PrincipalByEmail = "filter-email={0}";
 
         /// <summary>
+        /// The principal by email
+        /// </summary>
+        public const string PrincipalByLogin = "filter-login={0}";
+
+        /// <summary>
         /// The principal update password.
         /// </summary>
         public const string PrincipalUpdatePassword = "user-id={0}&password={1}&password-verify={2}";
