@@ -1480,18 +1480,12 @@
         {
             List<LmsUserDTO> users = this.GetLMSUsers(credentials, courseId);
 
-            List<Principal> adobeConnectUsers = provider.GetAllPrincipals().Values.Return(x => x.ToList(), new List<Principal>());
 
             foreach (LmsUserDTO u in users)
             {
                 string email = u.Email, login = u.Login;
-                Principal adobeConnectUser = adobeConnectUsers.FirstOrDefault(ac => login != null && ac.Login == login);
-                if (adobeConnectUser == null)
-                {
-                    adobeConnectUser = adobeConnectUsers.FirstOrDefault(ac => email != null && ac.Email == email);
-                }
-
-                if (adobeConnectUser == null)
+                var principal = this.GetACUser(provider, login, email);
+                if (principal == null)
                 {
                     PrincipalResult res =
                         provider.PrincipalUpdate(
@@ -1506,25 +1500,25 @@
                                 });
                     if (res.Success && res.Principal != null)
                     {
-                        adobeConnectUser = res.Principal;
+                        principal = res.Principal;
                     }
                 }
 
                 var permission = MeetingPermissionId.view;
                 string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
 
-                if (role.Contains("teacher"))
+                if (role.Contains("teacher") || role.Contains("owner"))
                 {
                     permission = MeetingPermissionId.host;
                 }
-                else if (role.Contains("ta") || role.Contains("designer"))
+                else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author"))
                 {
                     permission = MeetingPermissionId.mini_host;
                 }
 
-                if (adobeConnectUser != null)
+                if (principal != null)
                 {
-                    provider.UpdateScoPermissionForPrincipal(meetingScoId, adobeConnectUser.PrincipalId, permission);
+                    provider.UpdateScoPermissionForPrincipal(meetingScoId, principal.PrincipalId, permission);
                 }
             }
         }
