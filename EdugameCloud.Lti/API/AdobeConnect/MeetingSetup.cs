@@ -1507,11 +1507,11 @@
                 var permission = MeetingPermissionId.view;
                 string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
 
-                if (role.Contains("teacher") || role.Contains("owner"))
+                if (role.Contains("teacher"))
                 {
                     permission = MeetingPermissionId.host;
                 }
-                else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author"))
+                else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner"))
                 {
                     permission = MeetingPermissionId.mini_host;
                 }
