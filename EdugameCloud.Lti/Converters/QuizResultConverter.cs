@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Net.Mime;
     using System.Xml;
 
     using EdugameCloud.Core.Business.Models;
@@ -14,6 +15,8 @@
     using Esynctraining.Core.Utils;
 
     using Newtonsoft.Json;
+
+    using NHibernate.Hql.Ast.ANTLR;
 
     using RestSharp;
     using RestSharp.Deserializers;
@@ -151,6 +154,51 @@
                                 }
                                 
                                 break;
+                            case (int)QuestionTypeEnum.Matching:
+                                {
+                                    var userAnswers = new Dictionary<string, string>();
+                                    if (answer.answers != null)
+                                    {
+                                        answer.answers.ForEach(
+                                            a =>
+                                            {
+                                                int splitInd = a.IndexOf("$$", System.StringComparison.Ordinal);
+                                                if (splitInd > -1)
+                                                {
+                                                    string left = a.Substring(0, splitInd),
+                                                           right = a.Substring(splitInd + 2, a.Length - splitInd - 2);
+                                                    if (!userAnswers.ContainsKey(left))
+                                                    {
+                                                        userAnswers.Add(left, right);
+                                                    }
+                                                }
+                                            });
+                                    }
+                                    
+                                    var match = new List<JsonObject>();
+
+                                    foreach (var left in userAnswers.Keys)
+                                    {
+                                        var right = userAnswers[left];
+                                        var distactorLeft =
+                                            question.Distractors.FirstOrDefault(
+                                                d => d.DistractorName.StartsWith(left + "$$"));
+                                        
+                                        var distactorRight =
+                                            question.Distractors.FirstOrDefault(
+                                                d => d.DistractorName.EndsWith("$$" + right));
+                                        if (distactorLeft != null && distactorRight != null)
+                                        {
+                                            var jsonObject = new JsonObject();
+                                            jsonObject.Add("answer_id", distactorLeft.LmsAnswerId);
+                                            jsonObject.Add("match_id", distactorRight.LmsAnswer);
+                                            match.Add(jsonObject);
+                                        }
+                                    }
+                                    
+                                    answers = match;
+                                    break;
+                                }
                             case (int)QuestionTypeEnum.MultipleDropdowns:
                             case (int)QuestionTypeEnum.FillInTheBlank:
                                 {
@@ -163,47 +211,46 @@
                                         break;
                                     }
 
-                                    var answersDict =
-                                        JsonConvert.DeserializeObject<List<KeyValuePair<string, int>>>(
-                                            distractor.LmsAnswer) as List<KeyValuePair<string, int>>;
+                                    Dictionary<string, int> answersDict =
+                                        JsonConvert.DeserializeObject<Dictionary<string, int>>(distractor.LmsAnswer);
                                     
                                     JsonObject obj = new JsonObject();
 
-                                    foreach (var key in answersDict)
+                                    var xmlDoc = new XmlDocument();
+                                    xmlDoc.LoadXml(distractor.DistractorName);
+                                    var textTags = xmlDoc.SelectNodes(
+                                        string.Format("data//text[@isBlank='true']"));
+
+                                    foreach (var key in answersDict.Keys)
                                     {
-                                        var order = key.Value;
+                                        var order = answersDict[key];
                                         if (answer.answers.Count > order)
                                         {
                                             var userText = answer.answers[order];
-                                            /*
-                                            var optionstart =
-                                                distractor.DistractorName.IndexOf(
-                                                    "name=\"" + userText + ""\,
-                                                    System.StringComparison.Ordinal);
 
-                                            if (optionstart > -1)
-                                            {
-                                                var text = distractor.DistractorName.Substring(optionstart);
-                                                var 
-                                            }
-                                            */
-                                            var xmlDoc = new XmlDocument();
-                                            xmlDoc.LoadXml(distractor.DistractorName);
-                                            var optionTag = xmlDoc.SelectSingleNode(
-                                                string.Format("data//options//option[@name='{0}']", userText));
                                             int lmsId = 0;
-                                            if (optionTag != null && optionTag.Attributes["lmsid"] != null)
+                                            var textTag = textTags.Count > order ? textTags[order] : null;
+                                            if (textTag != null)
                                             {
-                                                lmsId = int.Parse(optionTag.Attributes["lmsid"].Value);
+                                                var id = textTag.Attributes["id"].Value;
+                                                var optionTag =
+                                                    xmlDoc.SelectSingleNode(
+                                                        string.Format("data//options[@id='{0}']//option[@name='{1}']",
+                                                        id,
+                                                        userText));
+                                                if (optionTag != null && optionTag.Attributes["lmsid"] != null)
+                                                {
+                                                    lmsId = int.Parse(optionTag.Attributes["lmsid"].Value);
+                                                }
                                             }
-
+                                            
                                             if (lmsId == 0)
                                             {
-                                                obj.Add(key.Key, userText);
+                                                obj.Add(key, userText);
                                             }
                                             else
                                             {
-                                                obj.Add(key.Key, lmsId);
+                                                obj.Add(key, lmsId);
                                             }
                                         }
                                     }

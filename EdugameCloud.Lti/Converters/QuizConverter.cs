@@ -442,6 +442,10 @@
                 {
                     questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion);
                 }
+                else if (questionType.QuestionType.Id == (int)QuestionTypeEnum.Calculated)
+                {
+                    questionText = this.ProcessCalculatedQuestionText(quizQuestion);
+                }
                 else
                 {
                     questionText = this.ClearName(quizQuestion.question_text);
@@ -513,9 +517,24 @@
                         this.ProcessFillInTheBlankDistractors(user, q, question, false);
                         break;
                     }
+                case (int)QuestionTypeEnum.Matching:
+                    {
+                        this.ProcessMatchingDistractors(user, q, question);
+                        break;
+                    }
                 case (int)QuestionTypeEnum.TrueFalse:
                     {
                         this.ProcessQuestionForTrueFalseDistractors(user, q, question, disctarctorModel);
+                        break;
+                    }
+                case (int)QuestionTypeEnum.Numerical:
+                    {
+                        this.ProcessNumericalDistractors(user, q, question);
+                        break;
+                    }
+                case (int)QuestionTypeEnum.Calculated:
+                    {
+                        this.ProcessCalculatedDistractors(user, q, question);
                         break;
                     }
             }
@@ -547,7 +566,21 @@
             return questionText;
         }
 
-
+        /// <summary>
+        /// The process fill in the blank distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="option">
+        /// The option.
+        /// </param>
         private void ProcessFillInTheBlankDistractors(
             User user,
             QuizQuestionDTO q,
@@ -644,7 +677,166 @@
             DistractorModel.RegisterSave(distractor);
             DistractorModel.Flush();
         }
-        
+
+        /// <summary>
+        /// The process numerical distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        private void ProcessNumericalDistractors(
+            User user,
+            QuizQuestionDTO q,
+            Question question)
+        {
+            foreach (var a in q.answers)
+            {
+                var lmsId = a.id;
+                bool isRange = a.numerical_answer_type != null && a.numerical_answer_type.Contains("range");
+                var name = string.Format(
+                    "{{\"min\":{0}, \"max\": {1}, \"error\":{2},\"type\":\"{3}\"}}",
+                    isRange ? a.start : a.exact,
+                    a.end,
+                    a.margin,
+                    isRange ? "Range" : "Exact");
+                var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = a.weight == 100;
+
+                DistractorModel.RegisterSave(distractor);
+            }
+        }
+
+        /// <summary>
+        /// The process calculated distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        private void ProcessCalculatedDistractors(
+            User user,
+            QuizQuestionDTO q,
+            Question question)
+        {
+            var a = q.answers.FirstOrDefault();
+            if (a == null)
+            {
+                return;
+            }
+
+            var lmsId = a.id;
+            var name = string.Format(
+                "{{\"val\":{0}, \"error\":{1} }}",
+                a.answer,
+                a.margin);
+            var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                new Distractor
+                {
+                    DateCreated = DateTime.Now,
+                    CreatedBy = user,
+                    Question = question,
+                    LmsAnswerId = lmsId
+                };
+            distractor.DateModified = DateTime.Now;
+            distractor.ModifiedBy = user;
+            distractor.DistractorName = name;
+            distractor.IsActive = true;
+            distractor.DistractorType = 1;
+            distractor.IsCorrect = a.weight == 100;
+
+            DistractorModel.RegisterSave(distractor);
+        }
+
+        /// <summary>
+        /// The process calculated question text.
+        /// </summary>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessCalculatedQuestionText(QuizQuestionDTO q)
+        {
+            var questionText = ClearName(q.question_text);
+            var values = q.answers.FirstOrDefault();
+            if (values == null)
+            {
+                return questionText;
+            }
+            
+            foreach (var variable in values.variables)
+            {
+                questionText = questionText.Replace("[" + variable.name + "]", variable.value);
+            }
+            
+            return questionText;
+        }
+
+        /// <summary>
+        /// The process matching distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        private void ProcessMatchingDistractors(
+            User user,
+            QuizQuestionDTO q,
+            Question question)
+        {
+            foreach (var a in q.answers)
+            {
+                var lmsId = a.id;
+                var name = string.Format("{0}$${1}", ClearName(a.text), ClearName(a.right));
+                var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.LmsAnswer = a.match_id;
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = true;
+                
+                DistractorModel.RegisterSave(distractor);
+            }
+        }
+
         /// <summary>
         /// The process single multiple choice text distractors.
         /// </summary>

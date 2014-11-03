@@ -6,6 +6,8 @@
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
 
+    using NHibernate.Cfg;
+
     using RestSharp;
 
     /// <summary>
@@ -73,7 +75,7 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id), 
+                string.Format("/api/v1/quiz_submissions/{0}/questions?per_page={1}", submission.id, 100), 
                 Method.POST, 
                 usertoken);
             request.RequestFormat = DataFormat.Json;
@@ -150,7 +152,7 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseid, quizid), 
+                string.Format("/api/v1/courses/{0}/quizzes/{1}/questions?per_page={2}", courseid, quizid, 100), 
                 Method.GET, 
                 usertoken);
 
@@ -219,7 +221,7 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/courses/{0}/quizzes", courseid), 
+                string.Format("/api/v1/courses/{0}/quizzes?per_page={1}", courseid, 100), 
                 Method.GET, 
                 usertoken);
 
@@ -342,7 +344,7 @@
             {
                 RestRequest request = CreateRequest(
                     api, 
-                    string.Format("/api/v1/courses/{0}/users", courseid), 
+                    string.Format("/api/v1/courses/{0}/users?per_page={1}", courseid, 100),
                     Method.GET, 
                     usertoken);
                 request.AddParameter("enrollment_type", role);

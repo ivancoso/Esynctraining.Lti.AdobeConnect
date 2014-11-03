@@ -487,18 +487,18 @@
                 this.SetDebugModelValues(model, providerName);
             }
 
-            if (credentials.AdminUser == null)
-            {
-                this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
-                return this.View("Error");
-            }
+            //if (credentials.AdminUser == null)
+            //{
+            //    this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
+            //    return this.View("Error");
+            //}
 
             this.AddSessionCookie(this.Session.SessionID);
 
             switch (providerName.ToLower())
             {
                 case LmsProviderNames.Canvas:
-                    if (BltiProviderHelper.VerifyBltiRequest(
+                     if (BltiProviderHelper.VerifyBltiRequest(
                         credentials,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
                     {

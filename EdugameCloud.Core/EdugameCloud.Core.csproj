@@ -303,6 +303,7 @@
     <Compile Include="Domain\DTO\SurveyResultDTO.cs" />
     <Compile Include="Domain\DTO\QuestionOrderDTO.cs" />
     <Compile Include="Domain\DTO\UserLoginHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\VariableDTO.cs" />
     <Compile Include="Domain\DTO\VCFProfileDTO.cs" />
     <Compile Include="Domain\DTO\GoogleSearchDTO.cs" />
     <Compile Include="Domain\DTO\EGCVersionsDTO.cs" />
