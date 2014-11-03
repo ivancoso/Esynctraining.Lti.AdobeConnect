@@ -173,7 +173,9 @@
                 {
                     // name of the provider we just used
                     provider = provider ?? result.Provider;
-                   
+
+                    LmsUser lmsUser = null;
+
                     if (result.ExtraData.ContainsKey("accesstoken"))
                     {
                         var token = result.ExtraData["accesstoken"];
@@ -181,7 +183,7 @@
                         var userName = result.ExtraData["name"];
                         var company = this.GetCredentials(provider);
 
-                        var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value
+                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value
                                       ?? new LmsUser { UserId = userId, CompanyLms = company };
 
                         lmsUser.Username = userName;
@@ -193,6 +195,12 @@
 
                     if (credentials != null)
                     {
+                        if (credentials.AdminUser == null && this.IsAdminRole(provider))
+                        {
+                            credentials.AdminUser = lmsUser;
+                            CompanyLmsModel.RegisterSave(credentials);
+                        }
+
                         this.ViewBag.RedirectUrl = string.Format(
                             "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
                             credentials.Layout ?? string.Empty,
@@ -203,8 +211,10 @@
 
                     this.ViewBag.Error = string.Format("Credentials not found");
                 }
-
-                this.ViewBag.Error = string.Format("Generic OAuth fail");
+                else
+                {
+                    this.ViewBag.Error = string.Format("Generic OAuth fail: {0}", result.Error != null ? result.Error.Message : (result.Provider ?? string.Empty));
+                }
             }
             catch (ApplicationException ex)
             {
@@ -487,11 +497,11 @@
                 this.SetDebugModelValues(model, providerName);
             }
 
-            //if (credentials.AdminUser == null)
-            //{
-            //    this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
-            //    return this.View("Error");
-            //}
+            if (credentials.AdminUser == null && !this.IsAdminRole(providerName))
+            {
+                this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
+                return this.View("Error");
+            }
 
             this.AddSessionCookie(this.Session.SessionID);
 
@@ -731,6 +741,27 @@
             }
 
             return creds;
+        }
+
+        /// <summary>
+        /// The is admin role.
+        /// </summary>
+        /// <param name="providerName">
+        /// The provider name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool IsAdminRole(string providerName)
+        {
+            var param = this.GetParam(providerName);
+
+            if (param == null)
+            {
+                return this.IsDebug;
+            }
+
+            return param.roles.Contains("Administrator") || param.roles.Contains("Instructor");
         }
 
         /// <summary>
