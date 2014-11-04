@@ -75,9 +75,10 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/quiz_submissions/{0}/questions?per_page={1}", submission.id, 100), 
+                string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id), 
                 Method.POST, 
                 usertoken);
+            request.AddParameter("per_page", 100);
             request.RequestFormat = DataFormat.Json;
             request.AddBody(submission);
 
@@ -152,10 +153,10 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/courses/{0}/quizzes/{1}/questions?per_page={2}", courseid, quizid, 100), 
+                string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseid, quizid), 
                 Method.GET, 
                 usertoken);
-
+            request.AddParameter("per_page", 100);
             IRestResponse<List<QuizQuestionDTO>> response = client.Execute<List<QuizQuestionDTO>>(request);
 
             ret.AddRange(response.Data);
@@ -221,10 +222,10 @@
 
             RestRequest request = CreateRequest(
                 api, 
-                string.Format("/api/v1/courses/{0}/quizzes?per_page={1}", courseid, 100), 
+                string.Format("/api/v1/courses/{0}/quizzes", courseid), 
                 Method.GET, 
                 usertoken);
-
+            request.AddParameter("per_page", 100);
             IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
 
             if (quizIds != null)
@@ -344,9 +345,10 @@
             {
                 RestRequest request = CreateRequest(
                     api, 
-                    string.Format("/api/v1/courses/{0}/users?per_page={1}", courseid, 100),
+                    string.Format("/api/v1/courses/{0}/users", courseid),
                     Method.GET, 
                     usertoken);
+                request.AddParameter("per_page", 100);
                 request.AddParameter("enrollment_type", role);
 
                 IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
