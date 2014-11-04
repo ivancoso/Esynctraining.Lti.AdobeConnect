@@ -16,6 +16,7 @@
 
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Utils;
 
     using RestSharp;
 
@@ -310,6 +311,7 @@
                         }
                     }
 
+                    role = Inflector.Capitalize(role);
                     string userId = user.XPathEvaluate("string(@id)").ToString();
                     string firstName = user.XPathEvaluate("string(@firstname)").ToString();
                     string lastName = user.XPathEvaluate("string(@lastname)").ToString();

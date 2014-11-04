@@ -110,7 +110,7 @@
         public string ac_role { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms_role.
+        /// Gets or sets the LMS role.
         /// </summary>
         [DataMember]
         public string lms_role { get; set; }

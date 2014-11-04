@@ -18,7 +18,12 @@
         /// <summary>
         /// Brain Honey
         /// </summary>
-        BrainHoney = 3
+        BrainHoney = 3,
+
+        /// <summary>
+        /// Black board
+        /// </summary>
+        Blackboard = 3
         
     }
 }

@@ -285,8 +285,9 @@
             List<PermissionInfo> hosts, participants, presenters;
             this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants);
 
-            foreach (LmsUserDTO user in users)
+            foreach (LmsUserDTO lmsuser in users)
             {
+                LmsUserDTO user = lmsuser;
                 string email = user.Email, login = user.Login;
 
                 var principal = this.GetACUser(provider, login, email);
@@ -297,7 +298,7 @@
                 }
 
                 user.ac_id = principal.PrincipalId;
-
+                
                 if (hosts.Any(v => v.PrincipalId == user.ac_id))
                 {
                     user.ac_role = "Host";
@@ -955,8 +956,9 @@
                 this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants);
 
                 // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (Principal user in registeredUser.Values)
+                foreach (var registeredPrincipal in registeredUser.Values)
                 {
+                    Principal user = registeredPrincipal;
                     if (hosts.Any(h => h.PrincipalId == user.PrincipalId)
                         || presenters.Any(p => p.PrincipalId == user.PrincipalId)
                         || participants.Any(p => p.PrincipalId == user.PrincipalId))
@@ -1073,7 +1075,8 @@
                     {
                         foreach (var orderRole in order)
                         {
-                            var userDTO = ug.FirstOrDefault(u => u.lms_role.Equals(orderRole, StringComparison.OrdinalIgnoreCase));
+                            string role = orderRole;
+                            var userDTO = ug.FirstOrDefault(u => u.lms_role.Equals(role, StringComparison.OrdinalIgnoreCase));
                             if (userDTO != null)
                             {
                                 return userDTO;
@@ -1173,6 +1176,12 @@
         /// </param>
         /// <param name="acp">
         /// The ACP.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
         /// </param>
         /// <returns>
         /// The <see cref="List{ACSessionParticipantDTO}"/>.

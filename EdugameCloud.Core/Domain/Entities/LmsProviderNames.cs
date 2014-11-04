@@ -19,5 +19,10 @@
         /// The brain honey.
         /// </summary>
         public const string BrainHoney = "brainhoney";
+
+        /// <summary>
+        /// The black board.
+        /// </summary>
+        public const string Blackboard = "blackboard";
     }
 }
