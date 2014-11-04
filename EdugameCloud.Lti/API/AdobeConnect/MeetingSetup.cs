@@ -453,17 +453,13 @@
                 }
             }
 
-            string email = param.lis_person_contact_email_primary, login = param.custom_canvas_user_login_id;
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
             string password = email != credentials.AcUsername
                                   ? Membership.GeneratePassword(8, 2)
                                   : credentials.AcPassword;
 
-            IEnumerable<Principal> adobeConnectUsers = provider.GetAllPrincipals().Values;
-
-            Principal registeredUser =
-                adobeConnectUsers.FirstOrDefault(
-                    ac => (email != null && ac.Email == email) || (login != null && ac.Login == login));
+            Principal registeredUser = this.GetACUser(provider, login, email);
 
             if (registeredUser != null)
             {
@@ -499,17 +495,13 @@
 
             string breezeToken;
 
-            string email = param.lis_person_contact_email_primary, login = param.custom_canvas_user_login_id;
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
             string password = email != credentials.AcUsername
                                   ? Membership.GeneratePassword(8, 2)
                                   : credentials.AcPassword;
 
-            IEnumerable<Principal> acUsers = provider.GetAllPrincipals().Values;
-
-            Principal registeredUser =
-                acUsers.FirstOrDefault(
-                    ac => (email != null && ac.Email == email) || (login != null && ac.Login == login));
+            Principal registeredUser = this.GetACUser(provider, login, email);
 
             if (registeredUser != null)
             {
@@ -585,7 +577,7 @@
 
             ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.ScoId });
 
-            if (!result.Values.Any(v => v.ScoId == recordingId))
+            if (result.Values.All(v => v.ScoId != recordingId))
             {
                 return false;
             }
@@ -943,28 +935,26 @@
         /// <param name="email">
         /// The email.
         /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CanJoin(AdobeConnectProvider provider, string meetingSco, string email)
+        private bool CanJoin(AdobeConnectProvider provider, string meetingSco, string email, string login)
         {
-            PrincipalCollectionResult registeredUser = provider.GetAllByEmail(HttpUtility.UrlEncode(email));
+            var registeredUser = this.GetACUser(provider, HttpUtility.UrlEncode(login), HttpUtility.UrlEncode(email));
 
-            if (registeredUser.Success && registeredUser.Values != null)
+            if (registeredUser != null)
             {
                 List<PermissionInfo> hosts, presenters, participants;
                 this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants);
 
-                // ReSharper disable once LoopCanBeConvertedToQuery
-                foreach (var registeredPrincipal in registeredUser.Values)
+                if (hosts.Any(h => h.PrincipalId == registeredUser.PrincipalId)
+                    || presenters.Any(p => p.PrincipalId == registeredUser.PrincipalId)
+                    || participants.Any(p => p.PrincipalId == registeredUser.PrincipalId))
                 {
-                    Principal user = registeredPrincipal;
-                    if (hosts.Any(h => h.PrincipalId == user.PrincipalId)
-                        || presenters.Any(p => p.PrincipalId == user.PrincipalId)
-                        || participants.Any(p => p.PrincipalId == user.PrincipalId))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
@@ -1370,12 +1360,8 @@
                               start_time = result.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture), 
                               duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"), 
                               connect_server = credentials.AcServer, 
-                              access_level =
-                                  permission != null && (permissionInfo = permission.FirstOrDefault()) != null
-                                      ? permissionInfo.PermissionId.ToString()
-                                      : string.Empty, 
-                              can_join =
-                                  this.CanJoin(provider, result.ScoId, param.lis_person_contact_email_primary), 
+                              access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString(): string.Empty, 
+                              can_join = this.CanJoin(provider, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login), 
                               is_editable = this.CanEdit(param)
                           };
             return ret;
