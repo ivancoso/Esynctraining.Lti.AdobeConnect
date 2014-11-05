@@ -1050,10 +1050,22 @@
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
         }
 
+        /// <summary>
+        /// The lms user is ac user.
+        /// </summary>
+        /// <param name="lmsUser">
+        /// The lms user.
+        /// </param>
+        /// <param name="participant">
+        /// The participant.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private static bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
         {
-            return lmsUser.primary_email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)
-                   || lmsUser.login_id.Equals(participant.Login, StringComparison.OrdinalIgnoreCase);
+            return participant.Login != null && ((lmsUser.primary_email != null && lmsUser.primary_email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
+                   || (lmsUser.login_id != null && lmsUser.login_id.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
         }
 
         /// <summary>
