@@ -603,6 +603,28 @@
             return this.Json(updatedUser);
         }
 
+        /// <summary>
+        /// The update user.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS Provider Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            List<LmsUserDTO> updatedUser = this.MeetingSetup.SetDefaultRolesForNonParticipants(
+                credentials,
+                this.MeetingSetup.GetProvider(credentials),
+                param);
+
+            return this.Json(updatedUser);
+        }
+
         #endregion
 
         #region Methods

@@ -5,6 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
     using System.Web.Security;
 
     using EdugameCloud.Core.Business.Models;
@@ -118,17 +119,11 @@
         /// </returns>
         public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
 
             if (meeting == null)
             {
-                return new MeetingDTO
-                           {
-                               id = "0", 
-                               connect_server = credentials.AcServer, 
-                               is_editable = this.CanEdit(param)
-                           };
+                return this.CreateEmptyMeetingResponse(credentials, param);
             }
 
             ScoInfoResult result = provider.GetScoInfo(meeting.ScoId);
@@ -136,12 +131,7 @@
             {
                 this.LmsCourseMeetingModel.RegisterDelete(meeting);
                 this.LmsCourseMeetingModel.Flush();
-                return new MeetingDTO
-                           {
-                               id = "0", 
-                               connect_server = credentials.AcServer, 
-                               is_editable = this.CanEdit(param)
-                           };
+                return this.CreateEmptyMeetingResponse(credentials, param);
             }
 
             IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.ScoId).Values;
@@ -709,9 +699,7 @@
                                                                  : SpecialPermissionId.remove);
 
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-            List<PermissionInfo> permission =
-                provider.GetScoPublicAccessPermissions(result.ScoInfo.ScoId)
-                    .Values.Return(x => x.ToList(), new List<PermissionInfo>());
+            List<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(result.ScoInfo.ScoId).Values.Return(x => x.ToList(), new List<PermissionInfo>());
 
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 credentials, 
@@ -809,6 +797,54 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
+            CompanyLms credentials,
+            AdobeConnectProvider provider,
+            LtiParamDTO param)
+        {
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            var users = this.GetUsers(credentials, provider, param);
+            if (meeting == null)
+            {
+                return users;
+            }
+
+            List<PermissionInfo> hosts, participants, presenters;
+            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants);
+
+            foreach (var user in users)
+            {
+                if (!this.IsUserSynched(hosts, presenters, participants, user))
+                {
+                    if (user.ac_id == null || user.ac_id == "0")
+                    {
+                        string email = user.Email, login = user.Login;
+
+                        this.UpdateUserACValues(provider, user, login, email);
+                    }
+
+                    this.SetLMSUserDefaultACPermissions(provider, meeting.ScoId, user, user.ac_id);
+                }
+            }
+
+            return users;
+        }
+
+        /// <summary>
+        /// The update user.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
         /// <param name="user">
         /// The user.
         /// </param>
@@ -831,29 +867,7 @@
             {
                 string email = user.Email, login = user.Login;
 
-                var principal = this.GetACUser(provider, login, email);
-
-                if (principal == null)
-                {
-                    var setup = new PrincipalSetup
-                                    {
-                                        Email = user.Email, 
-                                        FirstName = user.FirstName, 
-                                        LastName = user.LastName, 
-                                        Name = user.name, 
-                                        Login = user.Login, 
-                                        Password = Membership.GeneratePassword(8, 2)
-                                    };
-                    PrincipalResult pu = provider.PrincipalUpdate(setup);
-                    if (pu.Principal != null)
-                    {
-                        user.ac_id = pu.Principal.PrincipalId;
-                    }
-                }
-                else
-                {
-                    user.ac_id = principal.PrincipalId;
-                }
+                this.UpdateUserACValues(provider, user, login, email);
             }
 
             if (user.ac_role == null)
@@ -877,9 +891,74 @@
             return this.GetUsers(credentials, provider, param);
         }
 
+        /// <summary>
+        /// The update user ac values.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        private void UpdateUserACValues(AdobeConnectProvider provider, LmsUserDTO user, string login, string email)
+        {
+            var principal = this.GetACUser(provider, login, email);
+
+            if (principal == null)
+            {
+                var setup = new PrincipalSetup
+                                {
+                                    Email = user.Email,
+                                    FirstName = user.FirstName,
+                                    LastName = user.LastName,
+                                    Name = user.name,
+                                    Login = user.Login,
+                                    Password = Membership.GeneratePassword(8, 2)
+                                };
+                PrincipalResult pu = provider.PrincipalUpdate(setup);
+                if (pu.Principal != null)
+                {
+                    user.ac_id = pu.Principal.PrincipalId;
+                }
+            }
+            else
+            {
+                user.ac_id = principal.PrincipalId;
+            }
+        }
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The create empty meeting response.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingDTO"/>.
+        /// </returns>
+        private MeetingDTO CreateEmptyMeetingResponse(CompanyLms credentials, LtiParamDTO param)
+        {
+            return new MeetingDTO
+            {
+                id = "0",
+                connect_server = credentials.AcServer,
+                is_editable = this.CanEdit(param),
+                are_users_synched = true
+            };
+        }
 
         /// <summary>
         /// The get AC user.
@@ -929,6 +1008,12 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="courseId">
+        /// The course Id.
+        /// </param>
         /// <param name="meetingSco">
         /// The meeting SCO.
         /// </param>
@@ -941,8 +1026,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CanJoin(AdobeConnectProvider provider, string meetingSco, string email, string login)
+        private Tuple<bool, bool> GetMeetingFlags(AdobeConnectProvider provider, CompanyLms credentials, int courseId, string meetingSco, string email, string login)
         {
+            bool canJoin = false;
+            bool areUsersSynched = true;
             var registeredUser = this.GetACUser(provider, HttpUtility.UrlEncode(login), HttpUtility.UrlEncode(email));
 
             if (registeredUser != null)
@@ -954,11 +1041,103 @@
                     || presenters.Any(p => p.PrincipalId == registeredUser.PrincipalId)
                     || participants.Any(p => p.PrincipalId == registeredUser.PrincipalId))
                 {
-                    return true;
+                    canJoin = true;
+                }
+
+                areUsersSynched = this.AreUsersSynched(credentials, courseId, hosts, presenters, participants);
+            }
+
+            return new Tuple<bool, bool>(canJoin, areUsersSynched);
+        }
+
+        private static bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
+        {
+            return lmsUser.primary_email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)
+                   || lmsUser.login_id.Equals(participant.Login, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// The are users synched.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <param name="hosts">
+        /// The hosts.
+        /// </param>
+        /// <param name="presenters">
+        /// The presenters.
+        /// </param>
+        /// <param name="participants">
+        /// The participants.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool AreUsersSynched(
+            CompanyLms credentials,
+            int courseId,
+            List<PermissionInfo> hosts,
+            List<PermissionInfo> presenters,
+            List<PermissionInfo> participants)
+        {
+            var lmsUsers = this.GetLMSUsers(credentials, courseId);
+            foreach (var lmsUser in lmsUsers)
+            {
+                if (!IsUserSynched(hosts, presenters, participants, lmsUser))
+                {
+                    return false;
                 }
             }
 
-            return false;
+            return true;
+        }
+
+        private bool IsUserSynched(List<PermissionInfo> hosts, List<PermissionInfo> presenters, List<PermissionInfo> participants, LmsUserDTO lmsUser)
+        {
+            bool isFound = false;
+            foreach (var host in hosts)
+            {
+                if (LmsUserIsAcUser(lmsUser, host))
+                {
+                    lmsUser.ac_id = host.PrincipalId;
+                    lmsUser.ac_role = "Host";
+                    isFound = true;
+                    break;
+                }
+            }
+
+            foreach (var presenter in presenters)
+            {
+                if (LmsUserIsAcUser(lmsUser, presenter))
+                {
+                    lmsUser.ac_id = presenter.PrincipalId;
+                    lmsUser.ac_role = "Presenter";
+                    isFound = true;
+                    break;
+                }
+            }
+
+            foreach (var participant in participants)
+            {
+                if (LmsUserIsAcUser(lmsUser, participant))
+                {
+                    lmsUser.ac_id = participant.PrincipalId;
+                    lmsUser.ac_role = "Participant";
+                    isFound = true;
+                    break;
+                }
+            }
+
+            if (!isFound)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -1345,23 +1524,22 @@
         {
             PermissionInfo permissionInfo;
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
+            var flags = this.GetMeetingFlags(provider, credentials, param.course_id, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login);
+
             var ret = new MeetingDTO
                           {
                               id = result.ScoId, 
                               ac_room_url = result.UrlPath.Trim("/".ToCharArray()), 
-                              name =
-                                  result.Name.Substring(
-                                      bracketIndex < 0 || (bracketIndex + 2 > result.Name.Length)
-                                          ? 0
-                                          : bracketIndex + 2), 
+                              name = result.Name.Substring(bracketIndex < 0 || (bracketIndex + 2 > result.Name.Length) ? 0 : bracketIndex + 2), 
                               summary = result.Description, 
                               template = result.SourceScoId, 
                               start_date = result.BeginDate.ToString("yyyy-MM-dd"), 
                               start_time = result.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture), 
                               duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"), 
                               connect_server = credentials.AcServer, 
-                              access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString(): string.Empty, 
-                              can_join = this.CanJoin(provider, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login), 
+                              access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString() : string.Empty, 
+                              can_join = flags.Item1, 
+                              are_users_synched = flags.Item2,
                               is_editable = this.CanEdit(param)
                           };
             return ret;
@@ -1499,22 +1677,51 @@
                     }
                 }
 
-                var permission = MeetingPermissionId.view;
-                string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-
-                if (role.Contains("teacher"))
-                {
-                    permission = MeetingPermissionId.host;
-                }
-                else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner"))
-                {
-                    permission = MeetingPermissionId.mini_host;
-                }
-
                 if (principal != null)
                 {
-                    provider.UpdateScoPermissionForPrincipal(meetingScoId, principal.PrincipalId, permission);
+                    this.SetLMSUserDefaultACPermissions(provider, meetingScoId, u, principal.PrincipalId);
                 }
+            }
+        }
+
+        /// <summary>
+        /// The set LMS user default AC permissions.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="meetingScoId">
+        /// The meeting SCO id.
+        /// </param>
+        /// <param name="u">
+        /// The user.
+        /// </param>
+        /// <param name="principal">
+        /// The principal.
+        /// </param>
+        private void SetLMSUserDefaultACPermissions(
+            AdobeConnectProvider provider,
+            string meetingScoId,
+            LmsUserDTO u,
+            string principalId)
+        {
+            var permission = MeetingPermissionId.view;
+            u.ac_role = "Participant";
+            string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
+            if (role.Contains("teacher"))
+            {
+                permission = MeetingPermissionId.host;
+                u.ac_role = "Host";
+            }
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner"))
+            {
+                u.ac_role = "Presenter";
+                permission = MeetingPermissionId.mini_host;
+            }
+
+            if (!string.IsNullOrWhiteSpace(principalId))
+            {
+                provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
             }
         }
 

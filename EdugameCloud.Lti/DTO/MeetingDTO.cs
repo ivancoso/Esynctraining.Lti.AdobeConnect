@@ -47,7 +47,7 @@
         public string id { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is_editable.
+        /// Gets or sets a value indicating whether is editable.
         /// </summary>
         [DataMember]
         public bool is_editable { get; set; }
@@ -81,6 +81,12 @@
         /// </summary>
         [DataMember]
         public string template { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether users are synched.
+        /// </summary>
+        [DataMember]
+        public bool are_users_synched { get; set; }
 
         #endregion
     }
