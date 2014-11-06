@@ -5,7 +5,6 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Threading;
     using System.Web.Security;
 
     using EdugameCloud.Core.Business.Models;
@@ -1481,11 +1480,9 @@
 
                     foreach (var session in sessionList)
                     {
-                        var singleAttendance = session.participants.GroupBy(p => p.login)
+                        var singleAttendance = session.participants.GroupBy(p => p.loginOrFullName)
                             .ToDictionary(g => g.Key, g => g.ToList());
-                        foreach (
-                            var attendance in
-                                singleAttendance.Where(a => !string.IsNullOrWhiteSpace(a.Key) && a.Value.Count > 1))
+                        foreach (var attendance in singleAttendance.Where(a => !string.IsNullOrWhiteSpace(a.Key) && a.Value.Count > 1))
                         {
                             attendance.Value.Skip(1).ToList().ForEach(p => session.participants.Remove(p));
                             var attendee = attendance.Value.First();

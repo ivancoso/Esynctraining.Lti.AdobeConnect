@@ -8,15 +8,9 @@
     /// </summary>
     [DataContract]
     // ReSharper disable once InconsistentNaming
-    public class ACSessionParticipantDTO
+    public class ACSessionParticipantDTO : IComparable<ACSessionParticipantDTO>
     {
         #region Public Properties
-
-        /// <summary>
-        ///     Gets or sets the ac session participant id.
-        /// </summary>
-        [DataMember]
-        public int acSessionParticipantId { get; set; }
 
         /// <summary>
         ///     Gets or sets the date entered.
@@ -43,6 +37,28 @@
         public string login { get; set; }
 
         /// <summary>
+        ///     Gets login of full name.
+        /// </summary>
+        public string loginOrFullName
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(this.login) ? this.login : this.fullName;
+            }
+        }
+
+        /// <summary>
+        /// Gets the full name.
+        /// </summary>
+        public string fullName
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.lastName) ? this.firstName : string.Format("{0} {1}", this.firstName, this.lastName);
+            }
+        }
+
+        /// <summary>
         ///     Gets or sets the first name.
         /// </summary>
         [DataMember]
@@ -60,5 +76,19 @@
         public int transcriptId { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// The compare to.
+        /// </summary>
+        /// <param name="other">
+        /// The other.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int CompareTo(ACSessionParticipantDTO other)
+        {
+            return string.Compare(this.loginOrFullName, other.loginOrFullName, StringComparison.Ordinal);
+        }
     }
 }
