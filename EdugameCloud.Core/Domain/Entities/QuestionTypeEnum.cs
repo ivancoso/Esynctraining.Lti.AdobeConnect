@@ -98,6 +98,11 @@
         /// <summary>
         /// The multiple dropdowns.
         /// </summary>
-        MultipleDropdowns = 20
+        MultipleDropdowns = 20,
+
+        /// <summary>
+        /// The text no question.
+        /// </summary>
+        TextNoQuestion = 21
     }
 }

@@ -83,6 +83,11 @@
         /// </summary>
         public virtual string Email { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms user parameters.
+        /// </summary>
+        public virtual LmsUserParameters LmsUserParameters { get; set; }
+
         #endregion
     }
 }

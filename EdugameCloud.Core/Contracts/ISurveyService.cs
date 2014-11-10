@@ -132,17 +132,14 @@
         /// <param name="userId">
         /// The id.
         /// </param>
-        /// <param name="courseId">
-        /// The course id
-        /// </param>
-        /// <param name="provider">
-        /// The provider
+        /// <param name="lmsUserParametersId">
+        /// The lms User Parameters Id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseId, string provider);
+        ServiceResponse<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int lmsUserParametersId);
 
         /// <summary>
         /// The save.

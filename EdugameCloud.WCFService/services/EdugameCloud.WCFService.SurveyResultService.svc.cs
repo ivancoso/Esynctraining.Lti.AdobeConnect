@@ -56,6 +56,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// Gets the lms user parameters model.
+        /// </summary>
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -237,6 +248,7 @@ namespace EdugameCloud.WCFService
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
             instance.Survey = this.SurveyModel.GetOneById(resultDTO.surveyId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
+            instance.LmsUserParameters = LmsUserParametersModel.GetOneById(resultDTO.lmsUserParametersId).Value;
             return instance;
         }
 

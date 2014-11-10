@@ -21,6 +21,8 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
 
+    using FluentNHibernate.Conventions.AcceptanceCriteria;
+
     /// <summary>
     /// The LMS service.
     /// </summary>
@@ -54,6 +56,17 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// Gets the survey model.
+        /// </summary>
+        private SurveyModel SurveyModel
+        {
+            get
+            {
+                return IoC.Resolve<SurveyModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private LmsUserParametersModel LmsUserParametersModel
@@ -64,6 +77,9 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// Gets the lms course meeting model.
+        /// </summary>
         private LmsCourseMeetingModel LmsCourseMeetingModel
         {
             get
@@ -86,65 +102,6 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The get quizzes for user.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="lmsUserParametersId">
-        /// The lms User Parameters Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        public ServiceResponse<LmsQuizInfoDTO> GetQuizzesForUser(int userId, int lmsUserParametersId)
-        {
-            var ret = new ServiceResponse<LmsQuizInfoDTO>();
-
-            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId);
-
-            if (lmsUserParameters.Value != null)
-            {
-                var user = UserModel.GetOneById(userId);
-                var companyLms = lmsUserParameters.Value.CompanyLms;
-
-                var course = CourseAPI.GetCourse(
-                    companyLms.LmsDomain,
-                    lmsUserParameters.Value.LmsUser.Token,
-                    lmsUserParameters.Value.Course);
-                
-                IEnumerable<LmsQuizDTO> quizzesForCourse = CourseAPI.GetQuizzesForCourse(
-                    false, 
-                    companyLms.LmsDomain, 
-                    lmsUserParameters.Value.LmsUser.Token, 
-                    lmsUserParameters.Value.Course,
-                    null);
-
-                ret.objects = quizzesForCourse.Select(
-                    q =>
-                        {
-                            var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, (int)LmsProviderEnum.Canvas).Value;
-
-                            return new LmsQuizInfoDTO()
-                                       {
-                                           id = q.id, 
-                                           name = q.title,
-                                           course = course.id,
-                                           courseName = course.name,
-                                           lastModifiedEGC = egcQuiz != null ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp() : 0,
-                                           isPublished = q.published
-                                       };
-                        });
-            }
-            else
-            {
-                ret.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found"));
-            }            
-
-            return ret;
-        }
 
         /// <summary>
         /// The get authentication parameters by id.
@@ -189,6 +146,23 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The get quizzes for user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms User Parameters Id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<LmsQuizInfoDTO> GetQuizzesForUser(int userId, int lmsUserParametersId)
+        {
+            return this.GetItemsForUser(userId, lmsUserParametersId, false);
+        }
+
+        /// <summary>
         /// The convert quizzes.
         /// </summary>
         /// <param name="userId">
@@ -205,13 +179,159 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, List<int> quizIds)
         {
-            var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
+            return this.Convert(userId, lmsUserParametersId, quizIds, false) as ServiceResponse<QuizesAndSubModuleItemsDTO>;
+        }
 
+        /// <summary>
+        /// The get surveys for user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<LmsQuizInfoDTO> GetSurveysForUser(int userId, int lmsUserParametersId)
+        {
+            return this.GetItemsForUser(userId, lmsUserParametersId, true);
+        }
+
+        /// <summary>
+        /// The convert surveys.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(
+            int userId,
+            int lmsUserParametersId,
+            List<int> quizIds)
+        {
+            return this.Convert(userId, lmsUserParametersId, quizIds, true) as ServiceResponse<SurveysAndSubModuleItemsDTO>;
+        }
+
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// The get items for user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        private ServiceResponse<LmsQuizInfoDTO> GetItemsForUser(int userId, int lmsUserParametersId, bool isSurvey)
+        {
+            var ret = new ServiceResponse<LmsQuizInfoDTO>();
+
+            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId);
+
+            if (lmsUserParameters.Value != null)
+            {
+                var user = UserModel.GetOneById(userId);
+                var companyLms = lmsUserParameters.Value.CompanyLms;
+
+                var course = CourseAPI.GetCourse(
+                    companyLms.LmsDomain,
+                    lmsUserParameters.Value.LmsUser.Token,
+                    lmsUserParameters.Value.Course);
+
+                IEnumerable<LmsQuizDTO> quizzesForCourse = CourseAPI.GetQuizzesForCourse(
+                    false,
+                    companyLms.LmsDomain,
+                    lmsUserParameters.Value.LmsUser.Token,
+                    lmsUserParameters.Value.Course,
+                    null,
+                    isSurvey);
+
+                ret.objects = quizzesForCourse.Select(
+                    q =>
+                        {
+                            int lastModified = 0;
+                            if (isSurvey)
+                            {
+                                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.Value.Id, q.id, (int)LmsProviderEnum.Canvas).Value;
+                                lastModified = egcSurvey != null
+                                                   ? egcSurvey.SubModuleItem.DateModified.ConvertToTimestamp()
+                                                   : 0;
+                            }
+                            else
+                            {
+                                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, (int)LmsProviderEnum.Canvas).Value;
+                                lastModified = egcQuiz != null
+                                                   ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp()
+                                                   : 0;
+                            }
+                        
+
+                        return new LmsQuizInfoDTO()
+                        {
+                            id = q.id,
+                            name = q.title,
+                            course = course.id,
+                            courseName = course.name,
+                            lastModifiedEGC = lastModified,
+                            isPublished = q.published
+                        };
+                    });
+            }
+            else
+            {
+                ret.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found"));
+            }
+
+            return ret;
+        }
+
+
+
+        /// <summary>
+        /// The convert quizzes.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        private ServiceResponse Convert(int userId, int lmsUserParametersId, List<int> quizIds, bool isSurvey)
+        {
             if (quizIds == null)
             {
-                return serviceResponse;
+                return null;
             }
-            
+
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
 
             if (lmsUserParameters != null)
@@ -224,57 +344,56 @@ namespace EdugameCloud.WCFService
                     lmsUserParameters.Course);
 
                 IEnumerable<LmsQuizDTO> quizzes = CourseAPI.GetQuizzesForCourse(
-                    true, 
-                    companyLms.LmsDomain, 
-                    companyLms.AdminUser.Token, 
+                    true,
+                    companyLms.LmsDomain,
+                    companyLms.AdminUser.Token,
                     lmsUserParameters.Course,
-                    quizIds);
-                
-                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, course, user);
+                    quizIds,
+                    isSurvey);
 
-                var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
-                var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.LmsProvider.Id);
+                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, course, user, isSurvey);
 
-                serviceResponse.@object = new QuizesAndSubModuleItemsDTO
+                if (isSurvey)
                 {
-                    quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
-                    subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
-                };
+                    var serviceResponse = new ServiceResponse<SurveysAndSubModuleItemsDTO>();
+
+                    var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
+                    var surveys = this.SurveyModel.GetLmsSurveys(user.Id, lmsUserParameters.Course, companyLms.LmsProvider.Id);
+
+                    serviceResponse.@object = new SurveysAndSubModuleItemsDTO
+                    {
+                        surveys = subModuleItemsQuizes.Select(x => surveys.FirstOrDefault(q => q.surveyId == x.Value)).ToList(),
+                        subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
+                    };
+                    return serviceResponse;
+                }
+                else
+                {
+                    var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
+
+                    var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
+                    var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.LmsProvider.Id);
+
+                    serviceResponse.@object = new QuizesAndSubModuleItemsDTO
+                    {
+                        quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
+                        subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
+                    };
+                    return serviceResponse;
+                }
             }
             else
             {
+                var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
+
+
                 serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found"));
-            }    
-            
-            return serviceResponse;
-        }
-        
-        /*
-        public void SaveAnswers()
-        {
-            List<LmsQuizDTO> quizzes = CourseAPI.GetQuizzesForCourse(true, "canvas.instructure.com", TeacherToken, 875207);
-
-            foreach (LmsQuizDTO q in quizzes)
-            {
-                List<QuizSubmissionDTO> s = CourseAPI.GetSubmissionForQuiz(
-                    "canvas.instructure.com", 
-                    StudentToken, 
-                    875207, 
-                    q.id);
-                foreach (QuizSubmissionDTO subm in s)
-                {
-                    // subm.access_code = StudentToken;
-                    foreach (QuizQuestionDTO quest in q.questions.Take(2))
-                    {
-                        subm.quiz_questions.Add(new QuizSubmissionQuestionDTO { id = quest.id, answer = quest.answers.Last().id });
-                    }
-
-                    CourseAPI.AnswerQuestionsForQuiz("canvas.instructure.com", StudentToken, subm);
-                    CourseAPI.ReturnSubmissionForQuiz("canvas.instructure.com", StudentToken, 875207, subm);
-                }
+                return serviceResponse;
             }
+
+            return null;
         }
-        */
+
         #endregion
     }
 }

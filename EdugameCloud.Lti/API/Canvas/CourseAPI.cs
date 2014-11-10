@@ -78,7 +78,6 @@
                 string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id), 
                 Method.POST, 
                 usertoken);
-            request.AddParameter("per_page", 100);
             request.RequestFormat = DataFormat.Json;
             request.AddBody(submission);
 
@@ -212,10 +211,19 @@
         /// <param name="quizIds">
         /// The quiz Ids.
         /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
         /// <returns>
         /// The <see cref="List{QuizDTO}"/>.
         /// </returns>
-        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(bool detailed, string api, string usertoken, int courseid, IEnumerable<int> quizIds)
+        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(
+            bool detailed,
+            string api,
+            string usertoken,
+            int courseid,
+            IEnumerable<int> quizIds,
+            bool isSurvey)
         {
             var ret = new List<LmsQuizDTO>();
             var client = CreateRestClient(api);
@@ -232,6 +240,11 @@
             {
                 response.Data = response.Data.Where(q => quizIds.Contains(q.id)).ToList();
             }
+            response.Data =
+                response.Data.Where(
+                    q =>
+                    isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
+                    .ToList();
 
             if (detailed)
             {

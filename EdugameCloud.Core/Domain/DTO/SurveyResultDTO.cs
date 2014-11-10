@@ -40,6 +40,7 @@
             this.startTime = result.StartTime;
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
+            this.lmsUserParametersId = result.LmsUserParameters.Return(l => l.Id, 0);
         }
 
         #endregion
@@ -111,6 +112,12 @@
         /// </summary>
         [DataMember]
         public DateTime startTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the lms user parameters id.
+        /// </summary>
+        [DataMember]
+        public int lmsUserParametersId { get; set; }
 
         #endregion
     }

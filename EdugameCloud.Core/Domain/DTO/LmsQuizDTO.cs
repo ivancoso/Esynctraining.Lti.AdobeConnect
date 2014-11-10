@@ -32,6 +32,11 @@
         /// </summary>
         public bool published { get; set; }
 
+        /// <summary>
+        /// Gets or sets the quiz_type.
+        /// </summary>
+        public string quiz_type { get; set; }
+
         #endregion
     }
 }

@@ -64,5 +64,38 @@
         /// </returns>
         [OperationContract]
         ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(int userId, int lmsUserParametersId, List<int> quizIds);
+
+        /// <summary>
+        /// The get surveys for user.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<LmsQuizInfoDTO> GetSurveysForUser(int userId, int lmsUserParametersId);
+
+        /// <summary>
+        /// The convert surveys.
+        /// </summary>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
+        /// <param name="lmsUserParametersId">
+        /// The lms user parameters id.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(int userId, int lmsUserParametersId, List<int> quizIds);
     }
 }

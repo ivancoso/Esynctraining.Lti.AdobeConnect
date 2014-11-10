@@ -12,6 +12,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Converters;
     using EdugameCloud.WCFService.Base;
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
@@ -93,6 +94,17 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<QuestionModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the quiz result converter.
+        /// </summary>
+        private QuizResultConverter QuizResultConverter
+        {
+            get
+            {
+                return IoC.Resolve<QuizResultConverter>();
             }
         }
 
@@ -198,6 +210,7 @@ namespace EdugameCloud.WCFService
             }
 
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
+            this.QuizResultConverter.ConvertAndSendSurveyResult(results);
             return result;
         }
 

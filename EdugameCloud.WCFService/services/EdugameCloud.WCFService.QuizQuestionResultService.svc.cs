@@ -273,7 +273,7 @@ namespace EdugameCloud.WCFService
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
 
             this.SendResultsToMoodle(results);
-            QuizResultConverter.ConvertAndSendResult(results);
+            QuizResultConverter.ConvertAndSendQuizResult(results);
 
 
             return result;

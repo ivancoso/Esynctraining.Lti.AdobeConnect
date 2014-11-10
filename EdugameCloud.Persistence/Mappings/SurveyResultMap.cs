@@ -24,6 +24,7 @@
             this.Map(x => x.Email).Nullable();
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             this.References(x => x.Survey).Not.Nullable();
+            this.References(x => x.LmsUserParameters).Nullable();
         }
 
         #endregion
