@@ -358,11 +358,11 @@
             {
                 RestRequest request = CreateRequest(
                     api, 
-                    string.Format("/api/v1/courses/{0}/users", courseid),
+                    string.Format("/api/v1/courses/{0}/users?enrollment_type={1}", courseid,role),
                     Method.GET, 
                     usertoken);
-                request.AddParameter("per_page", 100);
-                request.AddParameter("enrollment_type", role);
+                //request.AddParameter("per_page", 100);
+                //request.AddParameter("enrollment_type", role);
 
                 IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
 

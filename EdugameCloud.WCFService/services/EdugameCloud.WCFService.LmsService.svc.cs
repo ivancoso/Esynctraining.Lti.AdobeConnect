@@ -19,6 +19,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using FluentNHibernate.Conventions.AcceptanceCriteria;
@@ -342,11 +343,14 @@ namespace EdugameCloud.WCFService
                     companyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     lmsUserParameters.Course);
+                var token = lmsUserParameters.LmsUser.Return(
+                    u => u.Token,
+                    companyLms.AdminUser.Return(a => a.Token, string.Empty));
 
                 IEnumerable<LmsQuizDTO> quizzes = CourseAPI.GetQuizzesForCourse(
                     true,
                     companyLms.LmsDomain,
-                    companyLms.AdminUser.Token,
+                    token,
                     lmsUserParameters.Course,
                     quizIds,
                     isSurvey);

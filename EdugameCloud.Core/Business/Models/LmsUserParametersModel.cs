@@ -7,6 +7,7 @@
     using Esynctraining.Core.Business.Queries;
 
     using NHibernate;
+    using NHibernate.Criterion;
     using NHibernate.SqlCommand;
 
     /// <summary>
@@ -63,11 +64,15 @@
         /// </returns>
         public IFutureValue<LmsUserParameters> GetOneForLogin(string id, string adobeConectDomain, int courseId)
         {
+            if (adobeConectDomain.EndsWith("/"))
+            {
+                adobeConectDomain = adobeConectDomain.Remove(adobeConectDomain.Length - 1);
+            }
             CompanyLms clms = null;
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
                 .Where(x => x.AcId == id && x.Course == courseId)
                 .JoinQueryOver(x => x.CompanyLms, () => clms, JoinType.InnerJoin)
-                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain + "%");
+                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain, MatchMode.Start);
             return this.Repository.FindOne(queryOver);
         }
 

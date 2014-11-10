@@ -1214,9 +1214,13 @@
             switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
+                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                    var token = lmsUser.Return(
+                            u => u.Token,
+                            credentials.AdminUser.Return(a => a.Token, string.Empty));
                     CourseAPI.CreateAnnouncement(
                         credentials.LmsDomain,
-                        credentials.AdminUser.Token,
+                        token,
                         param.course_id,
                         announcementTitle,
                         announcementMessage);
@@ -1301,9 +1305,9 @@
         private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, int canvasUserId, int canvasCourseId)
         {
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(canvasUserId, credentials.Id).Value;
-            var token = lmsUser != null
-                            ? lmsUser.Token
-                            : (credentials.AdminUser != null ? credentials.AdminUser.Token : string.Empty);
+            var token = lmsUser.Return(
+                    u => u.Token,
+                    credentials.AdminUser.Return(a => a.Token, string.Empty));
 
             List<LmsUserDTO> users = CourseAPI.GetUsersForCourse(
                 credentials.LmsDomain, 

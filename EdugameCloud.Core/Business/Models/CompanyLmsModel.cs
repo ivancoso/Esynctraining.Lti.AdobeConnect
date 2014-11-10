@@ -8,6 +8,7 @@
     using Esynctraining.Core.Business.Queries;
 
     using NHibernate;
+    using NHibernate.Criterion;
 
     /// <summary>
     /// The company LMS model.
@@ -75,8 +76,13 @@
         /// </returns>
         public IFutureValue<CompanyLms> GetOneByAcDomain(string adobeConnectDomain)
         {
+            if (adobeConnectDomain.EndsWith("/"))
+            {
+                adobeConnectDomain = adobeConnectDomain.Remove(adobeConnectDomain.Length - 1);
+            }
             var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
-                .Where(x => x.AcServer == adobeConnectDomain).Take(1);
+                .WhereRestrictionOn(x => x.AcServer).IsInsensitiveLike(adobeConnectDomain, MatchMode.Start)
+                .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 
