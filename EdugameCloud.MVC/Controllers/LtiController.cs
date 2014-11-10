@@ -496,12 +496,14 @@
                 credentials = this.GetCredentials(providerName);
                 this.SetDebugModelValues(model, providerName);
             }
-
+            
+            /*
             if (credentials.AdminUser == null && !this.IsAdminRole(providerName))
             {
                 this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
                 return this.View("Error");
             }
+            */
 
             this.AddSessionCookie(this.Session.SessionID);
 
@@ -721,13 +723,12 @@
         /// </param>
         private void AddSessionCookie(string newId)
         {
-            this.Response.Cookies.Add(
-                new HttpCookie(this.Settings.SessionCookieName, newId)
-                    {
-                        Domain = this.Settings.CookieDomain, 
-                        Secure = true, 
-                        Path = this.Settings.CookiePath
-                    });
+            this.Response.Cookies.Remove(this.Settings.SessionCookieName);
+            var sessionCookie = new HttpCookie(this.Settings.SessionCookieName, newId);
+
+            sessionCookie.Expires = DateTime.Now.AddMinutes(Session.Timeout);
+
+            this.Response.Cookies.Add(sessionCookie);
         }
 
         /// <summary>
@@ -783,7 +784,7 @@
                 return this.IsDebug;
             }
 
-            return param.roles.Contains("Administrator") || param.roles.Contains("Instructor");
+            return param.roles.Contains("Administrator");
         }
 
         /// <summary>

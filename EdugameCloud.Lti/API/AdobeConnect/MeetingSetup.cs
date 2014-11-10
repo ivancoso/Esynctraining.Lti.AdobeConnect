@@ -263,7 +263,7 @@
             Justification = "Reviewed. Suppression is OK here.")]
         public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.course_id);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id);
 
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
@@ -680,7 +680,7 @@
                 meeting.ScoId = result.ScoInfo.ScoId;
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
 
-                this.SetDefaultUsers(credentials, provider, meeting.CourseId, result.ScoInfo.ScoId);
+                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId);
 
                 this.CreateAnnouncement(
                     credentials, 
@@ -1010,6 +1010,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="lmsUserId">
+        /// The lms User Id.
+        /// </param>
         /// <param name="courseId">
         /// The course Id.
         /// </param>
@@ -1025,7 +1028,14 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private Tuple<bool, bool> GetMeetingFlags(AdobeConnectProvider provider, CompanyLms credentials, int courseId, string meetingSco, string email, string login)
+        private Tuple<bool, bool> GetMeetingFlags(
+            AdobeConnectProvider provider,
+            CompanyLms credentials,
+            int lmsUserId,
+            int courseId,
+            string meetingSco,
+            string email,
+            string login)
         {
             bool canJoin = false;
             bool areUsersSynched = true;
@@ -1043,7 +1053,7 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, courseId, hosts, presenters, participants);
+                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1073,6 +1083,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="lmsUserId">
+        /// The lms User Id.
+        /// </param>
         /// <param name="courseId">
         /// The course id.
         /// </param>
@@ -1090,12 +1103,13 @@
         /// </returns>
         private bool AreUsersSynched(
             CompanyLms credentials,
+            int lmsUserId,
             int courseId,
             List<PermissionInfo> hosts,
             List<PermissionInfo> presenters,
             List<PermissionInfo> participants)
         {
-            var lmsUsers = this.GetLMSUsers(credentials, courseId);
+            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId);
             foreach (var lmsUser in lmsUsers)
             {
                 if (!IsUserSynched(hosts, presenters, participants, lmsUser))
@@ -1275,17 +1289,25 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="canvasUserId">
+        /// The canvas User Id.
+        /// </param>
         /// <param name="canvasCourseId">
         /// The canvas course id.
         /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, int canvasCourseId)
+        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, int canvasUserId, int canvasCourseId)
         {
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(canvasUserId, credentials.Id).Value;
+            var token = lmsUser != null
+                            ? lmsUser.Token
+                            : (credentials.AdminUser != null ? credentials.AdminUser.Token : string.Empty);
+
             List<LmsUserDTO> users = CourseAPI.GetUsersForCourse(
                 credentials.LmsDomain, 
-                credentials.AdminUser.Token, 
+                token, 
                 canvasCourseId);
             return this.GroupUsers(users);
         }
@@ -1296,18 +1318,21 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="lmsUserId">
+        /// The lms User Id.
+        /// </param>
         /// <param name="courseId">
         /// The course id.
         /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, int courseId)
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, int lmsUserId, int courseId)
         {
             switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
-                    return this.GetCanvasUsers(credentials, courseId);
+                    return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
                     return this.GetBrainHoneyUsers(credentials, courseId);
             }
@@ -1533,7 +1558,7 @@
         {
             PermissionInfo permissionInfo;
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var flags = this.GetMeetingFlags(provider, credentials, param.course_id, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login);
+            var flags = this.GetMeetingFlags(provider, credentials, param.lms_user_id, param.course_id, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login);
 
             var ret = new MeetingDTO
                           {
@@ -1648,6 +1673,9 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
+        /// <param name="lmsUserId">
+        /// The lms User Id.
+        /// </param>
         /// <param name="courseId">
         /// The LMS course id.
         /// </param>
@@ -1657,10 +1685,11 @@
         private void SetDefaultUsers(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
+            int lmsUserId,
             int courseId, 
             string meetingScoId)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, courseId);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId);
 
 
             foreach (LmsUserDTO u in users)
