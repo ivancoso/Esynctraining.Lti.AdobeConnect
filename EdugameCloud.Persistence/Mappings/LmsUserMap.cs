@@ -18,6 +18,7 @@
             this.Map(x => x.Username).Nullable();
             this.Map(x => x.Password).Nullable();
             this.Map(x => x.Token).Nullable();
+            this.Map(x => x.AcConnectionMode).Default("0");
 
             this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
 

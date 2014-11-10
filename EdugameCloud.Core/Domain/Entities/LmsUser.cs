@@ -22,6 +22,11 @@
         public virtual CompanyLms CompanyLms { get; set; }
 
         /// <summary>
+        /// Gets or sets the AC connection mode.
+        /// </summary>
+        public virtual AcConnectionMode AcConnectionMode { get; set; }
+
+        /// <summary>
         /// Gets or sets the password.
         /// </summary>
         public virtual string Password { get; set; }

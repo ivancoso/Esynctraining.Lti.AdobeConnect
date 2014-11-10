@@ -42,8 +42,7 @@
         /// </returns>
         public IFutureValue<LmsUser> GetOneByUserIdAndCompanyLms(int userId, int companyLmsId)
         {
-            var queryOver =
-                new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId && u.CompanyLms.Id == companyLmsId);
+            var queryOver = new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId && u.CompanyLms.Id == companyLmsId);
             return this.Repository.FindOne(queryOver);
         }
 

@@ -416,121 +416,152 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param)
+        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings)
         {
-            AdobeConnectProvider provider = this.GetProvider(credentials);
+            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
+            string breezeToken = string.Empty, meetingUrl = string.Empty;
 
-            string breezeToken, meetingUrl = string.Empty;
+                AdobeConnectProvider provider = this.GetProvider(credentials);
 
-            this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+                this.LmsCourseMeetingModel.Flush();
+                LmsCourseMeeting currentMeeting =
+                    this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
 
-            string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
+                string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
 
-            if (!string.IsNullOrEmpty(currentMeetingScoId))
-            {
-                ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
-                if (currentMeetingSco != null)
+                if (!string.IsNullOrEmpty(currentMeetingScoId))
                 {
-                    meetingUrl = (credentials.AcServer.EndsWith("/")
-                                      ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
-                                      : credentials.AcServer) + currentMeetingSco.UrlPath;
+                    ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
+                    if (currentMeetingSco != null)
+                    {
+                        meetingUrl = (credentials.AcServer.EndsWith("/")
+                                          ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
+                                          : credentials.AcServer) + currentMeetingSco.UrlPath;
+                    }
                 }
-            }
 
-            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
+                string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-            string password = email != credentials.AcUsername
-                                  ? Membership.GeneratePassword(8, 2)
-                                  : credentials.AcPassword;
+                var password = this.GetACPassword(credentials, userSettings, email, login);
 
-            Principal registeredUser = this.GetACUser(provider, login, email);
+                Principal registeredUser = this.GetACUser(provider, login, email);
 
-            if (registeredUser != null)
-            {
-                breezeToken = this.LoginIntoAC(credentials, param, registeredUser, email, login, password, provider);
-                this.SaveLMSUserParameters(param, credentials, registeredUser.PrincipalId);
-            }
-            else
-            {
-                return param.launch_presentation_return_url;
-            }
+                if (registeredUser != null)
+                {
+                    if (connectionMode != AcConnectionMode.DontOverwriteACPassword)
+                    {
+                        breezeToken = this.LoginIntoAC(
+                            credentials,
+                            param,
+                            registeredUser,
+                            connectionMode,
+                            email,
+                            login,
+                            password,
+                            provider);
+                    }
 
-            return meetingUrl + "?session=" + breezeToken;
+                    this.SaveLMSUserParameters(param, credentials, registeredUser.PrincipalId);
+                }
+                else
+                {
+                    return param.launch_presentation_return_url;
+                }
+
+            return string.IsNullOrWhiteSpace(breezeToken) ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken);
         }
 
         /// <summary>
         /// The join recording.
         /// </summary>
         /// <param name="credentials">
-        /// The credentials.
+        ///     The credentials.
         /// </param>
         /// <param name="param">
-        /// The parameter.
+        ///     The parameter.
+        /// </param>
+        /// <param name="userSettings">
+        ///     The user settings
         /// </param>
         /// <param name="recordingUrl">
-        /// The recording url.
+        ///     The recording url.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, string recordingUrl)
+        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl)
         {
-            AdobeConnectProvider provider = this.GetProvider(credentials);
+            var breezeToken = string.Empty;
 
-            string breezeToken;
-
-            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
-
-            string password = email != credentials.AcUsername
-                                  ? Membership.GeneratePassword(8, 2)
-                                  : credentials.AcPassword;
-
-            Principal registeredUser = this.GetACUser(provider, login, email);
-
-            if (registeredUser != null)
+            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
+            if (connectionMode == AcConnectionMode.Overwrite
+                || connectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                if (email != credentials.AcUsername)
-                {
-                    provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
-                }
+                AdobeConnectProvider provider = this.GetProvider(credentials);
 
-                provider.PrincipalUpdate(
-                    new PrincipalSetup
-                        {
-                            PrincipalId = registeredUser.PrincipalId, 
-                            FirstName = param.lis_person_name_given, 
-                            LastName = param.lis_person_name_family, 
-                            Name = registeredUser.Name, 
-                            Login = registeredUser.Login, 
-                            Email = registeredUser.Email, 
-                            HasChildren = registeredUser.HasChildren
-                        });
+                string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-                LoginResult resultByLogin = provider.Login(new UserCredentials(HttpUtility.UrlEncode(login), password));
-                if (resultByLogin.Success)
+                var password = this.GetACPassword(credentials, userSettings, email, login);
+
+                Principal registeredUser = this.GetACUser(provider, login, email);
+
+                if (registeredUser != null)
                 {
-                    breezeToken = resultByLogin.Status.SessionInfo;
+                    breezeToken = this.LoginIntoAC(credentials, param, registeredUser, connectionMode, email, login, password, provider);
                 }
                 else
                 {
-                    LoginResult resultByEmail =
-                        provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
-                    breezeToken = resultByEmail.Status.SessionInfo;
+                    return param.launch_presentation_return_url;
                 }
             }
-            else
-            {
-                return param.launch_presentation_return_url;
-            }
 
-            return credentials.AcServer
-                   + (credentials.AcServer != null && credentials.AcServer.Last() == '/' ? string.Empty : "/")
-                   + recordingUrl + "?session=" + breezeToken;
+            var baseUrl = credentials.AcServer
+                          + (credentials.AcServer != null && credentials.AcServer.EndsWith(@"/") ? string.Empty : "/")
+                          + recordingUrl;
+
+            return string.IsNullOrWhiteSpace(breezeToken) ? baseUrl : string.Format("{0}?session={1}", baseUrl, breezeToken);
+        }
+
+        /// <summary>
+        /// The get AC password.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetACPassword(CompanyLms credentials, LmsUserSettingsDTO userSettings, string email, string login)
+        {
+            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
+            switch (connectionMode)
+            {
+                case AcConnectionMode.Overwrite:
+                    string password = credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase) 
+                                        || credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
+                                          ? credentials.AcPassword
+                                          : Membership.GeneratePassword(8, 2);
+                    return password;
+                case AcConnectionMode.DontOverwriteLocalPassword:
+                    return userSettings.password;
+                default:
+                    return null;
+            }
         }
 
         /// <summary>
@@ -1595,6 +1626,9 @@
         /// <param name="registeredUser">
         /// The registered user.
         /// </param>
+        /// <param name="connectionMode">
+        /// The connection Mode.
+        /// </param>
         /// <param name="email">
         /// The email.
         /// </param>
@@ -1614,13 +1648,16 @@
             CompanyLms credentials, 
             LtiParamDTO param, 
             Principal registeredUser, 
+            AcConnectionMode connectionMode,
             string email, 
             string login, 
             string password, 
             AdobeConnectProvider provider)
         {
             string breezeToken;
-            if (email != credentials.AcUsername)
+            if (connectionMode == AcConnectionMode.Overwrite 
+                && !credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
+                && !credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase))
             {
                 provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
             }

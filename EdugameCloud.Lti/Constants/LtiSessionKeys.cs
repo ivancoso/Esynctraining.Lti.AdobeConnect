@@ -16,6 +16,11 @@
         public const string ParamSessionKeyPattern = "{0}Param";
 
         /// <summary>
+        ///     The AC password session key pattern.
+        /// </summary>
+        public const string ACPasswordSessionKeyPattern = "{0}ACPassword";
+
+        /// <summary>
         ///     The provider session key pattern.
         /// </summary>
         public const string ProviderSessionKeyPattern = "{0}Provider";

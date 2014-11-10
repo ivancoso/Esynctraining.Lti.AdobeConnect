@@ -16,6 +16,8 @@
         {
             this.Map(x => x.AcId).Length(10).Not.Nullable();
             this.Map(x => x.Course).Not.Nullable();
+            
+
             this.Map(x => x.Wstoken).Length(50).Nullable();
 
             this.References(x => x.LmsUser).Nullable();

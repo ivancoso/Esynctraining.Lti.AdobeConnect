@@ -21,7 +21,6 @@
 
     using Esynctraining.AC.Provider;
     using Esynctraining.Core.Providers;
-
     using Microsoft.Web.WebPages.OAuth;
 
     /// <summary>
@@ -225,6 +224,93 @@
         }
 
         /// <summary>
+        /// The save settings.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult SaveSettings(LmsUserSettingsDTO settings)
+        {
+            var lmsProviderName = settings.lmsProviderName;
+            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            if (lmsUser == null)
+            {
+                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id };
+            }
+
+            lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
+
+            if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
+            {
+                this.SetACPassword(companyLms, param, settings.password);
+            }
+            else
+            {
+                this.RemoveACPassword(companyLms, param);
+            }
+
+            this.lmsUserModel.RegisterSave(lmsUser);
+            settings.password = "saved";
+            return this.Json(settings);
+        }
+
+        /// <summary>
+        /// The check password before join.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS Provider Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult CheckPasswordBeforeJoin(string lmsProviderName)
+        {
+            bool isValid = false;
+            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            if (lmsUser != null)
+            {
+                var mode = lmsUser.AcConnectionMode;
+                switch (mode)
+                {
+                    case AcConnectionMode.DontOverwriteLocalPassword:
+                        isValid = !string.IsNullOrWhiteSpace(this.GetACPassword(companyLms, param));
+                        break;
+                    default:
+                        isValid = true;
+                        break;
+                }
+            }
+
+            return this.Json(new { isValid });
+        }
+
+        /// <summary>
+        /// The get settings.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS Provider Name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
+        public virtual JsonResult GetSettings(string lmsProviderName)
+        {
+            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var acConnectionMode = this.GetUserACConnectionMode(companyLms, param);
+
+            return this.Json(new LmsUserSettingsDTO { acConnectionMode = acConnectionMode, lmsProviderName = lmsProviderName, password = "saved" });
+        }
+
+        /// <summary>
         /// The delete recording.
         /// </summary>
         /// <param name="lmsProviderName">
@@ -354,6 +440,12 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
@@ -376,6 +468,12 @@
         /// </summary>
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
+        /// </param>
+        /// <param name="startIndex">
+        /// The start Index.
+        /// </param>
+        /// <param name="limit">
+        /// The limit.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -423,7 +521,8 @@
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
-            string url = this.MeetingSetup.JoinMeeting(credentials, param);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings);
 
             return this.Redirect(url);
         }
@@ -444,7 +543,8 @@
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
-            string url = this.MeetingSetup.JoinRecording(credentials, param, recordingUrl);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl);
 
             if (url == null)
             {
@@ -473,7 +573,6 @@
             string providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
                                       ? provider
                                       : model.tool_consumer_info_product_family_code.ToLower();
-            //// todo: we need to check keys and secrets here var result = ;
 
             CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
                     providerName, 
@@ -630,6 +729,56 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The get user AC connection mode.
+        /// </summary>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        private int GetUserACConnectionMode(CompanyLms companyLms, LtiParamDTO param)
+        {
+            int connectionMode = 0;
+            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            if (lmsUser != null)
+            {
+                connectionMode = (int)lmsUser.AcConnectionMode;
+            }
+
+            return connectionMode;
+        }
+
+        /// <summary>
+        /// The get LMS user settings for join.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The LMS provider name.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LmsUserSettingsDTO"/>.
+        /// </returns>
+        private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, CompanyLms companyLms, LtiParamDTO param)
+        {
+            var connectionMode = this.GetUserACConnectionMode(companyLms, param);
+            return new LmsUserSettingsDTO
+            {
+                acConnectionMode = connectionMode,
+                lmsProviderName = lmsProviderName,
+                password = this.GetACPassword(companyLms, param)
+            };
+        }
 
         /// <summary>
         /// The set debug model values.
@@ -839,6 +988,43 @@
         }
 
         /// <summary>
+        /// Gets the parameter.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LtiParamDTO"/>.
+        /// </returns>
+        private string GetACPassword(CompanyLms company, LtiParamDTO data)
+        {
+            var key = this.GetACPasswordSessionKey(company, data);
+            var model = this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] as string;
+            return model;
+        }
+
+        /// <summary>
+        /// Gets the parameter.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        private void RemoveACPassword(CompanyLms company, LtiParamDTO data)
+        {
+            if (!string.IsNullOrWhiteSpace(this.GetACPassword(company, data)))
+            {
+                var key = this.GetACPasswordSessionKey(company, data);
+                this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] = null;
+            }
+        }
+
+        /// <summary>
         /// Gets the provider.
         /// </summary>
         /// <param name="providerName">
@@ -966,6 +1152,45 @@
         }
 
         /// <summary>
+        /// Sets the parameter.
+        /// </summary>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <param name="adobeConnectPassword">
+        /// Adobe Connect password
+        /// </param>
+        private void SetACPassword(CompanyLms companyLms, LtiParamDTO data, string adobeConnectPassword)
+        {
+            var key = this.GetACPasswordSessionKey(companyLms, data);
+            this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] = adobeConnectPassword;
+        }
+
+        /// <summary>
+        /// The get ac password session key.
+        /// </summary>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetACPasswordSessionKey(CompanyLms companyLms, LtiParamDTO data)
+        {
+            var key = companyLms.AcServer.ToLowerInvariant()
+                      + (string.IsNullOrWhiteSpace(data.lis_person_contact_email_primary)
+                             ? data.lms_user_login
+                             : data.lis_person_contact_email_primary);
+            return key;
+        }
+
+        /// <summary>
         /// Sets the provider.
         /// </summary>
         /// <param name="providerName">
@@ -981,5 +1206,4 @@
 
         #endregion
     }
-
 }

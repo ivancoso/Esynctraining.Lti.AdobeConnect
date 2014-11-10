@@ -351,6 +351,7 @@
     <Compile Include="Domain\Entities\SurveyGroupingType.cs" />
     <Compile Include="Domain\Entities\Survey.cs" />
     <Compile Include="Domain\Entities\UserLoginHistory.cs" />
+    <Compile Include="Domain\Entities\ACConnectionMode.cs" />
     <Compile Include="Domain\Formats\Edugame\EdugameConverter.cs" />
     <Compile Include="Domain\Formats\Edugame\EdugameDistractor.cs" />
     <Compile Include="Domain\Formats\Edugame\EdugameQuestion.cs" />

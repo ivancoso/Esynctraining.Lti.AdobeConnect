@@ -30,7 +30,7 @@
         public virtual string Wstoken { get; set; }
 
         /// <summary>
-        /// Gets or sets the company lms.
+        /// Gets or sets the company LMS.
         /// </summary>
         public virtual CompanyLms CompanyLms { get; set; }
 
