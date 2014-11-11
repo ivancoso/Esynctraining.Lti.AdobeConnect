@@ -5,6 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Security.Policy;
     using System.Web.Security;
 
     using EdugameCloud.Core.Business.Models;
@@ -272,7 +273,8 @@
             }
 
             List<PermissionInfo> hosts, participants, presenters;
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants);
+            HashSet<string> nonEditable = new HashSet<string>();
+            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, ref nonEditable);
 
             foreach (LmsUserDTO lmsuser in users)
             {
@@ -287,6 +289,7 @@
                 }
 
                 user.ac_id = principal.PrincipalId;
+                user.is_editable = !nonEditable.Contains(user.ac_id);
                 
                 if (hosts.Any(v => v.PrincipalId == user.ac_id))
                 {
@@ -807,7 +810,8 @@
             }
 
             List<PermissionInfo> hosts, participants, presenters;
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants);
+            HashSet<string> nonEditable = new HashSet<string>();
+            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, ref nonEditable);
 
             foreach (var user in users)
             {
@@ -1075,7 +1079,8 @@
             if (registeredUser != null)
             {
                 List<PermissionInfo> hosts, presenters, participants;
-                this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants);
+                HashSet<string> nonEditable = new HashSet<string>();
+                this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants, ref nonEditable);
 
                 if (hosts.Any(h => h.PrincipalId == registeredUser.PrincipalId)
                     || presenters.Any(p => p.PrincipalId == registeredUser.PrincipalId)
@@ -1411,19 +1416,78 @@
         /// <param name="participants">
         /// The participants.
         /// </param>
+        /// <param name="nonEditable">
+        /// The non editable.
+        /// </param>
         private void GetMeetingAttendees(
             AdobeConnectProvider provider, 
             string meetingSco, 
             out List<PermissionInfo> hosts, 
             out List<PermissionInfo> presenters, 
-            out List<PermissionInfo> participants)
+            out List<PermissionInfo> participants,
+            ref HashSet<string> nonEditable)
         {
             PermissionCollectionResult hostsResult = provider.GetMeetingHosts(meetingSco);
             PermissionCollectionResult presentersResult = provider.GetMeetingPresenters(meetingSco);
             PermissionCollectionResult participantsResult = provider.GetMeetingParticipants(meetingSco);
-            hosts = hostsResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
-            presenters = presentersResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
-            participants = participantsResult.Values.Return(x => x.ToList(), new List<PermissionInfo>());
+            hosts = this.ProcessACMeetingAttendees(ref nonEditable, provider, hostsResult);
+            presenters = this.ProcessACMeetingAttendees(ref nonEditable, provider, presentersResult);
+            participants = this.ProcessACMeetingAttendees(ref nonEditable, provider, participantsResult);
+        }
+
+        /// <summary>
+        /// The process ac meeting attendees.
+        /// </summary>
+        /// <param name="nonEditable">
+        /// The non editable.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
+        private List<PermissionInfo> ProcessACMeetingAttendees(
+            ref HashSet<string> nonEditable,
+            AdobeConnectProvider provider,
+            PermissionCollectionResult result)
+        {
+            var values = result.Values.Return(x => x.ToList(), new List<PermissionInfo>());
+            var groupValues = this.GetGroupPrincipals(provider, values.Select(v => v.PrincipalId));
+            foreach (var g in groupValues)
+            {
+                nonEditable.Add(g.PrincipalId);
+            }
+            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId }));
+            return values;
+        }
+
+        /// <summary>
+        /// The get group principals.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="groupIds">
+        /// The group ids.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
+        private List<Principal> GetGroupPrincipals(AdobeConnectProvider provider, IEnumerable<string> groupIds)
+        {
+            var principals = new List<Principal>();
+
+            foreach (var groupid in groupIds)
+            {
+                var groupPrincipals = provider.GetGroupUsers(groupid);
+                principals.AddRange(groupPrincipals.Values);
+            }
+
+            return principals;
         }
 
         /// <summary>
@@ -1643,9 +1707,6 @@
         /// </param>
         /// <param name="registeredUser">
         /// The registered user.
-        /// </param>
-        /// <param name="connectionMode">
-        /// The connection Mode.
         /// </param>
         /// <param name="email">
         /// The email.

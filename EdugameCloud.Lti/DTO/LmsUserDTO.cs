@@ -139,6 +139,12 @@
         [DataMember]
         public string primary_email { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether is_editable.
+        /// </summary>
+        [DataMember]
+        public bool is_editable { get; set; }
+
         #endregion
     }
 }
