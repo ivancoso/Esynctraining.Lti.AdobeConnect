@@ -22,7 +22,7 @@
         ///     Gets or sets the date left.
         /// </summary>
         [DataMember]
-        public DateTime dateTimeLeft { get; set; }
+        public DateTime? dateTimeLeft { get; set; }
 
         /// <summary>
         ///     Gets or sets the ac session participant id.

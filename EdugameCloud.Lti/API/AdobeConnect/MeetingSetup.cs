@@ -529,42 +529,6 @@
         }
 
         /// <summary>
-        /// The get AC password.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="userSettings">
-        /// The user settings.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetACPassword(CompanyLms credentials, LmsUserSettingsDTO userSettings, string email, string login)
-        {
-            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
-            switch (connectionMode)
-            {
-                case AcConnectionMode.Overwrite:
-                    string password = credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase) 
-                                        || credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
-                                          ? credentials.AcPassword
-                                          : Membership.GeneratePassword(8, 2);
-                    return password;
-                case AcConnectionMode.DontOverwriteLocalPassword:
-                    return userSettings.password;
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
         /// The remove recording.
         /// </summary>
         /// <param name="credentials">
@@ -968,6 +932,42 @@
         #region Methods
 
         /// <summary>
+        /// The get AC password.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetACPassword(CompanyLms credentials, LmsUserSettingsDTO userSettings, string email, string login)
+        {
+            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
+            switch (connectionMode)
+            {
+                case AcConnectionMode.Overwrite:
+                    string password = credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
+                                        || credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
+                                          ? credentials.AcPassword
+                                          : Membership.GeneratePassword(8, 2);
+                    return password;
+                case AcConnectionMode.DontOverwriteLocalPassword:
+                    return userSettings.password;
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
         /// The create empty meeting response.
         /// </summary>
         /// <param name="credentials">
@@ -1042,7 +1042,7 @@
         /// The credentials.
         /// </param>
         /// <param name="lmsUserId">
-        /// The lms User Id.
+        /// The LMS User Id.
         /// </param>
         /// <param name="courseId">
         /// The course Id.
@@ -1091,10 +1091,10 @@
         }
 
         /// <summary>
-        /// The lms user is ac user.
+        /// The LMS user is AC user.
         /// </summary>
         /// <param name="lmsUser">
-        /// The lms user.
+        /// The LMS user.
         /// </param>
         /// <param name="participant">
         /// The participant.
@@ -1102,7 +1102,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private static bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
+        private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
         {
             return participant.Login != null && ((lmsUser.primary_email != null && lmsUser.primary_email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
                    || (lmsUser.login_id != null && lmsUser.login_id.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
@@ -1115,7 +1115,7 @@
         /// The credentials.
         /// </param>
         /// <param name="lmsUserId">
-        /// The lms User Id.
+        /// The LMS User Id.
         /// </param>
         /// <param name="courseId">
         /// The course id.
@@ -1143,7 +1143,7 @@
             var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId);
             foreach (var lmsUser in lmsUsers)
             {
-                if (!IsUserSynched(hosts, presenters, participants, lmsUser))
+                if (!this.IsUserSynched(hosts, presenters, participants, lmsUser))
                 {
                     return false;
                 }
@@ -1152,12 +1152,30 @@
             return true;
         }
 
+        /// <summary>
+        /// The is user synched.
+        /// </summary>
+        /// <param name="hosts">
+        /// The hosts.
+        /// </param>
+        /// <param name="presenters">
+        /// The presenters.
+        /// </param>
+        /// <param name="participants">
+        /// The participants.
+        /// </param>
+        /// <param name="lmsUser">
+        /// The LMS user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
         private bool IsUserSynched(List<PermissionInfo> hosts, List<PermissionInfo> presenters, List<PermissionInfo> participants, LmsUserDTO lmsUser)
         {
             bool isFound = false;
             foreach (var host in hosts)
             {
-                if (LmsUserIsAcUser(lmsUser, host))
+                if (this.LmsUserIsAcUser(lmsUser, host))
                 {
                     lmsUser.ac_id = host.PrincipalId;
                     lmsUser.ac_role = "Host";
@@ -1168,7 +1186,7 @@
 
             foreach (var presenter in presenters)
             {
-                if (LmsUserIsAcUser(lmsUser, presenter))
+                if (this.LmsUserIsAcUser(lmsUser, presenter))
                 {
                     lmsUser.ac_id = presenter.PrincipalId;
                     lmsUser.ac_role = "Presenter";
@@ -1179,7 +1197,7 @@
 
             foreach (var participant in participants)
             {
-                if (LmsUserIsAcUser(lmsUser, participant))
+                if (this.LmsUserIsAcUser(lmsUser, participant))
                 {
                     lmsUser.ac_id = participant.PrincipalId;
                     lmsUser.ac_role = "Participant";
@@ -1257,7 +1275,7 @@
                         announcementMessage);
                     break;
                 case LmsProviderNames.BrainHoney:
-                    string error;
+                    // string error;
 //                    this.dlapApi.CreateAnnouncement(
 //                        credentials,
 //                        param.course_id,
@@ -1354,7 +1372,7 @@
         /// The credentials.
         /// </param>
         /// <param name="lmsUserId">
-        /// The lms User Id.
+        /// The LMS User Id.
         /// </param>
         /// <param name="courseId">
         /// The course id.
@@ -1439,7 +1457,7 @@
                                 firstName = us.SessionName,
                                 login = us.Login,
                                 dateTimeEntered = us.DateCreated,
-                                dateTimeLeft = us.DateEnd,
+                                dateTimeLeft = us.DateEnd.FixACValue(),
                                 durationInHours = (float)us.Duration.TotalHours,
                                 transcriptId = int.Parse(us.TranscriptId)
                             }).OrderByDescending(x => x.dateTimeEntered).ToList();
@@ -1505,8 +1523,8 @@
                             {
                                 scoId = int.Parse(sco.ScoId),
                                 assetId = int.Parse(sco.AssetId),
-                                dateStarted = sco.DateCreated,
-                                dateEnded = sco.DateEnd,
+                                dateStarted = sco.DateCreated.FixACValue(),
+                                dateEnded = sco.DateEnd.FixACValue(),
                                 sessionNumber = int.Parse(sco.Version),
                                 sessionName = sco.Version,
                                 participants = new List<ACSessionParticipantDTO>()
@@ -1522,7 +1540,7 @@
                                 firstName = us.SessionName,
                                 login = us.Login,
                                 dateTimeEntered = us.DateCreated,
-                                dateTimeLeft = us.DateEnd,
+                                dateTimeLeft = us.DateEnd.FixACValue(),
                                 durationInHours =
                                     (float)us.Duration.TotalHours,
                                 transcriptId = int.Parse(us.TranscriptId)
@@ -1715,7 +1733,7 @@
         /// The provider.
         /// </param>
         /// <param name="lmsUserId">
-        /// The lms User Id.
+        /// The LMS User Id.
         /// </param>
         /// <param name="courseId">
         /// The LMS course id.
@@ -1731,7 +1749,6 @@
             string meetingScoId)
         {
             List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId);
-
 
             foreach (LmsUserDTO u in users)
             {
@@ -1775,8 +1792,8 @@
         /// <param name="u">
         /// The user.
         /// </param>
-        /// <param name="principal">
-        /// The principal.
+        /// <param name="principalId">
+        /// The principal Id.
         /// </param>
         private void SetLMSUserDefaultACPermissions(
             AdobeConnectProvider provider,

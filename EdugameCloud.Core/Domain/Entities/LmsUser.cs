@@ -47,6 +47,11 @@
         public virtual string Username { get; set; }
 
         /// <summary>
+        /// Gets or sets the primary color.
+        /// </summary>
+        public virtual string PrimaryColor { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS user parameters.
         /// </summary>
         public virtual ISet<LmsUserParameters> LmsUserParameters

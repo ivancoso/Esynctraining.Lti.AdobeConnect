@@ -244,6 +244,7 @@
             }
 
             lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
+            lmsUser.PrimaryColor = settings.primaryColor;
 
             if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
@@ -305,9 +306,17 @@
         {
             CompanyLms companyLms = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
-            var acConnectionMode = this.GetUserACConnectionMode(companyLms, param);
+            var lmsUser = this.GetUser(companyLms, param);
 
-            return this.Json(new LmsUserSettingsDTO { acConnectionMode = acConnectionMode, lmsProviderName = lmsProviderName, password = "saved" });
+            return
+                this.Json(
+                    new LmsUserSettingsDTO
+                        {
+                            acConnectionMode = lmsUser.Item1,
+                            primaryColor = lmsUser.Item2,
+                            lmsProviderName = lmsProviderName,
+                            password = "saved"
+                        });
         }
 
         /// <summary>
@@ -606,6 +615,8 @@
 
             this.AddSessionCookie(this.Session.SessionID);
 
+            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
+
             switch (providerName.ToLower())
             {
                 case LmsProviderNames.Canvas:
@@ -613,21 +624,20 @@
                         credentials,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
                     {
-                        var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                         {
                             this.StartOAuth2Authentication(provider, model);
                             return null;
                         }
 
-                        return this.RedirectToExtJs(credentials, providerName);
+                        return this.RedirectToExtJs(credentials, lmsUser, providerName);
                     }
 
                     break;
                 case LmsProviderNames.BrainHoney:
                     if (BltiProviderHelper.VerifyBltiRequest(credentials, () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
                     {
-                        return this.RedirectToExtJs(credentials, providerName);
+                        return this.RedirectToExtJs(credentials, lmsUser, providerName);
                     }
 
                     break;
@@ -742,16 +752,18 @@
         /// <returns>
         /// The <see cref="int"/>.
         /// </returns>
-        private int GetUserACConnectionMode(CompanyLms companyLms, LtiParamDTO param)
+        private Tuple<int, string> GetUser(CompanyLms companyLms, LtiParamDTO param)
         {
             int connectionMode = 0;
+            string primaryColor = null;
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser != null)
             {
                 connectionMode = (int)lmsUser.AcConnectionMode;
+                primaryColor = lmsUser.PrimaryColor;
             }
 
-            return connectionMode;
+            return new Tuple<int, string>(connectionMode, primaryColor);
         }
 
         /// <summary>
@@ -771,10 +783,11 @@
         /// </returns>
         private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, CompanyLms companyLms, LtiParamDTO param)
         {
-            var connectionMode = this.GetUserACConnectionMode(companyLms, param);
+            var lmsUser = this.GetUser(companyLms, param);
             return new LmsUserSettingsDTO
             {
-                acConnectionMode = connectionMode,
+                acConnectionMode = lmsUser.Item1,
+                primaryColor = lmsUser.Item2,
                 lmsProviderName = lmsProviderName,
                 password = this.GetACPassword(companyLms, param)
             };
@@ -848,18 +861,21 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
         /// <param name="providerName">
         /// The provider name.
         /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        private ActionResult RedirectToExtJs(CompanyLms credentials, string providerName)
+        private ActionResult RedirectToExtJs(CompanyLms credentials, LmsUser user, string providerName)
         {
             this.ViewBag.RedirectUrl = string.Format(
                 "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
                 credentials.Layout ?? string.Empty,
-                credentials.PrimaryColor ?? string.Empty,
+                !string.IsNullOrWhiteSpace(user.PrimaryColor) ? user.PrimaryColor : (credentials.PrimaryColor ?? string.Empty),
                 providerName);
             return this.View("Redirect");
         }
