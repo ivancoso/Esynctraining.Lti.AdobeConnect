@@ -582,7 +582,8 @@ namespace EdugameCloud.WCFService
                     CompanyLmsModel.RegisterSave(lms);
 
                     if (lms.LmsProvider.Id == (int)LmsProviderEnum.BrainHoney || 
-                        lms.LmsProvider.Id == (int)LmsProviderEnum.Moodle)
+                        lms.LmsProvider.Id == (int)LmsProviderEnum.Moodle || 
+                        lms.LmsProvider.Id == (int)LmsProviderEnum.Blackboard)
                     {
                         var lmsUser = new LmsUser
                                           {
@@ -590,7 +591,7 @@ namespace EdugameCloud.WCFService
                                               Username = dto.lmsVO.lmsAdmin,
                                               Password = dto.lmsVO.lmsAdminPassword,
                                               Token = dto.lmsVO.lmsAdminToken,
-                                              UserId = 0
+                                              UserId = "0"
                                           };
                         LmsUserModel.RegisterSave(lmsUser, true);
                         lms.AdminUser = lmsUser;

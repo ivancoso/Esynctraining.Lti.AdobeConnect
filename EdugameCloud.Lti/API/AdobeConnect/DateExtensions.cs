@@ -12,7 +12,7 @@
         /// <summary>
         /// The date time 1951.
         /// </summary>
-        private static readonly DateTime dt1951 = new DateTime(1, 1, 1951);
+        private static readonly DateTime dt1951 = new DateTime(1951, 1, 1);
 
         #endregion
 

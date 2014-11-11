@@ -10,6 +10,7 @@
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Converters;
@@ -68,6 +69,7 @@
             IoC.Container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
             IoC.Container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
             IoC.Container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>());
+            IoC.Container.Register(Component.For<SoapAPI>().ImplementedBy<SoapAPI>());
             try
             {
                 // Initialize WebORB configuration before starting messaging server

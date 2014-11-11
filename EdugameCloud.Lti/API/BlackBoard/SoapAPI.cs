@@ -121,7 +121,7 @@
         {
             error = null;
             var client = new WebserviceWrapper(
-                lmsDomain,
+                "http://" + lmsDomain,
                 "EduGameCloud",
                 string.Empty,
                 TimeSpan.FromMinutes(15).Ticks);

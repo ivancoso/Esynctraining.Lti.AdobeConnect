@@ -39,7 +39,7 @@
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
-        public virtual int UserId { get; set; }
+        public virtual string UserId { get; set; }
 
         /// <summary>
         /// Gets or sets the username.

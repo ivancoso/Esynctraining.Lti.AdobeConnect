@@ -10,6 +10,7 @@
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.DTO;
@@ -35,6 +36,11 @@
         /// </summary>
         private readonly DlapAPI dlapApi;
 
+        /// <summary>
+        /// The SOAP API.
+        /// </summary>
+        private readonly SoapAPI soapApi;
+
         #endregion
 
         #region Constructors and Destructors
@@ -45,9 +51,13 @@
         /// <param name="dlapApi">
         /// The DLAP API.
         /// </param>
-        public MeetingSetup(DlapAPI dlapApi)
+        /// <param name="soapApi">
+        /// The SOAP API.
+        /// </param>
+        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi)
         {
             this.dlapApi = dlapApi;
+            this.soapApi = soapApi;
         }
 
         #endregion
@@ -591,7 +601,7 @@
         public void SaveLMSUserParameters(
             int lmsCourseId, 
             CompanyLms lmsCompany, 
-            int lmsUserId, 
+            string lmsUserId, 
             string adobeConnectUserId)
         {
             LmsUserParameters lmsUserParameters =
@@ -1066,7 +1076,7 @@
         private Tuple<bool, bool> GetMeetingFlags(
             AdobeConnectProvider provider,
             CompanyLms credentials,
-            int lmsUserId,
+            string lmsUserId,
             int courseId,
             string meetingSco,
             string email,
@@ -1139,7 +1149,7 @@
         /// </returns>
         private bool AreUsersSynched(
             CompanyLms credentials,
-            int lmsUserId,
+            string lmsUserId,
             int courseId,
             List<PermissionInfo> hosts,
             List<PermissionInfo> presenters,
@@ -1303,6 +1313,25 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
+        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int brainHoneyCourseId)
+        {
+            string error;
+            var users = this.soapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error);
+            return this.GroupUsers(users);
+        }
+
+        /// <summary>
+        /// The get brain honey users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="brainHoneyCourseId">
+        /// The brain honey course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
         private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId)
         {
             string error;
@@ -1356,7 +1385,7 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, int canvasUserId, int canvasCourseId)
+        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, string canvasUserId, int canvasCourseId)
         {
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(canvasUserId, credentials.Id).Value;
             var token = lmsUser.Return(
@@ -1385,7 +1414,7 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, int lmsUserId, int courseId)
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId)
         {
             switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
             {
@@ -1393,6 +1422,8 @@
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
                     return this.GetBrainHoneyUsers(credentials, courseId);
+                case LmsProviderNames.Blackboard:
+                    return this.GetBlackBoardUsers(credentials, courseId);
             }
 
             return new List<LmsUserDTO>();
@@ -1805,7 +1836,7 @@
         private void SetDefaultUsers(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
-            int lmsUserId,
+            string lmsUserId,
             int courseId, 
             string meetingScoId)
         {

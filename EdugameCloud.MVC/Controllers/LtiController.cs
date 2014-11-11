@@ -20,6 +20,7 @@
     using EdugameCloud.MVC.Social.OAuth.Canvas;
 
     using Esynctraining.AC.Provider;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Microsoft.Web.WebPages.OAuth;
 
@@ -178,7 +179,7 @@
                     if (result.ExtraData.ContainsKey("accesstoken"))
                     {
                         var token = result.ExtraData["accesstoken"];
-                        var userId = int.Parse(result.ExtraData["id"]);
+                        var userId = result.ExtraData["id"];
                         var userName = result.ExtraData["name"];
                         var company = this.GetCredentials(provider);
 
@@ -200,12 +201,7 @@
                             CompanyLmsModel.RegisterSave(credentials);
                         }
 
-                        this.ViewBag.RedirectUrl = string.Format(
-                            "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
-                            credentials.Layout ?? string.Empty,
-                            credentials.PrimaryColor ?? string.Empty,
-                            provider);
-                        return this.View("Redirect");
+                        this.RedirectToExtJs(credentials, lmsUser, provider);
                     }
 
                     this.ViewBag.Error = string.Format("Credentials not found");
@@ -256,7 +252,6 @@
             }
 
             this.lmsUserModel.RegisterSave(lmsUser);
-            settings.password = "saved";
             return this.Json(settings);
         }
 
@@ -307,7 +302,7 @@
             CompanyLms companyLms = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
             var lmsUser = this.GetUser(companyLms, param);
-
+            var password = this.GetACPassword(companyLms, param);
             return
                 this.Json(
                     new LmsUserSettingsDTO
@@ -315,7 +310,7 @@
                             acConnectionMode = lmsUser.Item1,
                             primaryColor = lmsUser.Item2,
                             lmsProviderName = lmsProviderName,
-                            password = "saved"
+                            password = string.IsNullOrWhiteSpace(password) ? null : password
                         });
         }
 
@@ -579,9 +574,7 @@
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
         {
-            string providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
-                                      ? provider
-                                      : model.tool_consumer_info_product_family_code.ToLower();
+            string providerName = this.GetProviderName(provider, model);
 
             CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
                     providerName, 
@@ -617,13 +610,14 @@
 
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
 
-            switch (providerName.ToLower())
+            if (BltiProviderHelper.VerifyBltiRequest(
+                credentials,
+                () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
             {
-                case LmsProviderNames.Canvas:
-                     if (BltiProviderHelper.VerifyBltiRequest(
-                        credentials,
-                        () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
-                    {
+                switch (providerName.ToLower())
+                {
+                    case LmsProviderNames.Canvas:
+
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                         {
                             this.StartOAuth2Authentication(provider, model);
@@ -631,16 +625,11 @@
                         }
 
                         return this.RedirectToExtJs(credentials, lmsUser, providerName);
-                    }
 
-                    break;
-                case LmsProviderNames.BrainHoney:
-                    if (BltiProviderHelper.VerifyBltiRequest(credentials, () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
-                    {
+                    case LmsProviderNames.BrainHoney:
+                    case LmsProviderNames.Blackboard:
                         return this.RedirectToExtJs(credentials, lmsUser, providerName);
-                    }
-
-                    break;
+                }
             }
 
             this.ViewBag.Error = "Invalid LTI request";
@@ -741,6 +730,35 @@
         #region Methods
 
         /// <summary>
+        /// The get provider name.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetProviderName(string provider, LtiParamDTO model)
+        {
+            var providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
+                       ? provider
+                       : model.tool_consumer_info_product_family_code.ToLower();
+            if (provider.Equals(LmsProviderNames.Blackboard, StringComparison.OrdinalIgnoreCase))
+            {
+                const string PatternToRemove = " learn";
+                if (providerName.EndsWith(PatternToRemove, StringComparison.OrdinalIgnoreCase))
+                {
+                    providerName = providerName.Replace(PatternToRemove, string.Empty);
+                }
+            }
+
+            return providerName;
+        }
+
+        /// <summary>
         /// The get user AC connection mode.
         /// </summary>
         /// <param name="companyLms">
@@ -808,9 +826,11 @@
             {
                 case LmsProviderNames.Canvas:
                     model.custom_canvas_api_domain = "canvas.instructure.com";
+                    model.lis_person_contact_email_primary = "mike@esynctraining.com";
                     break;
                 case LmsProviderNames.BrainHoney:
                     model.tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com";
+                    model.lis_person_contact_email_primary = "mike@esynctraining.com";
                     break;
             }
         }
@@ -872,10 +892,11 @@
         /// </returns>
         private ActionResult RedirectToExtJs(CompanyLms credentials, LmsUser user, string providerName)
         {
+            var primaryColor = user.With(x => x.PrimaryColor);
             this.ViewBag.RedirectUrl = string.Format(
                 "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
                 credentials.Layout ?? string.Empty,
-                !string.IsNullOrWhiteSpace(user.PrimaryColor) ? user.PrimaryColor : (credentials.PrimaryColor ?? string.Empty),
+                !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
                 providerName);
             return this.View("Redirect");
         }
@@ -918,6 +939,9 @@
                         break;
                     case LmsProviderNames.BrainHoney:
                         creds = this.CompanyLmsModel.GetOneByDomain("pacybersandbox-connect.brainhoney.com").Value;
+                        break;
+                    case LmsProviderNames.Blackboard:
+                        creds = this.CompanyLmsModel.GetOneByDomain("blackboard.advantageconnectpro.com").Value;
                         break;
                 }
             }
@@ -975,7 +999,7 @@
                                         custom_canvas_course_id = 865831, 
                                         lis_person_contact_email_primary = "mike@esynctraining.com", 
                                         roles = "Administrator", 
-                                        custom_canvas_user_id = 3969969, 
+                                        custom_canvas_user_id = "3969969", 
                                         tool_consumer_info_product_family_code = "canvas", 
                                         custom_canvas_api_domain = "canvas.instructure.com"
                                     };
@@ -984,12 +1008,24 @@
                         model = new LtiParamDTO
                                     {
                                         context_id = "24955426",
-                                        user_id = 24955385, 
+                                        user_id = "24955385", 
                                         lis_person_contact_email_primary = "mike@esynctraining.com", 
                                         roles = "Administrator", 
                                         tool_consumer_info_product_family_code = "BrainHoney", 
                                         tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com"
                                     };
+                        break;
+                    case LmsProviderNames.Blackboard:
+                        model = new LtiParamDTO
+                        {
+                            context_id = "cf1784b1cada44ddb512e47f66dd4ad7",
+                            user_id = "05f3cadd856e45d080a9c70a0bc0e7fb",
+                            lis_person_contact_email_primary = "mike@esynctraining.com",
+                            roles = "urn:lti:role:ims/lis/Instructor",
+                            tool_consumer_info_product_family_code = "Blackboard Learn",
+                            tool_consumer_instance_guid = "e4b016ab2cef47f58a40bb42648cb0ab",
+                            launch_presentation_return_url = "http://blackboard.advantageconnectpro.com/webapps/blackboard/execute/blti/launchReturn?course_id=_6_1&content_id=_44_1&toGC=false"
+                        };
                         break;
                 }
             }
@@ -1202,7 +1238,7 @@
             var key = companyLms.AcServer.ToLowerInvariant()
                       + (string.IsNullOrWhiteSpace(data.lis_person_contact_email_primary)
                              ? data.lms_user_login
-                             : data.lis_person_contact_email_primary);
+                             : data.lis_person_contact_email_primary).Return(x => x.ToLowerInvariant(), string.Empty);
             return key;
         }
 
