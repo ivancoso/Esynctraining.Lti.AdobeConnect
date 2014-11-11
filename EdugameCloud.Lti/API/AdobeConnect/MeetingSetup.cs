@@ -1461,7 +1461,7 @@
             {
                 nonEditable.Add(g.PrincipalId);
             }
-            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId }));
+            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name }));
             return values;
         }
 
