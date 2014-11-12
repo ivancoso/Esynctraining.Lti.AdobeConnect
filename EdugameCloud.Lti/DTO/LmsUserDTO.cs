@@ -13,91 +13,6 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets the email.
-        /// </summary>
-        public string Email
-        {
-            get
-            {
-                if (this.primary_email != null)
-                {
-                    return this.primary_email;
-                }
-
-                try
-                {
-                    // ReSharper disable once ObjectCreationAsStatement
-                    new MailAddress(this.Login);
-                    return this.Login;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the first name.
-        /// </summary>
-        public string FirstName
-        {
-            get
-            {
-                if (this.name == null)
-                {
-                    return "no";
-                }
-
-                int index = this.name.IndexOf(" ", StringComparison.Ordinal);
-                if (index < 0)
-                {
-                    return this.name;
-                }
-
-                return this.name.Substring(0, index);
-            }
-        }
-
-        /// <summary>
-        /// Gets the last name.
-        /// </summary>
-        public string LastName
-        {
-            get
-            {
-                if (this.name == null)
-                {
-                    return "name";
-                }
-
-                int index = this.name.IndexOf(" ", StringComparison.Ordinal);
-                if (index < 0)
-                {
-                    return this.lms_role;
-                }
-
-                return this.name.Substring(index);
-            }
-        }
-
-        /// <summary>
-        /// Gets the login.
-        /// </summary>
-        public string Login
-        {
-            get
-            {
-                if (this.login_id != null)
-                {
-                    return this.login_id;
-                }
-
-                return this.name;
-            }
-        }
-
-        /// <summary>
         /// Gets or sets the ac_id.
         /// </summary>
         [DataMember]
@@ -144,6 +59,95 @@
         /// </summary>
         [DataMember]
         public bool is_editable { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Gets the login.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetLogin()
+        {
+            if (this.login_id != null)
+            {
+                return this.login_id;
+            }
+
+            return this.name;
+        }
+
+        /// <summary>
+        /// Gets the email.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetEmail()
+        {
+            if (this.primary_email != null)
+            {
+                return this.primary_email;
+            }
+
+            try
+            {
+                // ReSharper disable once ObjectCreationAsStatement
+                new MailAddress(this.GetLogin());
+                return this.GetLogin();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the first name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetFirstName()
+        {
+            if (this.name == null)
+            {
+                return "no";
+            }
+
+            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            if (index < 0)
+            {
+                return this.name;
+            }
+
+            return this.name.Substring(0, index);
+        }
+
+        /// <summary>
+        /// Gets the last name.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetLastName()
+        {
+            if (this.name == null)
+            {
+                return "name";
+            }
+
+            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            if (index < 0)
+            {
+                return this.lms_role;
+            }
+
+            return this.name.Substring(index);
+        }
 
         #endregion
     }

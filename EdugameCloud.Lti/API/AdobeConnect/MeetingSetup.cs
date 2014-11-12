@@ -284,12 +284,12 @@
 
             List<PermissionInfo> hosts, participants, presenters;
             HashSet<string> nonEditable = new HashSet<string>();
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, ref nonEditable);
+            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, nonEditable);
 
             foreach (LmsUserDTO lmsuser in users)
             {
                 LmsUserDTO user = lmsuser;
-                string email = user.Email, login = user.Login;
+                string email = user.GetEmail(), login = user.GetLogin();
 
                 var principal = this.GetACUser(provider, login, email);
 
@@ -764,7 +764,7 @@
                 ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
-                    string name = string.Format("{0} for {1}", ltiProvider, credentials.LmsDomain ?? string.Empty);
+                    string name = string.Format("{0} courses", ltiProvider);
                     ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name == name && v.IsFolder);
                     if (existingFolder != null)
                     {
@@ -821,7 +821,7 @@
 
             List<PermissionInfo> hosts, participants, presenters;
             HashSet<string> nonEditable = new HashSet<string>();
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, ref nonEditable);
+            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, nonEditable);
 
             foreach (var user in users)
             {
@@ -829,12 +829,14 @@
                 {
                     if (user.ac_id == null || user.ac_id == "0")
                     {
-                        string email = user.Email, login = user.Login;
+                        string email = user.GetEmail(), login = user.GetLogin();
 
                         this.UpdateUserACValues(provider, user, login, email);
                     }
-
-                    this.SetLMSUserDefaultACPermissions(provider, meeting.ScoId, user, user.ac_id);
+                    if (user.is_editable)
+                    {
+                        this.SetLMSUserDefaultACPermissions(provider, meeting.ScoId, user, user.ac_id);
+                    }
                 }
             }
 
@@ -873,7 +875,7 @@
 
             if (user.ac_id == null || user.ac_id == "0")
             {
-                string email = user.Email, login = user.Login;
+                string email = user.GetEmail(), login = user.GetLogin();
 
                 this.UpdateUserACValues(provider, user, login, email);
             }
@@ -922,11 +924,11 @@
             {
                 var setup = new PrincipalSetup
                                 {
-                                    Email = user.Email,
-                                    FirstName = user.FirstName,
-                                    LastName = user.LastName,
+                                    Email = user.GetEmail(),
+                                    FirstName = user.GetFirstName(),
+                                    LastName = user.GetLastName(),
                                     Name = user.name,
-                                    Login = user.Login,
+                                    Login = user.GetLogin(),
                                     Password = Membership.GeneratePassword(8, 2)
                                 };
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
@@ -1090,7 +1092,7 @@
             {
                 List<PermissionInfo> hosts, presenters, participants;
                 HashSet<string> nonEditable = new HashSet<string>();
-                this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants, ref nonEditable);
+                this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants, nonEditable);
 
                 if (hosts.Any(h => h.PrincipalId == registeredUser.PrincipalId)
                     || presenters.Any(p => p.PrincipalId == registeredUser.PrincipalId)
@@ -1119,8 +1121,9 @@
         /// </returns>
         private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
         {
-            return participant.Login != null && ((lmsUser.primary_email != null && lmsUser.primary_email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
-                   || (lmsUser.login_id != null && lmsUser.login_id.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
+            string email = lmsUser.GetEmail(), login = lmsUser.GetLogin();
+            return participant.Login != null && ((email != null && email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
+                   || (login != null && login.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
         }
 
         /// <summary>
@@ -1456,14 +1459,36 @@
             out List<PermissionInfo> hosts, 
             out List<PermissionInfo> presenters, 
             out List<PermissionInfo> participants,
-            ref HashSet<string> nonEditable)
+            HashSet<string> nonEditable)
         {
+            HashSet<string> alreadyAdded = new HashSet<string>();
             PermissionCollectionResult hostsResult = provider.GetMeetingHosts(meetingSco);
             PermissionCollectionResult presentersResult = provider.GetMeetingPresenters(meetingSco);
             PermissionCollectionResult participantsResult = provider.GetMeetingParticipants(meetingSco);
-            hosts = this.ProcessACMeetingAttendees(ref nonEditable, provider, hostsResult);
-            presenters = this.ProcessACMeetingAttendees(ref nonEditable, provider, presentersResult);
-            participants = this.ProcessACMeetingAttendees(ref nonEditable, provider, participantsResult);
+            if (hostsResult.Values != null)
+            {
+                foreach (var g in hostsResult.Values)
+                {
+                    alreadyAdded.Add(g.PrincipalId);
+                }
+            }
+            if (presentersResult.Values != null)
+            {
+                foreach (var g in presentersResult.Values)
+                {
+                    alreadyAdded.Add(g.PrincipalId);
+                }
+            }
+            if (participantsResult.Values != null)
+            {
+                foreach (var g in participantsResult.Values)
+                {
+                    alreadyAdded.Add(g.PrincipalId);
+                }
+            }
+            hosts = this.ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
+            presenters = this.ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
+            participants = this.ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
         }
 
         /// <summary>
@@ -1478,21 +1503,30 @@
         /// <param name="result">
         /// The result.
         /// </param>
+        /// <param name="alreadyAdded">
+        /// The already added.
+        /// </param>
         /// <returns>
         /// The <see cref="List"/>.
         /// </returns>
         private List<PermissionInfo> ProcessACMeetingAttendees(
-            ref HashSet<string> nonEditable,
+            HashSet<string> nonEditable,
             AdobeConnectProvider provider,
-            PermissionCollectionResult result)
+            PermissionCollectionResult result,
+            HashSet<string> alreadyAdded)
         {
             var values = result.Values.Return(x => x.ToList(), new List<PermissionInfo>());
             var groupValues = this.GetGroupPrincipals(provider, values.Select(v => v.PrincipalId));
             foreach (var g in groupValues)
             {
+                if (alreadyAdded.Contains(g.PrincipalId))
+                {
+                    continue;
+                }
+                values.Add(new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary });
                 nonEditable.Add(g.PrincipalId);
+                alreadyAdded.Add(g.PrincipalId);
             }
-            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary }));
             return values;
         }
 
@@ -1844,7 +1878,7 @@
 
             foreach (LmsUserDTO u in users)
             {
-                string email = u.Email, login = u.Login;
+                string email = u.GetEmail(), login = u.GetLogin();
                 var principal = this.GetACUser(provider, login, email);
                 if (principal == null)
                 {
@@ -1852,11 +1886,11 @@
                         provider.PrincipalUpdate(
                             new PrincipalSetup
                                 {
-                                    Email = u.Email, 
-                                    FirstName = u.FirstName, 
-                                    LastName = u.LastName, 
+                                    Email = u.GetEmail(), 
+                                    FirstName = u.GetFirstName(), 
+                                    LastName = u.GetLastName(), 
                                     Password = Membership.GeneratePassword(8, 2), 
-                                    Login = u.Login, 
+                                    Login = u.GetLogin(), 
                                     Type = PrincipalTypes.user
                                 });
                     if (res.Success && res.Principal != null)

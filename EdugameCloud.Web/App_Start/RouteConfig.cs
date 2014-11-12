@@ -32,6 +32,7 @@
             routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });
 
             routes.MapLowercaseRoute("getusers", "Lti/User/GetAll", new { controller = "Lti", action = "GetUsers" });
+            routes.MapLowercaseRoute("updateuser", "Lti/User/Update", new { controller = "Lti", action = "UpdateUser" });
 
             routes.MapLowercaseRoute("getsetting", "Lti/Settings/Get", new { controller = "Lti", action = "GetSettings" });
             routes.MapLowercaseRoute("checkpass", "Lti/Settings/CheckPass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
