@@ -746,7 +746,10 @@
             // act: "principal-list"
             StatusInfo status;
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Format(CommandParams.PrincipalByEmail, email), out status);
+            var principals = this.requestProcessor.Process(
+                Commands.Principal.List,
+                string.Format(CommandParams.PrincipalByEmail, HttpUtility.UrlEncode(email)),
+                out status);
 
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
@@ -767,7 +770,10 @@
             // act: "principal-list"
             StatusInfo status;
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Format(CommandParams.PrincipalByLogin, login), out status);
+            var principals = this.requestProcessor.Process(
+                Commands.Principal.List, 
+                string.Format(CommandParams.PrincipalByLogin, HttpUtility.UrlEncode(login)), 
+                out status);
 
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
@@ -1182,7 +1188,14 @@
         {
             StatusInfo status;
 
-            this.requestProcessor.Process(Commands.Principal.UpdatePassword, string.Format(CommandParams.PrincipalUpdatePassword, principalId, newPassword, newPassword), out status);
+            this.requestProcessor.Process(
+                Commands.Principal.UpdatePassword,
+                string.Format(
+                    CommandParams.PrincipalUpdatePassword,
+                    principalId,
+                    HttpUtility.UrlEncode(newPassword),
+                    HttpUtility.UrlEncode(newPassword)),
+                out status);
 
             return new GenericResult(status);
         }
@@ -1577,7 +1590,13 @@
 
             try
             {
-                var doc = this.requestProcessor.Process(Commands.Login, string.Format(CommandParams.LoginParams, login, password), out status);
+                var doc = this.requestProcessor.Process(
+                    Commands.Login,
+                    string.Format(
+                        CommandParams.LoginParams,
+                        HttpUtility.UrlEncode(login),
+                        HttpUtility.UrlEncode(password)),
+                    out status);
 
                 return ResponseIsOk(doc, status);
             }
