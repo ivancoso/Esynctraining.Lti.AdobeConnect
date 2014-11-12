@@ -225,8 +225,8 @@
                             id = v.ScoId, 
                             name = v.Name, 
                             description = v.Description, 
-                            begin_date = v.BeginDate.ToString("MM-dd-yy h:mm:ss tt"), 
-                            end_date = v.EndDate.ToString("MM-dd-yy h:mm:ss tt"), 
+                            begin_date = v.BeginDate.ToString("MM/dd/yy h:mm:ss tt"), 
+                            end_date = v.EndDate.ToString("MM/dd/yy h:mm:ss tt"), 
                             duration = v.Duration, 
                             url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray())
                         }).ToList();
@@ -440,52 +440,52 @@
             var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
             string breezeToken = string.Empty, meetingUrl = string.Empty;
 
-                AdobeConnectProvider provider = this.GetProvider(credentials);
+            AdobeConnectProvider provider = this.GetProvider(credentials);
 
-                this.LmsCourseMeetingModel.Flush();
-                LmsCourseMeeting currentMeeting =
-                    this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            this.LmsCourseMeetingModel.Flush();
+            LmsCourseMeeting currentMeeting =
+                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
 
-                string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
+            string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
 
-                if (!string.IsNullOrEmpty(currentMeetingScoId))
+            if (!string.IsNullOrEmpty(currentMeetingScoId))
+            {
+                ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
+                if (currentMeetingSco != null)
                 {
-                    ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
-                    if (currentMeetingSco != null)
-                    {
-                        meetingUrl = (credentials.AcServer.EndsWith("/")
-                                          ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
-                                          : credentials.AcServer) + currentMeetingSco.UrlPath;
-                    }
+                    meetingUrl = (credentials.AcServer.EndsWith("/")
+                                        ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
+                                        : credentials.AcServer) + currentMeetingSco.UrlPath;
+                }
+            }
+
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
+
+            var password = this.GetACPassword(credentials, userSettings, email, login);
+
+            Principal registeredUser = this.GetACUser(provider, login, email);
+
+            if (registeredUser != null)
+            {
+                if (connectionMode != AcConnectionMode.DontOverwriteACPassword)
+                {
+                    breezeToken = this.LoginIntoAC(
+                        credentials,
+                        param,
+                        registeredUser,
+                        connectionMode,
+                        email,
+                        login,
+                        password,
+                        provider);
                 }
 
-                string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
-
-                var password = this.GetACPassword(credentials, userSettings, email, login);
-
-                Principal registeredUser = this.GetACUser(provider, login, email);
-
-                if (registeredUser != null)
-                {
-                    if (connectionMode != AcConnectionMode.DontOverwriteACPassword)
-                    {
-                        breezeToken = this.LoginIntoAC(
-                            credentials,
-                            param,
-                            registeredUser,
-                            connectionMode,
-                            email,
-                            login,
-                            password,
-                            provider);
-                    }
-
-                    this.SaveLMSUserParameters(param, credentials, registeredUser.PrincipalId);
-                }
-                else
-                {
-                    return param.launch_presentation_return_url;
-                }
+                this.SaveLMSUserParameters(param, credentials, registeredUser.PrincipalId);
+            }
+            else
+            {
+                return param.launch_presentation_return_url;
+            }
 
             return string.IsNullOrWhiteSpace(breezeToken) ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken);
         }
@@ -1084,7 +1084,7 @@
         {
             bool canJoin = false;
             bool areUsersSynched = true;
-            var registeredUser = this.GetACUser(provider, HttpUtility.UrlEncode(login), HttpUtility.UrlEncode(email));
+            var registeredUser = this.GetACUser(provider, login, email);
 
             if (registeredUser != null)
             {
@@ -1492,7 +1492,7 @@
             {
                 nonEditable.Add(g.PrincipalId);
             }
-            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name }));
+            values.AddRange(groupValues.Select(g => new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary }));
             return values;
         }
 
@@ -1784,14 +1784,14 @@
                         HasChildren = registeredUser.HasChildren
                     });
 
-            LoginResult resultByLogin = provider.Login(new UserCredentials(HttpUtility.UrlEncode(login), password));
+            LoginResult resultByLogin = provider.Login(new UserCredentials(login, password));
             if (resultByLogin.Success)
             {
                 breezeToken = resultByLogin.Status.SessionInfo;
             }
             else
             {
-                LoginResult resultByEmail = provider.Login(new UserCredentials(HttpUtility.UrlEncode(email), password));
+                LoginResult resultByEmail = provider.Login(new UserCredentials(email, password));
                 breezeToken = resultByEmail.Status.SessionInfo;
             }
 
