@@ -576,7 +576,8 @@ namespace EdugameCloud.WCFService
                                       LmsDomain = dto.lmsVO.lmsDomain,
                                       PrimaryColor = dto.lmsVO.primaryColor,
                                       Layout = dto.lmsVO.layout,
-                                      Title = dto.lmsVO.title
+                                      Title = dto.lmsVO.title,
+                                      UseSSL = dto.lmsVO.useSsl
                                   };
 
                     CompanyLmsModel.RegisterSave(lms);

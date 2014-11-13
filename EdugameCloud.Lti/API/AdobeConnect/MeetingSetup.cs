@@ -1310,16 +1310,16 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
-        /// <param name="brainHoneyCourseId">
+        /// <param name="blackBoardCourseId">
         /// The brain honey course id.
         /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int brainHoneyCourseId)
+        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId)
         {
             string error;
-            var users = this.soapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error);
+            var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
             return this.GroupUsers(users);
         }
 
@@ -1353,7 +1353,7 @@
         /// </returns>
         private List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
-            var order = new List<string> { "owner", "author", "teacher", "ta", "designer", "student", "reader", };
+            var order = new List<string> { "owner", "author", "course builder", "teacher", "instructor", "teaching assistant", "ta", "designer", "student", "learner", "reader", "guest" };
             users = users.GroupBy(u => u.id).Select(
                 ug =>
                     {
@@ -1930,12 +1930,13 @@
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
             string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-            if (role.Contains("teacher"))
+            if (role.Contains("teacher") || role.Contains("instructor"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
             }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner"))
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner")
+                || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
             {
                 u.ac_role = "Presenter";
                 permission = MeetingPermissionId.mini_host;

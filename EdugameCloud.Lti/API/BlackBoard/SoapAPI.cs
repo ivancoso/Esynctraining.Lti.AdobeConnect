@@ -2,14 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.ServiceModel;
+    using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.SessionState;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
 
     using BbWsClient;
     using BbWsClient.CourseMembership;
+    using BbWsClient.User;
 
     using Castle.Core.Logging;
 
@@ -29,16 +29,27 @@
     // ReSharper disable once InconsistentNaming
     public class SoapAPI
     {
+        #region Static Fields
+
+        /// <summary>
+        /// The port regex.
+        /// </summary>
+        private static readonly Regex portRegex = new Regex(@":(?<port>\d+)$", RegexOptions.Compiled);
+
+        #endregion
+
         #region Fields
 
         /// <summary>
         ///     The logger.
         /// </summary>
+        // ReSharper disable once NotAccessedField.Local
         private readonly ILogger logger;
 
         /// <summary>
         ///     The settings.
         /// </summary>
+        // ReSharper disable once NotAccessedField.Local
         private readonly dynamic settings;
 
         #endregion
@@ -92,45 +103,11 @@
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.CompanyLms.LmsDomain;
-                return this.LoginAndCreateAClient(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
+                bool useSsl = lmsUser.CompanyLms.UseSSL ?? false;
+                return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
-            return null;
-        }
-
-        /// <summary>
-        /// The login and create a client.
-        /// </summary>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <param name="userName">
-        /// The user name.
-        /// </param>
-        /// <param name="password">
-        /// The password.
-        /// </param>
-        /// <returns>
-        /// The <see cref="WebserviceWrapper"/>.
-        /// </returns>
-        public WebserviceWrapper LoginAndCreateAClient(out string error, string lmsDomain, string userName, string password)
-        {
-            error = null;
-            var client = new WebserviceWrapper(
-                "http://" + lmsDomain,
-                "EduGameCloud",
-                string.Empty,
-                TimeSpan.FromMinutes(15).Ticks);
-            if (client.loginUser(userName, password))
-            {
-                return client;
-            }
-
-            error = "Not able to login into: " + lmsDomain + " for user: " + userName;
             return null;
         }
 
@@ -159,24 +136,204 @@
             WebserviceWrapper client = null)
         {
             var result = new List<LmsUserDTO>();
+
             var enrollmentsResult = this.LoginIfNecessary(
-                client, 
+                ref client,
                 c =>
-                c.getCourseMembershipWrapper().loadGroupMembership("_" + courseid + "_1", new MembershipFilter())
-                , 
+                    {
+                        var courseIdFixed = string.Format("_{0}_1", courseid);
+                        var membershipFilter = new MembershipFilter
+                                                   {
+                                                       filterType = 2,
+                                                       filterTypeSpecified = true,
+                                                       courseIds = new[] { courseIdFixed }
+                                                   };
+                        
+                        var membership = c.getCourseMembershipWrapper();
+                        if (membership != null)
+                        {
+                            var enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
+                            var roles = membership.loadRoles(null);
+                            var userFilter = new UserFilter
+                                                 {
+                                                     filterTypeSpecified = true,
+                                                     filterType = 2,
+                                                     id = enrollments.Select(x => x.userId).ToArray()
+                                                 };
+                            var userService = c.getUserWrapper();
+                            if (userService != null)
+                            {
+                                var users = c.getUserWrapper().getUser(userFilter);
+                                return enrollments.Select(
+                                    e =>
+                                        {
+                                            var user = users.FirstOrDefault(u => e.userId == u.id);
+                                            return new LmsUserDTO
+                                                       {
+                                                           id = e.userId,
+                                                           login_id = user.With(x => x.name),
+                                                           primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
+                                                           name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
+                                                           lms_role = this.GetRole(e.roleId, roles),
+                                                       };
+                                        }).ToList();
+                            }
+                        }
+
+                        return new List<LmsUserDTO>();
+                    },
                 out error);
+
             if (enrollmentsResult == null)
             {
                 error = error ?? "SOAP. Unable to retrive result from API";
                 return result;
             }
 
-            return result;
+            return enrollmentsResult;
+        }
+
+        /// <summary>
+        /// The had error.
+        /// </summary>
+        /// <param name="ws">
+        /// The WS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool HadError(WebserviceWrapper ws, out string error)
+        {
+            error = null;
+            if (ws == null)
+            {
+                error = "NULL webservicewrapper";
+                return true;
+            }
+
+            string lastError = ws.getLastError();
+            if (lastError != null)
+            {
+                error = lastError;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The login and create a client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="userName">
+        /// The user name.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="WebserviceWrapper"/>.
+        /// </returns>
+        public WebserviceWrapper LoginAndCreateAClient(
+            out string error, 
+            bool useSsl, 
+            string lmsDomain, 
+            string userName, 
+            string password)
+        {
+            var client = new WebserviceWrapper(
+                this.GetHost(lmsDomain, useSsl), 
+                "EGC", 
+                "LTI", 
+                TimeSpan.FromMinutes(30).Seconds);
+            if (this.HadError(client, out error))
+            {
+                return null;
+            }
+
+            client.initialize_v1();
+            if (this.HadError(client, out error))
+            {
+                return null;
+            }
+
+            if (client.loginUser(userName, password))
+            {
+                return client;
+            }
+
+            error = "Not able to login into: " + lmsDomain + " for user: " + userName;
+            return null;
         }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The get role.
+        /// </summary>
+        /// <param name="roleId">
+        /// The role id.
+        /// </param>
+        /// <param name="availableRoles">
+        /// The available roles.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetRole(string roleId, CourseMembershipRoleVO[] availableRoles)
+        {
+            var role =
+                availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
+                    .Return(x => x.courseRoleDescription, string.Empty)
+                    .ToLowerInvariant()
+                    .Trim(':');
+            return Inflector.Capitalize(role);
+        }
+
+        /// <summary>
+        /// The get host.
+        /// </summary>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetHost(string lmsDomain, bool useSsl)
+        {
+            Match match = portRegex.Match(lmsDomain);
+            bool endsWithPort = match.Success;
+
+            lmsDomain = !endsWithPort ? (useSsl ? lmsDomain + ":443" : lmsDomain + ":80") : lmsDomain;
+            string result;
+
+            if (useSsl)
+            {
+                result = "https://" + lmsDomain;
+            }
+            else
+            {
+                result = "http://" + lmsDomain;
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// The login if necessary.
@@ -187,9 +344,10 @@
         /// <param name="action">
         /// The action.
         /// </param>
+        // ReSharper disable once UnusedMember.Local
         private void LoginIfNecessary(WebserviceWrapper session, Action<WebserviceWrapper> action)
         {
-            string error = null;
+            string error;
             session = session ?? this.BeginBatch(out error);
             action(session);
         }
@@ -209,9 +367,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
+        // ReSharper disable once UnusedMember.Local
         private T LoginIfNecessary<T>(WebserviceWrapper session, Func<WebserviceWrapper, T> action)
         {
-            string error = null;
+            string error;
             session = session ?? this.BeginBatch(out error);
             if (session != null)
             {
@@ -239,7 +398,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(WebserviceWrapper client, Func<WebserviceWrapper, T> action, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, out string error)
         {
             error = null;
             client = client ?? this.BeginBatch(out error);
@@ -269,7 +428,11 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(WebserviceWrapper session, Func<WebserviceWrapper, Tuple<T, string>> action, out string error)
+        // ReSharper disable once UnusedMember.Local
+        private T LoginIfNecessary<T>(
+            WebserviceWrapper session, 
+            Func<WebserviceWrapper, Tuple<T, string>> action, 
+            out string error)
         {
             error = null;
             session = session ?? this.BeginBatch(out error);

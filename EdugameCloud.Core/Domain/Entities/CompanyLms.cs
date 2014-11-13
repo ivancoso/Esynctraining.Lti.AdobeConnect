@@ -64,6 +64,11 @@
         public virtual string ConsumerKey { get; set; }
 
         /// <summary>
+        /// Gets or sets the use SSL.
+        /// </summary>
+        public virtual bool? UseSSL { get; set; }
+
+        /// <summary>
         /// Gets or sets the created by.
         /// </summary>
         public virtual User CreatedBy { get; set; }

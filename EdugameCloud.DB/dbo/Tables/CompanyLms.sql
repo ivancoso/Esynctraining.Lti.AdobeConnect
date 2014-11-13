@@ -17,6 +17,7 @@
     [acScoId]         NVARCHAR (50)  NULL,
     [acTemplateScoId] NVARCHAR (50)  NULL,
     [lmsDomain]       NVARCHAR (100) NULL,
+    [useSSL]          BIT            NULL,
     CONSTRAINT [PK_CompanyLms] PRIMARY KEY CLUSTERED ([companyLmsId] ASC),
     CONSTRAINT [FK_CompanyLms_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]),
     CONSTRAINT [FK_CompanyLms_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),
@@ -24,4 +25,6 @@
     CONSTRAINT [FK_CompanyLms_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
     CONSTRAINT [FK_CompanyLms_User2] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId])
 );
+
+
 

@@ -164,5 +164,11 @@
         /// </summary>
         [DataMember]
         public string title { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use SSL.
+        /// </summary>
+        [DataMember]
+        public bool useSsl { get; set; }
     }
 }
