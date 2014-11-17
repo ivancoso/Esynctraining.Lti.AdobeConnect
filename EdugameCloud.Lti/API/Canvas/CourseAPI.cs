@@ -14,7 +14,7 @@
     /// The course API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class CourseAPI
+    public class CourseAPI : ILmsAPI
     {
         #region Static Fields
 

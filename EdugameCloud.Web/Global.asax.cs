@@ -16,6 +16,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Extensions;
 //    using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
@@ -54,6 +55,11 @@
             var container = new WindsorContainer();
             IoC.Initialize(container);
             container.RegisterComponents(web: true);
+            container.Register(
+                Classes.FromAssemblyNamed("EdugameCloud.Lti")
+                    .BasedOn(typeof(ILmsAPI))
+                    .LifestyleTransient());
+
             container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>());
             container.Register(Component.For<SoapAPI>().ImplementedBy<SoapAPI>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());

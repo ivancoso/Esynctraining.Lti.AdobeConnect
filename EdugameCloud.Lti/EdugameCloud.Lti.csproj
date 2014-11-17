@@ -106,6 +106,9 @@
     <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CourseAPI.cs" />
+    <Compile Include="API\LmsAPI.cs" />
+    <Compile Include="API\LmsFactory.cs" />
+    <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
