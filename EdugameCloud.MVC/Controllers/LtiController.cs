@@ -201,7 +201,7 @@
                             CompanyLmsModel.RegisterSave(credentials);
                         }
 
-                        this.RedirectToExtJs(credentials, lmsUser, provider);
+                        return this.RedirectToExtJs(credentials, lmsUser, provider);
                     }
 
                     this.ViewBag.Error = string.Format("Credentials not found");
@@ -559,6 +559,88 @@
         }
 
         /// <summary>
+        /// The share recording.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <param name="recordingId">
+        /// The recording id.
+        /// </param>
+        /// <param name="isPublic">
+        /// The is public.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual string ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            var link = this.MeetingSetup.UpdateRecording(credentials, this.GetProvider(lmsProviderName), recordingId, isPublic, password);
+            
+            return link;
+        }
+
+        /// <summary>
+        /// The edit recording.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <param name="recordingUrl">
+        /// The recording url.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "edit");
+
+            if (url == null)
+            {
+                this.RedirectToError("Can not access the recording");
+            }
+
+            return this.Redirect(url);
+        }
+
+        /// <summary>
+        /// The get recording flv.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <param name="recordingUrl">
+        /// The recording url.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
+        {
+            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "offline");
+
+            if (url == null)
+            {
+                this.RedirectToError("Can not access the recording");
+            }
+
+            return this.Redirect(url);
+        }
+
+        /// <summary>
         /// The login with provider.
         /// </summary>
         /// <param name="provider">
@@ -609,7 +691,7 @@
             this.AddSessionCookie(this.Session.SessionID);
 
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
-
+            
             if (BltiProviderHelper.VerifyBltiRequest(
                 credentials,
                 () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)

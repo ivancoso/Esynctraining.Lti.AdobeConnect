@@ -52,6 +52,18 @@
         [DataMember]
         public string url { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether is_public.
+        /// </summary>
+        [DataMember]
+        public bool is_public { get; set; }
+
+        /// <summary>
+        /// Gets or sets the password.
+        /// </summary>
+        [DataMember]
+        public string password { get; set; }
+
         #endregion
     }
 }

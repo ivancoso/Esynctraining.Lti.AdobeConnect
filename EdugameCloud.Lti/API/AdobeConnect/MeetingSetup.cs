@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Security.Policy;
     using System.Web.Security;
+    using System.Web.UI.WebControls.WebParts;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -213,14 +214,24 @@
 
             if (meeting == null)
             {
-                return null;
+                return new List<RecordingDTO>();
             }
 
-            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.ScoId });
-            return
-                result.Values.Select(
-                    v =>
-                    new RecordingDTO
+            ScoContentCollectionResult result = provider.GetMeetingRecordings(meeting.ScoId);
+            
+            List<RecordingDTO> recordings = new List<RecordingDTO>();
+
+            foreach (var v in result.Values)
+            {
+                var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
+                bool isPublic = false;
+                if (moreDetails.Success && moreDetails.Values.Any())
+                {
+                    isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
+                }
+                string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
+
+                recordings.Add(new RecordingDTO
                         {
                             id = v.ScoId, 
                             name = v.Name, 
@@ -228,9 +239,56 @@
                             begin_date = v.BeginDate.ToString("MM/dd/yy h:mm:ss tt"), 
                             end_date = v.EndDate.ToString("MM/dd/yy h:mm:ss tt"), 
                             duration = v.Duration, 
-                            url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray())
-                        }).ToList();
+                            url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray()),
+                            is_public = isPublic,
+                            password = passcode
+                        });
+            }
+
+            return recordings;
         }
+
+        /// <summary>
+        /// The update recording.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="id">
+        /// The id.
+        /// </param>
+        /// <param name="isPublic">
+        /// The is public.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public string UpdateRecording(CompanyLms credentials, AdobeConnectProvider provider, string id, bool isPublic, string password)
+        {
+            var recording = provider.GetScoInfo(id).ScoInfo;
+
+            if (recording == null)
+            {
+                return string.Empty;
+            }
+
+            var accessResult = provider.UpdatePublicAccessPermissions(
+                id,
+                isPublic ? PermissionId.view : PermissionId.remove);
+            var passwordResult = provider.UpdateAclField(id, AclFieldId.meeting_passcode, password);
+
+            var recordingUrl = (credentials.AcServer.EndsWith("/")
+                                        ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
+                                        : credentials.AcServer) + recording.UrlPath;
+            return recordingUrl;
+        }
+
 
         /// <summary>
         /// The get templates.
@@ -508,7 +566,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl)
+        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null)
         {
             var breezeToken = string.Empty;
 
@@ -538,7 +596,13 @@
                           + (credentials.AcServer != null && credentials.AcServer.EndsWith(@"/") ? string.Empty : "/")
                           + recordingUrl;
 
-            return string.IsNullOrWhiteSpace(breezeToken) ? baseUrl : string.Format("{0}?session={1}", baseUrl, breezeToken);
+            return string.IsNullOrWhiteSpace(breezeToken)
+                       ? baseUrl
+                       : string.Format(
+                           "{0}?session={1}{2}",
+                           baseUrl,
+                           breezeToken,
+                           mode != null ? string.Format("&pbMode={0}", mode) : string.Empty);
         }
 
         /// <summary>
@@ -1101,7 +1165,7 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
+                //areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);

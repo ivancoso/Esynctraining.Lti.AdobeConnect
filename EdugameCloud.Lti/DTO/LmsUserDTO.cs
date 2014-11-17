@@ -10,6 +10,14 @@
     [DataContract]
     public class LmsUserDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LmsUserDTO"/> class.
+        /// </summary>
+        public LmsUserDTO()
+        {
+            this.is_editable = true;
+        }
+
         #region Public Properties
 
         /// <summary>

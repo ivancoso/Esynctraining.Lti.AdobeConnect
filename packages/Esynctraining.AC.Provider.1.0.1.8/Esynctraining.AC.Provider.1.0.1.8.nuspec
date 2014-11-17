@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>Esynctraining.AC.Provider</id>
+    <version>1.0.1.8</version>
+    <title>Esynctraining.AC.Provider</title>
+    <authors>eSyncTraining.com</authors>
+    <owners>eSyncTraining.com</owners>
+    <projectUrl>http://esynctraining.com/</projectUrl>
+    <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides PDF functionality for eSyncTraining projects</description>
+    <releaseNotes>Provides PDF functionality for eSyncTraining projects</releaseNotes>
+    <tags>core, pdf</tags>
+    <references>
+      <reference file="Esynctraining.AC.Provider.dll" />
+    </references>
+  </metadata>
+</package>
