@@ -162,6 +162,11 @@
             /// The field update.
             /// </summary>
             public const string FieldUpdate = "acl-id={0}&field-id={1}&value={2}";
+
+            /// <summary>
+            /// The field info.
+            /// </summary>
+            public const string FieldInfo = "acl-id={0}&filter-field-id={1}";
         }
 
         /// <summary>

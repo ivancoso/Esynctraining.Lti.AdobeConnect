@@ -111,6 +111,11 @@
             public const string FeatureUpdate = "meeting-feature-update";
 
             /// <summary>
+            /// The acl field info.
+            /// </summary>
+            public const string FieldInfo = "acl-field-info";
+
+            /// <summary>
             /// The acl field update.
             /// </summary>
             public const string FieldUpdate = "acl-field-update";

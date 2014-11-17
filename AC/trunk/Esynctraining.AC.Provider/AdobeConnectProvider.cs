@@ -1353,6 +1353,23 @@
         }
 
         /// <summary>
+        /// The update public access permissions.
+        /// </summary>
+        /// <param name="aclId">
+        /// The acl id.
+        /// </param>
+        /// <param name="permissionId">
+        /// The permission id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="StatusInfo"/>.
+        /// </returns>
+        public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
+        {
+            return this.UpdatePermissionsInternal(aclId, CommandParams.PrincipalIdPublicAccess, permissionId);
+        }
+
+        /// <summary>
         /// The update meeting feature for account
         /// </summary>
         /// <param name="accountId">
@@ -1375,6 +1392,29 @@
             this.requestProcessor.Process(Commands.Sco.FeatureUpdate, string.Format(CommandParams.Features.Update, accountId, featureId.ToXmlString(), enable ? "true" : "false"), out status);
 
             return status;
+        }
+
+        /// <summary>
+        /// The get acl field.
+        /// </summary>
+        /// <param name="aclId">
+        /// The acl id.
+        /// </param>
+        /// <param name="fieldId">
+        /// The field id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="FieldResult"/>.
+        /// </returns>
+        public FieldResult GetAclField(string aclId, AclFieldId fieldId)
+        {
+            StatusInfo status;
+
+            var result = this.requestProcessor.Process(Commands.Sco.FieldInfo, string.Format(CommandParams.Features.FieldInfo, aclId, fieldId.ToXmlString()), out status);
+
+            return ResponseIsOk(result, status)
+                ? new FieldResult(status, FieldParser.Parse(result))
+                : new FieldResult(status);
         }
 
         /// <summary>
