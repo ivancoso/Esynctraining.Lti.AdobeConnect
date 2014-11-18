@@ -27,7 +27,7 @@
     ///     The SOAP API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class SoapAPI
+    public class SoapAPI : ILmsAPI
     {
         #region Static Fields
 

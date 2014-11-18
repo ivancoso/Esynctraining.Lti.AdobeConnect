@@ -15,18 +15,13 @@
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Extensions;
-//    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;
     using EdugameCloud.Persistence;
     using EdugameCloud.Web.App_Start;
     using EdugameCloud.Web.Providers;
-
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
@@ -55,14 +50,7 @@
             var container = new WindsorContainer();
             IoC.Initialize(container);
             container.RegisterComponents(web: true);
-            container.Register(
-                Classes.FromAssemblyNamed("EdugameCloud.Lti")
-                    .BasedOn(typeof(ILmsAPI))
-                    .LifestyleTransient());
-
-            container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>());
-            container.Register(Component.For<SoapAPI>().ImplementedBy<SoapAPI>());
-            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+            RegisterLtiComponents(container);
             RegisterLocalComponents(container);
             SetControllerFactory(container);
             AreaRegistration.RegisterAllAreas();
@@ -89,6 +77,18 @@
             string pathPropertiesPath = this.GetPathPropertiesPath();
             container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
             AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
+        }
+
+        /// <summary>
+        /// The register LTI components.
+        /// </summary>
+        /// <param name="container">
+        /// The container.
+        /// </param>
+        private static void RegisterLtiComponents(WindsorContainer container)
+        {
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
         }
 
         /// <summary>

@@ -711,6 +711,7 @@
 
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
+                    case LmsProviderNames.Moodle:
                         return this.RedirectToExtJs(credentials, lmsUser, lmsDomain);
                 }
             }

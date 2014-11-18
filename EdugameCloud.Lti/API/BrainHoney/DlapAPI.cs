@@ -24,7 +24,7 @@
     ///     The course API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class DlapAPI
+    public class DlapAPI : ILmsAPI
     {
         #region Fields
 

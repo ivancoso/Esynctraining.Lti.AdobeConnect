@@ -14,6 +14,7 @@
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.AC.Provider;
@@ -42,6 +43,11 @@
         /// </summary>
         private readonly SoapAPI soapApi;
 
+        /// <summary>
+        /// The Moodle API.
+        /// </summary>
+        private readonly MoodleAPI moodleApi;
+
         #endregion
 
         #region Constructors and Destructors
@@ -55,10 +61,14 @@
         /// <param name="soapApi">
         /// The SOAP API.
         /// </param>
-        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi)
+        /// <param name="moodleApi">
+        /// The Moodle API.
+        /// </param>
+        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi)
         {
             this.dlapApi = dlapApi;
             this.soapApi = soapApi;
+            this.moodleApi = moodleApi;
         }
 
         #endregion
@@ -1393,6 +1403,25 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="blackBoardCourseId">
+        /// The brain honey course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int blackBoardCourseId)
+        {
+            string error;
+            var users = this.moodleApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+            return this.GroupUsers(users);
+        }
+
+        /// <summary>
+        /// The get brain honey users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
         /// <param name="brainHoneyCourseId">
         /// The brain honey course id.
         /// </param>
@@ -1491,6 +1520,8 @@
                     return this.GetBrainHoneyUsers(credentials, courseId);
                 case LmsProviderNames.Blackboard:
                     return this.GetBlackBoardUsers(credentials, courseId);
+                case LmsProviderNames.Moodle:
+                    return this.GetMoodleUsers(credentials, courseId);
             }
 
             return new List<LmsUserDTO>();

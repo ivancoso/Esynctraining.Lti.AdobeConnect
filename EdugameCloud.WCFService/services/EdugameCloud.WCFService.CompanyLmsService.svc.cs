@@ -9,12 +9,16 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
@@ -51,6 +55,28 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<DlapAPI>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the Moodle API.
+        /// </summary>
+        private MoodleAPI MoodleAPI
+        {
+            get
+            {
+                return IoC.Resolve<MoodleAPI>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the SOAP API.
+        /// </summary>
+        private SoapAPI SoapAPI
+        {
+            get
+            {
+                return IoC.Resolve<SoapAPI>();
             }
         }
 
@@ -165,12 +191,19 @@ namespace EdugameCloud.WCFService
                 case "brainhoney":
                     success = this.TestBrainHoneyConnection(test, out info);
                     break;
+                case "blackboard":
+                    success = this.TestBlackBoardConnection(test, out info);
+                    break;
                 case "moodle":
                     success = this.TestMoodleConnection(test, out info);
                     break;
             }
 
             result.@object = new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
+            if (!success)
+            {
+                result.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Failed to connect", info));
+            }
 
             return result;
         }
@@ -189,9 +222,8 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
-            //// todo
-            info = "Moodle connection test is not yet implemented";
-            return false;
+            var session = this.MoodleAPI.LoginAndCreateAClient(out info, test.domain.StartsWith("https"), test.domain, test.login, test.password);
+            return session != null;
         }
 
         /// <summary>
@@ -209,6 +241,24 @@ namespace EdugameCloud.WCFService
         private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
         {
             var session = this.DlapAPI.LoginAndCreateASession(out info, test.domain, test.login, test.password);
+            return session != null;
+        }
+
+        /// <summary>
+        /// The test brain honey connection.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
+        {
+            var session = this.SoapAPI.LoginAndCreateAClient(out info, test.domain.StartsWith("https"), test.domain, test.login, test.password);
             return session != null;
         }
 

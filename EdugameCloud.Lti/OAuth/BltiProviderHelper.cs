@@ -113,7 +113,7 @@
             signatureBase.AppendFormat("{0}", normalizedRequestParameters.OAuthUrlEncode());
 
             // Look up the secret using oauth_consumer_key
-            string secret = RetrieveSecretForKey(request.Form["oauth_consumer_key"], credentials);
+            string secret = RetrieveSecretForKey(request["oauth_consumer_key"], credentials);
 
             if (string.IsNullOrWhiteSpace(secret))
             {

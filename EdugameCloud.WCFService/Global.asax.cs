@@ -10,6 +10,8 @@
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.API;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
@@ -62,14 +64,11 @@
         /// </param>
         protected void Application_Start(object sender, EventArgs e)
         {
-            IoC.Initialize(new WindsorContainer());
-            IoC.Container.RegisterComponents(wcf: true);
-            IoC.Container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
-            IoC.Container.Register(Component.For<CourseAPI>().ImplementedBy<CourseAPI>());
-            IoC.Container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
-            IoC.Container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
-            IoC.Container.Register(Component.For<DlapAPI>().ImplementedBy<DlapAPI>());
-            IoC.Container.Register(Component.For<SoapAPI>().ImplementedBy<SoapAPI>());
+            var container = new WindsorContainer();
+            IoC.Initialize(container);
+            container.RegisterComponents(wcf: true);
+            container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
+            RegisterLtiComponents(container);
             try
             {
                 // Initialize WebORB configuration before starting messaging server
@@ -94,6 +93,19 @@
                 var logger = IoC.Resolve<Castle.Core.Logging.ILogger>();
                 logger.Error("Failed to initialize RTMP server", ex);
             }  
+        }
+
+        /// <summary>
+        /// The register LTI components.
+        /// </summary>
+        /// <param name="container">
+        /// The container.
+        /// </param>
+        private static void RegisterLtiComponents(WindsorContainer container)
+        {
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
+            container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
         }
 
         protected void Application_AuthenticateRequest(Object sender, EventArgs e)
