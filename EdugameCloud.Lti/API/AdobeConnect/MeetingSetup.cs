@@ -793,7 +793,7 @@
         /// </param>
         public void SetupFolders(CompanyLms credentials, AdobeConnectProvider provider)
         {
-            string ltiProvider = credentials.LmsProvider.LmsProviderName;
+            string ltiProvider = credentials.LmsProvider.ShortName;
             string templatesSco = null;
             if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
             {
@@ -1342,7 +1342,7 @@
                 duration,
                 param.referer ?? string.Empty);
 
-            switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
+            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
                     var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
@@ -1483,7 +1483,7 @@
         /// </returns>
         private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId)
         {
-            switch (credentials.LmsProvider.LmsProviderName.ToLowerInvariant())
+            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);

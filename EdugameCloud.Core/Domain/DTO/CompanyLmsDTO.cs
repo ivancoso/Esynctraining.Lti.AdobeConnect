@@ -40,13 +40,12 @@
                 this.modifiedBy = instance.ModifiedBy.Return(x => x.Id, 0);
                 this.dateCreated = instance.DateCreated;
                 this.dateModified = instance.DateModified;
-                this.lmsProvider = instance.LmsProvider.Return(x => x.LmsProviderName, string.Empty);
+                this.lmsProvider = instance.LmsProvider.Return(x => x.ShortName, string.Empty);
                 this.sharedSecret = instance.SharedSecret;
                 this.lmsAdmin = instance.AdminUser.With(x => x.Username);
                 this.lmsAdminToken = instance.AdminUser.With(x => x.Token);
                 this.lmsDomain = instance.LmsDomain;
                 this.primaryColor = instance.PrimaryColor;
-                this.layout = instance.Layout;
                 this.title = instance.Title;
             }
         }
@@ -152,12 +151,6 @@
         /// </summary>
         [DataMember]
         public string primaryColor { get; set; }
-
-        /// <summary>
-        /// Gets or sets the layout.
-        /// </summary>
-        [DataMember]
-        public string layout { get; set; }
 
         /// <summary>
         /// Gets or sets the title.

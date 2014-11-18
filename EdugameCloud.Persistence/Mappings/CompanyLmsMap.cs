@@ -24,7 +24,6 @@
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.SharedSecret).Not.Nullable();
             this.Map(x => x.PrimaryColor).Nullable();
-            this.Map(x => x.Layout).Nullable();
             this.Map(x => x.LmsDomain).Nullable();
             this.Map(x => x.ShowAnnouncements).Nullable();
             this.Map(x => x.Title).Nullable();

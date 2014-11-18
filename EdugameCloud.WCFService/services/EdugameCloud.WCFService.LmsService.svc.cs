@@ -2,9 +2,12 @@
 namespace EdugameCloud.WCFService
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Security.Policy;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Web;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
@@ -100,6 +103,17 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        /// <summary>
+        /// Gets the lms provider model.
+        /// </summary>
+        private LmsProviderModel LmsProviderModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsProviderModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -143,6 +157,35 @@ namespace EdugameCloud.WCFService
             var param = this.LmsUserParametersModel.GetOneForLogin(acId, acDomain, courseMeeting.CourseId).Value;
             result.@object = param != null ? new LmsUserParametersDTO(param) : null;
             
+            return result;
+        }
+
+        /// <summary>
+        /// The get providers.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        public ServiceResponse<LmsProviderDTO> GetProviders()
+        {
+            var result = new ServiceResponse<LmsProviderDTO>();
+
+            var providers = LmsProviderModel.GetAll();
+            result.objects = providers.Select(
+                p =>
+                    {
+                        var pdto = new LmsProviderDTO(p);
+                        pdto.configUrl = this.Settings.PortalUrl +
+                            "content/lti-config/" +
+                            p.ShortName + 
+                            ".xml";
+                        pdto.instructionsUrl = this.Settings.PortalUrl +
+                            "content/lti-instructions/" +
+                            p.ShortName + 
+                            ".pdf";
+                        return pdto;
+                    });
+
             return result;
         }
 

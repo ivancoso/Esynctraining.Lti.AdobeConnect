@@ -105,7 +105,7 @@
         {
             var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
                 .Where(x => (x.LmsDomain != null && x.LmsDomain == domain) || (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
-                .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.LmsProviderName).IsInsensitiveLike(providerName)
+                .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.ShortName).IsInsensitiveLike(providerName)
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }

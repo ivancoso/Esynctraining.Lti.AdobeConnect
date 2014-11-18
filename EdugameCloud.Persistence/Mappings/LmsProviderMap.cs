@@ -15,6 +15,7 @@
         public LmsProviderMap()
         {
             this.Map(x => x.LmsProviderName).Nullable();
+            this.Map(x => x.ShortName).Nullable();
         }
 
         #endregion

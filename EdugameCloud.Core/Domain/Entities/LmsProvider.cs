@@ -14,6 +14,11 @@
         /// </summary>
         public virtual string LmsProviderName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the short name.
+        /// </summary>
+        public virtual string ShortName { get; set; }
+
         #endregion
     }
 }

@@ -84,11 +84,6 @@
         public virtual DateTime DateModified { get; set; }
 
         /// <summary>
-        /// Gets or sets the layout.
-        /// </summary>
-        public virtual string Layout { get; set; }
-
-        /// <summary>
         /// Gets or sets the LMS domain.
         /// </summary>
         public virtual string LmsDomain { get; set; }

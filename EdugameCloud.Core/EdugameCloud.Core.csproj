@@ -245,6 +245,7 @@
     <Compile Include="Domain\DTO\ConnectionInfoDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
     <Compile Include="Domain\DTO\LmsAuthenticationParametersDTO.cs" />
+    <Compile Include="Domain\DTO\LmsProviderDTO.cs" />
     <Compile Include="Domain\DTO\LmsQuizDTO.cs" />
     <Compile Include="Domain\DTO\MoodleCourseInfoDTO.cs" />
     <Compile Include="Domain\DTO\LmsQuizConvertDTO.cs" />

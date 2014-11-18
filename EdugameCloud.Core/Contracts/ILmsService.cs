@@ -15,6 +15,15 @@
     public interface ILmsService
     {
         /// <summary>
+        /// The get providers.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        [OperationContract]
+        ServiceResponse<LmsProviderDTO> GetProviders();
+
+        /// <summary>
         /// The get quizzes for user.
         /// </summary>
         /// <param name="userId">

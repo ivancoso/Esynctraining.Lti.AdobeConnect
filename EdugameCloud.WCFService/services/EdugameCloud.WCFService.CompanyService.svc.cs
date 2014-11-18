@@ -575,7 +575,6 @@ namespace EdugameCloud.WCFService
                                       SharedSecret = Guid.NewGuid().ToString(),
                                       LmsDomain = dto.lmsVO.lmsDomain,
                                       PrimaryColor = dto.lmsVO.primaryColor,
-                                      Layout = dto.lmsVO.layout,
                                       Title = dto.lmsVO.title,
                                       UseSSL = dto.lmsVO.useSsl
                                   };

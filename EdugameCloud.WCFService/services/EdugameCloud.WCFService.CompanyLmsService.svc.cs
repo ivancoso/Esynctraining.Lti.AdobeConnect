@@ -289,7 +289,6 @@ namespace EdugameCloud.WCFService
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value;
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;
-            instance.Layout = dto.layout;
             instance.Title = dto.title;
             instance.UseSSL = dto.useSsl;
             if (instance.IsTransient() && !string.IsNullOrWhiteSpace(dto.lmsDomain))

@@ -42,7 +42,7 @@
         {
             var query = new DefaultQueryOver<LmsProvider, int>()
                 .GetQueryOver()
-                .WhereRestrictionOn(x => x.LmsProviderName)
+                .WhereRestrictionOn(x => x.ShortName)
                 .IsInsensitiveLike(name, MatchMode.Exact);
             return this.Repository.FindOne(query);
         }
