@@ -976,8 +976,7 @@
         {
             var primaryColor = user.With(x => x.PrimaryColor);
             this.ViewBag.RedirectUrl = string.Format(
-                "/extjs/index.html?layout={0}&primaryColor={1}&lmsProviderName={2}",
-                credentials.Layout ?? string.Empty,
+                "/extjs/index.html?primaryColor={0}&lmsProviderName={1}",
                 !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
                 providerName);
             return this.View("Redirect");

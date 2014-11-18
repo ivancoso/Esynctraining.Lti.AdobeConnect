@@ -381,6 +381,12 @@
     <Content Include="Content\swf\config\paths.properties" />
     <Content Include="Content\swf\admin\resources\fonts\ARIAL.TTF" />
     <Content Include="Content\swf\admin\resources\fonts\ARIALBD.TTF" />
+    <Content Include="Content\lti-instructions\Blackboard.pdf" />
+    <Content Include="Content\lti-instructions\BrainHoney.pdf" />
+    <Content Include="Content\lti-instructions\Canvas.pdf" />
+    <Content Include="Content\lti-instructions\Moodle.pdf" />
+    <Content Include="Content\lti-config\Blackboard.pdf" />
+    <Content Include="Content\lti-config\Moodle.pdf" />
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -542,7 +548,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost</IISUrl>
+          <IISUrl>http://localhost:2345</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
