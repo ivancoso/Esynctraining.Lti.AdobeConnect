@@ -656,18 +656,19 @@
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
         {
-            string providerName = this.GetProviderName(provider, model);
+            string lmsDomain = model.lms_domain;
+            string lmsProvider = this.GetProviderName(provider, model);
 
             CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
-                    providerName, 
-                    model.lms_domain, 
+                    lmsProvider, 
+                    lmsDomain, 
                     model.oauth_consumer_key).Value;
             if (credentials != null)
             {
-                this.SetParam(providerName, model);
-                this.SetCredentials(providerName, credentials);
+                this.SetParam(lmsDomain, model);
+                this.SetCredentials(lmsDomain, credentials);
 
-                this.MeetingSetup.SetupFolders(this.GetCredentials(providerName), this.GetProvider(providerName));
+                this.MeetingSetup.SetupFolders(this.GetCredentials(lmsDomain), this.GetProvider(lmsDomain));
             }
             else if (!this.IsDebug)
             {
@@ -676,8 +677,8 @@
             }
             else
             {
-                credentials = this.GetCredentials(providerName);
-                this.SetDebugModelValues(model, providerName);
+                credentials = this.GetCredentials(lmsDomain);
+                this.SetDebugModelValues(model, lmsProvider);
             }
             
             /*
@@ -696,7 +697,7 @@
                 credentials,
                 () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
             {
-                switch (providerName.ToLower())
+                switch (lmsProvider.ToLower())
                 {
                     case LmsProviderNames.Canvas:
 
@@ -706,11 +707,11 @@
                             return null;
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, providerName);
+                        return this.RedirectToExtJs(credentials, lmsUser, lmsDomain);
 
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
-                        return this.RedirectToExtJs(credentials, lmsUser, providerName);
+                        return this.RedirectToExtJs(credentials, lmsUser, lmsDomain);
                 }
             }
 
