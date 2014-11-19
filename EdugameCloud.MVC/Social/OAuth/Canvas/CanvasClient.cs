@@ -51,6 +51,11 @@
         /// </summary>
         private const string StateQueryKey = "state";
 
+        /// <summary>
+        /// The return uri provider key parameter name.
+        /// </summary>
+        private const string ReturnUriProviderKeyParameterName = "providerKey";
+
         #endregion
 
         #region Static Fields
@@ -117,6 +122,25 @@
         {
             var builder = new UriBuilder(returnUrl);
             builder.AppendQueryArgument(ReturnUriExtensionQueryParameterName, canvasUrl);
+            return builder.Uri.AbsoluteUri;
+        }
+
+        /// <summary>
+        /// The add provider key to return url.
+        /// </summary>
+        /// <param name="returnUrl">
+        /// The return url.
+        /// </param>
+        /// <param name="providerKey">
+        /// The provider key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string AddProviderKeyToReturnUrl(string returnUrl, string providerKey)
+        {
+            var builder = new UriBuilder(returnUrl);
+            builder.AppendQueryArgument(ReturnUriProviderKeyParameterName, providerKey);
             return builder.Uri.AbsoluteUri;
         }
 

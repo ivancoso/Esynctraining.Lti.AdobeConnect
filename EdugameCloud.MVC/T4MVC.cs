@@ -142,6 +142,29 @@ namespace EdugameCloud.MVC.Links
         }
     
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class lti_config {
+            private const string URLPATH = "~/Content/lti-config";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string Blackboard_pdf = Url("Blackboard.pdf");
+            public static readonly string brainhoney_xml = Url("brainhoney.xml");
+            public static readonly string canvas_xml = Url("canvas.xml");
+            public static readonly string index_html = Url("index.html");
+            public static readonly string Moodle_pdf = Url("Moodle.pdf");
+        }
+    
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class lti_instructions {
+            private const string URLPATH = "~/Content/lti-instructions";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string Blackboard_pdf = Url("Blackboard.pdf");
+            public static readonly string BrainHoney_pdf = Url("BrainHoney.pdf");
+            public static readonly string Canvas_pdf = Url("Canvas.pdf");
+            public static readonly string Moodle_pdf = Url("Moodle.pdf");
+        }
+    
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public static class styles {
             private const string URLPATH = "~/Content/styles";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }

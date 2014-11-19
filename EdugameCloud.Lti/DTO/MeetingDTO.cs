@@ -88,6 +88,11 @@
         [DataMember]
         public bool are_users_synched { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms_provider_name.
+        /// </summary>
+        public string lms_provider_name { get; set; }
+
         #endregion
     }
 }

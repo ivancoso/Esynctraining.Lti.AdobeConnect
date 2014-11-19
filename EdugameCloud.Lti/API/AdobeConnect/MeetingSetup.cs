@@ -744,7 +744,8 @@
                 updateItem, 
                 credentials.ACScoId, 
                 param.context_label ?? "nolabel", 
-                param.course_id);
+                param.course_id,
+                meeting.ScoId == null);
 
             ScoInfoResult result = meeting.ScoId != null
                                        ? provider.UpdateSco(updateItem)
@@ -1076,7 +1077,8 @@
                 id = "0",
                 connect_server = credentials.AcServer,
                 is_editable = this.CanEdit(param),
-                are_users_synched = true
+                are_users_synched = true,
+                lms_provider_name = credentials.LmsProvider.LmsProviderName
             };
         }
 
@@ -1851,7 +1853,8 @@
                               access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString() : string.Empty, 
                               can_join = flags.Item1, 
                               are_users_synched = flags.Item2,
-                              is_editable = this.CanEdit(param)
+                              is_editable = this.CanEdit(param),
+                              lms_provider_name = credentials.LmsProvider.LmsProviderName
                           };
             return ret;
         }
@@ -2061,12 +2064,16 @@
         /// <param name="courseId">
         /// The course id.
         /// </param>
+        /// <param name="isNew">
+        /// The is New.
+        /// </param>
         private void SetMeetingUpateItemFields(
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
             string contextLabel, 
-            int courseId)
+            int courseId,
+            bool isNew)
         {
             updateItem.Name = string.Format(
                 "{0} [{1}] {2}", 
@@ -2079,11 +2086,15 @@
             }
 
             updateItem.Description = meetingDTO.summary;
-            updateItem.UrlPath = meetingDTO.ac_room_url;
             updateItem.FolderId = folderSco;
             updateItem.Language = "en";
             updateItem.Type = ScoType.meeting;
-            updateItem.SourceScoId = meetingDTO.template;
+            
+            if (isNew)
+            {
+                updateItem.SourceScoId = meetingDTO.template;
+                updateItem.UrlPath = meetingDTO.ac_room_url;
+            }
 
             DateTime dateBegin;
 

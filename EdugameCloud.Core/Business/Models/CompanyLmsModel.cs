@@ -92,19 +92,16 @@
         /// <param name="providerName">
         /// The provider Name.
         /// </param>
-        /// <param name="domain">
-        /// The domain
-        /// </param>
         /// <param name="consumerKey">
         /// The consumer key
         /// </param>
         /// <returns>
         /// The canvas AC meeting
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByProviderAndDomainOrConsumerKey(string providerName, string domain, string consumerKey)
+        public IFutureValue<CompanyLms> GetOneByProviderAndConsumerKey(string providerName, string consumerKey)
         {
             var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
-                .Where(x => (x.LmsDomain != null && x.LmsDomain == domain) || (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
+                .Where(x => (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
                 .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.ShortName).IsInsensitiveLike(providerName)
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);

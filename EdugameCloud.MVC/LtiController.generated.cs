@@ -49,6 +49,24 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult SaveSettings()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.SaveSettings);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult CheckPasswordBeforeJoin()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.CheckPasswordBeforeJoin);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetSettings()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetSettings);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.JsonResult DeleteRecording()
         {
             return new T4MVC_JsonResult(Area, Name, ActionNames.DeleteRecording);
@@ -85,6 +103,18 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetAttendanceReport()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetAttendanceReport);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult GetSessionsReport()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.GetSessionsReport);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult Index()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.Index);
@@ -100,6 +130,18 @@ namespace EdugameCloud.MVC.Controllers
         public System.Web.Mvc.ActionResult JoinRecording()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.JoinRecording);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult EditRecording()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.EditRecording);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult GetRecordingFlv()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.GetRecordingFlv);
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -125,6 +167,12 @@ namespace EdugameCloud.MVC.Controllers
         {
             return new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
         }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.JsonResult SetDefaultRolesForNonParticipants()
+        {
+            return new T4MVC_JsonResult(Area, Name, ActionNames.SetDefaultRolesForNonParticipants);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public LtiController Actions { get { return EdugameCloudT4.Lti; } }
@@ -142,38 +190,54 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionNamesClass
         {
             public readonly string AuthenticationCallback = "callback";
+            public readonly string SaveSettings = "SaveSettings";
+            public readonly string CheckPasswordBeforeJoin = "CheckPasswordBeforeJoin";
+            public readonly string GetSettings = "GetSettings";
             public readonly string DeleteRecording = "DeleteRecording";
             public readonly string GetHtmlPage = "GetHtmlPage";
             public readonly string GetMeeting = "GetMeeting";
             public readonly string GetRecordings = "GetRecordings";
             public readonly string GetTemplates = "GetTemplates";
             public readonly string GetUsers = "GetUsers";
+            public readonly string GetAttendanceReport = "GetAttendanceReport";
+            public readonly string GetSessionsReport = "GetSessionsReport";
             public readonly string Index = "Index";
             public readonly string JoinMeeting = "JoinMeeting";
             public readonly string JoinRecording = "JoinRecording";
+            public readonly string EditRecording = "EditRecording";
+            public readonly string GetRecordingFlv = "GetRecordingFlv";
             public readonly string LoginWithProvider = "login";
             public readonly string RedirectToErrorPage = "RedirectToErrorPage";
             public readonly string UpdateMeeting = "UpdateMeeting";
             public readonly string UpdateUser = "UpdateUser";
+            public readonly string SetDefaultRolesForNonParticipants = "SetDefaultRolesForNonParticipants";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string AuthenticationCallback = "callback";
+            public const string SaveSettings = "SaveSettings";
+            public const string CheckPasswordBeforeJoin = "CheckPasswordBeforeJoin";
+            public const string GetSettings = "GetSettings";
             public const string DeleteRecording = "DeleteRecording";
             public const string GetHtmlPage = "GetHtmlPage";
             public const string GetMeeting = "GetMeeting";
             public const string GetRecordings = "GetRecordings";
             public const string GetTemplates = "GetTemplates";
             public const string GetUsers = "GetUsers";
+            public const string GetAttendanceReport = "GetAttendanceReport";
+            public const string GetSessionsReport = "GetSessionsReport";
             public const string Index = "Index";
             public const string JoinMeeting = "JoinMeeting";
             public const string JoinRecording = "JoinRecording";
+            public const string EditRecording = "EditRecording";
+            public const string GetRecordingFlv = "GetRecordingFlv";
             public const string LoginWithProvider = "login";
             public const string RedirectToErrorPage = "RedirectToErrorPage";
             public const string UpdateMeeting = "UpdateMeeting";
             public const string UpdateUser = "UpdateUser";
+            public const string SetDefaultRolesForNonParticipants = "SetDefaultRolesForNonParticipants";
         }
 
 
@@ -187,6 +251,31 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string __sid__ = "__sid__";
             public readonly string code = "code";
             public readonly string state = "state";
+            public readonly string providerKey = "providerKey";
+        }
+        static readonly ActionParamsClass_SaveSettings s_params_SaveSettings = new ActionParamsClass_SaveSettings();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_SaveSettings SaveSettingsParams { get { return s_params_SaveSettings; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_SaveSettings
+        {
+            public readonly string settings = "settings";
+        }
+        static readonly ActionParamsClass_CheckPasswordBeforeJoin s_params_CheckPasswordBeforeJoin = new ActionParamsClass_CheckPasswordBeforeJoin();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_CheckPasswordBeforeJoin CheckPasswordBeforeJoinParams { get { return s_params_CheckPasswordBeforeJoin; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_CheckPasswordBeforeJoin
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
+        static readonly ActionParamsClass_GetSettings s_params_GetSettings = new ActionParamsClass_GetSettings();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetSettings GetSettingsParams { get { return s_params_GetSettings; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetSettings
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
         }
         static readonly ActionParamsClass_DeleteRecording s_params_DeleteRecording = new ActionParamsClass_DeleteRecording();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -237,6 +326,26 @@ namespace EdugameCloud.MVC.Controllers
         {
             public readonly string lmsProviderName = "lmsProviderName";
         }
+        static readonly ActionParamsClass_GetAttendanceReport s_params_GetAttendanceReport = new ActionParamsClass_GetAttendanceReport();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetAttendanceReport GetAttendanceReportParams { get { return s_params_GetAttendanceReport; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetAttendanceReport
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+            public readonly string startIndex = "startIndex";
+            public readonly string limit = "limit";
+        }
+        static readonly ActionParamsClass_GetSessionsReport s_params_GetSessionsReport = new ActionParamsClass_GetSessionsReport();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetSessionsReport GetSessionsReportParams { get { return s_params_GetSessionsReport; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetSessionsReport
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+            public readonly string startIndex = "startIndex";
+            public readonly string limit = "limit";
+        }
         static readonly ActionParamsClass_Index s_params_Index = new ActionParamsClass_Index();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_Index IndexParams { get { return s_params_Index; } }
@@ -258,6 +367,24 @@ namespace EdugameCloud.MVC.Controllers
         public ActionParamsClass_JoinRecording JoinRecordingParams { get { return s_params_JoinRecording; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_JoinRecording
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+            public readonly string recordingUrl = "recordingUrl";
+        }
+        static readonly ActionParamsClass_EditRecording s_params_EditRecording = new ActionParamsClass_EditRecording();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_EditRecording EditRecordingParams { get { return s_params_EditRecording; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_EditRecording
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+            public readonly string recordingUrl = "recordingUrl";
+        }
+        static readonly ActionParamsClass_GetRecordingFlv s_params_GetRecordingFlv = new ActionParamsClass_GetRecordingFlv();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_GetRecordingFlv GetRecordingFlvParams { get { return s_params_GetRecordingFlv; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_GetRecordingFlv
         {
             public readonly string lmsProviderName = "lmsProviderName";
             public readonly string recordingUrl = "recordingUrl";
@@ -297,6 +424,14 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string lmsProviderName = "lmsProviderName";
             public readonly string user = "user";
         }
+        static readonly ActionParamsClass_SetDefaultRolesForNonParticipants s_params_SetDefaultRolesForNonParticipants = new ActionParamsClass_SetDefaultRolesForNonParticipants();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_SetDefaultRolesForNonParticipants SetDefaultRolesForNonParticipantsParams { get { return s_params_SetDefaultRolesForNonParticipants; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_SetDefaultRolesForNonParticipants
+        {
+            public readonly string lmsProviderName = "lmsProviderName";
+        }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ViewsClass Views { get { return s_views; } }
@@ -320,13 +455,35 @@ namespace EdugameCloud.MVC.Controllers
     {
         public T4MVC_LtiController() : base(Dummy.Instance) { }
 
-        public override System.Web.Mvc.ActionResult AuthenticationCallback(string __provider__, string __sid__, string code, string state)
+        public override System.Web.Mvc.ActionResult AuthenticationCallback(string __provider__, string __sid__, string code, string state, string providerKey)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.AuthenticationCallback);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__provider__", __provider__);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "__sid__", __sid__);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "state", state);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "providerKey", providerKey);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult SaveSettings(EdugameCloud.Lti.DTO.LmsUserSettingsDTO settings)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.SaveSettings);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "settings", settings);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult CheckPasswordBeforeJoin(string lmsProviderName)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.CheckPasswordBeforeJoin);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult GetSettings(string lmsProviderName)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetSettings);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 
@@ -373,6 +530,24 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
+        public override System.Web.Mvc.JsonResult GetAttendanceReport(string lmsProviderName, int startIndex, int limit)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetAttendanceReport);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "startIndex", startIndex);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "limit", limit);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult GetSessionsReport(string lmsProviderName, int startIndex, int limit)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetSessionsReport);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "startIndex", startIndex);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "limit", limit);
+            return callInfo;
+        }
+
         public override System.Web.Mvc.ActionResult Index(EdugameCloud.Lti.DTO.LtiParamDTO model)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Index);
@@ -390,6 +565,22 @@ namespace EdugameCloud.MVC.Controllers
         public override System.Web.Mvc.ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.JoinRecording);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "recordingUrl", recordingUrl);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult EditRecording(string lmsProviderName, string recordingUrl)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.EditRecording);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "recordingUrl", recordingUrl);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetRecordingFlv);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "recordingUrl", recordingUrl);
             return callInfo;
@@ -423,6 +614,13 @@ namespace EdugameCloud.MVC.Controllers
             var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "user", user);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName)
+        {
+            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.SetDefaultRolesForNonParticipants);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
 

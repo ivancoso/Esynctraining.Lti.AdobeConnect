@@ -152,6 +152,9 @@
         /// <param name="state">
         /// The state.
         /// </param>
+        /// <param name="providerKey">
+        /// The provider Key.
+        /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
@@ -163,9 +166,11 @@
             // ReSharper disable once InconsistentNaming
             string __sid__ = null, 
             string code = null, 
-            string state = null)
+            string state = null,
+            string providerKey = null)
         {
             string provider = __provider__;
+
             try
             {
                 AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication();
@@ -181,7 +186,7 @@
                         var token = result.ExtraData["accesstoken"];
                         var userId = result.ExtraData["id"];
                         var userName = result.ExtraData["name"];
-                        var company = this.GetCredentials(provider);
+                        var company = this.GetCredentials(providerKey);
 
                         lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value
                                       ?? new LmsUser { UserId = userId, CompanyLms = company };
@@ -191,17 +196,17 @@
                         this.lmsUserModel.RegisterSave(lmsUser);
                     }
 
-                    var credentials = this.GetCredentials(provider);
+                    var credentials = this.GetCredentials(providerKey);
 
                     if (credentials != null)
                     {
-                        if (credentials.AdminUser == null && this.IsAdminRole(provider))
+                        if (credentials.AdminUser == null && this.IsAdminRole(providerKey))
                         {
                             credentials.AdminUser = lmsUser;
                             CompanyLmsModel.RegisterSave(credentials);
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, provider);
+                        return this.RedirectToExtJs(credentials, lmsUser, providerKey);
                     }
 
                     this.ViewBag.Error = string.Format("Credentials not found");
@@ -656,19 +661,24 @@
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
         {
-            string lmsDomain = model.lms_domain;
+            string lmsKey = model.oauth_consumer_key;
             string lmsProvider = this.GetProviderName(provider, model);
 
-            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndDomainOrConsumerKey(
-                    lmsProvider, 
-                    lmsDomain, 
+            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(
+                    lmsProvider,
                     model.oauth_consumer_key).Value;
             if (credentials != null)
             {
-                this.SetParam(lmsDomain, model);
-                this.SetCredentials(lmsDomain, credentials);
+                if (credentials.LmsDomain != null && !string.Equals(credentials.LmsDomain, model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    this.ViewBag.Error = "This LTI integration is already set for different domain";
+                    return this.View("Error");
+                }
 
-                this.MeetingSetup.SetupFolders(this.GetCredentials(lmsDomain), this.GetProvider(lmsDomain));
+                this.SetParam(lmsKey, model);
+                this.SetCredentials(lmsKey, credentials);
+
+                this.MeetingSetup.SetupFolders(this.GetCredentials(lmsKey), this.GetProvider(lmsKey));
             }
             else if (!this.IsDebug)
             {
@@ -677,7 +687,7 @@
             }
             else
             {
-                credentials = this.GetCredentials(lmsDomain);
+                credentials = this.GetCredentials(lmsKey);
                 this.SetDebugModelValues(model, lmsProvider);
             }
             
@@ -703,16 +713,16 @@
 
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(provider, model);
+                            this.StartOAuth2Authentication(provider, lmsKey, model);
                             return null;
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, lmsDomain);
+                        return this.RedirectToExtJs(credentials, lmsUser, lmsKey);
 
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
-                        return this.RedirectToExtJs(credentials, lmsUser, lmsDomain);
+                        return this.RedirectToExtJs(credentials, lmsUser, lmsKey);
                 }
             }
 
@@ -949,13 +959,17 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
+        /// <param name="providerKey">
+        /// The provider Key.
+        /// </param>
         /// <param name="model">
         /// The model.
         /// </param>
-        private void StartOAuth2Authentication(string provider, LtiParamDTO model)
+        private void StartOAuth2Authentication(string provider, string providerKey, LtiParamDTO model)
         {
-            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider));
+            string returnUrl = this.Url.AbsoluteAction(EdugameCloudT4.Lti.AuthenticationCallback(provider, null, null, null, providerKey));
             returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(returnUrl, "https://" + model.lms_domain);
+            returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
             OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
         }
 
@@ -1031,7 +1045,7 @@
 
             if (creds == null)
             {
-                this.RedirectToError("Session timed out. Please refresh the page");
+                this.RedirectToError("Session timed out. Please refresh the page.");
                 return null;
             }
 
