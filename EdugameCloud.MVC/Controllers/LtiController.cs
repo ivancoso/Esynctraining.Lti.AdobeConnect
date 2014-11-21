@@ -435,7 +435,7 @@
                 this.MeetingSetup.GetProvider(credentials), 
                 param, 
                 out error);
-            if (error == null)
+            if (string.IsNullOrWhiteSpace(error))
             {
                 return this.Json(users);
             }
@@ -803,7 +803,7 @@
                 user,
                 out error);
 
-            if (error == null)
+            if (string.IsNullOrEmpty(error))
             {
                 return this.Json(users);
             }

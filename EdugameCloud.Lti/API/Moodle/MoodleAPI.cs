@@ -294,7 +294,7 @@
 
             if (((string)this.settings.MoodleChangeUrl).ToLower().Equals("true"))
             {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "PRO_Moodle");
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60");
             }
 
             return domain;
@@ -439,7 +439,7 @@
         {
             error = null;
             session = session ?? this.BeginBatch(out error, companyLms);
-            if (session != null)
+            if (session != null && string.IsNullOrWhiteSpace(error))
             {
                 var res = action(session);
                 if (res.Item2 != null)
