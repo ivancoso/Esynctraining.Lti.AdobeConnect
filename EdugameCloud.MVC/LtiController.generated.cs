@@ -97,9 +97,9 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public System.Web.Mvc.JsonResult GetUsers()
+        public System.Web.Mvc.ActionResult GetUsers()
         {
-            return new T4MVC_JsonResult(Area, Name, ActionNames.GetUsers);
+            return new T4MVC_ActionResult(Area, Name, ActionNames.GetUsers);
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -163,9 +163,9 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public System.Web.Mvc.JsonResult UpdateUser()
+        public System.Web.Mvc.ActionResult UpdateUser()
         {
-            return new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
+            return new T4MVC_ActionResult(Area, Name, ActionNames.UpdateUser);
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -523,9 +523,9 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult GetUsers(string lmsProviderName)
+        public override System.Web.Mvc.ActionResult GetUsers(string lmsProviderName)
         {
-            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.GetUsers);
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetUsers);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             return callInfo;
         }
@@ -609,9 +609,9 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.JsonResult UpdateUser(string lmsProviderName, EdugameCloud.Lti.DTO.LmsUserDTO user)
+        public override System.Web.Mvc.ActionResult UpdateUser(string lmsProviderName, EdugameCloud.Lti.DTO.LmsUserDTO user)
         {
-            var callInfo = new T4MVC_JsonResult(Area, Name, ActionNames.UpdateUser);
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.UpdateUser);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsProviderName", lmsProviderName);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "user", user);
             return callInfo;

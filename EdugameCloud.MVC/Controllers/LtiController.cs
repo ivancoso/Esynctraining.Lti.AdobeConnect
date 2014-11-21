@@ -425,16 +425,22 @@
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult GetUsers(string lmsProviderName)
+        public virtual ActionResult GetUsers(string lmsProviderName)
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
+            string error;
             List<LmsUserDTO> users = this.MeetingSetup.GetUsers(
                 credentials, 
                 this.MeetingSetup.GetProvider(credentials), 
-                param);
+                param, 
+                out error);
+            if (error == null)
+            {
+                return this.Json(users);
+            }
 
-            return this.Json(users);
+            return this.Content(error);
         }
 
         /// <summary>
@@ -785,17 +791,24 @@
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult UpdateUser(string lmsProviderName, LmsUserDTO user)
+        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user)
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
-            List<LmsUserDTO> updatedUser = this.MeetingSetup.UpdateUser(
+            string error;
+            List<LmsUserDTO> users = this.MeetingSetup.UpdateUser(
                 credentials, 
                 this.MeetingSetup.GetProvider(credentials), 
                 param, 
-                user);
+                user,
+                out error);
 
-            return this.Json(updatedUser);
+            if (error == null)
+            {
+                return this.Json(users);
+            }
+
+            return this.Content(error);
         }
 
         /// <summary>

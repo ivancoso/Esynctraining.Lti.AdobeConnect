@@ -328,14 +328,17 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", 
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, out string error)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id, out error);
 
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
@@ -845,7 +848,8 @@
             LtiParamDTO param)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
-            var users = this.GetUsers(credentials, provider, param);
+            string error;
+            var users = this.GetUsers(credentials, provider, param, out error);
             if (meeting == null)
             {
                 return users;
@@ -898,12 +902,13 @@
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
-            LmsUserDTO user)
+            LmsUserDTO user, 
+            out string error)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
-                return this.GetUsers(credentials, provider, param);
+                return this.GetUsers(credentials, provider, param, out error);
             }
 
             if (user.ac_id == null || user.ac_id == "0")
@@ -916,7 +921,7 @@
             if (user.ac_role == null)
             {
                 provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, MeetingPermissionId.remove);
-                return this.GetUsers(credentials, provider, param);
+                return this.GetUsers(credentials, provider, param, out error);
             }
 
             var permission = MeetingPermissionId.view;
@@ -931,7 +936,7 @@
 
             provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, permission);
 
-            return this.GetUsers(credentials, provider, param);
+            return this.GetUsers(credentials, provider, param, out error);
         }
 
         /// <summary>
@@ -1228,7 +1233,8 @@
             List<PermissionInfo> presenters,
             List<PermissionInfo> participants)
         {
-            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId);
+            string error;
+            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId, out error);
             foreach (var lmsUser in lmsUsers)
             {
                 if (!this.IsUserSynched(hosts, presenters, participants, lmsUser))
@@ -1425,9 +1431,8 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId)
+        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
         {
-            string error;
             var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
             return this.GroupUsers(users);
         }
@@ -1444,9 +1449,8 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int blackBoardCourseId)
+        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
         {
-            string error;
             var users = this.moodleApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
             return this.GroupUsers(users);
         }
@@ -1463,9 +1467,8 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId)
+        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId, out string error)
         {
-            string error;
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error);
             return this.GroupUsers(users);
         }
@@ -1481,24 +1484,44 @@
         /// </returns>
         private List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
-            var order = new List<string> { "owner", "author", "course builder", "teacher", "instructor", "teaching assistant", "ta", "designer", "student", "learner", "reader", "guest" };
-            users = users.GroupBy(u => u.id).Select(
-                ug =>
-                    {
-                        foreach (var orderRole in order)
+            if (users != null && users.Any())
+            {
+                var order = new List<string>
+                                {
+                                    "owner",
+                                    "author",
+                                    "course builder",
+                                    "teacher",
+                                    "instructor",
+                                    "teaching assistant",
+                                    "ta",
+                                    "designer",
+                                    "student",
+                                    "learner",
+                                    "reader",
+                                    "guest"
+                                };
+                users = users.GroupBy(u => u.id).Select(
+                    ug =>
                         {
-                            string role = orderRole;
-                            var userDTO = ug.FirstOrDefault(u => u.lms_role.Equals(role, StringComparison.OrdinalIgnoreCase));
-                            if (userDTO != null)
+                            foreach (var orderRole in order)
                             {
-                                return userDTO;
+                                string role = orderRole;
+                                var userDTO =
+                                    ug.FirstOrDefault(u => u.lms_role.Equals(role, StringComparison.OrdinalIgnoreCase));
+                                if (userDTO != null)
+                                {
+                                    return userDTO;
+                                }
                             }
-                        }
 
-                        return ug.First();
-                    }).ToList();
+                            return ug.First();
+                        }).ToList();
 
-            return users;
+                return users;
+            }
+
+            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -1545,20 +1568,22 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId)
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId, out string error)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
+                    error = null;
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId);
+                    return this.GetBrainHoneyUsers(credentials, courseId, out error);
                 case LmsProviderNames.Blackboard:
-                    return this.GetBlackBoardUsers(credentials, courseId);
+                    return this.GetBlackBoardUsers(credentials, courseId, out error);
                 case LmsProviderNames.Moodle:
-                    return this.GetMoodleUsers(credentials, courseId);
+                    return this.GetMoodleUsers(credentials, courseId, out error);
             }
 
+            error = null;
             return new List<LmsUserDTO>();
         }
 
@@ -2013,7 +2038,8 @@
             int courseId, 
             string meetingScoId)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId);
+            string error;
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId, out error);
 
             foreach (LmsUserDTO u in users)
             {

@@ -155,9 +155,16 @@
 
                         string resp = Encoding.UTF8.GetString(response);
 
-                        var xmlDoc = new XmlDocument();
-                        xmlDoc.LoadXml(resp);
-                        return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
+                        try
+                        {
+                            var xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(resp);
+                            return new Tuple<List<LmsUserDTO>, string>(MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), null);
+                        }
+                        catch (Exception ex)
+                        {
+                            return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
+                        }
                     }, 
                 company, 
                 out error);
@@ -224,20 +231,28 @@
                 return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
             }
 
-            var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
-
-            if (token.error != null)
+            try
             {
-                error = "Not able to login into: " + lmsDomain + " for user: " + userName;
+                var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
+
+                if (token.error != null)
+                {
+                    error = string.Format("Not able to login into: {0} for user: {1} due to error: {2}", lmsDomain, userName, token.error);
+                    return null;
+                }
+
+                return new MoodleSession
+                           {
+                               Token = token.token,
+                               Url = this.GetServicesUrl(lmsDomain, useSsl),
+                               UseSSL = useSsl
+                           };
+            }
+            catch (Exception ex)
+            {
+                error = string.Format("Not able to login into: {0} for user: {1}; response: {2}; error: {3}", lmsDomain, userName, resp, ex.With(x => x.Message));
                 return null;
             }
-
-            return new MoodleSession
-                       {
-                           Token = token.token, 
-                           Url = this.GetServicesUrl(lmsDomain, useSsl), 
-                           UseSSL = useSsl
-                       };
         }
 
         #endregion
@@ -390,6 +405,49 @@
             if (session != null)
             {
                 return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        protected T LoginIfNecessary<T>(
+            MoodleSession session,
+            Func<MoodleSession, Tuple<T, string>> action,
+            CompanyLms companyLms,
+            out string error)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error, companyLms);
+            if (session != null)
+            {
+                var res = action(session);
+                if (res.Item2 != null)
+                {
+                    error = res.Item2;
+                }
+
+                return res.Item1;
             }
 
             return default(T);
