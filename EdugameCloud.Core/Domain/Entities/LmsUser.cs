@@ -9,6 +9,10 @@
     /// </summary>
     public class LmsUser : Entity
     {
+        public LmsUser()
+        {
+        }
+
         /// <summary>
         /// The LMS user parameters.
         /// </summary>

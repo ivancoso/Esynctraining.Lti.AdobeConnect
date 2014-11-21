@@ -178,31 +178,29 @@
                 if (result.IsSuccessful)
                 {
                     LmsUser lmsUser = null;
+                    var company = this.GetCredentials(providerKey);
 
                     if (result.ExtraData.ContainsKey("accesstoken"))
                     {
                         var token = result.ExtraData["accesstoken"];
                         var userId = result.ExtraData["id"];
                         var userName = result.ExtraData["name"];
-                        var company = this.GetCredentials(providerKey);
-
-                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company };
+                        var param = this.GetParam(providerKey);
+                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = GetUserNameOrEmail(param) };
                         lmsUser.Username = userName;
                         lmsUser.Token = token;
                         this.lmsUserModel.RegisterSave(lmsUser);
                     }
 
-                    var credentials = this.GetCredentials(providerKey);
-
-                    if (credentials != null)
+                    if (company != null)
                     {
-                        if (credentials.AdminUser == null && this.IsAdminRole(providerKey))
+                        if (company.AdminUser == null && this.IsAdminRole(providerKey))
                         {
-                            credentials.AdminUser = lmsUser;
-                            CompanyLmsModel.RegisterSave(credentials);
+                            company.AdminUser = lmsUser;
+                            CompanyLmsModel.RegisterSave(company);
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, providerKey);
+                        return this.RedirectToExtJs(company, lmsUser, providerKey);
                     }
 
                     this.ViewBag.Error = string.Format("Credentials not found");
@@ -218,6 +216,11 @@
             }
 
             return this.View("Error");
+        }
+
+        private static string GetUserNameOrEmail(LtiParamDTO param)
+        {
+            return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
         }
 
         /// <summary>
@@ -237,7 +240,7 @@
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser == null)
             {
-                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id };
+                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
             }
 
             lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
