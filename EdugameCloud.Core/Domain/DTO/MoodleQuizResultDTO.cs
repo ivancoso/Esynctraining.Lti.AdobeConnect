@@ -27,7 +27,7 @@
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public virtual string userId { get; set; }
 
         /// <summary>
         /// Gets or sets the start time.

@@ -1,5 +1,8 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections;
+    using System.Collections.Generic;
+
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.Entities;
 
@@ -64,6 +67,22 @@
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
                 .Where(x => x.CompanyLms != null && x.CompanyLms.Id == companyLmsId && x.ScoId == meetingId).Take(1);
             return this.Repository.FindOne(defaultQuery);
+        }
+
+        /// <summary>
+        /// The get all by meeting id.
+        /// </summary>
+        /// <param name="meetingId">
+        /// The meeting id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<LmsCourseMeeting> GetAllByMeetingId(string meetingId)
+        {
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
+                .Where(x => x.ScoId == meetingId);
+            return this.Repository.FindAll(defaultQuery);
         }
     }
 }

@@ -212,7 +212,7 @@
                 }
 
                 var lmsUserParameters = quizResult.LmsUserParameters;
-                if (lmsUserParameters == null)
+                if (lmsUserParameters == null || lmsUserParameters.LmsUser == null)
                 {
                     return;
                 }
@@ -312,9 +312,9 @@
                 m.quizId = quizResult.Quiz.LmsQuizId ?? 0;
                 Question question = this.QuestionModel.GetOneById(r.questionId).Value;
                 m.questionId = question.LmsQuestionId ?? 0;
-                //m.questionType = question.QuestionType;
+                m.questionType = question.QuestionType.Type;
                 m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
-                m.userId = quizResult.LmsId;
+                m.userId = quizResult.LmsUserParameters.LmsUser.UserId;
                 m.startTime = quizResult.StartTime.ConvertToUTCTimestamp();
 
                 switch (question.QuestionType.Id)
@@ -377,10 +377,7 @@
                         break;
                 }
 
-                if (m.userId > 0 & m.quizId > 0)
-                {
-                    toSend.Add(m);
-                }
+                toSend.Add(m);
             }
 
             if (toSend.Count == 0)

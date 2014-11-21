@@ -1,6 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -23,6 +24,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     /// <summary>
@@ -146,15 +148,22 @@ namespace EdugameCloud.WCFService
         {
             var result = new ServiceResponse<LmsUserParametersDTO>();
 
-            var companyLms = CompanyLmsModel.GetOneByAcDomain(acDomain).Value;
-            if (companyLms == null)
-            {
-                result.SetError(new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No AC Server found", "No company has set this ac domain as theirs"));
-                return result;
-            }
+            var courseMeetings = LmsCourseMeetingModel.GetAllByMeetingId(scoId);
 
-            var courseMeeting = LmsCourseMeetingModel.GetOneByMeetingId(companyLms.Id, scoId).Value;
+            var courseMeeting = courseMeetings.FirstOrDefault(
+                cm =>
+                    {
+                        var acServer = cm.Return(c => c.CompanyLms.Return(cl => cl.AcServer, null), null);
+                        if (acServer == null)
+                        {
+                            return false;
+                        }
+                        if (acDomain.EndsWith("/"))
+                        {
+                            acDomain = acDomain.Substring(0, acDomain.Length - 1);
+                        }
+                        return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
+                    });
 
             if (courseMeeting == null)
             {
@@ -163,6 +172,15 @@ namespace EdugameCloud.WCFService
                 return result;
             }
 
+            CompanyLms companyLms = courseMeeting.CompanyLms;
+
+            if (companyLms == null)
+            {
+                result.SetError(new Error(
+                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No AC Server found", "No company has set this ac domain as theirs"));
+                return result;
+            }
+            
             var param = this.LmsUserParametersModel.GetOneForLogin(acId, acDomain, courseMeeting.CourseId).Value;
             result.@object = param != null ? new LmsUserParametersDTO(param) : null;
             

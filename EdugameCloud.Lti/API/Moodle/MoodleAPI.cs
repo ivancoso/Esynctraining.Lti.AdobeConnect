@@ -96,6 +96,11 @@
         /// </returns>
         public MoodleSession BeginBatch(out string error, CompanyLms companyLms)
         {
+            if (companyLms == null)
+            {
+                error = "No company lms settings";
+                return null;
+            }
             LmsUser lmsUser = companyLms.AdminUser;
             if (lmsUser != null)
             {
