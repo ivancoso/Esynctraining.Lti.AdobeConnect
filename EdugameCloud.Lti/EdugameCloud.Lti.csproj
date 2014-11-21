@@ -107,8 +107,11 @@
     <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CanvasAPI.cs" />
+    <Compile Include="API\Canvas\EGCEnabledCanvasAPI.cs" />
+    <Compile Include="API\IEGCEnabledLmsAPI.cs" />
     <Compile Include="API\ILmsAPI.cs" />
     <Compile Include="API\LmsFactory.cs" />
+    <Compile Include="API\Moodle\EGCEnabledMoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />
     <Compile Include="API\Moodle\MoodleSession.cs" />

@@ -14,19 +14,16 @@
 
     using Castle.Core.Logging;
 
-    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.EntityParsing;
-    using EdugameCloud.Core.Extensions;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
+
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
 
     /// <summary>
-    /// The Moodle API.
+    ///     The Moodle API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
     public class MoodleAPI : ILmsAPI
@@ -37,30 +34,19 @@
         ///     The logger.
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
-        private readonly ILogger logger;
+        // ReSharper disable once InconsistentNaming
+        protected readonly ILogger logger;
 
         /// <summary>
         ///     The settings.
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
-        private readonly dynamic settings;
+        // ReSharper disable once InconsistentNaming
+        protected readonly dynamic settings;
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Gets the quiz model.
-        /// </summary>
-        private QuizModel QuizModel
-        {
-            get
-            {
-                return IoC.Resolve<QuizModel>();
-            }
-        }
-
-        #endregion
+        #region Constructors and Destructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MoodleAPI"/> class.
@@ -75,6 +61,51 @@
         {
             this.settings = settings;
             this.logger = logger;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        ///     Gets the Moodle service short name.
+        /// </summary>
+        protected virtual string MoodleServiceShortName
+        {
+            get
+            {
+                return "lms";
+            }
+        }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The create rest client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MoodleSession"/>.
+        /// </returns>
+        public MoodleSession BeginBatch(out string error, CompanyLms companyLms)
+        {
+            LmsUser lmsUser = companyLms.AdminUser;
+            if (lmsUser != null)
+            {
+                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
+                bool useSsl = lmsUser.CompanyLms.UseSSL ?? false;
+                return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+            }
+
+            error = "ASP.NET Session is expired";
+            return null;
         }
 
         /// <summary>
@@ -96,36 +127,39 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            CompanyLms company,
-            int courseid,
-            out string error,
+            CompanyLms company, 
+            int courseid, 
+            out string error, 
             MoodleSession token = null)
         {
             var result = new List<LmsUserDTO>();
-            var enrollmentsResult = this.LoginIfNecessary(
-                token,
+            List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
+                token, 
                 c =>
-                {
-                    var pairs = new NameValueCollection
-                            {
-                                { "wsfunction", "core_enrol_get_enrolled_users" }, 
-                                { "wstoken", c.Token },
-                                { "courseid", courseid.ToString(CultureInfo.InvariantCulture) }
-                            };
-
-                    byte[] response;
-                    using (var client = new WebClient())
                     {
-                        response = client.UploadValues(c.Url, pairs);
-                    }
+                        var pairs = new NameValueCollection
+                                        {
+                                            { "wsfunction", "core_enrol_get_enrolled_users" }, 
+                                            { "wstoken", c.Token }, 
+                                            {
+                                                "courseid", 
+                                                courseid.ToString(CultureInfo.InvariantCulture)
+                                            }
+                                        };
 
-                    var resp = Encoding.UTF8.GetString(response);
+                        byte[] response;
+                        using (var client = new WebClient())
+                        {
+                            response = client.UploadValues(c.Url, pairs);
+                        }
 
-                    var xmlDoc = new XmlDocument();
-                    xmlDoc.LoadXml(resp);
-                    return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
-                },
-                company,
+                        string resp = Encoding.UTF8.GetString(response);
+
+                        var xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(resp);
+                        return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
+                    }, 
+                company, 
                 out error);
 
             if (enrollmentsResult == null)
@@ -135,244 +169,6 @@
             }
 
             return enrollmentsResult;
-        }
-
-        /// <summary>
-        /// The get items info for user.
-        /// </summary>
-        /// <param name="lmsUserParameters">
-        /// The lms user parameters.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is survey.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
-        {
-            var quizResult = this.LoginIfNecessary(
-                null,
-                c =>
-                {
-                    var pairs = new NameValueCollection
-                                        {
-                                            {
-                                                "wsfunction",
-                                                isSurvey ? "local_edugamecloud_get_total_survey_list" : "local_edugamecloud_get_total_quiz_list"
-                                            },
-                                            { "wstoken", c.Token },
-                                            {
-                                                "course",
-                                                lmsUserParameters.Course.ToString(
-                                                    CultureInfo.InvariantCulture)
-                                            }
-                                        };
-
-                    var xmlDoc = this.UploadValues(c.Url, pairs);
-
-                    return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
-                },
-                out error,
-                lmsUserParameters.LmsUser);
-
-            if (quizResult == null)
-            {
-                error = error ?? "Moodle XML. Unable to retrive result from API";
-                return new List<LmsQuizInfoDTO>();
-            }
-
-            error = string.Empty;
-            return quizResult;
-        }
-
-        /// <summary>
-        /// The get quzzes for user.
-        /// </summary>
-        /// <param name="lmsUserParameters">
-        /// The lms User Parameters.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz Ids.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
-        {
-            var result = new List<LmsQuizDTO>();
-            
-            foreach (var quizId in quizIds)
-            {
-                int id = quizId;
-                var quizResult = this.LoginIfNecessary(
-                    null,
-                    c =>
-                        {
-                            var pairs = new NameValueCollection
-                                            {
-                                                {
-                                                    "wsfunction",
-                                                    isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id"
-                                                },
-                                                { "wstoken", c.Token },
-                                                { 
-                                                    isSurvey ? "surveyId" : "quizId", 
-                                                    id.ToString(CultureInfo.InvariantCulture) 
-                                                }
-                                            };
-
-                            var xmlDoc = this.UploadValues(c.Url, pairs);
-
-
-                            string errorMessage = string.Empty, err = string.Empty;
-                            return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
-                        },
-                    out error,
-                    lmsUserParameters.LmsUser);
-                if (quizResult == null)
-                {
-                    error = error ?? "Moodle XML. Unable to retrive result from API";
-                    return result;
-                }
-
-                result.Add(quizResult);
-            }
-            
-            error = string.Empty;
-            return result;
-        }
-
-        /// <summary>
-        /// The send answers.
-        /// </summary>
-        /// <param name="lmsUserParameters">
-        /// The lms user parameters.
-        /// </param>
-        /// <param name="json">
-        /// The json.
-        /// </param>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json)
-        {
-            string error;
-
-            var quizResult = this.LoginIfNecessary(
-                null,
-                c =>
-                    {
-                        var pairs = new NameValueCollection
-                                        {
-                                            {
-                                                "wsfunction",
-                                                "local_edugamecloud_save_external_quiz_report"
-                                            },
-                                            { "wstoken", c.Token },
-                                            { "reportObject", json }
-                                        };
-
-                        var xmlDoc = this.UploadValues(c.Url, pairs);
-
-
-                        string errorMessage = string.Empty, err = string.Empty;
-                        return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
-                    },
-                out error,
-                lmsUserParameters.LmsUser);
-        }
-
-        /// <summary>
-        /// The upload values.
-        /// </summary>
-        /// <param name="url">
-        /// The url.
-        /// </param>
-        /// <param name="pairs">
-        /// The pairs.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
-        private XmlDocument UploadValues(string url, NameValueCollection pairs)
-        {
-            byte[] response;
-            using (var client = new WebClient())
-            {
-                response = client.UploadValues(url, pairs);
-            }
-
-            var resp = Encoding.UTF8.GetString(response);
-
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(resp);
-            return xmlDoc;
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="lmsUser">
-        /// The lms User.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private T LoginIfNecessary<T>(MoodleSession session, Func<MoodleSession, T> action, out string error, LmsUser lmsUser = null)
-        {
-            error = null;
-            session = session ?? this.BeginBatch(out error, lmsUser.CompanyLms);
-            if (session != null)
-            {
-                return action(session);
-            }
-
-            return default(T);
-        }
-
-        /// <summary>
-        /// The create rest client.
-        /// </summary>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="companyLms">
-        /// The company LMS.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MoodleSession"/>.
-        /// </returns>
-        public MoodleSession BeginBatch(out string error, CompanyLms companyLms)
-        {
-            var lmsUser = companyLms.AdminUser;
-            if (lmsUser != null)
-            {
-                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
-                bool useSsl = lmsUser.CompanyLms.UseSSL ?? false;
-                return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
-            }
-
-            error = "ASP.NET Session is expired";
-            return null;
         }
 
         /// <summary>
@@ -400,10 +196,10 @@
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
         public MoodleSession LoginAndCreateAClient(
-            out string error,
-            bool useSsl,
-            string lmsDomain,
-            string userName,
+            out string error, 
+            bool useSsl, 
+            string lmsDomain, 
+            string userName, 
             string password, 
             bool recursive = false)
         {
@@ -412,17 +208,17 @@
                             {
                                 { "username", userName }, 
                                 { "password", password }, 
-                                { "service", "edugamecloud" }
+                                { "service", this.MoodleServiceShortName }
                             };
 
             byte[] response;
-            var url = this.GetTokenUrl(lmsDomain, useSsl);
+            string url = this.GetTokenUrl(lmsDomain, useSsl);
             using (var client = new WebClient())
             {
                 response = client.UploadValues(url, pairs);
             }
 
-            var resp = Encoding.UTF8.GetString(response);
+            string resp = Encoding.UTF8.GetString(response);
             if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
             {
                 return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
@@ -436,59 +232,17 @@
                 return null;
             }
 
-            return new MoodleSession { Token = token.token, Url = this.GetServicesUrl(lmsDomain, useSsl), UseSSL = useSsl };
+            return new MoodleSession
+                       {
+                           Token = token.token, 
+                           Url = this.GetServicesUrl(lmsDomain, useSsl), 
+                           UseSSL = useSsl
+                       };
         }
 
-        /// <summary>
-        /// The get services url.
-        /// </summary>
-        /// <param name="domain">
-        /// The domain.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetServicesUrl(string domain, bool useSsl)
-        {
-            var serviceUrl = (string)this.settings.MoodleServiceUrl;
-            return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
-        }
+        #endregion
 
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="companyLms">
-        /// The company LMS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private T LoginIfNecessary<T>(MoodleSession session, Func<MoodleSession, T> action, CompanyLms companyLms, out string error)
-        {
-            error = null;
-            session = session ?? this.BeginBatch(out error, companyLms);
-            if (session != null)
-            {
-                return action(session);
-            }
-
-            return default(T);
-        }
+        #region Methods
 
         /// <summary>
         /// The fix domain.
@@ -502,7 +256,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string FixDomain(string domain, bool useSsl)
+        protected string FixDomain(string domain, bool useSsl)
         {
             domain = domain.ToLower();
 
@@ -532,6 +286,24 @@
         }
 
         /// <summary>
+        /// The get services url.
+        /// </summary>
+        /// <param name="domain">
+        /// The domain.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        protected string GetServicesUrl(string domain, bool useSsl)
+        {
+            var serviceUrl = (string)this.settings.MoodleServiceUrl;
+            return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
+        }
+
+        /// <summary>
         /// The get token url.
         /// </summary>
         /// <param name="domain">
@@ -543,10 +315,113 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetTokenUrl(string domain, bool useSsl)
+        protected string GetTokenUrl(string domain, bool useSsl)
         {
             var tokenUrl = (string)this.settings.MoodleTokenUrl;
             return this.FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
         }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="lmsUser">
+        /// The LMS User.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        protected T LoginIfNecessary<T>(
+            MoodleSession session, 
+            Func<MoodleSession, T> action, 
+            out string error, 
+            LmsUser lmsUser = null)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error, lmsUser.Return(x => x.CompanyLms, null));
+            if (session != null)
+            {
+                return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        protected T LoginIfNecessary<T>(
+            MoodleSession session, 
+            Func<MoodleSession, T> action, 
+            CompanyLms companyLms, 
+            out string error)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error, companyLms);
+            if (session != null)
+            {
+                return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// The upload values.
+        /// </summary>
+        /// <param name="url">
+        /// The url.
+        /// </param>
+        /// <param name="pairs">
+        /// The pairs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="XmlDocument"/>.
+        /// </returns>
+        protected XmlDocument UploadValues(string url, NameValueCollection pairs)
+        {
+            byte[] response;
+            using (var client = new WebClient())
+            {
+                response = client.UploadValues(url, pairs);
+            }
+
+            string resp = Encoding.UTF8.GetString(response);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(resp);
+            return xmlDoc;
+        }
+
+        #endregion
     }
 }

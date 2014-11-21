@@ -1524,7 +1524,7 @@
                     u => u.Token,
                     credentials.AdminUser.Return(a => a.Token, string.Empty));
 
-            List<LmsUserDTO> users = CanvasAPI.GetUsersForCourse(
+            List<LmsUserDTO> users = EGCEnabledCanvasAPI.GetUsersForCourse(
                 credentials.LmsDomain, 
                 token, 
                 canvasCourseId);

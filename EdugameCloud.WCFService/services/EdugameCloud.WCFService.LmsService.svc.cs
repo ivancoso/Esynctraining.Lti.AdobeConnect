@@ -306,7 +306,7 @@ namespace EdugameCloud.WCFService
                 var user = UserModel.GetOneById(userId);
                 
                 string error;
-                var quizzesForCourse = LmsFactory.GetLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id)
+                var quizzesForCourse = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id)
                     .GetItemsInfoForUser(
                     lmsUserParameters,
                     isSurvey,
@@ -379,7 +379,7 @@ namespace EdugameCloud.WCFService
                 var companyLms = lmsUserParameters.CompanyLms;
                 
                 string error;
-                IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
+                IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
                     .GetItemsForUser(
                         lmsUserParameters,
                         isSurvey,

@@ -75,22 +75,11 @@
             }
         }
 
-        /// <summary>
-        /// Gets the course api.
-        /// </summary>
-        private CanvasAPI CanvasApi
+        private EGCEnabledMoodleAPI MoodleApi
         {
             get
             {
-                return IoC.Resolve<CanvasAPI>();
-            }
-        }
-
-        private MoodleAPI MoodleApi
-        {
-            get
-            {
-                return IoC.Resolve<MoodleAPI>();
+                return IoC.Resolve<EGCEnabledMoodleAPI>();
             }
         }
 
@@ -152,7 +141,7 @@
         public void ConvertAndSendSurveyResultToCanvas(IEnumerable<SurveyQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsSurveyId)
         {
             
-            var quizSubmissions = CanvasAPI.GetSubmissionForQuiz(
+            var quizSubmissions = EGCEnabledCanvasAPI.GetSubmissionForQuiz(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,
@@ -198,7 +187,7 @@
                     lmsUserParameters.LmsUser.Token,
                     submission);
 
-                CanvasAPI.ReturnSubmissionForQuiz(
+                EGCEnabledCanvasAPI.ReturnSubmissionForQuiz(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     lmsUserParameters.Course,
@@ -260,7 +249,7 @@
         /// </param>
         public void ConvertAndSendQuizResultToCanvas(IEnumerable<QuizQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsQuizId)
         {
-            var quizSubmissions = CanvasAPI.GetSubmissionForQuiz(
+            var quizSubmissions = EGCEnabledCanvasAPI.GetSubmissionForQuiz(
                 lmsUserParameters.CompanyLms.LmsDomain, 
                 lmsUserParameters.LmsUser.Token, 
                 lmsUserParameters.Course, 
@@ -290,7 +279,7 @@
                     lmsUserParameters.LmsUser.Token, 
                     submission);
 
-                CanvasAPI.ReturnSubmissionForQuiz(
+                EGCEnabledCanvasAPI.ReturnSubmissionForQuiz(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     lmsUserParameters.Course,

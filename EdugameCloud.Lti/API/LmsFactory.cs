@@ -1,43 +1,53 @@
 ﻿namespace EdugameCloud.Lti.API
 {
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Moodle;
 
-    using Esynctraining.Core.Utils;
-
     /// <summary>
-    /// The lms factory.
+    ///     The LMS factory.
     /// </summary>
     public class LmsFactory
     {
-        /// <summary>
-        /// Gets the course api.
-        /// </summary>
-        private CanvasAPI CanvasApi
-        {
-            get
-            {
-                return IoC.Resolve<CanvasAPI>();
-            }
-        }
+        #region Fields
 
         /// <summary>
-        /// Gets the moodle api.
+        /// The Canvas API.
         /// </summary>
-        private MoodleAPI MoodleAPI
-        {
-            get
-            {
-                return IoC.Resolve<MoodleAPI>();
-            }
-        }
+        private readonly EGCEnabledMoodleAPI canvasApi;
 
         /// <summary>
-        /// The get lms api.
+        /// The Moodle API.
+        /// </summary>
+        private readonly EGCEnabledMoodleAPI moodleApi;
+
+        #endregion
+
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LmsFactory"/> class.
+        /// </summary>
+        /// <param name="canvasApi">
+        /// The Canvas API.
+        /// </param>
+        /// <param name="moodleApi">
+        /// The Moodle API.
+        /// </param>
+        public LmsFactory(EGCEnabledMoodleAPI canvasApi, EGCEnabledMoodleAPI moodleApi)
+        {
+            this.canvasApi = canvasApi;
+            this.moodleApi = moodleApi;
+        }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The get LMS API.
         /// </summary>
         /// <param name="lmsId">
-        /// The lms id.
+        /// The LMS id.
         /// </param>
         /// <returns>
         /// The <see cref="ILmsAPI"/>.
@@ -47,11 +57,36 @@
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
-                    return this.CanvasApi;
+                    return this.canvasApi;
                 case LmsProviderEnum.Moodle:
-                    return MoodleAPI;
+                    return this.moodleApi;
             }
+
             return null;
         }
+
+        /// <summary>
+        /// The get LMS API.
+        /// </summary>
+        /// <param name="lmsId">
+        /// The LMS id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ILmsAPI"/>.
+        /// </returns>
+        public IEGCEnabledLmsAPI GetEGCEnabledLmsAPI(LmsProviderEnum lmsId)
+        {
+            switch (lmsId)
+            {
+                case LmsProviderEnum.Canvas:
+                    return this.canvasApi;
+                case LmsProviderEnum.Moodle:
+                    return this.moodleApi;
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

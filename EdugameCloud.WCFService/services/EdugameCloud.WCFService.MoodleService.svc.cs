@@ -391,7 +391,7 @@ namespace EdugameCloud.WCFService
         {
             string error;
             var param = LmsUserParametersModel.GetOneById(142).Value;
-            var api = (new LmsFactory()).GetLmsAPI(LmsProviderEnum.Moodle);
+            var api = IoC.Resolve<LmsFactory>().GetEGCEnabledLmsAPI(LmsProviderEnum.Moodle);
             var i = api.GetItemsForUser(param, false, new int[] { 37 }, out error);
         }
 
