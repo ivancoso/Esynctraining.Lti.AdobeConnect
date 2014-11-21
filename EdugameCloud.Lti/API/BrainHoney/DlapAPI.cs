@@ -6,6 +6,7 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
     using Castle.Core.Logging;
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Providers;
@@ -295,6 +296,53 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// The get items info for user.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is survey.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// The get items for user.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is survey.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        /// <exception cref="NotImplementedException">
+        /// </exception>
+        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -14,11 +14,16 @@
 
     using Castle.Core.Logging;
 
+    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.EntityParsing;
+    using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Utils;
 
     /// <summary>
     /// The Moodle API.
@@ -39,6 +44,21 @@
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
         private readonly dynamic settings;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets the quiz model.
+        /// </summary>
+        private QuizModel QuizModel
+        {
+            get
+            {
+                return IoC.Resolve<QuizModel>();
+            }
+        }
 
         #endregion
 
@@ -118,6 +138,218 @@
         }
 
         /// <summary>
+        /// The get items info for user.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is survey.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        {
+            var quizResult = this.LoginIfNecessary(
+                null,
+                c =>
+                {
+                    var pairs = new NameValueCollection
+                                        {
+                                            {
+                                                "wsfunction",
+                                                isSurvey ? "local_edugamecloud_get_total_survey_list" : "local_edugamecloud_get_total_quiz_list"
+                                            },
+                                            { "wstoken", c.Token },
+                                            {
+                                                "course",
+                                                lmsUserParameters.Course.ToString(
+                                                    CultureInfo.InvariantCulture)
+                                            }
+                                        };
+
+                    var xmlDoc = this.UploadValues(c.Url, pairs);
+
+                    return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
+                },
+                out error,
+                lmsUserParameters.LmsUser);
+
+            if (quizResult == null)
+            {
+                error = error ?? "Moodle XML. Unable to retrive result from API";
+                return new List<LmsQuizInfoDTO>();
+            }
+
+            error = string.Empty;
+            return quizResult;
+        }
+
+        /// <summary>
+        /// The get quzzes for user.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms User Parameters.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz Ids.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List"/>.
+        /// </returns>
+        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        {
+            var result = new List<LmsQuizDTO>();
+            
+            foreach (var quizId in quizIds)
+            {
+                int id = quizId;
+                var quizResult = this.LoginIfNecessary(
+                    null,
+                    c =>
+                        {
+                            var pairs = new NameValueCollection
+                                            {
+                                                {
+                                                    "wsfunction",
+                                                    isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id"
+                                                },
+                                                { "wstoken", c.Token },
+                                                { 
+                                                    isSurvey ? "surveyId" : "quizId", 
+                                                    id.ToString(CultureInfo.InvariantCulture) 
+                                                }
+                                            };
+
+                            var xmlDoc = this.UploadValues(c.Url, pairs);
+
+
+                            string errorMessage = string.Empty, err = string.Empty;
+                            return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                        },
+                    out error,
+                    lmsUserParameters.LmsUser);
+                if (quizResult == null)
+                {
+                    error = error ?? "Moodle XML. Unable to retrive result from API";
+                    return result;
+                }
+
+                result.Add(quizResult);
+            }
+            
+            error = string.Empty;
+            return result;
+        }
+
+        /// <summary>
+        /// The send answers.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="json">
+        /// The json.
+        /// </param>
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json)
+        {
+            string error;
+
+            var quizResult = this.LoginIfNecessary(
+                null,
+                c =>
+                    {
+                        var pairs = new NameValueCollection
+                                        {
+                                            {
+                                                "wsfunction",
+                                                "local_edugamecloud_save_external_quiz_report"
+                                            },
+                                            { "wstoken", c.Token },
+                                            { "reportObject", json }
+                                        };
+
+                        var xmlDoc = this.UploadValues(c.Url, pairs);
+
+
+                        string errorMessage = string.Empty, err = string.Empty;
+                        return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                    },
+                out error,
+                lmsUserParameters.LmsUser);
+        }
+
+        /// <summary>
+        /// The upload values.
+        /// </summary>
+        /// <param name="url">
+        /// The url.
+        /// </param>
+        /// <param name="pairs">
+        /// The pairs.
+        /// </param>
+        /// <returns>
+        /// The <see cref="XmlDocument"/>.
+        /// </returns>
+        private XmlDocument UploadValues(string url, NameValueCollection pairs)
+        {
+            byte[] response;
+            using (var client = new WebClient())
+            {
+                response = client.UploadValues(url, pairs);
+            }
+
+            var resp = Encoding.UTF8.GetString(response);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(resp);
+            return xmlDoc;
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="lmsUser">
+        /// The lms User.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private T LoginIfNecessary<T>(MoodleSession session, Func<MoodleSession, T> action, out string error, LmsUser lmsUser = null)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error, lmsUser.CompanyLms);
+            if (session != null)
+            {
+                return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
         /// The create rest client.
         /// </summary>
         /// <param name="error">
@@ -180,7 +412,7 @@
                             {
                                 { "username", userName }, 
                                 { "password", password }, 
-                                { "service", "lms" }
+                                { "service", "edugamecloud" }
                             };
 
             byte[] response;

@@ -80,6 +80,9 @@
         [OperationContract]
         ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id);
 
+        [OperationContract]
+        void Test();
+
         #endregion
     }
 }

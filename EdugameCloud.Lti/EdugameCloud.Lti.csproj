@@ -106,8 +106,8 @@
     <Compile Include="API\BrainHoney\DlapExtensions.cs" />
     <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
-    <Compile Include="API\Canvas\CourseAPI.cs" />
-    <Compile Include="API\LmsAPI.cs" />
+    <Compile Include="API\Canvas\CanvasAPI.cs" />
+    <Compile Include="API\ILmsAPI.cs" />
     <Compile Include="API\LmsFactory.cs" />
     <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />

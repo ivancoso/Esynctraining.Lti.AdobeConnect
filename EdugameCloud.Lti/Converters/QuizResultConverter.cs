@@ -4,12 +4,15 @@
     using System.Globalization;
     using System.Linq;
     using System.Net.Mime;
+    using System.Web.Script.Serialization;
     using System.Xml;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Utils;
@@ -75,11 +78,19 @@
         /// <summary>
         /// Gets the course api.
         /// </summary>
-        private CourseAPI CourseAPI
+        private CanvasAPI CanvasApi
         {
             get
             {
-                return IoC.Resolve<CourseAPI>();
+                return IoC.Resolve<CanvasAPI>();
+            }
+        }
+
+        private MoodleAPI MoodleApi
+        {
+            get
+            {
+                return IoC.Resolve<MoodleAPI>();
             }
         }
 
@@ -107,69 +118,96 @@
                     return;
                 }
 
-                var lmsQuizId = surveyResult.Survey.LmsSurveyId;
-                if (lmsQuizId == null)
+                var lmsSurveyId = surveyResult.Survey.LmsSurveyId;
+                if (lmsSurveyId == null)
                 {
                     continue;
                 }
 
-                var quizSubmissions = CourseAPI.GetSubmissionForQuiz(
+                switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
+                {
+                    case (int)LmsProviderEnum.Moodle:
+                        //this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, quizResult);
+                        break;
+                    case (int)LmsProviderEnum.Canvas:
+                        this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
+                        break;
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// The convert and send survey result.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms User Parameters.
+        /// </param>
+        /// <param name="lmsSurveyId">
+        /// The lms Survey Id.
+        /// </param>
+        public void ConvertAndSendSurveyResultToCanvas(IEnumerable<SurveyQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsSurveyId)
+        {
+            
+            var quizSubmissions = CanvasAPI.GetSubmissionForQuiz(
+                lmsUserParameters.CompanyLms.LmsDomain,
+                lmsUserParameters.LmsUser.Token,
+                lmsUserParameters.Course,
+                lmsSurveyId);
+
+            foreach (var submission in quizSubmissions)
+            {
+                foreach (var answer in results)
+                {
+                    Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                    if (question.LmsQuestionId == null)
+                    {
+                        continue;
+                    }
+
+                    QuizQuestionResultDTO quizAnswer = new QuizQuestionResultDTO();
+                    quizAnswer.isCorrect = answer.isCorrect;
+                    if (question.QuestionType.Id == (int)QuestionTypeEnum.SingleMultipleChoiceText)
+                    {
+                        quizAnswer.answers =
+                            answer.answers.Where(a => a.surveyDistractorAnswerId != null)
+                                .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
+                                .ToList();
+                    }
+                    else
+                    {
+                        quizAnswer.answers =
+                            answer.answers.Where(a => a.value != null)
+                                .Select(a => a.value)
+                                .ToList();
+                    }
+                    var answers = this.ProcessAnswers(question, quizAnswer);
+
+                    if (answers != null)
+                    {
+                        submission.quiz_questions.Add(
+                            new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
+                    }
+                }
+
+                CanvasAPI.AnswerQuestionsForQuiz(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    submission);
+
+                CanvasAPI.ReturnSubmissionForQuiz(
                     lmsUserParameters.CompanyLms.LmsDomain,
                     lmsUserParameters.LmsUser.Token,
                     lmsUserParameters.Course,
-                    lmsQuizId.Value);
-
-                foreach (var submission in quizSubmissions)
-                {
-                    foreach (var answer in userAnswer)
-                    {
-                        Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
-                        if (question.LmsQuestionId == null)
-                        {
-                            continue;
-                        }
-
-                        QuizQuestionResultDTO quizAnswer = new QuizQuestionResultDTO();
-                        quizAnswer.isCorrect = answer.isCorrect;
-                        if (question.QuestionType.Id == (int)QuestionTypeEnum.SingleMultipleChoiceText)
-                        {
-                            quizAnswer.answers =
-                                answer.answers.Where(a => a.surveyDistractorAnswerId != null)
-                                    .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
-                                    .ToList();
-                        }
-                        else
-                        {
-                            quizAnswer.answers =
-                                answer.answers.Where(a => a.value != null)
-                                    .Select(a => a.value)
-                                    .ToList();
-                        }
-                        var answers = this.ProcessAnswers(question, quizAnswer);
-
-                        if (answers != null)
-                        {
-                            submission.quiz_questions.Add(
-                                new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
-                        }
-                    }
-
-                    CourseAPI.AnswerQuestionsForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token,
-                        submission);
-
-                    CourseAPI.ReturnSubmissionForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token,
-                        lmsUserParameters.Course,
-                        submission);
-                }
-            }   
+                    submission);
+            }
         }
 
         /// <summary>
-        /// The convert and send result.
+        /// The convert and send quiz result.
         /// </summary>
         /// <param name="results">
         /// The results.
@@ -196,43 +234,192 @@
                     continue;
                 }
 
-                var quizSubmissions = CourseAPI.GetSubmissionForQuiz(
-                    lmsUserParameters.CompanyLms.LmsDomain, 
-                    lmsUserParameters.LmsUser.Token, 
-                    lmsUserParameters.Course, 
-                    lmsQuizId.Value);
-
-                foreach (var submission in quizSubmissions)
+                switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
                 {
-                    foreach (var answer in userAnswer)
+                    case (int)LmsProviderEnum.Moodle:
+                        this.ConvertAndSendQuizResultToMoodle(userAnswer, lmsUserParameters, quizResult);
+                        break;
+                    case (int)LmsProviderEnum.Canvas:
+                        this.ConvertAndSendQuizResultToCanvas(userAnswer, lmsUserParameters, lmsQuizId.Value);
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The convert and send result.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms User Parameters.
+        /// </param>
+        /// <param name="lmsQuizId">
+        /// The lms Quiz Id.
+        /// </param>
+        public void ConvertAndSendQuizResultToCanvas(IEnumerable<QuizQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsQuizId)
+        {
+            var quizSubmissions = CanvasAPI.GetSubmissionForQuiz(
+                lmsUserParameters.CompanyLms.LmsDomain, 
+                lmsUserParameters.LmsUser.Token, 
+                lmsUserParameters.Course, 
+                lmsQuizId);
+
+            foreach (var submission in quizSubmissions)
+            {
+                foreach (var answer in results)
+                {
+                    Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                    if (question.LmsQuestionId == null)
                     {
-                        Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
-                        if (question.LmsQuestionId == null)
-                        {
-                            continue;
-                        }
-
-                        var answers = this.ProcessAnswers(question, answer);
-
-                        if (answers != null)
-                        {
-                            submission.quiz_questions.Add(
-                                new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
-                        }
+                        continue;
                     }
 
-                    CourseAPI.AnswerQuestionsForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token, 
-                        submission);
+                    var answers = this.ProcessAnswers(question, answer);
 
-                    CourseAPI.ReturnSubmissionForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token,
-                        lmsUserParameters.Course,
-                        submission);
+                    if (answers != null)
+                    {
+                        submission.quiz_questions.Add(
+                            new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
+                    }
                 }
-            }   
+
+                CanvasAPI.AnswerQuestionsForQuiz(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token, 
+                    submission);
+
+                CanvasAPI.ReturnSubmissionForQuiz(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    lmsUserParameters.Course,
+                    submission);
+            }
+        }
+
+
+        /// <summary>
+        /// The send results to moodle.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms User Parameters.
+        /// </param>
+        /// <param name="quizResult">
+        /// The quiz Result.
+        /// </param>
+        private void ConvertAndSendQuizResultToMoodle(IEnumerable<QuizQuestionResultDTO> results, LmsUserParameters lmsUserParameters, QuizResult quizResult)
+        {
+            var toSend = new List<MoodleQuizResultDTO>();
+
+            foreach (QuizQuestionResultDTO r in results)
+            {
+                var m = new MoodleQuizResultDTO();
+                    
+
+                m.quizId = quizResult.Quiz.LmsQuizId ?? 0;
+                Question question = this.QuestionModel.GetOneById(r.questionId).Value;
+                m.questionId = question.LmsQuestionId ?? 0;
+                //m.questionType = question.QuestionType;
+                m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
+                m.userId = quizResult.LmsId;
+                m.startTime = quizResult.StartTime.ConvertToUTCTimestamp();
+
+                switch (question.QuestionType.Id)
+                {
+                    case (int)QuestionTypeEnum.TrueFalse:
+                        Distractor distractor = question.Distractors != null
+                                                    ? question.Distractors.FirstOrDefault()
+                                                    : null;
+                        if (distractor != null)
+                        {
+                            bool answer = (r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                                            || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                            m.answers = new List<string> { answer ? "true" : "false" };
+                        }
+
+                        break;
+                    case (int)QuestionTypeEnum.CalculatedMultichoice:
+                    case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                        m.answers =
+                            question.Distractors.Where(
+                                q =>
+                                r.answers != null && r.answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)))
+                                .Select(q => q.LmsAnswer)
+                                .ToList();
+                        break;
+                    case (int)QuestionTypeEnum.Matching:
+                        var userAnswers = new Dictionary<string, string>();
+                        if (r.answers != null)
+                        {
+                            r.answers.ForEach(
+                                answer =>
+                                    {
+                                        int splitInd = answer.IndexOf("$$", System.StringComparison.Ordinal);
+                                        if (splitInd > -1)
+                                        {
+                                            string left = answer.Substring(0, splitInd),
+                                                    right = answer.Substring(
+                                                        splitInd + 2,
+                                                        answer.Length - splitInd - 2);
+                                            if (!userAnswers.ContainsKey(left))
+                                            {
+                                                userAnswers.Add(left, right);
+                                            }
+                                        }
+                                    });
+                        }
+
+                        m.answers = new List<string>();
+                        foreach (Distractor d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))
+                        {
+                            string key = d.DistractorName.Substring(
+                                0,
+                                d.DistractorName.IndexOf("$$", System.StringComparison.Ordinal));
+                            m.answers.Add(userAnswers.ContainsKey(key) ? userAnswers[key] : string.Empty);
+                        }
+
+                        break;
+                    default:
+                        m.answers = r.answers;
+                        break;
+                }
+
+                if (m.userId > 0 & m.quizId > 0)
+                {
+                    toSend.Add(m);
+                }
+            }
+
+            if (toSend.Count == 0)
+            {
+                return;
+            }
+
+            var ret =
+                toSend.GroupBy(s => s.quizId)
+                    .Select(
+                        s =>
+                        new
+                            {
+                                quizId = s.Key,
+                                usersResults =
+                            s.GroupBy(u => new { u.userId, u.startTime })
+                            .Select(
+                                u =>
+                                new
+                                    {
+                                        u.Key.userId,
+                                        u.Key.startTime,
+                                        answers = u.Select(a => new { a.questionId, a.answers })
+                                    })
+                            });
+
+            string json = new JavaScriptSerializer().Serialize(ret);
+            MoodleApi.SendAnswers(lmsUserParameters, json);
         }
 
         /// <summary>

@@ -271,14 +271,14 @@
 
                         if (string.IsNullOrEmpty(data))
                         {
-                            return null;
+                            throw new Exception("data is empty");
                         }
 
                         var authResponse = JsonConvert.DeserializeObject<CanvasAuthResponse>(data);
 
                         if (authResponse == null)
                         {
-                            return null;
+                            throw new Exception("auth response == null " + data);
                         }
 
                         if (!userCanvasUrlCache.ContainsKey(authResponse.access_token))

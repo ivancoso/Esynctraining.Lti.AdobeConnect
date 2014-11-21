@@ -103,6 +103,7 @@
         /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
+            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
             container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());

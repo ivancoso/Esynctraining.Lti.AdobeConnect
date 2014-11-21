@@ -5,6 +5,7 @@
 
     using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
+    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
 
@@ -12,7 +13,7 @@
     /// The course API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class CourseAPI : ILmsAPI
+    public class CanvasAPI : ILmsAPI
     {
         #region Static Fields
 
@@ -193,45 +194,67 @@
         }
 
         /// <summary>
-        /// The get quizzes for course.
+        /// The get items info for user.
         /// </summary>
-        /// <param name="detailed">
-        /// The detailed.
-        /// </param>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="quizIds">
-        /// The quiz Ids.
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
         /// </param>
         /// <param name="isSurvey">
-        /// The is Survey.
+        /// The is survey.
+        /// </param>
+        /// <param name="error">
+        /// The error.
         /// </param>
         /// <returns>
-        /// The <see cref="List{QuizDTO}"/>.
+        /// The <see cref="IEnumerable"/>.
         /// </returns>
-        public static IEnumerable<LmsQuizDTO> GetQuizzesForCourse(
-            bool detailed,
-            string api,
-            string usertoken,
-            int courseid,
-            IEnumerable<int> quizIds,
-            bool isSurvey)
+        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
+            var quizzes = this.GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
+            return quizzes.Select(q => new LmsQuizInfoDTO()
+                                           {
+                                               id = q.id,
+                                               name = q.title,
+                                               course = q.course,
+                                               courseName = q.courseName,
+                                               lastModifiedLMS = q.lastModifiedLMS,
+                                               isPublished = q.published
+                                           });
+        }
+
+        /// <summary>
+        /// The get items for user.
+        /// </summary>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is survey.
+        /// </param>
+        /// <param name="quizIds">
+        /// The quiz ids.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        {
+            var course = CanvasAPI.GetCourse(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    lmsUserParameters.Course);
+
             var ret = new List<LmsQuizDTO>();
-            var client = CreateRestClient(api);
+            var client = CreateRestClient(lmsUserParameters.CompanyLms.LmsDomain);
 
             RestRequest request = CreateRequest(
-                api, 
-                string.Format("/api/v1/courses/{0}/quizzes", courseid), 
+                lmsUserParameters.CompanyLms.LmsDomain, 
+                string.Format("/api/v1/courses/{0}/quizzes", lmsUserParameters.Course), 
                 Method.GET, 
-                usertoken);
+                lmsUserParameters.LmsUser.Token);
             request.AddParameter("per_page", 100);
             IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
 
@@ -246,15 +269,18 @@
                     isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
                     .ToList();
 
-            if (detailed)
+            if (quizIds != null)
             {
                 foreach (LmsQuizDTO q in response.Data)
                 {
-                    q.questions = GetQuestionsForQuiz(api, usertoken, courseid, q.id).ToArray();
+                    q.questions = GetQuestionsForQuiz(lmsUserParameters.CompanyLms.LmsDomain, lmsUserParameters.LmsUser.Token, lmsUserParameters.Course, q.id).ToArray();
+                    q.course = course.id;
+                    q.courseName = course.name;
                 }
             }
 
             ret.AddRange(response.Data);
+            error = string.Empty;
 
             return ret;
         }

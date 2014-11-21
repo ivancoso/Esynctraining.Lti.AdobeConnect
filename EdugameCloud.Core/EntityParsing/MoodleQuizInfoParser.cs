@@ -7,79 +7,95 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
 
+    using NHibernate.Hql.Ast.ANTLR;
+
+    /// <summary>
+    /// The moodle quiz info parser.
+    /// </summary>
     public class MoodleQuizInfoParser
     {
         /// <summary>
+        /// The quizzes path.
+        /// </summary>
+        private const string QuizzesPath = "RESPONSE/SINGLE/KEY[@name='quizzes']";
+
+        /// <summary>
+        /// The surveys path.
+        /// </summary>
+        private const string SurveysPath = "RESPONSE/SINGLE/KEY[@name='surveys']";
+
+        /// <summary>
+        /// The courses path.
+        /// </summary>
+        private const string CoursesPath = "RESPONSE/SINGLE/KEY[@name='courses']";
+
+        /// <summary>
+        /// The infos path.
+        /// </summary>
+        private const string InfosPath = "MULTIPLE/SINGLE";
+
+        /// <summary>
         /// Parses the specified XML.
         /// </summary>
-        /// <param name="xml">The XML.</param>
-        /// <returns>Collection of Meeting Items.</returns>
-        public static List<MoodleQuizInfoDTO> Parse(XmlNode xml, ref Dictionary<string, string> courseNamesDictionary )
+        /// <param name="xml">
+        /// The XML.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <returns>
+        /// Collection of Meeting Items.
+        /// </returns>
+        public static List<LmsQuizInfoDTO> Parse(XmlNode xml, bool isSurvey)
         {
-            var ret = new List<MoodleQuizInfoDTO>();
+            var ret = new List<LmsQuizInfoDTO>();
+            XmlNodeList infos = null;
 
-            if (xml == null)
+            var courseNames = new Dictionary<string, string>();
+
+            var courses = xml.SelectSingleNode(CoursesPath);
+
+            if (courses != null)
             {
-                return ret;
+                infos = courses.SelectNodes(InfosPath);
+
+                foreach (XmlNode i in infos)
+                {
+                    var id = i.GetNodeValue("id");
+                    var fullname = i.GetNodeValue("fullname");
+                    if (!courseNames.ContainsKey(id))
+                    {
+                        courseNames.Add(id, fullname);
+                    }
+                }
             }
-
-            var single = xml.SelectSingleNode("SINGLE");
-
-            if (single == null)
-            {
-                return ret;
-            }
-
-            var quizzes = single.SelectSingleNode("KEY[@name='quizzes']") ?? single.SelectSingleNode("KEY[@name='surveys']");
+            
+            var quizzes = isSurvey ? xml.SelectSingleNode(SurveysPath) : xml.SelectSingleNode(QuizzesPath);
 
             if (quizzes == null)
             {
                 return ret;
             }
 
-            var mult = quizzes.SelectSingleNode("MULTIPLE");
+            infos = quizzes.SelectNodes(InfosPath);
 
-            if (mult == null)
+            if (infos == null)
             {
                 return ret;
             }
-
-            var infos = mult.SelectNodes("SINGLE");
+            
             foreach (XmlNode i in infos)
             {
-                var info = new MoodleQuizInfoDTO();
-                info.id = i.GetNodeValue("id");
+                var info = new LmsQuizInfoDTO();
+                info.id = int.Parse(i.GetNodeValue("id") ?? "0");
                 info.name = i.GetNodeValue("name");
-                info.course = i.GetNodeValue("course");
-                info.lastModifiedMoodle = int.Parse(i.GetNodeValue("timemodified"));
+                var course = i.GetNodeValue("course") ?? "0";
+                info.course = int.Parse(course);
+                info.courseName = courseNames.ContainsKey(course) ? courseNames[course] : string.Empty;
+                info.lastModifiedLMS = int.Parse(i.GetNodeValue("timemodified"));
                 ret.Add(info);
             }
-
-            var courses = single.SelectSingleNode("KEY[@name='courses']");
-
-            if (courses == null)
-            {
-                return ret;
-            }
-
-            mult = courses.SelectSingleNode("MULTIPLE");
-
-            if (mult == null)
-            {
-                return ret;
-            }
-
-            infos = mult.SelectNodes("SINGLE");
-            foreach (XmlNode i in infos)
-            {
-                var id = i.GetNodeValue("id");
-                var fullname = i.GetNodeValue("fullname");
-                if (!courseNamesDictionary.ContainsKey(id))
-                {
-                    courseNamesDictionary.Add(id, fullname);
-                }
-            }
-
+            
             return ret;
         }
     }

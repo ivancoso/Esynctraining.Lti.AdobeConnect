@@ -5,6 +5,20 @@
     /// </summary>
     public class LmsQuizInfoDTO
     {
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LmsQuizInfoDTO"/> class.
+        /// </summary>
+        public LmsQuizInfoDTO()
+        {
+            this.isPublished = true;
+        }
+
+        #endregion
+
+        #region Public Properties
+
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
@@ -39,5 +53,7 @@
         /// Gets or sets a value indicating whether is published.
         /// </summary>
         public bool isPublished { get; set; }
+
+        #endregion
     }
 }

@@ -9,17 +9,10 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Utils;
 
     using Newtonsoft.Json;
-
-    using NHibernate.Mapping;
-
-    using RestSharp;
-    using RestSharp.Serializers;
 
     /// <summary>
     /// The quiz converter.
@@ -170,16 +163,8 @@
         }
 
         /// <summary>
-        /// Gets the course api.
+        /// Gets the survey grouping type model.
         /// </summary>
-        private CourseAPI CourseAPI
-        {
-            get
-            {
-                return IoC.Resolve<CourseAPI>();
-            }
-        }
-
         private SurveyGroupingTypeModel SurveyGroupingTypeModel
         {
             get
@@ -227,25 +212,28 @@
         /// <param name="quizzes">
         /// The quizzes.
         /// </param>
-        /// <param name="course">
-        /// The course.
-        /// </param>
         /// <param name="user">
         /// The user.
+        /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
         /// </param>
         /// <returns>
         /// The <see cref="Dictionary"/>.
         /// </returns>
-        public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, CourseDTO course, User user, bool isSurvey)
+        public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, User user, bool isSurvey, int lmsProviderId)
         {
             var submoduleQuiz = new Dictionary<int, int>();
-            var submoduleCategory = this.ProcessSubModuleCategory(course, user);
-
+            
             foreach (var quiz in quizzes)
             {
                 if (quiz.questions.Length > 0)
                 {
-                    var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey);
+                    var submoduleCategory = this.ProcessSubModuleCategory(quiz, user, lmsProviderId);
+                    var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey, lmsProviderId);
                     if (!submoduleQuiz.ContainsKey(item.Item1))
                     {
                         submoduleQuiz.Add(item.Item1, item.Item2);
@@ -271,36 +259,39 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
+        /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey)
+        private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey, int lmsProviderId)
         {
             SubModuleItem submodule;
             Tuple<int, int> result;
 
             if (isSurvey)
             {
-                var egcSurvey = this.SurveyModel.GetOneByLmsSurveyId(user.Id, quiz.id, (int)LmsProviderEnum.Canvas).Value
+                var egcSurvey = this.SurveyModel.GetOneByLmsSurveyId(user.Id, quiz.id, lmsProviderId).Value
                     ?? new Survey();
 
 
                 submodule = this.ProcessSubModule(user, subModuleCategory, egcSurvey.IsTransient() ? null : egcSurvey.SubModuleItem, quiz);
 
-                result = this.ProcessSurveyData(quiz, egcSurvey, submodule);
+                result = this.ProcessSurveyData(quiz, egcSurvey, submodule, lmsProviderId);
             }
             else
             {
-                var egcQuiz = this.QuizModel.GetOneByLmsQuizId(user.Id, quiz.id, (int)LmsProviderEnum.Canvas).Value
+                var egcQuiz = this.QuizModel.GetOneByLmsQuizId(user.Id, quiz.id, lmsProviderId).Value
                     ?? new Quiz();
 
 
                 submodule = this.ProcessSubModule(user, subModuleCategory, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
 
-                result = this.ProcessQuizData(quiz, egcQuiz, submodule);
+                result = this.ProcessQuizData(quiz, egcQuiz, submodule, lmsProviderId);
             }
             
-            this.ProcessQuizQuestions(quiz, user, submodule, isSurvey);
+            this.ProcessQuizQuestions(quiz, user, submodule, isSurvey, lmsProviderId);
 
             return result;
         }
@@ -308,24 +299,27 @@
         /// <summary>
         /// The process sub module category.
         /// </summary>
-        /// <param name="course">
-        /// The course.
+        /// <param name="quiz">
+        /// The quiz.
         /// </param>
         /// <param name="user">
         /// The user.
         /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
+        /// </param>
         /// <returns>
         /// The <see cref="SubModuleCategory"/>.
         /// </returns>
-        private SubModuleCategory ProcessSubModuleCategory(CourseDTO course, User user)
+        private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int lmsProviderId)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(course.id, (int)LmsProviderEnum.Canvas).Value
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(quiz.course, lmsProviderId).Value
                                           ?? new SubModuleCategory
                                           {
-                                              LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value,
-                                              CategoryName = course.name,
-                                              LmsCourseId = course.id,
+                                              LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value,
+                                              CategoryName = quiz.courseName,
+                                              LmsCourseId = quiz.course,
                                               User = user,
                                               DateModified = DateTime.Now,
                                               IsActive = true,
@@ -389,10 +383,13 @@
         /// <param name="submoduleItem">
         /// The submodule item.
         /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
+        /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
+        private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem, int lmsProviderId)
         {
             egcQuiz.LmsQuizId = quiz.id;
             egcQuiz.QuizName = this.ClearName(quiz.title);
@@ -400,7 +397,7 @@
             egcQuiz.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
-            egcQuiz.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value;
+            egcQuiz.LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value;
             egcQuiz.SubModuleItem.IsShared = true;
 
             this.QuizModel.RegisterSave(egcQuiz, true);
@@ -436,16 +433,19 @@
         /// <param name="submoduleItem">
         /// The submodule item.
         /// </param>
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
+        /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem)
+        private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem, int lmsProviderId)
         {
             egcSurvey.LmsSurveyId = quiz.id;
             egcSurvey.SurveyName = this.ClearName(quiz.title);
             egcSurvey.SubModuleItem = submoduleItem;
             egcSurvey.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
-            egcSurvey.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Canvas).Value;
+            egcSurvey.LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value;
             egcSurvey.SubModuleItem.IsShared = true;
             egcSurvey.SurveyGroupingType = SurveyGroupingTypeModel.GetOneById(1).Value;
 
@@ -499,9 +499,12 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey)
+        /// <param name="lmsProviderId">
+        /// The lms Provider Id.
+        /// </param>
+        private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int lmsProviderId)
         {
-            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider((int)LmsProviderEnum.Canvas);
+            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(lmsProviderId);
 
             foreach (var quizQuestion in quiz.questions.Where(qs => qs.question_type != null))
             {

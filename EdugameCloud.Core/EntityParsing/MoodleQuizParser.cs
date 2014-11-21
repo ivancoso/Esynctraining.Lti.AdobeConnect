@@ -1,16 +1,15 @@
 ﻿namespace EdugameCloud.Core.EntityParsing
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Xml;
 
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
 
-    using NHibernate.Hql.Ast.ANTLR;
-    using NHibernate.Util;
-
+    /// <summary>
+    /// The moodle quiz parser.
+    /// </summary>
     public class MoodleQuizParser
     {
         /// <summary>
@@ -20,7 +19,7 @@
         /// <param name="errorMessage">The error message</param>
         /// <param name="error">The error text</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static MoodleQuiz Parse(XmlNode xml, ref string errorMessage, ref string error)
+        public static LmsQuizDTO Parse(XmlNode xml, ref string errorMessage, ref string error)
         {
             if (xml == null)
             {
@@ -58,12 +57,11 @@
                 return null;
             }
 
-            var ret = new MoodleQuiz();
+            var ret = new LmsQuizDTO();
             
-            ret.Id = single.GetNodeValue("id");
-            ret.Name = single.GetNodeValue("name");
-            ret.Intro = single.GetNodeValue("intro");
-            ret.Questions = new List<MoodleQuestion>();
+            ret.id = int.Parse(single.GetNodeValue("id") ?? "0");
+            ret.title = single.GetNodeValue("name");
+            ret.description = single.GetNodeValue("intro");
 
             var courseNode = single.SelectSingleNode("KEY[@name='course']");
             if (courseNode != null)
@@ -74,9 +72,9 @@
                     int courseIdInt;
                     if (int.TryParse(courseSingle.GetNodeValue("id"), out courseIdInt))
                     {
-                        ret.LmsSubmoduleId = courseIdInt;
+                        ret.course = courseIdInt;
                     }
-                    ret.LmsSubmoduleName = courseSingle.GetNodeValue("fullname");
+                    ret.courseName = courseSingle.GetNodeValue("fullname");
                 }
             }
 
@@ -88,17 +86,17 @@
                 {
                     var questions = multiple.SelectNodes("SINGLE");
 
+                    var quizQuestions = new List<QuizQuestionDTO>();
                     foreach (XmlNode quest in questions)
                     {
-                        var q = new MoodleQuestion();
-                        ret.Questions.Add(q);
+                        var q = new QuizQuestionDTO();
+                        quizQuestions.Add(q);
 
-                        q.Id = quest.GetNodeValue("id");
-                        q.Name = quest.GetNodeValue("name");
-                        q.QuestionText = quest.GetNodeValue("questiontext");
-                        q.QuestionType = quest.GetNodeValue("qtype") ?? quest.GetNodeValue("typ");
-                        q.Presentation = quest.GetNodeValue("presentation");
-                        q.Datasets = new List<MoodleDataset>();
+                        q.id = int.Parse(quest.GetNodeValue("id") ?? "0");
+                        q.question_name = quest.GetNodeValue("name");
+                        q.question_text = quest.GetNodeValue("questiontext");
+                        q.question_type = quest.GetNodeValue("qtype") ?? quest.GetNodeValue("typ");
+                        q.presentation = quest.GetNodeValue("presentation");
 
                         var datasetsSingle = quest.SelectNodes("KEY[@name='datasets']/MULTIPLE/SINGLE");
                         if (datasetsSingle != null)
@@ -111,7 +109,7 @@
                                 mds.Max = ds.GetNodeValue("maximum"); 
                                 mds.Min = ds.GetNodeValue("minimum");
 
-                                q.Datasets.Add(mds);
+                                q.datasets.Add(mds);
 
                                 var items = ds.SelectNodes("KEY[@name='items']/MULTIPLE/SINGLE");
                                 if (items == null)
@@ -151,7 +149,7 @@
                         int singleChoiceInt;
                         if (int.TryParse(singleChoice, out singleChoiceInt))
                         {
-                            q.IsSingle = singleChoiceInt > 0;
+                            q.is_single = singleChoiceInt > 0;
                         }
 
                         var answers = optionsSingle.SelectSingleNode("KEY[@name='answers']");
@@ -165,14 +163,13 @@
                         {
                             continue;
                         }
-
-                        q.Answers = new List<MoodleQuestionOptionAnswer>();
+                        
                         var ansrs = answersMult.SelectNodes("SINGLE");
 
                         foreach (XmlNode answ in ansrs)
                         {
                             var a = new MoodleQuestionOptionAnswer();
-                            q.Answers.Add(a);
+                            q.option_answers.Add(a);
                             a.Id = answ.GetNodeValue("id");
                             a.Answer = answ.GetNodeValue("answer");
                             a.Fraction = answ.GetNodeValue("fraction");
@@ -198,7 +195,6 @@
                             continue;
                         }
 
-                        q.Questions = new List<MoodleQuestion>();
                         var qzs = qzMult.SelectNodes("SINGLE");
 
                         if (qzs.Count == 0)
@@ -221,14 +217,16 @@
 
                         foreach (XmlNode qzNode in qzs)
                         {
-                            var a = new MoodleQuestion();
-                            q.Questions.Add(a);
-                            a.Id = qzNode.GetNodeValue("id");
-                            a.QuestionType = qzNode.GetNodeValue("questiontype");
-                            a.QuestionText = qzNode.GetNodeValue("questiontext");
-                            a.AnswerText = qzNode.GetNodeValue("answertext");
+                            var a = new AnswerDTO();
+                            q.answers.Add(a);
+                            a.id = int.Parse(qzNode.GetNodeValue("id") ?? "0");
+                            a.question_type = qzNode.GetNodeValue("questiontype");
+                            a.question_text = qzNode.GetNodeValue("questiontext");
+                            a.text = qzNode.GetNodeValue("answertext");
                         }
                     }
+
+                    ret.questions = quizQuestions.ToArray();
                 }
 
             }

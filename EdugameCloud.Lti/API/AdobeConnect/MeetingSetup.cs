@@ -1395,7 +1395,7 @@
                     var token = lmsUser.Return(
                             u => u.Token,
                             credentials.AdminUser.Return(a => a.Token, string.Empty));
-                    CourseAPI.CreateAnnouncement(
+                    CanvasAPI.CreateAnnouncement(
                         credentials.LmsDomain,
                         token,
                         param.course_id,
@@ -1524,7 +1524,7 @@
                     u => u.Token,
                     credentials.AdminUser.Return(a => a.Token, string.Empty));
 
-            List<LmsUserDTO> users = CourseAPI.GetUsersForCourse(
+            List<LmsUserDTO> users = CanvasAPI.GetUsersForCourse(
                 credentials.LmsDomain, 
                 token, 
                 canvasCourseId);

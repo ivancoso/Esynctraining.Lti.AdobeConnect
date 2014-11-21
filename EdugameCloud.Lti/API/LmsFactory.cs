@@ -14,11 +14,11 @@
         /// <summary>
         /// Gets the course api.
         /// </summary>
-        private CourseAPI CourseAPI
+        private CanvasAPI CanvasApi
         {
             get
             {
-                return IoC.Resolve<CourseAPI>();
+                return IoC.Resolve<CanvasAPI>();
             }
         }
 
@@ -47,7 +47,7 @@
             switch (lmsId)
             {
                 case LmsProviderEnum.Canvas:
-                    return CourseAPI;
+                    return this.CanvasApi;
                 case LmsProviderEnum.Moodle:
                     return MoodleAPI;
             }

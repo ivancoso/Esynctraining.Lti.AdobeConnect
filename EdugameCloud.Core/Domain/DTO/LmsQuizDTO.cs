@@ -37,6 +37,21 @@
         /// </summary>
         public string quiz_type { get; set; }
 
+        /// <summary>
+        /// Gets or sets the course.
+        /// </summary>
+        public int course { get; set; }
+
+        /// <summary>
+        /// Gets or sets the course name.
+        /// </summary>
+        public string courseName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last modified lms.
+        /// </summary>
+        public int lastModifiedLMS { get; set; }
+
         #endregion
     }
 }

@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
 
+    using EdugameCloud.Core.Domain.Entities;
+
     /// <summary>
     /// The quiz question DTO.
     /// </summary>
@@ -15,6 +17,8 @@
         public QuizQuestionDTO()
         {
             this.answers = new List<AnswerDTO>();
+            this.option_answers = new List<MoodleQuestionOptionAnswer>();
+            this.datasets = new List<MoodleDataset>();
         }
 
         #endregion
@@ -50,6 +54,26 @@
         /// Gets or sets the quiz id.
         /// </summary>
         public int quiz_id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the presentation.
+        /// </summary>
+        public string presentation { get; set; }
+
+        /// <summary>
+        /// Gets or sets the datasets.
+        /// </summary>
+        public List<MoodleDataset> datasets { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is_single.
+        /// </summary>
+        public bool is_single { get; set; }
+
+        /// <summary>
+        /// Gets or sets the option_answers.
+        /// </summary>
+        public List<MoodleQuestionOptionAnswer> option_answers { get; set; }
 
         #endregion
     }

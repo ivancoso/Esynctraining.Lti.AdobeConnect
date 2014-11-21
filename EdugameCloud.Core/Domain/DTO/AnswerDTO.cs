@@ -94,6 +94,16 @@
         /// </summary>
         public double end { get; set; }
 
+        /// <summary>
+        /// Gets or sets the question_type.
+        /// </summary>
+        public string question_type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the question_text.
+        /// </summary>
+        public string question_text { get; set; }
+
         #endregion
     }
 }

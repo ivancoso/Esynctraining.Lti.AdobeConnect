@@ -9,23 +9,21 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel.Activation;
     using System.Web;
 
+    using Castle.Core.Internal;
+
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
-    using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.Converters;
-    using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
-    using FluentNHibernate.Conventions.AcceptanceCriteria;
 
     /// <summary>
     /// The LMS service.
@@ -89,6 +87,17 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<LmsCourseMeetingModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the lms factory.
+        /// </summary>
+        private LmsFactory LmsFactory
+        {
+            get
+            {
+                return IoC.Resolve<LmsFactory>();
             }
         }
 
@@ -290,56 +299,42 @@ namespace EdugameCloud.WCFService
         {
             var ret = new ServiceResponse<LmsQuizInfoDTO>();
 
-            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId);
+            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
 
-            if (lmsUserParameters.Value != null)
+            if (lmsUserParameters != null)
             {
                 var user = UserModel.GetOneById(userId);
-                var companyLms = lmsUserParameters.Value.CompanyLms;
+                
+                string error;
+                var quizzesForCourse = LmsFactory.GetLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id)
+                    .GetItemsInfoForUser(
+                    lmsUserParameters,
+                    isSurvey,
+                    out error).ToList();
 
-                var course = CourseAPI.GetCourse(
-                    companyLms.LmsDomain,
-                    lmsUserParameters.Value.LmsUser.Token,
-                    lmsUserParameters.Value.Course);
-
-                IEnumerable<LmsQuizDTO> quizzesForCourse = CourseAPI.GetQuizzesForCourse(
-                    false,
-                    companyLms.LmsDomain,
-                    lmsUserParameters.Value.LmsUser.Token,
-                    lmsUserParameters.Value.Course,
-                    null,
-                    isSurvey);
-
-                ret.objects = quizzesForCourse.Select(
+                quizzesForCourse.ForEach(
                     q =>
                         {
                             int lastModified = 0;
                             if (isSurvey)
                             {
-                                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.Value.Id, q.id, (int)LmsProviderEnum.Canvas).Value;
+                                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.LmsProvider.Id).Value;
                                 lastModified = egcSurvey != null
                                                    ? egcSurvey.SubModuleItem.DateModified.ConvertToTimestamp()
                                                    : 0;
                             }
                             else
                             {
-                                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, (int)LmsProviderEnum.Canvas).Value;
+                                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.LmsProvider.Id).Value;
                                 lastModified = egcQuiz != null
                                                    ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp()
                                                    : 0;
                             }
-                        
 
-                        return new LmsQuizInfoDTO()
-                        {
-                            id = q.id,
-                            name = q.title,
-                            course = course.id,
-                            courseName = course.name,
-                            lastModifiedEGC = lastModified,
-                            isPublished = q.published
-                        };
-                    });
+                            q.lastModifiedEGC = lastModified;
+                        });
+
+                ret.objects = quizzesForCourse;
             }
             else
             {
@@ -382,23 +377,16 @@ namespace EdugameCloud.WCFService
             {
                 var user = UserModel.GetOneById(userId).Value;
                 var companyLms = lmsUserParameters.CompanyLms;
-                var course = CourseAPI.GetCourse(
-                    companyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    lmsUserParameters.Course);
-                var token = lmsUserParameters.LmsUser.Return(
-                    u => u.Token,
-                    companyLms.AdminUser.Return(a => a.Token, string.Empty));
+                
+                string error;
+                IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
+                    .GetItemsForUser(
+                        lmsUserParameters,
+                        isSurvey,
+                        quizIds,
+                        out error);
 
-                IEnumerable<LmsQuizDTO> quizzes = CourseAPI.GetQuizzesForCourse(
-                    true,
-                    companyLms.LmsDomain,
-                    token,
-                    lmsUserParameters.Course,
-                    quizIds,
-                    isSurvey);
-
-                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, course, user, isSurvey);
+                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.LmsProvider.Id);
 
                 if (isSurvey)
                 {

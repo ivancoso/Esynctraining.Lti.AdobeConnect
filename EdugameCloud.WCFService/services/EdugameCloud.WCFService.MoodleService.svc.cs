@@ -23,6 +23,8 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.EntityParsing;
     using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.API;
+    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -270,7 +272,7 @@ namespace EdugameCloud.WCFService
                     serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage, error));
                     continue;
                 }
-
+                /*
                 if (q.Questions != null && q.Questions.Any())
                 {
                     var res = this.ConvertAndSave(q, user);
@@ -279,6 +281,7 @@ namespace EdugameCloud.WCFService
                         subModuleItemsQuizes.Add(res.Item1, res.Item2);
                     }
                 }
+                 * */
             }
 
             var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
@@ -349,7 +352,7 @@ namespace EdugameCloud.WCFService
                     serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage, error));
                     continue;
                 }
-
+                /*
                 if (q.Questions != null && q.Questions.Any())
                 {
                     try
@@ -362,10 +365,14 @@ namespace EdugameCloud.WCFService
                     }
                     catch (Exception e)
                     {
-                        serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, 
-                            "Error during quiz export", "Quiz " + q.Name + " can not be exported: " + e.Message));
+                        serviceResponse.SetError(
+                            new Error(
+                                Errors.CODE_ERRORTYPE_GENERIC_ERROR,
+                                "Error during quiz export",
+                                "Quiz " + q.Name + " can not be exported: " + e.Message));
                     }
                 }
+                 * */
             }
 
             var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
@@ -378,6 +385,14 @@ namespace EdugameCloud.WCFService
             };
 
             return serviceResponse;
+        }
+
+        public void Test()
+        {
+            string error;
+            var param = LmsUserParametersModel.GetOneById(142).Value;
+            var api = (new LmsFactory()).GetLmsAPI(LmsProviderEnum.Moodle);
+            var i = api.GetItemsForUser(param, false, new int[] { 37 }, out error);
         }
 
         /// <summary>
@@ -426,23 +441,8 @@ namespace EdugameCloud.WCFService
             var xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(resp);
 
-            var courseNames = new Dictionary<string, string>();
-
-            var quizes = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"), ref courseNames);
-
-            foreach (var quiz in quizes)
-            {
-                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.UserId, int.Parse(quiz.id), (int)LmsProviderEnum.Moodle).Value;
-                if (egcQuiz != null)
-                {
-                    quiz.lastModifiedEGC = egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp();
-                }
-
-                quiz.courseName = courseNames.ContainsKey(quiz.course) ? courseNames[quiz.course] : string.Empty;
-            }
-
-            serviceResponse.objects = quizes;
-
+            //// var quizes = MoodleQuizInfoParser.Parse(xmlDoc);
+            
             return serviceResponse;
         }
 
@@ -493,7 +493,7 @@ namespace EdugameCloud.WCFService
             xmlDoc.LoadXml(resp);
 
             var courseNames = new Dictionary<string, string>();
-
+            /*
             var surveys = MoodleQuizInfoParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"), ref courseNames);
 
             foreach (var survey in surveys)
@@ -508,7 +508,7 @@ namespace EdugameCloud.WCFService
             }
 
             serviceResponse.objects = surveys;
-
+            */
             return serviceResponse;
         }
 
@@ -1285,8 +1285,9 @@ namespace EdugameCloud.WCFService
 
             foreach (var quizQuestion in quiz.Questions.Where(qs => qs.QuestionType != null))
             {
-                var questionType = qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null 
+                QuestionType questionType = null;/* qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null 
                     && qt.MoodleQuestionType.Equals(quizQuestion.QuestionType.Equals("calculatedsimple") ? "calculated" : quizQuestion.QuestionType));
+                */
                 if (questionType == null)
                 {
                     continue;
@@ -1364,8 +1365,9 @@ namespace EdugameCloud.WCFService
 
             foreach (var quizQuestion in quiz.Questions.Where(qs => qs.QuestionType != null))
             {
-                var questionType = qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null
+                QuestionType questionType = null; /* qtypes.FirstOrDefault(qt => qt.MoodleQuestionType != null
                     && qt.MoodleQuestionType.Equals(quizQuestion.QuestionType.Equals("calculatedsimple") ? "calculated" : quizQuestion.QuestionType));
+                */
                 if (questionType == null)
                 {
                     continue;

@@ -210,7 +210,9 @@ namespace EdugameCloud.WCFService
             }
 
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
-            this.QuizResultConverter.ConvertAndSendSurveyResult(results);
+            
+            QuizResultConverter.ConvertAndSendSurveyResult(results);
+            
             return result;
         }
 
