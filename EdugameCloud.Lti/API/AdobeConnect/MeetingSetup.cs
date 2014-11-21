@@ -1172,7 +1172,7 @@
                     canJoin = true;
                 }
 
-                //areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
+                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1238,7 +1238,46 @@
                 }
             }
 
+            var permissionInfos = new List<PermissionInfo>();
+            permissionInfos.AddRange(hosts);
+            permissionInfos.AddRange(presenters);
+            permissionInfos.AddRange(participants);
+
+            foreach (var participant in permissionInfos)
+            {
+                if (!this.IsParticipantSynched(lmsUsers, participant))
+                {
+                    return false;
+                }
+            }
+
             return true;
+        }
+
+        /// <summary>
+        /// The is participant synched.
+        /// </summary>
+        /// <param name="lmsUsers">
+        /// The LMS users.
+        /// </param>
+        /// <param name="participant">
+        /// The participant.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool IsParticipantSynched(List<LmsUserDTO> lmsUsers, PermissionInfo participant)
+        {
+            bool found = false;
+            foreach (var lmsUser in lmsUsers)
+            {
+                if (this.LmsUserIsAcUser(lmsUser, participant))
+                {
+                    found = true;
+                }
+            }
+
+            return found;
         }
 
         /// <summary>
@@ -1553,10 +1592,10 @@
             out List<PermissionInfo> participants,
             HashSet<string> nonEditable)
         {
-            HashSet<string> alreadyAdded = new HashSet<string>();
-            PermissionCollectionResult hostsResult = provider.GetMeetingHosts(meetingSco);
-            PermissionCollectionResult presentersResult = provider.GetMeetingPresenters(meetingSco);
-            PermissionCollectionResult participantsResult = provider.GetMeetingParticipants(meetingSco);
+            var alreadyAdded = new HashSet<string>();
+            var hostsResult = provider.GetMeetingHosts(meetingSco);
+            var presentersResult = provider.GetMeetingPresenters(meetingSco);
+            var participantsResult = provider.GetMeetingParticipants(meetingSco);
             if (hostsResult.Values != null)
             {
                 foreach (var g in hostsResult.Values)
@@ -1564,6 +1603,7 @@
                     alreadyAdded.Add(g.PrincipalId);
                 }
             }
+
             if (presentersResult.Values != null)
             {
                 foreach (var g in presentersResult.Values)
@@ -1571,6 +1611,7 @@
                     alreadyAdded.Add(g.PrincipalId);
                 }
             }
+
             if (participantsResult.Values != null)
             {
                 foreach (var g in participantsResult.Values)
@@ -1578,6 +1619,7 @@
                     alreadyAdded.Add(g.PrincipalId);
                 }
             }
+
             hosts = this.ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
             presenters = this.ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
             participants = this.ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
@@ -1599,7 +1641,7 @@
         /// The already added.
         /// </param>
         /// <returns>
-        /// The <see cref="List"/>.
+        /// The <see cref="List{PermissionInfo}"/>.
         /// </returns>
         private List<PermissionInfo> ProcessACMeetingAttendees(
             HashSet<string> nonEditable,
@@ -1615,10 +1657,12 @@
                 {
                     continue;
                 }
-                values.Add(new PermissionInfo() { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary });
+
+                values.Add(new PermissionInfo { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary });
                 nonEditable.Add(g.PrincipalId);
                 alreadyAdded.Add(g.PrincipalId);
             }
+
             return values;
         }
 
@@ -1632,7 +1676,7 @@
         /// The group ids.
         /// </param>
         /// <returns>
-        /// The <see cref="List"/>.
+        /// The <see cref="List{Principal}"/>.
         /// </returns>
         private List<Principal> GetGroupPrincipals(AdobeConnectProvider provider, IEnumerable<string> groupIds)
         {
@@ -1865,6 +1909,9 @@
         /// </param>
         /// <param name="registeredUser">
         /// The registered user.
+        /// </param>
+        /// <param name="connectionMode">
+        /// The connection Mode.
         /// </param>
         /// <param name="email">
         /// The email.
