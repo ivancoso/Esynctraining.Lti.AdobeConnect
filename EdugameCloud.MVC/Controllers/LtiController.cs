@@ -186,7 +186,7 @@
                         var userId = result.ExtraData["id"];
                         var userName = result.ExtraData["name"];
                         var param = this.GetParam(providerKey);
-                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = GetUserNameOrEmail(param) };
+                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = this.GetUserNameOrEmail(param) };
                         lmsUser.Username = userName;
                         lmsUser.Token = token;
                         this.lmsUserModel.RegisterSave(lmsUser);
@@ -218,11 +218,6 @@
             return this.View("Error");
         }
 
-        private static string GetUserNameOrEmail(LtiParamDTO param)
-        {
-            return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
-        }
-
         /// <summary>
         /// The save settings.
         /// </summary>
@@ -240,7 +235,7 @@
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser == null)
             {
-                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
+                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id, Username = this.GetUserNameOrEmail(param) };
             }
 
             lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
@@ -583,6 +578,7 @@
         public virtual string ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            // ReSharper disable once UnusedVariable
             LtiParamDTO param = this.GetParam(lmsProviderName);
             var link = this.MeetingSetup.UpdateRecording(credentials, this.GetProvider(lmsProviderName), recordingId, isPublic, password);
             
@@ -820,6 +816,20 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The get user name or email.
+        /// </summary>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetUserNameOrEmail(LtiParamDTO param)
+        {
+            return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
+        }
 
         /// <summary>
         /// The get provider name.
