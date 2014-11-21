@@ -716,6 +716,13 @@
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
+
+                        if (lmsUser == null)
+                        {
+                            lmsUser = new LmsUser { CompanyLms = credentials, UserId = model.lms_user_id, Username = this.GetUserNameOrEmail(model) };
+                            this.lmsUserModel.RegisterSave(lmsUser);
+                        }
+
                         return this.RedirectToExtJs(credentials, lmsUser, lmsKey);
                 }
             }
