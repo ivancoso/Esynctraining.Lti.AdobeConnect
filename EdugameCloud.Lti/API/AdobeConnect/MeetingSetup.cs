@@ -5,10 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Security.Policy;
     using System.Web.Security;
-    using System.Web.UI.WebControls.WebParts;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.BlackBoard;
@@ -23,8 +20,6 @@
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
-    using RestSharp.Contrib;
 
     /// <summary>
     ///     The meeting setup.
@@ -227,9 +222,8 @@
                 return new List<RecordingDTO>();
             }
 
-            ScoContentCollectionResult result = provider.GetMeetingRecordings(meeting.ScoId);
-            
-            List<RecordingDTO> recordings = new List<RecordingDTO>();
+            var result = provider.GetMeetingRecordings(meeting.ScoId);
+            var recordings = new List<RecordingDTO>();
 
             foreach (var v in result.Values)
             {
@@ -239,6 +233,7 @@
                 {
                     isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
                 }
+
                 string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
 
                 recordings.Add(new RecordingDTO
@@ -288,17 +283,15 @@
                 return string.Empty;
             }
 
-            var accessResult = provider.UpdatePublicAccessPermissions(
-                id,
-                isPublic ? PermissionId.view : PermissionId.remove);
+            // ReSharper disable UnusedVariable
+            var accessResult = provider.UpdatePublicAccessPermissions(id, isPublic ? PermissionId.view : PermissionId.remove); 
             var passwordResult = provider.UpdateAclField(id, AclFieldId.meeting_passcode, password);
-
+            // ReSharper restore UnusedVariable
             var recordingUrl = (credentials.AcServer.EndsWith("/")
                                         ? credentials.AcServer.Substring(0, credentials.AcServer.Length - 1)
                                         : credentials.AcServer) + recording.UrlPath;
             return recordingUrl;
         }
-
 
         /// <summary>
         /// The get templates.
@@ -555,23 +548,26 @@
                 return param.launch_presentation_return_url;
             }
 
-            return string.IsNullOrWhiteSpace(breezeToken) ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken);
+            return string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
         }
 
         /// <summary>
         /// The join recording.
         /// </summary>
         /// <param name="credentials">
-        ///     The credentials.
+        /// The credentials.
         /// </param>
         /// <param name="param">
-        ///     The parameter.
+        /// The parameter.
         /// </param>
         /// <param name="userSettings">
-        ///     The user settings
+        /// The user settings
         /// </param>
         /// <param name="recordingUrl">
-        ///     The recording url.
+        /// The recording url.
+        /// </param>
+        /// <param name="mode">
+        /// The mode.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
@@ -606,12 +602,10 @@
                           + (credentials.AcServer != null && credentials.AcServer.EndsWith(@"/") ? string.Empty : "/")
                           + recordingUrl;
 
-            return string.IsNullOrWhiteSpace(breezeToken)
-                       ? baseUrl
-                       : string.Format(
+            return string.Format(
                            "{0}?session={1}{2}",
                            baseUrl,
-                           breezeToken,
+                           breezeToken ?? "null",
                            mode != null ? string.Format("&pbMode={0}", mode) : string.Empty);
         }
 
@@ -908,6 +902,7 @@
 
                         this.UpdateUserACValues(provider, user, login, email);
                     }
+
                     if (user.is_editable)
                     {
                         this.SetLMSUserDefaultACPermissions(provider, meeting.ScoId, user, user.ac_id);

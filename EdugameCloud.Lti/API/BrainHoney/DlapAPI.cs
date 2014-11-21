@@ -3,18 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Web;
-    using System.Web.SessionState;
     using System.Xml.Linq;
     using System.Xml.XPath;
-
     using Castle.Core.Logging;
-
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
-
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
@@ -67,24 +60,15 @@
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        public Session BeginBatch(out string error, LmsUser lmsUser = null)
+        public Session BeginBatch(out string error, CompanyLms companyLms)
         {
-            if (lmsUser == null)
-            {
-                HttpSessionState session = HttpContext.Current.With(x => x.Session);
-                string companyKey = string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, "brainhoney");
-                if (session != null && session[companyKey] != null)
-                {
-                    var companyLms = session[companyKey] as CompanyLms;
-                    lmsUser = companyLms.With(x => x.AdminUser);
-                }
-            }
+            var lmsUser = companyLms.AdminUser;
 
             if (lmsUser != null)
             {
@@ -159,6 +143,7 @@
                 session,
                 s =>
                 s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
+                credentials,
                 out error);
             if (courseResult == null)
             {
@@ -184,8 +169,9 @@
                 var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
                 var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
                 var announcementName = Guid.NewGuid().ToString("N") + ".zip";
-                //var groupsXml = this.FormatGroupsXml(session, courseId);
+                //// var groupsXml = this.FormatGroupsXml(session, courseId);
 
+                // ReSharper disable once UnusedVariable
                 XElement announcementResult = session.Post(
                     Commands.Announcements.Put + "&"
                     + string.Format(Parameters.Announcements.Put, courseId, announcementName),
@@ -199,28 +185,6 @@
                         new XAttribute("recurse", "false"),
                         new XElement("body", new XCData(announcementMessage))));
             }
-        }
-
-        private string FormatGroupsXml(Session session, int courseId)
-        {
-            var xml = "<groups/>";
-            var groupsResult = session.Get(Commands.Groups.List, string.Format(Parameters.Groups.List, courseId));
-            if (groupsResult != null)
-            {
-                var groups = groupsResult.XPathSelectElements("/enrollments/enrollment").ToList();
-                if (groups.Any())
-                {
-                    xml = "<groups>";
-                    foreach (XElement group in groups)
-                    {
-                        string groupId = group.XPathEvaluate("string(@id)").ToString();
-                        xml += string.Format(@"<group id=""{0}"" />", groupId);
-                    }
-                    xml += "</groups>";
-                }
-            }
-
-            return xml;
         }
 
         /// <summary>
@@ -254,7 +218,8 @@
                 s.Get(
                     Commands.Enrollments.List, 
                     string.Format(Parameters.Enrollments.List, s.DomainId, courseid).ToParams()), 
-                out error);
+                    company,
+                    out error);
             if (enrollmentsResult == null)
             {
                 error = error ?? "DLAP. Unable to retrive result from API";
@@ -278,34 +243,34 @@
                     long privilegesVal;
                     if (long.TryParse(privileges, out privilegesVal))
                     {
-                        if (CheckRole(privilegesVal, RightsFlags.ControlCourse))
+                        if (this.CheckRole(privilegesVal, RightsFlags.ControlCourse))
                         {
                             role = Roles.Owner;
                         }
-                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                                 && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                                 && CheckRole(privilegesVal, RightsFlags.GradeAssignment)
-                                 && CheckRole(privilegesVal, RightsFlags.GradeForum)
-                                 && CheckRole(privilegesVal, RightsFlags.GradeExam)
-                                 && CheckRole(privilegesVal, RightsFlags.SetupGradebook)
-                                 && CheckRole(privilegesVal, RightsFlags.ReadGradebook)
-                                 && CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
-                                 && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                                 && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                                 && this.CheckRole(privilegesVal, RightsFlags.GradeAssignment)
+                                 && this.CheckRole(privilegesVal, RightsFlags.GradeForum)
+                                 && this.CheckRole(privilegesVal, RightsFlags.GradeExam)
+                                 && this.CheckRole(privilegesVal, RightsFlags.SetupGradebook)
+                                 && this.CheckRole(privilegesVal, RightsFlags.ReadGradebook)
+                                 && this.CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
+                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
                         {
                             role = Roles.Teacher;
                         }
-                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                                 && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                                 && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                                 && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
                         {
                             role = Roles.Author;
                         }
-                        else if (CheckRole(privilegesVal, RightsFlags.Participate)
-                                 && CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                        else if (this.CheckRole(privilegesVal, RightsFlags.Participate)
+                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
                         {
                             role = Roles.Student;
                         }
-                        else if (CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
                         {
                             role = Roles.Reader;
                         }
@@ -337,6 +302,43 @@
         #region Methods
 
         /// <summary>
+        /// The format groups xml.
+        /// </summary>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        // ReSharper disable once UnusedMember.Local
+        private string FormatGroupsXml(Session session, int courseId)
+        {
+            var xml = "<groups/>";
+            var groupsResult = session.Get(Commands.Groups.List, string.Format(Parameters.Groups.List, courseId));
+            if (groupsResult != null)
+            {
+                var groups = groupsResult.XPathSelectElements("/enrollments/enrollment").ToList();
+                if (groups.Any())
+                {
+                    xml = "<groups>";
+                    // ReSharper disable once LoopCanBeConvertedToQuery
+                    foreach (XElement group in groups)
+                    {
+                        string groupId = group.XPathEvaluate("string(@id)").ToString();
+                        xml += string.Format(@"<group id=""{0}"" />", groupId);
+                    }
+
+                    xml += "</groups>";
+                }
+            }
+
+            return xml;
+        }
+
+        /// <summary>
         /// The check role.
         /// </summary>
         /// <param name="privilegesVal">
@@ -348,7 +350,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private static bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
+        private bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
         {
             return ((RightsFlags)privilegesVal & roleToCheck) == roleToCheck;
         }
@@ -679,22 +681,6 @@
         /// <summary>
         /// The login if necessary.
         /// </summary>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        private void LoginIfNecessary(Session session, Action<Session> action)
-        {
-            string error = null;
-            session = session ?? this.BeginBatch(out error);
-            action(session);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
         /// <typeparam name="T">
         /// Any type
         /// </typeparam>
@@ -704,32 +690,8 @@
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private T LoginIfNecessary<T>(Session session, Func<Session, T> action)
-        {
-            string error = null;
-            session = session ?? this.BeginBatch(out error);
-            if (session != null)
-            {
-                return action(session);
-            }
-
-            return default(T);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -737,48 +699,15 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, out string error)
+        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, CompanyLms companyLms, out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error);
+            session = session ?? this.BeginBatch(out error, companyLms);
             if (session != null)
             {
                 return action(session);
             }
 
-            return default(T);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private T LoginIfNecessary<T>(Session session, Func<Session, Tuple<T, string>> action, out string error)
-        {
-            error = null;
-            session = session ?? this.BeginBatch(out error);
-            if (session != null)
-            {
-                Tuple<T, string> resTuple = action(session);
-                error = resTuple.Item2;
-                return resTuple.Item1;
-            }
-
-            error = error ?? "DLAP. Session is null";
             return default(T);
         }
 
@@ -885,6 +814,9 @@
                 #endregion
             }
 
+            /// <summary>
+            /// The groups.
+            /// </summary>
             public class Groups
             {
                  #region Constants
@@ -896,7 +828,6 @@
 
                 #endregion
             }
-
 
             /// <summary>
             ///     The announcements.

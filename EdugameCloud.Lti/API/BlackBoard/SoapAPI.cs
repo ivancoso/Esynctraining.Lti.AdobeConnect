@@ -4,19 +4,12 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-    using System.Web;
-    using System.Web.SessionState;
-
     using BbWsClient;
     using BbWsClient.CourseMembership;
     using BbWsClient.User;
-
     using Castle.Core.Logging;
-
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
-
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -81,25 +74,16 @@
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        public WebserviceWrapper BeginBatch(out string error, LmsUser lmsUser = null)
+        public WebserviceWrapper BeginBatch(out string error, CompanyLms companyLms)
         {
-            if (lmsUser == null)
-            {
-                HttpSessionState session = HttpContext.Current.With(x => x.Session);
-                string companyKey = string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, "blackboard");
-                if (session != null && session[companyKey] != null)
-                {
-                    var companyLms = session[companyKey] as CompanyLms;
-                    lmsUser = companyLms.With(x => x.AdminUser);
-                }
-            }
-
+            var lmsUser = companyLms.AdminUser;
+            
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.CompanyLms.LmsDomain;
@@ -182,6 +166,7 @@
 
                         return new List<LmsUserDTO>();
                     },
+                company,
                 out error);
 
             if (enrollmentsResult == null)
@@ -293,7 +278,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetRole(string roleId, CourseMembershipRoleVO[] availableRoles)
+        private string GetRole(string roleId, IEnumerable<CourseMembershipRoleVO> availableRoles)
         {
             var role =
                 availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
@@ -338,51 +323,6 @@
         /// <summary>
         /// The login if necessary.
         /// </summary>
-        /// <param name="session">
-        /// The client.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        // ReSharper disable once UnusedMember.Local
-        private void LoginIfNecessary(WebserviceWrapper session, Action<WebserviceWrapper> action)
-        {
-            string error;
-            session = session ?? this.BeginBatch(out error);
-            action(session);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The client.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        // ReSharper disable once UnusedMember.Local
-        private T LoginIfNecessary<T>(WebserviceWrapper session, Func<WebserviceWrapper, T> action)
-        {
-            string error;
-            session = session ?? this.BeginBatch(out error);
-            if (session != null)
-            {
-                return action(session);
-            }
-
-            return default(T);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
         /// <typeparam name="T">
         /// Any type
         /// </typeparam>
@@ -392,58 +332,24 @@
         /// <param name="action">
         /// The action.
         /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, CompanyLms companyLms, out string error)
         {
             error = null;
-            client = client ?? this.BeginBatch(out error);
+            client = client ?? this.BeginBatch(out error, companyLms);
             if (client != null)
             {
                 return action(client);
             }
 
-            return default(T);
-        }
-
-        /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="session">
-        /// The client.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        // ReSharper disable once UnusedMember.Local
-        private T LoginIfNecessary<T>(
-            WebserviceWrapper session, 
-            Func<WebserviceWrapper, Tuple<T, string>> action, 
-            out string error)
-        {
-            error = null;
-            session = session ?? this.BeginBatch(out error);
-            if (session != null)
-            {
-                Tuple<T, string> resTuple = action(session);
-                error = resTuple.Item2;
-                return resTuple.Item1;
-            }
-
-            error = error ?? "SOAP. Client is null";
             return default(T);
         }
 

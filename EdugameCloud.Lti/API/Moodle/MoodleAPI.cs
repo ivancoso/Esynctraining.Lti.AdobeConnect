@@ -7,34 +7,25 @@
     using System.Linq;
     using System.Net;
     using System.Text;
-    using System.Web;
     using System.Web.Script.Serialization;
-    using System.Web.SessionState;
     using System.Xml;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
 
     using BbWsClient;
 
     using Castle.Core.Logging;
 
+    using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
-
-    using Esynctraining.Core.Domain.Contracts;
-    using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     /// <summary>
     /// The Moodle API.
     /// </summary>
+    // ReSharper disable once InconsistentNaming
     public class MoodleAPI : ILmsAPI
     {
-
         #region Fields
 
         /// <summary>
@@ -91,8 +82,6 @@
             MoodleSession token = null)
         {
             var result = new List<LmsUserDTO>();
-            error = null;
-
             var enrollmentsResult = this.LoginIfNecessary(
                 token,
                 c =>
@@ -116,6 +105,7 @@
                     xmlDoc.LoadXml(resp);
                     return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
                 },
+                company,
                 out error);
 
             if (enrollmentsResult == null)
@@ -128,60 +118,20 @@
         }
 
         /// <summary>
-        /// The login if necessary.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Any type
-        /// </typeparam>
-        /// <param name="client">
-        /// The client.
-        /// </param>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private T LoginIfNecessary<T>(MoodleSession session, Func<MoodleSession, T> action, out string error)
-        {
-            error = null;
-            session = session ?? this.BeginBatch(out error);
-            if (session != null)
-            {
-                return action(session);
-            }
-
-            return default(T);
-        }
-
-        /// <summary>
         /// The create rest client.
         /// </summary>
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="MoodleSession"/>.
         /// </returns>
-        public MoodleSession BeginBatch(out string error, LmsUser lmsUser = null)
+        public MoodleSession BeginBatch(out string error, CompanyLms companyLms)
         {
-            if (lmsUser == null)
-            {
-                HttpSessionState session = HttpContext.Current.With(x => x.Session);
-                string companyKey = string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, "moodle");
-                if (session != null && session[companyKey] != null)
-                {
-                    var companyLms = session[companyKey] as CompanyLms;
-                    lmsUser = companyLms.With(x => x.AdminUser);
-                }
-            }
-
+            var lmsUser = companyLms.AdminUser;
             if (lmsUser != null)
             {
                 string lmsDomain = lmsUser.CompanyLms.LmsDomain;
@@ -211,6 +161,9 @@
         /// <param name="password">
         /// The password.
         /// </param>
+        /// <param name="recursive">
+        /// The recursive.
+        /// </param>
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
@@ -219,7 +172,8 @@
             bool useSsl,
             string lmsDomain,
             string userName,
-            string password)
+            string password, 
+            bool recursive = false)
         {
             error = null;
             var pairs = new NameValueCollection
@@ -237,6 +191,10 @@
             }
 
             var resp = Encoding.UTF8.GetString(response);
+            if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
+            {
+                return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
+            }
 
             var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
 
@@ -256,7 +214,7 @@
         /// The domain.
         /// </param>
         /// <param name="useSsl">
-        /// The use Ssl.
+        /// The use SSL.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
@@ -268,13 +226,46 @@
         }
 
         /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private T LoginIfNecessary<T>(MoodleSession session, Func<MoodleSession, T> action, CompanyLms companyLms, out string error)
+        {
+            error = null;
+            session = session ?? this.BeginBatch(out error, companyLms);
+            if (session != null)
+            {
+                return action(session);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
         /// The fix domain.
         /// </summary>
         /// <param name="domain">
         /// The domain.
         /// </param>
         /// <param name="useSsl">
-        /// The use Ssl.
+        /// The use SSL.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
@@ -283,15 +274,15 @@
         {
             domain = domain.ToLower();
 
-            if (!(domain.StartsWith("http://") || domain.StartsWith("https://")))
+            if (!(domain.StartsWith(HttpScheme.Http) || domain.StartsWith(HttpScheme.Https)))
             {
                 if (useSsl)
                 {
-                    domain = "https://" + domain;
+                    domain = HttpScheme.Https + domain;
                 }
                 else
                 {
-                    domain = "http://" + domain;
+                    domain = HttpScheme.Http + domain;
                 }
             }
 

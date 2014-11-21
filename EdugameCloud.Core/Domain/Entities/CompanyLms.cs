@@ -2,7 +2,10 @@
 {
     using System;
 
+    using EdugameCloud.Core.Constants;
+
     using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.Extensions;
 
     using Iesi.Collections.Generic;
 
@@ -20,6 +23,11 @@
         /// The LMS course meetings.
         /// </summary>
         private ISet<LmsCourseMeeting> lmsCourseMeetings = new HashedSet<LmsCourseMeeting>();
+
+        /// <summary>
+        /// The LMS domain.
+        /// </summary>
+        private string lmsDomain;
 
         #region Public Properties
 
@@ -86,7 +94,34 @@
         /// <summary>
         /// Gets or sets the LMS domain.
         /// </summary>
-        public virtual string LmsDomain { get; set; }
+        public virtual string LmsDomain
+        {
+            get
+            {
+                var domainUrl = this.lmsDomain.Return(x => x.ToLower(), string.Empty);
+                if (domainUrl.StartsWith(HttpScheme.Http))
+                {
+                    return domainUrl.Substring(HttpScheme.Http.Length);
+                }
+
+                if (domainUrl.StartsWith(HttpScheme.Https))
+                {
+                    return domainUrl.Substring(HttpScheme.Https.Length);
+                }
+
+                return domainUrl;
+            }
+
+            set
+            {
+                if (!string.IsNullOrWhiteSpace(value) && this.UseSSL != true && value.StartsWith(HttpScheme.Https))
+                {
+                    this.UseSSL = true;
+                }
+
+                this.lmsDomain = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the LMS provider.

@@ -201,6 +201,8 @@
     <Compile Include="Social\OAuth\Instagram\InstagramAuthResponse.cs" />
     <Compile Include="Social\OAuth\Canvas\CanvasClient.cs" />
     <Compile Include="Social\OAuth\Canvas\CanvasUser.cs" />
+    <Compile Include="Social\OAuth\LtiOpenAuthSecurityManager.cs" />
+    <Compile Include="Social\OAuth\OAuthWebSecurityWrapper.cs" />
     <Compile Include="Social\OAuth\Twitter\TwitterClient2.cs" />
     <Compile Include="Social\OAuth\Twitter\TwitterClient.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramClient.cs" />

@@ -3,11 +3,9 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
-
-    using NHibernate.Cfg;
-
     using RestSharp;
 
     /// <summary>
@@ -81,6 +79,7 @@
             request.RequestFormat = DataFormat.Json;
             request.AddBody(submission);
 
+            // ReSharper disable once UnusedVariable
             var res = client.Execute(request);
         }
 
@@ -167,13 +166,13 @@
         /// The get course.
         /// </summary>
         /// <param name="api">
-        /// The api.
+        /// The API.
         /// </param>
         /// <param name="usertoken">
-        /// The usertoken.
+        /// The user token.
         /// </param>
         /// <param name="courseid">
-        /// The courseid.
+        /// The course id.
         /// </param>
         /// <returns>
         /// The <see cref="CourseDTO"/>.
@@ -240,6 +239,7 @@
             {
                 response.Data = response.Data.Where(q => quizIds.Contains(q.id)).ToList();
             }
+
             response.Data =
                 response.Data.Where(
                     q =>
@@ -263,16 +263,16 @@
         /// The get quiz by id.
         /// </summary>
         /// <param name="api">
-        /// The api.
+        /// The API.
         /// </param>
         /// <param name="usertoken">
-        /// The usertoken.
+        /// The user token.
         /// </param>
         /// <param name="courseid">
-        /// The courseid.
+        /// The course id.
         /// </param>
         /// <param name="quizid">
-        /// The quizid.
+        /// The quiz id.
         /// </param>
         /// <returns>
         /// The <see cref="LmsQuizDTO"/>.
@@ -427,7 +427,7 @@
         /// </returns>
         private static RestClient CreateRestClient(string api)
         {
-            var client = new RestClient(string.Format("https://{0}", api));
+            var client = new RestClient(string.Format("{0}{1}", HttpScheme.Https, api));
             return client;
         }
 

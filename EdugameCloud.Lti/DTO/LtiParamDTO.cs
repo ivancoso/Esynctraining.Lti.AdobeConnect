@@ -2,10 +2,9 @@
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
     using System.Web;
-
-    using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Core.Constants;
+    using Esynctraining.Core.Extensions;
 
     /// <summary>
     /// The LTI parameter DTO.
@@ -52,23 +51,18 @@
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
+                var lmsDomain = this.GetLmsDomain().Return(x => x.ToLower(), string.Empty);
+                if (lmsDomain.StartsWith(HttpScheme.Http))
                 {
-                    if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid))
-                    {
-                        return this.LmsDomainFromUrls();
-                    }
-
-                    Guid uid;
-                    if (Guid.TryParse(this.tool_consumer_instance_guid, out uid))
-                    {
-                        return this.LmsDomainFromUrls();
-                    }
-
-                    return this.tool_consumer_instance_guid;
+                    return lmsDomain.Substring(HttpScheme.Http.Length);
                 }
 
-                return this.custom_canvas_api_domain;
+                if (lmsDomain.StartsWith(HttpScheme.Https))
+                {
+                    return lmsDomain.Substring(HttpScheme.Https.Length);
+                }
+
+                return lmsDomain;
             }
         }
 
@@ -268,6 +262,33 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// The get LMS domain.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetLmsDomain()
+        {
+            if (string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
+            {
+                if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid))
+                {
+                    return this.LmsDomainFromUrls();
+                }
+
+                Guid uid;
+                if (Guid.TryParse(this.tool_consumer_instance_guid, out uid))
+                {
+                    return this.LmsDomainFromUrls();
+                }
+
+                return this.tool_consumer_instance_guid;
+            }
+
+            return this.custom_canvas_api_domain;
         }
 
         #endregion

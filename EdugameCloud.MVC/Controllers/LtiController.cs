@@ -17,6 +17,7 @@
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.OAuth;
     using EdugameCloud.MVC.HtmlHelpers;
+    using EdugameCloud.MVC.Social.OAuth;
     using EdugameCloud.MVC.Social.OAuth.Canvas;
 
     using Esynctraining.AC.Provider;
@@ -173,7 +174,7 @@
 
             try
             {
-                AuthenticationResult result = OAuthWebSecurity.VerifyAuthentication();
+                AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
                 if (result.IsSuccessful)
                 {
                     // name of the provider we just used
