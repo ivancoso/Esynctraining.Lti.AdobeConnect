@@ -652,43 +652,6 @@
         }
 
         /// <summary>
-        /// The save LMS user parameters.
-        /// </summary>
-        /// <param name="lmsCourseId">
-        /// The LMS Course Id.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The LMS Company.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="adobeConnectUserId">
-        /// The current user AC id.
-        /// </param>
-        public void SaveLMSUserParameters(
-            int lmsCourseId, 
-            CompanyLms lmsCompany, 
-            string lmsUserId, 
-            string adobeConnectUserId)
-        {
-            LmsUserParameters lmsUserParameters =
-                this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsCourseId).Value;
-            if (lmsUserParameters == null)
-            {
-                lmsUserParameters = new LmsUserParameters
-                                        {
-                                            AcId = adobeConnectUserId, 
-                                            Course = lmsCourseId, 
-                                            CompanyLms = lmsCompany
-                                        };
-            }
-
-            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-            this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
-        }
-
-        /// <summary>
         /// The save meeting.
         /// </summary>
         /// <param name="credentials">
@@ -1016,6 +979,42 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The save LMS user parameters.
+        /// </summary>
+        /// <param name="lmsCourseId">
+        /// The LMS Course Id.
+        /// </param>
+        /// <param name="lmsCompany">
+        /// The LMS Company.
+        /// </param>
+        /// <param name="lmsUserId">
+        /// The LMS User Id.
+        /// </param>
+        /// <param name="adobeConnectUserId">
+        /// The current user AC id.
+        /// </param>
+        private void SaveLMSUserParameters(
+            int lmsCourseId,
+            CompanyLms lmsCompany,
+            string lmsUserId,
+            string adobeConnectUserId)
+        {
+            LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsCourseId).Value;
+            if (lmsUserParameters == null)
+            {
+                lmsUserParameters = new LmsUserParameters
+                {
+                    AcId = adobeConnectUserId,
+                    Course = lmsCourseId,
+                    CompanyLms = lmsCompany
+                };
+            }
+
+            lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
+            this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
+        }
 
         /// <summary>
         /// The get AC password.

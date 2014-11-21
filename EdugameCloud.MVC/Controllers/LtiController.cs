@@ -177,9 +177,6 @@
                 AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
                 if (result.IsSuccessful)
                 {
-                    // name of the provider we just used
-                    provider = provider ?? result.Provider;
-
                     LmsUser lmsUser = null;
 
                     if (result.ExtraData.ContainsKey("accesstoken"))
@@ -189,9 +186,7 @@
                         var userName = result.ExtraData["name"];
                         var company = this.GetCredentials(providerKey);
 
-                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value
-                                      ?? new LmsUser { UserId = userId, CompanyLms = company };
-
+                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company };
                         lmsUser.Username = userName;
                         lmsUser.Token = token;
                         this.lmsUserModel.RegisterSave(lmsUser);
@@ -568,7 +563,7 @@
         /// The share recording.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The LMS provider name.
         /// </param>
         /// <param name="recordingId">
         /// The recording id.
@@ -586,7 +581,6 @@
         {
             CompanyLms credentials = this.GetCredentials(lmsProviderName);
             LtiParamDTO param = this.GetParam(lmsProviderName);
-            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
             var link = this.MeetingSetup.UpdateRecording(credentials, this.GetProvider(lmsProviderName), recordingId, isPublic, password);
             
             return link;
@@ -596,7 +590,7 @@
         /// The edit recording.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The LMS provider name.
         /// </param>
         /// <param name="recordingUrl">
         /// The recording url.
@@ -620,10 +614,10 @@
         }
 
         /// <summary>
-        /// The get recording flv.
+        /// The get recording FLV.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The LMS provider name.
         /// </param>
         /// <param name="recordingUrl">
         /// The recording url.
@@ -702,7 +696,7 @@
 
             this.AddSessionCookie(this.Session.SessionID);
 
-            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(model.lms_user_id, credentials.Id).Value;
+            var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(model.lms_user_id, model.lms_user_login, model.lis_person_contact_email_primary, credentials.Id);
             
             if (BltiProviderHelper.VerifyBltiRequest(
                 credentials,

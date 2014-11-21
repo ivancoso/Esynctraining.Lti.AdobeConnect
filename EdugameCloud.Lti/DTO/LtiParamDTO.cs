@@ -100,7 +100,11 @@
         {
             get
             {
-                return string.IsNullOrWhiteSpace(this.custom_canvas_user_login_id) ? this.lis_person_sourcedid : this.custom_canvas_user_login_id;
+                return string.IsNullOrWhiteSpace(this.custom_canvas_user_login_id)
+                           ? (string.IsNullOrWhiteSpace(this.ext_user_username)
+                                  ? this.lis_person_sourcedid
+                                  : this.ext_user_username)
+                           : this.custom_canvas_user_login_id;
             }
         }
 
@@ -154,6 +158,11 @@
         /// Gets or sets the LIS person source ID.
         /// </summary>
         public string lis_person_sourcedid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the extended Moodle user username.
+        /// </summary>
+        public string ext_user_username { get; set; }
 
         /// <summary>
         /// Gets or sets the OAUTH consumer key.
