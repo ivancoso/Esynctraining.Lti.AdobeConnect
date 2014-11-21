@@ -68,7 +68,7 @@
         {
             var queryOver = new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => (u.UserId == userId || u.Username == userLogin || u.Username == userEmail) && u.CompanyLms.Id == companyLmsId);
             var result = this.Repository.FindOne(queryOver).Value;
-            if (!string.IsNullOrWhiteSpace(userId) && !userId.Equals(result.UserId))
+            if (result != null && !string.IsNullOrWhiteSpace(userId) && !userId.Equals(result.UserId))
             {
                 result.UserId = userId;
                 this.RegisterSave(result);
