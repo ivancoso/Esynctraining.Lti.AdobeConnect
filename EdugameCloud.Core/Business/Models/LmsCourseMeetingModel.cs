@@ -1,11 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
-    using System.Collections;
     using System.Collections.Generic;
-
-    using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.Entities;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
@@ -13,7 +9,7 @@
     using NHibernate;
 
     /// <summary>
-    /// The lms course meeting model.
+    /// The LMS course meeting model.
     /// </summary>
     public class LmsCourseMeetingModel : BaseModel<LmsCourseMeeting, int>
     {
@@ -36,12 +32,12 @@
         /// Gets one by course id
         /// </summary>
         /// <param name="companyLmsId">
-        /// The company lms id</param>
+        /// The company LMS id</param>
         /// <param name="courseId">
         /// The course id
         /// </param>
         /// <returns>
-        /// The canvas ac meeting
+        /// The canvas AC meeting
         /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByCourseId(int companyLmsId, int courseId)
         {
@@ -54,13 +50,13 @@
         /// The get one by meeting id.
         /// </summary>
         /// <param name="companyLmsId">
-        /// The company lms id.
+        /// The company LMS id.
         /// </param>
         /// <param name="meetingId">
         /// The meeting id.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue"/>.
+        /// The <see cref="IFutureValue{LmsCourseMeeting}"/>.
         /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByMeetingId(int companyLmsId, string meetingId)
         {
@@ -76,7 +72,7 @@
         /// The meeting id.
         /// </param>
         /// <returns>
-        /// The <see cref="IEnumerable"/>.
+        /// The <see cref="IEnumerable{LmsCourseMeeting}"/>.
         /// </returns>
         public IEnumerable<LmsCourseMeeting> GetAllByMeetingId(string meetingId)
         {

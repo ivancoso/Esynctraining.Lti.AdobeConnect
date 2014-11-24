@@ -19,6 +19,9 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.
         /// </summary>
+        /// <param name="lmsProviderModel">
+        /// The LMS Provider Model.
+        /// </param>
         public CompanyLmsValidator(LmsProviderModel lmsProviderModel)
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
@@ -31,7 +34,9 @@
                 .Must(x => lmsProviderModel.GetOneByName(x).Value != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
 
-                .Must((model, x) => !string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword))
+                .Must((model, x) => 
+                    x.Equals(LmsProviderNames.Canvas, StringComparison.OrdinalIgnoreCase)
+                    || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword)))
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS setup. Please provide with LMS Admin and Password");
         }
     }

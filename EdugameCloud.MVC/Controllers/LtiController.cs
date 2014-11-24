@@ -669,7 +669,7 @@
                     model.oauth_consumer_key).Value;
             if (credentials != null)
             {
-                if (credentials.LmsDomain != null && !string.Equals(credentials.LmsDomain, model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                if (credentials.LmsDomain != null && !string.Equals(credentials.LmsDomain.TrimEnd("/".ToCharArray()), model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.ViewBag.Error = "This LTI integration is already set for different domain";
                     return this.View("Error");
@@ -722,7 +722,7 @@
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
-
+                    case LmsProviderNames.Sakai:
                         if (lmsUser == null)
                         {
                             lmsUser = new LmsUser { CompanyLms = credentials, UserId = model.lms_user_id, Username = this.GetUserNameOrEmail(model) };

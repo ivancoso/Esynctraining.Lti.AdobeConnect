@@ -24,5 +24,10 @@
         /// The black board.
         /// </summary>
         public const string Blackboard = "blackboard";
+
+        /// <summary>
+        /// The Sakai.
+        /// </summary>
+        public const string Sakai = "sakai";
     }
 }

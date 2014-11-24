@@ -646,13 +646,21 @@ namespace EdugameCloud.WCFService
                         ErrorsTexts.AccessError_Subject, 
                         ErrorsTexts.AccessError_NoUserExistsWithTheGivenEmail));
             }
-            else if (user.Status != UserStatus.Active || user.Company.Status != CompanyStatus.Active)
+            else if (user.Status != UserStatus.Active)
             {
                 result.SetError(
                     new Error(
                         Errors.CODE_ERRORTYPE_USER_INACTIVE, 
                         ErrorsTexts.AccessError_Subject, 
                         ErrorsTexts.AccessError_UserIsInactive));
+            }
+            else if (user.Company.Status != CompanyStatus.Active)
+            {
+                result.SetError(
+                    new Error(
+                        Errors.CODE_ERRORTYPE_USER_INACTIVE,
+                        ErrorsTexts.AccessError_Subject,
+                        ErrorsTexts.AccessError_CompanyIsInactive));
             }
             else if (user.Company.CurrentLicense == null)
             {

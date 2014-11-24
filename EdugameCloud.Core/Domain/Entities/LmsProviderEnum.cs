@@ -23,7 +23,12 @@
         /// <summary>
         /// Black board
         /// </summary>
-        Blackboard = 3
+        Blackboard = 4,
+
+        /// <summary>
+        /// Sakai
+        /// </summary>
+        Sakai = 5
         
     }
 }
