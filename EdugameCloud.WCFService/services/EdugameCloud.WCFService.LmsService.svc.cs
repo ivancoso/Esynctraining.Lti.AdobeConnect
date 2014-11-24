@@ -158,9 +158,9 @@ namespace EdugameCloud.WCFService
                         {
                             return false;
                         }
-                        if (acDomain.EndsWith("/"))
+                        if (acServer.EndsWith("/"))
                         {
-                            acDomain = acDomain.Substring(0, acDomain.Length - 1);
+                            acServer = acServer.Substring(0, acServer.Length - 1);
                         }
                         return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
                     });
