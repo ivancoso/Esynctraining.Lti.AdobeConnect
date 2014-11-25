@@ -79,15 +79,16 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool ExecuteIfPossible(Schedule schedule, Action<DateTime> scheduledAction)
+        public bool ExecuteIfPossible(Schedule schedule, Func<DateTime, string> scheduledAction, out string output)
         {
+            output = null;
             bool result = false;
             if (schedule.IsEnabled)
             {
                     // time to run the scheduled task
                     if (scheduledAction != null)
                     {
-                        scheduledAction(schedule.NextRun);
+                        output = scheduledAction(schedule.NextRun);
                         result = true;
                     }
             }

@@ -307,20 +307,69 @@
             if (session != null)
             {
                 var course = courseResult.XPathSelectElement("/course");
-                var courseName = course.XPathEvaluate("string(@title)").ToString();
-                var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
-                var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
+                if (course != null)
+                {
+                    var courseName = course.XPathEvaluate("string(@title)").ToString();
+                    var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
+                    var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
 
-                return new Course
-                           {
-                               CourseId = courseId,
-                               Title = courseName,
-                               StartDate = courseStartDate,
-                               EndDate = courseEndDate,
-                           };
+                    return new Course
+                               {
+                                   CourseId = courseId,
+                                   Title = courseName,
+                                   StartDate = courseStartDate,
+                                   EndDate = courseEndDate,
+                               };
+                }
+
+                error = "Course not found";
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// The get last signal id.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Nullable{Int64}"/>.
+        /// </returns>
+        public long? GetLastSignalId(CompanyLms company, out string error, Session session = null)
+        {
+            long? result = null;
+            XElement signalsResult = this.LoginIfNecessary(session, s => s.Get(Commands.Signals.GetLastSignalId), company, out error);
+            if (signalsResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive result from API";
+                return null;
+            }
+
+            if (!Session.IsSuccess(signalsResult))
+            {
+                error = "DLAP. Unable to create user: " + Session.GetMessage(signalsResult);
+                this.logger.Error(error);
+            }
+
+            try
+            {
+                var signal = signalsResult.XPathSelectElement("/signal");
+                result = long.Parse(signal.XPathEvaluate("string(@id)").With(x => x.ToString()));
+            }
+            catch (Exception ex)
+            {
+                error = ex.ToString();
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -465,7 +514,7 @@
             var changedEntityType = data.XPathEvaluate("string(@entitytype)").With(x => x.ToString());
             if (changedEntityType == "C")
             {
-                var itemId = data.XPathEvaluate("string(@entitytype)").With(x => x.ToString());
+                var itemId = data.XPathEvaluate("string(@itemid)").With(x => x.ToString());
                 result.Add(new CourseSignal(signalId, entityid, type) { EntityType = changedEntityType, ItemId = itemId });
             }
         }
@@ -991,6 +1040,11 @@
                 /// The list.
                 /// </summary>
                 public const string List = "getsignallist";
+
+                /// <summary>
+                /// The get last signal id.
+                /// </summary>
+                public const string GetLastSignalId = "getlastsignalid";
 
                 #endregion
             }

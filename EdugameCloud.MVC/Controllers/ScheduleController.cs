@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Web.Mvc;
     using EdugameCloud.Core.Business.Models;
@@ -26,8 +27,14 @@
         /// </summary>
         private readonly DlapAPI dlapApi;
 
+        /// <summary>
+        /// The meeting setup.
+        /// </summary>
         private readonly MeetingSetup meetingSetup;
 
+        /// <summary>
+        /// The company LMS model.
+        /// </summary>
         private readonly CompanyLmsModel companyLmsModel;
 
         /// <summary>
@@ -89,7 +96,7 @@
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
             foreach (Schedule schedule in schedules)
             {
-                Action<DateTime> scheduledAction = null;
+                Func<DateTime, string> scheduledAction = null;
 
                 switch (schedule.ScheduleDescriptor)
                 {
@@ -98,9 +105,9 @@
                         break;
                 }
 
-                var res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction);
-                result += "'" + schedule.ScheduleDescriptor.ToString()
-                          + (res ? "' task succedded; " : "' task failed; ");
+                string error;
+                var res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, out error);
+                result += "'" + schedule.ScheduleDescriptor + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
 
             return this.Content(result ?? "Tasks not found");
@@ -125,7 +132,7 @@
                 switch (schedule.ScheduleDescriptor)
                 {
                     case ScheduleDescriptor.BrainHoneySignals:
-                        scheduledAction = this.CheckForBrainHoneySignals;
+                        scheduledAction = dt => this.CheckForBrainHoneySignals(dt);
                         break;
                 }
 
@@ -147,8 +154,11 @@
         /// <param name="lastScheduledRunDate">
         /// The last scheduled run date.
         /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         [NonAction]
-        private void CheckForBrainHoneySignals(DateTime lastScheduledRunDate)
+        private string CheckForBrainHoneySignals(DateTime lastScheduledRunDate)
         {
             var errors = new List<string>();
             var api = this.dlapApi;
@@ -157,63 +167,124 @@
             {
                 string error;
                 var session = api.BeginBatch(out error, brainHoneyCompany);
-                var adobeConnectProvider = this.meetingSetup.GetProvider(brainHoneyCompany);
-                this.meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
-                var templates = this.meetingSetup.GetTemplates(adobeConnectProvider, brainHoneyCompany.ACTemplateScoId);
-                if (!templates.Any())
-                {
-                    error = "No templates found for " + brainHoneyCompany.LmsDomain;
-                }
+
                 if (error != null)
                 {
                     this.AddToErrors(errors, error, brainHoneyCompany);
                 }
                 else
                 {
-                    var signals = api.GetSignalsList(brainHoneyCompany, out error, session);
+                    if (brainHoneyCompany.LastSignalId == 0)
+                    {
+                        var signalId = api.GetLastSignalId(brainHoneyCompany, out error, session);
+                        if (error != null)
+                        {
+                            this.AddToErrors(errors, error, brainHoneyCompany);
+                        }
+                        else if (signalId.HasValue)
+                        {
+                            this.UpdateLastSignalId(brainHoneyCompany, signalId.Value);
+                        }
+
+                        continue;
+                    }
+
+                    var adobeConnectProvider = this.meetingSetup.GetProvider(brainHoneyCompany);
+                    this.meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
+                    var templates = this.meetingSetup.GetTemplates(
+                        adobeConnectProvider,
+                        brainHoneyCompany.ACTemplateScoId);
+                    if (!templates.Any())
+                    {
+                        error = "No templates found for " + brainHoneyCompany.LmsDomain;
+                    }
+
                     if (error != null)
                     {
                         this.AddToErrors(errors, error, brainHoneyCompany);
                     }
                     else
                     {
-                        
-                        signals = signals.OrderByDescending(x => x.SignalId).ToList();
-                        foreach (var signal in signals)
+                        var signals = api.GetSignalsList(brainHoneyCompany, out error, session);
+                        if (error != null)
                         {
-                            if (signal.Type == DlapAPI.SignalTypes.CourseCreated)
+                            this.AddToErrors(errors, error, brainHoneyCompany);
+                        }
+                        else
+                        {
+                            signals = signals.OrderBy(x => x.SignalId).ToList();
+                            foreach (var signal in signals)
                             {
-                                var courseSignal = (CourseSignal)signal;
-                                var course = api.GetCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
-                                if (error != null)
+                                if (signal.Type == DlapAPI.SignalTypes.CourseCreated)
                                 {
-                                    this.AddToErrors(errors, error, brainHoneyCompany);
-                                }
-                                else
-                                {
-                                    var startDate = DateTime.Parse(course.StartDate);
-                                    this.meetingSetup.SaveMeeting(
+                                    var courseSignal = (CourseSignal)signal;
+                                    var course = api.GetCourse(
                                         brainHoneyCompany,
-                                        adobeConnectProvider,
-                                        new LtiParamDTO { context_id = courseSignal.ItemId },
-                                        new MeetingDTO
-                                            {
-                                                start_date = startDate.ToString("MM-dd-yyyy"),
-                                                start_time = startDate.ToString("hh:mm tt"),
-                                                duration = "01:00",
-                                                id = courseSignal.ItemId,
-                                                name = course.Title,
-                                                template = templates.First().With(x => x.id)
-                                            },
+                                        courseSignal.EntityId,
+                                        out error,
+                                        session);
+                                    if (error != null)
+                                    {
+                                        this.AddToErrors(errors, error, brainHoneyCompany);
+                                    }
+                                    else
+                                    {
+                                        var startDate = DateTime.Parse(course.StartDate);
+                                        this.meetingSetup.SaveMeeting(
+                                            brainHoneyCompany,
+                                            adobeConnectProvider,
+                                            new LtiParamDTO
+                                                {
+                                                    context_id =
+                                                        course.CourseId.ToString(
+                                                            CultureInfo.InvariantCulture),
+                                                    tool_consumer_info_product_family_code = "brainhoney"
+                                                },
+                                            new MeetingDTO
+                                                {
+                                                    start_date = startDate.ToString("MM-dd-yyyy"),
+                                                    start_time = startDate.ToString("hh:mm tt"),
+                                                    duration = "01:00",
+                                                    id = courseSignal.ItemId,
+                                                    name = course.Title,
+                                                    template = templates.First().With(x => x.id)
+                                                },
                                             session);
+                                    }
                                 }
+                            }
+
+                            var lastSignal = signals.LastOrDefault();
+                            if (lastSignal != null)
+                            {
+                                this.UpdateLastSignalId(brainHoneyCompany, lastSignal.SignalId);
                             }
                         }
                     }
                 }
             }
+
+            return errors.ToPlainString();
         }
 
+        private void UpdateLastSignalId(CompanyLms brainHoneyCompany, long signalId)
+        {
+            brainHoneyCompany.LastSignalId = signalId;
+            this.companyLmsModel.RegisterSave(brainHoneyCompany);
+        }
+
+        /// <summary>
+        /// The add to errors.
+        /// </summary>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="brainHoneyCompany">
+        /// The brain honey company.
+        /// </param>
         private void AddToErrors(List<string> errors, string error, CompanyLms brainHoneyCompany)
         {
             errors.Add(string.Format("Error with company {0}:{1}", brainHoneyCompany.With(x => x.LmsDomain), error));
