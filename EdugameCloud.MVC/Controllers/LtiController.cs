@@ -207,7 +207,15 @@
                 }
                 else
                 {
-                    this.ViewBag.Error = string.Format("Generic OAuth fail: {0}", result.Error != null ? result.Error.Message : (result.Provider ?? string.Empty));
+                    var sid = Request.QueryString["__sid__"] ?? string.Empty;
+                    var cookie = Request.Cookies[sid];
+                    
+                    this.ViewBag.Error = string.Format(
+                        "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
+                        Request.QueryString["code"] ?? string.Empty,
+                        Request.QueryString["__provider__"] ?? string.Empty,
+                        sid,
+                        cookie != null ? cookie.Value : string.Empty);
                 }
             }
             catch (ApplicationException ex)

@@ -215,16 +215,22 @@
                     isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
                     .ToList();
 
-            if (quizIds != null)
+            
+            foreach (LmsQuizDTO q in response.Data)
             {
-                foreach (LmsQuizDTO q in response.Data)
+                if (quizIds != null)
                 {
-                    q.questions = GetQuestionsForQuiz(lmsUserParameters.CompanyLms.LmsDomain, lmsUserParameters.LmsUser.Token, lmsUserParameters.Course, q.id).ToArray();
-                    q.course = course.id;
-                    q.courseName = course.name;
+                    q.questions =
+                        GetQuestionsForQuiz(
+                            lmsUserParameters.CompanyLms.LmsDomain,
+                            lmsUserParameters.LmsUser.Token,
+                            lmsUserParameters.Course,
+                            q.id).ToArray();
                 }
+                q.course = course.id;
+                q.courseName = course.name;
             }
-
+            
             ret.AddRange(response.Data);
             error = string.Empty;
 

@@ -9,6 +9,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.EntityParsing;
 
     using Esynctraining.Core.Utils;
 
@@ -481,7 +482,7 @@
         /// </returns>
         private string ClearName(string name)
         {
-            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty);
+            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ");
         }
 
         /// <summary>
@@ -530,11 +531,12 @@
                 if (questionType.QuestionType.Id == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionType.Id == (int)QuestionTypeEnum.FillInTheBlank)
                 {
-                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion);
+                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)lmsProviderId);
                 }
-                else if (questionType.QuestionType.Id == (int)QuestionTypeEnum.Calculated)
+                else if (questionType.QuestionType.Id == (int)QuestionTypeEnum.Calculated
+                    || questionType.QuestionType.Id == (int)QuestionTypeEnum.CalculatedMultichoice)
                 {
-                    questionText = this.ProcessCalculatedQuestionText(quizQuestion);
+                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)lmsProviderId);
                 }
                 else
                 {
@@ -566,7 +568,7 @@
                     }
                 }
 
-                this.ProcessDistractors(user, questionType.QuestionType, quizQuestion, question);
+                this.ProcessDistractors(user, questionType.QuestionType, quizQuestion, question, (LmsProviderEnum)lmsProviderId);
 
                 if (isSurvey)
                 {
@@ -608,7 +610,10 @@
         /// <param name="question">
         /// The question.
         /// </param>
-        private void ProcessDistractors(User user, QuestionType qtype, QuizQuestionDTO q, Question question)
+        /// <param name="lmsProvider">
+        /// The lms Provider.
+        /// </param>
+        private void ProcessDistractors(User user, QuestionType qtype, QuizQuestionDTO q, Question question, LmsProviderEnum lmsProvider)
         {
             var disctarctorModel = this.DistractorModel;
             switch (qtype.Id)
@@ -622,12 +627,12 @@
 
                 case (int)QuestionTypeEnum.MultipleDropdowns:
                     {
-                        this.ProcessFillInTheBlankDistractors(user, q, question, true);
+                        this.ProcessFillInTheBlankDistractors(user, q, question, true, lmsProvider);
                         break;
                     }
                 case (int)QuestionTypeEnum.FillInTheBlank:
                     {
-                        this.ProcessFillInTheBlankDistractors(user, q, question, false);
+                        this.ProcessFillInTheBlankDistractors(user, q, question, false, lmsProvider);
                         break;
                     }
                 case (int)QuestionTypeEnum.Matching:
@@ -645,9 +650,10 @@
                         this.ProcessNumericalDistractors(user, q, question);
                         break;
                     }
+                case (int)QuestionTypeEnum.CalculatedMultichoice:
                 case (int)QuestionTypeEnum.Calculated:
                     {
-                        this.ProcessCalculatedDistractors(user, q, question);
+                        this.ProcessCalculatedDistractors(user, q, question, lmsProvider);
                         break;
                     }
             }
@@ -659,10 +665,59 @@
         /// <param name="q">
         /// The q.
         /// </param>
+        /// <param name="lmsProvider">
+        /// The lms provider.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string ProcessFillInTheBlankQuestionText(QuizQuestionDTO q)
+        private string ProcessFillInTheBlankQuestionText(QuizQuestionDTO q, LmsProviderEnum lmsProvider)
+        {
+            switch (lmsProvider)
+            {
+                case LmsProviderEnum.Canvas:
+                return this.ProcessFillInTheBlankQuestionTextCanvas(q);
+                case LmsProviderEnum.Moodle:
+                return this.ProcessFillInTheBlankQuestionTextMoodle(q);
+            }
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// The process fill in the blank question text moodle.
+        /// </summary>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessFillInTheBlankQuestionTextMoodle(QuizQuestionDTO q)
+        {
+            var i = 1;
+            var questionText = ClearName(q.question_text);
+            foreach (var a in q.answers)
+            {
+                if (a.question_text == null) continue;
+                var index = a.question_text.IndexOf(":=");
+                if (index < 0) continue;
+                var text = a.question_text.Substring(index + 2, a.question_text.Length - index - 3);
+                questionText = questionText.Replace("{#" + (i++) + "}", text);
+            }
+
+            return questionText;
+        }
+
+        /// <summary>
+        /// The process fill in the blank question text.
+        /// </summary>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessFillInTheBlankQuestionTextCanvas(QuizQuestionDTO q)
         {
             var questionText = this.ClearName(q.question_text);
             foreach (var a in q.answers)
@@ -694,7 +749,130 @@
         /// <param name="option">
         /// The option.
         /// </param>
+        /// <param name="lmsProvider">
+        /// The lms provider.
+        /// </param>
         private void ProcessFillInTheBlankDistractors(
+            User user,
+            QuizQuestionDTO q,
+            Question question,
+            bool option,
+            LmsProviderEnum lmsProvider)
+        {
+            switch (lmsProvider)
+            {
+                case LmsProviderEnum.Canvas:
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    break;
+                case LmsProviderEnum.Moodle:
+                    this.ProcessFillInTheBlankDistractorsMoodle(user, q, question, option);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// The process fill in the blank distractors moodle.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="option">
+        /// The option.
+        /// </param>
+        private void ProcessFillInTheBlankDistractorsMoodle(
+            User user,
+            QuizQuestionDTO q,
+            Question question,
+            bool option)
+        {
+            string blankTrue = "<text id=\"0\" isBlank=\"true\">",
+                blankFalse = "<text id=\"0\" isBlank=\"false\">",
+                closing = "</text>";
+            var distractorText = ClearName(q.question_text);
+            if (!distractorText.StartsWith("{#"))
+            {
+                distractorText = blankTrue + distractorText;
+            }
+
+            distractorText = distractorText.Replace("{#", closing + blankTrue)
+                .Replace("}", closing + blankFalse);
+            if (distractorText.StartsWith(closing))
+            {
+                distractorText = "<data>" + distractorText.Substring(closing.Length);
+            }
+            else
+            {
+                distractorText = "<data>" + blankFalse + distractorText;
+            }
+
+            var i = 1;
+            foreach (var a in q.answers)
+            {
+                if (a.question_text == null) continue;
+                var index = a.question_text.IndexOf(":=");
+                if (index < 0) continue;
+                var text = a.question_text.Substring(index + 2, a.question_text.Length - index - 3);
+                text = blankTrue + text + closing;
+                distractorText = distractorText.Replace(blankTrue + (i++) + closing, text);
+            }
+            if (distractorText.EndsWith(blankFalse))
+            {
+                distractorText = distractorText.Substring(0, distractorText.Length - blankFalse.Length);
+            }
+            if (distractorText.EndsWith(blankTrue))
+            {
+                distractorText = distractorText.Substring(0, distractorText.Length - blankTrue.Length);
+            }
+
+            if (!distractorText.EndsWith(closing))
+            {
+                distractorText = distractorText + closing;
+            }
+
+            distractorText = distractorText + "</data>";
+
+            var lmsId = q.id;
+
+            var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+            distractor.DateModified = DateTime.Now;
+            distractor.ModifiedBy = user;
+            distractor.DistractorName = distractorText;
+            distractor.IsActive = true;
+            distractor.DistractorType = null;
+            distractor.IsCorrect = true;
+
+            DistractorModel.RegisterSave(distractor);
+        }
+
+        /// <summary>
+        /// The process fill in the blank distractors.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="option">
+        /// The option.
+        /// </param>
+        private void ProcessFillInTheBlankDistractorsCanvas(
             User user,
             QuizQuestionDTO q,
             Question question,
@@ -849,7 +1027,87 @@
         /// <param name="question">
         /// The question.
         /// </param>
-        private void ProcessCalculatedDistractors(
+        /// <param name="lmsProvider">
+        /// The lms provider.
+        /// </param>
+        private void ProcessCalculatedDistractors(User user, QuizQuestionDTO q, Question question, LmsProviderEnum lmsProvider)
+        {
+            switch (lmsProvider)
+            {
+                case LmsProviderEnum.Canvas:
+                    this.ProcessCalculatedDistractorsCanvas(user, q, question);
+                break;
+                case LmsProviderEnum.Moodle:
+                    this.ProcessCalculatedDistractorsMoodle(user, q, question);
+                break;
+            }
+        }
+
+        /// <summary>
+        /// The process calculated distractors moodle.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        private void ProcessCalculatedDistractorsMoodle(User user, QuizQuestionDTO q, Question question)
+        {
+            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
+            foreach (var a in q.answers)
+            {
+                var expression = new MoodleExpressionParser(ClearName(a.text));
+                foreach (var ds in q.datasets)
+                {
+                    var variable = ds.Name;
+                    var value = ds.Items.Count > 0 ? ds.Items.First().Value : double.Parse(ds.Max ?? "0");
+                    expression.SetValue(variable, value);
+                }
+
+                var result = expression.Calculate();
+
+                var name = question.QuestionType.Id == (int)QuestionTypeEnum.CalculatedMultichoice
+                               ? result.ToString()
+                               : string.Format("{{\"val\":{0},\"error\":{1} }}", result, a.margin);
+
+                var lmsId = a.id;
+                var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.DistractorName = name;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = a.weight == 100;
+                distractor.LmsAnswer = (answerNumber++).ToString();
+
+                DistractorModel.RegisterSave(distractor);
+            }
+        }
+
+        /// <summary>
+        /// The process calculated distractors canvas.
+        /// </summary>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <param name="q">
+        /// The q.
+        /// </param>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        private void ProcessCalculatedDistractorsCanvas(
             User user,
             QuizQuestionDTO q,
             Question question)
@@ -889,21 +1147,43 @@
         /// <param name="q">
         /// The q.
         /// </param>
+        /// <param name="lmsProvider">
+        /// The lms Provider.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string ProcessCalculatedQuestionText(QuizQuestionDTO q)
+        private string ProcessCalculatedQuestionText(QuizQuestionDTO q, LmsProviderEnum lmsProvider)
         {
             var questionText = ClearName(q.question_text);
-            var values = q.answers.FirstOrDefault();
-            if (values == null)
+            switch (lmsProvider)
             {
-                return questionText;
-            }
+                case LmsProviderEnum.Canvas:
+                    var values = q.answers.FirstOrDefault();
+                    if (values == null)
+                    {
+                        return questionText;
+                    }
             
-            foreach (var variable in values.variables)
-            {
-                questionText = questionText.Replace("[" + variable.name + "]", variable.value);
+                    foreach (var variable in values.variables)
+                    {
+                        questionText = questionText.Replace("[" + variable.name + "]", variable.value);
+                    }
+                    break;
+                case LmsProviderEnum.Moodle:
+                    var vals = new Dictionary<string, double>();
+                    foreach (var a in q.datasets)
+                    {
+                        var value = a.Items.Count > 0 ? a.Items.Count : double.Parse(a.Max ?? "0");
+                        if (!vals.ContainsKey(a.Name))
+                            vals.Add(a.Name, value);
+                        var name = a.Name;
+                        questionText = questionText.Replace("{" + name + "}", value.ToString());
+                    }
+
+                    questionText = MoodleExpressionParser.SimplifyExpression(questionText, vals);
+
+                    break;
             }
             
             return questionText;
@@ -929,7 +1209,9 @@
             foreach (var a in q.answers)
             {
                 var lmsId = a.id;
-                var name = string.Format("{0}$${1}", ClearName(a.text), ClearName(a.right));
+                var name = a.right != null ? 
+                    string.Format("{0}$${1}", this.ClearName(a.text), this.ClearName(a.right))
+                    : string.Format("{0}$${1}", this.ClearName(a.question_text), this.ClearName(a.text));
                 var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
                     new Distractor
                     {

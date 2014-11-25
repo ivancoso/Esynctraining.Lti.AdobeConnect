@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.API
 {
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Moodle;
 
     /// <summary>
@@ -13,7 +14,7 @@
         /// <summary>
         /// The Canvas API.
         /// </summary>
-        private readonly EGCEnabledMoodleAPI canvasApi;
+        private readonly EGCEnabledCanvasAPI canvasApi;
 
         /// <summary>
         /// The Moodle API.
@@ -33,7 +34,7 @@
         /// <param name="moodleApi">
         /// The Moodle API.
         /// </param>
-        public LmsFactory(EGCEnabledMoodleAPI canvasApi, EGCEnabledMoodleAPI moodleApi)
+        public LmsFactory(EGCEnabledCanvasAPI canvasApi, EGCEnabledMoodleAPI moodleApi)
         {
             this.canvasApi = canvasApi;
             this.moodleApi = moodleApi;
