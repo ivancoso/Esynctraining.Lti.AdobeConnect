@@ -27,6 +27,7 @@
             this.Map(x => x.LmsDomain).Nullable();
             this.Map(x => x.ShowAnnouncements).Nullable();
             this.Map(x => x.Title).Nullable();
+            this.Map(x => x.LastSignalId).Not.Nullable().Default("(0)");
             this.Map(x => x.UseSSL).Nullable();
 
             this.References(x => x.CreatedBy).Not.Nullable().Column("createdBy");

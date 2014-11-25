@@ -162,6 +162,7 @@
     <Compile Include="Business\Models\MoodleUserModel.cs" />
     <Compile Include="Business\Models\LmsUserParametersModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
+    <Compile Include="Business\Models\ScheduleModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
@@ -333,6 +334,9 @@
     <Compile Include="Domain\Entities\MoodleUser.cs" />
     <Compile Include="Domain\Entities\LmsUserParameters.cs" />
     <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
+    <Compile Include="Domain\Entities\Schedule.cs" />
+    <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
+    <Compile Include="Domain\Entities\ScheduleType.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />

@@ -34,10 +34,8 @@
                 .Must(x => lmsProviderModel.GetOneByName(x).Value != null)
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
 
-                .Must((model, x) => 
-                    x.Equals(LmsProviderNames.Canvas, StringComparison.OrdinalIgnoreCase)
-                    || (!string.IsNullOrWhiteSpace(model.lmsAdmin) && !string.IsNullOrWhiteSpace(model.lmsAdminPassword)))
-                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS setup. Please provide with LMS Admin and Password");
+                .Must((model, x) => x.Equals(LmsProviderNames.Canvas, StringComparison.OrdinalIgnoreCase) || (!string.IsNullOrWhiteSpace(model.lmsAdmin)))
+                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Setup. Please provide with administrative Username and Password");
         }
     }
 }

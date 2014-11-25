@@ -8,6 +8,8 @@
     using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
@@ -235,48 +237,11 @@
             IEnumerable<XElement> enrollments = enrollmentsResult.XPathSelectElements("/enrollments/enrollment");
             foreach (XElement enrollment in enrollments)
             {
-                string role = Roles.Student;
                 string privileges = enrollment.XPathEvaluate("string(@privileges)").ToString();
                 XElement user = enrollment.XPathSelectElement("user");
                 if (!string.IsNullOrWhiteSpace(privileges) && user != null)
                 {
-                    long privilegesVal;
-                    if (long.TryParse(privileges, out privilegesVal))
-                    {
-                        if (this.CheckRole(privilegesVal, RightsFlags.ControlCourse))
-                        {
-                            role = Roles.Owner;
-                        }
-                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                                 && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                                 && this.CheckRole(privilegesVal, RightsFlags.GradeAssignment)
-                                 && this.CheckRole(privilegesVal, RightsFlags.GradeForum)
-                                 && this.CheckRole(privilegesVal, RightsFlags.GradeExam)
-                                 && this.CheckRole(privilegesVal, RightsFlags.SetupGradebook)
-                                 && this.CheckRole(privilegesVal, RightsFlags.ReadGradebook)
-                                 && this.CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
-                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
-                        {
-                            role = Roles.Teacher;
-                        }
-                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                                 && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
-                        {
-                            role = Roles.Author;
-                        }
-                        else if (this.CheckRole(privilegesVal, RightsFlags.Participate)
-                                 && this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
-                        {
-                            role = Roles.Student;
-                        }
-                        else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
-                        {
-                            role = Roles.Reader;
-                        }
-                    }
-
-                    role = Inflector.Capitalize(role);
+                    var role = this.ProcessRole(privileges);
                     string userId = user.XPathEvaluate("string(@id)").ToString();
                     string firstName = user.XPathEvaluate("string(@firstname)").ToString();
                     string lastName = user.XPathEvaluate("string(@lastname)").ToString();
@@ -297,9 +262,265 @@
             return result;
         }
 
+        /// <summary>
+        /// The get users for course.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="courseId">
+        /// The course Id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Course"/>.
+        /// </returns>
+        public Course GetCourse(
+            CompanyLms company,
+            int courseId,
+            out string error,
+            Session session = null)
+        {
+            XElement courseResult = this.LoginIfNecessary(
+                session,
+                s =>
+                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
+                company,
+                out error);
+            if (courseResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive course from API";
+                return null;
+            }
+
+            if (!Session.IsSuccess(courseResult))
+            {
+                error = "DLAP. Unable to get course: " + Session.GetMessage(courseResult);
+                this.logger.Error(error);
+            }
+
+            if (session != null)
+            {
+                var course = courseResult.XPathSelectElement("/course");
+                var courseName = course.XPathEvaluate("string(@title)").ToString();
+                var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
+                var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
+
+                return new Course
+                           {
+                               CourseId = courseId,
+                               Title = courseName,
+                               StartDate = courseStartDate,
+                               EndDate = courseEndDate,
+                           };
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The get users for course.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="types">
+        /// The types.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{BrainHoneySignal}"/>.
+        /// </returns>
+        public List<Signal> GetSignalsList(
+            CompanyLms company,
+            out string error,
+            Session session = null,
+            string types = "1.2|4.1|4.2|4.8")
+        {
+            var result = new List<Signal>();
+            XElement signalsResult = this.LoginIfNecessary(
+                session,
+                s =>
+                s.Get(
+                    Commands.Signals.List,
+                    string.Format(Parameters.Signals.List, company.LastSignalId, s.DomainId, types).ToParams()),
+                company,
+                    out error);
+            if (signalsResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive result from API";
+                return result;
+            }
+
+            if (!Session.IsSuccess(signalsResult))
+            {
+                error = "DLAP. Unable to create user: " + Session.GetMessage(signalsResult);
+                this.logger.Error(error);
+            }
+
+            IEnumerable<XElement> signals = signalsResult.XPathSelectElements("/signals/signal");
+            foreach (XElement signal in signals)
+            {
+                var signalId = long.Parse(signal.XPathEvaluate("string(@signalid)").With(x => x.ToString()));
+                var entityid = int.Parse(signal.XPathEvaluate("string(@entityid)").With(x => x.ToString()));
+                var type = signal.XPathEvaluate("string(@type)").ToString();
+                var data = signal.XPathSelectElement("data");
+                if (data != null)
+                {
+                    switch (type)
+                    {
+                        case SignalTypes.EnrollmentChanged:
+                            this.ProcessEnrollment(signalId, entityid, type, data, signal, result);
+                            break;
+                        case SignalTypes.CourseChanged:
+                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
+
+                            break;
+                        case SignalTypes.CourseDeleted:
+                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
+
+                            break;
+                        case SignalTypes.CourseCreated:
+                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
+
+                            break;
+                    }
+                }
+            }
+
+            return result;
+        }
+       
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The process enrollment.
+        /// </summary>
+        /// <param name="signalId">
+        /// The signal id.
+        /// </param>
+        /// <param name="entityid">
+        /// The entity id.
+        /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <param name="signal">
+        /// The signal.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        private void ProcessEnrollment(long signalId, int entityid, string type, XElement data, XElement signal, List<Signal> result)
+        {
+            var enrollmentSignal = new EnrollmentSignal(signalId, entityid, type)
+                                       {
+                                           OldStatus = int.Parse(data.XPathEvaluate("string(@oldstatus)").With(x => x.ToString())),
+                                           NewStatus = int.Parse(data.XPathEvaluate("string(@newstatus)").With(x => x.ToString()))
+                                       };
+            if (enrollmentSignal.NewStatus != 0)
+            {
+                enrollmentSignal.OldRole = this.ProcessRole(signal.XPathEvaluate("string(@oldflags)").With(x => x.ToString()));
+                enrollmentSignal.NewRole = this.ProcessRole(signal.XPathEvaluate("string(@newflags)").With(x => x.ToString()));
+            }
+
+            result.Add(enrollmentSignal);
+        }
+
+        /// <summary>
+        /// The process course.
+        /// </summary>
+        /// <param name="data">
+        /// The data.
+        /// </param>
+        /// <param name="result">
+        /// The result.
+        /// </param>
+        /// <param name="signalId">
+        /// The signal id.
+        /// </param>
+        /// <param name="entityid">
+        /// The entity id.
+        /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
+        private void ProcessCourseSignal(XElement data, List<Signal> result, long signalId, int entityid, string type)
+        {
+            var changedEntityType = data.XPathEvaluate("string(@entitytype)").With(x => x.ToString());
+            if (changedEntityType == "C")
+            {
+                var itemId = data.XPathEvaluate("string(@entitytype)").With(x => x.ToString());
+                result.Add(new CourseSignal(signalId, entityid, type) { EntityType = changedEntityType, ItemId = itemId });
+            }
+        }
+
+        /// <summary>
+        /// The process role.
+        /// </summary>
+        /// <param name="privileges">
+        /// The privileges.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessRole(string privileges)
+        {
+            string role = Roles.Student;
+            long privilegesVal;
+            if (long.TryParse(privileges, out privilegesVal))
+            {
+                if (this.CheckRole(privilegesVal, RightsFlags.ControlCourse))
+                {
+                    role = Roles.Owner;
+                }
+                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                         && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                         && this.CheckRole(privilegesVal, RightsFlags.GradeAssignment)
+                         && this.CheckRole(privilegesVal, RightsFlags.GradeForum)
+                         && this.CheckRole(privilegesVal, RightsFlags.GradeExam)
+                         && this.CheckRole(privilegesVal, RightsFlags.SetupGradebook)
+                         && this.CheckRole(privilegesVal, RightsFlags.ReadGradebook)
+                         && this.CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
+                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                {
+                    role = Roles.Teacher;
+                }
+                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                         && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                {
+                    role = Roles.Author;
+                }
+                else if (this.CheckRole(privilegesVal, RightsFlags.Participate)
+                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                {
+                    role = Roles.Student;
+                }
+                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                {
+                    role = Roles.Reader;
+                }
+            }
+
+            role = Inflector.Capitalize(role);
+            return role;
+        }
 
         /// <summary>
         /// The format groups xml.
@@ -714,6 +935,32 @@
         #endregion
 
         /// <summary>
+        /// The signal types.
+        /// </summary>
+        public class SignalTypes
+        {
+            /// <summary>
+            /// The enrollment changed.
+            /// </summary>
+            public const string EnrollmentChanged = "1.2";
+
+            /// <summary>
+            /// The course changed.
+            /// </summary>
+            public const string CourseChanged = "4.1";
+
+            /// <summary>
+            /// The course deleted.
+            /// </summary>
+            public const string CourseDeleted = "4.2";
+
+            /// <summary>
+            /// The course created.
+            /// </summary>
+            public const string CourseCreated = "4.8";
+        }
+
+        /// <summary>
         ///     The commands.
         /// </summary>
         protected class Commands
@@ -729,6 +976,21 @@
                 /// The list.
                 /// </summary>
                 public const string List = "listenrollments";
+
+                #endregion
+            }
+
+            /// <summary>
+            /// The enrollments.
+            /// </summary>
+            public class Signals
+            {
+                #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "getsignallist";
 
                 #endregion
             }
@@ -795,6 +1057,21 @@
                 /// The list.
                 /// </summary>
                 public const string List = "domainid={0}&limit=0&coursequery=%2Fid%3D{1}&select=user";
+
+                #endregion
+            }
+
+            /// <summary>
+            /// The enrollments.
+            /// </summary>
+            public class Signals
+            {
+                #region Constants
+
+                /// <summary>
+                /// The list.
+                /// </summary>
+                public const string List = "lastsignalid={0}&domainid={1}&type={2}";
 
                 #endregion
             }

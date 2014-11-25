@@ -89,7 +89,7 @@
         public bool are_users_synched { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms_provider_name.
+        /// Gets or sets the LMS provider name.
         /// </summary>
         public string lms_provider_name { get; set; }
 

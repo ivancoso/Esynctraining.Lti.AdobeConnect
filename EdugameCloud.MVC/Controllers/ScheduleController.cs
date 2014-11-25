@@ -1,43 +1,34 @@
-﻿namespace DepositionConferencing.MVC.Controllers
+﻿namespace EdugameCloud.MVC.Controllers
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Web.Mvc;
+    using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.DTO;
 
-    using DepositionConferencing.Core.Business.Models;
-    using DepositionConferencing.Core.Domain.Entities;
-
-    using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     /// <summary>
     ///     The schedule controller.
     /// </summary>
     [HandleError]
-    public partial class ScheduleController : BaseController
+    public class ScheduleController : BaseController
     {
         #region Fields
 
         /// <summary>
-        /// The AC session model.
+        /// The DLAP API.
         /// </summary>
-        private readonly ACSessionModel sessionModel;
+        private readonly DlapAPI dlapApi;
 
-        /// <summary>
-        /// The ac session participant model.
-        /// </summary>
-        private readonly ACSessionParticipantModel sessionParticipantModel;
+        private readonly MeetingSetup meetingSetup;
 
-        /// <summary>
-        /// The contact model.
-        /// </summary>
-        private readonly ContactModel contactModel;
-
-        /// <summary>
-        /// The integration model.
-        /// </summary>
-        private readonly ACIntegrationModel integrationModel;
+        private readonly CompanyLmsModel companyLmsModel;
 
         /// <summary>
         ///     The password activation model.
@@ -51,37 +42,32 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduleController"/> class.
         /// </summary>
-        /// <param name="sessionModel">
-        /// The ac Session Model.
+        /// <param name="dlapApi">
+        /// The DLAP API.
         /// </param>
-        /// <param name="sessionParticipantModel">
-        /// The ac Session Participant Model.
+        /// <param name="meetingSetup">
+        /// The meeting Setup.
         /// </param>
-        /// <param name="integrationModel">
-        /// The integration Model.
-        /// </param>
-        /// <param name="contactModel">
-        /// The contact Model.
+        /// <param name="companyLmsModel">
+        /// The company LMS Model.
         /// </param>
         /// <param name="scheduleModel">
-        /// The password Activation Model.
+        /// The schedule Model.
         /// </param>
         /// <param name="settings">
         /// The settings
         /// </param>
         public ScheduleController(
-            ACSessionModel sessionModel, 
-            ACSessionParticipantModel sessionParticipantModel, 
-            ACIntegrationModel integrationModel, 
-            ContactModel contactModel, 
+            DlapAPI dlapApi,
+            MeetingSetup meetingSetup,
+            CompanyLmsModel companyLmsModel,
             ScheduleModel scheduleModel, 
             ApplicationSettingsProvider settings)
             : base(settings)
         {
-            this.sessionModel = sessionModel;
-            this.sessionParticipantModel = sessionParticipantModel;
-            this.integrationModel = integrationModel;
-            this.contactModel = contactModel;
+            this.dlapApi = dlapApi;
+            this.meetingSetup = meetingSetup;
+            this.companyLmsModel = companyLmsModel;
             this.scheduleModel = scheduleModel;
         }
 
@@ -90,10 +76,10 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The force update.
+        ///     The force update.
         /// </summary>
         /// <returns>
-        /// The <see cref="ActionResult"/>.
+        ///     The <see cref="ActionResult" />.
         /// </returns>
         [HttpGet]
         [ActionName("force-update")]
@@ -107,13 +93,14 @@
 
                 switch (schedule.ScheduleDescriptor)
                 {
-                    case ScheduleDescriptor.UpdateParticipants:
-                        scheduledAction = this.UpdateParticipants;
+                    case ScheduleDescriptor.BrainHoneySignals:
+                        scheduledAction = this.CheckForBrainHoneySignals;
                         break;
                 }
 
                 var res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction);
-                result += "'" + schedule.ScheduleDescriptor.ToString() + (res ? "' task succedded; " : "' task failed; ");
+                result += "'" + schedule.ScheduleDescriptor.ToString()
+                          + (res ? "' task succedded; " : "' task failed; ");
             }
 
             return this.Content(result ?? "Tasks not found");
@@ -137,13 +124,14 @@
 
                 switch (schedule.ScheduleDescriptor)
                 {
-                    case ScheduleDescriptor.UpdateParticipants:
-                        scheduledAction = this.UpdateParticipants;
+                    case ScheduleDescriptor.BrainHoneySignals:
+                        scheduledAction = this.CheckForBrainHoneySignals;
                         break;
                 }
 
                 var res = this.scheduleModel.ExecuteIfNecessary(schedule, scheduledAction);
-                result += "'" + schedule.ScheduleDescriptor.ToString() + (res ? "' task succedded; " : "' task failed; ");
+                result += "'" + schedule.ScheduleDescriptor.ToString()
+                          + (res ? "' task succedded; " : "' task failed; ");
             }
 
             return this.Content(result ?? "Tasks not found");
@@ -160,45 +148,75 @@
         /// The last scheduled run date.
         /// </param>
         [NonAction]
-        private void UpdateParticipants(DateTime lastScheduledRunDate)
+        private void CheckForBrainHoneySignals(DateTime lastScheduledRunDate)
         {
-            List<ACSession> meetings = this.sessionModel.GetAll().ToList();
-            IEnumerable<int> mettingsScoIds = meetings.Select(x => x.ScoId);
-            foreach (int mettingsScoId in mettingsScoIds)
+            var errors = new List<string>();
+            var api = this.dlapApi;
+            var brainHoneyCompanies = this.companyLmsModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
+            foreach (var brainHoneyCompany in brainHoneyCompanies)
             {
-                ACSession meeting = meetings.FirstOrDefault(x => x.ScoId == mettingsScoId);
-                if (meeting != null)
+                string error;
+                var session = api.BeginBatch(out error, brainHoneyCompany);
+                var adobeConnectProvider = this.meetingSetup.GetProvider(brainHoneyCompany);
+                this.meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
+                var templates = this.meetingSetup.GetTemplates(adobeConnectProvider, brainHoneyCompany.ACTemplateScoId);
+                if (!templates.Any())
                 {
-                    foreach (ACSessionParticipant participant in meeting.Participants)
+                    error = "No templates found for " + brainHoneyCompany.LmsDomain;
+                }
+                if (error != null)
+                {
+                    this.AddToErrors(errors, error, brainHoneyCompany);
+                }
+                else
+                {
+                    var signals = api.GetSignalsList(brainHoneyCompany, out error, session);
+                    if (error != null)
                     {
-                        this.sessionParticipantModel.RegisterDelete(participant);
+                        this.AddToErrors(errors, error, brainHoneyCompany);
                     }
-
-                    meeting.Participants.Clear();
-                    IEnumerable<MeetingAttendee> participants =
-                        this.integrationModel.GetUpdatesForMeeting(mettingsScoId.ToString());
-                    foreach (MeetingAttendee meetingAttendee in participants)
+                    else
                     {
-                        Contact user;
-                        if ((user = this.contactModel.GetOneByEmail(meetingAttendee.Login).Value) != null
-                            || (user = this.contactModel.GetOneByPrincipalId(meetingAttendee.PrincipalId).Value) != null)
+                        
+                        signals = signals.OrderByDescending(x => x.SignalId).ToList();
+                        foreach (var signal in signals)
                         {
-                            if (user.ContactType.Id == (int)ContactTypeEnum.LegalParticipant)
+                            if (signal.Type == DlapAPI.SignalTypes.CourseCreated)
                             {
-                                var participant = new ACSessionParticipant
-                                                      {
-                                                          ACSession = meeting,
-                                                          Contact = user,
-                                                          DateTimeEntered =
-                                                              meetingAttendee.DateCreated,
-                                                          DateTimeLeft = meetingAttendee.DateEnd
-                                                      };
-                                this.sessionParticipantModel.RegisterSave(participant);
+                                var courseSignal = (CourseSignal)signal;
+                                var course = api.GetCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
+                                if (error != null)
+                                {
+                                    this.AddToErrors(errors, error, brainHoneyCompany);
+                                }
+                                else
+                                {
+                                    var startDate = DateTime.Parse(course.StartDate);
+                                    this.meetingSetup.SaveMeeting(
+                                        brainHoneyCompany,
+                                        adobeConnectProvider,
+                                        new LtiParamDTO { context_id = courseSignal.ItemId },
+                                        new MeetingDTO
+                                            {
+                                                start_date = startDate.ToString("MM-dd-yyyy"),
+                                                start_time = startDate.ToString("hh:mm tt"),
+                                                duration = "01:00",
+                                                id = courseSignal.ItemId,
+                                                name = course.Title,
+                                                template = templates.First().With(x => x.id)
+                                            },
+                                            session);
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+
+        private void AddToErrors(List<string> errors, string error, CompanyLms brainHoneyCompany)
+        {
+            errors.Add(string.Format("Error with company {0}:{1}", brainHoneyCompany.With(x => x.LmsDomain), error));
         }
 
         #endregion

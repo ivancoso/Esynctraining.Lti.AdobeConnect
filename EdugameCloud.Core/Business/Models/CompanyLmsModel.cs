@@ -107,6 +107,22 @@
             return this.Repository.FindOne(defaultQuery);
         }
 
+        /// <summary>
+        /// The get one by provider.
+        /// </summary>
+        /// <param name="providerId">
+        /// The provider Id.
+        /// </param>
+        /// <returns>
+        /// The canvas AC meeting
+        /// </returns>
+        public IEnumerable<CompanyLms> GetAllByProviderId(int providerId)
+        {
+            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver().Where(x => x.LmsProvider.Id == providerId);
+            return this.Repository.FindAll(defaultQuery);
+        }
+
+
         #endregion
     }
 }

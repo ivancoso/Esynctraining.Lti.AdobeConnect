@@ -100,6 +100,9 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
+    <Compile Include="API\BrainHoney\Course.cs" />
+    <Compile Include="API\BrainHoney\CourseSignal.cs" />
+    <Compile Include="API\BrainHoney\EnrollmentSignal.cs" />
     <Compile Include="API\BrainHoney\DlapAPI.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -124,6 +127,7 @@
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\CourseDTO.cs" />
     <Compile Include="DTO\LmsSettingsDTO.cs" />
+    <Compile Include="API\BrainHoney\Signal.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />

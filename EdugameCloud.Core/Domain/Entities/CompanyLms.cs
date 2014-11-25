@@ -119,7 +119,7 @@
                     this.UseSSL = true;
                 }
 
-                this.lmsDomain = value;
+                this.lmsDomain = value.Return(x => x.TrimEnd(@"/\".ToCharArray()), null);
             }
         }
 
@@ -137,6 +137,11 @@
         /// Gets or sets the primary color.
         /// </summary>
         public virtual string PrimaryColor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last signal id.
+        /// </summary>
+        public virtual long LastSignalId { get; set; }
 
         /// <summary>
         /// Gets or sets the shared secret.

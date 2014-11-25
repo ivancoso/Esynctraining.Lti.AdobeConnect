@@ -139,6 +139,7 @@
     <Compile Include="Mappings\LmsUserParametersMap.cs" />
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
     <Compile Include="Mappings\EmailHistoryMap.cs" />
+    <Compile Include="Mappings\ScheduleMap.cs" />
     <Compile Include="Mappings\SubscriptionHistoryLogMap.cs" />
     <Compile Include="Mappings\SubscriptionUpdateMap.cs" />
     <Compile Include="Mappings\SocialUserTokensMap.cs" />

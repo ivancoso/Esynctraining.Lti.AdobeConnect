@@ -669,6 +669,9 @@
         /// <param name="meetingDTO">
         /// The meeting DTO.
         /// </param>
+        /// <param name="extraData">
+        /// The extra Data.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
@@ -676,9 +679,12 @@
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
-            MeetingDTO meetingDTO)
+            MeetingDTO meetingDTO,
+            object extraData = null)
         {
             // fix meeting dto date & time
+
+            //TODO change on PadLeft
             if (meetingDTO.start_time.IndexOf(":", StringComparison.Ordinal) == 1)
             {
                 meetingDTO.start_time = "0" + meetingDTO.start_time;
@@ -723,7 +729,7 @@
                 meeting.ScoId = result.ScoInfo.ScoId;
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
 
-                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId);
+                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData);
 
                 this.CreateAnnouncement(
                     credentials, 
@@ -894,6 +900,9 @@
         /// </param>
         /// <param name="user">
         /// The user.
+        /// </param>
+        /// <param name="error">
+        /// The error.
         /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
@@ -1428,6 +1437,9 @@
         /// <param name="blackBoardCourseId">
         /// The brain honey course id.
         /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
@@ -1445,6 +1457,9 @@
         /// </param>
         /// <param name="blackBoardCourseId">
         /// The brain honey course id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
         /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
@@ -1464,12 +1479,19 @@
         /// <param name="brainHoneyCourseId">
         /// The brain honey course id.
         /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="extraData">
+        /// The extra Data.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId, out string error)
+        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId, out string error, object extraData = null)
         {
-            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error);
+            Session session = extraData == null ? null : (Session)extraData;
+            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, session);
             return this.GroupUsers(users);
         }
 
@@ -1565,10 +1587,16 @@
         /// <param name="courseId">
         /// The course id.
         /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="extraData">
+        /// The extra Data.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId, out string error)
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId, out string error, object extraData = null)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
@@ -1576,7 +1604,7 @@
                     error = null;
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId, out error);
+                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData);
                 case LmsProviderNames.Blackboard:
                     return this.GetBlackBoardUsers(credentials, courseId, out error);
                 case LmsProviderNames.Moodle:
@@ -2031,15 +2059,19 @@
         /// <param name="meetingScoId">
         /// The meeting SCO id.
         /// </param>
+        /// <param name="extraData">
+        /// The extra Data.
+        /// </param>
         private void SetDefaultUsers(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             string lmsUserId,
             int courseId, 
-            string meetingScoId)
+            string meetingScoId,
+            object extraData = null)
         {
             string error;
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId, out error);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId, out error, extraData);
 
             foreach (LmsUserDTO u in users)
             {

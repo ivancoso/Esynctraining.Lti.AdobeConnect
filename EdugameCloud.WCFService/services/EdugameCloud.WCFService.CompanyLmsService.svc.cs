@@ -343,7 +343,7 @@ namespace EdugameCloud.WCFService
             instance.PrimaryColor = dto.primaryColor;
             instance.Title = dto.title;
             instance.UseSSL = dto.useSsl;
-            if (instance.IsTransient() && !string.IsNullOrWhiteSpace(dto.lmsDomain))
+            if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {
                 instance.LmsDomain = dto.lmsDomain;
             }
