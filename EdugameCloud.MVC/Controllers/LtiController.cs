@@ -5,6 +5,7 @@
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
+    using System.IO;
     using System.Net;
     using System.Reflection;
     using System.Security.Cryptography;
@@ -14,6 +15,7 @@
     using System.Web.SessionState;
 
     using DotNetOpenAuth.AspNet;
+    using DotNetOpenAuth.Messaging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -1235,16 +1237,14 @@
             return provider;
         }
 
-        public string GetUrl(string sourceid)
+        [ActionName("sakai-test")]
+        public string GetUrl(string url = "https://edgesandbox.apus.edu/imsblis/service", string id = "791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6:::admin:::2f927813-62e0-4e91-b6e0-5b40b99ec613", string key = "12345", string secret = "secret")
         {
-            string id = sourceid ?? "57c2d93659ed9e33fb83d39b03bb2fb91351b57c631a84dee1f631a3f2e81c71:::2ac9cbd7-cf18-4110-b8bc-c1c35b57145d:::2f927813-62e0-4e91-b6e0-5b40b99ec613",
+            string 
                    lti_message_type = "basic-lis-readmembershipsforcontext",
                    lti_version = "LTI-1p0",
-                   endpoint = "https://edgesandbox.apus.edu/imsblis/service/",
                    oauthCallback = "about:blank",
                    oauthVersion = "1.0",
-                   oauthConsumerKey = "12345",
-                   oauthConsumerSecret = "secret",
                    oauthSignatureMethod = "HMAC-SHA1",
                    oauthNonce =
                        Convert.ToBase64String(
@@ -1270,15 +1270,15 @@
                 lti_message_type,
                 lti_version,
                 Uri.EscapeDataString(Uri.EscapeDataString(oauthCallback)),
-                oauthConsumerKey,
+                key,
                 oauthNonce,
                 oauthSignatureMethod,
                 oauthTimestamp,
                 oauthVersion);
 
-            baseString = string.Concat("POST&", Uri.EscapeDataString(endpoint), "&", baseString);
+            baseString = string.Concat("POST&", Uri.EscapeDataString(url), "&", baseString);
 
-            var compositeKey = Uri.EscapeDataString(oauthConsumerSecret) + "&";
+            var compositeKey = Uri.EscapeDataString(secret) + "&";
 
 
             string oauthSignature;
@@ -1286,36 +1286,18 @@
             {
                 oauthSignature = Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
             }
-
-            const string HeaderFormat = "OAuth oauth_nonce=\"{0}\", oauth_callback=\"{1}\", oauth_signature_method=\"{2}\", " +
-                                        "oauth_timestamp=\"{3}\", " +
-                                        "oauth_consumer_key=\"{4}\", oauth_signature=\"{5}\", " +
-                                        "oauth_version=\"{6}\"";
-
-            var authHeader = string.Format(
-                HeaderFormat,
-                Uri.EscapeDataString(oauthNonce),
-                Uri.EscapeDataString(oauthCallback),
-                Uri.EscapeDataString(oauthSignatureMethod),
-                Uri.EscapeDataString(oauthTimestamp),
-                Uri.EscapeDataString(oauthConsumerKey),
-                Uri.EscapeDataString(oauthSignature),
-                Uri.EscapeDataString(oauthVersion));
-
+            
             ServicePointManager.Expect100Continue = false;
 
-            var request = (HttpWebRequest)WebRequest.Create(endpoint);
-            request.Headers.Add("Authorization", authHeader);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
+            var request = (HttpWebRequest)WebRequest.Create(url);
 
             var pairs = new NameValueCollection
                                 {
-                                    { "id", HttpUtility.UrlEncode(id) }, 
+                                    { "id", id }, 
                                     { "lti_message_type", lti_message_type }, 
                                     { "lti_version", lti_version },
-                                    { "oauth_callback", HttpUtility.UrlEncode(oauthCallback) },
-                                    { "oauth_consumer_key", oauthConsumerKey },
+                                    { "oauth_callback", oauthCallback },
+                                    { "oauth_consumer_key", key },
                                     { "oauth_nonce", oauthNonce },
                                     { "oauth_signature", oauthSignature },
                                     { "oauth_signature_method", oauthSignatureMethod },
@@ -1323,15 +1305,40 @@
                                     { "oauth_version", oauthVersion }
                                 };
 
-            byte[] response;
-            using (var client = new WebClient())
+            var builder = new UriBuilder(url);
+
+            foreach (string pkey in pairs.Keys)
             {
-                response = client.UploadValues(endpoint, pairs);
+                builder.AppendQueryArgument(pkey, pairs[pkey]);
             }
 
-            var resp = Encoding.UTF8.GetString(response);
-            return resp;
+            var bytes = Encoding.UTF8.GetBytes(builder.Uri.Query.TrimStart("?".ToCharArray()));
 
+            string resp;
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Method = "POST";
+            request.Timeout = 5000;
+            request.Referer = url;
+            request.Host = new Uri(url).Host;
+            request.ContentLength = bytes.Length;
+            using (Stream requeststream = request.GetRequestStream())
+            {
+                requeststream.Write(bytes, 0, bytes.Length);
+                requeststream.Close();
+            }
+
+            using (HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse())
+            {
+                using (StreamReader sr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    resp = sr.ReadToEnd().Trim();
+                    sr.Close();
+                }
+
+                webResponse.Close();
+            }
+
+            return resp;
             /*
             byte[] dataStream = Encoding.ASCII.GetBytes(param);
             request.ContentLength = dataStream.Length;
