@@ -237,25 +237,33 @@
             string userName, 
             string password)
         {
-            var client = new WebserviceWrapper(
-                this.GetHost(lmsDomain, useSsl), 
-                "EGC", 
-                "LTI", 
-                TimeSpan.FromMinutes(30).Seconds);
-            if (this.HadError(client, out error))
+            try
             {
-                return null;
-            }
+                var client = new WebserviceWrapper(
+                    this.GetHost(lmsDomain, useSsl),
+                    "EGC",
+                    "LTI",
+                    TimeSpan.FromMinutes(30).Seconds);
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
 
-            client.initialize_v1();
-            if (this.HadError(client, out error))
-            {
-                return null;
-            }
+                client.initialize_v1();
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
 
-            if (client.loginUser(userName, password))
+                if (client.loginUser(userName, password))
+                {
+                    return client;
+                }
+            }
+            catch (Exception ex)
             {
-                return client;
+                error = ex.Message;
+                return null;
             }
 
             error = "Not able to login into: " + lmsDomain + " for user: " + userName;

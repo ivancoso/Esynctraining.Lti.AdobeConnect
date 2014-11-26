@@ -222,27 +222,31 @@
                                 { "password", password }, 
                                 { "service", this.MoodleServiceShortName }
                             };
-
+            string resp = string.Empty;
             byte[] response;
             string url = this.GetTokenUrl(lmsDomain, useSsl);
-            using (var client = new WebClient())
-            {
-                response = client.UploadValues(url, pairs);
-            }
-
-            string resp = Encoding.UTF8.GetString(response);
-            if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
-            {
-                return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
-            }
-
             try
             {
+                using (var client = new WebClient())
+                {
+                    response = client.UploadValues(url, pairs);
+                }
+
+                resp = Encoding.UTF8.GetString(response);
+                if (!recursive && resp.Contains(@"""errorcode"":""sslonlyaccess"""))
+                {
+                    return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
+                }
+
                 var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
 
                 if (token.error != null)
                 {
-                    error = string.Format("Not able to login into: {0} for user: {1} due to error: {2}", lmsDomain, userName, token.error);
+                    error = string.Format(
+                        "Not able to login into: {0} for user: {1} due to error: {2}",
+                        lmsDomain,
+                        userName,
+                        token.error);
                     return null;
                 }
 
@@ -255,7 +259,12 @@
             }
             catch (Exception ex)
             {
-                error = string.Format("Not able to login into: {0} for user: {1}; response: {2}; error: {3}", lmsDomain, userName, resp, ex.With(x => x.Message));
+                error = string.Format(
+                    "Not able to login into: {0} for user: {1};{2} error: {3}",
+                    lmsDomain,
+                    userName,
+                    string.IsNullOrWhiteSpace(resp) ? string.Empty : string.Format(" response: {0};", resp),
+                    ex.With(x => x.Message));
                 return null;
             }
         }

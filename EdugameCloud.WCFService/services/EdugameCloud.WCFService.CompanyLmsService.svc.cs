@@ -199,6 +199,9 @@ namespace EdugameCloud.WCFService
                 case "moodle":
                     success = this.TestMoodleConnection(test, out info);
                     break;
+                case "sakai":
+                    success = this.TestSakaiConnection(test, out info);
+                    break;
             }
 
             result.@object = new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
@@ -226,6 +229,25 @@ namespace EdugameCloud.WCFService
         {
             var session = this.MoodleAPI.LoginAndCreateAClient(out info, test.domain.StartsWith("https"), test.domain, test.login, test.password);
             return session != null;
+        }
+
+        /// <summary>
+        /// The test SAKAI connection.
+        /// </summary>
+        /// <param name="test">
+        /// The test.
+        /// </param>
+        /// <param name="info">
+        /// The info.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        // ReSharper disable once UnusedParameter.Local
+        private bool TestSakaiConnection(ConnectionTestDTO test, out string info)
+        {
+            info = "Not yet implemented";
+            return false;
         }
 
         /// <summary>
@@ -288,7 +310,7 @@ namespace EdugameCloud.WCFService
             }
 
             var fixedUrl = domainUrl.EndsWith("/") ? domainUrl : string.Format("{0}/", domainUrl);
-            fixedUrl = fixedUrl.EndsWith("api/xml/") ? fixedUrl : string.Format("{0}api/xml/", fixedUrl);
+            fixedUrl = fixedUrl.EndsWith("api/xml/") ? fixedUrl : string.Format("{0}api/xml", fixedUrl);
 
             var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = fixedUrl });
 

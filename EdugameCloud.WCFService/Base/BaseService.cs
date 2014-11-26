@@ -306,6 +306,10 @@
                 {
                     message = "User already exists in Adobe Connect.";
                 }
+                else if (res is LoginResult && !res.Success && string.IsNullOrWhiteSpace(field) && errorCode == StatusCodes.no_data)
+                {
+                    message = "Login failed";
+                }
                 else
                 {
                     message = string.Format(

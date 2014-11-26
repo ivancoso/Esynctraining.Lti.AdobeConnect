@@ -5,8 +5,6 @@
     using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
-    using System.IO;
-    using System.Linq;
     using System.Net;
     using System.Reflection;
     using System.Security.Cryptography;
@@ -16,7 +14,6 @@
     using System.Web.SessionState;
 
     using DotNetOpenAuth.AspNet;
-    using DotNetOpenAuth.Messaging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -187,14 +184,13 @@
                 {
                     LmsUser lmsUser = null;
                     var company = this.GetCredentials(providerKey);
-
                     if (result.ExtraData.ContainsKey("accesstoken"))
                     {
                         var token = result.ExtraData["accesstoken"];
                         var userId = result.ExtraData["id"];
-                        var userName = result.ExtraData["name"];
                         var param = this.GetParam(providerKey);
-                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = this.GetUserNameOrEmail(param) };
+                        var userName = this.GetUserNameOrEmail(param);
+                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = userName };
                         lmsUser.Username = userName;
                         lmsUser.Token = token;
                         this.lmsUserModel.RegisterSave(lmsUser);

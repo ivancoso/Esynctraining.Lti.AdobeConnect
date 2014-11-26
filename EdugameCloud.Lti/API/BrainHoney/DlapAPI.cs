@@ -102,20 +102,30 @@
         /// </returns>
         public Session LoginAndCreateASession(out string error, string lmsDomain, string userName, string password)
         {
-            var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
-            string userPrefix = lmsDomain.ToLower().Replace(".brainhoney.com", string.Empty).Replace("www.", string.Empty);
-
-            XElement result = session.Login(userPrefix, userName, password);
-            if (!Session.IsSuccess(result))
+            try
             {
-                error = "DLAP. Unable to login: " + Session.GetMessage(result);
-                this.logger.Error(error);
+                var session = new Session("EduGameCloud", (string)this.settings.BrainHoneyApiUrl) { Verbose = true };
+                string userPrefix = lmsDomain.ToLower()
+                    .Replace(".brainhoney.com", string.Empty)
+                    .Replace("www.", string.Empty);
+
+                XElement result = session.Login(userPrefix, userName, password);
+                if (!Session.IsSuccess(result))
+                {
+                    error = "DLAP. Unable to login: " + Session.GetMessage(result);
+                    this.logger.Error(error);
+                    return null;
+                }
+
+                error = null;
+                session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
+                return session;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
                 return null;
             }
-
-            error = null;
-            session.DomainId = result.XPathEvaluate("string(user/@domainid)").ToString();
-            return session;
         }
 
         /// <summary>
