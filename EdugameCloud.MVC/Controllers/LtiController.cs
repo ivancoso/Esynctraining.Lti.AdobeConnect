@@ -2,13 +2,21 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
     using System.Reflection;
+    using System.Security.Cryptography;
+    using System.Text;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
 
     using DotNetOpenAuth.AspNet;
+    using DotNetOpenAuth.Messaging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -1229,6 +1237,151 @@
             }
 
             return provider;
+        }
+
+        public string GetUrl(string sourceid)
+        {
+            string id = sourceid ?? "57c2d93659ed9e33fb83d39b03bb2fb91351b57c631a84dee1f631a3f2e81c71:::2ac9cbd7-cf18-4110-b8bc-c1c35b57145d:::2f927813-62e0-4e91-b6e0-5b40b99ec613",
+                   lti_message_type = "basic-lis-readmembershipsforcontext",
+                   lti_version = "LTI-1p0",
+                   endpoint = "https://edgesandbox.apus.edu/imsblis/service/",
+                   oauthCallback = "about:blank",
+                   oauthVersion = "1.0",
+                   oauthConsumerKey = "12345",
+                   oauthConsumerSecret = "secret",
+                   oauthSignatureMethod = "HMAC-SHA1",
+                   oauthNonce =
+                       Convert.ToBase64String(
+                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
+
+            var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+
+            const string BaseFormat =
+                "id={0}&" + 
+                "lti_message_type={1}&" + 
+                "lti_version={2}&" + 
+                "oauth_callback={3}&" + 
+                "oauth_consumer_key={4}&" + 
+                "oauth_nonce={5}&" + 
+                "oauth_signature_method={6}&" + 
+                "oauth_timestamp={7}&" +
+                "oauth_version={8}";
+
+            var baseString = string.Format(
+                BaseFormat,
+                Uri.EscapeDataString(Uri.EscapeDataString(id)),
+                lti_message_type,
+                lti_version,
+                Uri.EscapeDataString(Uri.EscapeDataString(oauthCallback)),
+                oauthConsumerKey,
+                oauthNonce,
+                oauthSignatureMethod,
+                oauthTimestamp,
+                oauthVersion);
+
+            baseString = string.Concat("POST&", Uri.EscapeDataString(endpoint), "&", baseString);
+
+            var compositeKey = Uri.EscapeDataString(oauthConsumerSecret) + "&";
+
+
+            string oauthSignature;
+            using (var hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
+            {
+                oauthSignature = Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
+            }
+
+            const string HeaderFormat = "OAuth oauth_nonce=\"{0}\", oauth_callback=\"{1}\", oauth_signature_method=\"{2}\", " +
+                                        "oauth_timestamp=\"{3}\", " +
+                                        "oauth_consumer_key=\"{4}\", oauth_signature=\"{5}\", " +
+                                        "oauth_version=\"{6}\"";
+
+            var authHeader = string.Format(
+                HeaderFormat,
+                Uri.EscapeDataString(oauthNonce),
+                Uri.EscapeDataString(oauthCallback),
+                Uri.EscapeDataString(oauthSignatureMethod),
+                Uri.EscapeDataString(oauthTimestamp),
+                Uri.EscapeDataString(oauthConsumerKey),
+                Uri.EscapeDataString(oauthSignature),
+                Uri.EscapeDataString(oauthVersion));
+
+            ServicePointManager.Expect100Continue = false;
+
+            var request = (HttpWebRequest)WebRequest.Create(endpoint);
+            request.Headers.Add("Authorization", authHeader);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            var pairs = new NameValueCollection
+                                {
+                                    { "id", HttpUtility.UrlEncode(id) }, 
+                                    { "lti_message_type", lti_message_type }, 
+                                    { "lti_version", lti_version },
+                                    { "oauth_callback", HttpUtility.UrlEncode(oauthCallback) },
+                                    { "oauth_consumer_key", oauthConsumerKey },
+                                    { "oauth_nonce", oauthNonce },
+                                    { "oauth_signature", oauthSignature },
+                                    { "oauth_signature_method", oauthSignatureMethod },
+                                    { "oauth_timestamp", oauthTimestamp },
+                                    { "oauth_version", oauthVersion }
+                                };
+
+            byte[] response;
+            using (var client = new WebClient())
+            {
+                response = client.UploadValues(endpoint, pairs);
+            }
+
+            var resp = Encoding.UTF8.GetString(response);
+            return resp;
+
+            /*
+            byte[] dataStream = Encoding.ASCII.GetBytes(param);
+            request.ContentLength = dataStream.Length;
+            Stream newStream = request.GetRequestStream();
+            newStream.Write(dataStream, 0, dataStream.Length);
+            newStream.Close();
+            
+            try
+            {
+                using (var response = request.GetResponse())
+                {
+                    using (var responseStream = response.GetResponseStream())
+                    {
+                        if (responseStream != null)
+                        {
+                            using (var sr = new StreamReader(responseStream))
+                            {
+                                var data = sr.ReadToEnd();
+                                return param + "<br /><br/ > " + data;
+                            }
+                        }
+
+                        return null;
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                var response = ex.Response.GetResponseStream();
+                if (response != null)
+                {
+                    var reader = new StreamReader(response);
+                    string line;
+                    var result = new StringBuilder();
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        result.Append(line);
+                    }
+
+                    var error = result.ToString();
+                    throw new ApplicationException(error);
+                }
+
+                throw new ApplicationException(ex.ToString());
+            }
+            */
         }
 
         /// <summary>
