@@ -378,6 +378,7 @@
     <Compile Include="Extensions\DateConverter.cs" />
     <Compile Include="Extensions\MoodleParserExtension.cs" />
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
+    <Compile Include="Extensions\UriBuilderExtensions.cs" />
     <Compile Include="RTMP\SocialConnectionHandler.cs" />
     <Compile Include="RTMP\ClientConnectionHandler.cs" />
     <Compile Include="RTMP\SocialNotifier.cs" />

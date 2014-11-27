@@ -94,6 +94,16 @@
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
+        /// Gets or sets the extended IMS LTI tool setting url.
+        /// </summary>
+        public string ext_ims_lti_tool_setting_url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the extended IMS LIST memberships id.
+        /// </summary>
+        public string ext_ims_lis_memberships_id { get; set; }
+
+        /// <summary>
         /// Gets the LMS user login id.
         /// </summary>
         public string lms_user_login
@@ -246,7 +256,7 @@
             int result = 0;
             try
             {
-                url = HttpUtility.UrlDecode(url);
+                url = HttpUtility.UrlDecode(url).With(x => string.Empty);
                 const string CourseIdQuery = "course_id";
                 int index = url.IndexOf("?", StringComparison.Ordinal);
                 if (index > 0)

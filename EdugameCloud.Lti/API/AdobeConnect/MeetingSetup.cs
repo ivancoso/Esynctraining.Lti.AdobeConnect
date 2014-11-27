@@ -11,6 +11,7 @@
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.API.Common;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.DTO;
 
@@ -43,6 +44,11 @@
         /// </summary>
         private readonly MoodleAPI moodleApi;
 
+        /// <summary>
+        /// The LTI 2 API.
+        /// </summary>
+        private readonly LTI2Api lti2Api;
+
         #endregion
 
         #region Constructors and Destructors
@@ -59,11 +65,15 @@
         /// <param name="moodleApi">
         /// The Moodle API.
         /// </param>
-        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi)
+        /// <param name="lti2Api">
+        /// The LTI 2 API.
+        /// </param>
+        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api)
         {
             this.dlapApi = dlapApi;
             this.soapApi = soapApi;
             this.moodleApi = moodleApi;
+            this.lti2Api = lti2Api;
         }
 
         #endregion
@@ -338,7 +348,7 @@
             Justification = "Reviewed. Suppression is OK here.")]
         public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, out string error)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id, out error);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id, out error, param);
 
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
@@ -684,7 +694,7 @@
         {
             // fix meeting dto date & time
 
-            //TODO change on PadLeft
+            //// TODO change on PadLeft
             if (meetingDTO.start_time.IndexOf(":", StringComparison.Ordinal) == 1)
             {
                 meetingDTO.start_time = "0" + meetingDTO.start_time;
@@ -729,7 +739,7 @@
                 meeting.ScoId = result.ScoInfo.ScoId;
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
 
-                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData);
+                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData ?? param);
 
                 this.CreateAnnouncement(
                     credentials, 
@@ -1141,20 +1151,11 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course Id.
+        /// <param name="param">
+        /// The parameter.
         /// </param>
         /// <param name="meetingSco">
         /// The meeting SCO.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="login">
-        /// The login.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
@@ -1162,12 +1163,13 @@
         private Tuple<bool, bool> GetMeetingFlags(
             AdobeConnectProvider provider,
             CompanyLms credentials,
-            string lmsUserId,
-            int courseId,
-            string meetingSco,
-            string email,
-            string login)
+            LtiParamDTO param,
+            string meetingSco)
         {
+            var lmsUserId = param.lms_user_id;
+            var courseId = param.course_id;
+            var email = param.lis_person_contact_email_primary;
+            var login = param.lms_user_login;
             bool canJoin = false;
             bool areUsersSynched = true;
             var registeredUser = this.GetACUser(provider, login, email);
@@ -1185,7 +1187,7 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants);
+                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants, param);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1231,6 +1233,9 @@
         /// <param name="participants">
         /// The participants.
         /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -1240,10 +1245,11 @@
             int courseId,
             List<PermissionInfo> hosts,
             List<PermissionInfo> presenters,
-            List<PermissionInfo> participants)
+            List<PermissionInfo> participants,
+            LtiParamDTO param)
         {
             string error;
-            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId, out error);
+            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId, out error, param);
             foreach (var lmsUser in lmsUsers)
             {
                 if (!this.IsUserSynched(hosts, presenters, participants, lmsUser))
@@ -1435,7 +1441,7 @@
         /// The credentials.
         /// </param>
         /// <param name="blackBoardCourseId">
-        /// The brain honey course id.
+        /// The black board course id.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -1455,8 +1461,8 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
-        /// <param name="blackBoardCourseId">
-        /// The brain honey course id.
+        /// <param name="moodleCourseId">
+        /// The Moodle course id.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -1464,10 +1470,41 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
+        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int moodleCourseId, out string error)
         {
-            var users = this.moodleApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+            var users = this.moodleApi.GetUsersForCourse(credentials, moodleCourseId, out error);
             return this.GroupUsers(users);
+        }
+
+        /// <summary>
+        /// The get brain honey users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> GetSakaiUsers(CompanyLms credentials, LtiParamDTO param, out string error)
+        {
+            if (param != null)
+            {
+                var users = this.lti2Api.GetUsersForCourse(
+                    credentials,
+                    param.ext_ims_lti_tool_setting_url,
+                    param.ext_ims_lis_memberships_id,
+                    out error);
+                return this.GroupUsers(users);
+            }
+
+            error = "extra data is not set";
+            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -1604,11 +1641,13 @@
                     error = null;
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData);
+                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
                 case LmsProviderNames.Blackboard:
                     return this.GetBlackBoardUsers(credentials, courseId, out error);
                 case LmsProviderNames.Moodle:
                     return this.GetMoodleUsers(credentials, courseId, out error);
+                case LmsProviderNames.Sakai:
+                    return this.GetSakaiUsers(credentials, extraData is LtiParamDTO ? (LtiParamDTO)extraData : null, out error);
             }
 
             error = null;
@@ -1928,7 +1967,7 @@
         {
             PermissionInfo permissionInfo;
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var flags = this.GetMeetingFlags(provider, credentials, param.lms_user_id, param.course_id, result.ScoId, param.lis_person_contact_email_primary, param.lms_user_login);
+            var flags = this.GetMeetingFlags(provider, credentials, param, result.ScoId);
 
             var ret = new MeetingDTO
                           {

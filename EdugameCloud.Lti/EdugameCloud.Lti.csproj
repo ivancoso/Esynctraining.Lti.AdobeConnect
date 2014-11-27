@@ -111,6 +111,7 @@
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CanvasAPI.cs" />
     <Compile Include="API\Canvas\EGCEnabledCanvasAPI.cs" />
+    <Compile Include="API\Common\LTI2Api.cs" />
     <Compile Include="API\IEGCEnabledLmsAPI.cs" />
     <Compile Include="API\ILmsAPI.cs" />
     <Compile Include="API\LmsFactory.cs" />

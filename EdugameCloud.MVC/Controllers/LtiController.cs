@@ -1238,20 +1238,21 @@
         }
 
         [ActionName("sakai-test")]
-        public string GetUrl(string url = "https://edgesandbox.apus.edu/imsblis/service", string id = "791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6:::admin:::2f927813-62e0-4e91-b6e0-5b40b99ec613", string key = "12345", string secret = "secret")
+        public string GetUrl(string url = "https://edgesandbox.apus.edu/imsblis/service", string id = "791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6:::admin:::2f927813-62e0-4e91-b6e0-5b40b99ec613", string key = "12345", string secret = "secret", string oauthNonce = null, string oauthTimestamp = null)
         {
-            string 
-                   lti_message_type = "basic-lis-readmembershipsforcontext",
+            var result = string.Empty;
+            string lti_message_type = "basic-lis-readmembershipsforcontext",
                    lti_version = "LTI-1p0",
                    oauthCallback = "about:blank",
                    oauthVersion = "1.0",
-                   oauthSignatureMethod = "HMAC-SHA1",
-                   oauthNonce =
+                   oauthSignatureMethod = "HMAC-SHA1";
+                   
+                   oauthNonce = oauthNonce ??
                        Convert.ToBase64String(
                            new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
 
             var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            var oauthTimestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
+            oauthTimestamp = oauthTimestamp ?? Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
 
             const string BaseFormat =
                 "id={0}&" + 
@@ -1266,17 +1267,18 @@
 
             var baseString = string.Format(
                 BaseFormat,
-                Uri.EscapeDataString(Uri.EscapeDataString(id)),
+                Uri.EscapeDataString(id),
                 lti_message_type,
                 lti_version,
-                Uri.EscapeDataString(Uri.EscapeDataString(oauthCallback)),
+                Uri.EscapeDataString(oauthCallback),
                 key,
                 oauthNonce,
                 oauthSignatureMethod,
                 oauthTimestamp,
                 oauthVersion);
 
-            baseString = string.Concat("POST&", Uri.EscapeDataString(url), "&", baseString);
+            baseString = string.Concat("POST&", Uri.EscapeDataString(url), "&", Uri.EscapeDataString(baseString));
+            result += "Php Base string: POST&https%3A%2F%2Fedgesandbox.apus.edu%2Fimsblis%2Fservice&id%3D791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6%253A%253A%253Aadmin%253A%253A%253A2f927813-62e0-4e91-b6e0-5b40b99ec613%26lti_message_type%3Dbasic-lis-readmembershipsforcontext%26lti_version%3DLTI-1p0%26oauth_callback%3Dabout%253Ablank%26oauth_consumer_key%3D12345%26oauth_nonce%3D9a155817a5272395549c18e3675c7608%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1417087109%26oauth_version%3D1.0<br/>";
 
             var compositeKey = Uri.EscapeDataString(secret) + "&";
 
@@ -1327,9 +1329,9 @@
                 requeststream.Close();
             }
 
-            using (HttpWebResponse webResponse = (HttpWebResponse)request.GetResponse())
+            using (var webResponse = (HttpWebResponse)request.GetResponse())
             {
-                using (StreamReader sr = new StreamReader(webResponse.GetResponseStream()))
+                using (var sr = new StreamReader(webResponse.GetResponseStream()))
                 {
                     resp = sr.ReadToEnd().Trim();
                     sr.Close();
@@ -1338,53 +1340,7 @@
                 webResponse.Close();
             }
 
-            return resp;
-            /*
-            byte[] dataStream = Encoding.ASCII.GetBytes(param);
-            request.ContentLength = dataStream.Length;
-            Stream newStream = request.GetRequestStream();
-            newStream.Write(dataStream, 0, dataStream.Length);
-            newStream.Close();
-            
-            try
-            {
-                using (var response = request.GetResponse())
-                {
-                    using (var responseStream = response.GetResponseStream())
-                    {
-                        if (responseStream != null)
-                        {
-                            using (var sr = new StreamReader(responseStream))
-                            {
-                                var data = sr.ReadToEnd();
-                                return param + "<br /><br/ > " + data;
-                            }
-                        }
-
-                        return null;
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                var response = ex.Response.GetResponseStream();
-                if (response != null)
-                {
-                    var reader = new StreamReader(response);
-                    string line;
-                    var result = new StringBuilder();
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        result.Append(line);
-                    }
-
-                    var error = result.ToString();
-                    throw new ApplicationException(error);
-                }
-
-                throw new ApplicationException(ex.ToString());
-            }
-            */
+            return "<textarea>" + resp + "</textarea>";
         }
 
         /// <summary>
