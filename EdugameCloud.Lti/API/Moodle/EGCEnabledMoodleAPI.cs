@@ -171,6 +171,7 @@
                 null,
                 c =>
                     {
+                        json = json.Replace("\"", "\"");
                         var pairs = new NameValueCollection
                                         {
                                             {

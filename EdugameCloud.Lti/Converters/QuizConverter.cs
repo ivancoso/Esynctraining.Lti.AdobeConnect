@@ -992,8 +992,8 @@
                 bool isRange = a.numerical_answer_type != null && a.numerical_answer_type.Contains("range");
                 var name = string.Format(
                     "{{\"min\":{0}, \"max\": {1}, \"error\":{2},\"type\":\"{3}\"}}",
-                    isRange ? a.start : a.exact,
-                    a.end,
+                    isRange ? a.start.ToString() : (string.IsNullOrWhiteSpace(a.text) ? a.exact.ToString() : a.text),
+                    string.IsNullOrWhiteSpace(a.text) ? a.end.ToString() : a.text,
                     a.margin,
                     isRange ? "Range" : "Exact");
                 var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
@@ -1174,7 +1174,7 @@
                     var vals = new Dictionary<string, double>();
                     foreach (var a in q.datasets)
                     {
-                        var value = a.Items.Count > 0 ? a.Items.Count : double.Parse(a.Max ?? "0");
+                        var value = a.Items.Count > 0 ? a.Items.First().Value : double.Parse(a.Max ?? "0");
                         if (!vals.ContainsKey(a.Name))
                             vals.Add(a.Name, value);
                         var name = a.Name;

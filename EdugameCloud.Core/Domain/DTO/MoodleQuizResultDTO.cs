@@ -5,6 +5,8 @@
 
     using NHibernate.Mapping;
 
+    using RestSharp;
+
     /// <summary>
     /// The moodle quiz result dto.
     /// </summary>
@@ -39,7 +41,7 @@
         /// Gets or sets the answers.
         /// </summary>
         [DataMember]
-        public virtual List<string> answers { get; set; }
+        public virtual object[] answers { get; set; }
 
         /// <summary>
         /// Gets or sets the is single.

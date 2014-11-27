@@ -327,7 +327,7 @@
                         {
                             bool answer = (r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
                                             || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
-                            m.answers = new List<string> { answer ? "true" : "false" };
+                            m.answers = new List<string> { answer ? "true" : "false" }.ToArray();
                         }
 
                         break;
@@ -337,8 +337,8 @@
                             question.Distractors.Where(
                                 q =>
                                 r.answers != null && r.answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)))
-                                .Select(q => q.LmsAnswer)
-                                .ToList();
+                                .Select(q => q.DistractorName)
+                                .ToArray();
                         break;
                     case (int)QuestionTypeEnum.Matching:
                         var userAnswers = new Dictionary<string, string>();
@@ -362,18 +362,25 @@
                                     });
                         }
 
-                        m.answers = new List<string>();
+                        var answers = new List<JsonObject>();
                         foreach (Distractor d in question.Distractors.OrderBy(ds => ds.LmsAnswerId))
                         {
                             string key = d.DistractorName.Substring(
                                 0,
                                 d.DistractorName.IndexOf("$$", System.StringComparison.Ordinal));
-                            m.answers.Add(userAnswers.ContainsKey(key) ? userAnswers[key] : string.Empty);
+                            if (userAnswers.ContainsKey(key))
+                            {
+                                var obj = new JsonObject();
+                                obj[key] = userAnswers[key];
+                                answers.Add(obj);
+                            }
                         }
+
+                        m.answers = answers.ToArray();
 
                         break;
                     default:
-                        m.answers = r.answers;
+                        m.answers = r.answers.ToArray();
                         break;
                 }
 
@@ -404,7 +411,7 @@
                                     })
                             });
 
-            string json = new JavaScriptSerializer().Serialize(ret);
+            string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
             MoodleApi.SendAnswers(lmsUserParameters, json);
         }
 
