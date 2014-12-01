@@ -213,6 +213,11 @@
                     /// The view.
                     /// </summary>
                     public const string View = "filter-permission-id=view";
+
+                    /// <summary>
+                    /// The view.
+                    /// </summary>
+                    public const string All = "filter-permission-id=host&filter-permission-id=mini-host&filter-permission-id=view";
                 }
             }
         }

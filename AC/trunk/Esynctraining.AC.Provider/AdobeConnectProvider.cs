@@ -701,6 +701,20 @@
         }
 
         /// <summary>
+        /// The get meeting participants.
+        /// </summary>
+        /// <param name="meetingId">
+        /// The meeting id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PermissionCollectionResult"/>.
+        /// </returns>
+        public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
+        {
+            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.All);
+        }
+
+        /// <summary>
         /// Provides a complete list of users and groups, including primary groups.
         /// </summary>
         /// <returns>
@@ -1187,15 +1201,12 @@
         public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
         {
             StatusInfo status;
-
-            this.requestProcessor.Process(
-                Commands.Principal.UpdatePassword,
-                string.Format(
-                    CommandParams.PrincipalUpdatePassword,
-                    principalId,
-                    HttpUtility.UrlEncode(newPassword),
-                    HttpUtility.UrlEncode(newPassword)),
-                out status);
+            var parameters = string.Format(
+                CommandParams.PrincipalUpdatePassword,
+                principalId,
+                HttpUtility.UrlEncode(newPassword),
+                HttpUtility.UrlEncode(newPassword));
+            this.requestProcessor.Process(Commands.Principal.UpdatePassword, parameters, out status);
 
             return new GenericResult(status);
         }
@@ -1395,10 +1406,10 @@
         }
 
         /// <summary>
-        /// The get acl field.
+        /// The get ACL field.
         /// </summary>
         /// <param name="aclId">
-        /// The acl id.
+        /// The ACL id.
         /// </param>
         /// <param name="fieldId">
         /// The field id.
