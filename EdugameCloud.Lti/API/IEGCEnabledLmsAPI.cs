@@ -59,6 +59,9 @@
         /// <param name="json">
         /// The JSON.
         /// </param>
-        void SendAnswers(LmsUserParameters lmsUserParameters, string json);
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey);
     }
 }

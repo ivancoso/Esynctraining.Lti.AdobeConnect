@@ -25,7 +25,7 @@
 
             this.References(x => x.User);
             this.References(x => x.SubModule);
-            this.References(x => x.LmsProvider).Nullable();
+            this.References(x => x.CompanyLms).Nullable();
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<SubModuleCategory>(x => x.ModifiedBy)));
         }
 

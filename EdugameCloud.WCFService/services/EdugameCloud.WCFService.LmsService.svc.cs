@@ -336,14 +336,14 @@ namespace EdugameCloud.WCFService
                             int lastModified = 0;
                             if (isSurvey)
                             {
-                                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.LmsProvider.Id).Value;
+                                var egcSurvey = SurveyModel.GetOneByLmsSurveyId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.Id).Value;
                                 lastModified = egcSurvey != null
                                                    ? egcSurvey.SubModuleItem.DateModified.ConvertToTimestamp()
                                                    : 0;
                             }
                             else
                             {
-                                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.LmsProvider.Id).Value;
+                                var egcQuiz = QuizModel.GetOneByLmsQuizId(user.Value.Id, q.id, lmsUserParameters.CompanyLms.Id).Value;
                                 lastModified = egcQuiz != null
                                                    ? egcQuiz.SubModuleItem.DateModified.ConvertToTimestamp()
                                                    : 0;
@@ -404,14 +404,14 @@ namespace EdugameCloud.WCFService
                         quizIds,
                         out error);
 
-                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.LmsProvider.Id);
+                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.Id);
 
                 if (isSurvey)
                 {
                     var serviceResponse = new ServiceResponse<SurveysAndSubModuleItemsDTO>();
 
                     var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
-                    var surveys = this.SurveyModel.GetLmsSurveys(user.Id, lmsUserParameters.Course, companyLms.LmsProvider.Id);
+                    var surveys = this.SurveyModel.GetLmsSurveys(user.Id, lmsUserParameters.Course, companyLms.Id);
 
                     serviceResponse.@object = new SurveysAndSubModuleItemsDTO
                     {
@@ -425,7 +425,7 @@ namespace EdugameCloud.WCFService
                     var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
                     var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
-                    var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.LmsProvider.Id);
+                    var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.Id);
 
                     serviceResponse.@object = new QuizesAndSubModuleItemsDTO
                     {

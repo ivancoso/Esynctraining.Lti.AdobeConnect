@@ -146,13 +146,13 @@ namespace EdugameCloud.Core.Business.Models
         /// <param name="lmsSurveyId">
         /// The lms quiz id.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms provider id.
+        /// <param name="companyLmsId">
+        /// The company lms id.
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{Quiz}"/>.
         /// </returns>
-        public IFutureValue<Survey> GetOneByLmsSurveyId(int userId, int lmsSurveyId, int lmsProviderId)
+        public IFutureValue<Survey> GetOneByLmsSurveyId(int userId, int lmsSurveyId, int companyLmsId)
         {
             QueryOver<User, User> companyQuery =
                new DefaultQueryOver<User, int>().GetQueryOver()
@@ -162,14 +162,16 @@ namespace EdugameCloud.Core.Business.Models
 
             Survey s = null;
             SubModuleItem smi = null;
+            SubModuleCategory smc = null;
             User u2 = null;
 
             var query =
                 new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
                     .WhereRestrictionOn(x => x.LmsSurveyId).IsNotNull
                     .And(x => x.LmsSurveyId == lmsSurveyId)
-                    .And(x => x.LmsProvider.Id == lmsProviderId)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                    .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
+                    .Where(() => smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
                     .Take(1);
@@ -247,13 +249,13 @@ namespace EdugameCloud.Core.Business.Models
         /// <param name="courseid">
         /// The courseid.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{SurveyFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseid, int lmsProviderId = 1)
+        public IEnumerable<SurveyFromStoredProcedureDTO> GetLmsSurveys(int userId, int courseid, int companyLmsId)
         {
             var query =
                 new DefaultQueryOver<User, int>().GetQueryOver()
@@ -271,7 +273,7 @@ namespace EdugameCloud.Core.Business.Models
             var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
                 .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                 .Where(() => smi.IsActive == true)
-                .And(() => (smc.LmsProvider == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.LmsProvider != null && smc.LmsProvider.Id == lmsProviderId))
+                .And(() => (smc.CompanyLms == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId))
                 .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
                 .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                 .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin).Where(() => (int)u2.Status == 1)

@@ -20,6 +20,7 @@
     using Newtonsoft.Json;
 
     using NHibernate.Hql.Ast.ANTLR;
+    using NHibernate.Linq;
 
     using RestSharp;
     using RestSharp.Deserializers;
@@ -116,7 +117,7 @@
                 switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
                 {
                     case (int)LmsProviderEnum.Moodle:
-                        //this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, quizResult);
+                        this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, surveyResult);
                         break;
                     case (int)LmsProviderEnum.Canvas:
                         this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
@@ -287,6 +288,79 @@
             }
         }
 
+        /// <summary>
+        /// The convert and send survey result to moodle.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="surveyResult">
+        /// The survey result.
+        /// </param>
+        private void ConvertAndSendSurveyResultToMoodle(IEnumerable<SurveyQuestionResultDTO> results, LmsUserParameters lmsUserParameters, SurveyResult surveyResult)
+        {
+            var toSend = new List<MoodleQuizResultDTO>();
+
+            foreach (SurveyQuestionResultDTO r in results)
+            {
+                var m = new MoodleQuizResultDTO();
+                
+                m.quizId = surveyResult.Survey.LmsSurveyId ?? 0;
+                Question question = this.QuestionModel.GetOneById(r.questionId).Value;
+                m.questionId = question.LmsQuestionId ?? 0;
+                m.questionType = question.QuestionType.Type;
+                m.isSingle = question.IsMoodleSingle.GetValueOrDefault();
+                m.userId = surveyResult.LmsUserParameters.LmsUser.UserId;
+                m.startTime = surveyResult.StartTime.ConvertToUTCTimestamp();
+
+                if (question.QuestionType.Id == (int)QuestionTypeEnum.SingleMultipleChoiceText
+                    || question.QuestionType.Id == (int)QuestionTypeEnum.Rate)
+                {
+                    m.answers = question.Distractors.Where(
+                                q =>
+                                r.answers != null && r.answers.Any(answ => answ.surveyDistractorAnswerId == q.Id))
+                                .Select(q => (q.LmsAnswerId.GetValueOrDefault() + 1).ToString())
+                                .ToArray();
+                }
+                else
+                {
+                    m.answers = r.answers.Select(a => a.value).ToArray();
+                }
+
+                toSend.Add(m);
+            }
+
+            if (toSend.Count == 0)
+            {
+                return;
+            }
+
+            var ret =
+                toSend.GroupBy(s => s.quizId)
+                    .Select(
+                        s =>
+                        new
+                        {
+                            surveyId = s.Key,
+                            courseId = surveyResult.Survey.SubModuleItem.SubModuleCategory.LmsCourseId ?? 0,
+                            usersResults =
+                        s.GroupBy(u => new { u.userId, u.startTime })
+                        .Select(
+                            u =>
+                            new
+                            {
+                                u.Key.userId,
+                                u.Key.startTime,
+                                answers = u.Select(a => new { a.questionId, answer = a.answers.Aggregate((b, c) => b.ToString() + "|" + c.ToString()) })
+                            })
+                        });
+
+            string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
+            this.MoodleApi.SendAnswers(lmsUserParameters, json, true);
+        }
 
         /// <summary>
         /// The send results to moodle.
@@ -412,7 +486,7 @@
                             });
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
-            MoodleApi.SendAnswers(lmsUserParameters, json);
+            MoodleApi.SendAnswers(lmsUserParameters, json, false);
         }
 
         /// <summary>

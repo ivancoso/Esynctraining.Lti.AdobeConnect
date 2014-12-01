@@ -29,6 +29,8 @@
             this.Map(x => x.Title).Nullable();
             this.Map(x => x.LastSignalId).Not.Nullable().Default("(0)");
             this.Map(x => x.UseSSL).Nullable();
+            this.Map(x => x.UseUserFolder).Nullable();
+            this.Map(x => x.UserFolderName).Nullable();
 
             this.References(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.References(x => x.Company).Not.Nullable().Column("companyId");

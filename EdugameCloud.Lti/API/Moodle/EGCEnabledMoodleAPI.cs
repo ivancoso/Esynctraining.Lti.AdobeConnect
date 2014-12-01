@@ -162,7 +162,10 @@
         /// <param name="json">
         /// The JSON.
         /// </param>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json)
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey)
         {
             string error;
 
@@ -176,7 +179,7 @@
                                         {
                                             {
                                                 "wsfunction",
-                                                "local_edugamecloud_save_external_quiz_report"
+                                                isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report"
                                             },
                                             { "wstoken", c.Token },
                                             { "reportObject", json }

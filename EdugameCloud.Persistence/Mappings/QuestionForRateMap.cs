@@ -18,6 +18,7 @@
             this.Map(x => x.PageNumber).Nullable();
             this.Map(x => x.AllowOther).Nullable();
             this.Map(x => x.IsMandatory).Not.Nullable().Default("1");
+            this.Map(x => x.IsAlwaysRateDropdown).Nullable();
 
             this.References(x => x.Question);
         }

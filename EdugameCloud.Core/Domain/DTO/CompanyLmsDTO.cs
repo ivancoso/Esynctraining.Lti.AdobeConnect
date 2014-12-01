@@ -47,6 +47,8 @@
                 this.lmsDomain = instance.LmsDomain;
                 this.primaryColor = instance.PrimaryColor;
                 this.title = instance.Title;
+                this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
+                this.userFolderName = instance.UserFolderName;
             }
         }
 
@@ -163,5 +165,17 @@
         /// </summary>
         [DataMember]
         public bool useSsl { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether use user folder.
+        /// </summary>
+        [DataMember]
+        public bool useUserFolder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user folder name.
+        /// </summary>
+        [DataMember]
+        public string userFolderName { get; set; }
     }
 }

@@ -74,9 +74,9 @@
         public virtual int? LmsCourseId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms provider
+        /// Gets or sets the company lms.
         /// </summary>
-        public virtual LmsProvider LmsProvider { get; set; }
+        public virtual CompanyLms CompanyLms { get; set; }
 
         #endregion
     }

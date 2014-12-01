@@ -94,6 +94,7 @@
                 q.question_text = quest.GetNodeValue("questiontext");
                 q.question_type = quest.GetNodeValue("qtype") ?? quest.GetNodeValue("typ");
                 q.presentation = quest.GetNodeValue("presentation");
+                q.is_mandatory = int.Parse(quest.GetNodeValue("required") ?? "0") > 0;
 
                 var datasetsSingle = quest.SelectNodes(DataSetPath);
                 if (datasetsSingle != null)

@@ -61,11 +61,6 @@
         /// </summary>
         public virtual int? LmsSurveyId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the lms provider
-        /// </summary>
-        public virtual LmsProvider LmsProvider { get; set; }
-
         #endregion
     }
 }

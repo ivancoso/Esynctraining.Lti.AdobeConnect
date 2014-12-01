@@ -54,6 +54,28 @@
         }
 
         /// <summary>
+        /// Gets the question for rate model.
+        /// </summary>
+        private QuestionForRateModel QuestionForRateModel
+        {
+            get
+            {
+                return IoC.Resolve<QuestionForRateModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the question for open answer model.
+        /// </summary>
+        private QuestionForOpenAnswerModel QuestionForOpenAnswerModel
+        {
+            get
+            {
+                return IoC.Resolve<QuestionForOpenAnswerModel>();
+            }
+        }
+
+        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private SubModuleCategoryModel SubModuleCategoryModel
@@ -219,13 +241,13 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="Dictionary"/>.
         /// </returns>
-        public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, User user, bool isSurvey, int lmsProviderId)
+        public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, User user, bool isSurvey, int companyLmsId)
         {
             var submoduleQuiz = new Dictionary<int, int>();
             
@@ -233,8 +255,8 @@
             {
                 if (quiz.questions.Length > 0)
                 {
-                    var submoduleCategory = this.ProcessSubModuleCategory(quiz, user, lmsProviderId);
-                    var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey, lmsProviderId);
+                    var submoduleCategory = this.ProcessSubModuleCategory(quiz, user, companyLmsId);
+                    var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey, companyLmsId);
                     if (!submoduleQuiz.ContainsKey(item.Item1))
                     {
                         submoduleQuiz.Add(item.Item1, item.Item2);
@@ -260,39 +282,39 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
+        /// <param name="companyLmsId">
+        /// The company lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey, int lmsProviderId)
+        private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey, int companyLmsId)
         {
             SubModuleItem submodule;
             Tuple<int, int> result;
 
             if (isSurvey)
             {
-                var egcSurvey = this.SurveyModel.GetOneByLmsSurveyId(user.Id, quiz.id, lmsProviderId).Value
+                var egcSurvey = this.SurveyModel.GetOneByLmsSurveyId(user.Id, quiz.id, companyLmsId).Value
                     ?? new Survey();
 
 
                 submodule = this.ProcessSubModule(user, subModuleCategory, egcSurvey.IsTransient() ? null : egcSurvey.SubModuleItem, quiz);
 
-                result = this.ProcessSurveyData(quiz, egcSurvey, submodule, lmsProviderId);
+                result = this.ProcessSurveyData(quiz, egcSurvey, submodule);
             }
             else
             {
-                var egcQuiz = this.QuizModel.GetOneByLmsQuizId(user.Id, quiz.id, lmsProviderId).Value
+                var egcQuiz = this.QuizModel.GetOneByLmsQuizId(user.Id, quiz.id, companyLmsId).Value
                     ?? new Quiz();
 
 
                 submodule = this.ProcessSubModule(user, subModuleCategory, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
 
-                result = this.ProcessQuizData(quiz, egcQuiz, submodule, lmsProviderId);
+                result = this.ProcessQuizData(quiz, egcQuiz, submodule);
             }
-            
-            this.ProcessQuizQuestions(quiz, user, submodule, isSurvey, lmsProviderId);
+
+            this.ProcessQuizQuestions(quiz, user, submodule, isSurvey, companyLmsId);
 
             return result;
         }
@@ -306,19 +328,19 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="SubModuleCategory"/>.
         /// </returns>
-        private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int lmsProviderId)
+        private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(quiz.course, lmsProviderId).Value
+            var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
                                           ?? new SubModuleCategory
                                           {
-                                              LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value,
+                                              CompanyLms = CompanyLmsModel.GetOneById(companyLmsId).Value,
                                               CategoryName = quiz.courseName,
                                               LmsCourseId = quiz.course,
                                               User = user,
@@ -384,13 +406,10 @@
         /// <param name="submoduleItem">
         /// The submodule item.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
-        /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem, int lmsProviderId)
+        private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
             egcQuiz.LmsQuizId = quiz.id;
             egcQuiz.QuizName = this.ClearName(quiz.title);
@@ -398,7 +417,6 @@
             egcQuiz.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
-            egcQuiz.LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value;
             egcQuiz.SubModuleItem.IsShared = true;
 
             this.QuizModel.RegisterSave(egcQuiz, true);
@@ -434,19 +452,15 @@
         /// <param name="submoduleItem">
         /// The submodule item.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
-        /// </param>
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem, int lmsProviderId)
+        private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem)
         {
             egcSurvey.LmsSurveyId = quiz.id;
             egcSurvey.SurveyName = this.ClearName(quiz.title);
             egcSurvey.SubModuleItem = submoduleItem;
             egcSurvey.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
-            egcSurvey.LmsProvider = LmsProviderModel.GetOneById(lmsProviderId).Value;
             egcSurvey.SubModuleItem.IsShared = true;
             egcSurvey.SurveyGroupingType = SurveyGroupingTypeModel.GetOneById(1).Value;
 
@@ -500,21 +514,60 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms Provider Id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
-        private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int lmsProviderId)
+        private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int companyLmsId)
         {
-            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(lmsProviderId);
+            var companyLms = CompanyLmsModel.GetOneById(companyLmsId).Value;
+            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(companyLms.LmsProvider.Id);
 
             foreach (var quizQuestion in quiz.questions.Where(qs => qs.question_type != null))
             {
+                bool isNumeric = false;
                 var questionType = qtypes.FirstOrDefault(qt => qt.LmsQuestionTypeName.Equals(quizQuestion.question_type));
                 if (questionType == null)
                 {
                     continue;
                 }
 
+                if (isSurvey)
+                {
+                    var separatorIndex = quizQuestion.presentation.IndexOf(">>>>>", System.StringComparison.Ordinal);
+                    string text = quizQuestion.question_text ?? quizQuestion.question_name,
+                        answers = separatorIndex > 0
+                            ? quizQuestion.presentation.Substring(separatorIndex + 5)
+                            : string.Empty,
+                        type = separatorIndex > 0 ? quizQuestion.presentation.Substring(0, separatorIndex) : string.Empty;
+                    if (type.Equals("d"))
+                    {
+                        questionType = new LmsQuestionType()
+                                           {
+                                               QuestionType = QuestionTypeModel.GetOneById((int)QuestionTypeEnum.Rate).Value,
+                                               LmsQuestionTypeName = string.Empty
+                                           };
+                            
+                    }
+                    if (questionType.QuestionType.Id == (int)QuestionTypeEnum.Numerical)
+                    {
+                        isNumeric = true;
+                        questionType = new LmsQuestionType()
+                        {
+                            QuestionType = QuestionTypeModel.GetOneById((int)QuestionTypeEnum.OpenAnswerSingleLine).Value,
+                            LmsQuestionTypeName = string.Empty
+                        };
+                    }
+
+                    quizQuestion.is_single = !type.Equals("c");
+
+                    quizQuestion.question_text = this.ClearName(text);
+                    quizQuestion.answers = answers.Split('|').Select((a, i) => new AnswerDTO()
+                    {
+                        text = a.IndexOf("####", System.StringComparison.Ordinal) > -1 ? a.Substring(a.IndexOf("####", System.StringComparison.Ordinal) + 4) : a,
+                        id = i
+                    }).ToList();
+                }
+                
                 var lmsQuestionId = quizQuestion.id;
 
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
@@ -531,16 +584,29 @@
                 if (questionType.QuestionType.Id == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionType.Id == (int)QuestionTypeEnum.FillInTheBlank)
                 {
-                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)lmsProviderId);
+                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProvider.Id);
                 }
                 else if (questionType.QuestionType.Id == (int)QuestionTypeEnum.Calculated
                     || questionType.QuestionType.Id == (int)QuestionTypeEnum.CalculatedMultichoice)
                 {
-                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)lmsProviderId);
+                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProvider.Id);
+                }
+                else if (questionType.QuestionType.Id == (int)QuestionTypeEnum.OpenAnswerSingleLine && isNumeric)
+                {
+                    questionText = this.ClearName(quizQuestion.question_text ?? quizQuestion.question_name);
+                    if (quizQuestion.presentation != null && quizQuestion.presentation.IndexOf("|") > -1)
+                    {
+                        var presentationIndex = quizQuestion.presentation.IndexOf("|");
+                        questionText = string.Format(
+                            "{0} ({1}-{2})", 
+                            questionText, 
+                            quizQuestion.presentation.Substring(0, presentationIndex),
+                            quizQuestion.presentation.Substring(presentationIndex + 1));
+                    }
                 }
                 else
                 {
-                    questionText = this.ClearName(quizQuestion.question_text);
+                    questionText = this.ClearName(quizQuestion.question_text ?? quizQuestion.question_name);
                 }
 
                 question.IsMoodleSingle = !questionType.LmsQuestionTypeName.Equals("multiple_answers_question"); 
@@ -549,6 +615,7 @@
                 question.DateModified = DateTime.Now;
                 question.ModifiedBy = user;
                 question.IsActive = true;
+                
                 var isTransient = question.Id == 0;
 
                 this.QuestionModel.RegisterSave(question);
@@ -559,16 +626,42 @@
                     {
                         case (int)QuestionTypeEnum.TrueFalse:
                             this.QuestionForTrueFalseModel.RegisterSave(
-                                new QuestionForTrueFalse { Question = question });
+                                new QuestionForTrueFalse { Question = question, IsMandatory = quizQuestion.is_mandatory });
                             break;
                         case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                             this.QuestionForSingleMultipleChoiceModel.RegisterSave(
-                                new QuestionForSingleMultipleChoice { Question = question });
+                                new QuestionForSingleMultipleChoice
+                                    {
+                                        Question = question, 
+                                        Restrictions = !quizQuestion.is_single ? "multi_choice" : null,
+                                        IsMandatory = quizQuestion.is_mandatory
+                                    });
+                            break;
+                        case (int)QuestionTypeEnum.OpenAnswerSingleLine:
+                        case (int)QuestionTypeEnum.OpenAnswerMultiLine:
+                            this.QuestionForOpenAnswerModel.RegisterSave(
+                                new QuestionForOpenAnswer
+                                {
+                                    Question = question,
+                                    IsMandatory = quizQuestion.is_mandatory
+                                });
+                            break;
+                        case (int)QuestionTypeEnum.Rate:
+                            this.QuestionForRateModel.RegisterSave(
+                                new QuestionForRate()
+                                    {
+                                        Question = question, 
+                                        Restrictions = quizQuestion.is_single ? "single_choice" : string.Empty, 
+                                        AllowOther = false, 
+                                        PageNumber = 0,
+                                        IsAlwaysRateDropdown = true,
+                                        IsMandatory = quizQuestion.is_mandatory
+                                    });
                             break;
                     }
                 }
 
-                this.ProcessDistractors(user, questionType.QuestionType, quizQuestion, question, (LmsProviderEnum)lmsProviderId);
+                this.ProcessDistractors(user, questionType.QuestionType, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProvider.Id);
 
                 if (isSurvey)
                 {
@@ -620,6 +713,7 @@
             {
                 case (int)QuestionTypeEnum.ShortAnswer:
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                case (int)QuestionTypeEnum.Rate:
                     {
                         this.ProcessSingleMultipleChoiceTextDistractors(user, q, question, disctarctorModel);
                         break;

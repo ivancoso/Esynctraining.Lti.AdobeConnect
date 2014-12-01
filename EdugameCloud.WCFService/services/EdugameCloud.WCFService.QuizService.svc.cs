@@ -240,7 +240,7 @@ namespace EdugameCloud.WCFService
         /// The user id.
         /// </param>
         /// <param name="lmsUserParametersId">
-        /// The lms user parameters id.
+        /// The lms User Parameters Id.
         /// </param>
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
@@ -249,7 +249,7 @@ namespace EdugameCloud.WCFService
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
 
-            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.LmsProvider.Id).ToList() };
+            return new ServiceResponse<QuizFromStoredProcedureDTO> { objects = this.QuizModel.GetLMSQuizzes(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id).ToList() };
         }
 
         /// <summary>

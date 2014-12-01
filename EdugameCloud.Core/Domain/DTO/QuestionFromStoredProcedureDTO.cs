@@ -149,6 +149,12 @@
         [DataMember]
         public virtual bool? randomizeAnswers { get; set; }
 
+        /// <summary>
+        /// Gets or sets the is always rate dropdown.
+        /// </summary>
+        [DataMember]
+        public virtual bool? isAlwaysRateDropdown { get; set; }
+
         #endregion
     }
 }

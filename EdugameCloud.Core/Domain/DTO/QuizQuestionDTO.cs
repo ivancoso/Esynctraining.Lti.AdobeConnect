@@ -69,6 +69,11 @@
         /// </summary>
         public bool is_single { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether is_mandatory.
+        /// </summary>
+        public bool is_mandatory { get; set; }
+
         #endregion
     }
 }

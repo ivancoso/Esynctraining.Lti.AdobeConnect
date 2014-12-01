@@ -283,7 +283,7 @@ namespace EdugameCloud.WCFService
                 }
                  * */
             }
-
+            /*
             var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
             var quizes = this.QuizModel.GetLMSQuizzes(user.Id, 0);
 
@@ -292,6 +292,7 @@ namespace EdugameCloud.WCFService
                                               quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value)).ToList(),
                                               subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
                                           };
+             */
             return serviceResponse;
         }
 
@@ -374,7 +375,7 @@ namespace EdugameCloud.WCFService
                 }
                  * */
             }
-
+            /*
             var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
             var quizes = this.SurveyModel.GetLmsSurveys(user.Id, 0);
 
@@ -383,7 +384,7 @@ namespace EdugameCloud.WCFService
                 surveys = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.surveyId == x.Value)).ToList(),
                 subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToList(),
             };
-
+            */
             return serviceResponse;
         }
 
@@ -575,7 +576,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="Tuple"/>.
         /// </returns>
-        private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user, bool isSurvey = false)
+        private Tuple<int, int> ConvertAndSave(MoodleQuiz quiz, User user, bool isSurvey, int companyLmsId)
         {
             Tuple<int, int> result;
             var moodleId = string.IsNullOrEmpty(quiz.Id) ? (int?)null : int.Parse(quiz.Id);
@@ -583,7 +584,7 @@ namespace EdugameCloud.WCFService
             if (!isSurvey)
             {
                 var egcQuiz = moodleId.HasValue
-                    ? this.QuizModel.GetOneByLmsQuizId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value
+                    ? this.QuizModel.GetOneByLmsQuizId(user.Id, moodleId.Value, companyLmsId).Value
                       ?? new Quiz()
                     : new Quiz();
 
@@ -596,7 +597,7 @@ namespace EdugameCloud.WCFService
             else
             {
                 var egcSurvey = moodleId.HasValue
-                                    ? this.SurveyModel.GetOneByLmsSurveyId(user.Id, moodleId.Value, (int)LmsProviderEnum.Moodle).Value
+                                    ? this.SurveyModel.GetOneByLmsSurveyId(user.Id, moodleId.Value, companyLmsId).Value
                                       ?? new Survey()
                                     : new Survey();
 
@@ -1198,7 +1199,6 @@ namespace EdugameCloud.WCFService
             egcSurvey.SurveyName = quiz.Name;
             egcSurvey.SubModuleItem = submoduleItem;
             egcSurvey.Description = Regex.Replace(quiz.Intro, "<[^>]*(>|$)", string.Empty);
-            egcSurvey.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Moodle).Value;
             egcSurvey.SubModuleItem.IsShared = true;
 
             this.SurveyModel.RegisterSave(egcSurvey, true);
@@ -1243,7 +1243,6 @@ namespace EdugameCloud.WCFService
             egcQuiz.Description = Regex.Replace(quiz.Intro, "<[^>]*(>|$)", string.Empty);
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
-            egcQuiz.LmsProvider = LmsProviderModel.GetOneById((int)LmsProviderEnum.Moodle).Value;
             egcQuiz.SubModuleItem.IsShared = true;
 
             this.QuizModel.RegisterSave(egcQuiz, true);
@@ -1454,7 +1453,7 @@ namespace EdugameCloud.WCFService
             submodule.ModifiedBy = user;
 
             var subModuleCategoryModel = this.SubModuleCategoryModel;
-            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndProvider(moodleQuiz.LmsSubmoduleId, (int)LmsProviderEnum.Moodle).Value
+            submodule.SubModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(moodleQuiz.LmsSubmoduleId, (int)LmsProviderEnum.Moodle).Value
                                           ?? new SubModuleCategory
                                                  {
                                                      CategoryName = moodleQuiz.LmsSubmoduleName,
@@ -1465,10 +1464,7 @@ namespace EdugameCloud.WCFService
                                                      ModifiedBy = user,
                                                      SubModule =
                                                          SubModuleModel.GetOneById(
-                                                             (int)SubModuleItemType.Quiz).Value,
-                                                     LmsProvider =
-                                                         LmsProviderModel.GetOneById(
-                                                             (int)LmsProviderEnum.Moodle).Value
+                                                             (int)SubModuleItemType.Quiz).Value
                                                  };
             if (submodule.SubModuleCategory.IsTransient())
             {

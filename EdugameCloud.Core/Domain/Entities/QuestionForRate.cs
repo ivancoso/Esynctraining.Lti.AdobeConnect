@@ -28,6 +28,11 @@
         /// </summary>
         public virtual bool? AllowOther { get; set; }
 
+        /// <summary>
+        /// Gets or sets the is always rate dropdown.
+        /// </summary>
+        public virtual bool? IsAlwaysRateDropdown { get; set; }
+
         #endregion
     }
 }

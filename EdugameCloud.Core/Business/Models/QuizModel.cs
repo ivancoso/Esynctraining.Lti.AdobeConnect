@@ -201,13 +201,13 @@
         /// <param name="lmsQuizId">
         /// The lms quiz id.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms provider id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{Quiz}"/>.
         /// </returns>
-        public IFutureValue<Quiz> GetOneByLmsQuizId(int userId, int lmsQuizId, int lmsProviderId)
+        public IFutureValue<Quiz> GetOneByLmsQuizId(int userId, int lmsQuizId, int companyLmsId)
         {
             QueryOver<User, User> companyQuery =
                new DefaultQueryOver<User, int>().GetQueryOver()
@@ -217,14 +217,16 @@
 
             Quiz q = null;
             SubModuleItem smi = null;
+            SubModuleCategory smc = null;
             User u2 = null;
 
             var query =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .WhereRestrictionOn(x => x.LmsQuizId).IsNotNull
                     .And(x => x.LmsQuizId == lmsQuizId)
-                    .And(x => x.LmsProvider.Id == lmsProviderId)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                    .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
+                    .Where(() => smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
                     .Take(1);
@@ -361,13 +363,13 @@
         /// <param name="courseid">
         /// The course id.
         /// </param>
-        /// <param name="lmsProviderId">
-        /// The lms provider id
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid, int lmsProviderId = 1)
+        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid, int companyLmsId)
         {
             QueryOver<User, User> query =
                new DefaultQueryOver<User, int>().GetQueryOver()
@@ -387,7 +389,7 @@
                     .Where(() => smi.IsActive == true && q.LmsQuizId != null)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
-                    .And(() => (smc.LmsProvider == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.LmsProvider != null && smc.LmsProvider.Id == lmsProviderId))
+                    .And(() => (smc.CompanyLms == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId))
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)

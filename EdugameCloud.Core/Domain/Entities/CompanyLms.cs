@@ -159,6 +159,16 @@
         public virtual string Title { get; set; }
 
         /// <summary>
+        /// Gets or sets the use user folder.
+        /// </summary>
+        public virtual bool? UseUserFolder { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user folder name.
+        /// </summary>
+        public virtual string UserFolderName { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

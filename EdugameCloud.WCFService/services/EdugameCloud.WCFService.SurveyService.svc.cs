@@ -241,7 +241,7 @@ namespace EdugameCloud.WCFService
         {
             var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
 
-            return new ServiceResponse<SurveyFromStoredProcedureDTO> { objects = this.SurveyModel.GetLmsSurveys(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.LmsProvider.Id).ToList() };
+            return new ServiceResponse<SurveyFromStoredProcedureDTO> { objects = this.SurveyModel.GetLmsSurveys(userId, lmsUserParameters.Course, lmsUserParameters.CompanyLms.Id).ToList() };
         }
 
         /// <summary>

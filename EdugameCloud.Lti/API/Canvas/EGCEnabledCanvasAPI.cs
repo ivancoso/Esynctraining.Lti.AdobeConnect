@@ -246,10 +246,13 @@
         /// <param name="json">
         /// The JSON.
         /// </param>
+        /// <param name="isSurvey">
+        /// The is Survey.
+        /// </param>
         /// <exception cref="NotImplementedException">
         /// Not yet implemented
         /// </exception>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json)
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey)
         {
             throw new NotImplementedException();
         }
