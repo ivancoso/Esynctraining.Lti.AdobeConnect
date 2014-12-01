@@ -715,10 +715,15 @@
 
             var updateItem = new MeetingUpdateItem { ScoId = meeting.ScoId };
 
+            var email = param.lis_person_contact_email_primary;
+            var login = param.lms_user_login;
+            var registeredUser = this.GetACUser(provider, login, email);
+            var meetingFolder = this.GetMeetingFolder(credentials, provider, registeredUser);
+
             this.SetMeetingUpateItemFields(
                 meetingDTO, 
                 updateItem, 
-                credentials.ACScoId, 
+                meetingFolder, 
                 param.context_label ?? "nolabel", 
                 param.course_id,
                 meeting.ScoId == null);
@@ -768,7 +773,7 @@
 
             return updatedMeeting;
         }
-
+        
         /// <summary>
         /// The setup folders.
         /// </summary>
@@ -780,67 +785,45 @@
         /// </param>
         public void SetupFolders(CompanyLms credentials, AdobeConnectProvider provider)
         {
-            string ltiProvider = credentials.LmsProvider.ShortName;
-            string templatesSco = null;
-            if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
-            {
-                ScoInfoResult templatesFolder = provider.GetScoInfo(credentials.ACTemplateScoId);
-                if (templatesFolder.Success && templatesFolder.ScoInfo != null)
-                {
-                    templatesSco = templatesFolder.ScoInfo.ScoId;
-                }
-            }
-
-            if (templatesSco == null)
-            {
-                ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
-                if (sharedTemplates.ScoId != null)
-                {
-                    credentials.ACTemplateScoId = sharedTemplates.ScoId;
-                }
-            }
-
-            string canvasSco = null;
-            if (!string.IsNullOrWhiteSpace(credentials.ACScoId))
-            {
-                ScoInfoResult canvasFolder = provider.GetScoInfo(credentials.ACScoId);
-                if (canvasFolder.Success && canvasFolder.ScoInfo != null)
-                {
-                    canvasSco = canvasFolder.ScoInfo.ScoId;
-                }
-            }
-
-            if (canvasSco == null)
-            {
-                ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
-                if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
-                {
-                    string name = string.Format("{0} courses", ltiProvider);
-                    ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name == name && v.IsFolder);
-                    if (existingFolder != null)
-                    {
-                        credentials.ACScoId = existingFolder.ScoId;
-                    }
-                    else
-                    {
-                        ScoInfoResult newFolder =
-                            provider.CreateSco(
-                                new FolderUpdateItem
-                                    {
-                                        Name = name, 
-                                        FolderId = sharedMeetings.ScoId, 
-                                        Type = ScoType.folder
-                                    });
-                        if (newFolder.Success && newFolder.ScoInfo != null)
-                        {
-                            credentials.ACScoId = newFolder.ScoInfo.ScoId;
-                        }
-                    }
-                }
-            }
-
+            this.SetupTemplateFolder(credentials, provider);
+            
             this.СompanyLmsModel.RegisterSave(credentials);
-            this.СompanyLmsModel.Flush();
+            this.СompanyLmsModel.Flush();   
+        }
+
+        /// <summary>
+        /// The get meeting folder.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string GetMeetingFolder(CompanyLms credentials, AdobeConnectProvider provider, Principal user)
+        {
+            string acScoId = null;
+
+            if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
+            {
+                acScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
+            }
+
+            if (acScoId == null)
+            {
+                this.SetupSharedMeetingsFolder(credentials, provider);
+                this.СompanyLmsModel.RegisterSave(credentials);
+                this.СompanyLmsModel.Flush();
+                acScoId = credentials.ACScoId;
+            }
+
+            return acScoId;
         }
 
         /// <summary>
@@ -1025,7 +1008,7 @@
             string lmsUserId,
             string adobeConnectUserId)
         {
-            LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneForLogin(adobeConnectUserId, lmsCompany.AcServer, lmsCourseId).Value;
+            LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(adobeConnectUserId, lmsCourseId, lmsCompany.Id).Value;
             if (lmsUserParameters == null)
             {
                 lmsUserParameters = new LmsUserParameters
@@ -2246,6 +2229,147 @@
                         dateBegin.AddMinutes((int)duration.TotalMinutes).ToString("yyyy-MM-ddTHH:mm:ssZ");
                 }
             }
+        }
+
+        /// <summary>
+        /// The setup template folder.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        private void SetupTemplateFolder(CompanyLms credentials, AdobeConnectProvider provider)
+        {
+            string templatesSco = null;
+            if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
+            {
+                ScoInfoResult templatesFolder = provider.GetScoInfo(credentials.ACTemplateScoId);
+                if (templatesFolder.Success && templatesFolder.ScoInfo != null)
+                {
+                    templatesSco = templatesFolder.ScoInfo.ScoId;
+                }
+            }
+
+            if (templatesSco == null)
+            {
+                ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
+                if (sharedTemplates.ScoId != null)
+                {
+                    credentials.ACTemplateScoId = sharedTemplates.ScoId;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The setup shared meetings folder.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        private void SetupSharedMeetingsFolder(CompanyLms credentials, AdobeConnectProvider provider)
+        {
+            string ltiFolderSco = null;
+            string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
+
+            if (!string.IsNullOrWhiteSpace(credentials.ACScoId))
+            {
+                ScoInfoResult canvasFolder = provider.GetScoInfo(credentials.ACScoId);
+                if (canvasFolder.Success && canvasFolder.ScoInfo != null && canvasFolder.ScoInfo.Name.Equals(name))
+                {
+                    ltiFolderSco = canvasFolder.ScoInfo.ScoId;
+                }
+            }
+
+            if (ltiFolderSco == null)
+            {
+                ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
+                if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
+                {
+                    ScoContent existingFolder =
+                        sharedMeetings.Values.FirstOrDefault(v => v.Name.Equals(name) && v.IsFolder);
+                    if (existingFolder != null)
+                    {
+                        credentials.ACScoId = existingFolder.ScoId;
+                    }
+                    else
+                    {
+                        ScoInfoResult newFolder =
+                            provider.CreateSco(
+                                new FolderUpdateItem
+                                {
+                                    Name = name,
+                                    FolderId = sharedMeetings.ScoId,
+                                    Type = ScoType.folder
+                                });
+                        if (newFolder.Success && newFolder.ScoInfo != null)
+                        {
+                            credentials.ACScoId = newFolder.ScoInfo.ScoId;
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The setup user meetings folder.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="user">
+        /// The user.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string SetupUserMeetingsFolder(CompanyLms credentials, AdobeConnectProvider provider, Principal user)
+        {
+            string ltiFolderSco = null;
+
+            ScoContentCollectionResult userMeetings = provider.GetContentsByType("user-meetings");
+            if (userMeetings.ScoId != null && userMeetings.Values != null)
+            {
+                ScoContent userFolder = userMeetings.Values.FirstOrDefault(v => (v.Name.Equals(user.Login) || v.Name.Equals(user.Email)) && v.IsFolder);
+
+                if (userFolder == null)
+                {
+                    return null;
+                }
+
+                string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
+
+                var existingFolder = provider.GetContentsByScoId(userFolder.ScoId).Values.FirstOrDefault(v => v.Name.Equals(name) && v.IsFolder);
+
+                if (existingFolder != null)
+                {
+                    ltiFolderSco = existingFolder.ScoId;
+                }
+                else
+                {
+                    ScoInfoResult newFolder =
+                        provider.CreateSco(
+                            new FolderUpdateItem
+                            {
+                                Name = name,
+                                FolderId = userFolder.ScoId,
+                                Type = ScoType.folder
+                            });
+                    if (newFolder.Success && newFolder.ScoInfo != null)
+                    {
+                        ltiFolderSco = newFolder.ScoInfo.ScoId;
+                    }
+                }
+            }
+
+            return ltiFolderSco;
         }
 
         #endregion

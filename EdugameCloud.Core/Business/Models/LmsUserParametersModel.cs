@@ -46,38 +46,7 @@
             var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver().Where(x => x.AcId == id && x.CompanyLms == null);
             return this.Repository.FindOne(queryOver);
         }
-
-        /// <summary>
-        /// The get one for login.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <param name="adobeConectDomain">
-        /// The ac domain.
-        /// </param>
-        /// <param name="courseId">
-        /// The course Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{LmsUserParameters}"/>.
-        /// </returns>
-        public IFutureValue<LmsUserParameters> GetOneForLogin(string id, string adobeConectDomain, int courseId)
-        {
-            if (adobeConectDomain.EndsWith("/"))
-            {
-                adobeConectDomain = adobeConectDomain.Remove(adobeConectDomain.Length - 1);
-            }
-            CompanyLms clms = null;
-            var queryOver = new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
-                .Where(x => x.AcId == id && x.Course == courseId)
-                .JoinQueryOver(x => x.CompanyLms, () => clms, JoinType.InnerJoin)
-                .WhereRestrictionOn(x => clms.AcServer).IsInsensitiveLike(adobeConectDomain, MatchMode.Start);
-            return this.Repository.FindOne(queryOver);
-        }
-
-        #endregion
-
+        
         /// <summary>
         /// The get one by AC id course id and LMS user id.
         /// </summary>
@@ -87,18 +56,21 @@
         /// <param name="lmsCourseId">
         /// The LMS course id.
         /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS user id.
+        /// <param name="companyLmsId">
+        /// The company Lms Id.
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{LmsUserParameters}"/>.
         /// </returns>
-        public IFutureValue<LmsUserParameters> GetOneByAcIdCourseIdAndLmsUserId(string adobeConnectUserId, int lmsCourseId, int lmsUserId)
+        public IFutureValue<LmsUserParameters> GetOneByAcIdCourseIdAndCompanyLmsId(string adobeConnectUserId, int lmsCourseId, int companyLmsId)
         {
             var queryOver =
                 new DefaultQueryOver<LmsUserParameters, int>().GetQueryOver()
-                .Where(x => x.AcId == adobeConnectUserId && x.Course == lmsCourseId && x.LmsUser.Id == lmsUserId).Take(1);
+                .Where(x => x.AcId == adobeConnectUserId && x.Course == lmsCourseId && x.CompanyLms.Id == companyLmsId).Take(1);
             return this.Repository.FindOne(queryOver);
         }
+
+        #endregion
+
     }
 }

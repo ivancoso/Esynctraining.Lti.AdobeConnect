@@ -181,7 +181,7 @@ namespace EdugameCloud.WCFService
                 return result;
             }
             
-            var param = this.LmsUserParametersModel.GetOneForLogin(acId, acDomain, courseMeeting.CourseId).Value;
+            var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, companyLms.Id).Value;
             result.@object = param != null ? new LmsUserParametersDTO(param) : null;
             
             return result;
