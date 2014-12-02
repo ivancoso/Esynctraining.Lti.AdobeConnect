@@ -210,6 +210,7 @@ namespace EdugameCloud.WCFService
                             "content/lti-instructions/" +
                             p.ShortName + 
                             ".pdf";
+                        pdto.nameWithoutSpaces = pdto.lmsProviderName.Replace(" ", string.Empty);
                         return pdto;
                     });
 

@@ -42,6 +42,12 @@
         public string lmsProviderName { get; set; }
 
         /// <summary>
+        /// Gets or sets the name without spaces.
+        /// </summary>
+        [DataMember]
+        public string nameWithoutSpaces { get; set; }
+
+        /// <summary>
         /// Gets or sets the short name.
         /// </summary>
         [DataMember]
