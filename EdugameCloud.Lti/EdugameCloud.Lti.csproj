@@ -49,9 +49,9 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.6, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.8\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.9\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.9\lib\net40\Esynctraining.Core.dll</HintPath>
@@ -100,6 +100,7 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
+    <Compile Include="API\BrainHoney\Enrollment.cs" />
     <Compile Include="API\BrainHoney\Course.cs" />
     <Compile Include="API\BrainHoney\CourseSignal.cs" />
     <Compile Include="API\BrainHoney\EnrollmentSignal.cs" />
@@ -107,6 +108,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="API\BrainHoney\DlapExtensions.cs" />
+    <Compile Include="API\BrainHoney\ProcessingSignalType.cs" />
+    <Compile Include="API\BrainHoney\ParsedSignalGroup.cs" />
     <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CanvasAPI.cs" />

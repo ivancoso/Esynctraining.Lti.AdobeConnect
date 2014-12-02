@@ -2,9 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Web;
     using System.Web.Mvc;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
@@ -12,6 +12,7 @@
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.DTO;
 
+    using Esynctraining.AC.Provider;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
@@ -213,47 +214,32 @@
                         }
                         else
                         {
-                            signals = signals.OrderBy(x => x.SignalId).ToList();
-                            foreach (var signal in signals)
+                            var parsedSignals = this.Parse(signals.OrderBy(x => x.SignalId).ToList());
+                            var soleEnrollments = parsedSignals.FirstOrDefault(x => x.ProcessingSignalType == ProcessingSignalType.SoleEnrollment).Return(x => x, new ParsedSignalGroup { SignalsAssociated = new List<Signal>() }).SignalsAssociated;
+                            var userNamesAndEmailsDeleted = new Dictionary<int, List<string>>();
+                            foreach (var signalGroup in parsedSignals)
                             {
-                                if (signal.Type == DlapAPI.SignalTypes.CourseCreated)
+                                switch (signalGroup.ProcessingSignalType)
                                 {
-                                    var courseSignal = (CourseSignal)signal;
-                                    var course = api.GetCourse(
-                                        brainHoneyCompany,
-                                        courseSignal.EntityId,
-                                        out error,
-                                        session);
-                                    if (error != null)
-                                    {
-                                        this.AddToErrors(errors, error, brainHoneyCompany);
-                                    }
-                                    else
-                                    {
-                                        var startDate = DateTime.Parse(course.StartDate);
-                                        this.meetingSetup.SaveMeeting(
-                                            brainHoneyCompany,
-                                            adobeConnectProvider,
-                                            new LtiParamDTO
-                                                {
-                                                    context_id =
-                                                        course.CourseId.ToString(
-                                                            CultureInfo.InvariantCulture),
-                                                    tool_consumer_info_product_family_code = "brainhoney"
-                                                },
-                                            new MeetingDTO
-                                                {
-                                                    start_date = startDate.ToString("MM-dd-yyyy"),
-                                                    start_time = startDate.ToString("hh:mm tt"),
-                                                    duration = "01:00",
-                                                    id = courseSignal.ItemId,
-                                                    name = course.Title,
-                                                    template = templates.First().With(x => x.id)
-                                                },
-                                            session);
-                                    }
+                                    case ProcessingSignalType.CourseToProcess:
+                                        var courseUsers = this.ProcessCourseCreated(signalGroup.RepresentativeSignal, api, brainHoneyCompany, session, errors, adobeConnectProvider, templates);
+                                        this.RemoveCourseEnrollmentsFromSoleEnrollments(soleEnrollments, courseUsers);
+                                        break;
+
+                                    case ProcessingSignalType.ToDelete:
+                                        var courseDeletedUsers = this.ProcessCourseDeleted(signalGroup.RepresentativeSignal, brainHoneyCompany, errors, adobeConnectProvider);
+                                        var key = signalGroup.RepresentativeSignal.EntityId;
+                                        if (!userNamesAndEmailsDeleted.ContainsKey(key))
+                                        {
+                                            userNamesAndEmailsDeleted.Add(key, new List<string>());
+                                        }
+
+                                        userNamesAndEmailsDeleted[key].AddRange(courseDeletedUsers);
+                                        break;
                                 }
                             }
+
+                            this.ProcessSoleEnrollments(brainHoneyCompany, soleEnrollments, userNamesAndEmailsDeleted, errors, api, session, adobeConnectProvider);
 
                             var lastSignal = signals.LastOrDefault();
                             if (lastSignal != null)
@@ -268,6 +254,270 @@
             return errors.ToPlainString();
         }
 
+        /// <summary>
+        /// The process sole enrollments.
+        /// </summary>
+        /// <param name="brainHoneyCompany">
+        /// The brain honey company.
+        /// </param>
+        /// <param name="soleEnrollments">
+        /// The sole enrollments.
+        /// </param>
+        /// <param name="userNamesAndEmailsDeletedWithCourses">
+        /// The user names and emails deleted with courses.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="api">
+        /// The api.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        // ReSharper disable once UnusedParameter.Local
+        private void ProcessSoleEnrollments(CompanyLms brainHoneyCompany, IEnumerable<Signal> soleEnrollments, Dictionary<int, List<string>> userNamesAndEmailsDeletedWithCourses, List<string> errors, DlapAPI api, Session session, AdobeConnectProvider provider)
+        {
+            var grouped = soleEnrollments.OrderBy(x => x.SignalId).GroupBy(x => x.EntityId, x => x).ToDictionary(x => x.Key, x => x);
+            foreach (var entityId in grouped.Keys)
+            {
+                var latestSignal = grouped[entityId].LastOrDefault().With(x => (EnrollmentSignal)x);
+                if (latestSignal != null)
+                {
+                    if (latestSignal.NewStatus != 0)
+                    {
+                        string error;
+                        var enrollment = api.GetEnrollment(brainHoneyCompany, latestSignal.EntityId, out error, session);
+                        if (error != null)
+                        {
+                            this.AddToErrors(errors, error, brainHoneyCompany);
+                        }
+                        else if (enrollment != null)
+                        {
+                            var lmsUser = new LmsUserDTO { login_id = enrollment.UserName, primary_email = enrollment.Email, lms_role = enrollment.Role, id = enrollment.UserId, is_editable = true, };
+                            this.meetingSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
+                            this.meetingSetup.UpdateUser(
+                                brainHoneyCompany,
+                                provider,
+                                new LtiParamDTO { context_id = enrollment.CourseId.ToString(CultureInfo.InvariantCulture) },
+                                lmsUser,
+                                out error,
+                                true);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// The remove course enrollments from sole enrollments.
+        /// </summary>
+        /// <param name="soleEnrollments">
+        /// The sole enrollments.
+        /// </param>
+        /// <param name="courseUsers">
+        /// The course users.
+        /// </param>
+        private void RemoveCourseEnrollmentsFromSoleEnrollments(List<Signal> soleEnrollments, List<LmsUserDTO> courseUsers)
+        {
+            if (courseUsers != null && courseUsers.Any())
+            {
+                var courseIds = courseUsers.Select(x => int.Parse(x.id)).ToList();
+                var toRemove = soleEnrollments.Where(x => courseIds.Contains(x.EntityId)).ToList();
+                foreach (var signal in toRemove)
+                {
+                    soleEnrollments.Remove(signal);
+                }
+            }
+        }
+
+        /// <summary>
+        /// The parse.
+        /// </summary>
+        /// <param name="orderedList">
+        /// The ordered list.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{ParsedSignalGroup}"/>.
+        /// </returns>
+        private List<ParsedSignalGroup> Parse(List<Signal> orderedList)
+        {
+            var result = new List<ParsedSignalGroup>();
+            var enrollments = orderedList.Where(x => x.Type == DlapAPI.SignalTypes.EnrollmentChanged).ToList();
+            var courses = orderedList.Except(enrollments).ToList();
+            var coursesGrouped = courses.GroupBy(x => x.EntityId).ToDictionary(x => x.Key, x => x.ToList());
+            foreach (var key in coursesGrouped.Keys)
+            {
+                var group = coursesGrouped[key];
+                result.Add(
+                    new ParsedSignalGroup
+                        {
+                            ProcessingSignalType = this.GetGroupProcessingSignalType(group),
+                            RepresentativeSignal = group.FirstOrDefault(x => x.EntityId != 0),
+                            SignalsAssociated = group
+                        });
+            }
+
+            if (enrollments.Any())
+            {
+                result.Add(new ParsedSignalGroup
+                               {
+                                   ProcessingSignalType = ProcessingSignalType.SoleEnrollment,
+                                   SignalsAssociated = enrollments
+                               });
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The get group processing signal type.
+        /// </summary>
+        /// <param name="group">
+        /// The group.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ProcessingSignalType"/>.
+        /// </returns>
+        private ProcessingSignalType GetGroupProcessingSignalType(List<Signal> @group)
+        {
+            if (group.Any(x => x.Type == DlapAPI.SignalTypes.CourseDeleted))
+            {
+                return group.Any(x => x.Type == DlapAPI.SignalTypes.CourseCreated)
+                           ? ProcessingSignalType.Skip
+                           : ProcessingSignalType.ToDelete;
+            }
+
+            return ProcessingSignalType.CourseToProcess;
+        }
+
+        /// <summary>
+        /// The process course created.
+        /// </summary>
+        /// <param name="signal">
+        /// The signal.
+        /// </param>
+        /// <param name="api">
+        /// The API.
+        /// </param>
+        /// <param name="brainHoneyCompany">
+        /// The Brain Honey company.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="adobeConnectProvider">
+        /// The adobe connect provider.
+        /// </param>
+        /// <param name="templates">
+        /// The templates.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> ProcessCourseCreated(
+            Signal signal,
+            DlapAPI api,
+            CompanyLms brainHoneyCompany,
+            Session session,
+            List<string> errors,
+            AdobeConnectProvider adobeConnectProvider,
+            IEnumerable<TemplateDTO> templates)
+        {
+            var result = new List<LmsUserDTO>();
+            string error;
+            var courseSignal = (CourseSignal)signal;
+            var course = api.GetCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
+            if (error != null)
+            {
+                this.AddToErrors(errors, error, brainHoneyCompany);
+            }
+            else
+            {
+                var courseEnrolledUsers = api.GetUsersForCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
+                if (error == null && courseEnrolledUsers != null && courseEnrolledUsers.Any())
+                {
+                    result.AddRange(courseEnrolledUsers);
+                }
+
+                var startDate = DateTime.Parse(course.StartDate);
+                this.meetingSetup.SaveMeeting(
+                    brainHoneyCompany,
+                    adobeConnectProvider,
+                    new LtiParamDTO
+                        {
+                            context_id = course.CourseId.ToString(CultureInfo.InvariantCulture),
+                            tool_consumer_info_product_family_code = "brainhoney"
+                        },
+                    new MeetingDTO
+                        {
+                            start_date = startDate.ToString("MM-dd-yyyy"),
+                            start_time = startDate.ToString("hh:mm tt"),
+                            duration = "01:00",
+                            id = courseSignal.ItemId,
+                            name = course.Title,
+                            template = templates.First().With(x => x.id)
+                        },
+                    session);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The process course created.
+        /// </summary>
+        /// <param name="signal">
+        /// The signal.
+        /// </param>
+        /// <param name="brainHoneyCompany">
+        /// The Brain Honey company.
+        /// </param>
+        /// <param name="errors">
+        /// The errors.
+        /// </param>
+        /// <param name="adobeConnectProvider">
+        /// The adobe connect provider.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{String}"/>.
+        /// </returns>
+        private List<string> ProcessCourseDeleted(
+            Signal signal,
+            CompanyLms brainHoneyCompany,
+            List<string> errors,
+            AdobeConnectProvider adobeConnectProvider)
+        {
+            string error;
+            var result = this.meetingSetup.DeleteMeeting(
+                brainHoneyCompany,
+                adobeConnectProvider,
+                new LtiParamDTO { context_id = signal.EntityId.ToString(CultureInfo.InvariantCulture) },
+                out error);
+            if (error != null)
+            {
+                this.AddToErrors(errors, error, brainHoneyCompany);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The update last signal id.
+        /// </summary>
+        /// <param name="brainHoneyCompany">
+        /// The brain honey company.
+        /// </param>
+        /// <param name="signalId">
+        /// The signal id.
+        /// </param>
         private void UpdateLastSignalId(CompanyLms brainHoneyCompany, long signalId)
         {
             brainHoneyCompany.LastSignalId = signalId;

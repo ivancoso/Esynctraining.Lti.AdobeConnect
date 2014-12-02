@@ -129,6 +129,49 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The set LMS user default AC permissions.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="meetingScoId">
+        /// The meeting SCO id.
+        /// </param>
+        /// <param name="u">
+        /// The user.
+        /// </param>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        public void SetLMSUserDefaultACPermissions(
+            AdobeConnectProvider provider,
+            string meetingScoId,
+            LmsUserDTO u,
+            string principalId)
+        {
+            var permission = MeetingPermissionId.view;
+            u.ac_role = "Participant";
+            string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
+            if (role.Contains("teacher") || role.Contains("instructor"))
+            {
+                permission = MeetingPermissionId.host;
+                u.ac_role = "Host";
+            }
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner")
+                || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
+            {
+                u.ac_role = "Presenter";
+                permission = MeetingPermissionId.mini_host;
+            }
+
+            if (!string.IsNullOrWhiteSpace(principalId)
+                && !string.IsNullOrWhiteSpace(meetingScoId))
+            {
+                provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
+            }
+        }
+
+        /// <summary>
         /// The get meeting.
         /// </summary>
         /// <param name="credentials">
@@ -357,7 +400,7 @@
             }
 
             List<PermissionInfo> hosts, participants, presenters;
-            HashSet<string> nonEditable = new HashSet<string>();
+            var nonEditable = new HashSet<string>();
             this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, nonEditable);
 
             foreach (LmsUserDTO lmsuser in users)
@@ -775,6 +818,47 @@
         }
         
         /// <summary>
+        /// The delete meeting.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingDTO"/>.
+        /// </returns>
+        public List<string> DeleteMeeting(
+            CompanyLms credentials,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            out string error)
+        {
+            error = null;
+            var model = this.LmsCourseMeetingModel;
+            LmsCourseMeeting meeting = model.GetOneByCourseId(credentials.Id, param.course_id).Value;
+
+            if (meeting == null)
+            {
+                error = "Meeting not found";
+                return new List<string>();
+            }
+
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.ScoId);
+            provider.DeleteSco(meeting.ScoId);
+            model.RegisterDelete(meeting, true);
+            
+            return enrollments.Select(x => x.Login).ToList();
+        }
+
+        /// <summary>
         /// The setup folders.
         /// </summary>
         /// <param name="credentials">
@@ -854,13 +938,11 @@
                 return users;
             }
 
-            List<PermissionInfo> hosts, participants, presenters;
-            HashSet<string> nonEditable = new HashSet<string>();
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, nonEditable);
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.ScoId);
 
             foreach (var user in users)
             {
-                if (!this.IsUserSynched(hosts, presenters, participants, user))
+                if (!this.IsUserSynched(enrollments, user))
                 {
                     if (user.ac_id == null || user.ac_id == "0")
                     {
@@ -897,6 +979,9 @@
         /// <param name="error">
         /// The error.
         /// </param>
+        /// <param name="skipReturningUsers">
+        /// The skip Returning Users.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
@@ -905,12 +990,14 @@
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
-            out string error)
+            out string error,
+            bool skipReturningUsers = false)
         {
+            error = null;
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
-                return this.GetUsers(credentials, provider, param, out error);
+                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
             }
 
             if (user.ac_id == null || user.ac_id == "0")
@@ -923,7 +1010,7 @@
             if (user.ac_role == null)
             {
                 provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, MeetingPermissionId.remove);
-                return this.GetUsers(credentials, provider, param, out error);
+                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
             }
 
             var permission = MeetingPermissionId.view;
@@ -938,7 +1025,7 @@
 
             provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, permission);
 
-            return this.GetUsers(credentials, provider, param, out error);
+            return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
         }
 
         /// <summary>
@@ -1159,18 +1246,14 @@
 
             if (registeredUser != null)
             {
-                List<PermissionInfo> hosts, presenters, participants;
-                HashSet<string> nonEditable = new HashSet<string>();
-                this.GetMeetingAttendees(provider, meetingSco, out hosts, out presenters, out participants, nonEditable);
+                var enrollments = this.GetMeetingAttendees(provider, meetingSco);
 
-                if (hosts.Any(h => h.PrincipalId == registeredUser.PrincipalId)
-                    || presenters.Any(p => p.PrincipalId == registeredUser.PrincipalId)
-                    || participants.Any(p => p.PrincipalId == registeredUser.PrincipalId))
+                if (enrollments.Any(h => h.PrincipalId == registeredUser.PrincipalId))
                 {
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, hosts, presenters, participants, param);
+                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, enrollments, param);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1207,14 +1290,8 @@
         /// <param name="courseId">
         /// The course id.
         /// </param>
-        /// <param name="hosts">
-        /// The hosts.
-        /// </param>
-        /// <param name="presenters">
-        /// The presenters.
-        /// </param>
-        /// <param name="participants">
-        /// The participants.
+        /// <param name="enrollments">
+        /// The enrollments.
         /// </param>
         /// <param name="param">
         /// The parameter.
@@ -1226,27 +1303,20 @@
             CompanyLms credentials,
             string lmsUserId,
             int courseId,
-            List<PermissionInfo> hosts,
-            List<PermissionInfo> presenters,
-            List<PermissionInfo> participants,
+            List<PermissionInfo> enrollments,
             LtiParamDTO param)
         {
             string error;
             var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId, out error, param);
             foreach (var lmsUser in lmsUsers)
             {
-                if (!this.IsUserSynched(hosts, presenters, participants, lmsUser))
+                if (!this.IsUserSynched(enrollments, lmsUser))
                 {
                     return false;
                 }
             }
 
-            var permissionInfos = new List<PermissionInfo>();
-            permissionInfos.AddRange(hosts);
-            permissionInfos.AddRange(presenters);
-            permissionInfos.AddRange(participants);
-
-            foreach (var participant in permissionInfos)
+            foreach (var participant in enrollments)
             {
                 if (!this.IsParticipantSynched(lmsUsers, participant))
                 {
@@ -1286,14 +1356,8 @@
         /// <summary>
         /// The is user synched.
         /// </summary>
-        /// <param name="hosts">
-        /// The hosts.
-        /// </param>
-        /// <param name="presenters">
-        /// The presenters.
-        /// </param>
-        /// <param name="participants">
-        /// The participants.
+        /// <param name="enrollments">
+        /// The enrollments.
         /// </param>
         /// <param name="lmsUser">
         /// The LMS user.
@@ -1301,37 +1365,15 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool IsUserSynched(List<PermissionInfo> hosts, List<PermissionInfo> presenters, List<PermissionInfo> participants, LmsUserDTO lmsUser)
+        private bool IsUserSynched(IEnumerable<PermissionInfo> enrollments, LmsUserDTO lmsUser)
         {
             bool isFound = false;
-            foreach (var host in hosts)
+            foreach (var host in enrollments)
             {
                 if (this.LmsUserIsAcUser(lmsUser, host))
                 {
                     lmsUser.ac_id = host.PrincipalId;
-                    lmsUser.ac_role = "Host";
-                    isFound = true;
-                    break;
-                }
-            }
-
-            foreach (var presenter in presenters)
-            {
-                if (this.LmsUserIsAcUser(lmsUser, presenter))
-                {
-                    lmsUser.ac_id = presenter.PrincipalId;
-                    lmsUser.ac_role = "Presenter";
-                    isFound = true;
-                    break;
-                }
-            }
-
-            foreach (var participant in participants)
-            {
-                if (this.LmsUserIsAcUser(lmsUser, participant))
-                {
-                    lmsUser.ac_id = participant.PrincipalId;
-                    lmsUser.ac_role = "Participant";
+                    lmsUser.ac_role = this.GetRoleString(host.PermissionId);
                     isFound = true;
                     break;
                 }
@@ -1343,6 +1385,30 @@
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// The get role string.
+        /// </summary>
+        /// <param name="permissionId">
+        /// The permission id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string GetRoleString(PermissionId permissionId)
+        {
+            switch (permissionId)
+            {
+                case PermissionId.host:
+                    return "Host";
+                case PermissionId.mini_host:
+                    return "Presenter";
+                case PermissionId.view:
+                    return "Participant";
+            }
+
+            return "Unknown";
         }
 
         /// <summary>
@@ -1664,7 +1730,7 @@
             out List<PermissionInfo> hosts, 
             out List<PermissionInfo> presenters, 
             out List<PermissionInfo> participants,
-            HashSet<string> nonEditable)
+            HashSet<string> nonEditable = null)
         {
             var alreadyAdded = new HashSet<string>();
             var hostsResult = provider.GetMeetingHosts(meetingSco);
@@ -1694,9 +1760,44 @@
                 }
             }
 
+            nonEditable = nonEditable ?? new HashSet<string>();
+
             hosts = this.ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
             presenters = this.ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
             participants = this.ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
+        }
+
+        /// <summary>
+        /// The get meeting attendees.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="meetingSco">
+        /// The meeting SCO.
+        /// </param>
+        /// <param name="nonEditable">
+        /// The non editable.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{PermissionInfo}"/>.
+        /// </returns>
+        private List<PermissionInfo> GetMeetingAttendees(
+            AdobeConnectProvider provider,
+            string meetingSco,
+            HashSet<string> nonEditable = null)
+        {
+            var alreadyAdded = new HashSet<string>();
+            var allMeetingEnrollments = provider.GetAllMeetingEnrollments(meetingSco);
+            if (allMeetingEnrollments.Values != null)
+            {
+                foreach (var g in allMeetingEnrollments.Values)
+                {
+                    alreadyAdded.Add(g.PrincipalId);
+                }
+            }
+
+            return this.ProcessACMeetingAttendees(nonEditable ?? new HashSet<string>(), provider, allMeetingEnrollments, alreadyAdded);
         }
 
         /// <summary>
@@ -1724,7 +1825,7 @@
             HashSet<string> alreadyAdded)
         {
             var values = result.Values.Return(x => x.ToList(), new List<PermissionInfo>());
-            var groupValues = this.GetGroupPrincipals(provider, values.Select(v => v.PrincipalId));
+            var groupValues = this.GetGroupPrincipals(provider, values.Where(x => x.HasChildren).Select(v => v.PrincipalId));
             foreach (var g in groupValues)
             {
                 if (alreadyAdded.Contains(g.PrincipalId))
@@ -2122,48 +2223,6 @@
                 {
                     this.SetLMSUserDefaultACPermissions(provider, meetingScoId, u, principal.PrincipalId);
                 }
-            }
-        }
-
-        /// <summary>
-        /// The set LMS user default AC permissions.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting SCO id.
-        /// </param>
-        /// <param name="u">
-        /// The user.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        private void SetLMSUserDefaultACPermissions(
-            AdobeConnectProvider provider,
-            string meetingScoId,
-            LmsUserDTO u,
-            string principalId)
-        {
-            var permission = MeetingPermissionId.view;
-            u.ac_role = "Participant";
-            string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-            if (role.Contains("teacher") || role.Contains("instructor"))
-            {
-                permission = MeetingPermissionId.host;
-                u.ac_role = "Host";
-            }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner")
-                || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
-            {
-                u.ac_role = "Presenter";
-                permission = MeetingPermissionId.mini_host;
-            }
-
-            if (!string.IsNullOrWhiteSpace(principalId))
-            {
-                provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
             }
         }
 

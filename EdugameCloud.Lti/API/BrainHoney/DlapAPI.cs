@@ -339,6 +339,75 @@
         }
 
         /// <summary>
+        /// The get enrollment.
+        /// </summary>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <param name="enrollmentId">
+        /// The enrollment Id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Enrollment"/>.
+        /// </returns>
+        public Enrollment GetEnrollment(
+            CompanyLms company,
+            long enrollmentId,
+            out string error,
+            Session session = null)
+        {
+            XElement enrollmentResult = this.LoginIfNecessary(
+                session,
+                s =>
+                s.Get(Commands.Enrollments.GetOne, string.Format(Parameters.Enrollments.GetOne, enrollmentId).ToParams()),
+                company,
+                out error);
+            if (enrollmentResult == null)
+            {
+                error = error ?? "DLAP. Unable to retrive enrollment from API";
+                return null;
+            }
+
+            if (!Session.IsSuccess(enrollmentResult))
+            {
+                error = "DLAP. Unable to get course: " + Session.GetMessage(enrollmentResult);
+                this.logger.Error(error);
+            }
+
+            if (session != null)
+            {
+                var enrollment = enrollmentResult.XPathSelectElement("/enrollment");
+                if (enrollment != null)
+                {
+                    var userId = enrollment.XPathEvaluate("string(@userid)").ToString();
+                    var courseId = int.Parse(enrollment.XPathEvaluate("string(@courseid)").ToString());
+                    var role = enrollment.XPathEvaluate("string(@privileges)").ToString();
+                    var user = enrollment.XPathSelectElement("/user");
+                    var email = user.XPathEvaluate("string(@email)").ToString();
+                    var userName = user.XPathEvaluate("string(@username)").ToString();
+                    return new Enrollment
+                    {
+                        CourseId = courseId,
+                        UserId = userId,
+                        Role = this.ProcessRole(role),
+                        Email = email,
+                        UserName = userName,
+                    };
+                }
+
+                error = "Enrollment not found";
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// The get last signal id.
         /// </summary>
         /// <param name="company">
@@ -404,7 +473,7 @@
             CompanyLms company,
             out string error,
             Session session = null,
-            string types = "1.2|4.1|4.2|4.8")
+            string types = "1.2|4.3|4.8")
         {
             var result = new List<Signal>();
             XElement signalsResult = this.LoginIfNecessary(
@@ -1036,6 +1105,11 @@
                 /// </summary>
                 public const string List = "listenrollments";
 
+                /// <summary>
+                /// The get one.
+                /// </summary>
+                public const string GetOne = "getenrollment3";
+
                 #endregion
             }
 
@@ -1121,6 +1195,11 @@
                 /// The list.
                 /// </summary>
                 public const string List = "domainid={0}&limit=0&coursequery=%2Fid%3D{1}&select=user";
+
+                /// <summary>
+                /// The get one.
+                /// </summary>
+                public const string GetOne = "enrollmentid={0}&select=user";
 
                 #endregion
             }

@@ -1,9 +1,11 @@
 ﻿namespace EdugameCloud.Lti.API.BrainHoney
 {
+    using System;
+
     /// <summary>
     ///     The brain honey signal.
     /// </summary>
-    public class Signal
+    public class Signal : IEquatable<Signal>
     {
         #region Constructors and Destructors
 
@@ -46,5 +48,19 @@
         public string Type { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// The equals.
+        /// </summary>
+        /// <param name="other">
+        /// The other.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool Equals(Signal other)
+        {
+            return this.SignalId == other.SignalId;
+        }
     }
 }
