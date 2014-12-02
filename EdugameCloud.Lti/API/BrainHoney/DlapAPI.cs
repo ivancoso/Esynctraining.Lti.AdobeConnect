@@ -388,7 +388,7 @@
                     var userId = enrollment.XPathEvaluate("string(@userid)").ToString();
                     var courseId = int.Parse(enrollment.XPathEvaluate("string(@courseid)").ToString());
                     var role = enrollment.XPathEvaluate("string(@privileges)").ToString();
-                    var user = enrollment.XPathSelectElement("/user");
+                    var user = enrollment.XPathSelectElement("user");
                     var email = user.XPathEvaluate("string(@email)").ToString();
                     var userName = user.XPathEvaluate("string(@username)").ToString();
                     return new Enrollment
@@ -509,10 +509,6 @@
                     {
                         case SignalTypes.EnrollmentChanged:
                             this.ProcessEnrollment(signalId, entityid, type, data, signal, result);
-                            break;
-                        case SignalTypes.CourseChanged:
-                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
-
                             break;
                         case SignalTypes.CourseDeleted:
                             this.ProcessCourseSignal(data, result, signalId, entityid, type);
@@ -1073,14 +1069,9 @@
             public const string EnrollmentChanged = "1.2";
 
             /// <summary>
-            /// The course changed.
-            /// </summary>
-            public const string CourseChanged = "4.1";
-
-            /// <summary>
             /// The course deleted.
             /// </summary>
-            public const string CourseDeleted = "4.2";
+            public const string CourseDeleted = "4.3";
 
             /// <summary>
             /// The course created.
