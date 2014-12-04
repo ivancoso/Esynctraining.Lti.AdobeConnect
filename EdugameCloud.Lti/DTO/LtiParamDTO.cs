@@ -256,7 +256,7 @@
             int result = 0;
             try
             {
-                url = HttpUtility.UrlDecode(url).With(x => string.Empty);
+                url = HttpUtility.UrlDecode(url).Return(x => x, string.Empty);
                 const string CourseIdQuery = "course_id";
                 int index = url.IndexOf("?", StringComparison.Ordinal);
                 if (index > 0)
