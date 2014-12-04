@@ -683,7 +683,7 @@
                     model.oauth_consumer_key).Value;
             if (credentials != null)
             {
-                if (credentials.LmsDomain != null && !string.Equals(credentials.LmsDomain.TrimEnd("/".ToCharArray()), model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(credentials.LmsDomain) && !string.Equals(credentials.LmsDomain.TrimEnd("/".ToCharArray()), model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.ViewBag.Error = "This LTI integration is already set for different domain";
                     return this.View("Error");
