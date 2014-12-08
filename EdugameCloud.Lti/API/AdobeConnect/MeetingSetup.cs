@@ -549,15 +549,18 @@
         /// <param name="userSettings">
         /// The user settings.
         /// </param>
+        /// <param name="adobeConnectProvider">
+        /// The adobe connect Provider.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings)
+        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, AdobeConnectProvider adobeConnectProvider = null)
         {
             var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
             string breezeToken = string.Empty, meetingUrl = string.Empty;
 
-            AdobeConnectProvider provider = this.GetProvider(credentials);
+            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
 
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
@@ -628,7 +631,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null)
+        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
         {
             var breezeToken = string.Empty;
 
@@ -636,7 +639,7 @@
             if (connectionMode == AcConnectionMode.Overwrite
                 || connectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                AdobeConnectProvider provider = this.GetProvider(credentials);
+                AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
 
                 string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 

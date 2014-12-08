@@ -2,27 +2,22 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.Specialized;
     using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.IO;
-    using System.Net;
     using System.Reflection;
-    using System.Security.Cryptography;
-    using System.Text;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
 
     using DotNetOpenAuth.AspNet;
-    using DotNetOpenAuth.Messaging;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.OAuth;
+    using EdugameCloud.Lti.Utils;
     using EdugameCloud.MVC.HtmlHelpers;
     using EdugameCloud.MVC.Social.OAuth;
     using EdugameCloud.MVC.Social.OAuth.Canvas;
@@ -31,6 +26,8 @@
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Microsoft.Web.WebPages.OAuth;
+
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     The LTI controller.
@@ -48,6 +45,11 @@
         /// The company LMS model.
         /// </summary>
         private readonly CompanyLmsModel companyLmsModel;
+
+        /// <summary>
+        /// The user session model.
+        /// </summary>
+        private readonly LmsUserSessionModel userSessionModel;
 
         /// <summary>
         /// The LMS user model.
@@ -69,6 +71,9 @@
         /// <param name="companyLmsModel">
         /// Company LMS model
         /// </param>
+        /// <param name="userSessionModel">
+        /// The user Session Model.
+        /// </param>
         /// <param name="lmsUserModel">
         /// LMS user model
         /// </param>
@@ -78,10 +83,11 @@
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public LtiController(CompanyLmsModel companyLmsModel, LmsUserModel lmsUserModel, MeetingSetup meetingSetup, ApplicationSettingsProvider settings)
+        public LtiController(CompanyLmsModel companyLmsModel, LmsUserSessionModel userSessionModel, LmsUserModel lmsUserModel, MeetingSetup meetingSetup, ApplicationSettingsProvider settings)
             : base(settings)
         {
             this.companyLmsModel = companyLmsModel;
+            this.userSessionModel = userSessionModel;
             this.lmsUserModel = lmsUserModel;
             this.meetingSetup = meetingSetup;
         }
@@ -185,16 +191,22 @@
                 if (result.IsSuccessful)
                 {
                     LmsUser lmsUser = null;
-                    var company = this.GetCredentials(providerKey);
+                    var session = this.GetSession(providerKey);
+                    var company = session.With(x => x.CompanyLms);
                     if (result.ExtraData.ContainsKey("accesstoken"))
                     {
                         var token = result.ExtraData["accesstoken"];
                         var userId = result.ExtraData["id"];
-                        var param = this.GetParam(providerKey);
+                        var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
                         var userName = this.GetUserNameOrEmail(param);
                         lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = userName };
                         lmsUser.Username = userName;
                         lmsUser.Token = token;
+                        if (lmsUser.IsTransient())
+                        {
+                            this.SaveSessionUser(session, lmsUser);
+                        }
+
                         this.lmsUserModel.RegisterSave(lmsUser);
                     }
 
@@ -244,8 +256,9 @@
         public virtual JsonResult SaveSettings(LmsUserSettingsDTO settings)
         {
             var lmsProviderName = settings.lmsProviderName;
-            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var companyLms = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser == null)
             {
@@ -257,11 +270,11 @@
 
             if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                this.SetACPassword(companyLms, param, settings.password);
+                this.SetACPassword(lmsProviderName, param, settings.password);
             }
             else
             {
-                this.RemoveACPassword(companyLms, param);
+                this.RemoveACPassword(param, session);
             }
 
             this.lmsUserModel.RegisterSave(lmsUser);
@@ -280,8 +293,9 @@
         public virtual JsonResult CheckPasswordBeforeJoin(string lmsProviderName)
         {
             bool isValid = false;
-            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var companyLms = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser != null)
             {
@@ -289,7 +303,7 @@
                 switch (mode)
                 {
                     case AcConnectionMode.DontOverwriteLocalPassword:
-                        isValid = !string.IsNullOrWhiteSpace(this.GetACPassword(companyLms, param));
+                        isValid = !string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword));
                         break;
                     default:
                         isValid = true;
@@ -312,10 +326,11 @@
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
         public virtual JsonResult GetSettings(string lmsProviderName)
         {
-            CompanyLms companyLms = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var companyLms = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             var lmsUser = this.GetUser(companyLms, param);
-            var password = this.GetACPassword(companyLms, param);
+            var password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword);
             return
                 this.Json(
                     new LmsUserSettingsDTO
@@ -341,11 +356,12 @@
         /// </returns>
         public virtual JsonResult DeleteRecording(string lmsProviderName, string id)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             bool res = this.MeetingSetup.RemoveRecording(
                 credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                this.GetAdobeConnectProvider(credentials), 
                 param.course_id, 
                 id);
             return this.Json(new { removed = res });
@@ -377,11 +393,12 @@
         [HttpPost]
         public virtual JsonResult GetMeeting(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             MeetingDTO meeting = this.MeetingSetup.GetMeeting(
-                credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                credentials,
+                this.GetAdobeConnectProvider(credentials), 
                 param);
 
             return this.Json(meeting);
@@ -399,11 +416,12 @@
         [HttpPost]
         public virtual JsonResult GetRecordings(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             List<RecordingDTO> recordings = this.MeetingSetup.GetRecordings(
-                credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                credentials,
+                this.GetAdobeConnectProvider(credentials), 
                 param.course_id);
 
             return this.Json(recordings);
@@ -421,9 +439,10 @@
         [HttpPost]
         public virtual JsonResult GetTemplates(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
             List<TemplateDTO> templates = this.MeetingSetup.GetTemplates(
-                this.MeetingSetup.GetProvider(credentials), 
+                this.GetAdobeConnectProvider(credentials), 
                 credentials.ACTemplateScoId);
 
             return this.Json(templates);
@@ -441,12 +460,13 @@
         [HttpPost]
         public virtual ActionResult GetUsers(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             string error;
             List<LmsUserDTO> users = this.MeetingSetup.GetUsers(
-                credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                credentials,
+                this.GetAdobeConnectProvider(credentials), 
                 param, 
                 out error);
             if (string.IsNullOrWhiteSpace(error))
@@ -474,11 +494,12 @@
         /// </returns>
         public virtual JsonResult GetAttendanceReport(string lmsProviderName, int startIndex = 0, int limit = 0)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             var report = this.MeetingSetup.GetAttendanceReport(
                 credentials,
-                this.MeetingSetup.GetProvider(credentials),
+                this.GetAdobeConnectProvider(credentials),
                 param, 
                 startIndex, 
                 limit);
@@ -503,11 +524,12 @@
         /// </returns>
         public virtual JsonResult GetSessionsReport(string lmsProviderName, int startIndex = 0, int limit = 0)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             var report = this.MeetingSetup.GetSessionsReport(
                 credentials,
-                this.MeetingSetup.GetProvider(credentials),
+                this.GetAdobeConnectProvider(credentials),
                 param,
                 startIndex,
                 limit);
@@ -542,10 +564,11 @@
         /// </returns>
         public virtual ActionResult JoinMeeting(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
-            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
-            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
+            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, this.GetAdobeConnectProvider(credentials));
 
             return this.Redirect(url);
         }
@@ -564,9 +587,10 @@
         /// </returns>
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
-            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl);
 
             if (url == null)
@@ -597,10 +621,9 @@
         /// </returns>
         public virtual string ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            // ReSharper disable once UnusedVariable
-            LtiParamDTO param = this.GetParam(lmsProviderName);
-            var link = this.MeetingSetup.UpdateRecording(credentials, this.GetProvider(lmsProviderName), recordingId, isPublic, password);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var link = this.MeetingSetup.UpdateRecording(credentials, this.GetAdobeConnectProvider(credentials), recordingId, isPublic, password);
             
             return link;
         }
@@ -619,9 +642,10 @@
         /// </returns>
         public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
-            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "edit");
 
             if (url == null)
@@ -646,9 +670,10 @@
         /// </returns>
         public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
-            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "offline");
 
             if (url == null)
@@ -675,12 +700,9 @@
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
         {
-            string lmsKey = model.oauth_consumer_key;
-            string lmsProvider = this.GetProviderName(provider, model);
+            string lmsProvider = model.GetLtiProviderName(provider);
 
-            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(
-                    lmsProvider,
-                    model.oauth_consumer_key).Value;
+            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(lmsProvider, model.oauth_consumer_key).Value;
             if (credentials != null)
             {
                 if (!string.IsNullOrWhiteSpace(credentials.LmsDomain) && !string.Equals(credentials.LmsDomain.TrimEnd("/".ToCharArray()), model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
@@ -688,38 +710,21 @@
                     this.ViewBag.Error = "This LTI integration is already set for different domain";
                     return this.View("Error");
                 }
-
-                this.SetParam(lmsKey, model);
-                this.SetCredentials(lmsKey, credentials);
-
-                this.MeetingSetup.SetupFolders(this.GetCredentials(lmsKey), this.GetProvider(lmsKey));
             }
-            else if (!this.IsDebug)
+            else 
             {
                 this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up. Please go to <a href=\"{0}\">{0}</a> to set it.", this.Settings.EGCUrl);
                 return this.View("Error");
             }
-            else
-            {
-                credentials = this.GetCredentials(lmsKey);
-                this.SetDebugModelValues(model, lmsProvider);
-            }
-            
-            /*
-            if (credentials.AdminUser == null && !this.IsAdminRole(providerName))
-            {
-                this.ViewBag.Error = "We don't have admin user for these settings. Please do OAuth.";
-                return this.View("Error");
-            }
-            */
-
-            this.AddSessionCookie(this.Session.SessionID);
 
             var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(model.lms_user_id, model.lms_user_login, model.lis_person_contact_email_primary, credentials.Id);
+            var session = this.SaveSession(credentials, model, lmsUser);
+            var key = session.Id.ToString();
+            var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+            this.MeetingSetup.SetupFolders(credentials, adobeConnectProvider);
+            this.SetAdobeConnectProvider(credentials.Id, adobeConnectProvider);
             
-            if (BltiProviderHelper.VerifyBltiRequest(
-                credentials,
-                () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
+            if (BltiProviderHelper.VerifyBltiRequest(credentials, () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
             {
                 switch (lmsProvider.ToLower())
                 {
@@ -727,11 +732,11 @@
 
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(provider, lmsKey, model);
+                            this.StartOAuth2Authentication(provider, key, model);
                             return null;
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, lmsKey);
+                        return this.RedirectToExtJs(credentials, lmsUser, key);
 
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
@@ -743,7 +748,7 @@
                             this.lmsUserModel.RegisterSave(lmsUser);
                         }
 
-                        return this.RedirectToExtJs(credentials, lmsUser, lmsKey);
+                        return this.RedirectToExtJs(credentials, lmsUser, key);
                 }
             }
 
@@ -781,11 +786,12 @@
         [HttpPost]
         public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTO meeting)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             MeetingDTO ret = this.MeetingSetup.SaveMeeting(
-                credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                credentials,
+                this.GetAdobeConnectProvider(credentials), 
                 param, 
                 meeting);
 
@@ -807,12 +813,13 @@
         [HttpPost]
         public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             string error;
             List<LmsUserDTO> users = this.MeetingSetup.UpdateUser(
-                credentials, 
-                this.MeetingSetup.GetProvider(credentials), 
+                credentials,
+                this.GetAdobeConnectProvider(credentials), 
                 param, 
                 user,
                 out error);
@@ -837,11 +844,12 @@
         [HttpPost]
         public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName)
         {
-            CompanyLms credentials = this.GetCredentials(lmsProviderName);
-            LtiParamDTO param = this.GetParam(lmsProviderName);
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
             List<LmsUserDTO> updatedUser = this.MeetingSetup.SetDefaultRolesForNonParticipants(
                 credentials,
-                this.MeetingSetup.GetProvider(credentials),
+                this.GetAdobeConnectProvider(credentials),
                 param);
 
             return this.Json(updatedUser);
@@ -863,35 +871,6 @@
         private string GetUserNameOrEmail(LtiParamDTO param)
         {
             return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
-        }
-
-        /// <summary>
-        /// The get provider name.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetProviderName(string provider, LtiParamDTO model)
-        {
-            var providerName = string.IsNullOrWhiteSpace(model.tool_consumer_info_product_family_code)
-                       ? provider
-                       : model.tool_consumer_info_product_family_code.ToLower();
-            if (provider.Equals(LmsProviderNames.Blackboard, StringComparison.OrdinalIgnoreCase))
-            {
-                const string PatternToRemove = " learn";
-                if (providerName.EndsWith(PatternToRemove, StringComparison.OrdinalIgnoreCase))
-                {
-                    providerName = providerName.Replace(PatternToRemove, string.Empty);
-                }
-            }
-
-            return providerName;
         }
 
         /// <summary>
@@ -932,10 +911,13 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="session">
+        /// The session.
+        /// </param>
         /// <returns>
         /// The <see cref="LmsUserSettingsDTO"/>.
         /// </returns>
-        private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, CompanyLms companyLms, LtiParamDTO param)
+        private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, CompanyLms companyLms, LtiParamDTO param, LmsUserSession session)
         {
             var lmsUser = this.GetUser(companyLms, param);
             return new LmsUserSettingsDTO
@@ -943,32 +925,8 @@
                 acConnectionMode = lmsUser.Item1,
                 primaryColor = lmsUser.Item2,
                 lmsProviderName = lmsProviderName,
-                password = this.GetACPassword(companyLms, param)
+                password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword)
             };
-        }
-
-        /// <summary>
-        /// The set debug model values.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="providerName">
-        /// The provider name.
-        /// </param>
-        private void SetDebugModelValues(LtiParamDTO model, string providerName)
-        {
-            switch (providerName.ToLower())
-            {
-                case LmsProviderNames.Canvas:
-                    model.custom_canvas_api_domain = "canvas.instructure.com";
-                    model.lis_person_contact_email_primary = "mike@esynctraining.com";
-                    break;
-                case LmsProviderNames.BrainHoney:
-                    model.tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com";
-                    model.lis_person_contact_email_primary = "mike@esynctraining.com";
-                    break;
-            }
         }
 
         /// <summary>
@@ -1041,60 +999,6 @@
         }
 
         /// <summary>
-        /// The add session cookie.
-        /// </summary>
-        /// <param name="newId">
-        /// The new id.
-        /// </param>
-        private void AddSessionCookie(string newId)
-        {
-            this.Response.Cookies.Remove(this.Settings.SessionCookieName);
-            var sessionCookie = new HttpCookie(this.Settings.SessionCookieName, newId);
-
-            sessionCookie.Expires = DateTime.Now.AddMinutes(Session.Timeout);
-
-            this.Response.Cookies.Add(sessionCookie);
-        }
-
-        /// <summary>
-        /// Gets the credentials.
-        /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLms"/>.
-        /// </returns>
-        private CompanyLms GetCredentials(string providerName)
-        {
-            var creds = this.Session[string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, providerName)] as CompanyLms;
-
-            if (creds == null && this.IsDebug)
-            {
-                switch (providerName.ToLower())
-                {
-                    case LmsProviderNames.Canvas:
-                        creds = this.CompanyLmsModel.GetOneByDomain("canvas.instructure.com").Value;
-                        break;
-                    case LmsProviderNames.BrainHoney:
-                        creds = this.CompanyLmsModel.GetOneByDomain("pacybersandbox-connect.brainhoney.com").Value;
-                        break;
-                    case LmsProviderNames.Blackboard:
-                        creds = this.CompanyLmsModel.GetOneByDomain("blackboard.advantageconnectpro.com").Value;
-                        break;
-                }
-            }
-
-            if (creds == null)
-            {
-                this.RedirectToError("Session timed out. Please refresh the page.");
-                return null;
-            }
-
-            return creds;
-        }
-
-        /// <summary>
         /// The is admin role.
         /// </summary>
         /// <param name="providerName">
@@ -1105,7 +1009,8 @@
         /// </returns>
         private bool IsAdminRole(string providerName)
         {
-            var param = this.GetParam(providerName);
+            var session = this.GetSession(providerName);
+            var param = session.LtiSession.With(x => x.LtiParam);
 
             if (param == null)
             {
@@ -1116,231 +1021,79 @@
         }
 
         /// <summary>
-        /// Gets the parameter.
+        /// Gets the credentials.
         /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
+        /// <param name="key">
+        /// The key.
         /// </param>
         /// <returns>
-        /// The <see cref="LtiParamDTO"/>.
+        /// The <see cref="CompanyLms"/>.
         /// </returns>
-        private LtiParamDTO GetParam(string providerName)
+        private LmsUserSession GetSession(string key)
         {
-            var model = this.Session[string.Format(LtiSessionKeys.ParamSessionKeyPattern, providerName)] as LtiParamDTO;
+            Guid uid;
+            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetOneById(uid).Value : null;
 
-            if (model == null && this.IsDebug)
+            if (session == null)
             {
-                switch (providerName.ToLower())
-                {
-                    case LmsProviderNames.Canvas:
-                        model = new LtiParamDTO
-                                    {
-                                        custom_canvas_course_id = 865831, 
-                                        lis_person_contact_email_primary = "mike@esynctraining.com", 
-                                        roles = "Administrator", 
-                                        custom_canvas_user_id = "3969969", 
-                                        tool_consumer_info_product_family_code = "canvas", 
-                                        custom_canvas_api_domain = "canvas.instructure.com"
-                                    };
-                        break;
-                    case LmsProviderNames.BrainHoney:
-                        model = new LtiParamDTO
-                                    {
-                                        context_id = "24955426",
-                                        user_id = "24955385", 
-                                        lis_person_contact_email_primary = "mike@esynctraining.com", 
-                                        roles = "Administrator", 
-                                        tool_consumer_info_product_family_code = "BrainHoney", 
-                                        tool_consumer_instance_guid = "pacybersandbox-connect.brainhoney.com"
-                                    };
-                        break;
-                    case LmsProviderNames.Blackboard:
-                        model = new LtiParamDTO
-                        {
-                            context_id = "cf1784b1cada44ddb512e47f66dd4ad7",
-                            user_id = "05f3cadd856e45d080a9c70a0bc0e7fb",
-                            lis_person_contact_email_primary = "mike@esynctraining.com",
-                            roles = "urn:lti:role:ims/lis/Instructor",
-                            tool_consumer_info_product_family_code = "Blackboard Learn",
-                            tool_consumer_instance_guid = "e4b016ab2cef47f58a40bb42648cb0ab",
-                            launch_presentation_return_url = "http://blackboard.advantageconnectpro.com/webapps/blackboard/execute/blti/launchReturn?course_id=_6_1&content_id=_44_1&toGC=false"
-                        };
-                        break;
-                }
-            }
-
-            if (model == null)
-            {
-                this.RedirectToError("You are not logged in.");
+                this.RedirectToError("Session timed out. Please refresh the page.");
                 return null;
             }
 
-            return model;
+            return session;
         }
 
         /// <summary>
         /// Gets the parameter.
         /// </summary>
-        /// <param name="company">
-        /// The company.
+        /// <param name="param">
+        /// The parameter.
         /// </param>
-        /// <param name="data">
-        /// The data.
+        /// <param name="session">
+        /// The session.
         /// </param>
-        /// <returns>
-        /// The <see cref="LtiParamDTO"/>.
-        /// </returns>
-        private string GetACPassword(CompanyLms company, LtiParamDTO data)
+        private void RemoveACPassword(LtiParamDTO param, LmsUserSession session)
         {
-            var key = this.GetACPasswordSessionKey(company, data);
-            var model = this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] as string;
-            return model;
-        }
-
-        /// <summary>
-        /// Gets the parameter.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="data">
-        /// The data.
-        /// </param>
-        private void RemoveACPassword(CompanyLms company, LtiParamDTO data)
-        {
-            if (!string.IsNullOrWhiteSpace(this.GetACPassword(company, data)))
+            if (!string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword)))
             {
-                var key = this.GetACPasswordSessionKey(company, data);
-                this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] = null;
+                var sessionData = new LtiSessionDTO
+                {
+                    LtiParam = param,
+                    ACPasswordData = null,
+                    SharedKey = null
+                };
+                session.SessionData = JsonConvert.SerializeObject(sessionData);
+                this.userSessionModel.RegisterSave(session);
             }
         }
 
         /// <summary>
         /// Gets the provider.
         /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="lmsUserSession">
+        /// The LMS User Session.
         /// </param>
         /// <returns>
         /// The <see cref="AdobeConnectProvider"/>.
         /// </returns>
-        private AdobeConnectProvider GetProvider(string providerName)
+        private AdobeConnectProvider GetAdobeConnectProvider(CompanyLms companyLms, LmsUserSession lmsUserSession = null)
         {
-            var provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, providerName)] as AdobeConnectProvider;
-
-            if (provider == null)
+            companyLms = companyLms ?? lmsUserSession.Return(x => x.CompanyLms, null);
+            AdobeConnectProvider provider = null;
+            if (companyLms != null)
             {
-                provider = this.MeetingSetup.GetProvider(this.GetCredentials(providerName));
-                this.SetProvider(providerName, provider);
+                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, companyLms.Id)] as AdobeConnectProvider;
+                if (provider == null)
+                {
+                    provider = this.MeetingSetup.GetProvider(companyLms);
+                    this.SetAdobeConnectProvider(companyLms.Id, provider);
+                }
             }
 
             return provider;
-        }
-
-        [ActionName("sakai-test")]
-        public string GetUrl(string url = "https://edgesandbox.apus.edu/imsblis/service", string id = "791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6:::admin:::2f927813-62e0-4e91-b6e0-5b40b99ec613", string key = "12345", string secret = "secret", string oauthNonce = null, string oauthTimestamp = null)
-        {
-            var result = string.Empty;
-            string lti_message_type = "basic-lis-readmembershipsforcontext",
-                   lti_version = "LTI-1p0",
-                   oauthCallback = "about:blank",
-                   oauthVersion = "1.0",
-                   oauthSignatureMethod = "HMAC-SHA1";
-                   
-                   oauthNonce = oauthNonce ??
-                       Convert.ToBase64String(
-                           new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture)));
-
-            var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            oauthTimestamp = oauthTimestamp ?? Convert.ToInt64(timeSpan.TotalSeconds).ToString(CultureInfo.InvariantCulture);
-
-            const string BaseFormat =
-                "id={0}&" + 
-                "lti_message_type={1}&" + 
-                "lti_version={2}&" + 
-                "oauth_callback={3}&" + 
-                "oauth_consumer_key={4}&" + 
-                "oauth_nonce={5}&" + 
-                "oauth_signature_method={6}&" + 
-                "oauth_timestamp={7}&" +
-                "oauth_version={8}";
-
-            var baseString = string.Format(
-                BaseFormat,
-                Uri.EscapeDataString(id),
-                lti_message_type,
-                lti_version,
-                Uri.EscapeDataString(oauthCallback),
-                key,
-                oauthNonce,
-                oauthSignatureMethod,
-                oauthTimestamp,
-                oauthVersion);
-
-            baseString = string.Concat("POST&", Uri.EscapeDataString(url), "&", Uri.EscapeDataString(baseString));
-            result += "Php Base string: POST&https%3A%2F%2Fedgesandbox.apus.edu%2Fimsblis%2Fservice&id%3D791f9ca3f6d67ef87e214ab50a7b2ad290a6c7c020241fbcbbfc53a87a0cb5c6%253A%253A%253Aadmin%253A%253A%253A2f927813-62e0-4e91-b6e0-5b40b99ec613%26lti_message_type%3Dbasic-lis-readmembershipsforcontext%26lti_version%3DLTI-1p0%26oauth_callback%3Dabout%253Ablank%26oauth_consumer_key%3D12345%26oauth_nonce%3D9a155817a5272395549c18e3675c7608%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1417087109%26oauth_version%3D1.0<br/>";
-
-            var compositeKey = Uri.EscapeDataString(secret) + "&";
-
-
-            string oauthSignature;
-            using (var hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
-            {
-                oauthSignature = Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
-            }
-            
-            ServicePointManager.Expect100Continue = false;
-
-            var request = (HttpWebRequest)WebRequest.Create(url);
-
-            var pairs = new NameValueCollection
-                                {
-                                    { "id", id }, 
-                                    { "lti_message_type", lti_message_type }, 
-                                    { "lti_version", lti_version },
-                                    { "oauth_callback", oauthCallback },
-                                    { "oauth_consumer_key", key },
-                                    { "oauth_nonce", oauthNonce },
-                                    { "oauth_signature", oauthSignature },
-                                    { "oauth_signature_method", oauthSignatureMethod },
-                                    { "oauth_timestamp", oauthTimestamp },
-                                    { "oauth_version", oauthVersion }
-                                };
-
-            var builder = new UriBuilder(url);
-
-            foreach (string pkey in pairs.Keys)
-            {
-                builder.AppendQueryArgument(pkey, pairs[pkey]);
-            }
-
-            var bytes = Encoding.UTF8.GetBytes(builder.Uri.Query.TrimStart("?".ToCharArray()));
-
-            string resp;
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.Method = "POST";
-            request.Timeout = 5000;
-            request.Referer = url;
-            request.Host = new Uri(url).Host;
-            request.ContentLength = bytes.Length;
-            using (Stream requeststream = request.GetRequestStream())
-            {
-                requeststream.Write(bytes, 0, bytes.Length);
-                requeststream.Close();
-            }
-
-            using (var webResponse = (HttpWebResponse)request.GetResponse())
-            {
-                using (var sr = new StreamReader(webResponse.GetResponseStream()))
-                {
-                    resp = sr.ReadToEnd().Trim();
-                    sr.Close();
-                }
-
-                webResponse.Close();
-            }
-
-            return "<textarea>" + resp + "</textarea>";
         }
 
         /// <summary>
@@ -1366,8 +1119,6 @@
             var manager = new SessionIDManager();
             string oldId = manager.GetSessionID(httpContext);
             string newId = manager.CreateSessionID(httpContext);
-
-            this.AddSessionCookie(newId);
 
             bool isAdd, isRedirected;
             manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
@@ -1421,84 +1172,96 @@
         }
 
         /// <summary>
-        /// Sets the credentials.
-        /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
-        /// </param>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        private void SetCredentials(string providerName, CompanyLms credentials)
-        {
-            this.Session[string.Format(LtiSessionKeys.CredentialsSessionKeyPattern, providerName)] = credentials;
-        }
-
-        /// <summary>
         /// Sets the parameter.
         /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
+        /// <param name="company">
+        /// The credentials.
         /// </param>
         /// <param name="param">
         /// The parameter.
         /// </param>
-        private void SetParam(string providerName, LtiParamDTO param)
+        /// <param name="lmsUser">
+        /// The LMS User.
+        /// </param>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LmsUserSession"/>.
+        /// </returns>
+        private LmsUserSession SaveSession(CompanyLms company, LtiParamDTO param, LmsUser lmsUser = null, string key = null)
         {
-            this.Session[string.Format(LtiSessionKeys.ParamSessionKeyPattern, providerName)] = param;
+            Guid uid;
+            var session = !string.IsNullOrWhiteSpace(key) && Guid.TryParse(key, out uid)
+                              ? this.userSessionModel.GetOneById(uid).Value
+                              : (lmsUser == null ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value);
+            session = session ?? new LmsUserSession { CompanyLms = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
+            var sessionData = new LtiSessionDTO { LtiParam = param };
+            session.SessionData = JsonConvert.SerializeObject(sessionData);
+            this.userSessionModel.RegisterSave(session);
+
+            return session;
         }
 
         /// <summary>
         /// Sets the parameter.
         /// </summary>
-        /// <param name="companyLms">
-        /// The company LMS.
+        /// <param name="session">
+        /// The session.
         /// </param>
-        /// <param name="data">
-        /// The data.
+        /// <param name="lmsUser">
+        /// The LMS User.
+        /// </param>
+        private void SaveSessionUser(LmsUserSession session, LmsUser lmsUser)
+        {
+            if (session != null && lmsUser != null)
+            {
+                session.LmsUser = lmsUser;
+                this.userSessionModel.RegisterSave(session);
+            }
+        }
+
+        /// <summary>
+        /// Set AC password
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
         /// </param>
         /// <param name="adobeConnectPassword">
         /// Adobe Connect password
         /// </param>
-        private void SetACPassword(CompanyLms companyLms, LtiParamDTO data, string adobeConnectPassword)
+        private void SetACPassword(string key, LtiParamDTO param, string adobeConnectPassword)
         {
-            var key = this.GetACPasswordSessionKey(companyLms, data);
-            this.Session[string.Format(LtiSessionKeys.ACPasswordSessionKeyPattern, key)] = adobeConnectPassword;
-        }
-
-        /// <summary>
-        /// The get ac password session key.
-        /// </summary>
-        /// <param name="companyLms">
-        /// The company LMS.
-        /// </param>
-        /// <param name="data">
-        /// The data.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetACPasswordSessionKey(CompanyLms companyLms, LtiParamDTO data)
-        {
-            var key = companyLms.AcServer.ToLowerInvariant()
-                      + (string.IsNullOrWhiteSpace(data.lis_person_contact_email_primary)
-                             ? data.lms_user_login
-                             : data.lis_person_contact_email_primary).Return(x => x.ToLowerInvariant(), string.Empty);
-            return key;
+            if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
+            {
+                var session = this.GetSession(key);
+                var sharedKey = AESGCM.NewKey();
+                var sessionData = new LtiSessionDTO
+                                      {
+                                          LtiParam = param,
+                                          ACPasswordData = AESGCM.SimpleEncrypt(adobeConnectPassword, sharedKey),
+                                          SharedKey = Convert.ToBase64String(sharedKey)
+                                      };
+                session.SessionData = JsonConvert.SerializeObject(sessionData);
+                this.userSessionModel.RegisterSave(session);
+            }
         }
 
         /// <summary>
         /// Sets the provider.
         /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
+        /// <param name="key">
+        /// The key.
         /// </param>
         /// <param name="acp">
         /// The ACP.
         /// </param>
-        private void SetProvider(string providerName, AdobeConnectProvider acp)
+        private void SetAdobeConnectProvider(int key, AdobeConnectProvider acp)
         {
-            this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, providerName)] = acp;
+            this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
         }
 
         #endregion

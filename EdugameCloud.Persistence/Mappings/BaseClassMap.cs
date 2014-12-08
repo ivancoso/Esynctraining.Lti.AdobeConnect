@@ -4,8 +4,6 @@
 
     using FluentNHibernate.Mapping;
 
-    using EdugameCloud.Core.Domain.Entities;
-
     /// <summary>
     /// The base class map.
     /// </summary>

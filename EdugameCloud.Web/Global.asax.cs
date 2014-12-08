@@ -87,6 +87,7 @@
         /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
         }

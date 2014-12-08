@@ -36,6 +36,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\BbWsClient.1.0.0.1\lib\net20\BbWsClient.dll</HintPath>
     </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>..\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Castle.Core">
       <HintPath>..\packages\Castle.Core.3.2.2\lib\net35\Castle.Core.dll</HintPath>
     </Reference>
@@ -122,6 +125,7 @@
     <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />
     <Compile Include="API\Moodle\MoodleSession.cs" />
+    <Compile Include="Business\Models\LmsUserSessionModel.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
@@ -133,6 +137,7 @@
     <Compile Include="DTO\LmsSettingsDTO.cs" />
     <Compile Include="API\BrainHoney\Signal.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
+    <Compile Include="DTO\LtiSessionDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
     <Compile Include="DTO\QuizSubmissionDTO.cs" />
@@ -146,6 +151,8 @@
     <Compile Include="OAuth\OAuthExtensions.cs" />
     <Compile Include="OAuth\QueryParameter.cs" />
     <Compile Include="OAuth\QueryParameterComparer.cs" />
+    <Compile Include="Domain\Entities\LmsUserSession.cs" />
+    <Compile Include="Utils\AESGCM.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
