@@ -3,6 +3,7 @@
     using System;
 
     using EdugameCloud.Core.Constants;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
@@ -99,27 +100,18 @@
             get
             {
                 var domainUrl = this.lmsDomain.Return(x => x.ToLower(), string.Empty);
-                if (domainUrl.StartsWith(HttpScheme.Http))
-                {
-                    return domainUrl.Substring(HttpScheme.Http.Length);
-                }
-
-                if (domainUrl.StartsWith(HttpScheme.Https))
-                {
-                    return domainUrl.Substring(HttpScheme.Https.Length);
-                }
-
-                return domainUrl;
+                
+                return domainUrl.RemoveHttpProtocolAndTrailingSlash();
             }
 
             set
             {
-                if (!string.IsNullOrWhiteSpace(value) && this.UseSSL != true && value.StartsWith(HttpScheme.Https))
+                if (this.UseSSL != true && value.IsSSL())
                 {
                     this.UseSSL = true;
                 }
 
-                this.lmsDomain = value.Return(x => x.TrimEnd(@"/\".ToCharArray()), null);
+                this.lmsDomain = value.Return(x => x.TrimEnd(@"/\".ToCharArray()), null).RemoveHttpProtocolAndTrailingSlash();
             }
         }
 

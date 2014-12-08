@@ -4,6 +4,7 @@
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -44,7 +45,7 @@
                 this.sharedSecret = instance.SharedSecret;
                 this.lmsAdmin = instance.AdminUser.With(x => x.Username);
                 this.lmsAdminToken = instance.AdminUser.With(x => x.Token);
-                this.lmsDomain = instance.LmsDomain;
+                this.lmsDomain = instance.LmsDomain.AddHttpProtocol(instance.UseSSL.GetValueOrDefault());
                 this.primaryColor = instance.PrimaryColor;
                 this.title = instance.Title;
                 this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
@@ -159,12 +160,6 @@
         /// </summary>
         [DataMember]
         public string title { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether use SSL.
-        /// </summary>
-        [DataMember]
-        public bool useSsl { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether use user folder.

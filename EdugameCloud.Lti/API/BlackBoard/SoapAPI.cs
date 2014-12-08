@@ -9,6 +9,7 @@
     using BbWsClient.User;
     using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
@@ -137,30 +138,49 @@
                         if (membership != null)
                         {
                             var enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
-                            var roles = membership.loadRoles(null);
-                            var userFilter = new UserFilter
-                                                 {
-                                                     filterTypeSpecified = true,
-                                                     filterType = 2,
-                                                     id = enrollments.Select(x => x.userId).ToArray()
-                                                 };
-                            var userService = c.getUserWrapper();
-                            if (userService != null)
+                            string errorDuringEnrollments;
+                            if (this.HadError(c, out errorDuringEnrollments))
                             {
-                                var users = c.getUserWrapper().getUser(userFilter);
-                                return enrollments.Select(
-                                    e =>
-                                        {
-                                            var user = users.FirstOrDefault(u => e.userId == u.id);
-                                            return new LmsUserDTO
-                                                       {
-                                                           id = e.userId,
-                                                           login_id = user.With(x => x.name),
-                                                           primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
-                                                           name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
-                                                           lms_role = this.GetRole(e.roleId, roles),
-                                                       };
-                                        }).ToList();
+                                return new List<LmsUserDTO>();
+                            }
+
+                            if (enrollments != null)
+                            {
+                                var roles = membership.loadRoles(null);
+                                var userFilter = new UserFilter
+                                                     {
+                                                         filterTypeSpecified = true,
+                                                         filterType = 2,
+                                                         id = enrollments.Select(x => x.userId).ToArray()
+                                                     };
+                                var userService = c.getUserWrapper();
+                                if (userService != null)
+                                {
+                                    var users = c.getUserWrapper().getUser(userFilter);
+                                    return enrollments.Select(
+                                        e =>
+                                            {
+                                                var user = users.FirstOrDefault(u => e.userId == u.id);
+                                                return new LmsUserDTO
+                                                           {
+                                                               id = e.userId,
+                                                               login_id = user.With(x => x.name),
+                                                               primary_email =
+                                                                   user.With(x => x.extendedInfo)
+                                                                   .With(x => x.emailAddress),
+                                                               name =
+                                                                   user.With(x => x.extendedInfo)
+                                                                   .Return(
+                                                                       x =>
+                                                                       string.Format(
+                                                                           "{0} {1}",
+                                                                           x.givenName,
+                                                                           x.familyName).Trim(),
+                                                                       user.With(s => s.name)),
+                                                               lms_role = this.GetRole(e.roleId, roles),
+                                                           };
+                                            }).ToList();
+                                }
                             }
                         }
 
@@ -313,19 +333,10 @@
             Match match = portRegex.Match(lmsDomain);
             bool endsWithPort = match.Success;
 
+            lmsDomain = lmsDomain.AddHttpProtocol(useSsl);
             lmsDomain = !endsWithPort ? (useSsl ? lmsDomain + ":443" : lmsDomain + ":80") : lmsDomain;
-            string result;
 
-            if (useSsl)
-            {
-                result = "https://" + lmsDomain;
-            }
-            else
-            {
-                result = "http://" + lmsDomain;
-            }
-
-            return result;
+            return lmsDomain;
         }
 
         /// <summary>

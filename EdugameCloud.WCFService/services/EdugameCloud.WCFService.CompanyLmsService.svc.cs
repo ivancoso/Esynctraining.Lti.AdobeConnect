@@ -9,6 +9,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Moodle;
@@ -151,7 +152,10 @@ namespace EdugameCloud.WCFService
                     };
 
                     lmsUser.Username = resultDto.lmsAdmin;
-                    lmsUser.Password = resultDto.lmsAdminPassword;
+                    if (!string.IsNullOrEmpty(resultDto.lmsAdminPassword))
+                    {
+                        lmsUser.Password = resultDto.lmsAdminPassword;
+                    }
                     lmsUser.Token = resultDto.lmsAdminToken;
 
                     LmsUserModel.RegisterSave(lmsUser, true);
@@ -185,25 +189,33 @@ namespace EdugameCloud.WCFService
             var result = new ServiceResponse<ConnectionInfoDTO>();
             bool success = false;
             string info = string.Empty;
-            switch (test.type.ToLowerInvariant())
-            {
-                case "ac":
-                    success = this.TestACConnection(test, out info);
-                    break;
-                case "brainhoney":
-                    success = this.TestBrainHoneyConnection(test, out info);
-                    break;
-                case "blackboard":
-                    success = this.TestBlackBoardConnection(test, out info);
-                    break;
-                case "moodle":
-                    success = this.TestMoodleConnection(test, out info);
-                    break;
-                case "sakai":
-                    success = this.TestSakaiConnection(test, out info);
-                    break;
-            }
 
+            if (!test.domain.StartsWithProtocol())
+            {
+                info = "Domain url should start with http:// or https://";
+            }
+            else
+            {
+                switch (test.type.ToLowerInvariant())
+                {
+                    case "ac":
+                        success = this.TestACConnection(test, out info);
+                        break;
+                    case "brainhoney":
+                        success = this.TestBrainHoneyConnection(test, out info);
+                        break;
+                    case "blackboard":
+                        success = this.TestBlackBoardConnection(test, out info);
+                        break;
+                    case "moodle":
+                        success = this.TestMoodleConnection(test, out info);
+                        break;
+                    case "sakai":
+                        success = this.TestSakaiConnection(test, out info);
+                        break;
+                }    
+            }
+            
             result.@object = new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
             if (!success)
             {
@@ -227,7 +239,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.MoodleAPI.LoginAndCreateAClient(out info, test.domain.StartsWith("https"), test.domain, test.login, test.password);
+            var session = this.MoodleAPI.LoginAndCreateAClient(out info, test.domain.IsSSL(), test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
             return session != null;
         }
 
@@ -264,7 +276,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.DlapAPI.LoginAndCreateASession(out info, test.domain, test.login, test.password);
+            var session = this.DlapAPI.LoginAndCreateASession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
             return session != null;
         }
 
@@ -282,7 +294,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.SoapAPI.LoginAndCreateAClient(out info, test.domain.StartsWith("https"), test.domain, test.login, test.password);
+            var session = this.SoapAPI.LoginAndCreateAClient(out info, test.domain.IsSSL(), test.domain, test.login, test.password);
             return session != null;
         }
 
@@ -302,8 +314,7 @@ namespace EdugameCloud.WCFService
         {
             info = string.Empty;
             var domainUrl = test.domain.ToLowerInvariant();
-            if (!domainUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
-                && !domainUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            if (!domainUrl.StartsWithProtocol())
             {
                 info = "Adobe Connect Domain url should start with http or https";
                 return false;
@@ -364,12 +375,12 @@ namespace EdugameCloud.WCFService
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;
             instance.Title = dto.title;
-            instance.UseSSL = dto.useSsl;
             instance.UseUserFolder = dto.useUserFolder;
             instance.UserFolderName = dto.userFolderName;
             if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {
-                instance.LmsDomain = dto.lmsDomain;
+                instance.LmsDomain = dto.lmsDomain.RemoveHttpProtocolAndTrailingSlash();
+                instance.UseSSL = dto.lmsDomain.IsSSL();
             }
             
             return instance;

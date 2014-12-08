@@ -12,6 +12,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
 
@@ -573,10 +574,10 @@ namespace EdugameCloud.WCFService
                                       ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value,
                                       ConsumerKey = Guid.NewGuid().ToString(),
                                       SharedSecret = Guid.NewGuid().ToString(),
-                                      LmsDomain = dto.lmsVO.lmsDomain,
+                                      LmsDomain = dto.lmsVO.lmsDomain.RemoveHttpProtocolAndTrailingSlash(),
                                       PrimaryColor = dto.lmsVO.primaryColor,
                                       Title = dto.lmsVO.title,
-                                      UseSSL = dto.lmsVO.useSsl,
+                                      UseSSL = dto.lmsVO.lmsDomain.IsSSL(),
                                       UseUserFolder = dto.lmsVO.useUserFolder,
                                       UserFolderName = dto.lmsVO.userFolderName
                                   };

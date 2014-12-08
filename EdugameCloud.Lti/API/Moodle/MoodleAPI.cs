@@ -17,6 +17,7 @@
     using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Extensions;
@@ -289,17 +290,7 @@
         {
             domain = domain.ToLower();
 
-            if (!(domain.StartsWith(HttpScheme.Http) || domain.StartsWith(HttpScheme.Https)))
-            {
-                if (useSsl)
-                {
-                    domain = HttpScheme.Https + domain;
-                }
-                else
-                {
-                    domain = HttpScheme.Http + domain;
-                }
-            }
+            domain = domain.AddHttpProtocol(useSsl);
 
             if (domain.Last() != '/')
             {
@@ -308,7 +299,7 @@
 
             if (((string)this.settings.MoodleChangeUrl).ToLower().Equals("true"))
             {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60");
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60").Replace("moodle.esynctraining.com", "192.168.10.60");
             }
 
             return domain;
