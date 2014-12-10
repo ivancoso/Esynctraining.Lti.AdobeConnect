@@ -376,6 +376,7 @@ namespace EdugameCloud.WCFService
             instance.PrimaryColor = dto.primaryColor;
             instance.Title = dto.title;
             instance.UseUserFolder = dto.useUserFolder;
+            instance.CanRemoveMeeting = dto.canRemoveMeeting;
             instance.UserFolderName = dto.userFolderName;
             if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {

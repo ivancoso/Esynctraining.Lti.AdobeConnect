@@ -172,6 +172,36 @@
         }
 
         /// <summary>
+        /// The delete meeting.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool DeleteMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        {
+            if (!credentials.CanRemoveMeeting.GetValueOrDefault())
+            {
+                return false;
+            }
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            if (meeting == null)
+            {
+                return false;
+            }
+            var result = provider.DeleteSco(meeting.ScoId);
+            return result.Code == StatusCodes.ok;
+        }
+
+        /// <summary>
         /// The get meeting.
         /// </summary>
         /// <param name="credentials">
@@ -1504,6 +1534,11 @@
         private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
         {
             var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+            //// trying once more, at least the teacher should be enrolled
+            //if (users.Count == 0)
+            //{
+            //    users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+            //}
             return this.GroupUsers(users);
         }
 
@@ -2070,6 +2105,7 @@
                               access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString() : string.Empty, 
                               can_join = flags.Item1, 
                               are_users_synched = flags.Item2,
+                              is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
                               is_editable = this.CanEdit(param),
                               lms_provider_name = credentials.LmsProvider.LmsProviderName
                           };
@@ -2259,9 +2295,8 @@
             bool isNew)
         {
             updateItem.Name = string.Format(
-                "{0} [{1}] {2}", 
-                courseId, 
-                contextLabel.Substring(0, Math.Min(contextLabel.Length, 10)), 
+                "[{0}] {1}", 
+                courseId,
                 meetingDTO.name);
             if (updateItem.Name.Length > 60)
             {

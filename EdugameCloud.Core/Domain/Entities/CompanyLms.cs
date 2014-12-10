@@ -161,6 +161,11 @@
         public virtual string UserFolderName { get; set; }
 
         /// <summary>
+        /// Gets or sets the can remove meeting.
+        /// </summary>
+        public virtual bool? CanRemoveMeeting { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

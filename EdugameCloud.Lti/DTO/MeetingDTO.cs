@@ -93,6 +93,12 @@
         /// </summary>
         public string lms_provider_name { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether is_removable.
+        /// </summary>
+        [DataMember]
+        public bool is_removable { get; set; }
+
         #endregion
     }
 }

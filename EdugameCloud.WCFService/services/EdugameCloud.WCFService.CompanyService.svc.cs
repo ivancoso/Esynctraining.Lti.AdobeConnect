@@ -579,6 +579,7 @@ namespace EdugameCloud.WCFService
                                       Title = dto.lmsVO.title,
                                       UseSSL = dto.lmsVO.lmsDomain.IsSSL(),
                                       UseUserFolder = dto.lmsVO.useUserFolder,
+                                      CanRemoveMeeting = dto.lmsVO.canRemoveMeeting,
                                       UserFolderName = dto.lmsVO.userFolderName
                                   };
 

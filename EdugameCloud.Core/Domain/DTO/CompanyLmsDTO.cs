@@ -49,6 +49,7 @@
                 this.primaryColor = instance.PrimaryColor;
                 this.title = instance.Title;
                 this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
+                this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
             }
         }
@@ -172,5 +173,11 @@
         /// </summary>
         [DataMember]
         public string userFolderName { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether can remove meeting.
+        /// </summary>
+        [DataMember]
+        public bool canRemoveMeeting { get; set; }
     }
 }

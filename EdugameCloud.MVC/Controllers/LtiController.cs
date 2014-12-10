@@ -405,6 +405,29 @@
         }
 
         /// <summary>
+        /// The delete meeting.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        [HttpPost]
+        public virtual JsonResult DeleteMeeting(string lmsProviderName)
+        {
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var success = this.MeetingSetup.DeleteMeeting(
+                credentials,
+                this.GetAdobeConnectProvider(credentials),
+                param);
+
+            return this.Json(success);
+        }
+
+        /// <summary>
         /// The get recordings.
         /// </summary>
         /// <param name="lmsProviderName">
