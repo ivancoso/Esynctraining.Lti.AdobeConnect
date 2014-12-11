@@ -4,7 +4,7 @@
     <id>Esynctraining.Core.Only</id>
 <!--    <id>Esynctraining.Core.Basic</id>-->
 <!--    <id>Esynctraining.Core.Common</id>-->
-    <version>1.0.0.7</version>
+    <version>1.0.0.9</version>
     <title>Esynctraining.Core.Only</title>
 <!--    <title>Esynctraining.Core.Basic</title>-->
 <!--    <title>Esynctraining.Core.Common</title>-->
@@ -18,7 +18,7 @@
 <!--    <description>Provides common functionality for eSyncTraining projects.</description>-->
     <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
     <tags>core</tags>
-    <releaseNotes>Provides core functionality for eSyncTraining projects. Core library only</releaseNotes>
+    <releaseNotes>Updated datetimewithtimezone class</releaseNotes>
 <!--        <releaseNotes>Provides basic functionality for eSyncTraining projects.</releaseNotes>-->
 <!--    <releaseNotes>Provides common functionality for eSyncTraining projects.</releaseNotes>-->
     <dependencies>

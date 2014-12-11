@@ -75,6 +75,144 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The less or equal operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator <=(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime <= b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA <= b;
+        }
+
+        /// <summary>
+        /// The more or equal operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator >=(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime >= b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA >= b;
+        }
+
+        /// <summary>
+        /// The less operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator <(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime < b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA < b;
+        }
+
+        /// <summary>
+        /// The more operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator >(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime > b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA > b;
+        }
+
+        /// <summary>
+        /// The equal operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator ==(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime == b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA == b;
+        }
+
+        /// <summary>
+        /// The not equal operator
+        /// </summary>
+        /// <param name="a">
+        /// The first entity to compare
+        /// </param>
+        /// <param name="b">
+        /// The second entity to compare
+        /// </param>
+        /// <returns>
+        /// The result of comparison
+        /// </returns>
+        public static bool operator !=(DateTimeWithZone a, DateTimeWithZone b)
+        {
+            if (a.TimeZone.Equals(b.TimeZone))
+            {
+                return a.DateTime != b.DateTime;
+            }
+
+            var newA = a.To(b.TimeZone);
+            return newA != b;
+        }
+
+        /// <summary>
         /// The add hours.
         /// </summary>
         /// <param name="hours">
@@ -86,6 +224,20 @@
         public DateTimeWithZone AddHours(int hours)
         {
             return new DateTimeWithZone(this.DateTime.AddHours(hours), this.TimeZone);
+        }
+
+        /// <summary>
+        /// The add hours.
+        /// </summary>
+        /// <param name="days">
+        /// The days.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTimeWithZone"/>.
+        /// </returns>
+        public DateTimeWithZone AddDays(int days)
+        {
+            return new DateTimeWithZone(this.DateTime.AddDays(days), this.TimeZone);
         }
 
         /// <summary>
@@ -123,7 +275,7 @@
         public override string ToString()
         {
             TimeSpan offset = this.TimeZone.GetUtcOffset(this.DateTime);
-            return this.DateTime.ToString(DateFormat) + string.Format("{0}:{1}", offset.Hours.ToString("D2"), offset.Minutes.ToString("D2"));
+            return this.DateTime.ToString(DateFormat) + string.Format("{0}{1}:{2}", offset.Hours > 0 ? "+" : (offset.Hours == 0 ? "-" : string.Empty), offset.Hours.ToString("D2"), offset.Minutes.ToString("D2"));
         }
 
         /// <summary>

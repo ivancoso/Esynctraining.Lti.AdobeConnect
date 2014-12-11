@@ -5,6 +5,7 @@
     using Castle.MicroKernel.ComponentActivator;
     using Castle.MicroKernel.Context;
 
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.FullText;
     using Esynctraining.Core.Utils;
     using NHibernate.Cfg;
@@ -62,9 +63,13 @@
         protected override object CreateInstance(CreationContext context, ConstructorCandidate constructor, object[] arguments)
         {
             var cfg = IoC.Resolve<Configuration>();
-            cfg.SetListener(NHibernate.Event.ListenerType.PostUpdate, new LuceneFTIndexEventListener());
-            cfg.SetListener(NHibernate.Event.ListenerType.PostInsert, new LuceneFTIndexEventListener());
-            cfg.SetListener(NHibernate.Event.ListenerType.PostDelete, new LuceneFTIndexEventListener());
+            if (cfg.GetProperty("disable_fulltext_integration").With(x => x.ToLower()) != "true")
+            {
+                cfg.SetListener(NHibernate.Event.ListenerType.PostUpdate, new LuceneFTIndexEventListener());
+                cfg.SetListener(NHibernate.Event.ListenerType.PostInsert, new LuceneFTIndexEventListener());
+                cfg.SetListener(NHibernate.Event.ListenerType.PostDelete, new LuceneFTIndexEventListener());
+            }
+
             return cfg.BuildSessionFactory();
         }
 
