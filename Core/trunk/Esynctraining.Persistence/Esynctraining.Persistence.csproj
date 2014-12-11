@@ -107,7 +107,9 @@
     <Compile Include="WindsorContainerConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Esynctraining.Persistence.nuspec" />
+    <None Include="Esynctraining.Persistence.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="nuget.config" />
     <None Include="packages.config" />
     <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
