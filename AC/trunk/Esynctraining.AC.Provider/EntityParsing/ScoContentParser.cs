@@ -39,6 +39,8 @@
                                UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
                                BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                                EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
+                               BeginDateLocal = xml.ParseNodeDateTimeLocal("date-begin/text()", default(DateTime)),
+                               EndDateLocal = xml.ParseNodeDateTimeLocal("date-end/text()", default(DateTime)),
                                DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now),
                                DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
                                IsSeminar = xml.ParseNodeBool("is-seminar/text()", default(bool)),

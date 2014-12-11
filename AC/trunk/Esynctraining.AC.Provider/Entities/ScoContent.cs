@@ -94,6 +94,18 @@ namespace Esynctraining.AC.Provider.Entities
         public DateTime EndDate { get; set; }
 
         /// <summary>
+        /// Gets or sets the begin date local.
+        /// </summary>
+        [XmlElement("date-begin")]
+        public DateTime BeginDateLocal { get; set; }
+
+        /// <summary>
+        /// Gets or sets the end date local.
+        /// </summary>
+        [XmlElement("date-end")]
+        public DateTime EndDateLocal { get; set; }
+
+        /// <summary>
         /// Gets or sets the date created.
         /// </summary>
         [XmlElement("date-created")]

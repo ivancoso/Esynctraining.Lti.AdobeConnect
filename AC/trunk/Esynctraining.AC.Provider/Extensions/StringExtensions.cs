@@ -2,6 +2,7 @@
 {
     using System;
     using System.Globalization;
+    using System.Linq;
 
     /// <summary>
     /// The string extensions.
@@ -12,6 +13,11 @@
         /// The date time xml format.
         /// </summary>
         private const string DateTimeXmlFormat = @"yyyy-MM-dd\THH:mm:ss.fffzzz";
+
+        /// <summary>
+        /// The date time xml format local.
+        /// </summary>
+        private const string DateTimeXmlFormatLocal = @"yyyy-MM-dd\THH:mm:ss";
 
         /// <summary>
         /// The parse integer with default.
@@ -86,6 +92,33 @@
                                 DateTimeXmlFormat,
                                 DateTimeFormatInfo.InvariantInfo,
                                 DateTimeStyles.AdjustToUniversal,
+                                out result))
+                       ? result
+                       : defaultValue;
+        }
+
+        /// <summary>
+        /// The parse date time local.
+        /// </summary>
+        /// <param name="stringValue">
+        /// The string value.
+        /// </param>
+        /// <param name="defaultValue">
+        /// The default value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTime"/>.
+        /// </returns>
+        public static DateTime ParseDateTimeLocal(this string stringValue, DateTime defaultValue)
+        {
+            DateTime result;
+
+            return (!string.IsNullOrWhiteSpace(stringValue)
+                    && DateTime.TryParseExact(
+                                stringValue.Substring(0, DateTimeXmlFormatLocal.Length - DateTimeXmlFormatLocal.Count(c => c == '\\')),
+                                DateTimeXmlFormatLocal,
+                                DateTimeFormatInfo.InvariantInfo,
+                                DateTimeStyles.None,
                                 out result))
                        ? result
                        : defaultValue;

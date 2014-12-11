@@ -75,6 +75,26 @@ namespace Esynctraining.AC.Provider.Extensions
         }
 
         /// <summary>
+        /// The parse node date time local.
+        /// </summary>
+        /// <param name="node">
+        /// The node.
+        /// </param>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <param name="defaultValue">
+        /// The default value.
+        /// </param>
+        /// <returns>
+        /// The <see cref="DateTime"/>.
+        /// </returns>
+        public static DateTime ParseNodeDateTimeLocal(this XmlNode node, string path, DateTime defaultValue)
+        {
+            return SelectSingleNodeValue(node, path).ParseDateTimeLocal(defaultValue);
+        }
+
+        /// <summary>
         /// The parse node boolean.
         /// </summary>
         /// <param name="node">
