@@ -12,6 +12,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Domain.Entities;
@@ -753,7 +754,7 @@
                 {
                     case LmsProviderNames.Canvas:
 
-                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasAPI.IsTokenExpired(model.lms_domain, lmsUser.Token))
                         {
                             this.StartOAuth2Authentication(provider, key, model);
                             return null;
@@ -1056,6 +1057,11 @@
         {
             Guid uid;
             var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetOneById(uid).Value : null;
+
+            if (this.IsDebug && session == null)
+            {
+                session = this.userSessionModel.GetOneById(Guid.Empty).Value;
+            }
 
             if (session == null)
             {

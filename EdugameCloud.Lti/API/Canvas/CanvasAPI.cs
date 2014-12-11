@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.Lti.API.Canvas
 {
     using System.Collections.Generic;
+    using System.Net;
+
     using EdugameCloud.Core.Constants;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
@@ -22,6 +24,33 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The check oauth.
+        /// </summary>
+        /// <param name="api">
+        /// The api.
+        /// </param>
+        /// <param name="usertoken">
+        /// The usertoken.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool IsTokenExpired(string api, string usertoken)
+        {
+            var client = CreateRestClient(api);
+
+            RestRequest request = CreateRequest(
+                api,
+                "/api/v1/users/self/profile",
+                Method.GET,
+                usertoken);
+
+            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
+
+            return response.StatusCode == HttpStatusCode.Unauthorized;
+        }
 
         /// <summary>
         /// The add more details for user.

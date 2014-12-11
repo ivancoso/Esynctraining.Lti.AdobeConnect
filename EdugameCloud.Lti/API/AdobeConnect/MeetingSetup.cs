@@ -228,8 +228,6 @@
             ScoInfoResult result = provider.GetScoInfo(meeting.ScoId);
             if (!result.Success || result.ScoInfo == null)
             {
-                this.LmsCourseMeetingModel.RegisterDelete(meeting);
-                this.LmsCourseMeetingModel.Flush();
                 return this.CreateEmptyMeetingResponse(credentials, param);
             }
 
@@ -251,10 +249,13 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
         /// <returns>
         /// The <see cref="AdobeConnectProvider"/>.
         /// </returns>
-        public AdobeConnectProvider GetProvider(CompanyLms credentials)
+        public AdobeConnectProvider GetProvider(CompanyLms credentials, bool login = true)
         {
             string apiUrl = credentials.AcServer + (credentials.AcServer.EndsWith("/") ? string.Empty : "/");
 
@@ -276,7 +277,10 @@
                                                     }
                                         };
             var provider = new AdobeConnectProvider(connectionDetails);
-            provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
+            if (login)
+            {
+                provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
+            }
 
             return provider;
         }
@@ -324,8 +328,8 @@
                             id = v.ScoId, 
                             name = v.Name, 
                             description = v.Description, 
-                            begin_date = v.BeginDate.ToString("MM/dd/yy h:mm:ss tt"), 
-                            end_date = v.EndDate.ToString("MM/dd/yy h:mm:ss tt"), 
+                            begin_date = v.BeginDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
+                            end_date = v.EndDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
                             duration = v.Duration, 
                             url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray()),
                             is_public = isPublic,
@@ -789,7 +793,14 @@
                 this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value
                 ?? new LmsCourseMeeting { CompanyLms = credentials, CourseId = param.course_id };
 
-            var updateItem = new MeetingUpdateItem { ScoId = meeting.ScoId };
+            bool isNewMeeting = false;
+            var existingMeeting = provider.GetScoInfo(meeting.ScoId);
+            if (!existingMeeting.Success)
+            {
+                isNewMeeting = true;
+            }
+
+            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meeting.ScoId };
 
             var email = param.lis_person_contact_email_primary;
             var login = param.lms_user_login;
@@ -804,9 +815,9 @@
                 param.course_id,
                 meeting.ScoId == null);
 
-            ScoInfoResult result = meeting.ScoId != null
-                                       ? provider.UpdateSco(updateItem)
-                                       : provider.CreateSco(updateItem);
+            ScoInfoResult result = isNewMeeting
+                                       ? provider.CreateSco(updateItem)
+                                       : provider.UpdateSco(updateItem);
 
             if (!result.Success || result.ScoInfo == null)
             {
@@ -814,7 +825,7 @@
                 return this.GetMeeting(credentials, provider, param);
             }
 
-            if (updateItem.ScoId == null)
+            if (isNewMeeting)
             {
                 // newly created meeting
                 meeting.ScoId = result.ScoInfo.ScoId;
@@ -1220,12 +1231,22 @@
         /// </returns>
         private Principal GetACUser(AdobeConnectProvider provider, string login, string email)
         {
+            var byLogin = provider.GetAllByLogin(login);
+            if (!byLogin.Success)
+            {
+                return null;
+            }
             var principal = string.IsNullOrWhiteSpace(login)
                                    ? null
-                                   : provider.GetAllByLogin(login).Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                                   : byLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             if (principal == null && !string.IsNullOrWhiteSpace(email))
             {
-                principal = provider.GetAllByEmail(email).Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                var byEmail = provider.GetAllByEmail(email);
+                if (!byEmail.Success)
+                {
+                    return null;
+                }
+                principal = byEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             }
 
             return principal;
@@ -1534,11 +1555,11 @@
         private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
         {
             var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
-            //// trying once more, at least the teacher should be enrolled
-            //if (users.Count == 0)
-            //{
-            //    users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
-            //}
+            // trying once more, at least the teacher should be enrolled
+            if (users.Count == 0)
+            {
+                users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+            }
             return this.GroupUsers(users);
         }
 
@@ -2172,17 +2193,19 @@
                         HasChildren = registeredUser.HasChildren
                     });
 
-            LoginResult resultByLogin = provider.Login(new UserCredentials(login, password));
+            var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
+
+            LoginResult resultByLogin = userProvider.Login(new UserCredentials(login, password));
             if (resultByLogin.Success)
             {
                 breezeToken = resultByLogin.Status.SessionInfo;
             }
             else
             {
-                LoginResult resultByEmail = provider.Login(new UserCredentials(email, password));
+                LoginResult resultByEmail = userProvider.Login(new UserCredentials(email, password));
                 breezeToken = resultByEmail.Status.SessionInfo;
             }
-
+            
             return breezeToken;
         }
 

@@ -531,7 +531,7 @@
                     continue;
                 }
 
-                if (isSurvey)
+                if (isSurvey && (companyLms.LmsProvider.Id == (int)LmsProviderEnum.Moodle))
                 {
                     var separatorIndex = quizQuestion.presentation.IndexOf(">>>>>", System.StringComparison.Ordinal);
                     string text = quizQuestion.question_text ?? quizQuestion.question_name,
@@ -741,7 +741,7 @@
                     }
                 case (int)QuestionTypeEnum.Numerical:
                     {
-                        this.ProcessNumericalDistractors(user, q, question);
+                        this.ProcessNumericalDistractors(user, q, question, lmsProvider);
                         break;
                     }
                 case (int)QuestionTypeEnum.CalculatedMultichoice:
@@ -1075,10 +1075,14 @@
         /// <param name="question">
         /// The question.
         /// </param>
+        /// <param name="lmsProvider">
+        /// The lms provider.
+        /// </param>
         private void ProcessNumericalDistractors(
             User user,
             QuizQuestionDTO q,
-            Question question)
+            Question question,
+            LmsProviderEnum lmsProvider)
         {
             foreach (var a in q.answers)
             {
@@ -1086,8 +1090,8 @@
                 bool isRange = a.numerical_answer_type != null && a.numerical_answer_type.Contains("range");
                 var name = string.Format(
                     "{{\"min\":{0}, \"max\": {1}, \"error\":{2},\"type\":\"{3}\"}}",
-                    isRange ? a.start.ToString() : (string.IsNullOrWhiteSpace(a.text) ? a.exact.ToString() : a.text),
-                    string.IsNullOrWhiteSpace(a.text) ? a.end.ToString() : a.text,
+                    isRange ? a.start.ToString() : (lmsProvider == LmsProviderEnum.Canvas ? a.exact.ToString() : a.text),
+                    lmsProvider == LmsProviderEnum.Canvas ? (isRange ? a.end.ToString() : a.exact.ToString()) : a.text,
                     a.margin,
                     isRange ? "Range" : "Exact");
                 var distractor = DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??

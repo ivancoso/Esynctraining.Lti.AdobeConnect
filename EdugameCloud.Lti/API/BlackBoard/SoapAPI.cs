@@ -157,6 +157,10 @@
                                 if (userService != null)
                                 {
                                     var users = c.getUserWrapper().getUser(userFilter);
+                                    if (users == null)
+                                    {
+                                        return new List<LmsUserDTO>();
+                                    }
                                     return enrollments.Select(
                                         e =>
                                             {

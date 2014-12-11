@@ -54,7 +54,7 @@
     </Reference>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.9\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.10\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.9\lib\net40\Esynctraining.Core.dll</HintPath>
