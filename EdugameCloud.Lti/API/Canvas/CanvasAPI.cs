@@ -3,8 +3,7 @@
     using System.Collections.Generic;
     using System.Net;
 
-    using EdugameCloud.Core.Constants;
-    using EdugameCloud.Core.Domain.DTO;
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
 
@@ -26,13 +25,13 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The check oauth.
+        /// Checks if token expired.
         /// </summary>
         /// <param name="api">
-        /// The api.
+        /// The API.
         /// </param>
         /// <param name="usertoken">
-        /// The usertoken.
+        /// The user token.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
