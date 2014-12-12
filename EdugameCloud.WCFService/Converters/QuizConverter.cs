@@ -570,6 +570,10 @@
                         id = i
                     }).ToList();
                 }
+                else if (isSurvey && (companyLms.LmsProvider.Id == (int)LmsProviderEnum.Canvas))
+                {
+                    quizQuestion.is_single = quizQuestion.answers.Count(a => a.weight == 100) == 1;
+                }
                 
                 var lmsQuestionId = quizQuestion.id;
 

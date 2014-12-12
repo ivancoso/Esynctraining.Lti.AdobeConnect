@@ -813,7 +813,7 @@
                 meetingFolder, 
                 param.context_label ?? "nolabel", 
                 param.course_id,
-                meeting.ScoId == null);
+                isNewMeeting);
 
             ScoInfoResult result = isNewMeeting
                                        ? provider.CreateSco(updateItem)
