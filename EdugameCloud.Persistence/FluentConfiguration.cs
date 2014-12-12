@@ -2,6 +2,7 @@
 {
     using System.Reflection;
 
+    using EdugameCloud.Lti.Persistence.Mappings;
     using EdugameCloud.Persistence.Conventions;
     using EdugameCloud.Persistence.Mappings;
 
@@ -63,6 +64,10 @@
             cfg.AddAssembly(executing);
             var persistenceModel = new PersistenceModel();
             persistenceModel.AddMappingsFromSource(new NameSpaceTypeSource(executing, typeof(UserMap).Namespace));
+
+            var ltiAssembly = Assembly.GetAssembly(typeof(LmsUserMap));
+            cfg.AddAssembly(ltiAssembly);
+            persistenceModel.AddMappingsFromSource(new NameSpaceTypeSource(ltiAssembly, typeof(LmsUserMap).Namespace));
 
             AddConventions(persistenceModel.Conventions);
             persistenceModel.Configure(cfg);

@@ -23,8 +23,6 @@
 
     using FluentValidation;
 
-    using ISpye.Persistence;
-
     using NHibernate;
     using Configuration = NHibernate.Cfg.Configuration;
 

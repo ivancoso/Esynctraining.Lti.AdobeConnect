@@ -1,6 +1,6 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     /// The LMS question type map.
@@ -14,9 +14,9 @@
         /// </summary>
         public LmsQuestionTypeMap()
         {
-            this.Map(x => x.LmsQuestionTypeName).Column("LmsQuestionType").Not.Nullable();
+            this.Map(x => x.LmsQuestionTypeName).Column("lmsQuestionType").Not.Nullable();
+            this.Map(x => x.QuestionTypeId).Not.Nullable();
             this.References(x => x.LmsProvider).Not.Nullable();
-            this.References(x => x.QuestionType).Not.Nullable();
         }
 
         #endregion

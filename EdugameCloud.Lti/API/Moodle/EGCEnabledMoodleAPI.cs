@@ -4,9 +4,10 @@
     using System.Collections.Specialized;
     using System.Globalization;
     using Castle.Core.Logging;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.EntityParsing;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.EntityParsing;
+
     using Esynctraining.Core.Providers;
 
     /// <summary>

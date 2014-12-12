@@ -8,9 +8,10 @@
     using BbWsClient.CourseMembership;
     using BbWsClient.User;
     using Castle.Core.Logging;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
+
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;

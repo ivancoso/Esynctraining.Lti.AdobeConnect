@@ -11,6 +11,9 @@ namespace EdugameCloud.ASMXService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;

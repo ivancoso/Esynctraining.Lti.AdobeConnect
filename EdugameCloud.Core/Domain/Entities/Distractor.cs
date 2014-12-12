@@ -72,19 +72,19 @@
         public virtual string Score { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms answer.
+        /// Gets or sets the LMS answer.
         /// </summary>
         public virtual string LmsAnswer { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms answer id.
+        /// Gets or sets the LMS answer id.
         /// </summary>
         public virtual int? LmsAnswerId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms provider
+        /// Gets or sets the LMS provider
         /// </summary>
-        public virtual LmsProvider LmsProvider { get; set; }
+        public virtual int? LmsProviderId { get; set; }
 
         #endregion
     }

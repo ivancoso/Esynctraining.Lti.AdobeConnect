@@ -171,7 +171,7 @@ namespace EdugameCloud.Core.Business.Models
                     .And(x => x.LmsSurveyId == lmsSurveyId)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
-                    .Where(() => smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId)
+                    .Where(() => smc.CompanyLmsId != null && smc.CompanyLmsId == companyLmsId)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
                     .Take(1);
@@ -273,7 +273,7 @@ namespace EdugameCloud.Core.Business.Models
             var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
                 .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                 .Where(() => smi.IsActive == true)
-                .And(() => (smc.CompanyLms == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId))
+                .And(() => (smc.CompanyLmsId == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLmsId != null && smc.CompanyLmsId == companyLmsId))
                 .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
                 .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                 .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin).Where(() => (int)u2.Status == 1)

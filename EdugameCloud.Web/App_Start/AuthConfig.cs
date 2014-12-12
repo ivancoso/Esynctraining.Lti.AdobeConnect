@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
 
+    using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.MVC.Social.OAuth;
-    using EdugameCloud.MVC.Social.OAuth.Canvas;
     using EdugameCloud.MVC.Social.OAuth.Instagram;
 
     using Microsoft.Web.WebPages.OAuth;

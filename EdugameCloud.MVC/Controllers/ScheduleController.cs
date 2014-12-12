@@ -10,6 +10,8 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BrainHoney;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.AC.Provider;

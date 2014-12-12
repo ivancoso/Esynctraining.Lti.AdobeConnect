@@ -22,9 +22,10 @@
             this.Map(x => x.ACSessionId).Not.Nullable();
             this.Map(x => x.IsArchive).Nullable();
             this.Map(x => x.Email).Nullable();
+            this.Map(x => x.LmsUserParametersId).Nullable();
+
             this.HasMany(x => x.Results).Cascade.Delete().ExtraLazyLoad().Inverse();
             this.References(x => x.Survey).Not.Nullable();
-            this.References(x => x.LmsUserParameters).Nullable();
         }
 
         #endregion

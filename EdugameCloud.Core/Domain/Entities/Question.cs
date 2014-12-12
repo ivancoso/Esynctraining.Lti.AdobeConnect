@@ -143,14 +143,14 @@
         public virtual int ScoreValue { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms question id.
+        /// Gets or sets the LMS question id.
         /// </summary>
         public virtual int? LmsQuestionId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms provider
+        /// Gets or sets the LMS provider
         /// </summary>
-        public virtual LmsProvider LmsProvider { get; set; }
+        public virtual int? LmsProviderId { get; set; }
         
         /// <summary>
         /// Gets or sets the value indicating whether is single.

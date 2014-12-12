@@ -5,7 +5,7 @@
     using System.Security.Cryptography;
     using System.Text;
     using System.Web;
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     /// The BLTI provider helper.

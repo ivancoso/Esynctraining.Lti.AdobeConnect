@@ -1,10 +1,8 @@
 ﻿namespace EdugameCloud.Lti.API
 {
     using System.Collections.Generic;
-
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
     using NHibernate.Mapping;
 
     /// <summary>

@@ -3,8 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
 

@@ -69,14 +69,14 @@
         public virtual User User { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms course id.
+        /// Gets or sets the LMS course id.
         /// </summary>
         public virtual int? LmsCourseId { get; set; }
 
         /// <summary>
-        /// Gets or sets the company lms.
+        /// Gets or sets the company LMS.
         /// </summary>
-        public virtual CompanyLms CompanyLms { get; set; }
+        public virtual int? CompanyLmsId { get; set; }
 
         #endregion
     }

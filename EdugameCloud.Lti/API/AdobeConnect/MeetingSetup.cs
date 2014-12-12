@@ -6,13 +6,13 @@
     using System.Globalization;
     using System.Linq;
     using System.Web.Security;
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Common;
     using EdugameCloud.Lti.API.Moodle;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.AC.Provider;

@@ -6,7 +6,7 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
     using Castle.Core.Logging;
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Extensions;

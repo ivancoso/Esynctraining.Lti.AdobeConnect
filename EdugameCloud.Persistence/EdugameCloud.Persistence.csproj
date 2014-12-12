@@ -53,6 +53,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.4\lib\net40\Esynctraining.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Esynctraining.Persistence">
+      <HintPath>..\packages\Esynctraining.Persistence.1.0.0.1\lib\net40\Esynctraining.Persistence.dll</HintPath>
+    </Reference>
     <Reference Include="FluentNHibernate">
       <HintPath>..\packages\FluentNHibernate.1.3.0.733\lib\FluentNHibernate.dll</HintPath>
     </Reference>
@@ -120,8 +123,6 @@
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="ISessionSource.cs" />
     <Compile Include="Mappings\BaseClassMap.cs" />
-    <Compile Include="Mappings\LmsCourseMeetingMap.cs" />
-    <Compile Include="Mappings\CompanyLmsMap.cs" />
     <Compile Include="Mappings\CompanyMap.cs" />
     <Compile Include="Mappings\AddressMap.cs" />
     <Compile Include="Mappings\ACSessionMap.cs" />
@@ -132,12 +133,6 @@
     <Compile Include="Mappings\BuildVersionMap.cs" />
     <Compile Include="Mappings\BaseClassMapGuid.cs" />
     <Compile Include="Mappings\CompanyThemeMap.cs" />
-    <Compile Include="Mappings\LmsProviderMap.cs" />
-    <Compile Include="Mappings\LmsQuestionTypeMap.cs" />
-    <Compile Include="Mappings\LmsUserMap.cs" />
-    <Compile Include="Mappings\LmsUserSessionMap.cs" />
-    <Compile Include="Mappings\MoodleUserMap.cs" />
-    <Compile Include="Mappings\LmsUserParametersMap.cs" />
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
     <Compile Include="Mappings\EmailHistoryMap.cs" />
     <Compile Include="Mappings\ScheduleMap.cs" />
@@ -211,6 +206,10 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj">
+      <Project>{b431087d-825b-4085-9747-f374c60fd4c4}</Project>
+      <Name>EdugameCloud.Lti.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>

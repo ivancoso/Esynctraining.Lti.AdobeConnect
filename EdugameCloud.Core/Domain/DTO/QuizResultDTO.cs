@@ -41,7 +41,7 @@
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
             this.lmsId = result.LmsId;
-            this.lmsUserParametersId = result.LmsUserParameters != null ? result.LmsUserParameters.Id : 0;
+            this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
             this.acEmail = result.ACEmail;
             this.isCompleted = result.isCompleted ?? false;
         }
@@ -129,13 +129,13 @@
         public int lmsId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms user parameters id.
+        /// Gets or sets the LMS user parameters id.
         /// </summary>
         [DataMember]
         public int lmsUserParametersId { get; set; }
 
         /// <summary>
-        /// Gets or sets the quiz result id.
+        /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
         public bool isCompleted { get; set; }

@@ -2,8 +2,6 @@
 {
     using System;
     using System.IO;
-    using System.Linq;
-    using System.Net;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Optimization;
@@ -20,7 +18,6 @@
     using EdugameCloud.MVC.ModelBinders;
     using EdugameCloud.MVC.Providers;
     using EdugameCloud.Persistence;
-    using EdugameCloud.Web.App_Start;
     using EdugameCloud.Web.Providers;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
@@ -90,6 +87,7 @@
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }
 
         /// <summary>

@@ -12,6 +12,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -248,7 +249,7 @@ namespace EdugameCloud.WCFService
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
             instance.Survey = this.SurveyModel.GetOneById(resultDTO.surveyId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
-            instance.LmsUserParameters = LmsUserParametersModel.GetOneById(resultDTO.lmsUserParametersId).Value;
+            instance.LmsUserParametersId = resultDTO.lmsUserParametersId;
             return instance;
         }
 

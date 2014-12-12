@@ -13,7 +13,12 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Moodle;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
+    using EdugameCloud.WCFService.Contracts;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
@@ -365,13 +370,13 @@ namespace EdugameCloud.WCFService
 
             instance.AcServer = dto.acServer;
             instance.AcUsername = dto.acUsername;
-            instance.Company = this.CompanyModel.GetOneById(dto.companyId).Value;
+            instance.CompanyId = dto.companyId;
             instance.ConsumerKey = dto.consumerKey;
-            instance.CreatedBy = this.UserModel.GetOneById(dto.createdBy).Value;
+            instance.CreatedBy = dto.createdBy;
             instance.DateCreated = dto.dateCreated;
             instance.DateModified = dto.dateModified;
             instance.LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
-            instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value;
+            instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value.Return(x => x.Id, dto.createdBy);
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;
             instance.Title = dto.title;

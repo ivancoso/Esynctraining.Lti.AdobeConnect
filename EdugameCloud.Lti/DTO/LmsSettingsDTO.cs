@@ -1,5 +1,4 @@
-﻿
-namespace EdugameCloud.Lti.DTO
+﻿namespace EdugameCloud.Lti.DTO
 {
     using System.Runtime.Serialization;
 

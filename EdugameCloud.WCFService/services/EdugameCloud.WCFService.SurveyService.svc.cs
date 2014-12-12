@@ -12,6 +12,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;

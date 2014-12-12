@@ -18,14 +18,20 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.Converters;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Contracts;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
+    using EdugameCloud.WCFService.Converters;
 
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
+
+    using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
 
     /// <summary>
     /// The LMS service.

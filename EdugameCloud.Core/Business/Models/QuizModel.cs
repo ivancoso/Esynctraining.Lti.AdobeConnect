@@ -226,7 +226,7 @@
                     .And(x => x.LmsQuizId == lmsQuizId)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
-                    .Where(() => smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId)
+                    .Where(() => smc.CompanyLmsId != null && smc.CompanyLmsId == companyLmsId)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)
                     .Take(1);
@@ -389,7 +389,7 @@
                     .Where(() => smi.IsActive == true && q.LmsQuizId != null)
                     .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
                     .Where(() => smc.IsActive == true)
-                    .And(() => (smc.CompanyLms == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLms != null && smc.CompanyLms.Id == companyLmsId))
+                    .And(() => (smc.CompanyLmsId == null && courseid == 0) || (smc.LmsCourseId == courseid && smc.CompanyLmsId != null && smc.CompanyLmsId == companyLmsId))
                     .JoinQueryOver(() => smc.User, () => u, JoinType.InnerJoin)
                     .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.InnerJoin)
                     .Where(() => u2.Company.Id == id.Value && (int)u2.Status == 1)

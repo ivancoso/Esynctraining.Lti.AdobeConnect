@@ -11,9 +11,9 @@
     using System.Xml.Linq;
     using System.Xml.XPath;
 
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.Core.Extensions;
 

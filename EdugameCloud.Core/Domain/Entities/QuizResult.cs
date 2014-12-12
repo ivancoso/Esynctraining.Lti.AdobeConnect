@@ -89,19 +89,19 @@
         public virtual DateTime StartTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets the lms id.
+        ///     Gets or sets the LMS id.
         /// </summary>
         public virtual int LmsId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the lms id.
+        ///     Gets or sets the LMS id.
         /// </summary>
         public virtual bool? isCompleted { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms user parameters.
+        /// Gets or sets the LMS user parameters.
         /// </summary>
-        public virtual LmsUserParameters LmsUserParameters { get; set; }
+        public virtual int? LmsUserParametersId { get; set; }
 
         #endregion
     }

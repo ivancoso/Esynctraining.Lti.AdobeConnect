@@ -20,12 +20,12 @@
             this.Map(x => x.IsActive).Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.Map(x => x.LmsCourseId).Nullable();
+            this.Map(x => x.CompanyLmsId).Nullable();
 
             this.HasMany(x => x.SubModuleItems).ExtraLazyLoad().Cascade.Delete().Inverse();
 
             this.References(x => x.User);
             this.References(x => x.SubModule);
-            this.References(x => x.CompanyLms).Nullable();
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<SubModuleCategory>(x => x.ModifiedBy)));
         }
 

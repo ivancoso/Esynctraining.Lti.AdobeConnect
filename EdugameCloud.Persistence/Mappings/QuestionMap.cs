@@ -32,6 +32,7 @@
             this.Map(x => x.LmsQuestionId).Nullable();
             this.Map(x => x.IsMoodleSingle).Nullable();
             this.Map(x => x.RandomizeAnswers).Nullable();
+            this.Map(x => x.LmsProviderId).Nullable().Column("lmsProviderId");
 
             this.HasMany(x => x.QuizQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
             this.HasMany(x => x.SurveyQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();
@@ -49,7 +50,6 @@
             this.References(x => x.Image).Column("imageId");
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Question>(x => x.ModifiedBy)));
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Question>(x => x.CreatedBy)));
-            this.References(x => x.LmsProvider).Nullable();
         }
 
         #endregion

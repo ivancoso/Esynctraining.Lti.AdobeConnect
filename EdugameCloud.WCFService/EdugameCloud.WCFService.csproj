@@ -95,6 +95,10 @@
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
@@ -102,6 +106,10 @@
     <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=104.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Services" />
@@ -203,6 +211,17 @@
       <DependentUpon>ErrorsTexts.resx</DependentUpon>
     </Compile>
     <Compile Include="Base\ExportService.cs" />
+    <Compile Include="Contracts\ICompanyLmsService.cs" />
+    <Compile Include="Contracts\ICompanyService.cs" />
+    <Compile Include="Contracts\ILmsService.cs" />
+    <Compile Include="Contracts\IMoodleAuthorizationService.cs" />
+    <Compile Include="Contracts\IMoodleService.cs" />
+    <Compile Include="Contracts\IUserService.cs" />
+    <Compile Include="Converters\CompanyDTOConverter.cs" />
+    <Compile Include="Converters\QuizConverter.cs" />
+    <Compile Include="Converters\QuizResultConverter.cs" />
+    <Compile Include="DTO\CompanyDTO.cs" />
+    <Compile Include="DTO\UserDTOWithSplashScreenDTO.cs" />
     <Compile Include="services\EdugameCloud.WCFService.LmsService.svc.cs">
       <DependentUpon>EdugameCloud.WCFService.LmsService.svc</DependentUpon>
     </Compile>

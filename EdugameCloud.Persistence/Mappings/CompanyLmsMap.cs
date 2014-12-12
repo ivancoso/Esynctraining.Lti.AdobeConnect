@@ -1,6 +1,6 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     /// The company LMS map.
@@ -33,12 +33,12 @@
             this.Map(x => x.CanRemoveMeeting).Nullable();
             this.Map(x => x.UserFolderName).Nullable();
 
-            this.References(x => x.CreatedBy).Not.Nullable().Column("createdBy");
-            this.References(x => x.Company).Not.Nullable().Column("companyId");
-            this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
-            this.References(x => x.ModifiedBy).Nullable().Column("modifiedBy");
-            this.References(x => x.AdminUser).Column("AdminUserId").Not.LazyLoad().Nullable();
+            this.Map(x => x.CreatedBy).Not.Nullable().Column("createdBy");
+            this.Map(x => x.ModifiedBy).Nullable().Column("modifiedBy");
+            this.Map(x => x.CompanyId).Not.Nullable().Column("companyId");
 
+            this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
+            this.References(x => x.AdminUser).Column("adminUserId").Not.LazyLoad().Nullable();
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.LmsCourseMeetings).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
         }

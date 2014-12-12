@@ -47,7 +47,7 @@
             {
                 const string EdugameServiceName = "EdugameCloud.WCFService";
                 resourcesAccess = new Dictionary<string, List<string>>();
-                var searchedInterfaceType = typeof(IUserService);
+                var searchedInterfaceType = typeof(ITestService);
                 if (searchedInterfaceType != null)
                 {
                     foreach (var typeReflected in Assembly.GetAssembly(searchedInterfaceType).GetTypes())
@@ -72,6 +72,7 @@
                                             roles.AddRange(ca.Roles);
                                         }
                                     }
+
                                     resourcesAccess.Add(EdugameServiceName + "." + typeReflected.Name.TrimStart('I') + "#" + publicMethod.Name, roles);
                                     
                                 }

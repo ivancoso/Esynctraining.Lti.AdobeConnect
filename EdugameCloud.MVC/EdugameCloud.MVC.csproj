@@ -174,8 +174,6 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\LtiController.cs" />
-    <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\SocialController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="ErrorController.generated.cs">
@@ -192,19 +190,11 @@
     <Compile Include="HtmlHelpers\ElementFocusExtention.cs" />
     <Compile Include="HtmlHelpers\UrlExtensions.cs" />
     <Compile Include="HtmlHelpers\ValidatedLabelExtensions.cs" />
-    <Compile Include="LtiController.generated.cs">
-      <DependentUpon>T4MVC.tt</DependentUpon>
-    </Compile>
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Modules\HttpErrorModule.cs" />
-    <Compile Include="Social\OAuth\Canvas\CanvasAuthResponse.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramUserData.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramAuthResponse.cs" />
-    <Compile Include="Social\OAuth\Canvas\CanvasClient.cs" />
-    <Compile Include="Social\OAuth\Canvas\CanvasUser.cs" />
-    <Compile Include="Social\OAuth\LtiOpenAuthSecurityManager.cs" />
-    <Compile Include="Social\OAuth\OAuthWebSecurityWrapper.cs" />
     <Compile Include="Social\OAuth\Twitter\TwitterClient2.cs" />
     <Compile Include="Social\OAuth\Twitter\TwitterClient.cs" />
     <Compile Include="Social\OAuth\Instagram\InstagramClient.cs" />

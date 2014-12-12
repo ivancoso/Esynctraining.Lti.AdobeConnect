@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Web.App_Start
+﻿namespace EdugameCloud.Web
 {
     using System.Web.Optimization;
 
@@ -10,7 +10,7 @@
     public class BundleConfig
     {
         /// <summary>
-        /// The register bundles. For more information on Bundling, visit http://go.microsoft.com/fwlink/?LinkId=254725
+        /// The register bundles. For more information on Bundling, visit <see cref="http://go.microsoft.com/fwlink/?LinkId=254725"/>
         /// </summary>
         /// <param name="bundles">
         /// The bundles.

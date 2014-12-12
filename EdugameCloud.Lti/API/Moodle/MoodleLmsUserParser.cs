@@ -4,8 +4,8 @@
     using System.Linq;
     using System.Xml;
 
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.Core.Utils;
 

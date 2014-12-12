@@ -2,7 +2,6 @@
 {
     using System;
 
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Domain.Entities;

@@ -1,8 +1,8 @@
 ﻿namespace EdugameCloud.Lti.API
 {
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Moodle;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     ///     The LMS factory.

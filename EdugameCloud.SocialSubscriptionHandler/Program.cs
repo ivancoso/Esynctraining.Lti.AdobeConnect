@@ -158,12 +158,8 @@
                     if (s.callback_url.Equals(callbackUrl, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var inactiveHistoryLogItem =
-                            historyLog.FirstOrDefault(
-                                x =>
-                                (x.SubscriptionId == s.id
-                                 || x.SubscriptionTag.Equals(s.object_id, StringComparison.InvariantCultureIgnoreCase))
-                                && (!x.LastQueryTime.HasValue
-                                    || x.LastQueryTime.Value <= DateTime.Now.AddHours(hoursWithoutQuery)));
+                            historyLog.FirstOrDefault(x => (x.SubscriptionId == s.id || x.SubscriptionTag.Equals(s.object_id, StringComparison.InvariantCultureIgnoreCase))
+                                && (!x.LastQueryTime.HasValue || x.LastQueryTime.Value <= DateTime.Now.AddHours(hoursWithoutQuery)));
                         if (inactiveHistoryLogItem != null)
                         {
                             var result = webProxy.DeleteInstagramSubscription(s.id);

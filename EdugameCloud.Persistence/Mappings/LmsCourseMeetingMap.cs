@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     /// The canvas AC meeting map

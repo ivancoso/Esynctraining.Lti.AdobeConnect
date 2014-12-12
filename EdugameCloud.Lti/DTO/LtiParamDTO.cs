@@ -3,9 +3,8 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Web;
-
-    using EdugameCloud.Core.Constants;
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Domain.Entities;
 
     using Esynctraining.Core.Extensions;
 
@@ -349,7 +348,7 @@
         private int TryParseBlackBoardCourseId()
         {
             int result = 0;
-            if (this.tool_consumer_info_product_family_code.ToLowerInvariant().Contains("blackboard"))
+            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("blackboard"), false))
             {
                 result = this.GetCourseFromQueryOfUrl(this.launch_presentation_return_url);
                 if (result == 0)

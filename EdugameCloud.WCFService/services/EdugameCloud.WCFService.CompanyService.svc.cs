@@ -9,12 +9,15 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel.Activation;
 
     using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.RTMP;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
+    using EdugameCloud.WCFService.DTO;
 
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Contracts;
@@ -33,7 +36,7 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
-    public class CompanyService : BaseService, ICompanyService
+    public class CompanyService : BaseService, Contracts.ICompanyService
     {
         #region Properties
 
@@ -566,12 +569,12 @@ namespace EdugameCloud.WCFService
                                       AcPassword = dto.lmsVO.acPassword,
                                       AcServer = dto.lmsVO.acServer,
                                       AcUsername = dto.lmsVO.acUsername,
-                                      Company = instance,
-                                      CreatedBy = this.UserModel.GetOneById(dto.lmsVO.createdBy).Value,
+                                      CompanyId = instance.Id,
+                                      CreatedBy = dto.lmsVO.createdBy,
                                       DateCreated = dto.lmsVO.dateCreated,
                                       DateModified = dto.lmsVO.dateModified,
                                       LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider).Value,
-                                      ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value,
+                                      ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value.Return(x => x.Id, dto.lmsVO.createdBy),
                                       ConsumerKey = Guid.NewGuid().ToString(),
                                       SharedSecret = Guid.NewGuid().ToString(),
                                       LmsDomain = dto.lmsVO.lmsDomain.RemoveHttpProtocolAndTrailingSlash(),

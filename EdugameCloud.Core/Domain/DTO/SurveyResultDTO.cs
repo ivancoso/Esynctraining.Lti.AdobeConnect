@@ -40,7 +40,7 @@
             this.startTime = result.StartTime;
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
-            this.lmsUserParametersId = result.LmsUserParameters.Return(l => l.Id, 0);
+            this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
         }
 
         #endregion

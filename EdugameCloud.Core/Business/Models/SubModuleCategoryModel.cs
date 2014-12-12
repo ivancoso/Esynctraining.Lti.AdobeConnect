@@ -77,7 +77,7 @@ namespace EdugameCloud.Core.Business.Models
         public IFutureValue<SubModuleCategory> GetOneByLmsCourseIdAndCompanyLms(int lmsCourseId, int companyLmsId)
         {
             var query =
-                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver().Where(x => x.LmsCourseId == lmsCourseId && x.CompanyLms != null && x.CompanyLms.Id == companyLmsId);
+                new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver().Where(x => x.LmsCourseId == lmsCourseId && x.CompanyLmsId != null && x.CompanyLmsId == companyLmsId);
             return this.Repository.FindOne(query);
         }
 

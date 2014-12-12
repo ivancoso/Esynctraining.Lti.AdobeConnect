@@ -1,22 +1,20 @@
-﻿namespace ISpye.Persistence
+﻿namespace EdugameCloud.Persistence
 {
     using System.Runtime.Remoting.Contexts;
     using System.Web;
 
-    using EdugameCloud.Persistence;
-
     using NHibernate;
 
-    ///<summary>
-    ///The nhibernate session web source.
-    ///</summary>
+    /// <summary>
+    ///     The hibernate session web source.
+    /// </summary>
     [Synchronization]
     public class NHibernateSessionWebSource : NHibernateSessionSource
     {
         #region Static Fields
 
         /// <summary>
-        /// The lock obj.
+        ///     The locking object.
         /// </summary>
         private static readonly object lockObj = new object();
 
@@ -41,7 +39,7 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The dispose.
+        ///     The dispose.
         /// </summary>
         public override void Dispose()
         {
@@ -57,7 +55,6 @@
                             if (HttpContext.Current.Server.GetLastError() == null)
                             {
                                 transaction.Commit();
-
                             }
                             else
                             {

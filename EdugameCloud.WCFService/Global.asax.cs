@@ -11,12 +11,8 @@
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.Converters;
     using EdugameCloud.Persistence;
+    using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
 
     using Esynctraining.Core.Providers;
@@ -104,11 +100,21 @@
         private static void RegisterLtiComponents(WindsorContainer container)
         {
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
             container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
         }
 
+        /// <summary>
+        /// The application authenticate request.
+        /// </summary>
+        /// <param name="sender">
+        /// The sender.
+        /// </param>
+        /// <param name="e">
+        /// The event arguments.
+        /// </param>
         protected void Application_AuthenticateRequest(Object sender, EventArgs e)
         {
             Weborb.Util.ThreadContext.setCurrentHttpContext(HttpContext.Current);

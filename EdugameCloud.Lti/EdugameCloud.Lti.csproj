@@ -52,6 +52,12 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.2.1\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="DotNetOpenAuth.AspNet">
+      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.4.12333\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DotNetOpenAuth.Core">
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.10\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
@@ -69,6 +75,14 @@
       <Private>True</Private>
       <HintPath>..\packages\BbWsClient.1.0.0.1\lib\net20\Microsoft.Web.Services2.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.2.0.30506.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\EdugameCloud.WCFService\Bin\Newtonsoft.Json.dll</HintPath>
@@ -84,11 +98,16 @@
       <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
@@ -125,30 +144,84 @@
     <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />
     <Compile Include="API\Moodle\MoodleSession.cs" />
+    <Compile Include="Business\Models\CompanyLmsModel.cs" />
+    <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
+    <Compile Include="Business\Models\LmsProviderModel.cs" />
+    <Compile Include="Business\Models\LmsQuestionTypeModel.cs" />
+    <Compile Include="Business\Models\LmsUserModel.cs" />
+    <Compile Include="Business\Models\LmsUserParametersModel.cs" />
     <Compile Include="Business\Models\LmsUserSessionModel.cs" />
+    <Compile Include="Business\Models\MoodleUserModel.cs" />
+    <Compile Include="Business\Models\ScheduleModel.cs" />
+    <Compile Include="Constants\HttpScheme.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
-    <Compile Include="Converters\QuizConverter.cs" />
-    <Compile Include="Converters\QuizResultConverter.cs" />
+    <Compile Include="Controllers\LtiController.cs" />
+    <Compile Include="Controllers\LtiScheduleController.cs" />
+    <Compile Include="Domain\Entities\ACConnectionMode.cs" />
+    <Compile Include="Domain\Entities\CompanyLms.cs" />
+    <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
+    <Compile Include="Domain\Entities\LmsProvider.cs" />
+    <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
+    <Compile Include="Domain\Entities\LmsProviderNames.cs" />
+    <Compile Include="Domain\Entities\LmsQuestionType.cs" />
+    <Compile Include="Domain\Entities\LmsQuizInfoDTO.cs" />
+    <Compile Include="Domain\Entities\LmsUser.cs" />
+    <Compile Include="Domain\Entities\LmsUserParameters.cs" />
+    <Compile Include="Domain\Entities\MoodleDataset.cs" />
+    <Compile Include="Domain\Entities\MoodleDataSetItem.cs" />
+    <Compile Include="Domain\Entities\MoodleQuestion.cs" />
+    <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
+    <Compile Include="Domain\Entities\MoodleQuiz.cs" />
+    <Compile Include="Domain\Entities\MoodleUser.cs" />
+    <Compile Include="Domain\Entities\Schedule.cs" />
+    <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
+    <Compile Include="Domain\Entities\ScheduleType.cs" />
     <Compile Include="DTO\ACSessionDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantDTO.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
+    <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
+    <Compile Include="DTO\CompanyLmsDTO.cs" />
     <Compile Include="DTO\CourseDTO.cs" />
+    <Compile Include="DTO\LmsAuthenticationParametersDTO.cs" />
+    <Compile Include="DTO\LmsProviderDTO.cs" />
+    <Compile Include="DTO\LmsQuizConvertDTO.cs" />
+    <Compile Include="DTO\LmsQuizDTO.cs" />
     <Compile Include="DTO\LmsSettingsDTO.cs" />
     <Compile Include="API\BrainHoney\Signal.cs" />
+    <Compile Include="DTO\LmsUserParametersDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\LtiSessionDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
+    <Compile Include="DTO\MoodleCourseInfoDTO.cs" />
+    <Compile Include="DTO\MoodleQuizInfoDTO.cs" />
+    <Compile Include="DTO\MoodleQuizResultDTO.cs" />
+    <Compile Include="DTO\MoodleTokenDTO.cs" />
+    <Compile Include="DTO\MoodleUserInfoDTO.cs" />
+    <Compile Include="DTO\QuizQuestionDTO.cs" />
     <Compile Include="DTO\QuizSubmissionDTO.cs" />
     <Compile Include="DTO\QuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\QuizSubmissionResultDTO.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\LmsUserDTO.cs" />
+    <Compile Include="DTO\VariableDTO.cs" />
+    <Compile Include="EntityParsing\MoodleExpressionParser.cs" />
+    <Compile Include="EntityParsing\MoodleQuizInfoParser.cs" />
+    <Compile Include="EntityParsing\MoodleQuizParser.cs" />
+    <Compile Include="Extensions\MoodleParserExtensions.cs" />
+    <Compile Include="Extensions\UriBuilderExtensions.cs" />
+    <Compile Include="Extensions\UrlExtensions.cs" />
+    <Compile Include="Extensions\UrlStringExtension.cs" />
     <Compile Include="OAuth\BltiProviderHelper.cs" />
+    <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />
+    <Compile Include="OAuth\Canvas\CanvasClient.cs" />
+    <Compile Include="OAuth\Canvas\CanvasUser.cs" />
+    <Compile Include="OAuth\LtiOpenAuthSecurityManager.cs" />
     <Compile Include="OAuth\NonceData.cs" />
     <Compile Include="OAuth\OAuthExtensions.cs" />
+    <Compile Include="OAuth\OAuthWebSecurityWrapper.cs" />
     <Compile Include="OAuth\QueryParameter.cs" />
     <Compile Include="OAuth\QueryParameterComparer.cs" />
     <Compile Include="Domain\Entities\LmsUserSession.cs" />
@@ -158,12 +231,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
-      <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

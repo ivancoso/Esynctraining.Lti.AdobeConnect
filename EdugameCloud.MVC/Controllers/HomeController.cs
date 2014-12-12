@@ -92,7 +92,7 @@
         /// The <see cref="ActionResult"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."), HttpGet]
-        public virtual ActionResult Admin(string view = null, string code = null, string __provider__ = null, string __sid__ = null, string state = null)
+        public virtual ActionResult Admin(string view = null, string code = null, string __provider__ = null, string __sid__ = null, string state = null, string providerKey = null)
         {
             if (__provider__ == "canvas" 
                 && !string.IsNullOrWhiteSpace(__sid__) 
@@ -100,7 +100,7 @@
                 && !string.IsNullOrWhiteSpace(state))
             {
                 //// crazy hack for canvas OAuth callback 
-                return this.RedirectToAction(EdugameCloudT4.Lti.AuthenticationCallback(__provider__, __sid__, code, state));
+                return this.RedirectToAction("callback", "Lti", new { __provider__,  __sid__, code, state, providerKey });
             }
             else
             {

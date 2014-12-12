@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Web.App_Start
+﻿namespace EdugameCloud.Web
 {
     using System.Web.Mvc;
 

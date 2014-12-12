@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Persistence.Mappings
 {
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     /// The LMS user parameters map.
