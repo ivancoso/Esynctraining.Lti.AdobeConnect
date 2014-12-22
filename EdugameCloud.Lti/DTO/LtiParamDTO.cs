@@ -32,6 +32,11 @@
         public string context_id { get; set; }
 
         /// <summary>
+        ///     Gets or sets the membership url.
+        /// </summary>
+        public string ext_ims_lis_memberships_url { get; set; }
+
+        /// <summary>
         ///     Gets or sets the context label.
         /// </summary>
         public string context_label { get; set; }

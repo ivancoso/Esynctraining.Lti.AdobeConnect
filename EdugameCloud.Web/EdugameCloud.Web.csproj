@@ -428,7 +428,9 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
-    <Content Include="Web.constrings" />
+    <Content Include="Web.constrings">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\_BaseModelData.cshtml" />
     <Content Include="Views\Shared\_IESpecific.cshtml" />
     <Content Include="Views\Shared\_BaseLayout.cshtml" />

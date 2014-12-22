@@ -152,13 +152,12 @@
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
             string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-            if (role.Contains("teacher") || role.Contains("instructor"))
+            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
             }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("owner")
-                || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
             {
                 u.ac_role = "Presenter";
                 permission = MeetingPermissionId.mini_host;
@@ -1605,7 +1604,7 @@
             {
                 var users = this.lti2Api.GetUsersForCourse(
                     credentials,
-                    param.ext_ims_lti_tool_setting_url,
+                    param.ext_ims_lis_memberships_url ?? param.ext_ims_lti_tool_setting_url,
                     param.ext_ims_lis_memberships_id,
                     out error);
                 return this.GroupUsers(users);
