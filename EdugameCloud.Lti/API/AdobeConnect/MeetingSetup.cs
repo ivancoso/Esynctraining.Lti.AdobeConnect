@@ -152,6 +152,12 @@
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
             string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
+            if (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
+            {
+                permission = MeetingPermissionId.remove;
+                u.ac_role = "Remove";
+            }
+
             if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner"))
             {
                 permission = MeetingPermissionId.host;
@@ -1000,6 +1006,9 @@
                     }
                 }
             }
+
+            users.RemoveAll(u => (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0")) 
+                && (!string.IsNullOrWhiteSpace(u.ac_role) && u.ac_role.Equals("Remove")));
 
             return users;
         }
