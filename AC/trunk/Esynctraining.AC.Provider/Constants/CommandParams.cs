@@ -86,6 +86,11 @@
         public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
 
         /// <summary>
+        /// The sco name.
+        /// </summary>
+        public const string ScoName = "sco-id={0}&filter-name={1}";
+
+        /// <summary>
         /// The group membership.
         /// </summary>
         public const string GroupMembership = "group-id={0}&principal-id={1}&is-member={2}";
@@ -113,7 +118,7 @@
             /// <summary>
             /// The meeting SCO id.
             /// </summary>
-            public const string MeetingScoId = "filter-type=meeting&filter-sco-id={0}";            
+            public const string MeetingScoId = "filter-type=meeting&filter-sco-id={0}";
         }
 
         /// <summary>
