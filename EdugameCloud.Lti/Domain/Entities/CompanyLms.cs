@@ -162,6 +162,16 @@
         public virtual bool? CanRemoveMeeting { get; set; }
 
         /// <summary>
+        /// Gets or sets the can edit meeting.
+        /// </summary>
+        public virtual bool? CanEditMeeting { get; set; }
+
+        /// <summary>
+        /// Gets or sets the is settings visible.
+        /// </summary>
+        public virtual bool? IsSettingsVisible { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

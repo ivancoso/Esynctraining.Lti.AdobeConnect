@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
+    using System.IO;
     using System.Runtime.Serialization;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
@@ -47,7 +48,11 @@
                 this.title = instance.Title;
                 this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
                 this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
+                this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
+                this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
+                this.setupUrl = instance.LmsProvider != null && instance.LmsProvider.ShortName != null ? 
+                    string.Format("/Content/lti-config/{0}.xml", instance.LmsProvider.ShortName) : null;
             }
         }
 
@@ -177,5 +182,23 @@
         /// </summary>
         [DataMember]
         public bool canRemoveMeeting { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether can edit meeting.
+        /// </summary>
+        [DataMember]
+        public bool canEditMeeting { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is settings visible.
+        /// </summary>
+        [DataMember]
+        public bool isSettingsVisible { get; set; }
+
+        /// <summary>
+        /// Gets or sets the setup url.
+        /// </summary>
+        [DataMember]
+        public string setupUrl { get; set; }
     }
 }

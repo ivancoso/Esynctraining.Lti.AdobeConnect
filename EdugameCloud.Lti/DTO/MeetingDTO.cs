@@ -53,6 +53,18 @@
         public bool is_editable { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether can_edit_meeting.
+        /// </summary>
+        [DataMember]
+        public bool can_edit_meeting { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether is_settings_visible.
+        /// </summary>
+        [DataMember]
+        public bool is_settings_visible { get; set; }
+
+        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [DataMember]

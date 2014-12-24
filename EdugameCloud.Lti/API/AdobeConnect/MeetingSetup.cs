@@ -2127,6 +2127,8 @@
                               are_users_synched = flags.Item2,
                               is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
                               is_editable = this.CanEdit(param),
+                              can_edit_meeting = credentials.CanEditMeeting.GetValueOrDefault(),
+                              is_settings_visible = credentials.IsSettingsVisible.GetValueOrDefault(),
                               lms_provider_name = credentials.LmsProvider.LmsProviderName
                           };
             return ret;
@@ -2453,10 +2455,27 @@
         {
             string ltiFolderSco = null;
 
-            ScoContentCollectionResult userMeetings = provider.GetContentsByType("user-meetings");
-            if (userMeetings.ScoId != null && userMeetings.Values != null)
+            StatusInfo status;
+            var shortcut = provider.GetShortcutByType("user-meetings", out status);
+            List<ScoContent> userFolders = new List<ScoContent>();
+
+            if (shortcut != null)
             {
-                ScoContent userFolder = userMeetings.Values.FirstOrDefault(v => (v.Name.Equals(user.Login) || v.Name.Equals(user.Email)) && v.IsFolder);
+                var userMeetings = provider.GetScoExpandedContentByName(shortcut.ScoId, user.Login);
+                if (userMeetings != null && userMeetings.Values != null)
+                {
+                    userFolders.AddRange(userMeetings.Values);
+                }
+                userMeetings = provider.GetScoExpandedContentByName(shortcut.ScoId, user.Email);
+                if (userMeetings != null && userMeetings.Values != null)
+                {
+                    userFolders.AddRange(userMeetings.Values);
+                }                
+            }
+            
+            if (userFolders.Count > 0)
+            {
+                ScoContent userFolder = userFolders.FirstOrDefault(uf => uf.Type.Equals("folder"));
 
                 if (userFolder == null)
                 {

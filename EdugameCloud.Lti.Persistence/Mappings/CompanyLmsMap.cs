@@ -33,6 +33,8 @@
             this.Map(x => x.UseSSL).Nullable();
             this.Map(x => x.UseUserFolder).Nullable();
             this.Map(x => x.CanRemoveMeeting).Nullable();
+            this.Map(x => x.CanEditMeeting).Nullable();
+            this.Map(x => x.IsSettingsVisible).Nullable();
             this.Map(x => x.UserFolderName).Nullable();
 
             this.Map(x => x.CreatedBy).Not.Nullable().Column("createdBy");
