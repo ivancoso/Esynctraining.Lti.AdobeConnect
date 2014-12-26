@@ -1095,7 +1095,10 @@
         {
             StatusInfo status;
 
-            var scos = this.requestProcessor.Process(Commands.Sco.ExpandedContents, string.Format(CommandParams.ScoName, scoId, name), out status);
+            var scos = this.requestProcessor.Process(
+                Commands.Sco.ExpandedContents, 
+                string.Format(CommandParams.ScoName, scoId, HttpUtility.UrlEncode(name)), 
+                out status);
 
             // ReSharper disable once InconsistentNaming
             const string scoPath = "//expanded-scos/sco";
