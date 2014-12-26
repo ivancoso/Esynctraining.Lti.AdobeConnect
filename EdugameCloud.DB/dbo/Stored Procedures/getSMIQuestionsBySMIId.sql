@@ -23,6 +23,7 @@ SELECT   Q.questionId,
 		 Q.imageId,
 		 Q.scoreValue,
 		 Q.randomizeAnswers,
+		 
 		 CASE 
 		    WHEN Q.questionTypeId = 12 THEN qr.restrictions 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.restrictions 
@@ -56,6 +57,9 @@ SELECT   Q.questionId,
 		 CASE 
 			WHEN Q.questionTypeId = 14 THEN qw.weightBucketType 
 			ELSE null END AS weightBucketType,
+		CASE 
+			WHEN Q.questionTypeId = 12 THEN qr.isAlwaysRateDropdown
+			ELSE null END AS isAlwaysRateDropdown,
 		 I.x,
 		 I.y,
 		 I.height,

@@ -8,9 +8,10 @@
     [incorrectMessage]        VARCHAR (500)  NULL,
     [isActive]                BIT            CONSTRAINT [DF__QuestionT__IsAct__1CBC4616] DEFAULT ((0)) NULL,
     [iconSource]              NVARCHAR (500) NULL,
-    [moodleQuestionType]      NVARCHAR (50)  NULL,
     CONSTRAINT [PK_QuestionType] PRIMARY KEY CLUSTERED ([questionTypeId] ASC)
 );
+
+
 
 
 

@@ -8,12 +8,16 @@
     [isActive]            BIT            CONSTRAINT [DF__UserSubMo__IsAct__3B75D760] DEFAULT ((0)) NULL,
     [lmsCourseId]         INT            NULL,
     [lmsProviderId]       INT            NULL,
+    [companyLmsId]        INT            NULL,
     CONSTRAINT [PK_SubModuleCategory] PRIMARY KEY CLUSTERED ([subModuleCategoryId] ASC),
+    CONSTRAINT [FK_SubModuleCategory_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]),
     CONSTRAINT [FK_SubModuleCategory_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),
     CONSTRAINT [FK_SubModuleCategory_User] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId]),
     CONSTRAINT [FK_UserSubModuleCategory_SubModule] FOREIGN KEY ([subModuleId]) REFERENCES [dbo].[SubModule] ([subModuleId]),
     CONSTRAINT [FK_UserSubModuleCategory_User] FOREIGN KEY ([userId]) REFERENCES [dbo].[User] ([userId])
 );
+
+
 
 
 
