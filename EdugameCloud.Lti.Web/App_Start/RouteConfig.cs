@@ -19,6 +19,7 @@
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
+
             routes.MapLowercaseRoute("LtiOAuthLogin", "Lti/{provider}-login", new { controller = "Lti", action = "login" });
             routes.MapLowercaseRoute("LtiOAuthCallback", "Lti/oauth-callback", new { controller = "Lti", action = "callback" });
             routes.MapLowercaseRoute("DefaultLti", "Lti", new { controller = "Lti", action = "Index" });

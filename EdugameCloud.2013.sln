@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Persistenc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Web", "EdugameCloud.Lti.Web\EdugameCloud.Lti.Web.csproj", "{A149C2F2-4E11-4667-A83F-59D6D00401E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.WebRequester", "EdugameCloud.Lti.WebRequester\EdugameCloud.Lti.WebRequester.csproj", "{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{A149C2F2-4E11-4667-A83F-59D6D00401E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A149C2F2-4E11-4667-A83F-59D6D00401E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A149C2F2-4E11-4667-A83F-59D6D00401E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

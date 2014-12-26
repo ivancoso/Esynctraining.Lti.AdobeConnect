@@ -1,7 +1,8 @@
-﻿namespace EdugameCloud.Persistence.Mappings
+﻿namespace EdugameCloud.Lti.Persistence.Mappings
 {
     using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.Domain.Entities;
+
+    using Esynctraining.Persistence.Mappings;
 
     /// <summary>
     /// The schedule map.

@@ -126,7 +126,7 @@
                         scheduledAction = this.CheckForBrainHoneySignals;
                         break;
                     case ScheduleDescriptor.CleanLmsSessions:
-                        scheduledAction = this.CheckForBrainHoneySignals;
+                        scheduledAction = this.CleanLmsSessions;
                         break;
                 }
 
