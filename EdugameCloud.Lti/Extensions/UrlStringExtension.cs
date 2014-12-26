@@ -19,19 +19,22 @@
         /// </returns>
         public static string RemoveHttpProtocolAndTrailingSlash(this string url)
         {
-            if (url.StartsWith(HttpScheme.Http, StringComparison.OrdinalIgnoreCase))
+            if (url != null)
             {
-                url = url.Substring(HttpScheme.Http.Length);
-            }
+                if (url.StartsWith(HttpScheme.Http, StringComparison.OrdinalIgnoreCase))
+                {
+                    url = url.Substring(HttpScheme.Http.Length);
+                }
 
-            if (url.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase))
-            {
-                url = url.Substring(HttpScheme.Https.Length);
-            }
+                if (url.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase))
+                {
+                    url = url.Substring(HttpScheme.Https.Length);
+                }
 
-            while (url.EndsWith("/"))
-            {
-                url = url.Substring(0, url.Length - 1);
+                while (url.EndsWith("/"))
+                {
+                    url = url.Substring(0, url.Length - 1);
+                }
             }
 
             return url;
