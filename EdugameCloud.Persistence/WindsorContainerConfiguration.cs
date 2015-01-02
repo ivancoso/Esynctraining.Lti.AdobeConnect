@@ -54,6 +54,7 @@
             {
                 container.AddFacility<WcfFacility>();
                 container.Register(Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
+                container.Register(Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(BaseConverter<,>)).WithService.Base().LifestyleTransient());
                 container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
             }
 

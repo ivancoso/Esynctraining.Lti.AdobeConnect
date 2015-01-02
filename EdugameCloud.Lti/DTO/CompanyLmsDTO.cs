@@ -51,8 +51,10 @@
                 this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
                 this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
-                this.setupUrl = instance.LmsProvider != null && instance.LmsProvider.ShortName != null ? 
-                    string.Format("/Content/lti-config/{0}.xml", instance.LmsProvider.ShortName) : null;
+                this.setupUrl = instance.LmsProvider != null ? 
+                    (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
+                    : instance.LmsProvider.ShortName != null ? string.Format("/Content/lti-config/{0}.xml", instance.LmsProvider.ShortName) : null)
+                    : null;
             }
         }
 

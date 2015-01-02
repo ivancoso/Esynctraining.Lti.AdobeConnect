@@ -19,6 +19,11 @@
         /// </summary>
         public virtual string ShortName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the configuration url.
+        /// </summary>
+        public virtual string ConfigurationUrl { get; set; }
+
         #endregion
     }
 }

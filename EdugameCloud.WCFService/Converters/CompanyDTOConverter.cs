@@ -1,7 +1,9 @@
-﻿namespace EdugameCloud.Core.Converters
+﻿namespace EdugameCloud.WCFService.Converters
 {
     using System;
+
     using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Core.Converters;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.DTO;

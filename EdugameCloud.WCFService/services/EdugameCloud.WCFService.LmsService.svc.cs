@@ -208,10 +208,12 @@ namespace EdugameCloud.WCFService
                 p =>
                     {
                         var pdto = new LmsProviderDTO(p);
-                        pdto.configUrl = this.Settings.PortalUrl +
+                        pdto.configUrl = string.IsNullOrWhiteSpace(p.ConfigurationUrl) ? 
+                            this.Settings.PortalUrl +
                             "content/lti-config/" +
                             p.ShortName + 
-                            ".xml";
+                            ".xml"
+                            : p.ConfigurationUrl;
                         pdto.instructionsUrl = this.Settings.PortalUrl +
                             "content/lti-instructions/" +
                             p.ShortName + 
