@@ -119,7 +119,7 @@
             CompanyLms company, 
             int courseid, 
             out string error, 
-            WebserviceWrapper client = null)
+            ref WebserviceWrapper client)
         {
             var result = new List<LmsUserDTO>();
 
@@ -317,7 +317,9 @@
                 availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
                     .Return(x => x.courseRoleDescription, string.Empty)
                     .ToLowerInvariant()
-                    .Trim(':');
+                    .Trim(':')
+                    .Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    .IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
             return Inflector.Capitalize(role);
         }
 

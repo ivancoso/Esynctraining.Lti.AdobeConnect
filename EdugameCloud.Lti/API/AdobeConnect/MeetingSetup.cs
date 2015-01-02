@@ -6,6 +6,9 @@
     using System.Globalization;
     using System.Linq;
     using System.Web.Security;
+
+    using BbWsClient;
+
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
@@ -1271,7 +1274,10 @@
         /// </returns>
         private bool CanEdit(LtiParamDTO param)
         {
-            return param.roles != null && (param.roles.Contains("Instructor") || param.roles.Contains("Administrator"));
+            return param.roles != null && (param.roles.Contains("Instructor") 
+                || param.roles.Contains("Administrator") 
+                || param.roles.Contains("Course Director")
+                || param.roles.Contains("CourseDirector"));
         }
 
         /// <summary>
@@ -1562,11 +1568,12 @@
         /// </returns>
         private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
         {
-            var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
-            // trying once more, at least the teacher should be enrolled
+            WebserviceWrapper client = null;
+            var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error, ref client);
+            ////TODO ACCESS DENIED IS INDEED RELATED TO A CALL FREQUENCY. WE SHOULD CACHE RESULTS and INVALIDATE CACHE ON MANUAL UPDATE BUTTON CLICK ONLY For 10 MINS TOPS
             if (users.Count == 0)
             {
-                users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error);
+                users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error, ref client);
             }
             return this.GroupUsers(users);
         }
