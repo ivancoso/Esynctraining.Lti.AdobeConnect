@@ -1673,6 +1673,8 @@
                             meeting.CachedUsers = JsonConvert.SerializeObject(users);
                             this.LmsCourseMeetingModel.RegisterSave(meeting, true);
                         }
+
+                        cachedUsers = users;
                     }
                 }
             }
