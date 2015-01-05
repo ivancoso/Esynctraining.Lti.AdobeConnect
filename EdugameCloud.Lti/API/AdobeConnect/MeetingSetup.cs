@@ -5,6 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
     using System.Web.Security;
 
     using BbWsClient;
@@ -23,7 +24,9 @@
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     The meeting setup.
@@ -31,6 +34,11 @@
     public class MeetingSetup
     {
         #region Fields
+
+        /// <summary>
+        /// The locker.
+        /// </summary>
+        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
 
         /// <summary>
         /// The DLAP API.
@@ -52,6 +60,11 @@
         /// </summary>
         private readonly LTI2Api lti2Api;
 
+        /// <summary>
+        /// The settings.
+        /// </summary>
+        private readonly dynamic settings;
+
         #endregion
 
         #region Constructors and Destructors
@@ -71,12 +84,16 @@
         /// <param name="lti2Api">
         /// The LTI 2 API.
         /// </param>
-        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api)
+        /// <param name="settings">
+        /// The settings.
+        /// </param>
+        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, ApplicationSettingsProvider settings)
         {
             this.dlapApi = dlapApi;
             this.soapApi = soapApi;
             this.moodleApi = moodleApi;
             this.lti2Api = lti2Api;
+            this.settings = settings;
         }
 
         #endregion
@@ -194,17 +211,20 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public bool DeleteMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
             if (!credentials.CanRemoveMeeting.GetValueOrDefault())
             {
                 return false;
             }
+
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
             if (meeting == null)
             {
                 return false;
             }
+
             var result = provider.DeleteSco(meeting.ScoId);
             return result.Code == StatusCodes.ok;
         }
@@ -426,16 +446,19 @@
         /// <param name="error">
         /// The error.
         /// </param>
+        /// <param name="forceUpdate">
+        /// The force Update.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", 
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, out string error)
+        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, out string error, bool forceUpdate = false)
         {
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, param.lms_user_id, param.course_id, out error, param);
-
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
+
             if (meeting == null)
             {
                 return users;
@@ -670,6 +693,9 @@
         /// <param name="mode">
         /// The mode.
         /// </param>
+        /// <param name="adobeConnectProvider">
+        /// The adobe Connect Provider.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
@@ -819,7 +845,6 @@
                 meetingDTO, 
                 updateItem, 
                 meetingFolder, 
-                param.context_label ?? "nolabel", 
                 param.course_id,
                 isNewMeeting);
 
@@ -839,7 +864,7 @@
                 meeting.ScoId = result.ScoInfo.ScoId;
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
 
-                this.SetDefaultUsers(credentials, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData ?? param);
+                this.SetDefaultUsers(credentials, meeting, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData ?? param);
 
                 this.CreateAnnouncement(
                     credentials, 
@@ -944,22 +969,22 @@
         /// </returns>
         public string GetMeetingFolder(CompanyLms credentials, AdobeConnectProvider provider, Principal user)
         {
-            string acScoId = null;
+            string adobeConnectScoId = null;
 
             if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
             {
-                acScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
+                adobeConnectScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
             }
 
-            if (acScoId == null)
+            if (adobeConnectScoId == null)
             {
                 this.SetupSharedMeetingsFolder(credentials, provider);
                 this.СompanyLmsModel.RegisterSave(credentials);
                 this.СompanyLmsModel.Flush();
-                acScoId = credentials.ACScoId;
+                adobeConnectScoId = credentials.ACScoId;
             }
 
-            return acScoId;
+            return adobeConnectScoId;
         }
 
         /// <summary>
@@ -1083,6 +1108,35 @@
             return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The get locker.
+        /// </summary>
+        /// <param name="lockerKey">
+        /// The locker key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        private static object GetLocker(string lockerKey)
+        {
+            if (!locker.ContainsKey(lockerKey))
+            {
+                lock (locker)
+                {
+                    if (!locker.ContainsKey(lockerKey))
+                    {
+                        locker.Add(lockerKey, new object());
+                    }
+                }
+            }
+
+            return locker[lockerKey];
+        }
+
         /// <summary>
         /// The update user ac values.
         /// </summary>
@@ -1105,14 +1159,14 @@
             if (principal == null)
             {
                 var setup = new PrincipalSetup
-                                {
-                                    Email = user.GetEmail(),
-                                    FirstName = user.GetFirstName(),
-                                    LastName = user.GetLastName(),
-                                    Name = user.name,
-                                    Login = user.GetLogin(),
-                                    Password = Membership.GeneratePassword(8, 2)
-                                };
+                {
+                    Email = user.GetEmail(),
+                    FirstName = user.GetFirstName(),
+                    LastName = user.GetLastName(),
+                    Name = user.name,
+                    Login = user.GetLogin(),
+                    Password = Membership.GeneratePassword(8, 2)
+                };
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
                 if (pu.Principal != null)
                 {
@@ -1124,10 +1178,6 @@
                 user.ac_id = principal.PrincipalId;
             }
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// The save LMS user parameters.
@@ -1242,22 +1292,24 @@
         /// </returns>
         private Principal GetACUser(AdobeConnectProvider provider, string login, string email)
         {
-            var byLogin = provider.GetAllByLogin(login);
-            if (!byLogin.Success)
+            var resultByLogin = provider.GetAllByLogin(login);
+            if (!resultByLogin.Success)
             {
                 return null;
             }
+
             var principal = string.IsNullOrWhiteSpace(login)
                                    ? null
-                                   : byLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                                   : resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             if (principal == null && !string.IsNullOrWhiteSpace(email))
             {
-                var byEmail = provider.GetAllByEmail(email);
-                if (!byEmail.Success)
+                var resultByEmail = provider.GetAllByEmail(email);
+                if (!resultByEmail.Success)
                 {
                     return null;
                 }
-                principal = byEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+
+                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             }
 
             return principal;
@@ -1289,6 +1341,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <param name="param">
         /// The parameter.
         /// </param>
@@ -1301,6 +1356,7 @@
         private Tuple<bool, bool> GetMeetingFlags(
             AdobeConnectProvider provider,
             CompanyLms credentials,
+            LmsCourseMeeting meeting,
             LtiParamDTO param,
             string meetingSco)
         {
@@ -1321,7 +1377,7 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, lmsUserId, courseId, enrollments, param);
+                areUsersSynched = this.AreUsersSynched(credentials, meeting, lmsUserId, courseId, enrollments, param);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1352,6 +1408,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <param name="lmsUserId">
         /// The LMS User Id.
         /// </param>
@@ -1369,13 +1428,14 @@
         /// </returns>
         private bool AreUsersSynched(
             CompanyLms credentials,
+            LmsCourseMeeting meeting,
             string lmsUserId,
             int courseId,
             List<PermissionInfo> enrollments,
             LtiParamDTO param)
         {
             string error;
-            var lmsUsers = this.GetLMSUsers(credentials, lmsUserId, courseId, out error, param);
+            var lmsUsers = this.GetLMSUsers(credentials, meeting, lmsUserId, courseId, out error, param);
             foreach (var lmsUser in lmsUsers)
             {
                 if (!this.IsUserSynched(enrollments, lmsUser))
@@ -1557,25 +1617,87 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <param name="blackBoardCourseId">
         /// The black board course id.
         /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
+        /// <param name="forceUpdate">
+        /// The force Update.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, int blackBoardCourseId, out string error)
+        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, LmsCourseMeeting meeting, int blackBoardCourseId, out string error, bool forceUpdate = false)
         {
-            WebserviceWrapper client = null;
-            var users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error, ref client);
-            ////TODO ACCESS DENIED IS INDEED RELATED TO A CALL FREQUENCY. WE SHOULD CACHE RESULTS and INVALIDATE CACHE ON MANUAL UPDATE BUTTON CLICK ONLY For 10 MINS TOPS
-            if (users.Count == 0)
+            var timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
+            var key = credentials.LmsDomain + ".course." + blackBoardCourseId;
+            error = null;
+            List<LmsUserDTO> cachedUsers = this.CheckCachedUsers(meeting, forceUpdate, timeout);
+            if (cachedUsers == null)
             {
-                users = this.soapApi.GetUsersForCourse(credentials, blackBoardCourseId, out error, ref client);
+                var lockMe = GetLocker(key);
+                lock (lockMe)
+                {
+                    if (meeting != null)
+                    {
+                        this.LmsCourseMeetingModel.Refresh(ref meeting);
+                    }
+
+                    cachedUsers = this.CheckCachedUsers(meeting, forceUpdate, timeout);
+                    if (cachedUsers == null)
+                    {
+                        WebserviceWrapper client = null;
+                        var users = this.soapApi.GetUsersForCourse(
+                            credentials,
+                            blackBoardCourseId,
+                            out error,
+                            ref client);
+                        if (users.Count == 0 && error.Return(x => x.ToLowerInvariant().Contains("access denied"), false))
+                        {
+                            Thread.Sleep(TimeSpan.FromSeconds(10));
+                            users = this.soapApi.GetUsersForCourse(
+                                credentials,
+                                blackBoardCourseId,
+                                out error,
+                                ref client);
+                        }
+
+                        if (string.IsNullOrWhiteSpace(error) && meeting != null)
+                        {
+                            meeting.AddedToCache = DateTime.Now;
+                            meeting.CachedUsers = JsonConvert.SerializeObject(users);
+                            this.LmsCourseMeetingModel.RegisterSave(meeting, true);
+                        }
+                    }
+                }
             }
-            return this.GroupUsers(users);
+
+            return this.GroupUsers(cachedUsers);
+        }
+
+        /// <summary>
+        /// The check cached users.
+        /// </summary>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
+        /// <param name="forceUpdate">
+        /// The force update.
+        /// </param>
+        /// <param name="timeout">
+        /// The timeout.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
+        {
+            return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
         }
 
         /// <summary>
@@ -1741,6 +1863,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <param name="lmsUserId">
         /// The LMS User Id.
         /// </param>
@@ -1753,10 +1878,13 @@
         /// <param name="extraData">
         /// The extra Data.
         /// </param>
+        /// <param name="forceUpdate">
+        /// The force Update.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, string lmsUserId, int courseId, out string error, object extraData = null)
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
@@ -1766,7 +1894,7 @@
                 case LmsProviderNames.BrainHoney:
                     return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
                 case LmsProviderNames.Blackboard:
-                    return this.GetBlackBoardUsers(credentials, courseId, out error);
+                    return this.GetBlackBoardUsers(credentials, meeting, courseId, out error, forceUpdate);
                 case LmsProviderNames.Moodle:
                     return this.GetMoodleUsers(credentials, courseId, out error);
                 case LmsProviderNames.Sakai:
@@ -2125,7 +2253,8 @@
         {
             PermissionInfo permissionInfo;
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var flags = this.GetMeetingFlags(provider, credentials, param, result.ScoId);
+            var lmsCourseMeeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            var flags = this.GetMeetingFlags(provider, credentials, lmsCourseMeeting, param, result.ScoId);
 
             var ret = new MeetingDTO
                           {
@@ -2249,6 +2378,9 @@
         /// <param name="credentials">
         /// The credentials.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <param name="provider">
         /// The provider.
         /// </param>
@@ -2266,6 +2398,7 @@
         /// </param>
         private void SetDefaultUsers(
             CompanyLms credentials, 
+            LmsCourseMeeting meeting,
             AdobeConnectProvider provider, 
             string lmsUserId,
             int courseId, 
@@ -2273,7 +2406,7 @@
             object extraData = null)
         {
             string error;
-            List<LmsUserDTO> users = this.GetLMSUsers(credentials, lmsUserId, courseId, out error, extraData);
+            List<LmsUserDTO> users = this.GetLMSUsers(credentials, meeting, lmsUserId, courseId, out error, extraData);
 
             foreach (LmsUserDTO u in users)
             {
@@ -2317,9 +2450,6 @@
         /// <param name="folderSco">
         /// The folder SCO.
         /// </param>
-        /// <param name="contextLabel">
-        /// The context label.
-        /// </param>
         /// <param name="courseId">
         /// The course id.
         /// </param>
@@ -2330,7 +2460,6 @@
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
-            string contextLabel, 
             int courseId,
             bool isNew)
         {
@@ -2482,6 +2611,7 @@
                 {
                     userFolders.AddRange(userMeetings.Values);
                 }
+
                 userMeetings = provider.GetScoExpandedContentByName(shortcut.ScoId, user.Email);
                 if (userMeetings != null && userMeetings.Values != null)
                 {

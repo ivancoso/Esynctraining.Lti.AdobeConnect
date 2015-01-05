@@ -119,15 +119,20 @@
             CompanyLms company, 
             int courseid, 
             out string error, 
-            ref WebserviceWrapper client)
+            ref WebserviceWrapper client,
+            bool forceUpdate = false)
         {
             var result = new List<LmsUserDTO>();
+
+            var courseIdFixed = string.Format("_{0}_1", courseid);
+
+
 
             var enrollmentsResult = this.LoginIfNecessary(
                 ref client,
                 c =>
                     {
-                        var courseIdFixed = string.Format("_{0}_1", courseid);
+                        
                         var membershipFilter = new MembershipFilter
                                                    {
                                                        filterType = 2,

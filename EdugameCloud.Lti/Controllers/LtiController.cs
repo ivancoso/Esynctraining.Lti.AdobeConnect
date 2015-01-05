@@ -190,7 +190,6 @@
             providerKey = FixExtraDataIssue(providerKey);
             string provider = __provider__;
             
-
             try
             {
                 AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
@@ -414,7 +413,7 @@
         /// The delete meeting.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The ДЬЫ provider name.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -483,11 +482,14 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="forceUpdate">
+        /// The force Update.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual ActionResult GetUsers(string lmsProviderName)
+        public virtual ActionResult GetUsers(string lmsProviderName, bool forceUpdate = false)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -497,7 +499,8 @@
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
-                out error);
+                out error, 
+                forceUpdate);
             if (string.IsNullOrWhiteSpace(error))
             {
                 return this.Json(users);
@@ -907,7 +910,6 @@
 
             return keyToFix;
         }
-
 
         /// <summary>
         /// The get user name or email.
