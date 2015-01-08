@@ -748,11 +748,16 @@
                 this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up.");
                 return this.View("Error");
             }
+            var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+
+            string email, login;
+            this.meetingSetup.GetParamLoginAndEmail(model, credentials, adobeConnectProvider, out email, out login);
+            model.ext_user_username = login;
 
             var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(model.lms_user_id, model.lms_user_login, model.lis_person_contact_email_primary, credentials.Id);
             var session = this.SaveSession(credentials, model, lmsUser);
             var key = session.Id.ToString();
-            var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+            
             this.MeetingSetup.SetupFolders(credentials, adobeConnectProvider);
             this.SetAdobeConnectProvider(credentials.Id, adobeConnectProvider);
             

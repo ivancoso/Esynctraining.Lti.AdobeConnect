@@ -836,8 +836,8 @@
 
             var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meeting.ScoId };
 
-            var email = param.lis_person_contact_email_primary;
-            var login = param.lms_user_login;
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
+
             var registeredUser = this.GetACUser(provider, login, email);
             var meetingFolder = this.GetMeetingFolder(credentials, provider, registeredUser);
 
@@ -1108,6 +1108,47 @@
             return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
         }
 
+        /// <summary>
+        /// The get param login and email.
+        /// </summary>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="login">
+        /// The login.
+        /// </param>
+        public void GetParamLoginAndEmail(
+            LtiParamDTO param,
+            CompanyLms credentials,
+            AdobeConnectProvider provider,
+            out string email,
+            out string login)
+        {
+            email = param.lis_person_contact_email_primary;
+            login = param.lms_user_login;
+            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
+            {
+                string error;
+                var users = this.GetUsers(credentials, provider, param, out error);
+                var user =
+                    users.FirstOrDefault(
+                        u => u.lti_id != null && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
+                if (user != null)
+                {
+                    login = user.login_id;
+                }
+            }
+        }
+
         #endregion
 
         #region Methods
@@ -1366,20 +1407,7 @@
         {
             var lmsUserId = param.lms_user_id;
             var courseId = param.course_id;
-            var email = param.lis_person_contact_email_primary;
-            var login = param.lms_user_login;
-            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
-            {
-                string error;
-                var users = this.GetUsers(credentials, provider, param, out error);
-                var user =
-                    users.FirstOrDefault(
-                        u => u.lti_id != null && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
-                if (user != null)
-                {
-                    login = user.login_id;
-                }
-            }
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
             bool canJoin = false;
             bool areUsersSynched = true;
