@@ -171,6 +171,18 @@
                                         e =>
                                             {
                                                 var user = users.FirstOrDefault(u => e.userId == u.id);
+                                                var ltiIdString = user.expansionData != null
+                                                                      ? user.expansionData.FirstOrDefault(
+                                                                          ed =>
+                                                                          ed.StartsWith(
+                                                                              "USER.UUID",
+                                                                              StringComparison
+                                                                              .InvariantCultureIgnoreCase))
+                                                                      : null;
+                                                if (ltiIdString != null)
+                                                {
+                                                    ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);
+                                                }
                                                 return new LmsUserDTO
                                                            {
                                                                id = e.userId,
@@ -188,6 +200,7 @@
                                                                            x.familyName).Trim(),
                                                                        user.With(s => s.name)),
                                                                lms_role = this.GetRole(e.roleId, roles),
+                                                               lti_id = ltiIdString
                                                            };
                                             }).ToList();
                                 }

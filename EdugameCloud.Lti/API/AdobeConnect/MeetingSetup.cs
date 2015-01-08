@@ -1167,6 +1167,10 @@
                     Login = user.GetLogin(),
                     Password = Membership.GeneratePassword(8, 2)
                 };
+                if (string.IsNullOrWhiteSpace(setup.Email))
+                {
+                    setup.Email = null;
+                }
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
                 if (pu.Principal != null)
                 {
@@ -1364,6 +1368,19 @@
             var courseId = param.course_id;
             var email = param.lis_person_contact_email_primary;
             var login = param.lms_user_login;
+            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
+            {
+                string error;
+                var users = this.GetUsers(credentials, provider, param, out error);
+                var user =
+                    users.FirstOrDefault(
+                        u => u.lti_id != null && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
+                if (user != null)
+                {
+                    login = user.login_id;
+                }
+            }
+
             bool canJoin = false;
             bool areUsersSynched = true;
             var registeredUser = this.GetACUser(provider, login, email);

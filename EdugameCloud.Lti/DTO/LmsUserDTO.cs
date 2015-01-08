@@ -68,6 +68,12 @@
         [DataMember]
         public bool is_editable { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lti_id.
+        /// </summary>
+        [DataMember]
+        public string lti_id { get; set; }
+
         #endregion
 
         #region Methods
