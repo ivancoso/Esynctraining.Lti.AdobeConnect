@@ -13,7 +13,7 @@
         /// <summary>
         /// The to delete.
         /// </summary>
-        ToDelete = 1, 
+        CourseToDelete = 1, 
 
         /// <summary>
         /// The sole enrollment.

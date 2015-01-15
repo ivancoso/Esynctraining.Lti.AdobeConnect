@@ -193,6 +193,10 @@
                 && !string.IsNullOrWhiteSpace(meetingScoId))
             {
                 provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
+                if (permission == MeetingPermissionId.host)
+                {
+                    provider.AddToGroupByType(principalId, "live-admins");
+                }
             }
         }
 
@@ -1104,6 +1108,10 @@
             }
 
             provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, permission);
+            if (permission == MeetingPermissionId.host)
+            {
+                provider.AddToGroupByType(user.ac_id, "live-admins");
+            }
 
             return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
         }

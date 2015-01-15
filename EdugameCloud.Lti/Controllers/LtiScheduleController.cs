@@ -308,7 +308,7 @@
                                         this.RemoveCourseEnrollmentsFromSoleEnrollments(soleEnrollments, courseUsers);
                                         break;
 
-                                    case ProcessingSignalType.ToDelete:
+                                    case ProcessingSignalType.CourseToDelete:
                                         List<string> courseDeletedUsers =
                                             this.ProcessCourseDeleted(
                                                 signalGroup.RepresentativeSignal, 
@@ -362,7 +362,7 @@
             {
                 return group.Any(x => x.Type == DlapAPI.SignalTypes.CourseCreated)
                            ? ProcessingSignalType.Skip
-                           : ProcessingSignalType.ToDelete;
+                           : ProcessingSignalType.CourseToDelete;
             }
 
             return ProcessingSignalType.CourseToProcess;
@@ -581,7 +581,7 @@
                         {
                             this.AddToErrors(errors, error, brainHoneyCompany);
                         }
-                        else if (enrollment != null)
+                        else if (enrollment != null && api.IsEnrollmentActive(enrollment.Status))
                         {
                             var lmsUser = new LmsUserDTO
                                               {
@@ -597,8 +597,7 @@
                                 provider, 
                                 new LtiParamDTO
                                     {
-                                        context_id =
-                                            enrollment.CourseId.ToString(CultureInfo.InvariantCulture)
+                                        context_id = enrollment.CourseId.ToString(CultureInfo.InvariantCulture)
                                     }, 
                                 lmsUser, 
                                 out error, 

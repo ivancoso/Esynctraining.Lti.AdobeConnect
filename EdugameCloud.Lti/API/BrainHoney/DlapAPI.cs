@@ -248,8 +248,9 @@
             foreach (XElement enrollment in enrollments)
             {
                 string privileges = enrollment.XPathEvaluate("string(@privileges)").ToString();
+                string status = enrollment.XPathEvaluate("string(@status)").ToString();
                 XElement user = enrollment.XPathSelectElement("user");
-                if (!string.IsNullOrWhiteSpace(privileges) && user != null)
+                if (!string.IsNullOrWhiteSpace(privileges) && user != null && this.IsEnrollmentActive(status))
                 {
                     var role = this.ProcessRole(privileges);
                     string userId = user.XPathEvaluate("string(@id)").ToString();
@@ -270,6 +271,30 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// The is enrollment active.
+        /// </summary>
+        /// <param name="enrollmentStatus">
+        /// The enrollment status.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool IsEnrollmentActive(string enrollmentStatus)
+        {
+            switch (enrollmentStatus)
+            {
+                case "4": ////Withdrawn
+                case "5": ////WithdrawnFailed
+                case "6": ////Transfered
+                case "9": ////Suspended
+                case "10": ////Inactive
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -388,6 +413,7 @@
                     var userId = enrollment.XPathEvaluate("string(@userid)").ToString();
                     var courseId = int.Parse(enrollment.XPathEvaluate("string(@courseid)").ToString());
                     var role = enrollment.XPathEvaluate("string(@privileges)").ToString();
+                    var status = enrollment.XPathEvaluate("string(@status)").ToString();
                     var user = enrollment.XPathSelectElement("user");
                     var email = user.XPathEvaluate("string(@email)").ToString();
                     var userName = user.XPathEvaluate("string(@username)").ToString();
@@ -398,6 +424,7 @@
                         Role = this.ProcessRole(role),
                         Email = email,
                         UserName = userName,
+                        Status = status,
                     };
                 }
 

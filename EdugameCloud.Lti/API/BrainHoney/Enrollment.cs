@@ -18,6 +18,11 @@
         public string Email { get; set; }
 
         /// <summary>
+        /// Gets or sets the status.
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
         /// Gets or sets the id.
         /// </summary>
         public long Id { get; set; }
