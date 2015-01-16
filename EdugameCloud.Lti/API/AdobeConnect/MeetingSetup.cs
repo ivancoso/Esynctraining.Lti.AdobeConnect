@@ -1726,6 +1726,10 @@
                             meeting.CachedUsers = JsonConvert.SerializeObject(users);
                             this.LmsCourseMeetingModel.RegisterSave(meeting, true);
                         }
+                        else if (users.Count == 0 && error.Return(x => x.ToLowerInvariant().Contains("access denied"), false))
+                        {
+                            users = this.CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
+                        }
 
                         cachedUsers = users;
                     }

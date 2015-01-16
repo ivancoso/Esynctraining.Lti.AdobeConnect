@@ -112,6 +112,9 @@
         /// <param name="client">
         /// The client.
         /// </param>
+        /// <param name="forceUpdate">
+        /// Forces update
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
@@ -126,13 +129,12 @@
 
             var courseIdFixed = string.Format("_{0}_1", courseid);
 
-
-
             var enrollmentsResult = this.LoginIfNecessary(
                 ref client,
                 c =>
                     {
-                        
+                        string errorDuringEnrollments = null;
+                        var resultedList = new List<LmsUserDTO>();
                         var membershipFilter = new MembershipFilter
                                                    {
                                                        filterType = 2,
@@ -144,10 +146,9 @@
                         if (membership != null)
                         {
                             var enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
-                            string errorDuringEnrollments;
                             if (this.HadError(c, out errorDuringEnrollments))
                             {
-                                return new List<LmsUserDTO>();
+                                return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                             }
 
                             if (enrollments != null)
@@ -162,43 +163,33 @@
                                 var userService = c.getUserWrapper();
                                 if (userService != null)
                                 {
-                                    var users = c.getUserWrapper().getUser(userFilter);
+                                    var users = userService.getUser(userFilter);
                                     if (users == null)
                                     {
-                                        return new List<LmsUserDTO>();
+                                        this.HadError(c, out errorDuringEnrollments);
+                                        return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                                     }
-                                    return enrollments.Select(
+
+                                    resultedList = enrollments.Select(
                                         e =>
                                             {
                                                 var user = users.FirstOrDefault(u => e.userId == u.id);
-                                                var ltiIdString = user.expansionData != null
+                                                var ltiIdString = user != null && user.expansionData != null
                                                                       ? user.expansionData.FirstOrDefault(
                                                                           ed =>
-                                                                          ed.StartsWith(
-                                                                              "USER.UUID",
-                                                                              StringComparison
-                                                                              .InvariantCultureIgnoreCase))
+                                                                          ed.StartsWith("USER.UUID", StringComparison.OrdinalIgnoreCase))
                                                                       : null;
                                                 if (ltiIdString != null)
                                                 {
                                                     ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);
                                                 }
+
                                                 return new LmsUserDTO
                                                            {
                                                                id = e.userId,
                                                                login_id = user.With(x => x.name),
-                                                               primary_email =
-                                                                   user.With(x => x.extendedInfo)
-                                                                   .With(x => x.emailAddress),
-                                                               name =
-                                                                   user.With(x => x.extendedInfo)
-                                                                   .Return(
-                                                                       x =>
-                                                                       string.Format(
-                                                                           "{0} {1}",
-                                                                           x.givenName,
-                                                                           x.familyName).Trim(),
-                                                                       user.With(s => s.name)),
+                                                               primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
+                                                               name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
                                                                lms_role = this.GetRole(e.roleId, roles),
                                                                lti_id = ltiIdString
                                                            };
@@ -207,7 +198,7 @@
                             }
                         }
 
-                        return new List<LmsUserDTO>();
+                        return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                     },
                 company,
                 out error);
@@ -385,6 +376,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
+        // ReSharper disable once UnusedMember.Local
         private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, CompanyLms companyLms, out string error)
         {
             error = null;
@@ -392,6 +384,41 @@
             if (client != null)
             {
                 return action(client);
+            }
+
+            return default(T);
+        }
+
+        /// <summary>
+        /// The login if necessary.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Any type
+        /// </typeparam>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="action">
+        /// The action.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, CompanyLms companyLms, out string error)
+        {
+            error = null;
+            client = client ?? this.BeginBatch(out error, companyLms);
+            if (client != null)
+            {
+                var result = action(client);
+                error = result.Item2;
+                return result.Item1;
             }
 
             return default(T);
