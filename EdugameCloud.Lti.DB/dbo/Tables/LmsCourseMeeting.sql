@@ -3,8 +3,15 @@
     [courseId]           INT           NOT NULL,
     [scoId]              NVARCHAR (50) NULL,
     [companyLmsId]       INT           NULL,
-    CONSTRAINT [PK_CanvasCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
+    [cachedUsers]        NTEXT         NULL,
+    [addedToCache]       DATETIME      NULL,
+    [officeHoursId]      INT           NULL,
+    [ownerId]            INT           NULL,
+    [lmsMeetingTypeId]   INT           NULL,
+    CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
 );
+
+
 
 
 

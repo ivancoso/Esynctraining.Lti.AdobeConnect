@@ -11,7 +11,6 @@
     [modifiedBy]        INT            NULL,
     [dateCreated]       DATE           NOT NULL,
     [dateModified]      DATE           NULL,
-    [layout]            NVARCHAR (50)  NULL,
     [primaryColor]      NVARCHAR (50)  NULL,
     [adminUserId]       INT            NULL,
     [acScoId]           NVARCHAR (50)  NULL,
@@ -26,10 +25,14 @@
     [canRemoveMeeting]  BIT            NULL,
     [canEditMeeting]    BIT            NULL,
     [isSettingsVisible] BIT            NULL,
+    [enableOfficeHours] BIT            NULL,
+    [enableStudyGroups] BIT            NULL,
     CONSTRAINT [PK_CompanyLms] PRIMARY KEY CLUSTERED ([companyLmsId] ASC),
     CONSTRAINT [FK_CompanyLms_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),
     CONSTRAINT [FK_CompanyLms_LmsUser] FOREIGN KEY ([adminUserId]) REFERENCES [dbo].[LmsUser] ([lmsUserId])
 );
+
+
 
 
 
