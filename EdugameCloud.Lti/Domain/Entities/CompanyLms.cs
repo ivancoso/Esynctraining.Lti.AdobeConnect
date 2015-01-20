@@ -172,6 +172,16 @@
         public virtual bool? IsSettingsVisible { get; set; }
 
         /// <summary>
+        /// Gets or sets the enable office hours.
+        /// </summary>
+        public virtual bool? EnableOfficeHours { get; set; }
+
+        /// <summary>
+        /// Gets or sets the enable study groups.
+        /// </summary>
+        public virtual bool? EnableStudyGroups { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

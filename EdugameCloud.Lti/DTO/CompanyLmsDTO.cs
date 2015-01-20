@@ -50,6 +50,8 @@
                 this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
                 this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
                 this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
+                this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
+                this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
                 this.setupUrl = instance.LmsProvider != null ? 
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
@@ -178,7 +180,6 @@
         [DataMember]
         public string userFolderName { get; set; }
 
-
         /// <summary>
         /// Gets or sets a value indicating whether can remove meeting.
         /// </summary>
@@ -196,6 +197,18 @@
         /// </summary>
         [DataMember]
         public bool isSettingsVisible { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether enable office hours.
+        /// </summary>
+        [DataMember]
+        public bool enableOfficeHours { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether enable study groups.
+        /// </summary>
+        [DataMember]
+        public bool enableStudyGroups { get; set; }
 
         /// <summary>
         /// Gets or sets the setup url.

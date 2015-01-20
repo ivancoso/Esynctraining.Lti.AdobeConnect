@@ -36,6 +36,8 @@
             this.provider = param.CompanyLms.LmsProvider.ShortName;
             this.wstoken = param.Wstoken;
             this.lmsUserId = param.LmsUser.Return(x => x.Id, (int?)null);
+            this.courseName = param.CourseName;
+            this.userEmail = param.UserEmail;
         }
 
         #endregion
@@ -95,6 +97,18 @@
         /// </summary>
         [DataMember]
         public string wstoken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user email.
+        /// </summary>
+        [DataMember]
+        public string userEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the course name.
+        /// </summary>
+        [DataMember]
+        public string courseName { get; set; }
 
         #endregion
     }

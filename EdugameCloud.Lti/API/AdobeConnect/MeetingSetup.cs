@@ -18,6 +18,7 @@
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
@@ -108,6 +109,17 @@
             get
             {
                 return IoC.Resolve<LmsCourseMeetingModel>();
+            }
+        }
+
+        /// <summary>
+        /// Gets the office hours model.
+        /// </summary>
+        private OfficeHoursModel OfficeHoursModel
+        {
+            get
+            {
+                return IoC.Resolve<OfficeHoursModel>();
             }
         }
 
@@ -212,25 +224,42 @@
         /// <param name="param">
         /// The param.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        public bool DeleteMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
+            Justification = "Reviewed. Suppression is OK here.")]
+        public object DeleteMeeting(
+            CompanyLms credentials,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            string scoId)
         {
             if (!credentials.CanRemoveMeeting.GetValueOrDefault())
             {
-                return false;
+                return new { error = "Meeting deleting is disabled for this company lms." };
             }
-
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
             if (meeting == null)
             {
-                return false;
+                return new { error = "Meeting not found" };
             }
 
-            var result = provider.DeleteSco(meeting.ScoId);
-            return result.Code == StatusCodes.ok;
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            {
+                this.LmsCourseMeetingModel.RegisterDelete(meeting);
+                return "true";
+            }
+
+            var result = provider.DeleteSco(meeting.GetMeetingScoId());
+            if (result.Code == StatusCodes.ok)
+            {
+                return "true";
+            }
+            return new { error = result.InnerXml };
         }
 
         /// <summary>
@@ -245,34 +274,138 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
-        public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
             if (meeting == null)
             {
-                return this.CreateEmptyMeetingResponse(credentials, param);
+                return this.CreateEmptyMeetingResponse(param);
             }
 
-            ScoInfoResult result = provider.GetScoInfo(meeting.ScoId);
+            ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
             if (!result.Success || result.ScoInfo == null)
             {
-                return this.CreateEmptyMeetingResponse(credentials, param);
+                return this.CreateEmptyMeetingResponse(param);
             }
 
-            IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.ScoId).Values;
+            IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
 
             MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
                 credentials, 
                 provider, 
                 param, 
                 result.ScoInfo, 
-                permission);
+                permission,
+                meeting);
 
             return meetingDTO;
+        }
+
+        /// <summary>
+        /// The get meetings.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <returns>
+        /// The <see cref="MeetingDTO"/>.
+        /// </returns>
+        public object GetMeetings(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        {
+            var ret = new List<MeetingDTO>();
+            
+            var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(credentials.Id, param.course_id);
+
+            foreach (var meeting in meetings)
+            {
+                ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
+                if (!result.Success || result.ScoInfo == null)
+                {
+                    continue;
+                }
+
+                IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
+
+                MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
+                    credentials,
+                    provider,
+                    param,
+                    result.ScoInfo,
+                    permission,
+                    meeting);
+                ret.Add(meetingDTO);
+            }
+            if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
+            {
+                var meeting =
+                    this.LmsCourseMeetingModel.GetOneByUserAndType(
+                        credentials.Id,
+                        param.lms_user_id,
+                        (int)LmsMeetingType.OfficeHours).Value;
+                if (meeting == null)
+                {
+                    var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                    if (lmsUser != null)
+                    {
+                        var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
+                        if (officeHours != null)
+                        {
+                            meeting = new LmsCourseMeeting()
+                                          {
+                                              OfficeHours = officeHours,
+                                              LmsMeetingType = (int)LmsMeetingType.OfficeHours,
+                                              CompanyLms = credentials,
+                                              CourseId = param.course_id
+                                          };
+                        }
+                    }
+                }
+                
+                if (meeting != null)
+                {
+                    ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
+                    if (result.Success && result.ScoInfo != null)
+                    {
+                        IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
+
+                        MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
+                            credentials,
+                            provider,
+                            param,
+                            result.ScoInfo,
+                            permission,
+                            meeting);
+                        meetingDTO.is_disabled_for_this_course = true;
+                        ret.Add(meetingDTO);
+                    }
+                }
+            }
+            
+            return new
+                       {
+                           meetings = ret,
+                           is_teacher = this.IsTeacher(param),
+                           lms_provider_name = credentials.LmsProvider.LmsProviderName,
+                           connect_server = credentials.AcServer.EndsWith("/") ? credentials.AcServer : credentials.AcServer + "/",
+                           is_settings_visible = credentials.IsSettingsVisible.GetValueOrDefault(),
+                           is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
+                           can_edit_meeting = credentials.CanEditMeeting.GetValueOrDefault(),
+                           office_hours_enabled = credentials.EnableOfficeHours.GetValueOrDefault(),
+                           study_groups_enabled = credentials.EnableStudyGroups.GetValueOrDefault()
+                       };
         }
 
         /// <summary>
@@ -332,16 +465,16 @@
         /// <returns>
         /// The <see cref="List{RecordingDTO}"/>.
         /// </returns>
-        public List<RecordingDTO> GetRecordings(CompanyLms credentials, AdobeConnectProvider provider, int courseId)
+        public List<RecordingDTO> GetRecordings(CompanyLms credentials, AdobeConnectProvider provider, int courseId, string scoId)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId).Value;
 
             if (meeting == null)
             {
                 return new List<RecordingDTO>();
             }
 
-            var result = provider.GetMeetingRecordings(meeting.ScoId);
+            var result = provider.GetMeetingRecordings(meeting.GetMeetingScoId());
             var recordings = new List<RecordingDTO>();
 
             foreach (var v in result.Values)
@@ -447,6 +580,9 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
@@ -458,9 +594,9 @@
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", 
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, out string error, bool forceUpdate = false)
+        public List<LmsUserDTO> GetUsers(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, out string error, bool forceUpdate = false)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
             List<LmsUserDTO> users = this.GetLMSUsers(credentials, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
 
             if (meeting == null)
@@ -470,7 +606,7 @@
 
             List<PermissionInfo> hosts, participants, presenters;
             var nonEditable = new HashSet<string>();
-            this.GetMeetingAttendees(provider, meeting.ScoId, out hosts, out presenters, out participants, nonEditable);
+            this.GetMeetingAttendees(provider, meeting.GetMeetingScoId(), out hosts, out presenters, out participants, nonEditable);
 
             foreach (LmsUserDTO lmsuser in users)
             {
@@ -548,6 +684,9 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="startIndex">
         /// The start Index.
         /// </param>
@@ -559,16 +698,16 @@
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionDTO> GetSessionsReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, int startIndex = 0, int limit = 0)
+        public List<ACSessionDTO> GetSessionsReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
             if (meeting == null)
             {
                 return new List<ACSessionDTO>();
             }
 
-            return this.GetSessionsWithParticipants(meeting.ScoId, provider, startIndex, limit);
+            return this.GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
         /// <summary>
@@ -583,6 +722,9 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="startIndex">
         /// The start Index.
         /// </param>
@@ -594,16 +736,16 @@
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionParticipantDTO> GetAttendanceReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, int startIndex = 0, int limit = 0)
+        public List<ACSessionParticipantDTO> GetAttendanceReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
             if (meeting == null)
             {
                 return new List<ACSessionParticipantDTO>();
             }
 
-            return this.GetAttendanceReport(meeting.ScoId, provider, startIndex, limit);
+            return this.GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
         /// <summary>
@@ -618,13 +760,16 @@
         /// <param name="userSettings">
         /// The user settings.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="adobeConnectProvider">
         /// The adobe connect Provider.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, AdobeConnectProvider adobeConnectProvider = null)
+        public string JoinMeeting(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, AdobeConnectProvider adobeConnectProvider = null)
         {
             var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
             string breezeToken = string.Empty, meetingUrl = string.Empty;
@@ -633,9 +778,14 @@
 
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
-            string currentMeetingScoId = currentMeeting != null ? currentMeeting.ScoId : string.Empty;
+            if (currentMeeting == null)
+            {
+                return "No meeting found";
+            }
+
+            string currentMeetingScoId = currentMeeting.GetMeetingScoId();
 
             if (!string.IsNullOrEmpty(currentMeetingScoId))
             {
@@ -653,6 +803,21 @@
             var password = this.GetACPassword(credentials, userSettings, email, login);
 
             Principal registeredUser = this.GetACUser(provider, login, email);
+            
+            if (currentMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            {
+                var userid = currentMeeting.OfficeHours != null && currentMeeting.OfficeHours.LmsUser != null
+                                 ? currentMeeting.OfficeHours.LmsUser.UserId
+                                 : string.Empty;
+                this.EnrollToOfficeHours(
+                    credentials,
+                    param,
+                    provider,
+                    currentMeetingScoId,
+                    ref registeredUser,
+                    userSettings,
+                    param.lms_user_id == userid);
+            }
 
             if (registeredUser != null)
             {
@@ -673,10 +838,73 @@
             }
             else
             {
-                return param.launch_presentation_return_url;
+                return JsonConvert.SerializeObject(new { error = string.Format("Cannot find Adobe Connect user with email {0} or login {1}", email, login) });
             }
 
             return string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
+        }
+
+        /// <summary>
+        /// The leave meeting.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
+        /// </param>
+        /// <param name="adobeConnectProvider">
+        /// The adobe connect provider.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public object LeaveMeeting(CompanyLms credentials, LtiParamDTO param, string scoId, AdobeConnectProvider adobeConnectProvider = null)
+        {
+            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
+
+            this.LmsCourseMeetingModel.Flush();
+            LmsCourseMeeting currentMeeting =
+                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+
+            if (currentMeeting == null)
+            {
+                return new { error = "No meeting found" };
+            }
+
+            if (currentMeeting.LmsMeetingType != (int)LmsMeetingType.StudyGroup)
+            {
+                return new { error = "The meeting is not a study group, you can only leave study groups." };
+            }
+
+            string currentMeetingScoId = currentMeeting.GetMeetingScoId();
+            
+            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
+
+            Principal registeredUser = this.GetACUser(provider, login, email);
+
+            if (registeredUser != null)
+            {
+                var result = provider.UpdateScoPermissionForPrincipal(
+                    currentMeetingScoId,
+                    registeredUser.PrincipalId,
+                    MeetingPermissionId.denied);
+                if (result.Code == StatusCodes.ok)
+                {
+                    return true;
+                }
+                return result;
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(new { error = string.Format("Cannot find Adobe Connect user with email {0} or login {1}", email, login) });
+            }
         }
 
         /// <summary>
@@ -755,6 +983,9 @@
         /// <param name="recordingId">
         /// The recording id.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -762,16 +993,17 @@
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             int courseId, 
-            string recordingId)
+            string recordingId,
+            string scoId)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, courseId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId).Value;
 
             if (meeting == null)
             {
                 return false;
             }
 
-            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.ScoId });
+            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.GetMeetingScoId() });
 
             if (result.Values.All(v => v.ScoId != recordingId))
             {
@@ -803,7 +1035,7 @@
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
-        public MeetingDTO SaveMeeting(
+        public object SaveMeeting(
             CompanyLms credentials, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
@@ -813,7 +1045,7 @@
             // fix meeting dto date & time
 
             //// TODO change on PadLeft
-            if (meetingDTO.start_time.IndexOf(":", StringComparison.Ordinal) == 1)
+            if (meetingDTO.start_time != null && meetingDTO.start_time.IndexOf(":", StringComparison.Ordinal) == 1)
             {
                 meetingDTO.start_time = "0" + meetingDTO.start_time;
             }
@@ -825,79 +1057,159 @@
                 meetingDTO.start_date = meetingDTO.start_date.Substring(6, 4) + "-"
                                         + meetingDTO.start_date.Substring(0, 5);
             }
-
             // end fix meeting dto
-            LmsCourseMeeting meeting =
-                this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value
-                ?? new LmsCourseMeeting { CompanyLms = credentials, CourseId = param.course_id };
+
+            var type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
+            if (type == (int)LmsMeetingType.OfficeHours)
+            {
+                meetingDTO.name = param.lis_person_name_full + "'s Office Hours";
+            }
+            
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, meetingDTO.id).Value;
+            if (meeting == null && type == (int)LmsMeetingType.OfficeHours)
+            {
+                meeting =
+                    this.LmsCourseMeetingModel.GetOneByCourseAndType(
+                        credentials.Id,
+                        param.course_id,
+                        (int)LmsMeetingType.OfficeHours).Value;
+            }
+            if (meeting == null)
+            {
+                meeting = new LmsCourseMeeting
+                       {
+                           CompanyLms = credentials,
+                           CourseId = param.course_id,
+                           LmsMeetingType = type,
+                           ScoId = type == (int)LmsMeetingType.OfficeHours ? meetingDTO.id : null
+                       };                
+            }
 
             bool isNewMeeting = false;
-            var existingMeeting = provider.GetScoInfo(meeting.ScoId);
+            var existingMeeting = provider.GetScoInfo(meeting.GetMeetingScoId());
             if (!existingMeeting.Success)
             {
                 isNewMeeting = true;
             }
 
-            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meeting.ScoId };
+            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meeting.GetMeetingScoId() };
 
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
             var registeredUser = this.GetACUser(provider, login, email);
+            if (type == (int)LmsMeetingType.StudyGroup)
+            {
+                this.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+            }
+
             var meetingFolder = this.GetMeetingFolder(credentials, provider, registeredUser);
 
             this.SetMeetingUpateItemFields(
-                meetingDTO, 
-                updateItem, 
-                meetingFolder, 
-                param.course_id,
+                meetingDTO,
+                updateItem,
+                meetingFolder,
+                type == (int)LmsMeetingType.OfficeHours ? (param.course_id + " " + meeting.Id) : param.course_id.ToString(),
                 isNewMeeting);
 
-            ScoInfoResult result = isNewMeeting
-                                       ? provider.CreateSco(updateItem)
-                                       : provider.UpdateSco(updateItem);
+            ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
             if (!result.Success || result.ScoInfo == null)
             {
                 // didn't save, load old saved meeting
-                return this.GetMeeting(credentials, provider, param);
+                return new { error = result.Status };
             }
 
             if (isNewMeeting)
             {
                 // newly created meeting
-                meeting.ScoId = result.ScoInfo.ScoId;
+                if (meeting.LmsMeetingType != (int)LmsMeetingType.OfficeHours)
+                {
+                    meeting.ScoId = result.ScoInfo.ScoId;
+                }
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
+                
+                if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
+                {
+                    this.SetDefaultUsers(
+                        credentials,
+                        meeting,
+                        provider,
+                        param.lms_user_id,
+                        meeting.CourseId,
+                        result.ScoInfo.ScoId,
+                        extraData ?? param);
 
-                this.SetDefaultUsers(credentials, meeting, provider, param.lms_user_id, meeting.CourseId, result.ScoInfo.ScoId, extraData ?? param);
-
-                this.CreateAnnouncement(
-                    credentials, 
-                    param, 
-                    meetingDTO.name, 
-                    oldStartDate, 
-                    meetingDTO.start_time, 
-                    meetingDTO.duration);
+                    this.CreateAnnouncement(
+                        credentials,
+                        param,
+                        meetingDTO.name,
+                        oldStartDate,
+                        meetingDTO.start_time,
+                        meetingDTO.duration);
+                }
+                else
+                {
+                    var acUser = this.GetACUser(provider, param.lms_user_login, param.lis_person_contact_email_primary);
+                    if (acUser != null)
+                    {
+                        provider.UpdateScoPermissionForPrincipal(
+                            result.ScoInfo.ScoId,
+                            acUser.PrincipalId,
+                            MeetingPermissionId.host);
+                    }
+                }
             }
 
-            SpecialPermissionId specialPermissionId = meetingDTO.access_level == "denied"
-                                                          ? SpecialPermissionId.denied
-                                                          : (meetingDTO.access_level == "view_hidden"
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            {
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                if (lmsUser != null)
+                {
+                    var officeHous = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value
+                                     ?? new OfficeHours() { LmsUser = lmsUser };
+                    officeHous.Hours = meetingDTO.office_hours;
+                    officeHous.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
+                    
+                    this.OfficeHoursModel.RegisterSave(officeHous);
+
+                    meeting.OfficeHours = officeHous;
+                    meeting.ScoId = null;
+                    this.LmsCourseMeetingModel.RegisterSave(meeting);
+                }
+            }
+            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
+            {
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                if (lmsUser != null)
+                {
+                    meeting.Owner = lmsUser;
+                    this.LmsCourseMeetingModel.RegisterSave(meeting);
+                }
+            }
+
+            SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(meetingDTO.access_level)
+                ? (meetingDTO.allow_guests ? SpecialPermissionId.remove : SpecialPermissionId.denied)
+                : meetingDTO.access_level == "denied" ? SpecialPermissionId.denied
+                                                      : (meetingDTO.access_level == "view_hidden"
                                                                  ? SpecialPermissionId.view_hidden
                                                                  : SpecialPermissionId.remove);
 
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-            List<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(result.ScoInfo.ScoId).Values.Return(x => x.ToList(), new List<PermissionInfo>());
+            List<PermissionInfo> permission =
+                provider.GetScoPublicAccessPermissions(result.ScoInfo.ScoId)
+                    .Values.Return(x => x.ToList(), new List<PermissionInfo>());
 
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
-                credentials, 
-                provider, 
-                param, 
-                result.ScoInfo, 
-                permission);
+                credentials,
+                provider,
+                param,
+                result.ScoInfo,
+                permission,
+                meeting);
 
             return updatedMeeting;
         }
-        
+
         /// <summary>
         /// The delete meeting.
         /// </summary>
@@ -910,6 +1222,9 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
@@ -920,11 +1235,12 @@
             CompanyLms credentials,
             AdobeConnectProvider provider,
             LtiParamDTO param,
+            string scoId,
             out string error)
         {
             error = null;
             var model = this.LmsCourseMeetingModel;
-            LmsCourseMeeting meeting = model.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = model.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
             if (meeting == null)
             {
@@ -932,8 +1248,8 @@
                 return new List<string>();
             }
 
-            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.ScoId);
-            provider.DeleteSco(meeting.ScoId);
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
+            provider.DeleteSco(meeting.GetMeetingScoId());
             model.RegisterDelete(meeting, true);
             
             return enrollments.Select(x => x.Login).ToList();
@@ -1003,23 +1319,31 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
+        /// <param name="forceUpdate">
+        /// The force update.
+        /// </param>
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
             CompanyLms credentials,
             AdobeConnectProvider provider,
-            LtiParamDTO param)
+            LtiParamDTO param,
+            string scoId,
+            bool forceUpdate)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
             string error;
-            var users = this.GetUsers(credentials, provider, param, out error);
+            var users = this.GetUsers(credentials, provider, param, scoId, out error, forceUpdate);
             if (meeting == null)
             {
                 return users;
             }
 
-            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.ScoId);
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
             foreach (var user in users)
             {
@@ -1034,7 +1358,7 @@
 
                     if (user.is_editable)
                     {
-                        this.SetLMSUserDefaultACPermissions(provider, meeting.ScoId, user, user.ac_id);
+                        this.SetLMSUserDefaultACPermissions(provider, meeting.GetMeetingScoId(), user, user.ac_id);
                     }
                 }
             }
@@ -1074,14 +1398,15 @@
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
+            string scoId,
             out string error,
             bool skipReturningUsers = false)
         {
             error = null;
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
             if (meeting == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
+                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
             }
 
             if (user.ac_id == null || user.ac_id == "0")
@@ -1093,8 +1418,8 @@
 
             if (user.ac_role == null)
             {
-                provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, MeetingPermissionId.remove);
-                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
+                provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, MeetingPermissionId.remove);
+                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
             }
 
             var permission = MeetingPermissionId.view;
@@ -1107,13 +1432,13 @@
                 permission = MeetingPermissionId.host;
             }
 
-            provider.UpdateScoPermissionForPrincipal(meeting.ScoId, user.ac_id, permission);
+            provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
             if (permission == MeetingPermissionId.host)
             {
                 provider.AddToGroupByType(user.ac_id, "live-admins");
             }
 
-            return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, out error);
+            return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
         }
 
         /// <summary>
@@ -1146,7 +1471,7 @@
             if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
             {
                 string error;
-                var users = this.GetUsers(credentials, provider, param, out error);
+                var users = this.GetUsers(credentials, provider, param, null, out error);
                 var user =
                     users.FirstOrDefault(
                         u => u.lti_id != null && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
@@ -1160,6 +1485,64 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The enroll to office hours.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="meetingScoId">
+        /// The meeting sco id.
+        /// </param>
+        /// <param name="registeredUser">
+        /// The registered user.
+        /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
+        /// <param name="isOwner">
+        /// The is owner.
+        /// </param>
+        private void EnrollToOfficeHours(CompanyLms credentials, LtiParamDTO param, AdobeConnectProvider provider, string meetingScoId, ref Principal registeredUser,
+            LmsUserSettingsDTO userSettings, bool isOwner)
+        {
+            if (registeredUser == null)
+            {
+                var setup = new PrincipalSetup
+                {
+                    Email = param.lis_person_contact_email_primary,
+                    FirstName = param.lis_person_name_given,
+                    LastName = param.lis_person_name_family,
+                    Name = param.lms_user_login,
+                    Login = param.lms_user_login,
+                    Password = this.GetACPassword(credentials, userSettings, param.lis_person_contact_email_primary, param.lms_user_login)
+                };
+                if (string.IsNullOrWhiteSpace(setup.Email))
+                {
+                    setup.Email = null;
+                }
+                PrincipalResult pu = provider.PrincipalUpdate(setup);
+                if (pu.Principal != null)
+                {
+                    registeredUser = pu.Principal;
+                }
+            }
+
+            if (registeredUser != null)
+            {
+                provider.UpdateScoPermissionForPrincipal(
+                    meetingScoId,
+                    registeredUser.PrincipalId,
+                    isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
+            }
+        }
 
         /// <summary>
         /// The get locker.
@@ -1247,13 +1630,22 @@
         /// <param name="adobeConnectUserId">
         /// The current user AC id.
         /// </param>
+        /// <param name="courseName">
+        /// The course Name.
+        /// </param>
+        /// <param name="userEmail">
+        /// The user Email.
+        /// </param>
         private void SaveLMSUserParameters(
             int lmsCourseId,
             CompanyLms lmsCompany,
             string lmsUserId,
-            string adobeConnectUserId)
+            string adobeConnectUserId,
+            string courseName,
+            string userEmail)
         {
             LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(adobeConnectUserId, lmsCourseId, lmsCompany.Id).Value;
+
             if (lmsUserParameters == null)
             {
                 lmsUserParameters = new LmsUserParameters
@@ -1264,6 +1656,9 @@
                 };
             }
 
+            lmsUserParameters.LastLoggedIn = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ssZ");
+            lmsUserParameters.CourseName = courseName;
+            lmsUserParameters.UserEmail = userEmail;
             lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
@@ -1307,24 +1702,19 @@
         /// <summary>
         /// The create empty meeting response.
         /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
         /// <param name="param">
         /// The parameter.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
-        private MeetingDTO CreateEmptyMeetingResponse(CompanyLms credentials, LtiParamDTO param)
+        private MeetingDTO CreateEmptyMeetingResponse(LtiParamDTO param)
         {
             return new MeetingDTO
             {
                 id = "0",
-                connect_server = credentials.AcServer,
-                is_editable = this.CanEdit(param),
-                are_users_synched = true,
-                lms_provider_name = credentials.LmsProvider.LmsProviderName
+                is_editable = this.IsTeacher(param),
+                are_users_synched = true
             };
         }
 
@@ -1369,20 +1759,54 @@
         }
 
         /// <summary>
+        /// The is teacher.
+        /// </summary>
+        /// <param name="param">
+        /// The param.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool IsTeacher(LtiParamDTO param)
+        {
+            return param.roles != null && (param.roles.Contains("Instructor")
+                || param.roles.Contains("Administrator")
+                || param.roles.Contains("Course Director")
+                || param.roles.Contains("CourseDirector"));
+        }
+
+        /// <summary>
         /// The can edit.
         /// </summary>
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CanEdit(LtiParamDTO param)
+        private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting)
         {
-            return param.roles != null && (param.roles.Contains("Instructor") 
-                || param.roles.Contains("Administrator") 
-                || param.roles.Contains("Course Director")
-                || param.roles.Contains("CourseDirector"));
+            if (meeting == null || meeting.LmsMeetingType == null)
+            {
+                return false;
+            }
+
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            {
+                return meeting.OfficeHours != null && meeting.OfficeHours.LmsUser != null
+                        && meeting.OfficeHours.LmsUser.UserId != null
+                       && meeting.OfficeHours.LmsUser.UserId.Equals(param.lms_user_id);
+            }
+
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
+            {
+                return meeting.Owner != null && meeting.Owner.UserId != null && meeting.Owner.UserId.Equals(param.lms_user_id);
+            }
+
+            return this.IsTeacher(param);
         }
 
         /// <summary>
@@ -1949,7 +2373,7 @@
             {
                 case LmsProviderNames.Canvas:
                     error = null;
-                    return this.GetCanvasUsers(credentials, lmsUserId, courseId);
+                    return this.GetCanvasUsers(credentials, credentials.AdminUser != null ? credentials.AdminUser.UserId : lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
                     return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
                 case LmsProviderNames.Blackboard:
@@ -2128,6 +2552,25 @@
         }
 
         /// <summary>
+        /// The add user to meeting hosts group.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="principalId">
+        /// The principal id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool AddUserToMeetingHostsGroup(AdobeConnectProvider provider, string principalId)
+        {
+            var group = provider.AddToGroupByType(principalId, "live-admins");
+            
+            return group;
+        }
+
+        /// <summary>
         /// The get attendance Report.
         /// </summary>
         /// <param name="meetingId">
@@ -2300,6 +2743,9 @@
         /// <param name="permission">
         /// The permission.
         /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
@@ -2308,12 +2754,27 @@
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             ScoInfo result, 
-            IEnumerable<PermissionInfo> permission)
+            IEnumerable<PermissionInfo> permission,
+            LmsCourseMeeting lmsCourseMeeting)
         {
-            PermissionInfo permissionInfo;
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var lmsCourseMeeting = this.LmsCourseMeetingModel.GetOneByCourseId(credentials.Id, param.course_id).Value;
+            //var lmsCourseMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, result.ScoId).Value;
             var flags = this.GetMeetingFlags(provider, credentials, lmsCourseMeeting, param, result.ScoId);
+            PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
+            string officeHoursString = null;
+            var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();
+            if (type == (int)LmsMeetingType.OfficeHours)
+            {
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                if (lmsUser != null)
+                {
+                    var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
+                    if (officeHours != null)
+                    {
+                        officeHoursString = officeHours.Hours;
+                    }
+                }
+            }
 
             var ret = new MeetingDTO
                           {
@@ -2324,16 +2785,14 @@
                               template = result.SourceScoId, 
                               start_date = result.BeginDate.ToString("yyyy-MM-dd"), 
                               start_time = result.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture), 
-                              duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"), 
-                              connect_server = credentials.AcServer, 
-                              access_level = permission != null && (permissionInfo = permission.FirstOrDefault()) != null ? permissionInfo.PermissionId.ToString() : string.Empty, 
-                              can_join = flags.Item1, 
-                              are_users_synched = flags.Item2,
-                              is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
-                              is_editable = this.CanEdit(param),
-                              can_edit_meeting = credentials.CanEditMeeting.GetValueOrDefault(),
-                              is_settings_visible = credentials.IsSettingsVisible.GetValueOrDefault(),
-                              lms_provider_name = credentials.LmsProvider.LmsProviderName
+                              duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"),
+                              access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
+                              allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
+                              can_join = (type == (int)LmsMeetingType.OfficeHours) || flags.Item1, 
+                              are_users_synched = flags.Item2 || type != (int)LmsMeetingType.Meeting,
+                              is_editable = this.CanEdit(param, lmsCourseMeeting),
+                              type = type,
+                              office_hours = officeHoursString
                           };
             return ret;
         }
@@ -2383,10 +2842,10 @@
                 && !credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
                 && !credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase))
             {
-                provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
+                var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
             }
 
-            provider.PrincipalUpdate(
+            var principalUpdateResult = provider.PrincipalUpdate(
                 new PrincipalSetup
                     {
                         PrincipalId = registeredUser.PrincipalId, 
@@ -2428,7 +2887,7 @@
         /// </param>
         private void SaveLMSUserParameters(LtiParamDTO param, CompanyLms lmsCompany, string adobeConnectUserId)
         {
-            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId);
+            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary);
         }
 
         /// <summary>
@@ -2519,7 +2978,7 @@
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
-            int courseId,
+            string courseId,
             bool isNew)
         {
             updateItem.Name = string.Format(
@@ -2540,6 +2999,12 @@
             {
                 updateItem.SourceScoId = meetingDTO.template;
                 updateItem.UrlPath = meetingDTO.ac_room_url;
+            }
+
+            if (meetingDTO.start_date == null || meetingDTO.start_time == null)
+            {
+                updateItem.DateBegin = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                updateItem.DateEnd = DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ssZ");
             }
 
             DateTime dateBegin;

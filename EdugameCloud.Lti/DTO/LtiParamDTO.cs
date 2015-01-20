@@ -53,10 +53,19 @@
         {
             get
             {
+                if (this.custom_canvas_course_id != 0)
+                {
+                    return this.custom_canvas_course_id;
+                }
+
                 int courseId;
-                return this.custom_canvas_course_id == 0
-                           ? int.TryParse(this.context_id, out courseId) ? courseId : this.TryParseBlackBoardCourseId()
-                           : this.custom_canvas_course_id;
+                if (int.TryParse(this.context_id, out courseId))
+                {
+                    return courseId;
+                }
+
+                courseId = this.TryParseBlackBoardCourseId();
+                return courseId != 0 ? courseId : this.TryGetSakaiCourseIdHash();
             }
         }
 
@@ -359,6 +368,28 @@
                 if (result == 0)
                 {
                     result = this.GetCourseFromQueryOfUrl(this.referer);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The try get sakai course id hash.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        private int TryGetSakaiCourseIdHash()
+        {
+            int result = 0;
+
+            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("sakai"), false))
+            {
+                Guid guid;
+                if (Guid.TryParse(this.context_id, out guid))
+                {
+                    result = guid.GetHashCode();
                 }
             }
 

@@ -95,6 +95,7 @@
     <Compile Include="Mappings\LmsUserParametersMap.cs" />
     <Compile Include="Mappings\LmsUserSessionMap.cs" />
     <Compile Include="Mappings\MoodleUserMap.cs" />
+    <Compile Include="Mappings\OfficeHoursMap.cs" />
     <Compile Include="Mappings\ScheduleMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -105,7 +106,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

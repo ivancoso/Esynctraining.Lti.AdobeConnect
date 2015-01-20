@@ -34,6 +34,21 @@
         /// </summary>
         public virtual CompanyLms CompanyLms { get; set; }
 
+        /// <summary>
+        /// Gets or sets the course name.
+        /// </summary>
+        public virtual string CourseName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user email.
+        /// </summary>
+        public virtual string UserEmail { get; set; }
+
+        /// <summary>
+        /// Gets or sets the last logged in.
+        /// </summary>
+        public virtual string LastLoggedIn { get; set; }
+
         #endregion
     }
 }

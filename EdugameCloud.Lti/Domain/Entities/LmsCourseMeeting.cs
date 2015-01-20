@@ -43,6 +43,21 @@
         /// </summary>
         public virtual string ScoId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms meeting type.
+        /// </summary>
+        public virtual int? LmsMeetingType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the office hours.
+        /// </summary>
+        public virtual OfficeHours OfficeHours { get; set; }
+
+        /// <summary>
+        /// Gets or sets the owner.
+        /// </summary>
+        public virtual LmsUser Owner { get; set; }
+
         #endregion
 
         #region Public Methods and Operators

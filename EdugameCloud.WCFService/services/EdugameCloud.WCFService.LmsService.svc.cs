@@ -154,9 +154,10 @@ namespace EdugameCloud.WCFService
         {
             var result = new ServiceResponse<LmsUserParametersDTO>();
 
+            LmsCourseMeetingModel.Flush();
             var courseMeetings = LmsCourseMeetingModel.GetAllByMeetingId(scoId);
 
-            var courseMeeting = courseMeetings.FirstOrDefault(
+            var serverCourseMeetings = courseMeetings.Where(
                 cm =>
                     {
                         var acServer = cm.Return(c => c.CompanyLms.Return(cl => cl.AcServer, null), null);
@@ -169,26 +170,33 @@ namespace EdugameCloud.WCFService
                             acServer = acServer.Substring(0, acServer.Length - 1);
                         }
                         return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
-                    });
+                    })
+                    .ToList();
 
-            if (courseMeeting == null)
+            if (!serverCourseMeetings.Any())
             {
                 result.SetError(new Error(
                     Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No course found", "This meeting is not associated to any course"));
                 return result;
             }
 
-            CompanyLms companyLms = courseMeeting.CompanyLms;
+            List<LmsUserParameters> paramList = new List<LmsUserParameters>();
 
-            if (companyLms == null)
+            foreach (var courseMeeting in serverCourseMeetings)
             {
-                result.SetError(new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No AC Server found", "No company has set this ac domain as theirs"));
-                return result;
+                if (courseMeeting.CompanyLms == null)
+                {
+                    continue;
+                }
+
+                var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, courseMeeting.CompanyLms.Id).Value;
+                if (param != null)
+                {
+                    paramList.Add(param);
+                }
             }
             
-            var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, companyLms.Id).Value;
-            result.@object = param != null ? new LmsUserParametersDTO(param) : null;
+            result.@object = paramList.Any() ? new LmsUserParametersDTO(paramList.OrderByDescending(p => p.LastLoggedIn ?? "0").First()) : null;
             
             return result;
         }

@@ -384,6 +384,8 @@ namespace EdugameCloud.WCFService
             instance.CanRemoveMeeting = dto.canRemoveMeeting;
             instance.CanEditMeeting = dto.canEditMeeting;
             instance.IsSettingsVisible = dto.isSettingsVisible;
+            instance.EnableOfficeHours = dto.enableOfficeHours;
+            instance.EnableStudyGroups = dto.enableStudyGroups;
             instance.UserFolderName = dto.userFolderName;
             if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {

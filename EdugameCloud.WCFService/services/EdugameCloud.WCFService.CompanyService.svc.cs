@@ -585,6 +585,8 @@ namespace EdugameCloud.WCFService
                                       CanRemoveMeeting = dto.lmsVO.canRemoveMeeting,
                                       CanEditMeeting = dto.lmsVO.canEditMeeting,
                                       IsSettingsVisible = dto.lmsVO.isSettingsVisible,
+                                      EnableOfficeHours = dto.lmsVO.enableOfficeHours,
+                                      EnableStudyGroups = dto.lmsVO.enableStudyGroups,
                                       UserFolderName = dto.lmsVO.userFolderName
                                   };
 

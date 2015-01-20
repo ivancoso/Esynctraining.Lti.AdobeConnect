@@ -53,18 +53,6 @@
         public bool is_editable { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether can_edit_meeting.
-        /// </summary>
-        [DataMember]
-        public bool can_edit_meeting { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is_settings_visible.
-        /// </summary>
-        [DataMember]
-        public bool is_settings_visible { get; set; }
-
-        /// <summary>
         /// Gets or sets the name.
         /// </summary>
         [DataMember]
@@ -101,15 +89,28 @@
         public bool are_users_synched { get; set; }
 
         /// <summary>
-        /// Gets or sets the LMS provider name.
-        /// </summary>
-        public string lms_provider_name { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is_removable.
+        /// Gets or sets the type.
         /// </summary>
         [DataMember]
-        public bool is_removable { get; set; }
+        public int type { get; set; }
+
+        /// <summary>
+        /// Gets or sets the office hours.
+        /// </summary>
+        [DataMember]
+        public string office_hours { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether allow_guests.
+        /// </summary>
+        [DataMember]
+        public bool allow_guests { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether enabled_for_this_meeting.
+        /// </summary>
+        [DataMember]
+        public bool is_disabled_for_this_course { get; set; }
 
         #endregion
     }

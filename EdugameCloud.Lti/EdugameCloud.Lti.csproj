@@ -152,6 +152,7 @@
     <Compile Include="Business\Models\LmsUserParametersModel.cs" />
     <Compile Include="Business\Models\LmsUserSessionModel.cs" />
     <Compile Include="Business\Models\MoodleUserModel.cs" />
+    <Compile Include="Business\Models\OfficeHoursModel.cs" />
     <Compile Include="Business\Models\ScheduleModel.cs" />
     <Compile Include="Constants\HttpScheme.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
     <Compile Include="Domain\Entities\CompanyLms.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
+    <Compile Include="Domain\Entities\LmsMeetingType.cs" />
     <Compile Include="Domain\Entities\LmsProvider.cs" />
     <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
     <Compile Include="Domain\Entities\LmsProviderNames.cs" />
@@ -173,6 +175,7 @@
     <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
     <Compile Include="Domain\Entities\MoodleQuiz.cs" />
     <Compile Include="Domain\Entities\MoodleUser.cs" />
+    <Compile Include="Domain\Entities\OfficeHours.cs" />
     <Compile Include="Domain\Entities\Schedule.cs" />
     <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
     <Compile Include="Domain\Entities\ScheduleType.cs" />
@@ -210,6 +213,7 @@
     <Compile Include="EntityParsing\MoodleExpressionParser.cs" />
     <Compile Include="EntityParsing\MoodleQuizInfoParser.cs" />
     <Compile Include="EntityParsing\MoodleQuizParser.cs" />
+    <Compile Include="Extensions\LmsCourseMeetingExtension.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="Extensions\UriBuilderExtensions.cs" />
     <Compile Include="Extensions\UrlExtensions.cs" />
@@ -228,7 +232,9 @@
     <Compile Include="Utils\AESGCM.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>

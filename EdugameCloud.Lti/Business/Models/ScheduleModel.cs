@@ -76,13 +76,16 @@
         /// <param name="scheduledAction">
         /// The scheduled action.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="output">
         /// The output.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool ExecuteIfPossible(Schedule schedule, Func<DateTime, string> scheduledAction, out string output)
+        public bool ExecuteIfPossible(Schedule schedule, Func<DateTime, string, string> scheduledAction, string scoId, out string output)
         {
             output = null;
             bool result = false;
@@ -91,7 +94,7 @@
                     // time to run the scheduled task
                     if (scheduledAction != null)
                     {
-                        output = scheduledAction(schedule.NextRun);
+                        output = scheduledAction(schedule.NextRun, scoId);
                         result = true;
                     }
             }

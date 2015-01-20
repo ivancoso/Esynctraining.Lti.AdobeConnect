@@ -105,20 +105,23 @@
         #region Public Methods and Operators
 
         /// <summary>
-        ///     The force update.
+        /// The force update.
         /// </summary>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
-        ///     The <see cref="ActionResult" />.
+        /// The <see cref="ActionResult"/>.
         /// </returns>
         [HttpGet]
         [ActionName("force-update")]
-        public virtual ActionResult ForceUpdate()
+        public virtual ActionResult ForceUpdate(string scoId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
             foreach (Schedule schedule in schedules)
             {
-                Func<DateTime, string> scheduledAction = null;
+                Func<DateTime, string, string> scheduledAction = null;
 
                 switch (schedule.ScheduleDescriptor)
                 {
@@ -131,7 +134,7 @@
                 }
 
                 string error;
-                bool res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, out error);
+                bool res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, scoId, out error);
                 result += "'" + schedule.ScheduleDescriptor
                           + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
@@ -147,7 +150,7 @@
         /// </returns>
         [HttpGet]
         [ActionName("update-if-necessary")]
-        public virtual ActionResult UpdateIfNecessary()
+        public virtual ActionResult UpdateIfNecessary(string scoId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
@@ -158,11 +161,11 @@
                 switch (schedule.ScheduleDescriptor)
                 {
                     case ScheduleDescriptor.BrainHoneySignals:
-                        scheduledAction = dt => this.CheckForBrainHoneySignals(dt);
+                        scheduledAction = dt => this.CheckForBrainHoneySignals(dt, scoId);
                         break;
 
                     case ScheduleDescriptor.CleanLmsSessions:
-                        scheduledAction = dt => this.CleanLmsSessions(dt);
+                        scheduledAction = dt => this.CleanLmsSessions(dt, scoId);
                         break;
                 }
 
@@ -200,12 +203,15 @@
         /// <param name="lastScheduledRunDate">
         /// The last scheduled run date.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
         [NonAction]
         // ReSharper disable once UnusedParameter.Local
-        private string CleanLmsSessions(DateTime lastScheduledRunDate)
+        private string CleanLmsSessions(DateTime lastScheduledRunDate, string scoId = null)
         {
             IEnumerable<LmsUserSession> lmsSessions = this.lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-7));
             foreach (var lmsSession in lmsSessions)
@@ -224,11 +230,14 @@
         /// <param name="lastScheduledRunDate">
         /// The last scheduled run date.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
         [NonAction]
-        private string CheckForBrainHoneySignals(DateTime lastScheduledRunDate)
+        private string CheckForBrainHoneySignals(DateTime lastScheduledRunDate, string scoId)
         {
             var errors = new List<string>();
             DlapAPI api = this.dlapApi;
@@ -314,7 +323,8 @@
                                                 signalGroup.RepresentativeSignal, 
                                                 brainHoneyCompany, 
                                                 errors, 
-                                                adobeConnectProvider);
+                                                adobeConnectProvider,
+                                                scoId);
                                         int key = signalGroup.RepresentativeSignal.EntityId;
                                         if (!userNamesAndEmailsDeleted.ContainsKey(key))
                                         {
@@ -332,7 +342,8 @@
                                 errors, 
                                 api, 
                                 session, 
-                                adobeConnectProvider);
+                                adobeConnectProvider,
+                                scoId);
 
                             Signal lastSignal = signals.LastOrDefault();
                             if (lastSignal != null)
@@ -504,6 +515,9 @@
         /// <param name="adobeConnectProvider">
         /// The adobe connect provider.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="List{String}"/>.
         /// </returns>
@@ -511,13 +525,15 @@
             Signal signal, 
             CompanyLms brainHoneyCompany, 
             List<string> errors, 
-            AdobeConnectProvider adobeConnectProvider)
+            AdobeConnectProvider adobeConnectProvider,
+            string scoId)
         {
             string error;
             List<string> result = this.meetingSetup.DeleteMeeting(
                 brainHoneyCompany, 
                 adobeConnectProvider, 
                 new LtiParamDTO { context_id = signal.EntityId.ToString(CultureInfo.InvariantCulture) }, 
+                scoId,
                 out error);
             if (error != null)
             {
@@ -548,6 +564,9 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
             Justification = "Reviewed. Suppression is OK here.")]
 
@@ -558,7 +577,8 @@
             List<string> errors, 
             DlapAPI api, 
             Session session, 
-            AdobeConnectProvider provider)
+            AdobeConnectProvider provider,
+            string scoId)
         {
             Dictionary<int, IGrouping<int, Signal>> grouped =
                 soleEnrollments.OrderBy(x => x.SignalId)
@@ -600,6 +620,7 @@
                                         context_id = enrollment.CourseId.ToString(CultureInfo.InvariantCulture)
                                     }, 
                                 lmsUser, 
+                                scoId,
                                 out error, 
                                 true);
                         }

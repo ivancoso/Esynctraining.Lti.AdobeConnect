@@ -353,13 +353,16 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="id">
         /// The id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
-        public virtual JsonResult DeleteRecording(string lmsProviderName, string id)
+        public virtual JsonResult DeleteRecording(string lmsProviderName, string scoId, string id)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -368,7 +371,8 @@
                 credentials, 
                 this.GetAdobeConnectProvider(credentials), 
                 param.course_id, 
-                id);
+                id,
+                scoId);
             return this.Json(new { removed = res });
         }
 
@@ -392,11 +396,14 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult GetMeeting(string lmsProviderName)
+        public virtual JsonResult GetMeeting(string lmsProviderName, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -404,9 +411,32 @@
             MeetingDTO meeting = this.MeetingSetup.GetMeeting(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
-                param);
+                param,
+                scoId);
 
             return this.Json(meeting);
+        }
+
+        /// <summary>
+        /// The get meetings.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult GetMeetings(string lmsProviderName)
+        {
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var meetings = this.MeetingSetup.GetMeetings(
+                credentials,
+                this.GetAdobeConnectProvider(credentials),
+                param);
+
+            return this.Json(meetings);
         }
 
         /// <summary>
@@ -415,11 +445,14 @@
         /// <param name="lmsProviderName">
         /// The ДЬЫ provider name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult DeleteMeeting(string lmsProviderName)
+        public virtual JsonResult DeleteMeeting(string lmsProviderName, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -427,7 +460,8 @@
             var success = this.MeetingSetup.DeleteMeeting(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
-                param);
+                param,
+                scoId);
 
             return this.Json(success);
         }
@@ -438,11 +472,14 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult GetRecordings(string lmsProviderName)
+        public virtual JsonResult GetRecordings(string lmsProviderName, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -450,7 +487,8 @@
             List<RecordingDTO> recordings = this.MeetingSetup.GetRecordings(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
-                param.course_id);
+                param.course_id,
+                scoId);
 
             return this.Json(recordings);
         }
@@ -482,6 +520,9 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="forceUpdate">
         /// The force Update.
         /// </param>
@@ -489,7 +530,7 @@
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual ActionResult GetUsers(string lmsProviderName, bool forceUpdate = false)
+        public virtual ActionResult GetUsers(string lmsProviderName, string scoId, bool forceUpdate = false)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -499,7 +540,8 @@
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
-                out error, 
+                scoId,
+                out error,
                 forceUpdate);
             if (string.IsNullOrWhiteSpace(error))
             {
@@ -515,6 +557,9 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="startIndex">
         /// The start Index.
         /// </param>
@@ -524,7 +569,7 @@
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
-        public virtual JsonResult GetAttendanceReport(string lmsProviderName, int startIndex = 0, int limit = 0)
+        public virtual JsonResult GetAttendanceReport(string lmsProviderName, string scoId, int startIndex = 0, int limit = 0)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -533,6 +578,7 @@
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param, 
+                scoId,
                 startIndex, 
                 limit);
 
@@ -545,6 +591,9 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <param name="startIndex">
         /// The start Index.
         /// </param>
@@ -554,7 +603,7 @@
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
-        public virtual JsonResult GetSessionsReport(string lmsProviderName, int startIndex = 0, int limit = 0)
+        public virtual JsonResult GetSessionsReport(string lmsProviderName, string scoId, int startIndex = 0, int limit = 0)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -563,6 +612,7 @@
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param,
+                scoId,
                 startIndex,
                 limit);
 
@@ -591,18 +641,43 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        public virtual ActionResult JoinMeeting(string lmsProviderName)
+        public virtual ActionResult JoinMeeting(string lmsProviderName, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, this.GetAdobeConnectProvider(credentials));
-
+            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, this.GetAdobeConnectProvider(credentials));
+            
             return this.Redirect(url);
+        }
+
+        /// <summary>
+        /// The leave meeting.
+        /// </summary>
+        /// <param name="lmsProviderName">
+        /// The lms provider name.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult LeaveMeeting(string lmsProviderName, string scoId)
+        {
+            var session = this.GetSession(lmsProviderName);
+            var credentials = session.CompanyLms;
+            var param = session.LtiSession.With(x => x.LtiParam);
+            var result = this.MeetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
+
+            return Json(result);
         }
 
         /// <summary>
@@ -826,7 +901,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
-            MeetingDTO ret = this.MeetingSetup.SaveMeeting(
+            var ret = this.MeetingSetup.SaveMeeting(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
@@ -844,11 +919,14 @@
         /// <param name="user">
         /// The user.
         /// </param>
+        /// <param name="scoId">
+        /// The sco id
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user)
+        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -859,6 +937,7 @@
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
                 user,
+                scoId,
                 out error);
 
             if (string.IsNullOrEmpty(error))
@@ -875,11 +954,14 @@
         /// <param name="lmsProviderName">
         /// The LMS Provider Name.
         /// </param>
+        /// <param name="scoId">
+        /// The sco Id.
+        /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName)
+        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, string scoId)
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
@@ -887,7 +969,9 @@
             List<LmsUserDTO> updatedUser = this.MeetingSetup.SetDefaultRolesForNonParticipants(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
-                param);
+                param,
+                scoId,
+                false);
 
             return this.Json(updatedUser);
         }
@@ -1049,6 +1133,7 @@
         {
             var primaryColor = user.With(x => x.PrimaryColor);
             this.ViewBag.RedirectUrl = string.Format(
+                (this.Settings.LtiPath ?? string.Empty) +
                 "/extjs/index.html?primaryColor={0}&lmsProviderName={1}",
                 !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
                 providerName);
