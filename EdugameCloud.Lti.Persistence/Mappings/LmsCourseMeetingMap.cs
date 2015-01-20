@@ -17,6 +17,7 @@
         public LmsCourseMeetingMap()
         {
             this.OptimisticLock.Dirty();
+            this.DynamicUpdate();
             this.Map(x => x.CourseId).Not.Nullable();
             this.Map(x => x.ScoId).Nullable();
             this.Map(x => x.CachedUsers).Nullable();

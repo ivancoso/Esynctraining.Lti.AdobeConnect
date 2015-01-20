@@ -229,6 +229,9 @@
     <Compile Include="OAuth\QueryParameter.cs" />
     <Compile Include="OAuth\QueryParameterComparer.cs" />
     <Compile Include="Domain\Entities\LmsUserSession.cs" />
+    <Compile Include="Routes\LowerCaseRoute.cs" />
+    <Compile Include="Routes\LtiRoutes.cs" />
+    <Compile Include="Routes\RoutesExtensions.cs" />
     <Compile Include="Utils\AESGCM.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -3,12 +3,12 @@
     using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
-    /// The lms course meeting extension.
+    /// The LMS course meeting extension.
     /// </summary>
     public static class LmsCourseMeetingExtension
     {
         /// <summary>
-        /// The meeting sco id.
+        /// The meeting SCO id.
         /// </summary>
         /// <param name="meeting">
         /// The meeting.
@@ -22,10 +22,12 @@
             {
                 return meeting.ScoId;
             }
+
             if (meeting.OfficeHours != null)
             {
                 return meeting.OfficeHours.ScoId;
             }
+
             return null;
         }
     }

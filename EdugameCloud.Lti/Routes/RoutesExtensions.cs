@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.Web.Routes
+﻿namespace EdugameCloud.Lti.Routes
 {
     using System;
     using System.Web.Mvc;

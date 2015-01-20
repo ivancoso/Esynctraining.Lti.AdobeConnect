@@ -207,7 +207,7 @@
                 provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
                 if (permission == MeetingPermissionId.host)
                 {
-                    provider.AddToGroupByType(principalId, "live-admins");
+                    this.AddUserToMeetingHostsGroup(provider, principalId);
                 }
             }
         }
@@ -275,7 +275,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
@@ -1126,6 +1126,7 @@
                 {
                     meeting.ScoId = result.ScoInfo.ScoId;
                 }
+
                 this.LmsCourseMeetingModel.RegisterSave(meeting);
                 
                 if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
@@ -1149,13 +1150,14 @@
                 }
                 else
                 {
-                    var acUser = this.GetACUser(provider, param.lms_user_login, param.lis_person_contact_email_primary);
-                    if (acUser != null)
+                    var user = this.GetACUser(provider, param.lms_user_login, param.lis_person_contact_email_primary);
+                    if (user != null)
                     {
                         provider.UpdateScoPermissionForPrincipal(
                             result.ScoInfo.ScoId,
-                            acUser.PrincipalId,
+                            user.PrincipalId,
                             MeetingPermissionId.host);
+                        this.AddUserToMeetingHostsGroup(provider, user.PrincipalId);
                     }
                 }
             }
@@ -1293,6 +1295,7 @@
 
             if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
             {
+                //TODO Think about user folders + renaming directory
                 adobeConnectScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
             }
 
@@ -1435,7 +1438,7 @@
             provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
             if (permission == MeetingPermissionId.host)
             {
-                provider.AddToGroupByType(user.ac_id, "live-admins");
+                this.AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
 
             return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
@@ -1541,6 +1544,10 @@
                     meetingScoId,
                     registeredUser.PrincipalId,
                     isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
+                if (isOwner)
+                {
+                    this.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                }
             }
         }
 
@@ -1733,7 +1740,7 @@
         /// <returns>
         /// The <see cref="Principal"/>.
         /// </returns>
-        private Principal GetACUser(AdobeConnectProvider provider, string login, string email)
+        public Principal GetACUser(AdobeConnectProvider provider, string login, string email)
         {
             var resultByLogin = provider.GetAllByLogin(login);
             if (!resultByLogin.Success)
@@ -2985,10 +2992,7 @@
                 "[{0}] {1}", 
                 courseId,
                 meetingDTO.name);
-            if (updateItem.Name.Length > 60)
-            {
-                updateItem.Name = updateItem.Name.Substring(0, 60);
-            }
+            updateItem.Name = updateItem.Name.TruncateIfMoreThen(60);
 
             updateItem.Description = meetingDTO.summary;
             updateItem.FolderId = folderSco;
@@ -3065,13 +3069,32 @@
         {
             string ltiFolderSco = null;
             string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
-
+            name = name.TruncateIfMoreThen(60);
             if (!string.IsNullOrWhiteSpace(credentials.ACScoId))
             {
                 ScoInfoResult canvasFolder = provider.GetScoInfo(credentials.ACScoId);
-                if (canvasFolder.Success && canvasFolder.ScoInfo != null && canvasFolder.ScoInfo.Name.Equals(name))
+                if (canvasFolder.Success && canvasFolder.ScoInfo != null)
                 {
-                    ltiFolderSco = canvasFolder.ScoInfo.ScoId;
+                    if (canvasFolder.ScoInfo.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ltiFolderSco = canvasFolder.ScoInfo.ScoId;
+                    }
+                    else
+                    {
+                        ScoInfoResult updatedSco =
+                            provider.UpdateSco(
+                                new FolderUpdateItem
+                                    {
+                                        ScoId = canvasFolder.ScoInfo.ScoId,
+                                        Name = name,
+                                        FolderId = canvasFolder.ScoInfo.FolderId,
+                                        Type = ScoType.folder
+                                    });
+                        if (updatedSco.Success && updatedSco.ScoInfo != null)
+                        {
+                            ltiFolderSco = updatedSco.ScoInfo.ScoId;
+                        }
+                    }
                 }
             }
 
@@ -3080,22 +3103,14 @@
                 ScoContentCollectionResult sharedMeetings = provider.GetContentsByType("meetings");
                 if (sharedMeetings.ScoId != null && sharedMeetings.Values != null)
                 {
-                    ScoContent existingFolder =
-                        sharedMeetings.Values.FirstOrDefault(v => v.Name.Equals(name) && v.IsFolder);
+                    ScoContent existingFolder = sharedMeetings.Values.FirstOrDefault(v => v.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && v.IsFolder);
                     if (existingFolder != null)
                     {
                         credentials.ACScoId = existingFolder.ScoId;
                     }
                     else
                     {
-                        ScoInfoResult newFolder =
-                            provider.CreateSco(
-                                new FolderUpdateItem
-                                {
-                                    Name = name,
-                                    FolderId = sharedMeetings.ScoId,
-                                    Type = ScoType.folder
-                                });
+                        ScoInfoResult newFolder = provider.CreateSco(new FolderUpdateItem { Name = name, FolderId = sharedMeetings.ScoId, Type = ScoType.folder });
                         if (newFolder.Success && newFolder.ScoInfo != null)
                         {
                             credentials.ACScoId = newFolder.ScoInfo.ScoId;
@@ -3153,8 +3168,8 @@
                 }
 
                 string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
-
-                var existingFolder = provider.GetContentsByScoId(userFolder.ScoId).Values.FirstOrDefault(v => v.Name.Equals(name) && v.IsFolder);
+                name = name.TruncateIfMoreThen(60);
+                var existingFolder = provider.GetContentsByScoId(userFolder.ScoId).Values.FirstOrDefault(v => v.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && v.IsFolder);
 
                 if (existingFolder != null)
                 {

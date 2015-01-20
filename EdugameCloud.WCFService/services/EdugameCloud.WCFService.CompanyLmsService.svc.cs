@@ -10,6 +10,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Moodle;
@@ -83,6 +84,17 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<SoapAPI>();
+            }
+        }
+
+        /// <summary>
+        ///     Gets the SOAP API.
+        /// </summary>
+        private MeetingSetup MeetingSetup
+        {
+            get
+            {
+                return IoC.Resolve<MeetingSetup>();
             }
         }
 
@@ -161,6 +173,7 @@ namespace EdugameCloud.WCFService
                     {
                         lmsUser.Password = resultDto.lmsAdminPassword;
                     }
+
                     lmsUser.Token = resultDto.lmsAdminToken;
 
                     LmsUserModel.RegisterSave(lmsUser, true);
@@ -171,6 +184,8 @@ namespace EdugameCloud.WCFService
                     }
                 }
 
+                this.UpdateAdobeConnectFolder(isTransient, entity);
+
                 result.@object = new CompanyLmsDTO(entity);
                 return result;
             }
@@ -178,6 +193,24 @@ namespace EdugameCloud.WCFService
             result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
+        }
+
+        private void UpdateAdobeConnectFolder(bool isTransient, CompanyLms instance)
+        {
+            if (!isTransient && instance.UseUserFolder.GetValueOrDefault() == false)
+            {
+                var acp = this.MeetingSetup.GetProvider(instance);
+                if (acp != null)
+                {
+                   var scoId = instance.ACScoId;
+                   var resultedId = this.MeetingSetup.GetMeetingFolder(instance, acp, null);
+                   if (scoId != resultedId)
+                   {
+                       instance.ACScoId = resultedId;
+                       this.CompanyLmsModel.RegisterSave(instance);
+                   }
+                }
+            }
         }
 
         /// <summary>
