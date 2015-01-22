@@ -242,6 +242,7 @@
             {
                 return new { error = "Meeting deleting is disabled for this company lms." };
             }
+
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
             if (meeting == null)
             {
@@ -259,6 +260,7 @@
             {
                 return "true";
             }
+
             return new { error = result.InnerXml };
         }
 
@@ -318,7 +320,7 @@
         /// The provider.
         /// </param>
         /// <param name="param">
-        /// The param.
+        /// The parameter.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
@@ -462,6 +464,9 @@
         /// <param name="courseId">
         /// The course id.
         /// </param>
+        /// <param name="scoId">
+        /// The SCO Id.
+        /// </param>
         /// <returns>
         /// The <see cref="List{RecordingDTO}"/>.
         /// </returns>
@@ -581,7 +586,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -685,7 +690,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="startIndex">
         /// The start Index.
@@ -723,7 +728,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="startIndex">
         /// The start Index.
@@ -761,7 +766,7 @@
         /// The user settings.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="adobeConnectProvider">
         /// The adobe connect Provider.
@@ -851,13 +856,10 @@
         /// The credentials.
         /// </param>
         /// <param name="param">
-        /// The param.
-        /// </param>
-        /// <param name="userSettings">
-        /// The user settings.
+        /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
         /// </param>
         /// <param name="adobeConnectProvider">
         /// The adobe connect provider.
@@ -870,8 +872,7 @@
             AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
 
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
             if (currentMeeting == null)
             {
@@ -895,16 +896,10 @@
                     currentMeetingScoId,
                     registeredUser.PrincipalId,
                     MeetingPermissionId.denied);
-                if (result.Code == StatusCodes.ok)
-                {
-                    return true;
-                }
-                return result;
+                return result.Code == StatusCodes.ok ? (object)true : result;
             }
-            else
-            {
-                return JsonConvert.SerializeObject(new { error = string.Format("Cannot find Adobe Connect user with email {0} or login {1}", email, login) });
-            }
+
+            return JsonConvert.SerializeObject(new { error = string.Format("Cannot find Adobe Connect user with email {0} or login {1}", email, login) });
         }
 
         /// <summary>
@@ -984,7 +979,7 @@
         /// The recording id.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
@@ -1108,7 +1103,7 @@
                 meetingDTO,
                 updateItem,
                 meetingFolder,
-                type == (int)LmsMeetingType.OfficeHours ? (param.course_id + " " + meeting.Id) : param.course_id.ToString(),
+                type == (int)LmsMeetingType.OfficeHours ? (param.course_id + " " + meeting.Id) : param.course_id.ToString(CultureInfo.InvariantCulture),
                 isNewMeeting);
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
@@ -1190,11 +1185,14 @@
             }
 
             SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(meetingDTO.access_level)
-                ? (meetingDTO.allow_guests ? SpecialPermissionId.remove : SpecialPermissionId.denied)
-                : meetingDTO.access_level == "denied" ? SpecialPermissionId.denied
-                                                      : (meetingDTO.access_level == "view_hidden"
-                                                                 ? SpecialPermissionId.view_hidden
-                                                                 : SpecialPermissionId.remove);
+                                                          ? (meetingDTO.allow_guests
+                                                                 ? SpecialPermissionId.remove
+                                                                 : SpecialPermissionId.denied)
+                                                          : "denied".Equals(meetingDTO.access_level, StringComparison.OrdinalIgnoreCase)
+                                                                ? SpecialPermissionId.denied
+                                                                : ("view_hidden".Equals(meetingDTO.access_level, StringComparison.OrdinalIgnoreCase)
+                                                                       ? SpecialPermissionId.view_hidden
+                                                                       : SpecialPermissionId.remove);
 
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
             List<PermissionInfo> permission =
@@ -1225,7 +1223,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -1295,7 +1293,7 @@
 
             if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
             {
-                //TODO Think about user folders + renaming directory
+                ////TODO Think about user folders + renaming directory
                 adobeConnectScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
             }
 
@@ -1323,7 +1321,7 @@
         /// The parameter.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="forceUpdate">
         /// The force update.
@@ -1387,6 +1385,9 @@
         /// <param name="user">
         /// The user.
         /// </param>
+        /// <param name="scoId">
+        /// The SCO Id.
+        /// </param>
         /// <param name="error">
         /// The error.
         /// </param>
@@ -1445,10 +1446,10 @@
         }
 
         /// <summary>
-        /// The get param login and email.
+        /// The get parameter login and email.
         /// </summary>
         /// <param name="param">
-        /// The param.
+        /// The parameter.
         /// </param>
         /// <param name="credentials">
         /// The credentials.
@@ -1485,71 +1486,49 @@
             }
         }
 
-        #endregion
-
-        #region Methods
-
         /// <summary>
-        /// The enroll to office hours.
+        /// The get AC user.
         /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="param">
-        /// The param.
-        /// </param>
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting sco id.
+        /// <param name="login">
+        /// The login.
         /// </param>
-        /// <param name="registeredUser">
-        /// The registered user.
+        /// <param name="email">
+        /// The email.
         /// </param>
-        /// <param name="userSettings">
-        /// The user settings.
-        /// </param>
-        /// <param name="isOwner">
-        /// The is owner.
-        /// </param>
-        private void EnrollToOfficeHours(CompanyLms credentials, LtiParamDTO param, AdobeConnectProvider provider, string meetingScoId, ref Principal registeredUser,
-            LmsUserSettingsDTO userSettings, bool isOwner)
+        /// <returns>
+        /// The <see cref="Principal"/>.
+        /// </returns>
+        public Principal GetACUser(AdobeConnectProvider provider, string login, string email)
         {
-            if (registeredUser == null)
+            var resultByLogin = provider.GetAllByLogin(login);
+            if (!resultByLogin.Success)
             {
-                var setup = new PrincipalSetup
-                {
-                    Email = param.lis_person_contact_email_primary,
-                    FirstName = param.lis_person_name_given,
-                    LastName = param.lis_person_name_family,
-                    Name = param.lms_user_login,
-                    Login = param.lms_user_login,
-                    Password = this.GetACPassword(credentials, userSettings, param.lis_person_contact_email_primary, param.lms_user_login)
-                };
-                if (string.IsNullOrWhiteSpace(setup.Email))
-                {
-                    setup.Email = null;
-                }
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
-                if (pu.Principal != null)
-                {
-                    registeredUser = pu.Principal;
-                }
+                return null;
             }
 
-            if (registeredUser != null)
+            var principal = string.IsNullOrWhiteSpace(login)
+                                   ? null
+                                   : resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            if (principal == null && !string.IsNullOrWhiteSpace(email))
             {
-                provider.UpdateScoPermissionForPrincipal(
-                    meetingScoId,
-                    registeredUser.PrincipalId,
-                    isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
-                if (isOwner)
+                var resultByEmail = provider.GetAllByEmail(email);
+                if (!resultByEmail.Success)
                 {
-                    this.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                    return null;
                 }
+
+                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             }
+
+            return principal;
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// The get locker.
@@ -1574,6 +1553,75 @@
             }
 
             return locker[lockerKey];
+        }
+
+        /// <summary>
+        /// The enroll to office hours.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="param">
+        /// The parameter.
+        /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="meetingScoId">
+        /// The meeting SCO id.
+        /// </param>
+        /// <param name="registeredUser">
+        /// The registered user.
+        /// </param>
+        /// <param name="userSettings">
+        /// The user settings.
+        /// </param>
+        /// <param name="isOwner">
+        /// The is owner.
+        /// </param>
+        private void EnrollToOfficeHours(
+            CompanyLms credentials,
+            LtiParamDTO param,
+            AdobeConnectProvider provider,
+            string meetingScoId,
+            ref Principal registeredUser,
+            LmsUserSettingsDTO userSettings,
+            bool isOwner)
+        {
+            if (registeredUser == null)
+            {
+                var setup = new PrincipalSetup
+                {
+                    Email = param.lis_person_contact_email_primary,
+                    FirstName = param.lis_person_name_given,
+                    LastName = param.lis_person_name_family,
+                    Name = param.lms_user_login,
+                    Login = param.lms_user_login,
+                    Password = this.GetACPassword(credentials, userSettings, param.lis_person_contact_email_primary, param.lms_user_login)
+                };
+                if (string.IsNullOrWhiteSpace(setup.Email))
+                {
+                    setup.Email = null;
+                }
+
+                PrincipalResult pu = provider.PrincipalUpdate(setup);
+                if (pu.Principal != null)
+                {
+                    registeredUser = pu.Principal;
+                }
+            }
+
+            if (registeredUser != null)
+            {
+                provider.UpdateScoPermissionForPrincipal(
+                    meetingScoId,
+                    registeredUser.PrincipalId,
+                    isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
+                if (isOwner)
+                {
+                    this.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                }
+            }
         }
 
         /// <summary>
@@ -1610,6 +1658,7 @@
                 {
                     setup.Email = null;
                 }
+
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
                 if (pu.Principal != null)
                 {
@@ -1726,50 +1775,10 @@
         }
 
         /// <summary>
-        /// The get AC user.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
-        public Principal GetACUser(AdobeConnectProvider provider, string login, string email)
-        {
-            var resultByLogin = provider.GetAllByLogin(login);
-            if (!resultByLogin.Success)
-            {
-                return null;
-            }
-
-            var principal = string.IsNullOrWhiteSpace(login)
-                                   ? null
-                                   : resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
-            if (principal == null && !string.IsNullOrWhiteSpace(email))
-            {
-                var resultByEmail = provider.GetAllByEmail(email);
-                if (!resultByEmail.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
-            }
-
-            return principal;
-        }
-
-        /// <summary>
         /// The is teacher.
         /// </summary>
         /// <param name="param">
-        /// The param.
+        /// The parameter.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
@@ -2570,6 +2579,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
+        // ReSharper disable once UnusedMethodReturnValue.Local
         private bool AddUserToMeetingHostsGroup(AdobeConnectProvider provider, string principalId)
         {
             var group = provider.AddToGroupByType(principalId, "live-admins");
@@ -2750,8 +2760,8 @@
         /// <param name="permission">
         /// The permission.
         /// </param>
-        /// <param name="type">
-        /// The type.
+        /// <param name="lmsCourseMeeting">
+        /// The LMS Course Meeting.
         /// </param>
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
@@ -2849,9 +2859,11 @@
                 && !credentials.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
                 && !credentials.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase))
             {
+                // ReSharper disable once UnusedVariable
                 var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
             }
 
+            // ReSharper disable once UnusedVariable
             var principalUpdateResult = provider.PrincipalUpdate(
                 new PrincipalSetup
                     {
