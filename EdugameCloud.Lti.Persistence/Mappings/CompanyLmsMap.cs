@@ -38,6 +38,9 @@
             this.Map(x => x.UserFolderName).Nullable();
             this.Map(x => x.EnableOfficeHours).Nullable();
             this.Map(x => x.EnableStudyGroups).Nullable();
+            this.Map(x => x.EnableCourseMeetings).Nullable();
+            this.Map(x => x.ShowEGCHelp).Nullable();
+            this.Map(x => x.ShowLmsHelp).Nullable();
 
             this.Map(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.Map(x => x.ModifiedBy).Nullable().Column("modifiedBy");

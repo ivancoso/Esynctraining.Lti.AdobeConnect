@@ -135,6 +135,22 @@
         public string lis_person_sourcedid { get; set; }
 
         /// <summary>
+        /// Gets or sets the custom_enablemeeting.
+        /// </summary>
+        public string custom_enablemeeting { get; set; }
+
+        /// <summary>
+        /// Gets a value indicating whether is_course_meeting_enabled.
+        /// </summary>
+        public bool is_course_meeting_enabled
+        {
+            get
+            {
+                return this.custom_enablemeeting != null && this.custom_enablemeeting.ToUpper().Equals("TRUE");
+            }
+        }
+
+        /// <summary>
         ///     Gets the LMS domain.
         /// </summary>
         public string lms_domain

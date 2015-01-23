@@ -24,6 +24,11 @@
         /// </summary>
         public virtual string ConfigurationUrl { get; set; }
 
+        /// <summary>
+        /// Gets or sets the user guide file url.
+        /// </summary>
+        public virtual string UserGuideFileUrl { get; set; }
+
         #endregion
     }
 }

@@ -11,6 +11,7 @@
     using EdugameCloud.Core.Keys;
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.Lti.API;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Persistence;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
@@ -64,6 +65,7 @@
             IoC.Initialize(container);
             container.RegisterComponents(wcf: true);
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
+            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             RegisterLtiComponents(container);
             try
             {

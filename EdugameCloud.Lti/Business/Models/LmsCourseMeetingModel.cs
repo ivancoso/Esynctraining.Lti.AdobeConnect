@@ -167,12 +167,26 @@
                 .Where(() => (((x.ScoId != null) && (x.ScoId == meetingId)) ||
                      (x.OfficeHours != null && oh.ScoId == meetingId)));
             return this.Repository.FindAll(defaultQuery);
+        }
 
-            /*
-            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.ScoId == meetingId);
+        /// <summary>
+        /// The get all by office hours id.
+        /// </summary>
+        /// <param name="officeHoursId">
+        /// The office hours id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable"/>.
+        /// </returns>
+        public IEnumerable<LmsCourseMeeting> GetAllByOfficeHoursId(int officeHoursId)
+        {
+            LmsCourseMeeting x = null;
+            OfficeHours oh = null;
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
+                .GetQueryOver(() => x)
+                .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
+                .Where(() => x.OfficeHours != null && oh.Id == officeHoursId);
             return this.Repository.FindAll(defaultQuery);
-            */
         }
     }
 }

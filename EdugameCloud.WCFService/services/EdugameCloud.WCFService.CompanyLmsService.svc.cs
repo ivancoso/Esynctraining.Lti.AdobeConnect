@@ -419,6 +419,9 @@ namespace EdugameCloud.WCFService
             instance.IsSettingsVisible = dto.isSettingsVisible;
             instance.EnableOfficeHours = dto.enableOfficeHours;
             instance.EnableStudyGroups = dto.enableStudyGroups;
+            instance.EnableCourseMeetings = dto.enableCourseMeetings;
+            instance.ShowEGCHelp = dto.showEGCHelp;
+            instance.ShowLmsHelp = dto.showLmsHelp;
             instance.UserFolderName = dto.userFolderName;
             if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {

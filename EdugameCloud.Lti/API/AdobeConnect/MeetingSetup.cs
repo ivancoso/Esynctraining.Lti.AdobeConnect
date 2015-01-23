@@ -249,10 +249,21 @@
                 return new { error = "Meeting not found" };
             }
 
-            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours && meeting.OfficeHours != null)
             {
-                this.LmsCourseMeetingModel.RegisterDelete(meeting);
-                return "true";
+                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(
+                    meeting.OfficeHours.Id);
+                if (coursesWithThisOfficeHours.Any(c => c.Id != meeting.Id))
+                {
+                    this.LmsCourseMeetingModel.RegisterDelete(meeting);
+                    return "true";
+                }
+            }
+
+            this.LmsCourseMeetingModel.RegisterDelete(meeting);
+            if (meeting.OfficeHours != null)
+            {
+                this.OfficeHoursModel.RegisterDelete(meeting.OfficeHours);                
             }
 
             var result = provider.DeleteSco(meeting.GetMeetingScoId());
@@ -406,7 +417,12 @@
                            is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
                            can_edit_meeting = credentials.CanEditMeeting.GetValueOrDefault(),
                            office_hours_enabled = credentials.EnableOfficeHours.GetValueOrDefault(),
-                           study_groups_enabled = credentials.EnableStudyGroups.GetValueOrDefault()
+                           study_groups_enabled = credentials.EnableStudyGroups.GetValueOrDefault(),
+                           course_meetings_enabled = credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
+                           is_lms_help_visible = credentials.ShowLmsHelp.GetValueOrDefault(),
+                           is_egc_help_visible = credentials.ShowEGCHelp.GetValueOrDefault(),
+                           user_guide_link = !string.IsNullOrEmpty(credentials.LmsProvider.UserGuideFileUrl) ? credentials.LmsProvider.UserGuideFileUrl : 
+                                string.Format("/content/lti-instructions/{0}.pdf", credentials.LmsProvider.ShortName)
                        };
         }
 
@@ -1081,13 +1097,22 @@
             }
 
             bool isNewMeeting = false;
-            var existingMeeting = provider.GetScoInfo(meeting.GetMeetingScoId());
+            var meetingSco = meeting.GetMeetingScoId();
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+            var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
+
+            if (string.IsNullOrEmpty(meetingSco) && type == (int)LmsMeetingType.OfficeHours && officeHours != null)
+            {    
+                meetingSco = officeHours.ScoId;
+                meetingDTO.id = meetingSco;
+            }
+            var existingMeeting = provider.GetScoInfo(meetingSco);
             if (!existingMeeting.Success)
             {
                 isNewMeeting = true;
             }
 
-            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meeting.GetMeetingScoId() };
+            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
@@ -1098,12 +1123,13 @@
             }
 
             var meetingFolder = this.GetMeetingFolder(credentials, provider, registeredUser);
+            
 
             this.SetMeetingUpateItemFields(
                 meetingDTO,
                 updateItem,
                 meetingFolder,
-                type == (int)LmsMeetingType.OfficeHours ? (param.course_id + " " + meeting.Id) : param.course_id.ToString(CultureInfo.InvariantCulture),
+                type == (int)LmsMeetingType.OfficeHours ? lmsUser.Id.ToString() : param.course_id.ToString(CultureInfo.InvariantCulture),
                 isNewMeeting);
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
@@ -1157,31 +1183,22 @@
                 }
             }
 
-            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours && lmsUser != null)
             {
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
-                if (lmsUser != null)
-                {
-                    var officeHous = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value
-                                     ?? new OfficeHours() { LmsUser = lmsUser };
-                    officeHous.Hours = meetingDTO.office_hours;
-                    officeHous.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
+                officeHours = officeHours ?? new OfficeHours() { LmsUser = lmsUser };
+                officeHours.Hours = meetingDTO.office_hours;
+                officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
                     
-                    this.OfficeHoursModel.RegisterSave(officeHous);
+                this.OfficeHoursModel.RegisterSave(officeHours);
 
-                    meeting.OfficeHours = officeHous;
-                    meeting.ScoId = null;
-                    this.LmsCourseMeetingModel.RegisterSave(meeting);
-                }
+                meeting.OfficeHours = officeHours;
+                meeting.ScoId = null;
+                this.LmsCourseMeetingModel.RegisterSave(meeting);
             }
-            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
+            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup && lmsUser != null)
             {
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
-                if (lmsUser != null)
-                {
-                    meeting.Owner = lmsUser;
-                    this.LmsCourseMeetingModel.RegisterSave(meeting);
-                }
+                meeting.Owner = lmsUser;
+                this.LmsCourseMeetingModel.RegisterSave(meeting);
             }
 
             SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(meetingDTO.access_level)
@@ -2886,6 +2903,12 @@
             else
             {
                 LoginResult resultByEmail = userProvider.Login(new UserCredentials(email, password));
+                if (resultByEmail.Success)
+                {
+                    breezeToken = resultByEmail.Status.SessionInfo;                    
+                }
+
+                resultByEmail = userProvider.Login(new UserCredentials(registeredUser.Login, password));
                 breezeToken = resultByEmail.Status.SessionInfo;
             }
             

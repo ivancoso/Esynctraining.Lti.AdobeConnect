@@ -182,6 +182,21 @@
         public virtual bool? EnableStudyGroups { get; set; }
 
         /// <summary>
+        /// Gets or sets the enable course meetings.
+        /// </summary>
+        public virtual bool? EnableCourseMeetings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the show lms help.
+        /// </summary>
+        public virtual bool? ShowLmsHelp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the show egc help.
+        /// </summary>
+        public virtual bool? ShowEGCHelp { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

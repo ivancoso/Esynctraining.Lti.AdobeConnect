@@ -587,6 +587,9 @@ namespace EdugameCloud.WCFService
                                       IsSettingsVisible = dto.lmsVO.isSettingsVisible,
                                       EnableOfficeHours = dto.lmsVO.enableOfficeHours,
                                       EnableStudyGroups = dto.lmsVO.enableStudyGroups,
+                                      EnableCourseMeetings = dto.lmsVO.enableCourseMeetings,
+                                      ShowEGCHelp = dto.lmsVO.showEGCHelp,
+                                      ShowLmsHelp = dto.lmsVO.showLmsHelp,
                                       UserFolderName = dto.lmsVO.userFolderName
                                   };
 

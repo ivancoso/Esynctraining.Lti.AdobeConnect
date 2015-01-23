@@ -52,6 +52,9 @@
                 this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
                 this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
                 this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
+                this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
+                this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
+                this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
                 this.setupUrl = instance.LmsProvider != null ? 
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
@@ -209,6 +212,24 @@
         /// </summary>
         [DataMember]
         public bool enableStudyGroups { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether enable course meetings.
+        /// </summary>
+        [DataMember]
+        public bool enableCourseMeetings { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether show lms help.
+        /// </summary>
+        [DataMember]
+        public bool showLmsHelp { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether show egc help.
+        /// </summary>
+        [DataMember]
+        public bool showEGCHelp { get; set; }
 
         /// <summary>
         /// Gets or sets the setup url.
