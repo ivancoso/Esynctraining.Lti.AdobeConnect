@@ -361,6 +361,12 @@
                     meeting);
                 ret.Add(meetingDTO);
             }
+            if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
+            {
+                var empty = this.CreateEmptyMeetingResponse(param);
+                ret.Add(empty);
+            }
+
             if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
             {
                 var meeting =
@@ -1787,7 +1793,9 @@
             {
                 id = "0",
                 is_editable = this.IsTeacher(param),
-                are_users_synched = true
+                are_users_synched = true,
+                type = (int)LmsMeetingType.Meeting,
+                is_disabled_for_this_course = true
             };
         }
 
