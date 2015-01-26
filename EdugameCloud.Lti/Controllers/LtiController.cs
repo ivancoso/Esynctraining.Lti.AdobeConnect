@@ -976,6 +976,35 @@
             return this.Json(updatedUser);
         }
 
+        /// <summary>
+        /// The get authentication parameters.
+        /// </summary>
+        /// <param name="acId">
+        /// The ac id.
+        /// </param>
+        /// <param name="acDomain">
+        /// The ac domain.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="JsonResult"/>.
+        /// </returns>
+        public virtual JsonResult GetAuthenticationParameters(string acId, string acDomain, string scoId)
+        {
+            string error = null;
+            var param = this.MeetingSetup.GetLmsParameters(acId, acDomain, scoId, ref error);
+            if (param != null)
+            {
+                return this.Json(param, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return this.Json(new { error = error }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         #endregion
 
         #region Methods

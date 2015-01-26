@@ -363,8 +363,8 @@
             }
             if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
             {
-                var empty = this.CreateEmptyMeetingResponse(param);
-                ret.Add(empty);
+               // var empty = this.CreateEmptyMeetingResponse(param);
+               // ret.Add(empty);
             }
 
             if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
@@ -1371,7 +1371,7 @@
 
             foreach (var user in users)
             {
-                if (!this.IsUserSynched(enrollments, user))
+                if (!this.IsUserSynched(enrollments, user, provider))
                 {
                     if (user.ac_id == null || user.ac_id == "0")
                     {
@@ -1466,6 +1466,70 @@
             }
 
             return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
+        }
+
+        /// <summary>
+        /// The get lms parameters.
+        /// </summary>
+        /// <param name="acId">
+        /// The ac id.
+        /// </param>
+        /// <param name="acDomain">
+        /// The ac domain.
+        /// </param>
+        /// <param name="scoId">
+        /// The sco id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="LmsUserParametersDTO"/>.
+        /// </returns>
+        public LmsUserParametersDTO GetLmsParameters(string acId, string acDomain, string scoId, ref string error)
+        {
+            LmsCourseMeetingModel.Flush();
+            var courseMeetings = LmsCourseMeetingModel.GetAllByMeetingId(scoId);
+
+            var serverCourseMeetings = courseMeetings.Where(
+                cm =>
+                {
+                    var acServer = cm.Return(c => c.CompanyLms.Return(cl => cl.AcServer, null), null);
+                    if (acServer == null)
+                    {
+                        return false;
+                    }
+                    if (acServer.EndsWith("/"))
+                    {
+                        acServer = acServer.Substring(0, acServer.Length - 1);
+                    }
+                    return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
+                })
+                    .ToList();
+
+            if (!serverCourseMeetings.Any())
+            {
+                error = "This meeting is not associated to any course";
+                return null;
+            }
+
+            List<LmsUserParameters> paramList = new List<LmsUserParameters>();
+
+            foreach (var courseMeeting in serverCourseMeetings)
+            {
+                if (courseMeeting.CompanyLms == null)
+                {
+                    continue;
+                }
+
+                var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, courseMeeting.CompanyLms.Id).Value;
+                if (param != null)
+                {
+                    paramList.Add(param);
+                }
+            }
+
+            return paramList.Any() ? new LmsUserParametersDTO(paramList.OrderByDescending(p => p.LastLoggedIn ?? "0").First()) : null;
         }
 
         /// <summary>
@@ -1895,7 +1959,7 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.AreUsersSynched(credentials, meeting, lmsUserId, courseId, enrollments, param);
+                areUsersSynched = this.AreUsersSynched(credentials, meeting, lmsUserId, courseId, enrollments, param, provider);
             }
 
             return new Tuple<bool, bool>(canJoin, areUsersSynched);
@@ -1910,14 +1974,28 @@
         /// <param name="participant">
         /// The participant.
         /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant)
+        private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant, AdobeConnectProvider provider)
         {
             string email = lmsUser.GetEmail(), login = lmsUser.GetLogin();
-            return participant.Login != null && ((email != null && email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
+            var isACUser = participant.Login != null && ((email != null && email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
                    || (login != null && login.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
+            if (isACUser)
+            {
+                return true;
+            }
+            var principal = provider.GetOneByPrincipalId(participant.PrincipalId);
+            if (principal.Success)
+            {
+                isACUser = principal.PrincipalInfo.Principal.Email.Equals(email)
+                           || principal.PrincipalInfo.Principal.Email.Equals(login);
+            }
+            return isACUser;
         }
 
         /// <summary>
@@ -1941,6 +2019,9 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
@@ -1950,13 +2031,14 @@
             string lmsUserId,
             int courseId,
             List<PermissionInfo> enrollments,
-            LtiParamDTO param)
+            LtiParamDTO param,
+            AdobeConnectProvider provider)
         {
             string error;
             var lmsUsers = this.GetLMSUsers(credentials, meeting, lmsUserId, courseId, out error, param);
             foreach (var lmsUser in lmsUsers)
             {
-                if (!this.IsUserSynched(enrollments, lmsUser))
+                if (!this.IsUserSynched(enrollments, lmsUser, provider))
                 {
                     return false;
                 }
@@ -1964,7 +2046,7 @@
 
             foreach (var participant in enrollments)
             {
-                if (!this.IsParticipantSynched(lmsUsers, participant))
+                if (!this.IsParticipantSynched(lmsUsers, participant, provider))
                 {
                     return false;
                 }
@@ -1982,15 +2064,18 @@
         /// <param name="participant">
         /// The participant.
         /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool IsParticipantSynched(List<LmsUserDTO> lmsUsers, PermissionInfo participant)
+        private bool IsParticipantSynched(List<LmsUserDTO> lmsUsers, PermissionInfo participant, AdobeConnectProvider provider)
         {
             bool found = false;
             foreach (var lmsUser in lmsUsers)
             {
-                if (this.LmsUserIsAcUser(lmsUser, participant))
+                if (this.LmsUserIsAcUser(lmsUser, participant, provider))
                 {
                     found = true;
                 }
@@ -2008,15 +2093,18 @@
         /// <param name="lmsUser">
         /// The LMS user.
         /// </param>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool IsUserSynched(IEnumerable<PermissionInfo> enrollments, LmsUserDTO lmsUser)
+        private bool IsUserSynched(IEnumerable<PermissionInfo> enrollments, LmsUserDTO lmsUser, AdobeConnectProvider provider)
         {
             bool isFound = false;
             foreach (var host in enrollments)
             {
-                if (this.LmsUserIsAcUser(lmsUser, host))
+                if (this.LmsUserIsAcUser(lmsUser, host, provider))
                 {
                     lmsUser.ac_id = host.PrincipalId;
                     lmsUser.ac_role = this.GetRoleString(host.PermissionId);
@@ -2414,7 +2502,10 @@
             {
                 case LmsProviderNames.Canvas:
                     error = null;
-                    return this.GetCanvasUsers(credentials, credentials.AdminUser != null ? credentials.AdminUser.UserId : lmsUserId, courseId);
+                    var lmsUser = meeting.LmsMeetingType == (int)LmsMeetingType.Meeting
+                                      ? lmsUserId
+                                      : (credentials.AdminUser != null ? credentials.AdminUser.UserId : lmsUserId);
+                    return this.GetCanvasUsers(credentials, lmsUser, courseId);
                 case LmsProviderNames.BrainHoney:
                     return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
                 case LmsProviderNames.Blackboard:

@@ -1,6 +1,4 @@
-﻿using NHibernate.SqlCommand;
-
-namespace EdugameCloud.Core.Business.Models
+﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;

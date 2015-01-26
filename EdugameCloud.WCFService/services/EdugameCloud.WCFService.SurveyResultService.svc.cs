@@ -249,7 +249,7 @@ namespace EdugameCloud.WCFService
             instance.ParticipantName = resultDTO.participantName.With(x => x.Trim());
             instance.Survey = this.SurveyModel.GetOneById(resultDTO.surveyId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
-            instance.LmsUserParametersId = resultDTO.lmsUserParametersId;
+            instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
             return instance;
         }
 

@@ -18,6 +18,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Contracts;
     using EdugameCloud.Lti.Domain.Entities;
@@ -73,6 +74,14 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<SurveyModel>();
+            }
+        }
+
+        private MeetingSetup MeetingSetup
+        {
+            get
+            {
+                return IoC.Resolve<MeetingSetup>();
             }
         }
 
@@ -154,49 +163,17 @@ namespace EdugameCloud.WCFService
         {
             var result = new ServiceResponse<LmsUserParametersDTO>();
 
-            LmsCourseMeetingModel.Flush();
-            var courseMeetings = LmsCourseMeetingModel.GetAllByMeetingId(scoId);
-
-            var serverCourseMeetings = courseMeetings.Where(
-                cm =>
-                    {
-                        var acServer = cm.Return(c => c.CompanyLms.Return(cl => cl.AcServer, null), null);
-                        if (acServer == null)
-                        {
-                            return false;
-                        }
-                        if (acServer.EndsWith("/"))
-                        {
-                            acServer = acServer.Substring(0, acServer.Length - 1);
-                        }
-                        return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
-                    })
-                    .ToList();
-
-            if (!serverCourseMeetings.Any())
+            string error = null;
+            var param = this.MeetingSetup.GetLmsParameters(acId, acDomain, scoId, ref error);
+            if (param != null)
+            {
+                result.@object = param;
+            }
+            else
             {
                 result.SetError(new Error(
-                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No course found", "This meeting is not associated to any course"));
-                return result;
+                    Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "No parameters found", error));
             }
-
-            List<LmsUserParameters> paramList = new List<LmsUserParameters>();
-
-            foreach (var courseMeeting in serverCourseMeetings)
-            {
-                if (courseMeeting.CompanyLms == null)
-                {
-                    continue;
-                }
-
-                var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, courseMeeting.CompanyLms.Id).Value;
-                if (param != null)
-                {
-                    paramList.Add(param);
-                }
-            }
-            
-            result.@object = paramList.Any() ? new LmsUserParametersDTO(paramList.OrderByDescending(p => p.LastLoggedIn ?? "0").First()) : null;
             
             return result;
         }
