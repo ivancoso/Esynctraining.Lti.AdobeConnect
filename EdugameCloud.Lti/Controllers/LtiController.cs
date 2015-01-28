@@ -81,7 +81,12 @@
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public LtiController(CompanyLmsModel companyLmsModel, LmsUserSessionModel userSessionModel, LmsUserModel lmsUserModel, MeetingSetup meetingSetup, ApplicationSettingsProvider settings)
+        public LtiController(
+            CompanyLmsModel companyLmsModel,
+            LmsUserSessionModel userSessionModel,
+            LmsUserModel lmsUserModel, 
+            MeetingSetup meetingSetup, 
+            ApplicationSettingsProvider settings)
         {
             this.companyLmsModel = companyLmsModel;
             this.userSessionModel = userSessionModel;
@@ -847,7 +852,7 @@
                             this.StartOAuth2Authentication(provider, key, model);
                             return null;
                         }
-
+                        
                         return this.RedirectToExtJs(credentials, lmsUser, key);
 
                     case LmsProviderNames.BrainHoney:

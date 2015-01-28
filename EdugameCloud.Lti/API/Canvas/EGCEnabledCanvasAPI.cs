@@ -124,7 +124,6 @@
                     u =>
                     {
                         u.lms_role = role;
-                        AddMoreDetailsForUser(api, usertoken, u);
                     });
 
                 ret.AddRange(us);
