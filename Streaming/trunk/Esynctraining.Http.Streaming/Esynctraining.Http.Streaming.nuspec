@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Http.Streaming</id>
+        <version>1.0.0.0</version>
+        <title>Esynctraining.Http.Streaming</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides HTTP multipart request functionality for eSyncTraining projects. A HTTP multipart request is a HTTP request that HTTP clients construct to send files and data over to a HTTP Server. It is commonly used by HTTP clients to upload files to the server.</description>
+        <releaseNotes />
+        <copyright>Copyright © 2015 eSyncTraining.com</copyright>
+        <tags>core http multipart streamig</tags>
+    </metadata>
+    <files>
+        <file src="bin\Release\Esynctraining.Http.Streaming.dll" target="lib\Esynctraining.Http.Streaming.dll" />
+    </files>
+</package>
