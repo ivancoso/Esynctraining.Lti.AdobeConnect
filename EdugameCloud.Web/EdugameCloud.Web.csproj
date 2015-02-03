@@ -387,6 +387,18 @@
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-config\Blackboard.pdf" />
     <Content Include="Content\lti-config\Moodle.pdf" />
+    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Error.cshtml">
+      <Link>Views\Lti\Error.cshtml</Link>
+    </Content>
+    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolPassword.cshtml">
+      <Link>Views\Lti\ProxyToolPassword.cshtml</Link>
+    </Content>
+    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolRegistrationSucceeded.cshtml">
+      <Link>Views\Lti\ProxyToolRegistrationSucceeded.cshtml</Link>
+    </Content>
+    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Redirect.cshtml">
+      <Link>Views\Lti\Redirect.cshtml</Link>
+    </Content>
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -444,8 +456,6 @@
     <Content Include="Views\Home\LogIn.cshtml" />
     <Content Include="Views\Social\LoggedIn.cshtml" />
     <Content Include="Views\Home\Unsubscribed.cshtml" />
-    <Content Include="Views\Lti\Error.cshtml" />
-    <Content Include="Views\Lti\Redirect.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

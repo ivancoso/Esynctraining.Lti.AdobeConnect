@@ -590,7 +590,9 @@ namespace EdugameCloud.WCFService
                                       EnableCourseMeetings = dto.lmsVO.enableCourseMeetings,
                                       ShowEGCHelp = dto.lmsVO.showEGCHelp,
                                       ShowLmsHelp = dto.lmsVO.showLmsHelp,
-                                      UserFolderName = dto.lmsVO.userFolderName
+                                      UserFolderName = dto.lmsVO.userFolderName,
+                                      EnableProxyToolMode = dto.lmsVO.enableProxyToolMode,
+                                      ProxyToolSharedPassword =  dto.lmsVO.proxyToolPassword
                                   };
 
                     CompanyLmsModel.RegisterSave(lms);

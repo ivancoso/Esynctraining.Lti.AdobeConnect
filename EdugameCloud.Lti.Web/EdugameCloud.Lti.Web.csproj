@@ -182,11 +182,15 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Web.constrings" />
+    <Content Include="Web.constrings">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Lti\Error.cshtml" />
     <Content Include="Views\Lti\Redirect.cshtml" />
+    <Content Include="Views\Lti\ProxyToolPassword.cshtml" />
+    <Content Include="Views\Lti\ProxyToolRegistrationSucceeded.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extjs\" />

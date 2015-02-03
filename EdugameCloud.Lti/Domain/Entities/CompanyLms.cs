@@ -89,6 +89,16 @@
         public virtual DateTime DateModified { get; set; }
 
         /// <summary>
+        /// Gets or sets the enable proxy tool mode.
+        /// </summary>
+        public virtual bool? EnableProxyToolMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the proxy tool shared password.
+        /// </summary>
+        public virtual string ProxyToolSharedPassword { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS domain.
         /// </summary>
         public virtual string LmsDomain

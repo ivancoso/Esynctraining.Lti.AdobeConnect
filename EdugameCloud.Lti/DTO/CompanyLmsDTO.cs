@@ -60,6 +60,8 @@
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
                     : instance.LmsProvider.ShortName != null ? string.Format("/Content/lti-config/{0}.xml", instance.LmsProvider.ShortName) : null)
                     : null;
+                this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
+                this.proxyToolPassword = instance.ProxyToolSharedPassword;
             }
         }
 
@@ -92,6 +94,18 @@
         /// </summary>
         [DataMember]
         public string lmsAdminPassword { get; set; }
+
+        /// <summary>
+        /// Gets or sets the proxy tool mode.
+        /// </summary>
+        [DataMember]
+        public bool enableProxyToolMode { get; set; }
+
+        /// <summary>
+        /// Gets or sets the proxy tool password.
+        /// </summary>
+        [DataMember]
+        public string proxyToolPassword { get; set; }
 
         /// <summary>
         /// Gets or sets the LMS admin token.

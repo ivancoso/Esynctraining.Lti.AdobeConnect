@@ -38,6 +38,12 @@ namespace EdugameCloud.Core.Domain.DTO
         public string password { get; set; }
 
         /// <summary>
+        /// Gets or sets the proxy tool mode.
+        /// </summary>
+        [DataMember]
+        public bool enableProxyToolMode { get; set; }
+
+        /// <summary>
         /// Gets or sets the type.
         /// </summary>
         [DataMember]

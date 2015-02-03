@@ -332,7 +332,18 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.SoapAPI.LoginAndCreateAClient(out info, test.domain.IsSSL(), test.domain, test.login, test.password);
+            var session = test.enableProxyToolMode
+                              ? this.SoapAPI.LoginToolAndCreateAClient(
+                                  out info,
+                                  test.domain.IsSSL(),
+                                  test.domain,
+                                  test.password)
+                              : this.SoapAPI.LoginUserAndCreateAClient(
+                                  out info,
+                                  test.domain.IsSSL(),
+                                  test.domain,
+                                  test.login,
+                                  test.password);
             return session != null;
         }
 
@@ -423,6 +434,8 @@ namespace EdugameCloud.WCFService
             instance.ShowEGCHelp = dto.showEGCHelp;
             instance.ShowLmsHelp = dto.showLmsHelp;
             instance.UserFolderName = dto.userFolderName;
+            instance.EnableProxyToolMode = dto.enableProxyToolMode;
+            instance.ProxyToolSharedPassword = dto.proxyToolPassword;
             if (!string.IsNullOrWhiteSpace(dto.lmsDomain))
             {
                 instance.LmsDomain = dto.lmsDomain.RemoveHttpProtocolAndTrailingSlash();

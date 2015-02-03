@@ -42,6 +42,9 @@
             this.Map(x => x.ShowEGCHelp).Nullable();
             this.Map(x => x.ShowLmsHelp).Nullable();
 
+            this.Map(x => x.EnableProxyToolMode).Nullable();
+            this.Map(x => x.ProxyToolSharedPassword).Nullable();
+
             this.Map(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.Map(x => x.ModifiedBy).Nullable().Column("modifiedBy");
             this.Map(x => x.CompanyId).Not.Nullable().Column("companyId");

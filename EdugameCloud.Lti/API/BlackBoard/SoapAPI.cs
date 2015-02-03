@@ -2,12 +2,15 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.Linq;
     using System.Text.RegularExpressions;
     using BbWsClient;
     using BbWsClient.CourseMembership;
     using BbWsClient.User;
     using Castle.Core.Logging;
+
+    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -24,6 +27,50 @@
     // ReSharper disable once InconsistentNaming
     public class SoapAPI : ILmsAPI
     {
+        #region Constants
+
+        /// <summary>
+        /// The vendor EGC.
+        /// </summary>
+        public const string VendorEgc = "EGC";
+
+        /// <summary>
+        /// The program LTI.
+        /// </summary>
+        public const string ProgramLti = "LTI";
+
+        /// <summary>
+        /// The EGC LTI tool description.
+        /// </summary>
+        public const string EgcLtiToolDescription = "EdugameCloud Black Board Proxy Tool for LTI Integration";
+
+        /// <summary>
+        /// The tool methods.
+        /// </summary>
+        public readonly List<string> ToolMethods =
+            new List<string>
+                {
+                    "Context.WS:loginTool",
+                    "Context.WS:login",
+                    "CourseMembership.WS:getCourseMembership",
+                    "CourseMembership.WS:getCourseRoles",
+                    "User.WS:getUser",
+                };
+
+        /// <summary>
+        /// The ticket methods.
+        /// </summary>
+        public readonly List<string> TicketMethods =
+            new List<string>
+                {
+                    "Context.WS:login",
+                    "Context.WS:loginTicket",
+                    "Context.WS:getMyMemberships",
+                    "Context.WS:getMemberships",
+                };
+
+        #endregion
+
         #region Static Fields
 
         /// <summary>
@@ -71,6 +118,53 @@
         #region Public Methods and Operators
 
         /// <summary>
+        /// The try register EGC tool.
+        /// </summary>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="registrationPassword">
+        /// The registration password.
+        /// </param>
+        /// <param name="initialPassword">
+        /// The initial password.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool TryRegisterEGCTool(string lmsDomain, string registrationPassword, string initialPassword, out string error)
+        {
+            WebserviceWrapper client;
+            if (!this.InitializeClient(this.FixHostFromString(lmsDomain), out client, out error))
+            {
+                return false;
+            }
+
+            var result = client.registerTool(
+                EgcLtiToolDescription,
+                registrationPassword,
+                initialPassword,
+                this.ToolMethods.ToArray(),
+                this.TicketMethods.ToArray());
+
+            if (this.HadError(client, out error))
+            {
+                return false;
+            }
+
+            if (result.statusSpecified && !result.status)
+            {
+                error = result.failureErrors.ToPlainString();
+                return false;
+            }
+
+            return result.status;
+        }
+
+        /// <summary>
         /// The create rest client.
         /// </summary>
         /// <param name="error">
@@ -88,9 +182,15 @@
             
             if (lmsUser != null)
             {
-                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
-                bool useSsl = lmsUser.CompanyLms.UseSSL ?? false;
-                return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+                string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
+                string toolPassword = string.IsNullOrWhiteSpace(companyLms.ProxyToolSharedPassword)
+                                          ? defaultToolRegistrationPassword
+                                          : companyLms.ProxyToolSharedPassword;
+                string lmsDomain = companyLms.LmsDomain;
+                bool useSsl = companyLms.UseSSL ?? false;
+                return companyLms.EnableProxyToolMode == true
+                           ? this.LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
+                           : this.LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
             error = "ASP.NET Session is expired";
@@ -264,7 +364,7 @@
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
-        public WebserviceWrapper LoginAndCreateAClient(
+        public WebserviceWrapper LoginUserAndCreateAClient(
             out string error, 
             bool useSsl, 
             string lmsDomain, 
@@ -273,18 +373,9 @@
         {
             try
             {
-                var client = new WebserviceWrapper(
-                    this.GetHost(lmsDomain, useSsl),
-                    "EGC",
-                    "LTI",
-                    TimeSpan.FromMinutes(30).Seconds);
-                if (this.HadError(client, out error))
-                {
-                    return null;
-                }
-
-                client.initialize_v1();
-                if (this.HadError(client, out error))
+                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
+                WebserviceWrapper client;
+                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
                 {
                     return null;
                 }
@@ -292,6 +383,11 @@
                 if (client.loginUser(userName, password))
                 {
                     return client;
+                }
+
+                if (this.HadError(client, out error))
+                {
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -304,9 +400,154 @@
             return null;
         }
 
+        /// <summary>
+        /// The login and create a client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="WebserviceWrapper"/>.
+        /// </returns>
+        public WebserviceWrapper LoginToolAndCreateAClient(
+            out string error,
+            bool useSsl,
+            string lmsDomain,
+            string password)
+        {
+            try
+            {
+                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
+                WebserviceWrapper client;
+                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
+                {
+                    return null;
+                }
+
+                client.initialize_v1();
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
+
+                if (client.loginTool(password))
+                {
+                    return client;
+                }
+
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return null;
+            }
+
+            error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
+            return null;
+        }
+
+        /// <summary>
+        /// The login and create a client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="useSsl">
+        /// The use SSL.
+        /// </param>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="password">
+        /// The password.
+        /// </param>
+        /// <returns>
+        /// The <see cref="WebserviceWrapper"/>.
+        /// </returns>
+        public WebserviceWrapper LoginTicketAndCreateAClient(
+            out string error,
+            bool useSsl,
+            string lmsDomain,
+            string password)
+        {
+            try
+            {
+                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
+                WebserviceWrapper client;
+                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
+                {
+                    return null;
+                }
+
+                client.initialize_v1();
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
+
+                if (client.loginTicket(password))
+                {
+                    return client;
+                }
+
+                if (this.HadError(client, out error))
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+                return null;
+            }
+
+            error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
+            return null;
+        }
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The initialize client.
+        /// </summary>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <param name="client">
+        /// The client.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
+        {
+            client = new WebserviceWrapper(lmsDomain, VendorEgc, ProgramLti, TimeSpan.FromMinutes(30).Seconds);
+            if (this.HadError(client, out error))
+            {
+                return false;
+            }
+
+            client.initialize_v1();
+            return !this.HadError(client, out error);
+        }
 
         /// <summary>
         /// The get role.
@@ -352,6 +593,24 @@
             lmsDomain = lmsDomain.AddHttpProtocol(useSsl);
             lmsDomain = !endsWithPort ? (useSsl ? lmsDomain + ":443" : lmsDomain + ":80") : lmsDomain;
 
+            return lmsDomain;
+        }
+
+        /// <summary>
+        /// The fix host from string.
+        /// </summary>
+        /// <param name="lmsDomain">
+        /// The LMS domain.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string FixHostFromString(string lmsDomain)
+        {
+            Match match = portRegex.Match(lmsDomain);
+            bool endsWithPort = match.Success;
+            var useSsl = lmsDomain.StartsWith(HttpScheme.Https, StringComparison.OrdinalIgnoreCase);
+            lmsDomain = !endsWithPort ? (useSsl ? lmsDomain + ":443" : lmsDomain + ":80") : lmsDomain;
             return lmsDomain;
         }
 

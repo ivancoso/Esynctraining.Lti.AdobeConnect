@@ -19,6 +19,7 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
+    using EdugameCloud.Lti.Models;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
@@ -361,6 +362,7 @@
                     meeting);
                 ret.Add(meetingDTO);
             }
+
             if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
             {
                // var empty = this.CreateEmptyMeetingResponse(param);
@@ -382,7 +384,7 @@
                         var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
                         if (officeHours != null)
                         {
-                            meeting = new LmsCourseMeeting()
+                            meeting = new LmsCourseMeeting
                                           {
                                               OfficeHours = officeHours,
                                               LmsMeetingType = (int)LmsMeetingType.OfficeHours,
@@ -1034,8 +1036,8 @@
         /// <summary>
         /// The save meeting.
         /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <param name="provider">
         /// The provider.
@@ -1073,6 +1075,7 @@
                 meetingSco = officeHours.ScoId;
                 meetingDTO.id = meetingSco;
             }
+
             var existingMeeting = provider.GetScoInfo(meetingSco);
 
             var isNewMeeting = !existingMeeting.Success;
@@ -1092,7 +1095,7 @@
                 meetingDTO,
                 updateItem,
                 meetingFolder,
-                type == (int)LmsMeetingType.OfficeHours ? lmsUser.Id.ToString() : param.course_id.ToString(CultureInfo.InvariantCulture),
+                type == (int)LmsMeetingType.OfficeHours ? lmsUser.Id.ToString(CultureInfo.InvariantCulture) : param.course_id.ToString(CultureInfo.InvariantCulture),
                 isNewMeeting);
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
@@ -1143,9 +1146,10 @@
                 }
             }
 
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours && lmsUser != null)
             {
-                officeHours = officeHours ?? new OfficeHours() { LmsUser = lmsUser };
+                officeHours = officeHours ?? new OfficeHours { LmsUser = lmsUser };
                 officeHours.Hours = meetingDTO.office_hours;
                 officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
                     
@@ -1424,16 +1428,16 @@
         }
 
         /// <summary>
-        /// The get lms parameters.
+        /// The get LMS parameters.
         /// </summary>
         /// <param name="acId">
-        /// The ac id.
+        /// The AC id.
         /// </param>
         /// <param name="acDomain">
-        /// The ac domain.
+        /// The AC domain.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -3376,5 +3380,11 @@
         }
 
         #endregion
+
+        public bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
+        {
+            var pass = (string)this.settings.InitialBBPassword;
+            return this.soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
+        }
     }
 }

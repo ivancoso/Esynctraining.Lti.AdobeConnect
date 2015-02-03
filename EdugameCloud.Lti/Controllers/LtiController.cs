@@ -4,10 +4,13 @@
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Net;
     using System.Reflection;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.SessionState;
+    using System.Xml.Linq;
+    using System.Xml.XPath;
 
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Lti.API.AdobeConnect;
@@ -17,6 +20,7 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
+    using EdugameCloud.Lti.Models;
     using EdugameCloud.Lti.OAuth;
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.Utils;
@@ -808,6 +812,63 @@
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
+        [ActionName("register-proxy-tool")]
+        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
+        [HttpGet]
+        public virtual ActionResult RegisterProxyTool(string lmsDomain)
+        {
+            var blackBoardProfile = this.ParseBlackBoardSharedInfo(lmsDomain);
+            return this.View(
+                "ProxyToolPassword",
+                new ProxyToolPasswordModel
+                    {
+                        LmsDomain = lmsDomain,
+                        BlackBoardTitle =
+                            string.IsNullOrWhiteSpace(blackBoardProfile.Name)
+                                ? lmsDomain
+                                : blackBoardProfile.Name,
+                        LtiVersion = string.IsNullOrWhiteSpace(blackBoardProfile.LtiVersion) ? "2.0-July08" : blackBoardProfile.LtiVersion
+                    });
+        }
+
+        /// <summary>
+        /// The login with provider.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        [ActionName("register-proxy-tool")]
+        [HttpPost]
+        public virtual ActionResult RegisterProxyTool(ProxyToolPasswordModel model)
+        {
+            string error = null;
+            if (!this.meetingSetup.TryRegisterEGCTool(model, out error))
+            {
+                this.ViewBag.Error = error;
+                return this.View("Error");
+            }
+
+            return this.View("ProxyToolRegistrationSucceeded", model);
+        }
+
+        /// <summary>
+        /// The login with provider.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
@@ -1013,6 +1074,40 @@
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The parse black board shared info.
+        /// </summary>
+        /// <param name="lmsDomain">
+        /// The lms domain.
+        /// </param>
+        /// <returns>
+        /// The <see cref="BBConsumerProfileDTO"/>.
+        /// </returns>
+        private BBConsumerProfileDTO ParseBlackBoardSharedInfo(string lmsDomain)
+        {
+            var res = new BBConsumerProfileDTO();
+            try
+            {
+                var uriBuilder = new UriBuilder(lmsDomain + "/webapps/ws/wsadmin/tcprofile");
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                var xmlResponse = new WebClient().DownloadString(uriBuilder.Uri);
+                var response = XElement.Parse(xmlResponse);
+                var name = response.XPathEvaluate("string(/tool-consumer-info/name)").ToString();
+                res.Name = name;
+                var ltiVersion = response.XPathEvaluate("string(/@ltiVersion)").ToString();
+                res.LtiVersion = ltiVersion;
+                IEnumerable<XElement> services = response.XPathSelectElements("/services-offered/service");
+                var servicesList = services.Select(service => service.XPathEvaluate("string(@name)").ToString()).ToList();
+                res.Services = servicesList;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return res;
+        }
 
         /// <summary>
         /// The fix extra data issue.
