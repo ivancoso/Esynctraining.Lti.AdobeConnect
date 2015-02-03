@@ -597,7 +597,7 @@ namespace EdugameCloud.WCFService
 
                     CompanyLmsModel.RegisterSave(lms);
 
-                    if (lms.LmsProvider.Id != (int)LmsProviderEnum.Canvas)
+                    if (lms.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !dto.lmsVO.enableProxyToolMode)
                     {
                         var lmsUser = new LmsUser
                                           {

@@ -160,7 +160,7 @@ namespace EdugameCloud.WCFService
                 }
 
                 this.CompanyLmsModel.RegisterSave(entity);
-                if (entity.LmsProvider.Id != (int)LmsProviderEnum.Canvas)
+                if (entity.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !resultDto.enableProxyToolMode)
                 {
                     var lmsUser = entity.AdminUser ?? new LmsUser
                     {

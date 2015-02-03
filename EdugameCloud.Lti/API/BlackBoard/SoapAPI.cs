@@ -180,7 +180,7 @@
         {
             var lmsUser = companyLms.AdminUser;
             
-            if (lmsUser != null)
+            if (lmsUser != null || companyLms.EnableProxyToolMode == true)
             {
                 string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
                 string toolPassword = string.IsNullOrWhiteSpace(companyLms.ProxyToolSharedPassword)
