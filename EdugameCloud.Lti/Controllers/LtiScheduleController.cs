@@ -46,6 +46,11 @@
         private readonly MeetingSetup meetingSetup;
 
         /// <summary>
+        /// The users setup.
+        /// </summary>
+        private readonly UsersSetup usersSetup;
+
+        /// <summary>
         ///     The password activation model.
         /// </summary>
         private readonly ScheduleModel scheduleModel;
@@ -75,13 +80,17 @@
         /// <param name="settings">
         /// The settings
         /// </param>
+        /// <param name="usersSetup">
+        /// The users setup.
+        /// </param>
         public LtiScheduleController(
             DlapAPI dlapApi, 
             MeetingSetup meetingSetup, 
             CompanyLmsModel companyLmsModel, 
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel, 
-            ApplicationSettingsProvider settings)
+            ApplicationSettingsProvider settings, 
+            UsersSetup usersSetup)
         {
             this.dlapApi = dlapApi;
             this.meetingSetup = meetingSetup;
@@ -89,6 +98,7 @@
             this.lmsSessionModel = lmsSessionModel;
             this.scheduleModel = scheduleModel;
             this.Settings = settings;
+            this.usersSetup = usersSetup;
         }
 
         #endregion
@@ -611,8 +621,8 @@
                                                   id = enrollment.UserId, 
                                                   is_editable = true, 
                                               };
-                            this.meetingSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
-                            this.meetingSetup.UpdateUser(
+                            this.usersSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
+                            this.usersSetup.UpdateUser(
                                 brainHoneyCompany, 
                                 provider, 
                                 new LtiParamDTO

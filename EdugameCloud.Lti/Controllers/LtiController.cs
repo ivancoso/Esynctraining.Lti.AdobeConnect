@@ -25,6 +25,7 @@
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.Utils;
     using Esynctraining.AC.Provider;
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Microsoft.Web.WebPages.OAuth;
@@ -63,6 +64,11 @@
         /// </summary>
         private readonly MeetingSetup meetingSetup;
 
+        /// <summary>
+        /// The users setup.
+        /// </summary>
+        private readonly UsersSetup usersSetup;
+
         #endregion
 
         #region Constructors and Destructors
@@ -85,18 +91,23 @@
         /// <param name="settings">
         /// The settings.
         /// </param>
+        /// <param name="usersSetup">
+        /// The users setup.
+        /// </param>
         public LtiController(
             CompanyLmsModel companyLmsModel,
             LmsUserSessionModel userSessionModel,
             LmsUserModel lmsUserModel, 
             MeetingSetup meetingSetup, 
-            ApplicationSettingsProvider settings)
+            ApplicationSettingsProvider settings, 
+            UsersSetup usersSetup)
         {
             this.companyLmsModel = companyLmsModel;
             this.userSessionModel = userSessionModel;
             this.lmsUserModel = lmsUserModel;
             this.meetingSetup = meetingSetup;
             this.Settings = settings;
+            this.usersSetup = usersSetup;
         }
 
         #endregion
@@ -545,7 +556,7 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             string error;
-            List<LmsUserDTO> users = this.MeetingSetup.GetUsers(
+            List<LmsUserDTO> users = this.usersSetup.GetUsers(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
@@ -662,9 +673,13 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            string url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, this.GetAdobeConnectProvider(credentials));
-            
-            return this.Redirect(url);
+            var url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, this.GetAdobeConnectProvider(credentials));
+            if (url is string)
+            {
+                return this.Redirect(url as string);
+            }
+
+            return this.Json(url);
         }
 
         /// <summary>
@@ -806,7 +821,7 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="model">
+        /// <param name="param">
         /// The model.
         /// </param>
         /// <returns>
@@ -871,14 +886,14 @@
         /// </returns>
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO model)
+        public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
-            string lmsProvider = model.GetLtiProviderName(provider);
+            string lmsProvider = param.GetLtiProviderName(provider);
 
-            CompanyLms credentials = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(lmsProvider, model.oauth_consumer_key).Value;
-            if (credentials != null)
+            CompanyLms companyLms = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
+            if (companyLms != null)
             {
-                if (!string.IsNullOrWhiteSpace(credentials.LmsDomain) && !string.Equals(credentials.LmsDomain.TrimEnd("/".ToCharArray()), model.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(companyLms.LmsDomain) && !string.Equals(companyLms.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.ViewBag.Error = "This LTI integration is already set for different domain";
                     return this.View("Error");
@@ -889,45 +904,72 @@
                 this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up.");
                 return this.View("Error");
             }
-            var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
 
+            var adobeConnectProvider = this.GetAdobeConnectProvider(companyLms);
+            this.SetAdobeConnectProvider(companyLms.Id, adobeConnectProvider);
+            
             string email, login;
-            this.meetingSetup.GetParamLoginAndEmail(model, credentials, adobeConnectProvider, out email, out login);
-            model.ext_user_username = login;
+            this.usersSetup.GetParamLoginAndEmail(param, companyLms, adobeConnectProvider, out email, out login);
+            param.ext_user_username = login;
 
-            var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(model.lms_user_id, model.lms_user_login, model.lis_person_contact_email_primary, credentials.Id);
-            var session = this.SaveSession(credentials, model, lmsUser);
+            var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, companyLms.Id);
+            
+            var session = this.SaveSession(companyLms, param, lmsUser);
             var key = session.Id.ToString();
             
-            this.MeetingSetup.SetupFolders(credentials, adobeConnectProvider);
-            this.SetAdobeConnectProvider(credentials.Id, adobeConnectProvider);
+            this.MeetingSetup.SetupFolders(companyLms, adobeConnectProvider);
             
-            if (BltiProviderHelper.VerifyBltiRequest(credentials, () => this.ValidateLMSDomainAndSaveIfNeeded(model, credentials)) || this.IsDebug)
+            if (BltiProviderHelper.VerifyBltiRequest(companyLms, () => this.ValidateLMSDomainAndSaveIfNeeded(param, companyLms)) || this.IsDebug)
             {
+                Principal acPrincipal = null;
+
                 switch (lmsProvider.ToLower())
                 {
                     case LmsProviderNames.Canvas:
-
-                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasAPI.IsTokenExpired(credentials.LmsDomain, lmsUser.Token))
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasAPI.IsTokenExpired(companyLms.LmsDomain, lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(provider, key, model);
+                            this.StartOAuth2Authentication(provider, key, param);
                             return null;
                         }
-                        
-                        return this.RedirectToExtJs(credentials, lmsUser, key);
+                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.lis_person_name_given,
+                            param.lis_person_name_family);
+                        break;
 
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
                     case LmsProviderNames.Sakai:
+                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.lis_person_name_given,
+                            param.lis_person_name_family);
                         if (lmsUser == null)
                         {
-                            lmsUser = new LmsUser { CompanyLms = credentials, UserId = model.lms_user_id, Username = this.GetUserNameOrEmail(model) };
+                            lmsUser = new LmsUser
+                                          {
+                                              CompanyLms = companyLms,
+                                              UserId = param.lms_user_id,
+                                              Username = this.GetUserNameOrEmail(param),
+                                              PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null
+                                          };
                             this.lmsUserModel.RegisterSave(lmsUser);
                         }
-
-                        return this.RedirectToExtJs(credentials, lmsUser, key);
+                        break;
                 }
+
+                if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
+                {
+                    lmsUser.PrincipalId = acPrincipal.PrincipalId;
+                    this.lmsUserModel.RegisterSave(lmsUser);
+                }
+
+                return this.RedirectToExtJs(companyLms, lmsUser, key);
             }
 
             this.ViewBag.Error = "Invalid LTI request";
@@ -998,7 +1040,7 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             string error;
-            List<LmsUserDTO> users = this.MeetingSetup.UpdateUser(
+            List<LmsUserDTO> users = this.usersSetup.UpdateUser(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
@@ -1032,7 +1074,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
-            List<LmsUserDTO> updatedUser = this.MeetingSetup.SetDefaultRolesForNonParticipants(
+            List<LmsUserDTO> updatedUser = this.usersSetup.SetDefaultRolesForNonParticipants(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param,

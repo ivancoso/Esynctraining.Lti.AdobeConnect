@@ -52,6 +52,11 @@
         public virtual string PrimaryColor { get; set; }
 
         /// <summary>
+        /// Gets or sets the principal id.
+        /// </summary>
+        public virtual string PrincipalId { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS user parameters.
         /// </summary>
         public virtual ISet<LmsUserParameters> LmsUserParameters

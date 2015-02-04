@@ -22,6 +22,7 @@
             this.Map(x => x.Token).Nullable();
             this.Map(x => x.PrimaryColor).Nullable();
             this.Map(x => x.AcConnectionMode).Default("0");
+            this.Map(x => x.PrincipalId).Nullable();
 
             this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
 

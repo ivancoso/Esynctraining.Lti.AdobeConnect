@@ -66,6 +66,7 @@
             container.RegisterComponents(wcf: true);
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             RegisterLtiComponents(container);
             try
             {
