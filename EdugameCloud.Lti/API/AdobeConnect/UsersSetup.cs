@@ -112,17 +112,6 @@
         }
 
         /// <summary>
-        /// Gets the office hours model.
-        /// </summary>
-        private OfficeHoursModel OfficeHoursModel
-        {
-            get
-            {
-                return IoC.Resolve<OfficeHoursModel>();
-            }
-        }
-
-        /// <summary>
         ///     Gets the LMS user parameters.
         /// </summary>
         private LmsUserModel LmsUserModel
@@ -130,28 +119,6 @@
             get
             {
                 return IoC.Resolve<LmsUserModel>();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the LMS user parameters model.
-        /// </summary>
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the company LMS model.
-        /// </summary>
-        private CompanyLmsModel СompanyLmsModel
-        {
-            get
-            {
-                return IoC.Resolve<CompanyLmsModel>();
             }
         }
 
@@ -675,15 +642,17 @@
         {
             var alreadyAdded = new HashSet<string>();
             var allMeetingEnrollments = provider.GetAllMeetingEnrollments(meetingSco);
-            if (allMeetingEnrollments.Values != null)
+            var allValues = allMeetingEnrollments.Values.Return(x => x.ToList(), new List<PermissionInfo>());
+            foreach (var g in allValues)
             {
-                foreach (var g in allMeetingEnrollments.Values)
-                {
-                    alreadyAdded.Add(g.PrincipalId);
-                }
+                alreadyAdded.Add(g.PrincipalId);
             }
 
-            return this.ProcessACMeetingAttendees(nonEditable ?? new HashSet<string>(), provider, allMeetingEnrollments, alreadyAdded);
+            return this.ProcessACMeetingAttendees(
+                nonEditable ?? new HashSet<string>(),
+                provider,
+                allValues,
+                alreadyAdded);
         }
 
         /// <summary>
@@ -1029,6 +998,7 @@
                 isACUser = principal.PrincipalInfo.Principal.Email.Equals(email)
                            || principal.PrincipalInfo.Principal.Email.Equals(login);
             }
+
             return isACUser;
         }
 
@@ -1405,8 +1375,6 @@
             }
         }
 
-
-
         /// <summary>
         /// The process ac meeting attendees.
         /// </summary>
@@ -1416,8 +1384,8 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="result">
-        /// The result.
+        /// <param name="values">
+        /// The values.
         /// </param>
         /// <param name="alreadyAdded">
         /// The already added.
@@ -1428,10 +1396,9 @@
         private List<PermissionInfo> ProcessACMeetingAttendees(
             HashSet<string> nonEditable,
             AdobeConnectProvider provider,
-            PermissionCollectionResult result,
+            List<PermissionInfo> values,
             HashSet<string> alreadyAdded)
         {
-            var values = result.Values.Return(x => x.ToList(), new List<PermissionInfo>());
             var groupValues = this.GetGroupPrincipals(provider, values.Where(x => x.HasChildren).Select(v => v.PrincipalId));
             foreach (var g in groupValues)
             {
@@ -1478,31 +1445,32 @@
             HashSet<string> nonEditable = null)
         {
             var alreadyAdded = new HashSet<string>();
-            var hostsResult = provider.GetMeetingHosts(meetingSco);
-            var presentersResult = provider.GetMeetingPresenters(meetingSco);
-            var participantsResult = provider.GetMeetingParticipants(meetingSco);
-            if (hostsResult.Values != null)
+            var allEnrollments = provider.GetAllMeetingEnrollments(meetingSco);
+            var hostsResult =
+                allEnrollments.Values.Return(
+                    x => x.Where(v => v.PermissionId == PermissionId.host).ToList(),
+                    new List<PermissionInfo>());
+            var presentersResult =
+                allEnrollments.Values.Return(
+                    x => x.Where(v => v.PermissionId == PermissionId.mini_host).ToList(),
+                    new List<PermissionInfo>());
+            var participantsResult =
+                allEnrollments.Values.Return(
+                    x => x.Where(v => v.PermissionId == PermissionId.view).ToList(),
+                    new List<PermissionInfo>());
+            foreach (var g in hostsResult)
             {
-                foreach (var g in hostsResult.Values)
-                {
-                    alreadyAdded.Add(g.PrincipalId);
-                }
+                alreadyAdded.Add(g.PrincipalId);
             }
 
-            if (presentersResult.Values != null)
+            foreach (var g in presentersResult)
             {
-                foreach (var g in presentersResult.Values)
-                {
-                    alreadyAdded.Add(g.PrincipalId);
-                }
+                alreadyAdded.Add(g.PrincipalId);
             }
 
-            if (participantsResult.Values != null)
+            foreach (var g in participantsResult)
             {
-                foreach (var g in participantsResult.Values)
-                {
-                    alreadyAdded.Add(g.PrincipalId);
-                }
+                alreadyAdded.Add(g.PrincipalId);
             }
 
             nonEditable = nonEditable ?? new HashSet<string>();
@@ -1511,7 +1479,7 @@
             presenters = this.ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
             participants = this.ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
         }
-        
+
         #endregion
     }
 }
