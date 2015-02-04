@@ -125,7 +125,7 @@
                 log.Error("Social Realtime Error data=" + data, ex);
             }
 
-            if (updates.Any())
+            if (updates.Any() && bool.Parse((string)Settings.SocialSubscriptionsEnabled))
             {
                 Task.Factory.StartNew(() => this.InsertRealTimeCallbackData(connectionString, updates, log));
             }
