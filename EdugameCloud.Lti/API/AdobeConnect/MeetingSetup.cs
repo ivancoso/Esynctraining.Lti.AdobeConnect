@@ -5,11 +5,6 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using System.Threading;
-    using System.Web.Security;
-
-    using BbWsClient;
-
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
@@ -38,31 +33,6 @@
         #region Fields
 
         /// <summary>
-        /// The locker.
-        /// </summary>
-        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
-
-        /// <summary>
-        /// The DLAP API.
-        /// </summary>
-        private readonly DlapAPI dlapApi;
-
-        /// <summary>
-        /// The SOAP API.
-        /// </summary>
-        private readonly SoapAPI soapApi;
-
-        /// <summary>
-        /// The Moodle API.
-        /// </summary>
-        private readonly MoodleAPI moodleApi;
-
-        /// <summary>
-        /// The LTI 2 API.
-        /// </summary>
-        private readonly LTI2Api lti2Api;
-
-        /// <summary>
         /// The settings.
         /// </summary>
         private readonly dynamic settings;
@@ -74,27 +44,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MeetingSetup"/> class.
         /// </summary>
-        /// <param name="dlapApi">
-        /// The DLAP API.
-        /// </param>
-        /// <param name="soapApi">
-        /// The SOAP API.
-        /// </param>
-        /// <param name="moodleApi">
-        /// The Moodle API.
-        /// </param>
-        /// <param name="lti2Api">
-        /// The LTI 2 API.
-        /// </param>
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public MeetingSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, ApplicationSettingsProvider settings)
+        public MeetingSetup(ApplicationSettingsProvider settings)
         {
-            this.dlapApi = dlapApi;
-            this.soapApi = soapApi;
-            this.moodleApi = moodleApi;
-            this.lti2Api = lti2Api;
             this.settings = settings;
         }
 
@@ -1343,6 +1297,9 @@
         /// <param name="meeting">
         /// The meeting.
         /// </param>
+        /// <param name="type">
+        /// The type.
+        /// </param>
         /// <param name="param">
         /// The parameter.
         /// </param>
@@ -1352,13 +1309,20 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private Tuple<bool, bool> GetMeetingFlags(
+        private MeetingSynchronizationFlags GetMeetingFlags(
             AdobeConnectProvider provider,
             CompanyLms credentials,
             LmsCourseMeeting meeting,
+            int type,
+            bool isMeetingEditable,
             LtiParamDTO param,
             string meetingSco)
         {
+            if (type == (int)LmsMeetingType.OfficeHours)
+            {
+                return new MeetingSynchronizationFlags(true, true);
+            }
+
             var lmsUserId = param.lms_user_id;
             var courseId = param.course_id;
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
@@ -1379,7 +1343,7 @@
                 areUsersSynched = this.UsersSetup.AreUsersSynched(credentials, meeting, lmsUserId, courseId, enrollments, param, provider);
             }
 
-            return new Tuple<bool, bool>(canJoin, areUsersSynched);
+            return new MeetingSynchronizationFlags(canJoin, areUsersSynched);
         }
 
         /// <summary>
@@ -1643,12 +1607,13 @@
             IEnumerable<PermissionInfo> permission,
             LmsCourseMeeting lmsCourseMeeting)
         {
+            bool isEditable = this.CanEdit(param, lmsCourseMeeting);
+            var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var flags = lmsCourseMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours ? new Tuple<bool, bool>(true, true) :
-                this.GetMeetingFlags(provider, credentials, lmsCourseMeeting, param, result.ScoId);
+            var flags = this.GetMeetingFlags(provider, credentials, lmsCourseMeeting, type, isEditable, param, result.ScoId);
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
             string officeHoursString = null;
-            var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();
+            
             if (type == (int)LmsMeetingType.OfficeHours)
             {
                 var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
@@ -1674,9 +1639,9 @@
                               duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"),
                               access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                               allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
-                              can_join = (type == (int)LmsMeetingType.OfficeHours) || flags.Item1, 
-                              are_users_synched = flags.Item2,
-                              is_editable = this.CanEdit(param, lmsCourseMeeting),
+                              can_join = flags.CanUserJoin, 
+                              are_users_synched = flags.AreUsersSynched,
+                              is_editable = isEditable,
                               type = type,
                               office_hours = officeHoursString
                           };
@@ -2088,10 +2053,6 @@
 
         #endregion
 
-        public bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
-        {
-            var pass = (string)this.settings.InitialBBPassword;
-            return this.soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
-        }
+        
     }
 }

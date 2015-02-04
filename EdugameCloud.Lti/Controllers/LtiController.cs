@@ -14,6 +14,7 @@
 
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
@@ -28,6 +29,8 @@
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Utils;
+
     using Microsoft.Web.WebPages.OAuth;
 
     using Newtonsoft.Json;
@@ -374,7 +377,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="id">
         /// The id.
@@ -417,7 +420,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -441,7 +444,7 @@
         /// The get meetings.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The LMS provider name.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -463,10 +466,10 @@
         /// The delete meeting.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The ДЬЫ provider name.
+        /// The LMS provider name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -493,7 +496,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -541,7 +544,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="forceUpdate">
         /// The force Update.
@@ -578,7 +581,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="startIndex">
         /// The start Index.
@@ -612,7 +615,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <param name="startIndex">
         /// The start Index.
@@ -662,7 +665,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
@@ -686,10 +689,10 @@
         /// The leave meeting.
         /// </summary>
         /// <param name="lmsProviderName">
-        /// The lms provider name.
+        /// The LMS provider name.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -701,7 +704,7 @@
             var param = session.LtiSession.With(x => x.LtiParam);
             var result = this.MeetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
 
-            return Json(result);
+            return this.Json(result);
         }
 
         /// <summary>
@@ -818,11 +821,8 @@
         /// <summary>
         /// The login with provider.
         /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The model.
+        /// <param name="lmsDomain">
+        /// The LMS Domain.
         /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
@@ -832,6 +832,13 @@
         [HttpGet]
         public virtual ActionResult RegisterProxyTool(string lmsDomain)
         {
+            if (string.IsNullOrWhiteSpace(lmsDomain))
+            {
+                this.ViewBag.Error = "Blackboard LMS domain is missing";
+                return this.View("Error");
+            }
+
+            lmsDomain = lmsDomain.TrimEnd(@"\/".ToCharArray());
             var blackBoardProfile = this.ParseBlackBoardSharedInfo(lmsDomain);
             return this.View(
                 "ProxyToolPassword",
@@ -847,11 +854,8 @@
         }
 
         /// <summary>
-        /// The login with provider.
+        /// The register proxy tools.
         /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
         /// <param name="model">
         /// The model.
         /// </param>
@@ -862,8 +866,8 @@
         [HttpPost]
         public virtual ActionResult RegisterProxyTool(ProxyToolPasswordModel model)
         {
-            string error = null;
-            if (!this.meetingSetup.TryRegisterEGCTool(model, out error))
+            string error;
+            if (!this.TryRegisterEGCTool(model, out error))
             {
                 this.ViewBag.Error = error;
                 return this.View("Error");
@@ -878,8 +882,8 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="model">
-        /// The model.
+        /// <param name="param">
+        /// The parameter.
         /// </param>
         /// <returns>
         /// The <see cref="ActionResult"/>.
@@ -931,6 +935,7 @@
                             this.StartOAuth2Authentication(provider, key, param);
                             return null;
                         }
+
                         acPrincipal = this.usersSetup.GetOrCreatePrincipal(
                             adobeConnectProvider,
                             param.lms_user_login,
@@ -960,6 +965,7 @@
                                           };
                             this.lmsUserModel.RegisterSave(lmsUser);
                         }
+
                         break;
                 }
 
@@ -1028,7 +1034,7 @@
         /// The user.
         /// </param>
         /// <param name="scoId">
-        /// The sco id
+        /// The SCO id
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -1063,7 +1069,7 @@
         /// The LMS Provider Name.
         /// </param>
         /// <param name="scoId">
-        /// The sco Id.
+        /// The SCO Id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
@@ -1088,17 +1094,18 @@
         /// The get authentication parameters.
         /// </summary>
         /// <param name="acId">
-        /// The ac id.
+        /// The AC id.
         /// </param>
         /// <param name="acDomain">
-        /// The ac domain.
+        /// The AC domain.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
         /// </param>
         /// <returns>
         /// The <see cref="JsonResult"/>.
         /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
         public virtual JsonResult GetAuthenticationParameters(string acId, string acDomain, string scoId)
         {
             string error = null;
@@ -1107,10 +1114,8 @@
             {
                 return this.Json(param, JsonRequestBehavior.AllowGet);
             }
-            else
-            {
-                return this.Json(new { error = error }, JsonRequestBehavior.AllowGet);
-            }
+            
+            return this.Json(new { error }, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
@@ -1118,10 +1123,49 @@
         #region Methods
 
         /// <summary>
+        /// The fix extra data issue.
+        /// </summary>
+        /// <param name="keyToFix">
+        /// The key to fix.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private static string FixExtraDataIssue(string keyToFix)
+        {
+            if (keyToFix != null && keyToFix.Contains(","))
+            {
+                var keys = keyToFix.Split(",".ToCharArray());
+                keyToFix = keys.FirstOrDefault().Return(x => x, keyToFix);
+            }
+
+            return keyToFix;
+        }
+
+        /// <summary>
+        /// The try register EGC tool.
+        /// </summary>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
+        {
+            var pass = (string)this.Settings.InitialBBPassword;
+            var soapApi = IoC.Resolve<SoapAPI>();
+            return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
+        }
+
+        /// <summary>
         /// The parse black board shared info.
         /// </summary>
         /// <param name="lmsDomain">
-        /// The lms domain.
+        /// The LMS domain.
         /// </param>
         /// <returns>
         /// The <see cref="BBConsumerProfileDTO"/>.
@@ -1143,32 +1187,12 @@
                 var servicesList = services.Select(service => service.XPathEvaluate("string(@name)").ToString()).ToList();
                 res.Services = servicesList;
             }
-            catch (Exception ex)
+                // ReSharper disable once EmptyGeneralCatchClause
+            catch (Exception)
             {
-
             }
 
             return res;
-        }
-
-        /// <summary>
-        /// The fix extra data issue.
-        /// </summary>
-        /// <param name="keyToFix">
-        /// The key to fix.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private static string FixExtraDataIssue(string keyToFix)
-        {
-            if (keyToFix != null && keyToFix.Contains(","))
-            {
-                var keys = keyToFix.Split(",".ToCharArray());
-                keyToFix = keys.FirstOrDefault().Return(x => x, keyToFix);
-            }
-
-            return keyToFix;
         }
 
         /// <summary>

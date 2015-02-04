@@ -162,11 +162,7 @@ namespace EdugameCloud.WCFService
                 this.CompanyLmsModel.RegisterSave(entity);
                 if (entity.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !resultDto.enableProxyToolMode)
                 {
-                    var lmsUser = entity.AdminUser ?? new LmsUser
-                    {
-                        CompanyLms = entity,
-                        UserId = "0"
-                    };
+                    var lmsUser = entity.AdminUser ?? new LmsUser { CompanyLms = entity, UserId = "0" };
 
                     lmsUser.Username = resultDto.lmsAdmin;
                     if (!string.IsNullOrEmpty(resultDto.lmsAdminPassword))
@@ -177,11 +173,8 @@ namespace EdugameCloud.WCFService
                     lmsUser.Token = resultDto.lmsAdminToken;
 
                     LmsUserModel.RegisterSave(lmsUser, true);
-                    if (isTransient)
-                    {
-                        entity.AdminUser = lmsUser;
-                        CompanyLmsModel.RegisterSave(entity);
-                    }
+                    entity.AdminUser = lmsUser;
+                    CompanyLmsModel.RegisterSave(entity);
                 }
 
                 this.UpdateAdobeConnectFolder(isTransient, entity);
