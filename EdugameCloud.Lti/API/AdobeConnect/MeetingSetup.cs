@@ -5,23 +5,17 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.API.Common;
-    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
-    using EdugameCloud.Lti.Models;
 
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
     using Newtonsoft.Json;
 
@@ -30,30 +24,6 @@
     /// </summary>
     public class MeetingSetup
     {
-        #region Fields
-
-        /// <summary>
-        /// The settings.
-        /// </summary>
-        private readonly dynamic settings;
-
-        #endregion
-
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MeetingSetup"/> class.
-        /// </summary>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        public MeetingSetup(ApplicationSettingsProvider settings)
-        {
-            this.settings = settings;
-        }
-
-        #endregion
-
         #region Properties
 
         /// <summary>
@@ -653,11 +623,11 @@
 
                 provider.UpdateScoPermissionForPrincipal(
                     currentMeetingScoId,
-                    registeredUser.PrincipalId,
+                    registeredUser.With(x => x.PrincipalId),
                     isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
                 if (isOwner)
                 {
-                    this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                    this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.With(x => x.PrincipalId));
                 }
             }
 
@@ -970,8 +940,7 @@
                 }
             }
 
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours && lmsUser != null)
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
                 officeHours = officeHours ?? new OfficeHours { LmsUser = lmsUser };
                 officeHours.Hours = meetingDTO.office_hours;
@@ -982,7 +951,7 @@
                 meeting.OfficeHours = officeHours;
                 meeting.ScoId = null;
             }
-            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup && lmsUser != null)
+            else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
             {
                 meeting.Owner = lmsUser;
             }
@@ -1132,6 +1101,7 @@
         /// <returns>
         /// The <see cref="LmsUserParametersDTO"/>.
         /// </returns>
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
         public LmsUserParametersDTO GetLmsParameters(string acId, string acDomain, string scoId, ref string error)
         {
             LmsCourseMeetingModel.Flush();
@@ -1145,10 +1115,12 @@
                     {
                         return false;
                     }
+
                     if (acServer.EndsWith("/"))
                     {
                         acServer = acServer.Substring(0, acServer.Length - 1);
                     }
+
                     return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
                 })
                     .ToList();
@@ -1300,6 +1272,9 @@
         /// <param name="type">
         /// The type.
         /// </param>
+        /// <param name="isMeetingEditable">
+        /// The is Meeting Editable.
+        /// </param>
         /// <param name="param">
         /// The parameter.
         /// </param>
@@ -1340,7 +1315,17 @@
                     canJoin = true;
                 }
 
-                areUsersSynched = this.UsersSetup.AreUsersSynched(credentials, meeting, lmsUserId, courseId, enrollments, param, provider);
+                if (isMeetingEditable)
+                {
+                    areUsersSynched = this.UsersSetup.AreUsersSynched(
+                        credentials,
+                        meeting,
+                        lmsUserId,
+                        courseId,
+                        enrollments,
+                        param,
+                        provider);
+                }
             }
 
             return new MeetingSynchronizationFlags(canJoin, areUsersSynched);
@@ -1417,8 +1402,6 @@
                     break;
             }
         }
-
-
 
         /// <summary>
         /// The get attendance Report.
@@ -1719,14 +1702,15 @@
             }
             else
             {
-                LoginResult resultByEmail = userProvider.Login(new UserCredentials(email, password));
+                var resultByEmail = userProvider.Login(new UserCredentials(email, password));
                 if (resultByEmail.Success)
                 {
+                    // ReSharper disable once RedundantAssignment
                     breezeToken = resultByEmail.Status.SessionInfo;                    
                 }
 
-                resultByEmail = userProvider.Login(new UserCredentials(registeredUser.Login, password));
-                breezeToken = resultByEmail.Status.SessionInfo;
+                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
+                breezeToken = resultByLogin.Status.SessionInfo;
             }
             
             return breezeToken;
@@ -1750,13 +1734,13 @@
         }
 
         /// <summary>
-        /// The fix meeting dto fields.
+        /// The fix meeting DTO fields.
         /// </summary>
         /// <param name="meetingDTO">
-        /// The meeting dto.
+        /// The meeting DTO.
         /// </param>
         /// <param name="param">
-        /// The param.
+        /// The parameter.
         /// </param>
         private void FixMeetingDTOFields(MeetingDTO meetingDTO, LtiParamDTO param)
         {
@@ -1765,6 +1749,7 @@
                 meetingDTO.start_time = meetingDTO.start_time.PadLeft(8, '0');
             }
 
+            // ReSharper disable once UnusedVariable
             string oldStartDate = meetingDTO.start_date;
 
             if (meetingDTO.start_date != null)
@@ -1780,16 +1765,19 @@
         }
 
         /// <summary>
-        /// The get lms course meeting.
+        /// The get LMS course meeting.
         /// </summary>
-        /// <param name="companyLmsId">
-        /// The company lms id.
+        /// <param name="companyLms">
+        /// The company LMS.
         /// </param>
         /// <param name="courseId">
         /// The course id.
         /// </param>
         /// <param name="scoId">
-        /// The sco id.
+        /// The SCO id.
+        /// </param>
+        /// <param name="type">
+        /// The type.
         /// </param>
         /// <returns>
         /// The <see cref="LmsCourseMeeting"/>.
@@ -1805,6 +1793,7 @@
                         courseId,
                         (int)LmsMeetingType.OfficeHours).Value;
             }
+
             if (meeting == null)
             {
                 meeting = new LmsCourseMeeting
@@ -2052,7 +2041,5 @@
         }
 
         #endregion
-
-        
     }
 }
