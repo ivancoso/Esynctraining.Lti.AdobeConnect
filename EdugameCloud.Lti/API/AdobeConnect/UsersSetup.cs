@@ -831,15 +831,19 @@
         /// </returns>
         public Principal GetPrincipalByLoginOrEmail(AdobeConnectProvider provider, string login, string email)
         {
-            var resultByLogin = provider.GetAllByLogin(login);
-            if (!resultByLogin.Success)
-            {
-                return null;
-            }
+            Principal principal = null;
 
-            var principal = string.IsNullOrWhiteSpace(login)
-                                   ? null
-                                   : resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            if (!string.IsNullOrWhiteSpace(login))
+            {
+                var resultByLogin = provider.GetAllByLogin(login);
+                if (!resultByLogin.Success)
+                {
+                    return null;
+                }
+
+                principal = resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            }
+            
             if (principal == null && !string.IsNullOrWhiteSpace(email))
             {
                 var resultByEmail = provider.GetAllByEmail(email);
