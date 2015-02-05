@@ -262,11 +262,6 @@
 
                 var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsuser.id, companyLms.Id).Value;
 
-                if (lmsUser == null)
-                {
-
-                }
-
                 if (lmsUser == null || string.IsNullOrEmpty(lmsUser.PrincipalId))
                 {
                     continue;
@@ -327,7 +322,7 @@
         /// <summary>
         /// The update user.
         /// </summary>
-        /// <param name="credentials">
+        /// <param name="companyLms">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -346,42 +341,67 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
-            CompanyLms credentials,
+            CompanyLms companyLms,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             string scoId,
             bool forceUpdate)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
             string error;
-            var users = this.GetUsers(credentials, provider, param, scoId, out error, forceUpdate);
+       
+            var users = this.GetLMSUsers(companyLms, meeting, param.lms_user_id, param.course_id, out error, forceUpdate);
+            
             if (meeting == null)
             {
                 return users;
             }
+            var meetingSco = meeting.GetMeetingScoId();
 
             List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
-            foreach (var user in users)
+            var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
+
+            foreach (var lmsUser in users)
             {
-                if (!this.IsUserSynched(enrollments, user, provider))
+                string login = lmsUser.GetLogin(), email = lmsUser.GetEmail();
+                var user = this.LmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(
+                    lmsUser.id,
+                    login,
+                    email,
+                    companyLms.Id) ?? new LmsUser()
+                    {
+                        CompanyLms = companyLms,
+                        Username = login,
+                        UserId = lmsUser.id
+                    };
+
+                if (string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    if (user.ac_id == null || user.ac_id == "0")
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName());
+                    if (principal != null)
                     {
-                        string email = user.GetEmail(), login = user.GetLogin();
-
-                        this.UpdateUserACValues(provider, user, login, email);
+                        user.PrincipalId = principal.PrincipalId;
+                        this.LmsUserModel.RegisterSave(user);
                     }
+                }
 
-                    if (user.is_editable)
-                    {
-                        this.SetLMSUserDefaultACPermissions(provider, meeting.GetMeetingScoId(), user, user.ac_id);
-                    }
+                if (principalIds.Contains(user.PrincipalId))
+                {
+                    lmsUser.ac_id = user.PrincipalId;
+                    this.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null, true);
+                    principalIds.Remove(user.PrincipalId);
+                }
+                else if (!string.IsNullOrEmpty(user.PrincipalId))
+                {
+                    this.SetLMSUserDefaultACPermissions(provider, meetingSco, lmsUser, user.PrincipalId);
                 }
             }
 
-            users.RemoveAll(u => (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
-                && (!string.IsNullOrWhiteSpace(u.ac_role) && u.ac_role.Equals("Remove")));
+            foreach (var principalId in principalIds)
+            {
+                provider.UpdateScoPermissionForPrincipal(meetingSco, principalId, MeetingPermissionId.remove);
+            }
 
             return users;
         }
@@ -429,11 +449,26 @@
                 return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
             }
 
-            if (user.ac_id == null || user.ac_id == "0")
+            if (user.ac_id == null)
             {
                 string email = user.GetEmail(), login = user.GetLogin();
 
-                this.UpdateUserACValues(provider, user, login, email);
+                var principal = this.GetOrCreatePrincipal(
+                    provider,
+                    login,
+                    email,
+                    user.GetFirstName(),
+                    user.GetLastName());
+
+                if (principal != null)
+                {
+                    user.ac_id = principal.PrincipalId;
+                }
+            }
+
+            if (user.ac_id == null)
+            {
+                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
             }
 
             if (user.ac_role == null)
@@ -443,11 +478,11 @@
             }
 
             var permission = MeetingPermissionId.view;
-            if (user.ac_role.ToLower() == "presenter")
+            if (user.ac_role.Equals("presenter", StringComparison.InvariantCultureIgnoreCase))
             {
                 permission = MeetingPermissionId.mini_host;
             }
-            else if (user.ac_role.ToLower() == "host")
+            else if (user.ac_role.Equals("host", StringComparison.InvariantCultureIgnoreCase))
             {
                 permission = MeetingPermissionId.host;
             }
@@ -476,11 +511,15 @@
         /// <param name="principalId">
         /// The principal Id.
         /// </param>
+        /// <param name="ignoreAC">
+        /// The ignore AC
+        /// </param>
         public void SetLMSUserDefaultACPermissions(
             AdobeConnectProvider provider,
             string meetingScoId,
             LmsUserDTO u,
-            string principalId)
+            string principalId,
+            bool ignoreAC = false)
         {
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
@@ -500,6 +539,11 @@
             {
                 u.ac_role = "Presenter";
                 permission = MeetingPermissionId.mini_host;
+            }
+
+            if (ignoreAC)
+            {
+                return;
             }
 
             if (!string.IsNullOrWhiteSpace(principalId)
@@ -565,8 +609,13 @@
                     lmsUser.id,
                     login,
                     email,
-                    companyLms.Id);
-                
+                    companyLms.Id) ?? new LmsUser()
+                                          {
+                                              CompanyLms = companyLms,
+                                              Username = login,
+                                              UserId = lmsUser.id
+                                          };
+
                 if (string.IsNullOrEmpty(user.PrincipalId))
                 {
                     var principal = this.GetPrincipalByLoginOrEmail(provider, login, email);
@@ -583,23 +632,8 @@
                 }
 
                 principalIds.Remove(user.PrincipalId);
+            }
 
-                /*
-                if (!this.IsUserSynched(enrollments, lmsUser, provider))
-                {
-                    return false;
-                }
-                */
-            }
-            /*
-            foreach (var participant in enrollments)
-            {
-                if (!this.IsParticipantSynched(lmsUsers, participant, provider))
-                {
-                    return false;
-                }
-            }
-            */
             return !principalIds.Any();
         }
 
@@ -1326,53 +1360,6 @@
             }
 
             return new List<LmsUserDTO>();
-        }
-
-        /// <summary>
-        /// The update user ac values.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        private void UpdateUserACValues(AdobeConnectProvider provider, LmsUserDTO user, string login, string email)
-        {
-            var principal = this.GetPrincipalByLoginOrEmail(provider, login, email);
-
-            if (principal == null)
-            {
-                var setup = new PrincipalSetup
-                {
-                    Email = user.GetEmail(),
-                    FirstName = user.GetFirstName(),
-                    LastName = user.GetLastName(),
-                    Name = user.name,
-                    Login = user.GetLogin(),
-                    Password = Membership.GeneratePassword(8, 2)
-                };
-                if (string.IsNullOrWhiteSpace(setup.Email))
-                {
-                    setup.Email = null;
-                }
-
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
-                if (pu.Principal != null)
-                {
-                    user.ac_id = pu.Principal.PrincipalId;
-                }
-            }
-            else
-            {
-                user.ac_id = principal.PrincipalId;
-            }
         }
 
         /// <summary>

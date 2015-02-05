@@ -414,33 +414,6 @@
         }
 
         /// <summary>
-        /// The get meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
-        [HttpPost]
-        public virtual JsonResult GetMeeting(string lmsProviderName, string scoId)
-        {
-            var session = this.GetSession(lmsProviderName);
-            var credentials = session.CompanyLms;
-            var param = session.LtiSession.With(x => x.LtiParam);
-            MeetingDTO meeting = this.MeetingSetup.GetMeeting(
-                credentials,
-                this.GetAdobeConnectProvider(credentials), 
-                param,
-                scoId);
-
-            return this.Json(meeting);
-        }
-
-        /// <summary>
         /// The get meetings.
         /// </summary>
         /// <param name="lmsProviderName">

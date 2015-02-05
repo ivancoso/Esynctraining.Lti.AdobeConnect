@@ -160,52 +160,6 @@
         }
 
         /// <summary>
-        /// The get meeting.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingDTO"/>.
-        /// </returns>
-        public MeetingDTO GetMeeting(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId)
-        {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
-
-            if (meeting == null)
-            {
-                return this.CreateEmptyMeetingResponse(param);
-            }
-
-            ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
-            if (!result.Success || result.ScoInfo == null)
-            {
-                return this.CreateEmptyMeetingResponse(param);
-            }
-
-            IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
-
-            MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
-                credentials, 
-                provider, 
-                param, 
-                result.ScoInfo, 
-                permission,
-                meeting);
-
-            return meetingDTO;
-        }
-
-        /// <summary>
         /// The get meetings.
         /// </summary>
         /// <param name="credentials">

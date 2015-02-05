@@ -27,7 +27,6 @@
             routes.MapLowercaseRoute("getsetting", "Lti/Settings/Get", new { controller = "Lti", action = "GetSettings" });
             routes.MapLowercaseRoute("checkpass", "Lti/Settings/CheckPass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
             routes.MapLowercaseRoute("savesettings", "Lti/Settings/Save", new { controller = "Lti", action = "SaveSettings" });
-            routes.MapLowercaseRoute("getmeeting", "Lti/Meeting/Get", new { controller = "Lti", action = "GetMeeting" });
             routes.MapLowercaseRoute("leavemeeting", "Lti/Meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });
             routes.MapLowercaseRoute("getmeetings", "Lti/Meeting/GetAll", new { controller = "Lti", action = "GetMeetings" });
             routes.MapLowercaseRoute("setdefaults", "Lti/Meeting/SetDefaultACRoles", new { controller = "Lti", action = "SetDefaultRolesForNonParticipants" });
