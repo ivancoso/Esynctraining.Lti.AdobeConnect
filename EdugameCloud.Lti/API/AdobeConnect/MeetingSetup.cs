@@ -633,7 +633,7 @@
                 var userid = currentMeeting.OfficeHours != null && currentMeeting.OfficeHours.LmsUser != null
                                  ? currentMeeting.OfficeHours.LmsUser.UserId
                                  : string.Empty;
-                var isOwner = userid.Equals(param.user_id);
+                var isOwner = userid.Equals(param.lms_user_id);
 
                 provider.UpdateScoPermissionForPrincipal(
                     currentMeetingScoId,
@@ -1290,7 +1290,7 @@
                 return true;
             }
 
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.user_id, companyLms.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             
             // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
             if (lmsUser == null || lmsUser.PrincipalId == null)
