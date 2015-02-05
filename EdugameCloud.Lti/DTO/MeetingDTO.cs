@@ -83,12 +83,6 @@
         public string template { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether users are synched.
-        /// </summary>
-        [DataMember]
-        public bool are_users_synched { get; set; }
-
-        /// <summary>
         /// Gets or sets the type.
         /// </summary>
         [DataMember]

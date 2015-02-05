@@ -655,7 +655,7 @@
                 return this.Redirect(url as string);
             }
 
-            return this.Json(url);
+            return this.Json(url, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -698,14 +698,14 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl);
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl);
 
-            if (url == null)
+            if (!(url is string))
             {
                 this.RedirectToError("Can not access the recording");
             }
 
-            return this.Redirect(url);
+            return this.Json(url, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -753,14 +753,14 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "edit");
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "edit");
 
-            if (url == null)
+            if (!(url is string))
             {
                 this.RedirectToError("Can not access the recording");
             }
 
-            return this.Redirect(url);
+            return this.Json(url, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -781,14 +781,14 @@
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            string url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "offline");
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "offline");
 
-            if (url == null)
+            if (!(url is string))
             {
                 this.RedirectToError("Can not access the recording");
             }
 
-            return this.Redirect(url);
+            return this.Json(url, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

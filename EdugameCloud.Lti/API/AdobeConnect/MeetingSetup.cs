@@ -737,7 +737,7 @@
         /// <summary>
         /// The join recording.
         /// </summary>
-        /// <param name="credentials">
+        /// <param name="companyLms">
         /// The credentials.
         /// </param>
         /// <param name="param">
@@ -758,7 +758,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string JoinRecording(CompanyLms credentials, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
+        public object JoinRecording(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
         {
             var breezeToken = string.Empty;
 
@@ -766,26 +766,33 @@
             if (connectionMode == AcConnectionMode.Overwrite
                 || connectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
+                AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(companyLms);
 
                 string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-                var password = this.UsersSetup.GetACPassword(credentials, userSettings, email, login);
+                var password = this.UsersSetup.GetACPassword(companyLms, userSettings, email, login);
 
-                Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email);
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+                if (lmsUser == null)
+                {
+                    return new { error = string.Format("No user with id {0} found in the database.", param.lms_user_id) };
+                }
+
+                var principalInfo = lmsUser.PrincipalId != null ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
+                var registeredUser = principalInfo != null ? principalInfo.Principal : null;
 
                 if (registeredUser != null)
                 {
-                    breezeToken = this.LoginIntoAC(credentials, param, registeredUser, connectionMode, email, login, password, provider);
+                    breezeToken = this.LoginIntoAC(companyLms, param, registeredUser, connectionMode, email, login, password, provider);
                 }
                 else
                 {
-                    return param.launch_presentation_return_url;
+                    return new { error = string.Format("No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty) };
                 }
             }
 
-            var baseUrl = credentials.AcServer
-                          + (credentials.AcServer != null && credentials.AcServer.EndsWith(@"/") ? string.Empty : "/")
+            var baseUrl = companyLms.AcServer
+                          + (companyLms.AcServer != null && companyLms.AcServer.EndsWith(@"/") ? string.Empty : "/")
                           + recordingUrl;
 
             return string.Format(
@@ -1217,28 +1224,6 @@
         }
 
         /// <summary>
-        /// The create empty meeting response.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingDTO"/>.
-        /// </returns>
-        // ReSharper disable once UnusedMember.Local
-        private MeetingDTO CreateEmptyMeetingResponse(LtiParamDTO param)
-        {
-            return new MeetingDTO
-            {
-                id = "0",
-                is_editable = this.UsersSetup.IsTeacher(param),
-                are_users_synched = true,
-                type = (int)LmsMeetingType.Meeting,
-                is_disabled_for_this_course = true
-            };
-        }
-
-        /// <summary>
         /// The can edit.
         /// </summary>
         /// <param name="param">
@@ -1278,17 +1263,11 @@
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
+        /// <param name="companyLms">
+        /// The company Lms.
         /// </param>
         /// <param name="type">
         /// The type.
-        /// </param>
-        /// <param name="isMeetingEditable">
-        /// The is Meeting Editable.
         /// </param>
         /// <param name="param">
         /// The parameter.
@@ -1299,51 +1278,29 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private MeetingSynchronizationFlags GetMeetingFlags(
+        private bool CanJoin(
             AdobeConnectProvider provider,
-            CompanyLms credentials,
-            LmsCourseMeeting meeting,
+            CompanyLms companyLms,
             int type,
-            bool isMeetingEditable,
             LtiParamDTO param,
             string meetingSco)
         {
             if (type == (int)LmsMeetingType.OfficeHours)
             {
-                return new MeetingSynchronizationFlags(true, true);
+                return true;
             }
 
-            var lmsUserId = param.lms_user_id;
-            var courseId = param.course_id;
-            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
-
-            bool canJoin = false;
-            bool areUsersSynched = true;
-            var registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email);
-
-            if (registeredUser != null)
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.user_id, companyLms.Id).Value;
+            
+            // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
+            if (lmsUser == null || lmsUser.PrincipalId == null)
             {
-                var enrollments = this.UsersSetup.GetMeetingAttendees(provider, meetingSco);
-
-                if (enrollments.Any(h => h.PrincipalId == registeredUser.PrincipalId))
-                {
-                    canJoin = true;
-                }
-
-                if (isMeetingEditable)
-                {
-                    areUsersSynched = this.UsersSetup.AreUsersSynched(
-                        credentials,
-                        meeting,
-                        lmsUserId,
-                        courseId,
-                        enrollments,
-                        param,
-                        provider);
-                }
+                return false;
             }
 
-            return new MeetingSynchronizationFlags(canJoin, areUsersSynched);
+            var enrollments = this.UsersSetup.GetMeetingAttendees(provider, meetingSco);
+            
+            return enrollments.Any(e => e.PrincipalId != null && e.PrincipalId.Equals(lmsUser.PrincipalId));
         }
 
         /// <summary>
@@ -1576,7 +1533,7 @@
         /// <summary>
         /// The get meeting DTO by SCO info.
         /// </summary>
-        /// <param name="credentials">
+        /// <param name="companyLms">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -1598,7 +1555,7 @@
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
         private MeetingDTO GetMeetingDTOByScoInfo(
-            CompanyLms credentials, 
+            CompanyLms companyLms, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             ScoInfo result, 
@@ -1608,13 +1565,13 @@
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
             var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var flags = this.GetMeetingFlags(provider, credentials, lmsCourseMeeting, type, isEditable, param, result.ScoId);
+            var canJoin = this.CanJoin(provider, companyLms, type, param, result.ScoId);
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
             string officeHoursString = null;
             
             if (type == (int)LmsMeetingType.OfficeHours)
             {
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
                 if (lmsUser != null)
                 {
                     var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
@@ -1637,8 +1594,7 @@
                               duration = (result.EndDate - result.BeginDate).ToString(@"h\:mm"),
                               access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                               allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
-                              can_join = flags.CanUserJoin, 
-                              are_users_synched = flags.AreUsersSynched,
+                              can_join = canJoin,
                               is_editable = isEditable,
                               type = type,
                               office_hours = officeHoursString
