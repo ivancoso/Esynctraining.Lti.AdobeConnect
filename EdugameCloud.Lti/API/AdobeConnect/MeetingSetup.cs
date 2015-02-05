@@ -16,6 +16,8 @@
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Utils;
+
     using Newtonsoft.Json;
 
     /// <summary>
@@ -23,67 +25,6 @@
     /// </summary>
     public class MeetingSetup
     {
-        /// <summary>
-        /// The users setup.
-        /// </summary>
-        private readonly UsersSetup usersSetup;
-
-        /// <summary>
-        /// The comp LMS model.
-        /// </summary>
-        private readonly CompanyLmsModel companyLmsModel;
-
-        /// <summary>
-        /// The LMS user parameters model.
-        /// </summary>
-        private readonly LmsUserParametersModel lmsUserParametersModel;
-
-        /// <summary>
-        /// The LMS user model.
-        /// </summary>
-        private readonly LmsUserModel lmsUserModel;
-
-        /// <summary>
-        /// The office hours model.
-        /// </summary>
-        private readonly OfficeHoursModel officeHoursModel;
-
-        /// <summary>
-        /// The LMS course meeting model.
-        /// </summary>
-        private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MeetingSetup"/> class.
-        /// </summary>
-        /// <param name="usersSetup">
-        /// The users setup.
-        /// </param>
-        /// <param name="companyLmsModel">
-        /// The company LMS model.
-        /// </param>
-        /// <param name="lmsUserParametersModel">
-        /// The LMS user parameters model.
-        /// </param>
-        /// <param name="lmsUserModel">
-        /// The LMS user model.
-        /// </param>
-        /// <param name="officeHoursModel">
-        /// The office hours model.
-        /// </param>
-        /// <param name="lmsCourseMeetingModel">
-        /// The LMS course meeting model.
-        /// </param>
-        public MeetingSetup(UsersSetup usersSetup, CompanyLmsModel companyLmsModel, LmsUserParametersModel lmsUserParametersModel, LmsUserModel lmsUserModel, OfficeHoursModel officeHoursModel, LmsCourseMeetingModel lmsCourseMeetingModel)
-        {
-            this.usersSetup = usersSetup;
-            this.companyLmsModel = companyLmsModel;
-            this.lmsUserParametersModel = lmsUserParametersModel;
-            this.officeHoursModel = officeHoursModel;
-            this.lmsCourseMeetingModel = lmsCourseMeetingModel;
-            this.lmsUserModel = lmsUserModel;
-        }
-
         #region Properties
 
         /// <summary>
@@ -93,7 +34,7 @@
         {
             get
             {
-                return this.lmsCourseMeetingModel;
+                return IoC.Resolve<LmsCourseMeetingModel>();
             }
         }
 
@@ -104,7 +45,7 @@
         {
             get
             {
-                return this.officeHoursModel;
+                return IoC.Resolve<OfficeHoursModel>();
             }
         }
 
@@ -115,7 +56,7 @@
         {
             get
             {
-                return this.lmsUserModel;
+                return IoC.Resolve<LmsUserModel>();
             }
         }
 
@@ -126,7 +67,7 @@
         {
             get
             {
-                return this.lmsUserParametersModel;
+                return IoC.Resolve<LmsUserParametersModel>();
             }
         }
 
@@ -137,7 +78,7 @@
         {
             get
             {
-                return this.companyLmsModel;
+                return IoC.Resolve<CompanyLmsModel>();
             }
         }
 
@@ -148,7 +89,7 @@
         {
             get
             {
-                return this.usersSetup;
+                return IoC.Resolve<UsersSetup>();
             }
         }
 
@@ -1264,7 +1205,7 @@
         /// The provider.
         /// </param>
         /// <param name="companyLms">
-        /// The company Lms.
+        /// The company LMS.
         /// </param>
         /// <param name="type">
         /// The type.
