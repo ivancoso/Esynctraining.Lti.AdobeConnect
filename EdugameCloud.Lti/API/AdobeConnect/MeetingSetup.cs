@@ -625,7 +625,7 @@
         /// <summary>
         /// The leave meeting.
         /// </summary>
-        /// <param name="credentials">
+        /// <param name="companyLms">
         /// The credentials.
         /// </param>
         /// <param name="param">
@@ -640,12 +640,12 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object LeaveMeeting(CompanyLms credentials, LtiParamDTO param, string scoId, AdobeConnectProvider adobeConnectProvider = null)
+        public object LeaveMeeting(CompanyLms companyLms, LtiParamDTO param, string scoId, AdobeConnectProvider adobeConnectProvider = null)
         {
-            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(credentials);
+            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(companyLms);
 
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
 
             if (currentMeeting == null)
             {
@@ -661,7 +661,7 @@
             
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-            Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email);
+            Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email, companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (registeredUser != null)
             {
@@ -838,8 +838,12 @@
             
             var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 
-            var registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, param.lms_user_login, param.lis_person_contact_email_primary);
-            
+            var registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(
+                provider,
+                param.lms_user_login,
+                param.lis_person_contact_email_primary,
+                companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+
             if (type == (int)LmsMeetingType.StudyGroup)
             {
                 this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
@@ -890,7 +894,10 @@
                 }
                 else
                 {
-                    var user = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, param.lms_user_login, param.lis_person_contact_email_primary);
+                    var user = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, 
+                        param.lms_user_login, 
+                        param.lis_person_contact_email_primary, 
+                        companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
                     if (user != null)
                     {
                         provider.UpdateScoPermissionForPrincipal(

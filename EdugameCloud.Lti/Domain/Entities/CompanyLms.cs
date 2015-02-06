@@ -207,6 +207,11 @@
         public virtual bool? ShowEGCHelp { get; set; }
 
         /// <summary>
+        /// Gets or sets the search principal by email first.
+        /// </summary>
+        public virtual bool? ACUsesEmailAsLogin { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual ISet<LmsUser> LmsUsers

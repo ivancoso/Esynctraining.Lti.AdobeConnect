@@ -41,6 +41,7 @@
             this.Map(x => x.EnableCourseMeetings).Nullable();
             this.Map(x => x.ShowEGCHelp).Nullable();
             this.Map(x => x.ShowLmsHelp).Nullable();
+            this.Map(x => x.ACUsesEmailAsLogin).Nullable();
 
             this.Map(x => x.EnableProxyToolMode).Nullable();
             this.Map(x => x.ProxyToolSharedPassword).Nullable();

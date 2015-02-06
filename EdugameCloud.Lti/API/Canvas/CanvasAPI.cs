@@ -180,7 +180,7 @@
                 string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseid, quizid), 
                 Method.GET, 
                 usertoken);
-            request.AddParameter("per_page", 100);
+            request.AddParameter("per_page", 1000);
             IRestResponse<List<QuizQuestionDTO>> response = client.Execute<List<QuizQuestionDTO>>(request);
 
             ret.AddRange(response.Data);

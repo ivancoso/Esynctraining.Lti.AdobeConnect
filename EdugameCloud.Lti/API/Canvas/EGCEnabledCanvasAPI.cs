@@ -199,7 +199,7 @@
                 string.Format("/api/v1/courses/{0}/quizzes", lmsUserParameters.Course),
                 Method.GET,
                 lmsUserParameters.LmsUser.Token);
-            request.AddParameter("per_page", 100);
+            request.AddParameter("per_page", 1000);
             IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
 
             if (quizIds != null)

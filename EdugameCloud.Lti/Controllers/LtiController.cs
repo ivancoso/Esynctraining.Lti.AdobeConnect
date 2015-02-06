@@ -914,7 +914,8 @@
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,
                             param.lis_person_name_given,
-                            param.lis_person_name_family);
+                            param.lis_person_name_family,
+                            companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
                         break;
 
                     case LmsProviderNames.BrainHoney:
@@ -926,7 +927,8 @@
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,
                             param.lis_person_name_given,
-                            param.lis_person_name_family);
+                            param.lis_person_name_family,
+                            companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
                         if (lmsUser == null)
                         {
                             lmsUser = new LmsUser

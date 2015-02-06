@@ -20,7 +20,7 @@
             //this.DynamicUpdate();
             this.Map(x => x.CourseId).Not.Nullable();
             this.Map(x => x.ScoId).Nullable();
-            this.Map(x => x.CachedUsers).Nullable();
+            this.Map(x => x.CachedUsers).CustomType("StringClob").CustomSqlType("nvarchar(max)").Nullable();
             this.Map(x => x.AddedToCache).Nullable();
             this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Nullable();
             

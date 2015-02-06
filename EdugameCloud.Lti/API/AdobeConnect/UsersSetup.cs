@@ -256,13 +256,28 @@
             var nonEditable = new HashSet<string>();
             this.GetMeetingAttendees(provider, meeting.GetMeetingScoId(), out hosts, out presenters, out participants, nonEditable);
 
-            foreach (LmsUserDTO lmsuser in users)
+            foreach (LmsUserDTO user in users)
             {
-                LmsUserDTO user = lmsuser;
+                string login = user.GetLogin(), email = user.GetEmail();
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.id, companyLms.Id).Value
+                     ?? new LmsUser()
+                     {
+                         CompanyLms = companyLms,
+                         Username = login,
+                         UserId = user.lti_id ?? user.id
+                     };
 
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsuser.id, companyLms.Id).Value;
+                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                {
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, user.GetFirstName(), user.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                    if (principal != null)
+                    {
+                        lmsUser.PrincipalId = principal.PrincipalId;
+                        this.LmsUserModel.RegisterSave(lmsUser);
+                    }
+                }
 
-                if (lmsUser == null || string.IsNullOrEmpty(lmsUser.PrincipalId))
+                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                 {
                     continue;
                 }
@@ -350,7 +365,7 @@
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
             string error;
        
-            var users = this.GetLMSUsers(companyLms, meeting, param.lms_user_id, param.course_id, out error, forceUpdate);
+            var users = this.GetLMSUsers(companyLms, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
             
             if (meeting == null)
             {
@@ -373,12 +388,12 @@
                     {
                         CompanyLms = companyLms,
                         Username = login,
-                        UserId = lmsUser.id
+                        UserId = lmsUser.lti_id ?? lmsUser.id
                     };
 
                 if (string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName());
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
                     if (principal != null)
                     {
                         user.PrincipalId = principal.PrincipalId;
@@ -409,7 +424,7 @@
         /// <summary>
         /// The update user.
         /// </summary>
-        /// <param name="credentials">
+        /// <param name="companyLms">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -434,7 +449,7 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> UpdateUser(
-            CompanyLms credentials,
+            CompanyLms companyLms,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             LmsUserDTO user,
@@ -443,10 +458,10 @@
             bool skipReturningUsers = false)
         {
             error = null;
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
             if (meeting == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
             }
 
             if (user.ac_id == null)
@@ -458,7 +473,8 @@
                     login,
                     email,
                     user.GetFirstName(),
-                    user.GetLastName());
+                    user.GetLastName(),
+                    companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
 
                 if (principal != null)
                 {
@@ -468,13 +484,13 @@
 
             if (user.ac_id == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
             }
 
             if (user.ac_role == null)
             {
                 provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, MeetingPermissionId.remove);
-                return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
             }
 
             var permission = MeetingPermissionId.view;
@@ -493,7 +509,7 @@
                 this.AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
 
-            return skipReturningUsers ? null : this.GetUsers(credentials, provider, param, scoId, out error);
+            return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
         }
 
         /// <summary>
@@ -704,7 +720,7 @@
             foreach (LmsUserDTO u in users)
             {
                 string email = u.GetEmail(), login = u.GetLogin();
-                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName());
+                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
 
                 if (principal != null)
                 {
@@ -720,7 +736,7 @@
                             lmsUser = new LmsUser()
                                           {
                                               CompanyLms = companyLms,
-                                              UserId = u.id,
+                                              UserId = u.lti_id ?? u.id,
                                               Username = login
                                           };
                         }
@@ -746,14 +762,28 @@
         /// <param name="email">
         /// The email.
         /// </param>
+        /// <param name="searchByEmailFirst">
+        /// The search By Email First.
+        /// </param>
         /// <returns>
         /// The <see cref="Principal"/>.
         /// </returns>
-        public Principal GetPrincipalByLoginOrEmail(AdobeConnectProvider provider, string login, string email)
+        public Principal GetPrincipalByLoginOrEmail(AdobeConnectProvider provider, string login, string email, bool searchByEmailFirst)
         {
             Principal principal = null;
 
-            if (!string.IsNullOrWhiteSpace(login))
+            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
+            {
+                var resultByEmail = provider.GetAllByEmail(email);
+                if (!resultByEmail.Success)
+                {
+                    return null;
+                }
+
+                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+            }
+
+            if (principal == null && !string.IsNullOrWhiteSpace(login))
             {
                 var resultByLogin = provider.GetAllByLogin(login);
                 if (!resultByLogin.Success)
@@ -764,7 +794,7 @@
                 principal = resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
             }
             
-            if (principal == null && !string.IsNullOrWhiteSpace(email))
+            if (!searchByEmailFirst && principal == null && !string.IsNullOrWhiteSpace(email))
             {
                 var resultByEmail = provider.GetAllByEmail(email);
                 if (!resultByEmail.Success)
@@ -796,6 +826,9 @@
         /// <param name="lastName">
         /// The last name.
         /// </param>
+        /// <param name="searchByEmailFirst">
+        /// The search By Email First.
+        /// </param>
         /// <returns>
         /// The <see cref="Principal"/>.
         /// </returns>
@@ -804,9 +837,10 @@
             string login,
             string email,
             string firstName,
-            string lastName)
+            string lastName,
+            bool searchByEmailFirst)
         {
-            var principal = this.GetPrincipalByLoginOrEmail(provider, login, email);
+            var principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
 
             if (principal == null)
             {
@@ -1022,6 +1056,15 @@
                     .Select(v => v.Token)
                     .Where(t => t != null)
                     .ToList();
+            if (!adminCourseTokens.Contains(token))
+            {
+                adminCourseTokens.Add(token);
+            }
+            if (credentials.AdminUser != null && credentials.AdminUser.Token != null
+                && !adminCourseTokens.Contains(credentials.AdminUser.Token))
+            {
+                adminCourseTokens.Add(credentials.AdminUser.Token);
+            }
 
             foreach (var user in users)
             {
