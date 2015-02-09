@@ -5,6 +5,9 @@
     using System.Linq;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+
+    using NHibernate.Dialect.Function;
+
     using RestSharp;
 
     /// <summary>
@@ -111,22 +114,62 @@
             // ReSharper disable once RedundantNameQualifier
             foreach (string role in CanvasAPI.CanvasRoles)
             {
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}", courseid, role, 100),
-                    Method.GET,
-                    usertoken);
+                var link = string.Format(
+                    "/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}",
+                    courseid,
+                    role,
+                    100);
 
-                IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
+                while (!string.IsNullOrEmpty(link))
+                {
+                    RestRequest request = CreateRequest(api, link, Method.GET, usertoken);
 
-                List<LmsUserDTO> us = response.Data;
-                us.ForEach(
-                    u =>
+                    IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
+
+                    link = string.Empty;
+                    foreach (var h in response.Headers)
                     {
-                        u.lms_role = role;
-                    });
+                        if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            link = h.Value.ToString();
+                            var index = link.IndexOf("rel=\"next\"");
+                            if (index > -1)
+                            {
+                                link = link.Substring(0, index - 2);
+                                index = link.LastIndexOf(">");
+                                if (index > -1)
+                                {
+                                    link = link.Substring(0, index);
+                                    index = link.LastIndexOf("<");
+                                    if (index > -1)
+                                    {
+                                        link = link.Substring(index + 1);
+                                        index = link.IndexOf("/api/v1/");
+                                        if (index > -1)
+                                        {
+                                            link = link.Substring(index);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        link = string.Empty;
+                    }
 
-                ret.AddRange(us);
+                    List<LmsUserDTO> us = response.Data;
+                    if (us == null)
+                    {
+                        continue;
+                    }
+                    us.ForEach(
+                        u =>
+                            {
+                                u.lms_role = role;
+                            });
+
+                    ret.AddRange(us);
+                }
             }
 
             return ret;

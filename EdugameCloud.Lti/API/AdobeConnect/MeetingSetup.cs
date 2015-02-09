@@ -821,6 +821,11 @@
             
             var type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            if (lmsUser == null)
+            {
+                return new { error = string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, companyLms.Id) };                
+            }
+
             var meeting = this.GetLmsCourseMeeting(companyLms, param.course_id, meetingDTO.id, type);
             var meetingSco = meeting.GetMeetingScoId();
             
@@ -1545,7 +1550,8 @@
                               can_join = canJoin,
                               is_editable = isEditable,
                               type = type,
-                              office_hours = officeHoursString
+                              office_hours = officeHoursString,
+                              connect_server = companyLms.AcServer
                           };
             return ret;
         }

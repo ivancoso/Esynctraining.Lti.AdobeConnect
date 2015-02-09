@@ -259,7 +259,7 @@
             foreach (LmsUserDTO user in users)
             {
                 string login = user.GetLogin(), email = user.GetEmail();
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.id, companyLms.Id).Value
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, companyLms.Id).Value
                      ?? new LmsUser()
                      {
                          CompanyLms = companyLms,
@@ -381,7 +381,7 @@
             {
                 string login = lmsUser.GetLogin(), email = lmsUser.GetEmail();
                 var user = this.LmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(
-                    lmsUser.id,
+                    lmsUser.lti_id ?? lmsUser.id,
                     login,
                     email,
                     companyLms.Id) ?? new LmsUser()
@@ -725,7 +725,7 @@
                 if (principal != null)
                 {
                     var lmsUser = this.LmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(
-                        u.id,
+                        u.lti_id ?? u.id,
                         login,
                         email,
                         companyLms.Id);
