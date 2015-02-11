@@ -1550,8 +1550,7 @@
                               can_join = canJoin,
                               is_editable = isEditable,
                               type = type,
-                              office_hours = officeHoursString,
-                              connect_server = companyLms.AcServer
+                              office_hours = officeHoursString
                           };
             return ret;
         }

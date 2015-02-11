@@ -29,12 +29,6 @@
         public bool can_join { get; set; }
 
         /// <summary>
-        /// Gets or sets the connect_server.
-        /// </summary>
-        [DataMember]
-        public string connect_server { get; set; }
-
-        /// <summary>
         /// Gets or sets the duration.
         /// </summary>
         [DataMember]

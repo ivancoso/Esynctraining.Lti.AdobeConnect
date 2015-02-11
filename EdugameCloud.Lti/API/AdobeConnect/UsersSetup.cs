@@ -401,10 +401,16 @@
                     }
                 }
 
-                if (principalIds.Contains(user.PrincipalId))
+                var enrollment = enrollments.FirstOrDefault(e => e.PrincipalId.Equals(user.PrincipalId));
+
+                if (enrollment != null)
                 {
                     lmsUser.ac_id = user.PrincipalId;
-                    this.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null, true);
+                    lmsUser.ac_role = enrollment.PermissionId == PermissionId.host
+                                          ? "Host"
+                                          : (enrollment.PermissionId == PermissionId.mini_host
+                                                 ? "Presenter"
+                                                 : "Participant");
                     principalIds.Remove(user.PrincipalId);
                 }
                 else if (!string.IsNullOrEmpty(user.PrincipalId))
