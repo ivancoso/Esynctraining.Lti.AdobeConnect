@@ -204,7 +204,7 @@ namespace EdugameCloud.WCFService
                 return response;
             }
 
-            response = (ServiceResponse<FileDTO>)this.UpdateResult(response, result);
+            response = this.UpdateResult(response, result);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, response, string.Empty);
             return response;
         }

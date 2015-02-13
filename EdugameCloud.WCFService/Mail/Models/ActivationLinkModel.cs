@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace EdugameCloud.WCFService.Mail.Models
+﻿namespace EdugameCloud.WCFService.Mail.Models
 {
     using Esynctraining.Core.Providers;
 

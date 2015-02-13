@@ -1,7 +1,5 @@
 ﻿namespace EdugameCloud.Core.Providers.Mailer.Models
 {
-    using EdugameCloud.Core.Providers;
-
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer.Models;
 

@@ -142,12 +142,12 @@ namespace EdugameCloud.WCFService
                         item.Value.SentCc.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                         .Where(i => !string.IsNullOrWhiteSpace(i))
                         .Select(i => new MailAddress(i, i))
-                        .ToList() : new List<MailAddress> { },
+                        .ToList() : new List<MailAddress>(),
                     item.Value.SentCc != null ? 
                         item.Value.SentCc.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                         .Where(i => !string.IsNullOrWhiteSpace(i))
                         .Select(i => new MailAddress(i, i))
-                        .ToList() : new List<MailAddress> { },
+                        .ToList() : new List<MailAddress>(),
                     null as List<LinkedResource>);
 
                 var newHistoryItem = item.Value.DeepClone();

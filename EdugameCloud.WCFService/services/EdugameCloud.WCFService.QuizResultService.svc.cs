@@ -12,7 +12,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
-    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.WCFService.Base;
 
     using Esynctraining.Core.Domain.Contracts;
@@ -24,8 +23,6 @@ namespace EdugameCloud.WCFService
     using FluentValidation.Results;
 
     using Resources;
-
-    using Weborb.Client;
 
     /// <summary>
     ///     The account service.
@@ -56,17 +53,6 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<QuizModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the lms user parameters model.
-        /// </summary>
-        private LmsUserParametersModel LmsUserParametersModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
             }
         }
 

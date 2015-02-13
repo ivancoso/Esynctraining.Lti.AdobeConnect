@@ -4,8 +4,6 @@
     using System.Collections;
     using System.Reflection;
 
-    using EdugameCloud.Core.Providers;
-
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 

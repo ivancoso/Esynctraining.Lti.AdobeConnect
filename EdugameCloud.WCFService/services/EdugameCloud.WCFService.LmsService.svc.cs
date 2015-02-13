@@ -1,26 +1,17 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Security.Policy;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.Web;
-
-    using Castle.Core.Internal;
-
+    
     using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Business.Models;
-    using EdugameCloud.Lti.Contracts;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
@@ -29,7 +20,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
@@ -43,17 +33,6 @@ namespace EdugameCloud.WCFService
     public class LmsService : BaseService, ILmsService
     {
         #region Properties
-
-        /// <summary>
-        ///     Gets the question model.
-        /// </summary>
-        private CompanyLmsModel CompanyLmsModel
-        {
-            get
-            {
-                return IoC.Resolve<CompanyLmsModel>();
-            }
-        }
 
         /// <summary>
         /// Gets the quiz model.
@@ -433,12 +412,9 @@ namespace EdugameCloud.WCFService
             {
                 var serviceResponse = new ServiceResponse<QuizesAndSubModuleItemsDTO>();
 
-
                 serviceResponse.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found"));
                 return serviceResponse;
             }
-
-            return null;
         }
 
         #endregion

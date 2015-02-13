@@ -21,8 +21,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
-    using NHibernate.Mapping;
-
     using Resources;
 
     /// <summary>

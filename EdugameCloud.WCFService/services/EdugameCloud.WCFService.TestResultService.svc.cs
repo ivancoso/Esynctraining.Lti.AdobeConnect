@@ -96,7 +96,7 @@ namespace EdugameCloud.WCFService
                 return result;
             }
 
-            result = (ServiceResponse<TestResultDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }

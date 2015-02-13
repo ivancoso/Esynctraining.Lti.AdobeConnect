@@ -376,8 +376,8 @@ namespace EdugameCloud.WCFService
                 instance.Address.Address1 = addressVo.address1;
                 instance.Address.Address2 = addressVo.address2;
                 instance.Address.City = addressVo.city;
-                instance.Address.DateCreated = addressVo.dateCreated.HasValue ? addressVo.dateCreated.Value : DateTime.Now;
-                instance.Address.DateModified = addressVo.dateModified.HasValue ? addressVo.dateModified.Value : DateTime.Now;
+                instance.Address.DateCreated = addressVo.dateCreated ?? DateTime.Now;
+                instance.Address.DateModified = addressVo.dateModified ?? DateTime.Now;
                 instance.Address.Latitude = addressVo.latitude;
                 instance.Address.Longitude = addressVo.longitude;
                 instance.Address.Country = addressVo.countryId.HasValue

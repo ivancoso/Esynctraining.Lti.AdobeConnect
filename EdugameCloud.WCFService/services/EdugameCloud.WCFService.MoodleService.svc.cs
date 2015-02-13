@@ -14,18 +14,11 @@ namespace EdugameCloud.WCFService
     using System.Web.Script.Serialization;
     using System.Xml;
 
-    using Castle.Windsor.Configuration.AppDomain;
-
     using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Contracts;
-    using EdugameCloud.Core.Domain;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Business.Models;
-    using EdugameCloud.Lti.Contracts;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.EntityParsing;
@@ -36,8 +29,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
-
-    using FluentNHibernate.Conventions.AcceptanceCriteria;
 
     /// <summary>
     ///     The moodle service.

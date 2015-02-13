@@ -162,7 +162,7 @@ namespace EdugameCloud.WCFService
                 return result;
             }
 
-            result = (ServiceResponse<SNGroupDiscussionDTO>)this.UpdateResult(result, validationResult);
+            result = this.UpdateResult(result, validationResult);
             this.LogError(ErrorsTexts.EntityCreationError_Subject, result, string.Empty);
             return result;
         }
@@ -196,7 +196,7 @@ namespace EdugameCloud.WCFService
             instance.GroupDiscussionTitle = groupDiscussion.groupDiscussionTitle;
             instance.GroupDiscussionData = groupDiscussion.groupDiscussionData;
             instance.DateCreated = groupDiscussion.dateCreated == DateTime.MinValue ? DateTime.Now : groupDiscussion.dateCreated;
-            instance.DateModified = groupDiscussion.dateModified.HasValue ? groupDiscussion.dateModified.Value : DateTime.Now;
+            instance.DateModified = groupDiscussion.dateModified ?? DateTime.Now;
             instance.ACSessionId = this.ACSessionModel.GetOneById(groupDiscussion.acSessionId).Value.With(x => x.Id);
             instance.IsActive = groupDiscussion.isActive;
             return instance;

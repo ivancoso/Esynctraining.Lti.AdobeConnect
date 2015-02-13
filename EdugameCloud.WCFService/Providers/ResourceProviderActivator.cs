@@ -79,12 +79,8 @@
 
                 return HttpContext.Current.Session[ResourceProvideActivatorKey];
             }
-            else
-            {
-                return new WcfResourceProvider();
-            }
-
-            return base.CreateInstance(context, constructor, arguments);
+            
+            return new WcfResourceProvider();
         }
 
         #endregion

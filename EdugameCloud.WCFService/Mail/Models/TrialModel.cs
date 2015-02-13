@@ -1,10 +1,7 @@
 ﻿namespace EdugameCloud.WCFService.Mail.Models
 {
-    using System.EnterpriseServices.Internal;
-
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Providers.Mailer.Models;
-
+    
     /// <summary>
     /// The trial model.
     /// </summary>

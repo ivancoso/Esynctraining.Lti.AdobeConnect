@@ -17,7 +17,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.RTMP;
     using EdugameCloud.WCFService.Base;
 
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
@@ -37,21 +36,6 @@ namespace EdugameCloud.WCFService
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class RestService : BaseService, IRestService
     {
-        #region Properties
-
-        /// <summary>
-        ///     Gets the authentication model.
-        /// </summary>
-        private AuthenticationModel AuthenticationModel
-        {
-            get
-            {
-                return IoC.Resolve<AuthenticationModel>();
-            }
-        }
-
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>

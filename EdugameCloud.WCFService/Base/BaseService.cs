@@ -301,7 +301,7 @@
                 string field = res.Status.InvalidField;
                 StatusCodes errorCode = res.Status.Code;
                 StatusSubCodes errorSubCode = res.Status.SubCode;
-                string message = string.Empty;
+                string message;
                 if (field == "login" && errorCode == StatusCodes.invalid && errorSubCode == StatusSubCodes.duplicate)
                 {
                     message = "User already exists in Adobe Connect.";

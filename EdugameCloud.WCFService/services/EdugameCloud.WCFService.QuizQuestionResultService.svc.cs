@@ -2,20 +2,14 @@
 namespace EdugameCloud.WCFService
 {
     using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Globalization;
     using System.Linq;
-    using System.Net;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using System.Web.Script.Serialization;
-
+    
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
-    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Converters;
 
@@ -37,17 +31,6 @@ namespace EdugameCloud.WCFService
     public class QuizQuestionResultService : BaseService, IQuizQuestionResultService
     {
         #region Properties
-
-        /// <summary>
-        ///     Gets the question model.
-        /// </summary>
-        private MoodleUserModel MoodleUserModel
-        {
-            get
-            {
-                return IoC.Resolve<MoodleUserModel>();
-            }
-        }
 
         /// <summary>
         ///     Gets the question model.

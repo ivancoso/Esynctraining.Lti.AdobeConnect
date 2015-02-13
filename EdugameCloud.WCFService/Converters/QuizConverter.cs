@@ -90,17 +90,6 @@
         }
 
         /// <summary>
-        /// Gets the lms provider model.
-        /// </summary>
-        private LmsProviderModel LmsProviderModel
-        {
-            get
-            {
-                return IoC.Resolve<LmsProviderModel>();
-            }
-        }
-
-        /// <summary>
         ///     Gets the company model.
         /// </summary>
         private SubModuleModel SubModuleModel
@@ -207,17 +196,6 @@
             get
             {
                 return IoC.Resolve<DistractorModel>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the user model.
-        /// </summary>
-        private UserModel UserModel
-        {
-            get
-            {
-                return IoC.Resolve<UserModel>();
             }
         }
 

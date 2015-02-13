@@ -5,11 +5,7 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel;
     using System.ServiceModel.Activation;
 
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Contracts;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
@@ -106,17 +102,6 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<LmsUserModel>();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
-        private CompanyModel CompanyModel
-        {
-            get
-            {
-                return IoC.Resolve<CompanyModel>();
             }
         }
 
