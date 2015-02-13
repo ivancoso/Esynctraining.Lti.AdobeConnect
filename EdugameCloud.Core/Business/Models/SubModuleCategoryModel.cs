@@ -5,10 +5,8 @@ using NHibernate.Transform;
 
 namespace EdugameCloud.Core.Business.Models
 {
-    using System;
     using System.Collections.Generic;
 
-    using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
 

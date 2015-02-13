@@ -31,15 +31,6 @@
     /// </summary>
     public class FileModel : BaseModel<File, Guid>
     {
-        #region Static Fields
-
-        /// <summary>
-        ///     The object to sync threads.
-        /// </summary>
-        private static readonly object SyncObj = new object();
-
-        #endregion
-
         #region Fields
 
         /// <summary>

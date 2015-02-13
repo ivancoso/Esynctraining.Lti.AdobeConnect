@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
 

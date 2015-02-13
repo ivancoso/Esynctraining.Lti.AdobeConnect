@@ -1,15 +1,13 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
-    using System.Web.UI.WebControls;
-
+    
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Extensions;
-
+    
     using NHibernate;
 
     public class EmailHistoryModel : BaseModel<EmailHistory, int>

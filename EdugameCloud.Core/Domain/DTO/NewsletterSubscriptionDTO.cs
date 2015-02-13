@@ -23,9 +23,6 @@
             /// <summary>
             /// Initializes a new instance of the <see cref="CompanyDTO"/> class.
             /// </summary>
-            /// <param name="c">
-            /// The c.
-            /// </param>
             public NewsletterSubscriptionDTO(NewsletterSubscription n)
             {
                 this.newsletterSubscriptionId = n.Id;

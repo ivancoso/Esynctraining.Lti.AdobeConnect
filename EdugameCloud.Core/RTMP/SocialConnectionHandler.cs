@@ -1,7 +1,5 @@
 ﻿namespace EdugameCloud.Core.RTMP
 {
-    using System;
-
     using Castle.Core.Logging;
 
     using Weborb.Messaging.Api.Service;

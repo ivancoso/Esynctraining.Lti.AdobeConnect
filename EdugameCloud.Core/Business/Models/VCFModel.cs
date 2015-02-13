@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
+
     using Castle.Core.Logging;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;

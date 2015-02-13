@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using NHibernate.Criterion;
-using NHibernate.SqlCommand;
-using NHibernate.Transform;
+﻿using NHibernate.Criterion;
 
 namespace EdugameCloud.Core.Business.Models
 {

@@ -1,6 +1,4 @@
-﻿using Esynctraining.Core.Domain.Entities;
-
-namespace EdugameCloud.Core.Domain.DTO
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Collections.Generic;
     using System.Linq;

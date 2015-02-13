@@ -2,14 +2,11 @@
 {
     using System.Collections.Generic;
 
-    using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-
-    using NHibernate.Criterion;
 
     /// <summary>
     ///     The QuestionType model.

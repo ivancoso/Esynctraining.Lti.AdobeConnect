@@ -9,7 +9,6 @@
     using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.DTO;
 
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     using RestSharp;

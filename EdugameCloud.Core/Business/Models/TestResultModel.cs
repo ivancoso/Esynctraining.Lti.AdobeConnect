@@ -1,6 +1,4 @@
-﻿using Esynctraining.Core.Extensions;
-using NHibernate.Criterion;
-using NHibernate.Proxy;
+﻿using NHibernate.Criterion;
 using NHibernate.SqlCommand;
 using NHibernate.Transform;
 

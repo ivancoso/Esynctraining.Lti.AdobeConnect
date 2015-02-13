@@ -7,8 +7,6 @@
 
     using Esynctraining.Core.Domain.Contracts;
 
-    using NHibernate.Mapping;
-
     /// <summary>
     ///     The ProxyService interface.
     /// </summary>

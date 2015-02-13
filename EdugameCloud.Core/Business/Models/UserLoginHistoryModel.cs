@@ -95,7 +95,6 @@
         /// </returns>
         public IEnumerable<UserLoginHistory> GetAllPaged(int pageIndex, int pageSize, out int totalCount)
         {
-            User @usr = null;
             if (pageIndex <= default(int))
             {
                 pageIndex = 1;

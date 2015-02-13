@@ -26,7 +26,7 @@
         /// <param name="clh">
         ///     The contact login history.
         /// </param>
-        /// <param name="com"></param>
+        /// <param name="company"></param>
         public UserLoginHistoryDTO(UserLoginHistory clh, Company company)
         {
             this.userLoginHistoryId = clh.Id;

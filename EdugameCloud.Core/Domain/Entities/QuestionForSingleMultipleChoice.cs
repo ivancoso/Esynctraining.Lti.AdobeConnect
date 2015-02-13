@@ -1,11 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
-    using System;
-
-    using Esynctraining.Core.Domain.Entities;
-
-    using Iesi.Collections.Generic;
-
     /// <summary>
     ///     The question.
     /// </summary>

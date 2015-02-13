@@ -3,8 +3,6 @@
     using System;
     using System.Runtime.Serialization;
 
-    using EdugameCloud.Core.Domain.Entities;
-
     /// <summary>
     ///     The recent report DTO.
     /// </summary>

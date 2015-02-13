@@ -1,5 +1,4 @@
-﻿using Esynctraining.Core.Utils;
-using NHibernate.SqlCommand;
+﻿using NHibernate.SqlCommand;
 
 namespace EdugameCloud.Core.Business.Models
 {

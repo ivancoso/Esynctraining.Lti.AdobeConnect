@@ -7,8 +7,6 @@
 
     using Esynctraining.Core.Extensions;
 
-    using NHibernate.Mapping;
-
     /// <summary>
     ///     The quiz question result DTO.
     /// </summary>

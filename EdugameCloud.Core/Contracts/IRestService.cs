@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
-    using System.IO;
     using System.ServiceModel;
     using System.ServiceModel.Web;
 

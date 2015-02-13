@@ -5,8 +5,6 @@
 
     using EdugameCloud.Core.Domain.Entities;
 
-    using NHibernate.Proxy;
-
     /// <summary>
     ///     The company license DTO.
     /// </summary>

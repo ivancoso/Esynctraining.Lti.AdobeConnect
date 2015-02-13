@@ -3,7 +3,6 @@
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Formats.Edugame;
 
     using Esynctraining.Core.Domain.Contracts;
 

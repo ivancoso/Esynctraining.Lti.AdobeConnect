@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Configuration;
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -86,7 +85,6 @@
         /// </param>
         /// <param name="testModel">
         /// The test model.
-        /// </param>
         /// </param>
         /// <param name="userRepository">
         /// The user Repository.

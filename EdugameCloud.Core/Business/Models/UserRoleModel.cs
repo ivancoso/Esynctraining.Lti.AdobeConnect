@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
-    using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;

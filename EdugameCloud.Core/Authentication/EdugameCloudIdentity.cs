@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Core.Authentication
 {
     using System.Collections.Generic;
-    using System.Security.Principal;
 
     using EdugameCloud.Core.Domain.Entities;
 

@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
-    using System.Collections.Generic;
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;

@@ -19,7 +19,7 @@
         /// <summary>
         ///     Initializes a new instance of the <see cref="BaseConverter{T,T2}" /> class.
         /// </summary>
-        public BaseConverter()
+        protected BaseConverter()
             : base(typeof(T), typeof(T2))
         {
         }
@@ -61,7 +61,7 @@
         /// <param name="binderType">
         /// The binder type.
         /// </param>
-        public BaseConverter(Type binderType)
+        protected BaseConverter(Type binderType)
         {
             this.BinderTypes = new List<Type> { binderType };
         }
@@ -72,7 +72,7 @@
         /// <param name="binderTypes">
         /// The binder type.
         /// </param>
-        public BaseConverter(params Type[] binderTypes)
+        protected BaseConverter(params Type[] binderTypes)
         {
             var types = new List<Type>();
             types.AddRange(binderTypes);

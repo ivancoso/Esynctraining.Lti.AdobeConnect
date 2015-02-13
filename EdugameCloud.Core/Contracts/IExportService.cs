@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Contracts
 {
-    using EdugameCloud.Core.Domain;
     using Esynctraining.Core.Domain.Contracts;
     using System.ServiceModel;
     
@@ -13,9 +12,6 @@
         /// <summary>
         /// Export questions by SubModule id.
         /// </summary>
-        /// <param name="subModuleId">SubModule id.</param>
-        /// <param name="questionIds">Question ids.</param>
-        /// <param name="format">Export format.</param>
         /// <returns>The <see cref="ServiceResponse"/>.</returns>
         [OperationContract]
         ServiceResponse<string> ExportQuestionsBySubModuleItemId(bool questionsModel);
