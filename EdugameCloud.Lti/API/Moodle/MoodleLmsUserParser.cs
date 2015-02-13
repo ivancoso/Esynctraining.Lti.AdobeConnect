@@ -12,7 +12,7 @@
     /// <summary>
     /// The moodle LMS user parser.
     /// </summary>
-    public class MoodleLmsUserParser
+    internal static class MoodleLmsUserParser
     {
         /// <summary>
         /// Parses the specified XML.

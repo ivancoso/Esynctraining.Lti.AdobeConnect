@@ -6,8 +6,6 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
-    using NHibernate.Dialect.Function;
-
     using RestSharp;
 
     /// <summary>
@@ -16,40 +14,40 @@
     // ReSharper disable once InconsistentNaming
     public class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI
     {
-        /// <summary>
-        /// The get quiz by id.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="quizid">
-        /// The quiz id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsQuizDTO"/>.
-        /// </returns>
-        public static LmsQuizDTO GetQuizById(string api, string usertoken, int courseid, string quizid)
-        {
-            var client = CreateRestClient(api);
+        ///// <summary>
+        ///// The get quiz by id.
+        ///// </summary>
+        ///// <param name="api">
+        ///// The API.
+        ///// </param>
+        ///// <param name="usertoken">
+        ///// The user token.
+        ///// </param>
+        ///// <param name="courseid">
+        ///// The course id.
+        ///// </param>
+        ///// <param name="quizid">
+        ///// The quiz id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="LmsQuizDTO"/>.
+        ///// </returns>
+        //public static LmsQuizDTO GetQuizById(string api, string usertoken, int courseid, string quizid)
+        //{
+        //    var client = CreateRestClient(api);
 
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/courses/{0}/quizzes/{1}", courseid, quizid),
-                Method.GET,
-                usertoken);
+        //    RestRequest request = CreateRequest(
+        //        api,
+        //        string.Format("/api/v1/courses/{0}/quizzes/{1}", courseid, quizid),
+        //        Method.GET,
+        //        usertoken);
 
-            IRestResponse<LmsQuizDTO> response = client.Execute<LmsQuizDTO>(request);
+        //    IRestResponse<LmsQuizDTO> response = client.Execute<LmsQuizDTO>(request);
 
-            response.Data.questions = GetQuestionsForQuiz(api, usertoken, courseid, response.Data.id).ToArray();
+        //    response.Data.questions = GetQuestionsForQuiz(api, usertoken, courseid, response.Data.id).ToArray();
 
-            return response.Data;
-        }
+        //    return response.Data;
+        //}
 
         /// <summary>
         /// The get submission for quiz.

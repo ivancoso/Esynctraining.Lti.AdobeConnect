@@ -167,16 +167,16 @@
                     new XAttribute("password", password)));
         }
 
-        /// <summary>
-        ///     Logout of DLAP
-        /// </summary>
-        /// <returns>XML results</returns>
-        public XElement Logout()
-        {
-            XElement result = this.Get("logout");
-            this.cookies = null;
-            return result;
-        }
+        ///// <summary>
+        /////     Logout of DLAP
+        ///// </summary>
+        ///// <returns>XML results</returns>
+        //public XElement Logout()
+        //{
+        //    XElement result = this.Get("logout");
+        //    this.cookies = null;
+        //    return result;
+        //}
 
         /// <summary>
         /// Makes a POST request to DLAP
@@ -207,27 +207,31 @@
             }
         }
 
-        /// <summary>
-        /// Makes a POST request to DLAP
-        /// </summary>
-        /// <param name="cmd">
-        /// DLAP command
-        /// </param>
-        /// <param name="xml">
-        /// XML to post to DLAP
-        /// </param>
-        /// <returns>
-        /// XML results
-        /// </returns>
-        public XElement Post(string cmd, string xml)
-        {
-            if (!xml.StartsWith("<request"))
-            {
-                xml = "<requests>" + xml + "</requests>";
-            }
+        ///// <summary>
+        ///// Makes a POST request to DLAP
+        ///// </summary>
+        ///// <param name="cmd">
+        ///// DLAP command
+        ///// </param>
+        ///// <param name="xml">
+        ///// XML to post to DLAP
+        ///// </param>
+        ///// <returns>
+        ///// XML results
+        ///// </returns>
+        //public XElement Post(string cmd, string xml)
+        //{
+        //    if (!xml.StartsWith("<request"))
+        //    {
+        //        xml = "<requests>" + xml + "</requests>";
+        //    }
 
-            return this.Post(cmd, XElement.Parse(xml));
-        }
+        //    return this.Post(cmd, XElement.Parse(xml));
+        //}
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Returns the XML data when calling RawRequest
@@ -238,7 +242,7 @@
         /// <returns>
         /// XML results
         /// </returns>
-        public XElement ReadResponse(HttpWebResponse response)
+        private XElement ReadResponse(HttpWebResponse response)
         {
             using (Stream stream = response.GetResponseStream())
             {
@@ -251,8 +255,8 @@
                 catch (Exception e)
                 {
                     return new XElement(
-                        "response", 
-                        new XAttribute("code", e.GetType().Name), 
+                        "response",
+                        new XAttribute("code", e.GetType().Name),
                         new XAttribute("message", e.Message));
                 }
             }
@@ -276,7 +280,7 @@
         /// <returns>
         /// Http Web Response
         /// </returns>
-        public HttpWebResponse Request(string query, Stream postData, string contentType, int timeout)
+        private HttpWebResponse Request(string query, Stream postData, string contentType, int timeout)
         {
             var request = (HttpWebRequest)WebRequest.Create(this.Server + query);
             request.UserAgent = this.Agent;
@@ -319,10 +323,6 @@
             var response = (HttpWebResponse)request.GetResponse();
             return response;
         }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         /// The log.

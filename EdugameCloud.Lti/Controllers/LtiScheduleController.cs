@@ -202,7 +202,7 @@
         /// <param name="brainHoneyCompany">
         /// The brain honey company.
         /// </param>
-        private void AddToErrors(List<string> errors, string error, CompanyLms brainHoneyCompany)
+        private static void AddToErrors(List<string> errors, string error, CompanyLms brainHoneyCompany)
         {
             errors.Add(string.Format("Error with company {0}:{1}", brainHoneyCompany.With(x => x.LmsDomain), error));
         }
@@ -260,7 +260,7 @@
 
                 if (error != null)
                 {
-                    this.AddToErrors(errors, error, brainHoneyCompany);
+                    AddToErrors(errors, error, brainHoneyCompany);
                 }
                 else
                 {
@@ -269,7 +269,7 @@
                         long? signalId = api.GetLastSignalId(brainHoneyCompany, out error, session);
                         if (error != null)
                         {
-                            this.AddToErrors(errors, error, brainHoneyCompany);
+                            AddToErrors(errors, error, brainHoneyCompany);
                         }
                         else if (signalId.HasValue)
                         {
@@ -291,18 +291,18 @@
 
                     if (error != null)
                     {
-                        this.AddToErrors(errors, error, brainHoneyCompany);
+                        AddToErrors(errors, error, brainHoneyCompany);
                     }
                     else
                     {
                         List<Signal> signals = api.GetSignalsList(brainHoneyCompany, out error, session);
                         if (error != null)
                         {
-                            this.AddToErrors(errors, error, brainHoneyCompany);
+                            AddToErrors(errors, error, brainHoneyCompany);
                         }
                         else
                         {
-                            List<ParsedSignalGroup> parsedSignals = this.Parse(
+                            List<ParsedSignalGroup> parsedSignals = Parse(
                                 signals.OrderBy(x => x.SignalId).ToList());
                             List<Signal> soleEnrollments =
                                 parsedSignals.FirstOrDefault(
@@ -316,7 +316,7 @@
                                 {
                                     case ProcessingSignalType.CourseToProcess:
                                         List<LmsUserDTO> courseUsers =
-                                            this.ProcessCourseCreated(
+                                            ProcessCourseCreated(
                                                 signalGroup.RepresentativeSignal, 
                                                 api, 
                                                 brainHoneyCompany, 
@@ -324,12 +324,12 @@
                                                 errors, 
                                                 adobeConnectProvider, 
                                                 templates);
-                                        this.RemoveCourseEnrollmentsFromSoleEnrollments(soleEnrollments, courseUsers);
+                                        RemoveCourseEnrollmentsFromSoleEnrollments(soleEnrollments, courseUsers);
                                         break;
 
                                     case ProcessingSignalType.CourseToDelete:
                                         List<string> courseDeletedUsers =
-                                            this.ProcessCourseDeleted(
+                                            ProcessCourseDeleted(
                                                 signalGroup.RepresentativeSignal, 
                                                 brainHoneyCompany, 
                                                 errors, 
@@ -346,7 +346,7 @@
                                 }
                             }
 
-                            this.ProcessSoleEnrollments(
+                            ProcessSoleEnrollments(
                                 brainHoneyCompany, 
                                 soleEnrollments, 
                                 errors, 
@@ -377,7 +377,7 @@
         /// <returns>
         /// The <see cref="ProcessingSignalType"/>.
         /// </returns>
-        private ProcessingSignalType GetGroupProcessingSignalType(List<Signal> @group)
+        private static ProcessingSignalType GetGroupProcessingSignalType(List<Signal> @group)
         {
             if (group.Any(x => x.Type == DlapAPI.SignalTypes.CourseDeleted))
             {
@@ -398,7 +398,7 @@
         /// <returns>
         /// The <see cref="List{ParsedSignalGroup}"/>.
         /// </returns>
-        private List<ParsedSignalGroup> Parse(List<Signal> orderedList)
+        private static List<ParsedSignalGroup> Parse(List<Signal> orderedList)
         {
             var result = new List<ParsedSignalGroup>();
             List<Signal> enrollments = orderedList.Where(x => x.Type == DlapAPI.SignalTypes.EnrollmentChanged).ToList();
@@ -411,7 +411,7 @@
                 result.Add(
                     new ParsedSignalGroup
                         {
-                            ProcessingSignalType = this.GetGroupProcessingSignalType(group), 
+                            ProcessingSignalType = GetGroupProcessingSignalType(group), 
                             RepresentativeSignal = group.FirstOrDefault(x => x.EntityId != 0), 
                             SignalsAssociated = group
                         });
@@ -472,7 +472,7 @@
             Course course = api.GetCourse(brainHoneyCompany, courseSignal.EntityId, out error, session);
             if (error != null)
             {
-                this.AddToErrors(errors, error, brainHoneyCompany);
+                AddToErrors(errors, error, brainHoneyCompany);
             }
             else
             {
@@ -487,7 +487,7 @@
                 }
 
                 DateTime startDate = DateTime.Parse(course.StartDate);
-                this.meetingSetup.SaveMeeting(
+                meetingSetup.SaveMeeting(
                     brainHoneyCompany, 
                     adobeConnectProvider, 
                     new LtiParamDTO
@@ -547,7 +547,7 @@
                 out error);
             if (error != null)
             {
-                this.AddToErrors(errors, error, brainHoneyCompany);
+                AddToErrors(errors, error, brainHoneyCompany);
             }
 
             return result;
@@ -609,7 +609,7 @@
                             session);
                         if (error != null)
                         {
-                            this.AddToErrors(errors, error, brainHoneyCompany);
+                            AddToErrors(errors, error, brainHoneyCompany);
                         }
                         else if (enrollment != null && api.IsEnrollmentActive(enrollment.Status))
                         {
@@ -648,7 +648,7 @@
         /// <param name="courseUsers">
         /// The course users.
         /// </param>
-        private void RemoveCourseEnrollmentsFromSoleEnrollments(
+        private static void RemoveCourseEnrollmentsFromSoleEnrollments(
             List<Signal> soleEnrollments, 
             List<LmsUserDTO> courseUsers)
         {

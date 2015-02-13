@@ -169,54 +169,6 @@
         }
 
         /// <summary>
-        /// The get canvas users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra Data.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force Update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        public List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
-        {
-            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
-            {
-                case LmsProviderNames.Canvas:
-                    error = null;
-                    return this.GetCanvasUsers(credentials, lmsUserId, courseId);
-                case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
-                case LmsProviderNames.Blackboard:
-                    return this.GetBlackBoardUsers(credentials, meeting, courseId, out error, forceUpdate);
-                case LmsProviderNames.Moodle:
-                    return this.GetMoodleUsers(credentials, courseId, out error);
-                case LmsProviderNames.Sakai:
-                    return this.GetSakaiUsers(credentials, extraData is LtiParamDTO ? (LtiParamDTO)extraData : null, out error);
-            }
-
-            error = null;
-            return new List<LmsUserDTO>();
-        }
-
-        /// <summary>
         /// The get users.
         /// </summary>
         /// <param name="companyLms">
@@ -254,7 +206,7 @@
 
             List<PermissionInfo> hosts, participants, presenters;
             var nonEditable = new HashSet<string>();
-            this.GetMeetingAttendees(provider, meeting.GetMeetingScoId(), out hosts, out presenters, out participants, nonEditable);
+            GetMeetingAttendees(provider, meeting.GetMeetingScoId(), out hosts, out presenters, out participants, nonEditable);
 
             foreach (LmsUserDTO user in users)
             {
@@ -624,7 +576,7 @@
                 alreadyAdded.Add(g.PrincipalId);
             }
 
-            return this.ProcessACMeetingAttendees(
+            return ProcessACMeetingAttendees(
                 nonEditable ?? new HashSet<string>(),
                 provider,
                 allValues,
@@ -873,132 +825,131 @@
 
         #endregion
 
-
         #region Private Methods
 
-        /// <summary>
-        /// The is user synched.
-        /// </summary>
-        /// <param name="enrollments">
-        /// The enrollments.
-        /// </param>
-        /// <param name="lmsUser">
-        /// The LMS user.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private bool IsUserSynched(IEnumerable<PermissionInfo> enrollments, LmsUserDTO lmsUser, AdobeConnectProvider provider)
-        {
-            bool isFound = false;
-            foreach (var host in enrollments)
-            {
-                if (this.LmsUserIsAcUser(lmsUser, host, provider))
-                {
-                    lmsUser.ac_id = host.PrincipalId;
-                    lmsUser.ac_role = this.GetRoleString(host.PermissionId);
-                    isFound = true;
-                    break;
-                }
-            }
+        ///// <summary>
+        ///// The is user synched.
+        ///// </summary>
+        ///// <param name="enrollments">
+        ///// The enrollments.
+        ///// </param>
+        ///// <param name="lmsUser">
+        ///// The LMS user.
+        ///// </param>
+        ///// <param name="provider">
+        ///// The provider.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="bool"/>.
+        ///// </returns>
+        //private bool IsUserSynched(IEnumerable<PermissionInfo> enrollments, LmsUserDTO lmsUser, AdobeConnectProvider provider)
+        //{
+        //    bool isFound = false;
+        //    foreach (var host in enrollments)
+        //    {
+        //        if (this.LmsUserIsAcUser(lmsUser, host, provider))
+        //        {
+        //            lmsUser.ac_id = host.PrincipalId;
+        //            lmsUser.ac_role = this.GetRoleString(host.PermissionId);
+        //            isFound = true;
+        //            break;
+        //        }
+        //    }
 
-            if (!isFound)
-            {
-                return false;
-            }
+        //    if (!isFound)
+        //    {
+        //        return false;
+        //    }
 
-            return true;
-        }
+        //    return true;
+        //}
 
-        /// <summary>
-        /// The get role string.
-        /// </summary>
-        /// <param name="permissionId">
-        /// The permission id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetRoleString(PermissionId permissionId)
-        {
-            switch (permissionId)
-            {
-                case PermissionId.host:
-                    return "Host";
-                case PermissionId.mini_host:
-                    return "Presenter";
-                case PermissionId.view:
-                    return "Participant";
-            }
+        ///// <summary>
+        ///// The get role string.
+        ///// </summary>
+        ///// <param name="permissionId">
+        ///// The permission id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="string"/>.
+        ///// </returns>
+        //private string GetRoleString(PermissionId permissionId)
+        //{
+        //    switch (permissionId)
+        //    {
+        //        case PermissionId.host:
+        //            return "Host";
+        //        case PermissionId.mini_host:
+        //            return "Presenter";
+        //        case PermissionId.view:
+        //            return "Participant";
+        //    }
 
-            return "Unknown";
-        }
+        //    return "Unknown";
+        //}
 
-        /// <summary>
-        /// The is participant synched.
-        /// </summary>
-        /// <param name="lmsUsers">
-        /// The LMS users.
-        /// </param>
-        /// <param name="participant">
-        /// The participant.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private bool IsParticipantSynched(List<LmsUserDTO> lmsUsers, PermissionInfo participant, AdobeConnectProvider provider)
-        {
-            bool found = false;
-            foreach (var lmsUser in lmsUsers)
-            {
-                if (this.LmsUserIsAcUser(lmsUser, participant, provider))
-                {
-                    found = true;
-                }
-            }
+        ///// <summary>
+        ///// The is participant synched.
+        ///// </summary>
+        ///// <param name="lmsUsers">
+        ///// The LMS users.
+        ///// </param>
+        ///// <param name="participant">
+        ///// The participant.
+        ///// </param>
+        ///// <param name="provider">
+        ///// The provider.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="bool"/>.
+        ///// </returns>
+        //private bool IsParticipantSynched(List<LmsUserDTO> lmsUsers, PermissionInfo participant, AdobeConnectProvider provider)
+        //{
+        //    bool found = false;
+        //    foreach (var lmsUser in lmsUsers)
+        //    {
+        //        if (this.LmsUserIsAcUser(lmsUser, participant, provider))
+        //        {
+        //            found = true;
+        //        }
+        //    }
 
-            return found;
-        }
+        //    return found;
+        //}
 
-        /// <summary>
-        /// The LMS user is AC user.
-        /// </summary>
-        /// <param name="lmsUser">
-        /// The LMS user.
-        /// </param>
-        /// <param name="participant">
-        /// The participant.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant, AdobeConnectProvider provider)
-        {
-            string email = lmsUser.GetEmail(), login = lmsUser.GetLogin();
-            var isACUser = participant.Login != null && ((email != null && email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
-                   || (login != null && login.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
-            if (isACUser)
-            {
-                return true;
-            }
-            var principal = provider.GetOneByPrincipalId(participant.PrincipalId);
-            if (principal.Success)
-            {
-                isACUser = principal.PrincipalInfo.Principal.Email.Equals(email)
-                           || principal.PrincipalInfo.Principal.Email.Equals(login);
-            }
+        ///// <summary>
+        ///// The LMS user is AC user.
+        ///// </summary>
+        ///// <param name="lmsUser">
+        ///// The LMS user.
+        ///// </param>
+        ///// <param name="participant">
+        ///// The participant.
+        ///// </param>
+        ///// <param name="provider">
+        ///// The provider.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="bool"/>.
+        ///// </returns>
+        //private bool LmsUserIsAcUser(LmsUserDTO lmsUser, PermissionInfo participant, AdobeConnectProvider provider)
+        //{
+        //    string email = lmsUser.GetEmail(), login = lmsUser.GetLogin();
+        //    var isACUser = participant.Login != null && ((email != null && email.Equals(participant.Login, StringComparison.OrdinalIgnoreCase))
+        //           || (login != null && login.Equals(participant.Login, StringComparison.OrdinalIgnoreCase)));
+        //    if (isACUser)
+        //    {
+        //        return true;
+        //    }
+        //    var principal = provider.GetOneByPrincipalId(participant.PrincipalId);
+        //    if (principal.Success)
+        //    {
+        //        isACUser = principal.PrincipalInfo.Principal.Email.Equals(email)
+        //                   || principal.PrincipalInfo.Principal.Email.Equals(login);
+        //    }
 
-            return isACUser;
-        }
+        //    return isACUser;
+        //}
 
         /// <summary>
         /// The get group principals.
@@ -1012,7 +963,7 @@
         /// <returns>
         /// The <see cref="List{Principal}"/>.
         /// </returns>
-        private List<Principal> GetGroupPrincipals(AdobeConnectProvider provider, IEnumerable<string> groupIds)
+        private static List<Principal> GetGroupPrincipals(AdobeConnectProvider provider, IEnumerable<string> groupIds)
         {
             var principals = new List<Principal>();
 
@@ -1023,6 +974,54 @@
             }
 
             return principals;
+        }
+
+        /// <summary>
+        /// The get canvas users.
+        /// </summary>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <param name="meeting">
+        /// The meeting.
+        /// </param>
+        /// <param name="lmsUserId">
+        /// The LMS User Id.
+        /// </param>
+        /// <param name="courseId">
+        /// The course id.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="extraData">
+        /// The extra Data.
+        /// </param>
+        /// <param name="forceUpdate">
+        /// The force Update.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{LmsUserDTO}"/>.
+        /// </returns>
+        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        {
+            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
+            {
+                case LmsProviderNames.Canvas:
+                    error = null;
+                    return this.GetCanvasUsers(credentials, lmsUserId, courseId);
+                case LmsProviderNames.BrainHoney:
+                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
+                case LmsProviderNames.Blackboard:
+                    return this.GetBlackBoardUsers(credentials, meeting, courseId, out error, forceUpdate);
+                case LmsProviderNames.Moodle:
+                    return this.GetMoodleUsers(credentials, courseId, out error);
+                case LmsProviderNames.Sakai:
+                    return this.GetSakaiUsers(credentials, extraData as LtiParamDTO, out error);
+            }
+
+            error = null;
+            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -1084,7 +1083,7 @@
                 }
             }
 
-            return this.GroupUsers(users);
+            return GroupUsers(users);
         }
 
         /// <summary>
@@ -1109,7 +1108,7 @@
         {
             Session session = extraData == null ? null : (Session)extraData;
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, session);
-            return this.GroupUsers(users);
+            return GroupUsers(users);
         }
 
         /// <summary>
@@ -1136,7 +1135,7 @@
                     param.ext_ims_lis_memberships_url ?? param.ext_ims_lti_tool_setting_url,
                     param.ext_ims_lis_memberships_id,
                     out error);
-                return this.GroupUsers(users);
+                return GroupUsers(users);
             }
 
             error = "extra data is not set";
@@ -1161,7 +1160,7 @@
         private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int moodleCourseId, out string error)
         {
             var users = this.moodleApi.GetUsersForCourse(credentials, moodleCourseId, out error);
-            return this.GroupUsers(users);
+            return GroupUsers(users);
         }
 
         /// <summary>
@@ -1236,7 +1235,7 @@
                 }
             }
 
-            return this.GroupUsers(cachedUsers);
+            return GroupUsers(cachedUsers);
         }
 
         /// <summary>
@@ -1293,7 +1292,7 @@
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
+        private static List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
             if (users != null && users.Any())
             {
@@ -1353,13 +1352,13 @@
         /// <returns>
         /// The <see cref="List{PermissionInfo}"/>.
         /// </returns>
-        private List<PermissionInfo> ProcessACMeetingAttendees(
+        private static List<PermissionInfo> ProcessACMeetingAttendees(
             HashSet<string> nonEditable,
             AdobeConnectProvider provider,
             List<PermissionInfo> values,
             HashSet<string> alreadyAdded)
         {
-            var groupValues = this.GetGroupPrincipals(provider, values.Where(x => x.HasChildren).Select(v => v.PrincipalId));
+            var groupValues = GetGroupPrincipals(provider, values.Where(x => x.HasChildren).Select(v => v.PrincipalId));
             foreach (var g in groupValues)
             {
                 if (alreadyAdded.Contains(g.PrincipalId))
@@ -1396,7 +1395,7 @@
         /// <param name="nonEditable">
         /// The non editable.
         /// </param>
-        private void GetMeetingAttendees(
+        private static void GetMeetingAttendees(
             AdobeConnectProvider provider,
             string meetingSco,
             out List<PermissionInfo> hosts,
@@ -1435,11 +1434,13 @@
 
             nonEditable = nonEditable ?? new HashSet<string>();
 
-            hosts = this.ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
-            presenters = this.ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
-            participants = this.ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
+            hosts = ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
+            presenters = ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
+            participants = ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
         }
 
         #endregion
+
     }
+
 }

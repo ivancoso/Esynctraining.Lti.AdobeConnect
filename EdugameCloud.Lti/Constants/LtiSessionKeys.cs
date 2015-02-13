@@ -5,20 +5,20 @@
     /// </summary>
     public class LtiSessionKeys
     {
-        /// <summary>
-        ///     The credentials session key pattern.
-        /// </summary>
-        public const string CredentialsSessionKeyPattern = "{0}Credentials";
+        ///// <summary>
+        /////     The credentials session key pattern.
+        ///// </summary>
+        //public const string CredentialsSessionKeyPattern = "{0}Credentials";
 
-        /// <summary>
-        ///     The parameter session key pattern.
-        /// </summary>
-        public const string ParamSessionKeyPattern = "{0}Param";
+        ///// <summary>
+        /////     The parameter session key pattern.
+        ///// </summary>
+        //public const string ParamSessionKeyPattern = "{0}Param";
 
-        /// <summary>
-        ///     The AC password session key pattern.
-        /// </summary>
-        public const string ACPasswordSessionKeyPattern = "{0}ACPassword";
+        ///// <summary>
+        /////     The AC password session key pattern.
+        ///// </summary>
+        //public const string ACPasswordSessionKeyPattern = "{0}ACPassword";
 
         /// <summary>
         ///     The provider session key pattern.

@@ -7,7 +7,6 @@
     using Esynctraining.Core.Business.Queries;
 
     using NHibernate;
-    using NHibernate.Criterion;
     using NHibernate.SqlCommand;
 
     /// <summary>

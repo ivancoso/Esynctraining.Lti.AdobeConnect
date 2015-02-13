@@ -138,7 +138,7 @@
         public bool TryRegisterEGCTool(string lmsDomain, string registrationPassword, string initialPassword, out string error)
         {
             WebserviceWrapper client;
-            if (!this.InitializeClient(this.FixHostFromString(lmsDomain), out client, out error))
+            if (!InitializeClient(FixHostFromString(lmsDomain), out client, out error))
             {
                 return false;
             }
@@ -150,7 +150,7 @@
                 this.ToolMethods.ToArray(),
                 this.TicketMethods.ToArray());
 
-            if (this.HadError(client, out error))
+            if (HadError(client, out error))
             {
                 return false;
             }
@@ -163,40 +163,7 @@
 
             return result.status;
         }
-
-        /// <summary>
-        /// The create rest client.
-        /// </summary>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="companyLms">
-        /// The company LMS.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RestClient"/>.
-        /// </returns>
-        public WebserviceWrapper BeginBatch(out string error, CompanyLms companyLms)
-        {
-            var lmsUser = companyLms.AdminUser;
-            
-            if (lmsUser != null || companyLms.EnableProxyToolMode == true)
-            {
-                string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
-                string toolPassword = string.IsNullOrWhiteSpace(companyLms.ProxyToolSharedPassword)
-                                          ? defaultToolRegistrationPassword
-                                          : companyLms.ProxyToolSharedPassword;
-                string lmsDomain = companyLms.LmsDomain;
-                bool useSsl = companyLms.UseSSL ?? false;
-                return companyLms.EnableProxyToolMode == true
-                           ? this.LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
-                           : this.LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
-            }
-
-            error = "ASP.NET Session is expired";
-            return null;
-        }
-
+        
         /// <summary>
         /// The get users for course.
         /// </summary>
@@ -246,7 +213,7 @@
                         if (membership != null)
                         {
                             var enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
-                            if (this.HadError(c, out errorDuringEnrollments))
+                            if (HadError(c, out errorDuringEnrollments))
                             {
                                 return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                             }
@@ -266,7 +233,7 @@
                                     var users = userService.getUser(userFilter);
                                     if (users == null)
                                     {
-                                        this.HadError(c, out errorDuringEnrollments);
+                                        HadError(c, out errorDuringEnrollments);
                                         return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                                     }
 
@@ -290,7 +257,7 @@
                                                                login_id = user.With(x => x.name),
                                                                primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
                                                                name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
-                                                               lms_role = this.GetRole(e.roleId, roles),
+                                                               lms_role = GetRole(e.roleId, roles),
                                                                lti_id = ltiIdString
                                                            };
                                             }).ToList();
@@ -310,37 +277,6 @@
             }
 
             return enrollmentsResult;
-        }
-
-        /// <summary>
-        /// The had error.
-        /// </summary>
-        /// <param name="ws">
-        /// The WS.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public bool HadError(WebserviceWrapper ws, out string error)
-        {
-            error = null;
-            if (ws == null)
-            {
-                error = "NULL webservicewrapper";
-                return true;
-            }
-
-            string lastError = ws.getLastError();
-            if (lastError != null)
-            {
-                error = lastError;
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>
@@ -373,9 +309,9 @@
         {
             try
             {
-                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
+                var lmsDomainFixed = GetHost(lmsDomain, useSsl);
                 WebserviceWrapper client;
-                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
+                if (!InitializeClient(lmsDomainFixed, out client, out error))
                 {
                     return null;
                 }
@@ -385,7 +321,7 @@
                     return client;
                 }
 
-                if (this.HadError(client, out error))
+                if (HadError(client, out error))
                 {
                     return null;
                 }
@@ -426,15 +362,15 @@
         {
             try
             {
-                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
+                var lmsDomainFixed = GetHost(lmsDomain, useSsl);
                 WebserviceWrapper client;
-                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
+                if (!InitializeClient(lmsDomainFixed, out client, out error))
                 {
                     return null;
                 }
 
                 client.initialize_v1();
-                if (this.HadError(client, out error))
+                if (HadError(client, out error))
                 {
                     return null;
                 }
@@ -444,7 +380,7 @@
                     return client;
                 }
 
-                if (this.HadError(client, out error))
+                if (HadError(client, out error))
                 {
                     return null;
                 }
@@ -477,50 +413,83 @@
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
-        public WebserviceWrapper LoginTicketAndCreateAClient(
-            out string error,
-            bool useSsl,
-            string lmsDomain,
-            string password)
-        {
-            try
-            {
-                var lmsDomainFixed = this.GetHost(lmsDomain, useSsl);
-                WebserviceWrapper client;
-                if (!this.InitializeClient(lmsDomainFixed, out client, out error))
-                {
-                    return null;
-                }
+        //public WebserviceWrapper LoginTicketAndCreateAClient(
+        //    out string error,
+        //    bool useSsl,
+        //    string lmsDomain,
+        //    string password)
+        //{
+        //    try
+        //    {
+        //        var lmsDomainFixed = GetHost(lmsDomain, useSsl);
+        //        WebserviceWrapper client;
+        //        if (!InitializeClient(lmsDomainFixed, out client, out error))
+        //        {
+        //            return null;
+        //        }
 
-                client.initialize_v1();
-                if (this.HadError(client, out error))
-                {
-                    return null;
-                }
+        //        client.initialize_v1();
+        //        if (HadError(client, out error))
+        //        {
+        //            return null;
+        //        }
 
-                if (client.loginTicket(password))
-                {
-                    return client;
-                }
+        //        if (client.loginTicket(password))
+        //        {
+        //            return client;
+        //        }
 
-                if (this.HadError(client, out error))
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
-                error = ex.Message;
-                return null;
-            }
+        //        if (HadError(client, out error))
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        error = ex.Message;
+        //        return null;
+        //    }
 
-            error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
-            return null;
-        }
+        //    error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
+        //    return null;
+        //}
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The create rest client.
+        /// </summary>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="companyLms">
+        /// The company LMS.
+        /// </param>
+        /// <returns>
+        /// The <see cref="RestClient"/>.
+        /// </returns>
+        private WebserviceWrapper BeginBatch(out string error, CompanyLms companyLms)
+        {
+            var lmsUser = companyLms.AdminUser;
+
+            if (lmsUser != null || companyLms.EnableProxyToolMode == true)
+            {
+                string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
+                string toolPassword = string.IsNullOrWhiteSpace(companyLms.ProxyToolSharedPassword)
+                                          ? defaultToolRegistrationPassword
+                                          : companyLms.ProxyToolSharedPassword;
+                string lmsDomain = companyLms.LmsDomain;
+                bool useSsl = companyLms.UseSSL ?? false;
+                return companyLms.EnableProxyToolMode == true
+                           ? this.LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
+                           : this.LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
+            }
+
+            error = "ASP.NET Session is expired";
+            return null;
+        }
 
         /// <summary>
         /// The initialize client.
@@ -537,16 +506,16 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
+        private static bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
         {
             client = new WebserviceWrapper(lmsDomain, VendorEgc, ProgramLti, TimeSpan.FromMinutes(30).Seconds);
-            if (this.HadError(client, out error))
+            if (HadError(client, out error))
             {
                 return false;
             }
 
             client.initialize_v1();
-            return !this.HadError(client, out error);
+            return !HadError(client, out error);
         }
 
         /// <summary>
@@ -561,7 +530,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetRole(string roleId, IEnumerable<CourseMembershipRoleVO> availableRoles)
+        private static string GetRole(string roleId, IEnumerable<CourseMembershipRoleVO> availableRoles)
         {
             var role =
                 availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
@@ -585,7 +554,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetHost(string lmsDomain, bool useSsl)
+        private static string GetHost(string lmsDomain, bool useSsl)
         {
             Match match = portRegex.Match(lmsDomain);
             bool endsWithPort = match.Success;
@@ -605,7 +574,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string FixHostFromString(string lmsDomain)
+        private static string FixHostFromString(string lmsDomain)
         {
             Match match = portRegex.Match(lmsDomain);
             bool endsWithPort = match.Success;
@@ -683,6 +652,38 @@
             return default(T);
         }
 
+        /// <summary>
+        /// The had error.
+        /// </summary>
+        /// <param name="ws">
+        /// The WS.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        private static bool HadError(WebserviceWrapper ws, out string error)
+        {
+            error = null;
+            if (ws == null)
+            {
+                error = "NULL webservicewrapper";
+                return true;
+            }
+
+            string lastError = ws.getLastError();
+            if (lastError != null)
+            {
+                error = lastError;
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
+
     }
 }

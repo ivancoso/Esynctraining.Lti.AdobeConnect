@@ -93,7 +93,7 @@
         /// <returns>
         /// The <see cref="MoodleSession"/>.
         /// </returns>
-        public MoodleSession BeginBatch(out string error, CompanyLms companyLms)
+        private MoodleSession BeginBatch(out string error, CompanyLms companyLms)
         {
             if (companyLms == null)
             {

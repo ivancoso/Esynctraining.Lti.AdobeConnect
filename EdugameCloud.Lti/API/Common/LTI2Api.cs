@@ -71,7 +71,7 @@
             error = null;
             try
             {
-                XElement response = this.CreateSignedRequestAndGetResponse(
+                XElement response = CreateSignedRequestAndGetResponse(
                     company, 
                     servicePattern, 
                     lis_result_sourcedid, 
@@ -128,7 +128,7 @@
         /// <returns>
         /// The <see cref="XElement"/>.
         /// </returns>
-        private XElement CreateSignedRequestAndGetResponse(
+        private static XElement CreateSignedRequestAndGetResponse(
             CompanyLms company, 
             string serviceUrl, 
             string lis_result_sourcedid, 

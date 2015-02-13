@@ -128,76 +128,76 @@
             }
         }
 
-        /// <summary>
-        /// The create announcement.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="announcementTitle">
-        /// The announcement title.
-        /// </param>
-        /// <param name="announcementMessage">
-        /// The announcement message.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        public void CreateAnnouncement(CompanyLms credentials, int courseId, string announcementTitle, string announcementMessage, out string error, Session session = null)
-        {
-            XElement courseResult = this.LoginIfNecessary(
-                session,
-                s =>
-                s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
-                credentials,
-                out error);
-            if (courseResult == null)
-            {
-                error = error ?? "DLAP. Unable to retrive course from API";
-                return;
-            }
+        ///// <summary>
+        ///// The create announcement.
+        ///// </summary>
+        ///// <param name="credentials">
+        ///// The credentials.
+        ///// </param>
+        ///// <param name="courseId">
+        ///// The course id.
+        ///// </param>
+        ///// <param name="announcementTitle">
+        ///// The announcement title.
+        ///// </param>
+        ///// <param name="announcementMessage">
+        ///// The announcement message.
+        ///// </param>
+        ///// <param name="error">
+        ///// The error.
+        ///// </param>
+        ///// <param name="session">
+        ///// The session.
+        ///// </param>
+        //public void CreateAnnouncement(CompanyLms credentials, int courseId, string announcementTitle, string announcementMessage, out string error, Session session = null)
+        //{
+        //    XElement courseResult = this.LoginIfNecessary(
+        //        session,
+        //        s =>
+        //        s.Get(Commands.Courses.GetOne, string.Format(Parameters.Courses.GetOne, courseId).ToParams()),
+        //        credentials,
+        //        out error);
+        //    if (courseResult == null)
+        //    {
+        //        error = error ?? "DLAP. Unable to retrive course from API";
+        //        return;
+        //    }
 
-            if (!Session.IsSuccess(courseResult))
-            {
-                error = "DLAP. Unable to get course: " + Session.GetMessage(courseResult);
-                this.logger.Error(error);
-            }
+        //    if (!Session.IsSuccess(courseResult))
+        //    {
+        //        error = "DLAP. Unable to get course: " + Session.GetMessage(courseResult);
+        //        this.logger.Error(error);
+        //    }
 
-            if (session != null)
-            {
-                /*[<roles>
-                When entityid refers to a course or section, the recipient roles within the course or section for this announcement.
-                <role flags="enum" />
-                . . .
-                </roles>]*/
-                var course = courseResult.XPathSelectElement("/course");
-                var courseName = course.XPathEvaluate("string(@title)").ToString();
-                var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
-                var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
-                var announcementName = Guid.NewGuid().ToString("N") + ".zip";
-                //// var groupsXml = this.FormatGroupsXml(session, courseId);
+        //    if (session != null)
+        //    {
+        //        /*[<roles>
+        //        When entityid refers to a course or section, the recipient roles within the course or section for this announcement.
+        //        <role flags="enum" />
+        //        . . .
+        //        </roles>]*/
+        //        var course = courseResult.XPathSelectElement("/course");
+        //        var courseName = course.XPathEvaluate("string(@title)").ToString();
+        //        var courseStartDate = course.XPathEvaluate("string(@startdate)").ToString();
+        //        var courseEndDate = course.XPathEvaluate("string(@enddate)").ToString();
+        //        var announcementName = Guid.NewGuid().ToString("N") + ".zip";
+        //        //// var groupsXml = this.FormatGroupsXml(session, courseId);
 
-                // ReSharper disable once UnusedVariable
-                XElement announcementResult = session.Post(
-                    Commands.Announcements.Put + "&"
-                    + string.Format(Parameters.Announcements.Put, courseId, announcementName),
-                    new XElement(
-                        "announcement",
-                        new XAttribute("to", courseName),
-                        new XAttribute("entityid", courseId),
-                        new XAttribute("title", announcementTitle),
-                        new XAttribute("startdate", courseStartDate),
-                        new XAttribute("enddate", courseEndDate),
-                        new XAttribute("recurse", "false"),
-                        new XElement("body", new XCData(announcementMessage))));
-            }
-        }
+        //        // ReSharper disable once UnusedVariable
+        //        XElement announcementResult = session.Post(
+        //            Commands.Announcements.Put + "&"
+        //            + string.Format(Parameters.Announcements.Put, courseId, announcementName),
+        //            new XElement(
+        //                "announcement",
+        //                new XAttribute("to", courseName),
+        //                new XAttribute("entityid", courseId),
+        //                new XAttribute("title", announcementTitle),
+        //                new XAttribute("startdate", courseStartDate),
+        //                new XAttribute("enddate", courseEndDate),
+        //                new XAttribute("recurse", "false"),
+        //                new XElement("body", new XCData(announcementMessage))));
+        //    }
+        //}
 
         /// <summary>
         /// The get users for course.
@@ -252,7 +252,7 @@
                 XElement user = enrollment.XPathSelectElement("user");
                 if (!string.IsNullOrWhiteSpace(privileges) && user != null && this.IsEnrollmentActive(status))
                 {
-                    var role = this.ProcessRole(privileges);
+                    var role = ProcessRole(privileges);
                     string userId = user.XPathEvaluate("string(@id)").ToString();
                     string firstName = user.XPathEvaluate("string(@firstname)").ToString();
                     string lastName = user.XPathEvaluate("string(@lastname)").ToString();
@@ -421,7 +421,7 @@
                     {
                         CourseId = courseId,
                         UserId = userId,
-                        Role = this.ProcessRole(role),
+                        Role = ProcessRole(role),
                         Email = email,
                         UserName = userName,
                         Status = status,
@@ -535,14 +535,14 @@
                     switch (type)
                     {
                         case SignalTypes.EnrollmentChanged:
-                            this.ProcessEnrollment(signalId, entityid, type, data, signal, result);
+                            ProcessEnrollment(signalId, entityid, type, data, signal, result);
                             break;
                         case SignalTypes.CourseDeleted:
-                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
+                            ProcessCourseSignal(data, result, signalId, entityid, type);
 
                             break;
                         case SignalTypes.CourseCreated:
-                            this.ProcessCourseSignal(data, result, signalId, entityid, type);
+                            ProcessCourseSignal(data, result, signalId, entityid, type);
 
                             break;
                     }
@@ -577,7 +577,7 @@
         /// <param name="result">
         /// The result.
         /// </param>
-        private void ProcessEnrollment(long signalId, int entityid, string type, XElement data, XElement signal, List<Signal> result)
+        private static void ProcessEnrollment(long signalId, int entityid, string type, XElement data, XElement signal, List<Signal> result)
         {
             var enrollmentSignal = new EnrollmentSignal(signalId, entityid, type)
                                        {
@@ -586,8 +586,8 @@
                                        };
             if (enrollmentSignal.NewStatus != 0)
             {
-                enrollmentSignal.OldRole = this.ProcessRole(signal.XPathEvaluate("string(@oldflags)").With(x => x.ToString()));
-                enrollmentSignal.NewRole = this.ProcessRole(signal.XPathEvaluate("string(@newflags)").With(x => x.ToString()));
+                enrollmentSignal.OldRole = ProcessRole(signal.XPathEvaluate("string(@oldflags)").With(x => x.ToString()));
+                enrollmentSignal.NewRole = ProcessRole(signal.XPathEvaluate("string(@newflags)").With(x => x.ToString()));
             }
 
             result.Add(enrollmentSignal);
@@ -611,7 +611,7 @@
         /// <param name="type">
         /// The type.
         /// </param>
-        private void ProcessCourseSignal(XElement data, List<Signal> result, long signalId, int entityid, string type)
+        private static void ProcessCourseSignal(XElement data, List<Signal> result, long signalId, int entityid, string type)
         {
             var changedEntityType = data.XPathEvaluate("string(@entitytype)").With(x => x.ToString());
             if (changedEntityType == "C")
@@ -630,40 +630,40 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string ProcessRole(string privileges)
+        private static string ProcessRole(string privileges)
         {
             string role = Roles.Student;
             long privilegesVal;
             if (long.TryParse(privileges, out privilegesVal))
             {
-                if (this.CheckRole(privilegesVal, RightsFlags.ControlCourse))
+                if (CheckRole(privilegesVal, RightsFlags.ControlCourse))
                 {
                     role = Roles.Owner;
                 }
-                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                         && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                         && this.CheckRole(privilegesVal, RightsFlags.GradeAssignment)
-                         && this.CheckRole(privilegesVal, RightsFlags.GradeForum)
-                         && this.CheckRole(privilegesVal, RightsFlags.GradeExam)
-                         && this.CheckRole(privilegesVal, RightsFlags.SetupGradebook)
-                         && this.CheckRole(privilegesVal, RightsFlags.ReadGradebook)
-                         && this.CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
-                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                         && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                         && CheckRole(privilegesVal, RightsFlags.GradeAssignment)
+                         && CheckRole(privilegesVal, RightsFlags.GradeForum)
+                         && CheckRole(privilegesVal, RightsFlags.GradeExam)
+                         && CheckRole(privilegesVal, RightsFlags.SetupGradebook)
+                         && CheckRole(privilegesVal, RightsFlags.ReadGradebook)
+                         && CheckRole(privilegesVal, RightsFlags.SubmitFinalGrade)
+                         && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
                 {
                     role = Roles.Teacher;
                 }
-                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse)
-                         && this.CheckRole(privilegesVal, RightsFlags.UpdateCourse)
-                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
+                else if (CheckRole(privilegesVal, RightsFlags.ReadCourse)
+                         && CheckRole(privilegesVal, RightsFlags.UpdateCourse)
+                         && CheckRole(privilegesVal, RightsFlags.ReadCourseFull))
                 {
                     role = Roles.Author;
                 }
-                else if (this.CheckRole(privilegesVal, RightsFlags.Participate)
-                         && this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                else if (CheckRole(privilegesVal, RightsFlags.Participate)
+                         && CheckRole(privilegesVal, RightsFlags.ReadCourse))
                 {
                     role = Roles.Student;
                 }
-                else if (this.CheckRole(privilegesVal, RightsFlags.ReadCourse))
+                else if (CheckRole(privilegesVal, RightsFlags.ReadCourse))
                 {
                     role = Roles.Reader;
                 }
@@ -673,42 +673,42 @@
             return role;
         }
 
-        /// <summary>
-        /// The format groups xml.
-        /// </summary>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        // ReSharper disable once UnusedMember.Local
-        private string FormatGroupsXml(Session session, int courseId)
-        {
-            var xml = "<groups/>";
-            var groupsResult = session.Get(Commands.Groups.List, string.Format(Parameters.Groups.List, courseId));
-            if (groupsResult != null)
-            {
-                var groups = groupsResult.XPathSelectElements("/enrollments/enrollment").ToList();
-                if (groups.Any())
-                {
-                    xml = "<groups>";
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach (XElement group in groups)
-                    {
-                        string groupId = group.XPathEvaluate("string(@id)").ToString();
-                        xml += string.Format(@"<group id=""{0}"" />", groupId);
-                    }
+        ///// <summary>
+        ///// The format groups xml.
+        ///// </summary>
+        ///// <param name="session">
+        ///// The session.
+        ///// </param>
+        ///// <param name="courseId">
+        ///// The course id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="string"/>.
+        ///// </returns>
+        //// ReSharper disable once UnusedMember.Local
+        //private static string FormatGroupsXml(Session session, int courseId)
+        //{
+        //    var xml = "<groups/>";
+        //    var groupsResult = session.Get(Commands.Groups.List, string.Format(Parameters.Groups.List, courseId));
+        //    if (groupsResult != null)
+        //    {
+        //        var groups = groupsResult.XPathSelectElements("/enrollments/enrollment").ToList();
+        //        if (groups.Any())
+        //        {
+        //            xml = "<groups>";
+        //            // ReSharper disable once LoopCanBeConvertedToQuery
+        //            foreach (XElement group in groups)
+        //            {
+        //                string groupId = group.XPathEvaluate("string(@id)").ToString();
+        //                xml += string.Format(@"<group id=""{0}"" />", groupId);
+        //            }
 
-                    xml += "</groups>";
-                }
-            }
+        //            xml += "</groups>";
+        //        }
+        //    }
 
-            return xml;
-        }
+        //    return xml;
+        //}
 
         /// <summary>
         /// The check role.
@@ -722,7 +722,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
+        private static bool CheckRole(long privilegesVal, RightsFlags roleToCheck)
         {
             return ((RightsFlags)privilegesVal & roleToCheck) == roleToCheck;
         }

@@ -23,7 +23,7 @@
     /// <summary>
     ///     The meeting setup.
     /// </summary>
-    public class MeetingSetup
+    public sealed class MeetingSetup
     {
         #region Properties
 
@@ -470,7 +470,7 @@
                 return new List<ACSessionDTO>();
             }
 
-            return this.GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
+            return GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
         /// <summary>
@@ -508,7 +508,7 @@
                 return new List<ACSessionParticipantDTO>();
             }
 
-            return this.GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
+            return GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
         /// <summary>
@@ -1346,7 +1346,7 @@
         /// <returns>
         /// The <see cref="List{ACSessionParticipantDTO}"/>.
         /// </returns>
-        private List<ACSessionParticipantDTO> GetAttendanceReport(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
+        private static List<ACSessionParticipantDTO> GetAttendanceReport(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -1391,7 +1391,7 @@
         /// <returns>
         /// The <see cref="List{ACSessionDTO}"/>.
         /// </returns>
-        private List<ACSessionDTO> GetSessionsWithParticipants(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
+        private static List<ACSessionDTO> GetSessionsWithParticipants(string meetingId, AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
         {
             try
             {

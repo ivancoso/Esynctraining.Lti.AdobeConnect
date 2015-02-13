@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
-    using System.IO;
     using System.Runtime.Serialization;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
