@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace EdugameCloud.Lti.Persistence
+﻿namespace EdugameCloud.Lti.Persistence
 {
     using System.Reflection;
 
