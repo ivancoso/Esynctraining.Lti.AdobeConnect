@@ -11,6 +11,7 @@ namespace DotAmf.Serialization
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Configuration;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -1792,8 +1793,14 @@ namespace DotAmf.Serialization
         {
             int index;
 
+            bool dateReferencesEnabled;
+            dateReferencesEnabled = ConfigurationManager.AppSettings["EnableDotAMFDateReferences"] == null
+                                      || !bool.TryParse(
+                                          ConfigurationManager.AppSettings["EnableDotAMFDateReferences"],
+                                          out dateReferencesEnabled) || dateReferencesEnabled;
+
             // Write a date
-            if (context.AmfVersion != AmfVersion.Amf3 || (index = context.References.IndexOf(value)) == -1)
+            if (!dateReferencesEnabled || context.AmfVersion != AmfVersion.Amf3 || (index = context.References.IndexOf(value)) == -1)
             {
                 double timestamp = DataContractHelper.ConvertToTimestamp(value);
                 context.References.Add(new AmfReference { Reference = value, AmfxType = AmfxContent.Date });
@@ -1889,8 +1896,16 @@ namespace DotAmf.Serialization
         {
             int index;
 
+            bool stringReferencesEnabled;
+            stringReferencesEnabled = ConfigurationManager.AppSettings["EnableDotAMFStringReferences"] == null
+                                      || !bool.TryParse(
+                                          ConfigurationManager.AppSettings["EnableDotAMFStringReferences"],
+                                          out stringReferencesEnabled) || stringReferencesEnabled;
+
             // Write a string
-            if (value == string.Empty || context.AmfVersion != AmfVersion.Amf3
+            if (!stringReferencesEnabled 
+                || value == string.Empty 
+                || context.AmfVersion != AmfVersion.Amf3
                 || (index = context.StringReferences.IndexOf(value)) == -1)
             {
                 if (value != string.Empty)
