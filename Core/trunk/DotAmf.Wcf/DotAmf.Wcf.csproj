@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7F1303A6-9994-490E-B6B3-BDC5113281EE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DotAmf.ServiceModel</RootNamespace>
+    <AssemblyName>DotAmf.Wcf</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Channels\Messages\AmfBatchMessage.cs" />
+    <Compile Include="Channels\Messages\AmfMessageBase.cs" />
+    <Compile Include="Configuration\AmfEndpointCapabilities.cs" />
+    <Compile Include="Description\AmfOperationBehavior.cs" />
+    <Compile Include="Dispatcher\AmfEndpointContext.cs" />
+    <Compile Include="Dispatcher\AmfErrorHandler.cs" />
+    <Compile Include="Dispatcher\AmfMessageFilter.cs" />
+    <Compile Include="Dispatcher\AmfMessageInspector.cs" />
+    <Compile Include="Dispatcher\AmfOperationInvoker.cs" />
+    <Compile Include="Dispatcher\AmfOperationKind.cs" />
+    <Compile Include="Configuration\AmfBehaviorExtensionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Description\AmfEndpointBehavior.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Configuration\AmfBindingExtensionElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Channels\AmfEncodingBindingElement.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Channels\AmfEncoder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Channels\AmfEncoderFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Channels\Messages\AmfGenericMessage.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\AmfDispatchOperationSelector.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Dispatcher\AmfGenericOperationFormatter.cs" />
+    <Compile Include="Dispatcher\AmfOperationUtil.cs" />
+    <Compile Include="Dispatcher\AmfCommandFormatter.cs" />
+    <Compile Include="Dispatcher\AmfCommandInvoker.cs" />
+    <Compile Include="Dispatcher\AmfFaultInvoker.cs" />
+    <Compile Include="Errors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Errors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Faults\AmfOperationNotFoundException.cs" />
+    <Compile Include="Messaging\AbstractMessage.cs" />
+    <Compile Include="Messaging\AcknowledgeMessage.cs" />
+    <Compile Include="Messaging\CommandMessage.cs" />
+    <Compile Include="Messaging\ErrorMessage.cs" />
+    <Compile Include="Messaging\MessagingHeaders.cs" />
+    <Compile Include="Messaging\RemotingMessage.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DotAmf\DotAmf.csproj">
+      <Project>{DBF8762E-17D7-4AAE-9F06-133DE9870FBC}</Project>
+      <Name>DotAmf</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Errors.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Errors.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DotAmf.Wcf.nuspec" />
+    <None Include="packages.config" />
+    <None Include="_CreateNewNuGetPackage\Config.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
+ECHO Creating NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -BuildConfiguration '$(ConfigurationName)' -BuildPlatform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
