@@ -200,9 +200,9 @@ namespace DotAmf.ServiceModel.Channels
                 this._serializer.ReadObject(stream, output);
                 output.Flush();
                 ms.Seek(0, SeekOrigin.Begin);
-
                 // Write AMFX message
-                return Message.CreateMessage(MessageVersion.None, null, AmfxReader.Create(ms, true));
+                var result = Message.CreateMessage(MessageVersion.None, null, AmfxReader.Create(ms, true));
+                return result;
             }
             catch
             {
@@ -276,7 +276,12 @@ namespace DotAmf.ServiceModel.Channels
                     message.WriteBodyContents(writer);
                     writer.Flush();
                     ms.Seek(0, SeekOrigin.Begin);
-
+//#if DEBUG
+//                    var sr = new StreamReader(ms);
+//                    var buffer = sr.ReadToEnd();
+//                    ms.Seek(0, SeekOrigin.Begin);
+//
+//#endif
                     // Encode binary AMF packet from AMFX data
                     this._serializer.WriteObject(stream, AmfxReader.Create(ms));
                 }

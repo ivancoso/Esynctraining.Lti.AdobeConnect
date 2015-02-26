@@ -1090,7 +1090,7 @@ namespace DotAmf.Serialization
         {
             int length = Convert.ToInt32(reader.GetAttribute(AmfxContent.ArrayLength));
 
-            var result = new object[length];
+            var result = length == 0 ? null : new object[length];
             context.References.Add(new AmfReference { Reference = result, AmfxType = AmfxContent.Array });
 
             int referenceIndex = context.References.Count - 1;
