@@ -276,12 +276,7 @@ namespace DotAmf.ServiceModel.Channels
                     message.WriteBodyContents(writer);
                     writer.Flush();
                     ms.Seek(0, SeekOrigin.Begin);
-//#if DEBUG
-//                    var sr = new StreamReader(ms);
-//                    var buffer = sr.ReadToEnd();
-//                    ms.Seek(0, SeekOrigin.Begin);
-//
-//#endif
+
                     // Encode binary AMF packet from AMFX data
                     this._serializer.WriteObject(stream, AmfxReader.Create(ms));
                 }

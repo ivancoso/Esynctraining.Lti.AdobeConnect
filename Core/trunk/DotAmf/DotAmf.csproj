@@ -75,6 +75,7 @@
     <Compile Include="Decoder\IAmfDecoder.cs" />
     <Compile Include="Serialization\DataContractHelper.cs" />
     <Compile Include="Serialization\TypeAdapters\BaseTypeAdapter.cs" />
+    <Compile Include="Serialization\TypeAdapters\StringArrayTypeAdapter.cs" />
     <Compile Include="Serialization\TypeAdapters\FloatTypeAdapter.cs" />
     <Compile Include="Serialization\TypeAdapters\GuidTypeAdapter.cs" />
     <Compile Include="Serialization\TypeAdapters\DecimalTypeAdapter.cs" />
