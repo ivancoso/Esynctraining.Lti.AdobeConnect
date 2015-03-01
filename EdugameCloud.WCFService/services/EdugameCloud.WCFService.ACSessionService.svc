@@ -1,1 +1,0 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="EdugameCloud.WCFService.ACSessionService" CodeBehind="EdugameCloud.WCFService.ACSessionService.svc.cs" %>
