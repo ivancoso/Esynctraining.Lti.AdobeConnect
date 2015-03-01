@@ -4,6 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -36,8 +37,8 @@
                 this.companyId = user.Company.Id;
                 this.createdBy = user.CreatedBy.Return(x => x.Id, (int?)null);
                 this.modifiedBy = user.ModifiedBy.Return(x => x.Id, (int?)null);
-                this.dateCreated = user.DateCreated;
-                this.dateModified = user.DateModified;
+                this.dateCreated = user.DateCreated.ConvertToUnixTimestamp();
+                this.dateModified = user.DateModified.ConvertToUnixTimestamp();
                 this.email = user.Email;
                 this.logoId = user.Logo.Return(x => x.Id, (Guid?)null);
                 this.firstName = user.FirstName;
@@ -55,6 +56,9 @@
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the logo id.
+        /// </summary>
         [DataMember]
         public Guid? logoId { get; set; }
 
@@ -69,6 +73,7 @@
             {
                 return this.firstName + ' ' + this.lastName;
             }
+
             set { }
         }
         // ReSharper restore ValueParameterNotUsed
@@ -83,91 +88,91 @@
         /// Gets or sets id
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         /// <summary>
         ///     Gets or sets the age of a user.
         /// </summary>
         [DataMember]
-        public virtual int companyId { get; set; }
+        public int companyId { get; set; }
 
         /// <summary>
         /// Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int? createdBy { get; set; }
+        public int? createdBy { get; set; }
 
         /// <summary>
         /// Gets or sets the modified by.
         /// </summary>
         [DataMember]
-        public virtual int? modifiedBy { get; set; }
+        public int? modifiedBy { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the email.
         /// </summary>
         [DataMember]
-        public virtual string email { get; set; }
+        public string email { get; set; }
 
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
         [DataMember]
-        public virtual string firstName { get; set; }
+        public string firstName { get; set; }
 
         /// <summary>
         /// Gets or sets the language id.
         /// </summary>
         [DataMember]
-        public virtual int languageId { get; set; }
+        public int languageId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
-        public virtual bool isActive { get; set; }
+        public bool isActive { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
         [DataMember]
-        public virtual string lastName { get; set; }
+        public string lastName { get; set; }
 
         /// <summary>
         /// Gets or sets the password.
         /// </summary>
         [DataMember]
-        public virtual string password { get; set; }
+        public string password { get; set; }
 
         /// <summary>
         /// Gets or sets the time zone id.
         /// </summary>
         [DataMember]
-        public virtual int timeZoneId { get; set; }
+        public int timeZoneId { get; set; }
 
         /// <summary>
         /// Gets or sets the user role id.
         /// </summary>
         [DataMember]
-        public virtual int userRoleId { get; set; }
+        public int userRoleId { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is unsubscribed.
         /// </summary>
         [DataMember]
-        public virtual bool isUnsubscribed { get; set; }
+        public bool isUnsubscribed { get; set; }
 
         #endregion
     }

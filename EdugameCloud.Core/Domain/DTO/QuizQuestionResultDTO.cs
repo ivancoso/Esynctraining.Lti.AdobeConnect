@@ -1,10 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
-
     using EdugameCloud.Core.Domain.Entities;
-
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -13,6 +10,16 @@
     [DataContract]
     public class QuizQuestionResultDTO
     {
+        /// <summary>
+        /// The answer distractors field.
+        /// </summary>
+        private int[] answerDistractorsField = { };
+
+        /// <summary>
+        /// The answers field.
+        /// </summary>
+        private string[] answersField = { };
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -77,18 +84,38 @@
         /// </summary>
         [DataMember]
         public int quizResultId { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the answer disctractors.
         /// </summary>
         [DataMember]
-        public List<int> answerDistractors { get; set; }
+        public int[] answerDistractors
+        {
+            get
+            {
+                return this.answerDistractorsField ?? new int[] { };
+            }
+            set
+            {
+                this.answerDistractorsField = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the answers.
         /// </summary>
         [DataMember]
-        public List<string> answers { get; set; }
+        public string[] answers
+        {
+            get
+            {
+                return this.answersField ?? new string[] { };
+            }
+            set
+            {
+                this.answersField = value;
+            }
+        }
 
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
     /// <summary>
-    /// The facebook profile dto.
+    /// The facebook profile DTO.
     /// </summary>
     public class FacebookProfileDTO
     {

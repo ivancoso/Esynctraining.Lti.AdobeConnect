@@ -4,6 +4,7 @@
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The SN session member.
@@ -32,7 +33,7 @@
                 this.snMemberId = member.Id;
                 this.participant = member.Participant;
                 this.participantProfile = member.ParticipantProfile;
-                this.dateCreated = member.DateCreated;
+                this.dateCreated = (member.DateCreated ?? DateTime.Now).ConvertToUnixTimestamp();
                 this.isBlocked = member.IsBlocked;
             }
         }
@@ -73,7 +74,7 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime? dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is blocked.

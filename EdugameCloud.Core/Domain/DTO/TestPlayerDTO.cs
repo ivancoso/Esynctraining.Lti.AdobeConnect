@@ -1,7 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The test player DTO.
@@ -9,67 +10,97 @@
     [DataContract]
     public class TestPlayerDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestPlayerDTO"/> class.
+        /// </summary>
+        public TestPlayerDTO()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TestPlayerDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public TestPlayerDTO(TestPlayerFromStoredProcedureDTO dto)
+        {
+            this.timePassed = dto.timePassed;
+            this.scorePassed = dto.scorePassed;
+            this.TotalQuestion = dto.TotalQuestion;
+            this.endTime = dto.endTime.ConvertToUnixTimestamp();
+            this.participantName = dto.participantName;
+            this.acEmail = dto.acEmail;
+            this.position = dto.position;
+            this.testResultId = dto.testResultId;
+            this.score = dto.score;
+            this.startTime = dto.startTime.ConvertToUnixTimestamp();
+            this.timeLimit = dto.timeLimit;
+            this.passingScore = dto.passingScore;
+            this.isCompleted = dto.isCompleted;
+        }
+
         #region Public Properties
 
         /// <summary>
         /// Gets or sets a value indicating whether time passed.
         /// </summary>
         [DataMember]
-        public virtual bool timePassed { get; set; }
+        public bool timePassed { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether score passed.
         /// </summary>
         [DataMember]
-        public virtual bool scorePassed { get; set; }
+        public bool scorePassed { get; set; }
 
         /// <summary>
         /// Gets or sets the total question.
         /// </summary>
         [DataMember]
-        public virtual long TotalQuestion { get; set; }
+        public long TotalQuestion { get; set; }
 
         /// <summary>
         /// Gets or sets the end time.
         /// </summary>
         [DataMember]
-        public virtual DateTime endTime { get; set; }
+        public double endTime { get; set; }
 
         /// <summary>
         /// Gets or sets the participant name.
         /// </summary>
         [DataMember]
-        public virtual string participantName { get; set; }
+        public string participantName { get; set; }
 
         /// <summary>
         /// Gets or sets the AC email.
         /// </summary>
         [DataMember]
-        public virtual string acEmail { get; set; }
+        public string acEmail { get; set; }
 
         /// <summary>
         /// Gets or sets the position.
         /// </summary>
         [DataMember]
-        public virtual long position { get; set; }
+        public long position { get; set; }
 
         /// <summary>
         /// Gets or sets the test result id.
         /// </summary>
         [DataMember]
-        public virtual int testResultId { get; set; }
+        public int testResultId { get; set; }
 
         /// <summary>
         /// Gets or sets the score.
         /// </summary>
         [DataMember]
-        public virtual int score { get; set; }
+        public int score { get; set; }
 
         /// <summary>
         /// Gets or sets the start time.
         /// </summary>
         [DataMember]
-        public virtual DateTime startTime { get; set; }
+        public double startTime { get; set; }
 
         /// <summary>
         /// Gets or sets the time limit.
@@ -84,10 +115,10 @@
         public decimal? passingScore { get; set; }
 
         /// <summary>
-        /// Gets or sets the start time.
+        /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
-        public virtual bool isCompleted { get; set; }
+        public bool isCompleted { get; set; }
 
         #endregion
     }

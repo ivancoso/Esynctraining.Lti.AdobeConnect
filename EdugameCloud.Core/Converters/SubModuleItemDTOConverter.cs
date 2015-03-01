@@ -89,8 +89,12 @@
             instance = instance ?? new SubModuleItem();
             instance.IsActive = dto.isActive;
             instance.IsShared = dto.isShared;
-            instance.DateCreated = dto.dateCreated == DateTime.MinValue ? DateTime.Now : dto.dateCreated;
-            instance.DateModified = dto.dateModified == DateTime.MinValue ? DateTime.Now : dto.dateModified;
+            if (instance.IsTransient())
+            {
+                instance.DateCreated = DateTime.Now;
+            }
+
+            instance.DateModified = DateTime.Now;
             instance.SubModuleCategory = this.subModuleCategoryModel.GetOneById(dto.subModuleCategoryId).Value;
             instance.CreatedBy = dto.createdBy.HasValue ? this.userModel.GetOneById(dto.createdBy.Value).Value : null;
             instance.ModifiedBy = dto.modifiedBy.HasValue ? this.userModel.GetOneById(dto.modifiedBy.Value).Value : null;

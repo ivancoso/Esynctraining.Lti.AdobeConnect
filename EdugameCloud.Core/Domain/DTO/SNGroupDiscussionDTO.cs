@@ -1,8 +1,10 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
+
+    using Esynctraining.Core.Extensions;
 
     /// <summary>
     ///     The SN Group discussion DTO.
@@ -28,13 +30,15 @@
             if (groupDiscussion != null)
             {
                 this.snGroupDiscussionId = groupDiscussion.Id;
-                this.dateCreated = groupDiscussion.DateCreated;
-                this.dateModified = groupDiscussion.DateModified;
+                this.dateCreated = groupDiscussion.DateCreated.ConvertToUnixTimestamp();
+                this.dateModified =
+                    (groupDiscussion.DateModified ?? groupDiscussion.DateCreated)
+                    .With(x => x.ConvertToUnixTimestamp());
                 this.groupDiscussionTitle = groupDiscussion.GroupDiscussionTitle;
                 this.groupDiscussionData = groupDiscussion.GroupDiscussionData;
                 this.isActive = groupDiscussion.IsActive;
                 this.acSessionId = groupDiscussion.ACSessionId;
-                }
+            }
         }
 
         #region Public Properties
@@ -45,6 +49,9 @@
         [DataMember]
         public int snGroupDiscussionId { get; set; }
 
+        /// <summary>
+        /// Gets or sets the company id.
+        /// </summary>
         [DataMember]
         public int companyId { get; set; }
 
@@ -52,13 +59,13 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime? dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets the title.

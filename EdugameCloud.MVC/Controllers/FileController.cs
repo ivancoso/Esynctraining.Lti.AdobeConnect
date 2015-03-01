@@ -17,6 +17,7 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.MVC.Attributes;
     using EdugameCloud.MVC.ViewModels;
     using EdugameCloud.MVC.ViewResults;
@@ -434,19 +435,18 @@
                 User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
                 string outputName = user.FullName.Replace(" ", "-") + "-collaboration-report-";
 
-                List<SNSessionDTO> userSessions = this.sessionModel.GetSNSessionsByUserId(userId).ToList();
+                var userSessions = this.sessionModel.GetSNSessionsByUserId(userId).ToList();
                 if (sessionId.HasValue)
                 {
                     userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
-                    outputName +=
-                        userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
+                    outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
                 }
                 else
                 {
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
 
-                Dictionary<int, SNSessionDTO> sessionsById = userSessions.ToDictionary(s => s.acSessionId, s => s);
+                var sessionsById = userSessions.ToDictionary(s => s.acSessionId, s => s);
 
                 Dictionary<int, SNGroupDiscussion> discussions =
                     IoC.Resolve<SNGroupDiscussionModel>()
@@ -469,13 +469,13 @@
                 var sessionResults = sessionsById.ToDictionary(
                     kvp => kvp.Value,
                     kvp =>
-                    new
+                    new 
                         {
                             discussion = discussions.ContainsKey(kvp.Key) ? discussions[kvp.Key] : null,
                             members = members.ContainsKey(kvp.Key) ? members[kvp.Key] : new List<dynamic>()
                         });
 
-                Func<SNSessionDTO, IDictionary<int, string>, object> resultConverter =
+                Func<SNSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>
                     new
                         {
@@ -492,7 +492,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        SNSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         List<dynamic> sessionMessages =
                             messages.Return(
                                 map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
@@ -520,7 +520,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        SNSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         List<dynamic> sessionMessages =
                             messages.Return(
                                 map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
@@ -645,29 +645,21 @@
                 User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
                 string outputName = user.FullName.Replace(" ", "-") + "-crossword-report-";
                 var appletItemModel = IoC.Resolve<AppletItemModel>();
-                List<CrosswordSessionDTO> userSessions = appletItemModel.GetCrosswordSessionsByUserId(userId).ToList();
+                var userSessions = appletItemModel.GetCrosswordSessionsByUserId(userId).ToList();
                 if (sessionId.HasValue)
                 {
                     userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
-                    outputName +=
-                        userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
+                    outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
                 }
                 else
                 {
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
 
-                Dictionary<CrosswordSessionDTO, List<CrosswordResultByAcSessionDTO>> sessionResults =
-                    userSessions.ToDictionary(
-                        s => s,
-                        s => appletItemModel.GetCrosswordResultByACSessionId(s.acSessionId).ToList());
+                var sessionResults = userSessions.ToDictionary(s => s, s => appletItemModel.GetCrosswordResultByACSessionId(s.acSessionId).ToList());
+                var crosswords = sessionResults.ToDictionary(s => s.Key, s => this.ReadCrosswordDefinition(s.Value.First().documentXML));
 
-                Dictionary<CrosswordSessionDTO, List<KeyValuePair<string, string>>> crosswords =
-                    sessionResults.ToDictionary(
-                        s => s.Key,
-                        s => this.ReadCrosswordDefinition(s.Value.First().documentXML));
-
-                Func<CrosswordSessionDTO, IDictionary<int, string>, object> resultConverter =
+                Func<CrosswordSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>
                     new
                         {
@@ -684,7 +676,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        CrosswordSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var details =
                             new[] { acSession }.Select(
                                 s =>
@@ -704,7 +696,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        CrosswordSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var questions = crosswords[acSession];
                         var participants =
                             sessionResults[acSession].Select(
@@ -727,7 +719,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        CrosswordSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var count = crosswords[acSession].Count;
                         var questions =
                             crosswords[acSession].Select(
@@ -1020,7 +1012,7 @@
                     s => s,
                     s => IoC.Resolve<QuizResultModel>().GetQuizResultByACSessionId(s.acSessionId, s.subModuleItemId));
 
-                Func<QuizSessionDTO, IDictionary<int, string>, object> resultConverter =
+                Func<QuizSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>
                     new
                         {
@@ -1037,7 +1029,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        QuizSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        QuizSessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var details =
                             new[] { acSession }.Select(
                                 s =>
@@ -1053,7 +1045,7 @@
                                         averageTime =
                                     (long)
                                     sessionResults[s].players.Where(p => p.score > 0)
-                                        .Average(p => (p.endTime - p.startTime).Ticks)
+                                        .Average(p => (p.endTime.ConvertFromUnixTimeStamp() - p.startTime.ConvertFromUnixTimeStamp()).Ticks)
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
                     };
@@ -1062,23 +1054,23 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        QuizSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        QuizSessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var questions = sessionResults[acSession].questions;
                         var participants =
-                            sessionResults[acSession].players.Select(
+                            sessionResults[acSession].players.ToList().Select(
                                 p =>
                                 new
                                     {
                                         acSessionId,
                                         rank = p.position,
                                         p.score,
-                                        startTime = p.startTime,// p.score > 0 ? p.startTime : DateTime.Today,
-                                        endTime = p.endTime,// p.score > 0 ? p.endTime : DateTime.Today,
+                                        startTime = p.startTime.ConvertFromUnixTimeStamp(), // p.score > 0 ? p.startTime : DateTime.Today,
+                                        endTime = p.endTime.ConvertFromUnixTimeStamp(), // p.score > 0 ? p.endTime : DateTime.Today,
                                         p.participantName,
                                         participantEmail = p.acEmail,
                                         showEmail = acSession.includeAcEmails ?? false,
-                                        totalQuestions = questions.Count,
-                                        scorePercent = ((double)p.score / questions.Count).ToString("0.0%")
+                                        totalQuestions = questions.Length,
+                                        scorePercent = ((double)p.score / questions.Length).ToString("0.0%")
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
                     };
@@ -1087,7 +1079,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        QuizSessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        QuizSessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var questions =
                             sessionResults[acSession].questions.Select(
                                 q =>
@@ -1173,7 +1165,7 @@
                 User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
                 string outputName = user.FullName.Replace(" ", "-") + "-survey-report-";
 
-                List<SurveySessionDTO> userSessions = this.sessionModel.GetSurveySessionsByUserId(userId).ToList();
+                List<SurveySessionFromStoredProcedureDTO> userSessions = this.sessionModel.GetSurveySessionsByUserId(userId).ToList();
                 if (sessionId.HasValue)
                 {
                     userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
@@ -1193,7 +1185,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        SurveySessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var details =
                             new[] { acSession }.Select(
                                 s =>
@@ -1202,11 +1194,11 @@
                                         acSessionId,
                                         totalQuestions = s.TotalQuestion,
                                         s.TotalScore,
-                                        total = sessionResults[s].players.Count,
+                                        total = sessionResults[s].players.Length,
                                         active = s.activeParticipants,
                                         averageScore = sessionResults[s].players.Average(p => p.score),
                                         averageTime =
-                                    (long)sessionResults[s].players.Average(p => (p.endTime - p.startTime).Ticks)
+                                    (long)sessionResults[s].players.Average(p => (p.endTime.ConvertFromUnixTimeStamp() - p.startTime.ConvertFromUnixTimeStamp()).Ticks)
                                     })
                                 .ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
@@ -1216,7 +1208,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        SurveySessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var participants =
                             sessionResults[acSession].players.Select(
                                 p =>
@@ -1225,8 +1217,8 @@
                                         acSessionId,
                                         rank = p.position,
                                         p.score,
-                                        p.startTime,
-                                        p.endTime,
+                                        startTime = p.startTime.ConvertFromUnixTimeStamp(),
+                                        endTime = p.endTime.ConvertFromUnixTimeStamp(),
                                         p.participantName,
                                         totalQuestions = acSession.TotalQuestion,
                                         scorePercent = ((double)p.score / acSession.TotalQuestion).ToString("0.0%")
@@ -1239,7 +1231,7 @@
                     {
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        SurveySessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var questions =
                             sessionResults[acSession].questions.Select(
                                 q =>
@@ -1261,7 +1253,7 @@
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
                         int questionId = int.Parse(args.Parameters["questionId"].Values.First());
-                        SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        SurveySessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var results = this.ConvertAnswers(sessionResults, acSession, questionId).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", results));
                     };
@@ -1271,7 +1263,7 @@
                         args.DataSources.Clear();
                         int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
                         int questionId = int.Parse(args.Parameters["questionId"].Values.First());
-                        SurveySessionDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                        SurveySessionFromStoredProcedureDTO acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
                         var results =
                             this.ConvertAnswersForParticipants(sessionResults, acSession, questionId)
                                 .Select(
@@ -1324,7 +1316,7 @@
                             o =>
                             new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
 
-                Func<SurveySessionDTO, IDictionary<int, string>, object> resultConverter =
+                Func<SurveySessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>
                     new
                         {
@@ -1386,7 +1378,7 @@
                 {
                     userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
                     outputName +=
-                        userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
+                        userSessions.FirstOrDefault().Return(x => x.dateCreated.ConvertFromUnixTimeStamp(), DateTime.Today).ToString("MM-dd-yyyy");
                 }
                 else
                 {
@@ -1411,7 +1403,7 @@
                             name = s.testName,
                             reportType = "test",
                             s.categoryName,
-                            s.dateCreated,
+                            dateCreated = s.dateCreated.ConvertFromUnixTimeStamp(),
                         };
 
                 SubreportProcessingEventHandler detailsHandler = (sender, args) =>
@@ -1430,14 +1422,14 @@
                                 new
                                     {
                                         acSessionId,
-                                        totalQuestions = questions.Count,
+                                        totalQuestions = questions.Length,
                                         totalScore = s.TotalScore,
                                         total = s.totalParticipants,
                                         active = s.activeParticipants,
                                         averageScore = acSession.avgScore,
-                                        averageScorePercent = (acSession.avgScore / questions.Count).ToString("0.0%"),
+                                        averageScorePercent = (acSession.avgScore / questions.Length).ToString("0.0%"),
                                         averageTime =
-                                    (long)sessionResults[s].players.Average(p => (p.endTime - p.startTime).Ticks),
+                                    (long)sessionResults[s].players.Average(p => (p.endTime.ConvertFromUnixTimeStamp() - p.startTime.ConvertFromUnixTimeStamp()).Ticks),
                                         passingScore,
                                         passingScorePercent = ((double)passingScore / 100).ToString("0.0%"),
                                         timeLimit = tests[s].TimeLimit.HasValue ? tests[s].TimeLimit.Value : 0,
@@ -1460,16 +1452,16 @@
                                                 acSessionId,
                                                 rank = p.position,
                                                 p.score,
-                                                p.startTime,
-                                                p.endTime,
+                                                startTime = p.startTime.ConvertFromUnixTimeStamp(),
+                                                endTime = p.endTime.ConvertFromUnixTimeStamp(),
                                                 p.participantName,
                                                 participantEmail = p.acEmail,
                                                 showEmail = acSession.includeAcEmails ?? false,
                                                 totalScore = acSession.TotalScore,
                                                 scorePassed = p.scorePassed ? 1 : 0,
                                                 timePassed = p.timePassed ? 1 : 0,
-                                                totalQuestions = questions.Count,
-                                                scorePercent = ((double)p.score / questions.Count).ToString("0.0%")
+                                                totalQuestions = questions.Length,
+                                                scorePercent = ((double)p.score / questions.Length).ToString("0.0%")
                                             };
                                 })
                             .ToList();
@@ -1493,7 +1485,7 @@
                                         q.isMandatory,
                                         totalCorrect = q.CorrectAnswerCount,
                                         q.restrictions,
-                                        totalQuestions = preQuestions.Count
+                                        totalQuestions = preQuestions.Length
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
                     };
@@ -1613,12 +1605,12 @@
         /// <returns>
         /// The <see cref="IEnumerable{Object}"/>.
         /// </returns>
-        private IEnumerable<dynamic> ConvertAnswers(Dictionary<SurveySessionDTO, SurveyResultDataDTO> sessionResults, SurveySessionDTO session, int questionId)
+        private IEnumerable<dynamic> ConvertAnswers(Dictionary<SurveySessionFromStoredProcedureDTO, SurveyResultDataDTO> sessionResults, SurveySessionFromStoredProcedureDTO session, int questionId)
         {
             var results = sessionResults[session];
             var activePlayers = results.players.Count(x => x.score > 0);
             var question = results.questions.FirstOrDefault(x => x.questionId == questionId);
-            var distractors = question.Return(x => x.distractors, new List<DistractorDTO>());
+            var distractors = question.Return(x => x.distractors.Return(d => d.ToList(), new List<DistractorDTO>()), new List<DistractorDTO>());
             var groupedAnswers = results.players.SelectMany(p => p.answers.Where(x => x.questionId == questionId).Select(x => new { player = p, answer = x, answerString = this.ConvertAnswer(x, question, distractors) }))
                 .GroupBy(x => x.answerString).ToDictionary(x => x.Key, x => x.Select(a => a)).ToList();
             return
@@ -1693,11 +1685,11 @@
         /// <returns>
         /// The <see cref="IEnumerable{Object}"/>.
         /// </returns>
-        private IEnumerable<dynamic> ConvertAnswersForParticipants(Dictionary<SurveySessionDTO, SurveyResultDataDTO> sessionResults, SurveySessionDTO session, int questionId)
+        private IEnumerable<dynamic> ConvertAnswersForParticipants(Dictionary<SurveySessionFromStoredProcedureDTO, SurveyResultDataDTO> sessionResults, SurveySessionFromStoredProcedureDTO session, int questionId)
         {
             var results = sessionResults[session];
             var question = results.questions.FirstOrDefault(x => x.questionId == questionId);
-            var distractors = question.Return(x => x.distractors, new List<DistractorDTO>());
+            var distractors = question.Return(x => x.distractors.Return(d => d.ToList(), new List<DistractorDTO>()), new List<DistractorDTO>());
             return
                 results.players.SelectMany(
                     p =>

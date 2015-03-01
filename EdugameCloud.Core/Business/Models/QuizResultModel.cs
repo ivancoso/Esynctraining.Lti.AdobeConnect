@@ -80,8 +80,15 @@
         public QuizResultDataDTO GetQuizResultByACSessionId(int adobeConnectSessionId, int smiId)
         {
             var res = new QuizResultDataDTO();
-            res.questions = new List<QuestionForAdminDTO>(this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getQuizQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)));
-            res.players = new List<QuizPlayerDTO>(this.Repository.StoreProcedureForMany<QuizPlayerDTO>("getQuizResultByACSessionId", new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId), new StoreProcedureParam<int>("subModuleItemId", smiId)));
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getQuizQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+            res.players =
+                this.Repository.StoreProcedureForMany<QuizPlayerFromStoredProcedureDTO>(
+                    "getQuizResultByACSessionId",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId))
+                    .ToList()
+                    .Select(x => new QuizPlayerDTO(x))
+                    .ToArray();
 
             var questionIds = res.questions.Select(q => q.questionId).ToList();
 
@@ -97,7 +104,7 @@
 
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToList();
+                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
             }
 
             return res;

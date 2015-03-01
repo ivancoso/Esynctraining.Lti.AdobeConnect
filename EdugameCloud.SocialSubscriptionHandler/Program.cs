@@ -152,7 +152,7 @@
             var subscriptions = webProxy.ListSubscriptions();
             if (subscriptions.data != null)
             {
-                LogMessage(logger, "Found " + subscriptions.data.Count + " subscriptions");
+                LogMessage(logger, "Found " + subscriptions.data.Length + " subscriptions");
                 foreach (var s in subscriptions.data)
                 {
                     if (s.callback_url.Equals(callbackUrl, StringComparison.InvariantCultureIgnoreCase))

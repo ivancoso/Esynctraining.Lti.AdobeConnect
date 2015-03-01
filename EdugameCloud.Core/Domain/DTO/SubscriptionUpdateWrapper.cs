@@ -1,7 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Collections.Generic;
-
     /// <summary>
     /// The subscription update wrapper.
     /// </summary>
@@ -14,7 +12,7 @@
         /// </summary>
         public SubscriptionUpdateWrapper()
         {
-            this.data = new List<SubscriptionUpdateDTO>();
+            this.data = new SubscriptionUpdateDTO[] { };
         }
 
         #endregion
@@ -24,7 +22,7 @@
         /// <summary>
         /// Gets or sets the data.
         /// </summary>
-        public List<SubscriptionUpdateDTO> data { get; set; }
+        public SubscriptionUpdateDTO[] data { get; set; }
 
         #endregion
     }

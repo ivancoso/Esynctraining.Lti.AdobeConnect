@@ -3,6 +3,7 @@
     using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -33,7 +34,7 @@
         /// </param>
         public UserWithLoginHistoryDTO(User user, UserLoginHistory latest) : base(user)
         {
-            this.lastLogin = latest.Return(x => x.DateCreated, (DateTime?)null);
+            this.lastLogin = latest.Return(x => x.DateCreated, DateTime.Now).ConvertToUnixTimestamp();
         }
 
 
@@ -49,7 +50,7 @@
         public UserWithLoginHistoryDTO(User user, DateTime? latest)
             : base(user)
         {
-            this.lastLogin = latest;
+            this.lastLogin = (latest ?? DateTime.Now).ConvertToUnixTimestamp();
         }
 
         #endregion
@@ -60,7 +61,7 @@
         /// Gets or sets the last login.
         /// </summary>
         [DataMember]
-        public DateTime? lastLogin { get; set; }
+        public double lastLogin { get; set; }
 
         #endregion
     }

@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Domain.Entities;
 
     /// <summary>
-    ///     The language dto.
+    ///     The language DTO.
     /// </summary>
     [DataContract]
     public class LanguageDTO

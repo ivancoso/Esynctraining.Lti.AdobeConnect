@@ -1,9 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -33,11 +33,11 @@
             this.surveyResultId = result.Id;
             this.acSessionId = result.ACSessionId;
             this.surveyId = result.Survey.With(x => x.Id);
-            this.dateCreated = result.DateCreated;
-            this.endTime = result.EndTime;
+            this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
+            this.endTime = result.EndTime.ConvertToUnixTimestamp();
             this.participantName = result.ParticipantName;
             this.score = result.Score;
-            this.startTime = result.StartTime;
+            this.startTime = result.StartTime.ConvertToUnixTimestamp();
             this.isArchive = result.IsArchive ?? false;
             this.email = result.Email;
             this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
@@ -81,13 +81,13 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the end time.
         /// </summary>
         [DataMember]
-        public DateTime endTime { get; set; }
+        public double endTime { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
@@ -111,10 +111,10 @@
         ///     Gets or sets the start time.
         /// </summary>
         [DataMember]
-        public DateTime startTime { get; set; }
+        public double startTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms user parameters id.
+        /// Gets or sets the LMS user parameters id.
         /// </summary>
         [DataMember]
         public int lmsUserParametersId { get; set; }

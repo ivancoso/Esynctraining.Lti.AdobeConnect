@@ -16,6 +16,9 @@
     using Castle.Core.Logging;
     using Castle.MicroKernel;
 
+    using DotAmf.Data;
+    using DotAmf.ServiceModel.Messaging;
+
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
@@ -35,7 +38,6 @@
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
-    using Esynctraining.Core.Weborb.WCFExtension;
 
     using FluentValidation;
     using FluentValidation.Results;
@@ -82,14 +84,70 @@
         {
             get
             {
-                object authValue;
-                OperationContext.Current.IncomingMessageProperties.TryGetValue("httpRequest", out authValue);
-                if (authValue != null)
+                object httpRequestValue = null;
+                if (OperationContext.Current.With(x => x.IncomingMessageProperties)
+                    .With(x => x.TryGetValue("httpRequest", out httpRequestValue)) && httpRequestValue != null)
                 {
-                    return (HttpRequestMessageProperty)authValue;
+                    return (HttpRequestMessageProperty)httpRequestValue;
                 }
 
                 return null;
+            }
+        }
+
+        /// <summary>
+        ///     Gets the current user.
+        /// </summary>
+        protected Guid CurrentUserToken
+        {
+            get
+            {
+                Guid token;
+                foreach (
+                    object value in
+                        OperationContext.Current.With(x => x.IncomingMessageProperties)
+                            .Return(x => x.Values, new List<object>()))
+                {
+                    if (value is AmfMessage)
+                    {
+                        var message = (AmfMessage)value;
+                        object data = message.With(x => x.Data);
+                        if (data is AbstractMessage)
+                        {
+                            var abstractMessage = (AbstractMessage)data;
+                            IDictionary<string, object> headers = abstractMessage.With(x => x.Headers);
+
+                            if (headers != null && headers.ContainsKey("DSEndpoint") && headers["DSEndpoint"] != null
+                                && Guid.TryParse(headers["DSEndpoint"].ToString(), out token))
+                            {
+                                return token;
+                            }
+                        }
+                    }
+                }
+
+                var authHeader = this.AuthHeaderName;
+                if (this.CurrentRequest != null
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    && this.CurrentRequest.Headers != null
+                    && this.CurrentRequest.Headers.HasKey(authHeader)
+                    && Guid.TryParse(this.CurrentRequest.Headers[authHeader], out token))
+                {
+                    return token;
+                }
+
+                return Guid.Empty;
+            }
+        }
+
+        /// <summary>
+        ///     Gets a value indicating whether is development environment.
+        /// </summary>
+        protected bool IsDev
+        {
+            get
+            {
+                return HttpContext.Current.IsDebuggingEnabled;
             }
         }
 
@@ -320,6 +378,7 @@
                             ? string.Empty
                             : string.Format(" (reason : {0})", errorSubCode));
                 }
+
                 result.SetError(new Error(Errors.CODE_ERRORTYPE_INVALID_OBJECT, ACErrorMessageTitle, message));
             }
 
@@ -392,13 +451,13 @@
         /// </param>
         protected void UpdateCache(MethodInfo method, params object[] args)
         {
-            WCFUtil.InvalidateCache(this, method, args);
         }
 
         /// <summary>
         /// The update cache.
         /// </summary>
         /// <typeparam name="T">
+        /// Type of entity
         /// </typeparam>
         /// <param name="target">
         /// The target.
@@ -411,12 +470,14 @@
         /// </param>
         protected void UpdateCache<T>(T target, string methodName, params object[] args)
         {
-            WCFUtil.InvalidateCache(target, typeof(T).GetMethod(methodName), args);
         }
 
         /// <summary>
         /// The update cache.
         /// </summary>
+        /// <typeparam name="T">
+        /// Type of entity
+        /// </typeparam>
         /// <param name="expression">
         /// The method expressions.
         /// </param>
@@ -425,7 +486,6 @@
         /// </param>
         protected void UpdateCache<T>(Expression<Action<T>> expression, params object[] args)
         {
-            WCFUtil.InvalidateCache(this, Lambda.MethodInfo(expression), args);
         }
 
         /// <summary>
@@ -449,7 +509,7 @@
                     DateExpires = DateTime.Now.AddDays(7)
                 };
                 model.RegisterSave(userActivation);
-                bcced = GetBCCed(Settings.BCCNewEmail as string);
+                bcced = GetBCCed(this.Settings.BCCNewEmail as string);
             }
 
             this.SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
@@ -461,8 +521,8 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        /// <param name="password">
-        /// The password.
+        /// <param name="activationCode">
+        /// The activation Code.
         /// </param>
         /// <param name="company">
         /// The company.
@@ -541,8 +601,8 @@
         /// <param name="user">
         /// The user.
         /// </param>
-        /// <param name="password">
-        /// The password.
+        /// <param name="activationCode">
+        /// The activation Code.
         /// </param>
         /// <param name="company">
         /// The company.
@@ -602,12 +662,12 @@
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        protected ServiceResponse<RecentReportDTO> GetBaseRecentSplashScreenReports(int userId, int pageIndex, int pageSize)
+        protected PagedRecentReportsDTO GetBaseRecentSplashScreenReports(int userId, int pageIndex, int pageSize)
         {
             int totalCount;
-            return new ServiceResponse<RecentReportDTO>
+            return new PagedRecentReportsDTO
             {
-                objects = this.SubModuleItemModel.GetRecentSplashScreenReportsPaged(userId, pageIndex, pageSize, out totalCount).ToList(),
+                objects = this.SubModuleItemModel.GetRecentSplashScreenReportsPaged(userId, pageIndex, pageSize, out totalCount).ToArray(),
                 totalCount = totalCount
             };
         }
@@ -627,12 +687,12 @@
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        protected ServiceResponse<ReportDTO> GetBaseSplashScreenReports(int userId, int pageIndex, int pageSize)
+        protected PagedReportsDTO GetBaseSplashScreenReports(int userId, int pageIndex, int pageSize)
         {
             int totalCount;
-            return new ServiceResponse<ReportDTO>
+            return new PagedReportsDTO
             {
-                objects = this.ACSessionModel.GetSplashScreenReportsPaged(userId, pageIndex, pageSize, out totalCount).ToList(),
+                objects = this.ACSessionModel.GetSplashScreenReportsPaged(userId, pageIndex, pageSize, out totalCount).ToArray(),
                 totalCount = totalCount
             };
         }
@@ -728,8 +788,8 @@
         /// <param name="email">
         /// The email.
         /// </param>
-        /// <param name="password">
-        /// The password.
+        /// <param name="activationCode">
+        /// The activation Code.
         /// </param>
         protected void SendActivationLinkEmail(string firstName, string email, string activationCode)
         {
@@ -757,7 +817,6 @@
                 Common.AppEmail);
         }
 
-
         /// <summary>
         /// The send activation email.
         /// </summary>
@@ -767,8 +826,14 @@
         /// <param name="email">
         /// The email.
         /// </param>
+        /// <param name="company">
+        /// The company.
+        /// </param>
         /// <param name="activationCode">
         /// The activation code.
+        /// </param>
+        /// <param name="bcced">
+        /// The BCCED.
         /// </param>
         protected void SendActivationEmail(string firstName, string email, Company company, string activationCode, List<MailAddress> bcced = null)
         {
@@ -802,7 +867,9 @@
                 Emails.ActivationSubject,
                 model,
                 Common.AppEmailName,
-                Common.AppEmail, cced, blindCopies);
+                Common.AppEmail, 
+                cced, 
+                blindCopies);
 
             this.SaveHistory(
                 firstName,
@@ -810,60 +877,38 @@
                 Emails.ActivationSubject,
                 model,
                 Common.AppEmailName,
-                Common.AppEmail, cced, blindCopies);
-            
-        }
-
-        /// <summary>
-        /// The get c ced.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{MailAddress}"/>.
-        /// </returns>
-        private static List<MailAddress> GetCCed(string email, Company company)
-        {
-            if (company != null && company.PrimaryContact != null && !email.Equals(company.PrimaryContact.Email, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new List<MailAddress>
-                                     {
-                                         new MailAddress(company.PrimaryContact.Email, company.PrimaryContact.FullName)
-                                     };
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// The get bc ced.
-        /// </summary>
-        /// <param name="emails">
-        /// The emails.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{MailAddress}"/>.
-        /// </returns>
-        private static List<MailAddress> GetBCCed(string emails)
-        {
-            if (string.IsNullOrEmpty(emails))
-            {
-                return null;
-            }
-
-            var blindSeparator = new [] { ";" };
-            var blindEmails = emails.Split(blindSeparator, StringSplitOptions.RemoveEmptyEntries);
-
-            return blindEmails.Any() ? blindEmails.Select(email => new MailAddress(email)).ToList() : null;
+                Common.AppEmail, 
+                cced, 
+                blindCopies);
         }
 
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The log error.
+        /// </summary>
+        /// <param name="methodName">
+        /// The method name.
+        /// </param>
+        /// <param name="error">
+        /// The error.
+        /// </param>
+        /// <param name="userName">
+        /// The user Name.
+        /// </param>
+        protected void LogError(string methodName, Error error, string userName = null)
+        {
+            this.logger.Error(
+                string.Format(
+                    "{4}. Error result for user: {0}, Error code: {1}, Error Message: {2}, Error Details: {3}",
+                    userName ?? "Anonymous",
+                    error.errorCode,
+                    error.errorMessage,
+                    error.errorDetail,
+                    methodName));
+        }
 
         /// <summary>
         /// The log error.
@@ -894,18 +939,11 @@
         /// <param name="userName">
         /// The user name.
         /// </param>
-        protected void LogError(string methodName, ServiceResponse result, string userName)
+        protected void LogError(string methodName, ServiceResponse result, string userName = null)
         {
             if (result != null && result.error != null)
             {
-                this.logger.Error(
-                    string.Format(
-                        "{4}. Error result for user: {0}, Error code: {1}, Error Message: {2}, Error Details: {3}",
-                        userName,
-                        result.error.errorCode,
-                        result.error.errorMessage,
-                        result.error.errorDetail,
-                        methodName));
+                this.LogError(methodName, result.error, userName);
             }
         }
 
@@ -926,6 +964,27 @@
         /// </returns>
         protected T UpdateResult<T>(T result, ValidationResult validationResult) where T : ServiceResponse
         {
+            var error = this.GenerateValidationError(validationResult);
+            if (error != null)
+            {
+                result.status = Errors.CODE_RESULTTYPE_ERROR;
+                result.error = error;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// The generate error.
+        /// </summary>
+        /// <param name="validationResult">
+        /// The validation result.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ServiceResponse"/>.
+        /// </returns>
+        protected Error GenerateValidationError(ValidationResult validationResult)
+        {
             if (validationResult != null)
             {
                 foreach (ValidationFailure failure in validationResult.Errors)
@@ -939,18 +998,14 @@
                             errorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR;
                         }
 
-                        result.status = Errors.CODE_RESULTTYPE_ERROR;
-                        result.error = new Error { errorCode = errorCode, errorMessage = errorDetails.ElementAtOrDefault(1) };
+                        return new Error { errorCode = errorCode, errorMessage = errorDetails.ElementAtOrDefault(1) };
                     }
-                    else
-                    {
-                        result.status = Errors.CODE_RESULTTYPE_ERROR;
-                        result.error = new Error { errorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage = failure.ErrorMessage };
-                    }
+
+                    return new Error { errorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage = failure.ErrorMessage };
                 }
             }
 
-            return result;
+            return null;
         }
 
         /// <summary>
@@ -973,25 +1028,51 @@
             return list;
         }
 
-        private void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        /// <summary>
+        /// The save history.
+        /// </summary>
+        /// <param name="toName">
+        /// The to name.
+        /// </param>
+        /// <param name="toEmail">
+        /// The to email.
+        /// </param>
+        /// <param name="subject">
+        /// The subject.
+        /// </param>
+        /// <param name="model">
+        /// The model.
+        /// </param>
+        /// <param name="fromName">
+        /// The from name.
+        /// </param>
+        /// <param name="fromEmail">
+        /// The from email.
+        /// </param>
+        /// <param name="cced">
+        /// The CCED.
+        /// </param>
+        /// <param name="bcced">
+        /// The BCCED.
+        /// </param>
+        /// <typeparam name="TModel">
+        /// Mail Model 
+        /// </typeparam>
+        protected void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
         {
-            string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model),
-                message = body;
+            string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model), message = body;
             if (message != null)
             {
-                message = Regex.Replace(message, "<[^>]*(>|$)", "");
+                message = Regex.Replace(message, "<[^>]*(>|$)", string.Empty);
                 message = message.Replace("\r\n", "\n").Replace("\r", "\n").Replace("&nbsp;", " ").Replace("&#39;", @"'");
                 message = Regex.Replace(message, @"[ ]{2,}", " ");
                 message = message.Replace("\n ", "\n");
                 message = Regex.Replace(message, @"[\n]{2,}", "\n");
-                message =
-                    message.Replace(
-                        "Enriching online interaction for meetings, training and education on Adobe Connect",
-                        "");
-                while (message.StartsWith("\n")) message = message.Remove(0, 1);
+                message = message.Replace("Enriching online interaction for meetings, training and education on Adobe Connect", string.Empty);
+                message = message.TrimStart("\n".ToCharArray());
             }
 
-            var emailHistory = new EmailHistory()
+            var emailHistory = new EmailHistory
                                {
                                    SentTo = toEmail,
                                    SentToName = toName,
@@ -1015,6 +1096,53 @@
                                };
 
             this.EmailHistoryModel.RegisterSave(emailHistory, true);
+        }
+
+        /// <summary>
+        /// The get CCED.
+        /// </summary>
+        /// <param name="email">
+        /// The email.
+        /// </param>
+        /// <param name="company">
+        /// The company.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{MailAddress}"/>.
+        /// </returns>
+        private static List<MailAddress> GetCCed(string email, Company company)
+        {
+            if (company != null && company.PrimaryContact != null && !email.Equals(company.PrimaryContact.Email, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new List<MailAddress>
+                                     {
+                                         new MailAddress(company.PrimaryContact.Email, company.PrimaryContact.FullName)
+                                     };
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// The get BBCED.
+        /// </summary>
+        /// <param name="emails">
+        /// The emails.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{MailAddress}"/>.
+        /// </returns>
+        private static List<MailAddress> GetBCCed(string emails)
+        {
+            if (string.IsNullOrEmpty(emails))
+            {
+                return null;
+            }
+
+            var blindSeparator = new[] { ";" };
+            var blindEmails = emails.Split(blindSeparator, StringSplitOptions.RemoveEmptyEntries);
+
+            return blindEmails.Any() ? blindEmails.Select(email => new MailAddress(email)).ToList() : null;
         }
 
         #endregion

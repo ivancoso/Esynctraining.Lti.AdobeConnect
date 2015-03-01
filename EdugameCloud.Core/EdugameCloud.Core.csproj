@@ -34,20 +34,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Core.3.2.0\lib\net40-client\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.3.3.0\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Facilities.Logging, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Facilities.Logging, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.LoggingFacility.3.2.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
+      <HintPath>..\packages\Castle.LoggingFacility.3.3.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Services.Logging.Log4netIntegration">
-      <HintPath>..\packages\Castle.Core-log4net.3.2.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Services.Logging.Log4netIntegration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Windsor.3.2.0\lib\net40\Castle.Windsor.dll</HintPath>
+      <HintPath>..\packages\Castle.Core-log4net.3.3.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="ClosedXML">
       <HintPath>..\packages\ClosedXML.0.68.1\lib\net40-client\ClosedXML.dll</HintPath>
@@ -140,9 +141,6 @@
     <Compile Include="Attributes\EdugameCloudRestrictedAccessAttribute.cs" />
     <Compile Include="Authentication\EdugameAuthenticationValidator.cs" />
     <Compile Include="Authentication\EdugameCloudIdentity.cs" />
-    <Compile Include="Authentication\WebOrbAuthenticationHandler.cs" />
-    <Compile Include="Authentication\WebOrbAuthorizationHandler.cs" />
-    <Compile Include="Authentication\WebOrbRolesProvider.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />
@@ -198,7 +196,7 @@
     <Compile Include="Business\Models\SubModuleItemModel.cs" />
     <Compile Include="Business\Models\QuizResultModel.cs" />
     <Compile Include="Business\Models\CountryModel.cs" />
-    <Compile Include="Business\Models\RTMPModel.cs" />
+    <Compile Include="Business\Models\RealTimeNotificationModel.cs" />
     <Compile Include="Business\Models\StateModel.cs" />
     <Compile Include="Business\Models\LanguageModel.cs" />
     <Compile Include="Business\Models\TimeZoneModel.cs" />
@@ -212,26 +210,60 @@
     <Compile Include="Business\Models\WebProxyModel.cs" />
     <Compile Include="Business\Queries\QueryOverCompany.cs" />
     <Compile Include="Business\Queries\QueryOverUser.cs" />
-    <Compile Include="Contracts\IEmailService.cs" />
-    <Compile Include="Contracts\IExportService.cs" />
-    <Compile Include="Contracts\IImportService.cs" />
-    <Compile Include="Contracts\ISocialService.cs" />
-    <Compile Include="Contracts\ITestQuestionResultService.cs" />
-    <Compile Include="Contracts\ITestResultService.cs" />
-    <Compile Include="Contracts\ITestService.cs" />
-    <Compile Include="Contracts\ISurveyQuestionResultService.cs" />
-    <Compile Include="Contracts\ISurveyResultService.cs" />
-    <Compile Include="Contracts\ISurveyService.cs" />
     <Compile Include="Converters\BaseConverter.cs" />
     <Compile Include="Converters\AddressDTOConverter.cs" />
     <Compile Include="Converters\CompanyThemeDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
+    <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
+    <Compile Include="Domain\DTO\UploadedFileDTO.cs" />
+    <Compile Include="Domain\DTO\QuizFromStoredProcedureExDTO.cs" />
+    <Compile Include="Domain\DTO\QuizPlayerFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\QuizSessionDTO.cs" />
+    <Compile Include="Domain\DTO\RecentReportFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\ReportFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SMICategoriesFromStoredProcedureExDTO.cs" />
+    <Compile Include="Domain\DTO\SNProfileExtraFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SNSessionFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SubModuleCategoryFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SubModuleItemFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SurveyFromStoredProcedureExDTO.cs" />
+    <Compile Include="Domain\DTO\SurveyPlayerFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\SurveySessionDTO.cs" />
+    <Compile Include="Domain\DTO\TestFromStoredProcedureExDTO.cs" />
+    <Compile Include="Domain\DTO\TestPlayerFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\TestResultSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\TestQuestionResultSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\SurveyResultSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\SurveyQuestionResultSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\SubModuleItemSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\SubModuleCategorySaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\SNMemberSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\PagedReportsDTO.cs" />
+    <Compile Include="Domain\DTO\PagedRecentReportsDTO.cs" />
+    <Compile Include="Domain\DTO\QuizQuestionResultSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\PagedQuestionTypeDTO.cs" />
+    <Compile Include="Domain\DTO\PagedQuestionDTO.cs" />
+    <Compile Include="Domain\DTO\QuestionSaveAllDTO.cs" />
+    <Compile Include="Domain\DTO\AppletResultSaveAllDTO.cs" />
     <Compile Include="Domain\DTO\CompanyThemeDTO.cs" />
     <Compile Include="Domain\DTO\ConnectionTestDTO.cs" />
     <Compile Include="Domain\DTO\ConnectionInfoDTO.cs" />
     <Compile Include="Domain\DTO\EmailHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\FailedFileDTO.cs" />
+    <Compile Include="Domain\DTO\FilesUploadedResultDTO.cs" />
     <Compile Include="Domain\DTO\NewsletterSubscriptionDTO.cs" />
+    <Compile Include="Domain\DTO\PagedUserLoginHistoryDTO.cs" />
+    <Compile Include="Domain\DTO\PagedThemeDTO.cs" />
+    <Compile Include="Domain\DTO\PagedTestDTO.cs" />
+    <Compile Include="Domain\DTO\PagedSurveyDTO.cs" />
+    <Compile Include="Domain\DTO\PagedSubModuleItemsDTO.cs" />
+    <Compile Include="Domain\DTO\PagedQuizDTO.cs" />
+    <Compile Include="Domain\DTO\PagedAppletItemsDTO.cs" />
+    <Compile Include="Domain\DTO\PagedDistractorDTO.cs" />
+    <Compile Include="Domain\DTO\PagedSubModuleCategoryDTO.cs" />
     <Compile Include="Domain\DTO\QuizesAndSubModuleItemsDTO.cs" />
+    <Compile Include="Domain\DTO\QuizResultSaveAllDTO.cs" />
     <Compile Include="Domain\DTO\SocialUserTokensDTO.cs" />
     <Compile Include="Domain\DTO\SubModuleItemThemeDTO.cs" />
     <Compile Include="Domain\DTO\SessionDTO.cs" />
@@ -244,8 +276,9 @@
     <Compile Include="Domain\DTO\SubscriptionUpdateDTO.cs" />
     <Compile Include="Domain\DTO\SubscriptionUpdateWrapper.cs" />
     <Compile Include="Domain\DTO\TagRequestDTO.cs" />
+    <Compile Include="Domain\DTO\TestSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\TestWithSmiDTO.cs" />
-    <Compile Include="Domain\DTO\UserLastLoginDTO.cs" />
+    <Compile Include="Domain\DTO\UserLastLoginFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\UserWithLoginHistoryDTO.cs" />
     <Compile Include="Domain\DTO\GeoCountryDTO.cs" />
     <Compile Include="Domain\DTO\GeoStateDTO.cs" />
@@ -258,16 +291,13 @@
     <Compile Include="Domain\DTO\TestPlayerDTO.cs" />
     <Compile Include="Domain\DTO\TestFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\TestDataDTO.cs" />
-    <Compile Include="Domain\DTO\TestCategoriesFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\TestDTO.cs" />
     <Compile Include="Domain\DTO\SplashScreenDTO.cs" />
     <Compile Include="Domain\DTO\SupportTicketDTO.cs" />
     <Compile Include="Domain\DTO\SurveyQuestionResultAnswerDTO.cs" />
-    <Compile Include="Domain\DTO\QuizCategoriesFromStoredProcedureDTO.cs" />
-    <Compile Include="Domain\DTO\QuizSubModuleItemDTOFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\SurveySMIWrapperDTO.cs" />
     <Compile Include="Domain\DTO\QuizSMIWrapperDTO.cs" />
-    <Compile Include="Domain\DTO\SurveySessionDTO.cs" />
+    <Compile Include="Domain\DTO\SurveySessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\SurveyGroupingTypeDTO.cs" />
     <Compile Include="Domain\DTO\SurveyDataDTO.cs" />
     <Compile Include="Domain\DTO\SurveyDTO.cs" />
@@ -326,34 +356,13 @@
     <Compile Include="Domain\DTO\SurveyAndSubModuleItemsDTO.cs" />
     <Compile Include="Extensions\DateConverter.cs" />
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="RTMP\SocialConnectionHandler.cs" />
     <Compile Include="RTMP\ClientConnectionHandler.cs" />
     <Compile Include="RTMP\SocialNotifier.cs" />
     <Compile Include="RTMP\DBChangesNotifier.cs" />
     <Compile Include="RTMP\NotificationType.cs" />
     <Compile Include="Constants\ClientConstants.cs" />
-    <Compile Include="Contracts\ISNMemberService.cs" />
-    <Compile Include="Contracts\ISNProfileService.cs" />
-    <Compile Include="Contracts\ISNGroupDiscussionService.cs" />
-    <Compile Include="Contracts\IBuildVersionService.cs" />
-    <Compile Include="Contracts\IQuestionTypeService.cs" />
-    <Compile Include="Contracts\IReportingService.cs" />
-    <Compile Include="Contracts\IThemeService.cs" />
-    <Compile Include="Contracts\IDistractorService.cs" />
-    <Compile Include="Contracts\IQuestionService.cs" />
-    <Compile Include="Contracts\ISubModuleCategoryService.cs" />
-    <Compile Include="Contracts\ISubModuleItemService.cs" />
-    <Compile Include="Contracts\ILookupService.cs" />
-    <Compile Include="Contracts\ICompanyLicenseService.cs" />
-    <Compile Include="Contracts\IQuizQuestionResultService.cs" />
-    <Compile Include="Contracts\IQuizService.cs" />
-    <Compile Include="Contracts\IAppletItemService.cs" />
-    <Compile Include="Contracts\IACSessionService.cs" />
-    <Compile Include="Contracts\IRestService.cs" />
-    <Compile Include="Contracts\IAppletResultService.cs" />
-    <Compile Include="Contracts\IFileService.cs" />
-    <Compile Include="Contracts\IErrorService.cs" />
-    <Compile Include="Contracts\IQuizResultService.cs" />
     <Compile Include="Converters\JsonDateTimeConverter.cs" />
     <Compile Include="Domain\DTO\AddressDTO.cs" />
     <Compile Include="Domain\DTO\AppletResultDTO.cs" />
@@ -377,8 +386,8 @@
     <Compile Include="Domain\DTO\QuizPlayerDTO.cs" />
     <Compile Include="Domain\DTO\QuizResultDataDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordResultByACSessionDTO.cs" />
-    <Compile Include="Domain\DTO\QuizSessionDTO.cs" />
-    <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
+    <Compile Include="Domain\DTO\QuizSessionFromStoredProcedureDTO.cs" />
+    <Compile Include="Domain\DTO\CrosswordSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\RecentReportDTO.cs" />
     <Compile Include="Domain\DTO\SNGroupDiscussionDTO.cs" />
     <Compile Include="Domain\DTO\SNLinkDTO.cs" />
@@ -469,7 +478,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Contracts\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

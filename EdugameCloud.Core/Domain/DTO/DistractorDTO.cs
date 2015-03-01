@@ -4,6 +4,7 @@
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -40,8 +41,8 @@
             this.isCorrect = distractor.IsCorrect;
             this.createdBy = distractor.CreatedBy.Return(x => x.Id, (int?)null);
             this.modifiedBy = distractor.ModifiedBy.Return(x => x.Id, (int?)null);
-            this.dateCreated = distractor.DateCreated;
-            this.dateModified = distractor.DateModified;
+            this.dateCreated = distractor.DateCreated.ConvertToUnixTimestamp();
+            this.dateModified = distractor.DateModified.ConvertToUnixTimestamp();
             this.isActive = distractor.IsActive;
             this.imageVO = distractor.Image.Return(x => new FileDTO(x), null);
             this.distractorType = distractor.DistractorType;
@@ -73,13 +74,13 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the distractor.

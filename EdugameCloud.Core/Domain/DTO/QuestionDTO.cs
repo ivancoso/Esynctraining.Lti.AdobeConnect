@@ -1,11 +1,11 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -17,6 +17,11 @@
     [KnownType(typeof(DistractorDTO))]
     public class QuestionDTO
     {
+        /// <summary>
+        /// The distractors field.
+        /// </summary>
+        private DistractorDTO[] distractorsField = { };
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -24,7 +29,6 @@
         /// </summary>
         public QuestionDTO()
         {
-            this.distractors = new List<DistractorDTO>();
         }
 
         /// <summary>
@@ -50,12 +54,12 @@
             this.hint = question.Hint;
             this.createdBy = question.CreatedBy.Return(x => x.Id, (int?)null);
             this.modifiedBy = question.ModifiedBy.Return(x => x.Id, (int?)null);
-            this.dateCreated = question.DateCreated;
-            this.dateModified = question.DateModified;
+            this.dateCreated = question.DateCreated.With(x => x.ConvertToUnixTimestamp());
+            this.dateModified = question.DateModified.With(x => x.ConvertToUnixTimestamp());
             this.isActive = question.IsActive;
             this.scoreValue = question.ScoreValue;
             this.imageVO = question.Image.Return(x => new FileDTO(x), null);
-            this.distractors = question.Distractors.Select(x => new DistractorDTO(x)).ToList();
+            this.distractors = question.Distractors.Select(x => new DistractorDTO(x)).ToArray();
             this.correctReference = question.CorrectReference;
             this.randomizeAnswers = question.RandomizeAnswers;
 
@@ -100,19 +104,30 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
-        public List<DistractorDTO> distractors { get; set; }
+        public DistractorDTO[] distractors
+        {
+            get
+            {
+                return this.distractorsField ?? new DistractorDTO[] { };
+            }
+
+            set
+            {
+                this.distractorsField = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the hint.

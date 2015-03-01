@@ -1,81 +1,110 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
+    using EdugameCloud.Core.Extensions;
+
     /// <summary>
-    ///     The crossword session DTO.
+    ///     The crossword session from stored procedure DTO.
     /// </summary>
     [DataContract]
     public class CrosswordSessionDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CrosswordSessionDTO"/> class.
+        /// </summary>
+        public CrosswordSessionDTO()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CrosswordSessionDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public CrosswordSessionDTO(CrosswordSessionFromStoredProcedureDTO dto)
+        {
+            this.acSessionId = dto.acSessionId;
+            this.acUserModeId = dto.acUserModeId;
+            this.activeParticipants = dto.activeParticipants;
+            this.appletItemId = dto.appletItemId;
+            this.appletName = dto.appletName;
+            this.categoryName = dto.categoryName;
+            this.dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
+            this.language = dto.language;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.totalParticipants = dto.totalParticipants;
+            this.userId = dto.userId;
+        }
+
         #region Public Properties
 
         /// <summary>
         /// Gets or sets the ac session id.
         /// </summary>
         [DataMember]
-        public virtual int acSessionId { get; set; }
+        public int acSessionId { get; set; }
 
         /// <summary>
         /// Gets or sets the ac user mode id.
         /// </summary>
         [DataMember]
-        public virtual int acUserModeId { get; set; }
+        public int acUserModeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int activeParticipants { get; set; }
+        public int activeParticipants { get; set; }
 
         /// <summary>
         /// Gets or sets the applet item id.
         /// </summary>
         [DataMember]
-        public virtual int appletItemId { get; set; }
+        public int appletItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the applet name.
         /// </summary>
         [DataMember]
-        public virtual string appletName { get; set; }
+        public string appletName { get; set; }
 
         /// <summary>
         /// Gets or sets the category name.
         /// </summary>
         [DataMember]
-        public virtual string categoryName { get; set; }
+        public string categoryName { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the language.
         /// </summary>
         [DataMember]
-        public virtual string language { get; set; }
+        public string language { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleItemId { get; set; }
+        public int subModuleItemId { get; set; }
 
         /// <summary>
         ///     Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int totalParticipants { get; set; }
+        public int totalParticipants { get; set; }
 
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         #endregion
     }

@@ -1,7 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The quiz player DTO.
@@ -9,62 +10,91 @@
     [DataContract]
     public class QuizPlayerDTO
     {
+        #region Constructors and Destructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizPlayerDTO"/> class.
+        /// </summary>
+        public QuizPlayerDTO()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizPlayerDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public QuizPlayerDTO(QuizPlayerFromStoredProcedureDTO dto)
+        {
+            this.TotalQuestion = dto.TotalQuestion;
+            this.endTime = dto.endTime.ConvertToUnixTimestamp();
+            this.acEmail = dto.acEmail;
+            this.participantName = dto.participantName;
+            this.position = dto.position;
+            this.quizResultId = dto.quizResultId;
+            this.score = dto.score;
+            this.startTime = dto.startTime.ConvertToUnixTimestamp();
+            this.isCompleted = dto.isCompleted;
+        }
+
+        #endregion
+
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the total question.
+        ///     Gets or sets the total question.
         /// </summary>
         [DataMember]
-        public virtual int TotalQuestion { get; set; }
+        public int TotalQuestion { get; set; }
 
         /// <summary>
-        /// Gets or sets the end time.
+        ///     Gets or sets the AC email.
         /// </summary>
         [DataMember]
-        public virtual DateTime endTime { get; set; }
+        public string acEmail { get; set; }
 
         /// <summary>
-        /// Gets or sets the AC email.
+        ///     Gets or sets the end time.
         /// </summary>
         [DataMember]
-        public virtual string acEmail { get; set; }
+        public double endTime { get; set; }
 
         /// <summary>
-        /// Gets or sets the participant name.
+        ///     Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
-        public virtual string participantName { get; set; }
+        public bool isCompleted { get; set; }
 
         /// <summary>
-        /// Gets or sets the position.
+        ///     Gets or sets the participant name.
         /// </summary>
         [DataMember]
-        public virtual long position { get; set; }
+        public string participantName { get; set; }
 
         /// <summary>
-        /// Gets or sets the quiz result id.
+        ///     Gets or sets the position.
         /// </summary>
         [DataMember]
-        public virtual int quizResultId { get; set; }
+        public long position { get; set; }
 
         /// <summary>
-        /// Gets or sets the score.
+        ///     Gets or sets the quiz result id.
         /// </summary>
         [DataMember]
-        public virtual int score { get; set; }
+        public int quizResultId { get; set; }
 
         /// <summary>
-        /// Gets or sets the start time.
+        ///     Gets or sets the score.
         /// </summary>
         [DataMember]
-        public virtual DateTime startTime { get; set; }
+        public int score { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether is completed.
+        ///     Gets or sets the start time.
         /// </summary>
         [DataMember]
-        public virtual bool isCompleted { get; set; }
-
+        public double startTime { get; set; }
 
         #endregion
     }

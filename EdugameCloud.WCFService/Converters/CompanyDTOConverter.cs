@@ -8,8 +8,6 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.DTO;
 
-    using Esynctraining.Core.Extensions;
-
     /// <summary>
     /// The sub module item DTO converter.
     /// </summary>
@@ -82,9 +80,7 @@
             instance = instance ?? new Company();
             if (instance.IsTransient())
             {
-                instance.DateCreated = (companyDto.dateCreated == DateTime.MinValue)
-                                           ? DateTime.Now
-                                           : companyDto.dateCreated.AdaptToSQL();
+                instance.DateCreated = DateTime.Now;
             }
 
             instance.CompanyName = companyDto.companyName;

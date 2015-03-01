@@ -1,8 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
+
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The survey player DTO.
@@ -10,55 +10,71 @@
     [DataContract]
     public class SurveyPlayerDTO
     {
+        public SurveyPlayerDTO()
+        {
+        }
+
         #region Public Properties
+
+        public SurveyPlayerDTO(SurveyPlayerFromStoredProcedureDTO dto)
+        {
+            this.answers = dto.answers;
+            this.TotalQuestion = dto.TotalQuestion;
+            this.endTime = dto.endTime.ConvertToUnixTimestamp();
+            this.participantName = dto.participantName;
+            this.position = dto.position;
+            this.surveyResultId = dto.surveyResultId;
+            this.score = dto.score;
+            this.startTime = dto.startTime.ConvertToUnixTimestamp();
+        }
 
         /// <summary>
         /// Gets or sets the answers.
         /// </summary>
         [DataMember]
-        public List<SurveyQuestionResultAnswerDTO> answers { get; set; }
+        public SurveyQuestionResultAnswerDTO[] answers { get; set; }
 
         /// <summary>
         /// Gets or sets the total question.
         /// </summary>
         [DataMember]
-        public virtual int TotalQuestion { get; set; }
+        public int TotalQuestion { get; set; }
 
         /// <summary>
         /// Gets or sets the end time.
         /// </summary>
         [DataMember]
-        public virtual DateTime endTime { get; set; }
+        public double endTime { get; set; }
 
         /// <summary>
         /// Gets or sets the participant name.
         /// </summary>
         [DataMember]
-        public virtual string participantName { get; set; }
+        public string participantName { get; set; }
 
         /// <summary>
         /// Gets or sets the position.
         /// </summary>
         [DataMember]
-        public virtual long position { get; set; }
+        public long position { get; set; }
 
         /// <summary>
         /// Gets or sets the survey result id.
         /// </summary>
         [DataMember]
-        public virtual int surveyResultId { get; set; }
+        public int surveyResultId { get; set; }
 
         /// <summary>
         /// Gets or sets the score.
         /// </summary>
         [DataMember]
-        public virtual int score { get; set; }
+        public int score { get; set; }
 
         /// <summary>
         /// Gets or sets the start time.
         /// </summary>
         [DataMember]
-        public virtual DateTime startTime { get; set; }
+        public double startTime { get; set; }
 
         #endregion
     }

@@ -1,8 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
+
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -36,7 +37,7 @@
             this.accountId = result.AccountId;
             this.meetingURL = result.MeetingUrl;
             this.scoId = result.ScoId;
-            this.dateCreated = result.DateCreated;
+            this.dateCreated = result.DateCreated.With(x => x.ConvertToUnixTimestamp());
             this.status = (int)result.Status;
             this.includeACEmails = result.IncludeAcEmails ?? false;
         }
@@ -73,7 +74,7 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the language.

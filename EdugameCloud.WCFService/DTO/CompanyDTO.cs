@@ -1,10 +1,9 @@
 ﻿namespace EdugameCloud.WCFService.DTO
 {
-    using System;
     using System.Runtime.Serialization;
-
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Extensions;
@@ -42,8 +41,8 @@
             this.primaryContactVO = c.PrimaryContact.Return(x => new UserDTO(x), null);
             this.companyName = c.CompanyName;
             this.isActive = c.Status == CompanyStatus.Active;
-            this.dateCreated = c.DateCreated;
-            this.dateModified = c.DateModified;
+            this.dateCreated = c.DateCreated.ConvertToUnixTimestamp();
+            this.dateModified = c.DateModified.ConvertToUnixTimestamp();
             var license = c.CurrentLicense ?? c.FutureActiveLicense;
             this.themeVO = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false) ? c.Theme.Return(x => new CompanyThemeDTO(c.Id, x), null) : null;
             this.licenseVO = license.Return(x => new CompanyLicenseDTO(x), null);
@@ -99,13 +98,13 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is active.

@@ -1,10 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The splash screen dto.
+    /// The splash screen DTO.
     /// </summary>
     [DataContract]
     public class SplashScreenDTO
@@ -15,13 +14,13 @@
         /// Gets or sets the recent reports.
         /// </summary>
         [DataMember]
-        public List<RecentReportDTO> recentReports { get; set; }
+        public RecentReportDTO[] recentReports { get; set; }
 
         /// <summary>
         /// Gets or sets the reports.
         /// </summary>
         [DataMember]
-        public List<ReportDTO> reports { get; set; }
+        public ReportDTO[] reports { get; set; }
 
         #endregion
     }

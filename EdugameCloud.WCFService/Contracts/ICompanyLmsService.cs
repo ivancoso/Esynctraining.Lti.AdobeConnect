@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
 
-    using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     /// The Company LMS Service interface.
@@ -20,10 +20,11 @@
         /// The result DTO.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyLmsDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyLmsDTO> Save(CompanyLmsDTO resultDto);
+        [FaultContract(typeof(Error))]
+        CompanyLmsDTO Save(CompanyLmsDTO resultDto);
 
         /// <summary>
         /// The test connection.
@@ -32,9 +33,10 @@
         /// The result DTO.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="ConnectionInfoDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<ConnectionInfoDTO> TestConnection(ConnectionTestDTO resultDto);
+        [FaultContract(typeof(Error))]
+        ConnectionInfoDTO TestConnection(ConnectionTestDTO resultDto);
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -15,7 +14,7 @@
         /// Gets or sets the date time ticks.
         /// </summary>
         [DataMember]
-        public DateTime expiration { get; set; }
+        public double expiration { get; set; }
 
         /// <summary>
         /// Gets or sets the value.

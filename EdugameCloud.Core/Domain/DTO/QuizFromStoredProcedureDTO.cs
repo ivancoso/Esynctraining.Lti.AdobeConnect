@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The quiz item DTO.
@@ -9,91 +9,122 @@
     [DataContract]
     public class QuizFromStoredProcedureDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizFromStoredProcedureDTO"/> class.
+        /// </summary>
+        public QuizFromStoredProcedureDTO()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizFromStoredProcedureDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public QuizFromStoredProcedureDTO(QuizFromStoredProcedureExDTO dto)
+        {
+            this.quizId = dto.quizId;
+            this.quizName = dto.quizName;
+            this.categoryName = dto.categoryName;
+            this.createdBy = dto.createdBy;
+            this.createdByLastName = dto.createdByLastName;
+            this.createdByName = dto.createdByName;
+            this.dateModified = dto.dateModified.ConvertToUnixTimestamp();
+            this.firstName = dto.firstName;
+            this.lastName = dto.lastName;
+            this.description = dto.description;
+            this.subModuleCategoryId = dto.subModuleCategoryId;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.userId = dto.userId;
+            this.lmsQuizId = dto.lmsQuizId;
+        }
+
         #region Public Properties
 
         /// <summary>
         /// Gets or sets the quiz id.
         /// </summary>
         [DataMember]
-        public virtual int quizId { get; set; }
+        public int quizId { get; set; }
 
         /// <summary>
         /// Gets or sets the quiz name.
         /// </summary>
         [DataMember]
-        public virtual string quizName { get; set; }
+        public string quizName { get; set; }
 
         /// <summary>
         /// Gets or sets the category name.
         /// </summary>
         [DataMember]
-        public virtual string categoryName { get; set; }
+        public string categoryName { get; set; }
 
         /// <summary>
         /// Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int createdBy { get; set; }
+        public int createdBy { get; set; }
 
         /// <summary>
         /// Gets or sets the created by last name.
         /// </summary>
         [DataMember]
-        public virtual string createdByLastName { get; set; }
+        public string createdByLastName { get; set; }
 
         /// <summary>
         /// Gets or sets the created by name.
         /// </summary>
         [DataMember]
-        public virtual string createdByName { get; set; }
+        public string createdByName { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
         [DataMember]
-        public virtual string firstName { get; set; }
+        public string firstName { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
         [DataMember]
-        public virtual string lastName { get; set; }
+        public string lastName { get; set; }
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
         [DataMember]
-        public virtual string description { get; set; }
+        public string description { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.
         /// </summary>
         [DataMember]
-        public virtual int subModuleCategoryId { get; set; }
+        public int subModuleCategoryId { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleItemId { get; set; }
+        public int subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         /// <summary>
-        /// Gets or sets the lms quiz id.
+        /// Gets or sets the LMS quiz id.
         /// </summary>
         [DataMember]
-        public virtual int? lmsQuizId { get; set; }
+        public int? lmsQuizId { get; set; }
 
         #endregion
     }

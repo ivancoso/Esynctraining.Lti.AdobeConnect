@@ -1,8 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -40,8 +40,8 @@
             this.address2 = a.Address2;
             this.latitude = a.Latitude;
             this.longitude = a.Longitude;
-            this.dateCreated = a.DateCreated;
-            this.dateModified = a.DateModified;
+            this.dateCreated = a.DateCreated.With(x => x.ConvertToUnixTimestamp());
+            this.dateModified = a.DateModified.With(x => x.ConvertToUnixTimestamp());
             this.zip = a.Zip;
         }
 
@@ -107,13 +107,13 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime? dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime? dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the state vo.

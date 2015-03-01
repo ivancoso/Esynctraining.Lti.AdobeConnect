@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.ServiceModel;
     using System.Web;
 
     using EdugameCloud.Core.Business.Models;
@@ -187,7 +188,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        protected ServiceResponse<string> Export(int smiId)
+        protected string Export(int smiId)
         {
             return this.Export(smiId, null);
         }
@@ -202,11 +203,11 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         /// Question Ids.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="string"/>.
         /// </returns>
-        protected ServiceResponse<string> Export(int smiId, List<int> questionIds)
+        protected string Export(int smiId, List<int> questionIds)
         {
-            var result = new ServiceResponse<string>();
+            Error error;
             try
             {
                 SubModuleItem smi = this.SubModuleItemModel.GetOneById(smiId).Value;
@@ -222,29 +223,25 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
 
                 System.IO.File.WriteAllText(filePath, data);
 
-                result.@object = id;
-                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
+                return id;
             }
             catch (ArgumentException)
             {
-                this.LogError(ErrorsTexts.ExportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ExportError_Subject, 
-                        ErrorsTexts.ExportError_NoData));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ExportError_Subject,
+                    ErrorsTexts.ExportError_NoData);
             }
-            catch
+            catch (Exception ex)
             {
-                this.LogError(ErrorsTexts.ExportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ExportError_Subject, 
-                        ErrorsTexts.ExportError_InvalidFormat));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ExportError_Subject,
+                    ex.ToString());
             }
 
-            return result;
+            this.LogError("ExportService.Export", error);
+                throw new FaultException<Error>(error, error.errorMessage);
         }
 
         /// <summary>
@@ -389,10 +386,10 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         /// <returns>
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
-        protected ServiceResponse<QuestionDTO> Import(string fileId, int? smiId, int? userId, FormatsEnum format)
+        protected QuestionDTO[] Import(string fileId, int? smiId, int? userId, FormatsEnum format)
         {
-            var result = new ServiceResponse<QuestionDTO>();
             var questionDtos = new List<QuestionDTO>();
+            Error error = null;
             try
             {
                 SubModuleItem subModuleItem = smiId.HasValue
@@ -450,48 +447,43 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
                 }
 
                 System.IO.File.Delete(filePath);
-                result.status = Errors.CODE_RESULTTYPE_SUCCESS;
             }
             catch (ArgumentException)
             {
-                this.LogError(ErrorsTexts.ImportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ImportError_Subject, 
-                        ErrorsTexts.ImportError_NoData));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ImportError_Subject,
+                    ErrorsTexts.ImportError_NoData);
             }
             catch (SerializationException)
             {
-                this.LogError(ErrorsTexts.ImportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ImportError_Subject, 
-                        ErrorsTexts.ImportError_InvalidFormat));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ImportError_Subject,
+                    ErrorsTexts.ImportError_InvalidFormat);
             }
             catch (FileNotFoundException)
             {
-                this.LogError(ErrorsTexts.ImportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ImportError_Subject, 
-                        ErrorsTexts.ImportError_NotFound));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ImportError_Subject,
+                    ErrorsTexts.ImportError_NotFound);
             }
             catch
             {
-                this.LogError(ErrorsTexts.ImportError_Subject, result);
-                result.SetError(
-                    new Error(
-                        Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED, 
-                        ErrorsTexts.ImportError_Subject, 
-                        ErrorsTexts.ImportError_Unknown));
+                error = new Error(
+                    Errors.CODE_ERRORTYPE_REQUEST_NOT_PROCESSED,
+                    ErrorsTexts.ImportError_Subject,
+                    ErrorsTexts.ImportError_Unknown);
             }
 
-            result.objects = questionDtos;
+            if (error != null)
+            {
+                this.LogError("Export.Import", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
 
-            return result;
+            return questionDtos.ToArray();
         }
 
         /// <summary>
@@ -548,8 +540,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         protected QuestionFor ProcessCustomQuestionType(Question question, EdugameQuestion dto)
         {
             switch (question.QuestionType.Id)
-            
- {
+            {
                 case (int)QuestionTypeEnum.TrueFalse:
                     var qtf = new QuestionForTrueFalse
                     {
@@ -725,7 +716,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        /// The deserialize edugame questions.
+        /// The deserialize EDUGAME questions.
         /// </summary>
         /// <param name="format">
         /// The format.
@@ -740,10 +731,13 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         /// The <see cref="EdugameQuestions"/>.
         /// </returns>
         /// <exception cref="FileNotFoundException">
+        /// File not found
         /// </exception>
         /// <exception cref="SerializationException">
+        /// Serialized exception
         /// </exception>
         /// <exception cref="ArgumentException">
+        /// Argument exception
         /// </exception>
         private EdugameQuestions DeserializeEdugameQuestions(FormatsEnum format, string filePath, string schemaPath)
         {
@@ -773,7 +767,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        /// The get save image rutine.
+        /// The get save image routine.
         /// </summary>
         /// <param name="subModuleItem">
         /// The sub module item.
@@ -782,7 +776,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         /// The creator.
         /// </param>
         /// <returns>
-        /// The <see cref="Func"/>.
+        /// The save image routine
         /// </returns>
         private Func<string, string, File> GetSaveImageRutine(SubModuleItem subModuleItem, User creator)
         {

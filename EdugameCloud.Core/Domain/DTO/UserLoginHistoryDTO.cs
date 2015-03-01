@@ -1,10 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
-
     using EdugameCloud.Core.Domain.Entities;
-
+    using EdugameCloud.Core.Extensions;
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -24,13 +22,15 @@
         /// Initializes a new instance of the <see cref="UserLoginHistoryDTO"/> class.
         /// </summary>
         /// <param name="clh">
-        ///     The contact login history.
+        /// The contact login history.
         /// </param>
-        /// <param name="company"></param>
+        /// <param name="company">
+        /// The company.
+        /// </param>
         public UserLoginHistoryDTO(UserLoginHistory clh, Company company)
         {
             this.userLoginHistoryId = clh.Id;
-            this.dateCreated = clh.DateCreated;
+            this.dateCreated = clh.DateCreated.With(x => x.ConvertToUnixTimestamp());
             this.fromIP = clh.FromIP;
             this.application = clh.Application;
             this.userId = clh.User.With(x => x.Id);
@@ -69,7 +69,7 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the document title.

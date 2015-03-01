@@ -3,7 +3,7 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The question order dto.
+    /// The question order DTO.
     /// </summary>
     [DataContract]
     public class QuestionOrderDTO

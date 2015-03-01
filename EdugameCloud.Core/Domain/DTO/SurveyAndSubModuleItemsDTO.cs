@@ -15,13 +15,13 @@
         /// Gets or sets the surveys.
         /// </summary>
         [DataMember]
-        public List<SurveyFromStoredProcedureDTO> surveys { get; set; }
+        public SurveyFromStoredProcedureDTO[] surveys { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module items.
         /// </summary>
         [DataMember]
-        public List<SubModuleItemDTO> subModuleItems { get; set; }
+        public SubModuleItemDTO[] subModuleItems { get; set; }
 
         #endregion
     }

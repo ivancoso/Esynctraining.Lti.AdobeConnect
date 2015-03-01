@@ -3,8 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Cryptography.X509Certificates;
-
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
 
@@ -128,7 +126,7 @@
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             Quiz q = null;
-            SMICategoriesFromStoredProcedureDTO dto = null;
+            SMICategoriesFromStoredProcedureExDTO dto = null;
             QueryOver<Quiz, SubModuleCategory> queryOver =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.RightOuterJoin)
@@ -160,9 +158,12 @@
                             .WithAlias(() => dto.userId)
                             .Select(() => smc.Id)
                             .WithAlias(() => dto.subModuleCategoryId))
-                    .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureDTO>());
-            List<SMICategoriesFromStoredProcedureDTO> result =
-                this.Repository.FindAll<SMICategoriesFromStoredProcedureDTO>(queryOver).ToList();
+                    .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureExDTO>());
+            var result =
+                this.Repository.FindAll<SMICategoriesFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SMICategoriesFromStoredProcedureDTO(x))
+                    .ToList();
             return result;
         }
 
@@ -300,14 +301,14 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetQuizzesByUserId(int userId, bool showLms)
+        public IEnumerable<QuizFromStoredProcedureExDTO> GetQuizzesByUserId(int userId, bool showLms)
         {
             Quiz q = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            QuizFromStoredProcedureDTO dto = null;
+            QuizFromStoredProcedureExDTO dto = null;
             QueryOver<Quiz, User> queryOver =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
@@ -348,9 +349,9 @@
                             .WithAlias(() => dto.categoryName)
                             .Select(() => smc.Id)
                             .WithAlias(() => dto.subModuleCategoryId))
-                    .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
-            List<QuizFromStoredProcedureDTO> result =
-                this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+                    .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureExDTO>());
+            List<QuizFromStoredProcedureExDTO> result =
+                this.Repository.FindAll<QuizFromStoredProcedureExDTO>(queryOver).ToList();
             return result;
         }
 
@@ -369,7 +370,7 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetLMSQuizzes(int userId, int courseid, int companyLmsId)
+        public IEnumerable<QuizFromStoredProcedureExDTO> GetLMSQuizzes(int userId, int courseid, int companyLmsId)
         {
             QueryOver<User, User> query =
                new DefaultQueryOver<User, int>().GetQueryOver()
@@ -382,7 +383,7 @@
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            QuizFromStoredProcedureDTO dto = null;
+            QuizFromStoredProcedureExDTO dto = null;
             QueryOver<Quiz, User> queryOver =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
@@ -423,9 +424,9 @@
                             .WithAlias(() => dto.categoryName)
                             .Select(() => smc.Id)
                             .WithAlias(() => dto.subModuleCategoryId))
-                            .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
-            List<QuizFromStoredProcedureDTO> result =
-                this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureExDTO>());
+            List<QuizFromStoredProcedureExDTO> result =
+                this.Repository.FindAll<QuizFromStoredProcedureExDTO>(queryOver).ToList();
             return result;
         }
 
@@ -438,7 +439,7 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizFromStoredProcedureDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizFromStoredProcedureDTO> GetSharedForUserQuizzesByUserId(int userId)
+        public IEnumerable<QuizFromStoredProcedureExDTO> GetSharedForUserQuizzesByUserId(int userId)
         {
             QueryOver<User, User> query =
                 new DefaultQueryOver<User, int>().GetQueryOver()
@@ -451,7 +452,7 @@
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            QuizFromStoredProcedureDTO dto = null;
+            QuizFromStoredProcedureExDTO dto = null;
             QueryOver<Quiz, User> queryOver =
                 new DefaultQueryOver<Quiz, int>().GetQueryOver(() => q)
                     .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
@@ -489,9 +490,9 @@
                             .WithAlias(() => dto.categoryName)
                             .Select(() => smc.Id)
                             .WithAlias(() => dto.subModuleCategoryId))
-                    .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureDTO>());
-            List<QuizFromStoredProcedureDTO> result =
-                this.Repository.FindAll<QuizFromStoredProcedureDTO>(queryOver).ToList();
+                    .TransformUsing(Transformers.AliasToBean<QuizFromStoredProcedureExDTO>());
+            List<QuizFromStoredProcedureExDTO> result =
+                this.Repository.FindAll<QuizFromStoredProcedureExDTO>(queryOver).ToList();
             return result;
         }
 
@@ -509,8 +510,8 @@
             var result = new QuizDataDTO { quizVO = new QuizDTO(this.GetOneById(quizId).Value) };
             if (result.quizVO != null && result.quizVO.subModuleItemId.HasValue)
             {
-                result.questions = this.GetQuizQuestionsBySMIId(result.quizVO.subModuleItemId.Value).ToList();
-                result.distractors = this.GetQuizDistractorsBySMIId(result.quizVO.subModuleItemId.Value).ToList();
+                result.questions = this.GetQuizQuestionsBySMIId(result.quizVO.subModuleItemId.Value).ToArray();
+                result.distractors = this.GetQuizDistractorsBySMIId(result.quizVO.subModuleItemId.Value).ToArray();
             }
 
             return result;

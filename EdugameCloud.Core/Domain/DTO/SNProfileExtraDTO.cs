@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The SN profile with extra data DTO.
@@ -15,6 +15,28 @@
         /// </summary>
         public SNProfileExtraDTO()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SNProfileExtraDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public SNProfileExtraDTO(SNProfileExtraFromStoredProcedureDTO dto)
+        {
+            this.snProfileId = dto.snProfileId;
+            this.profileName = dto.profileName;
+            this.categoryName = dto.categoryName;
+            this.dateModified = dto.dateModified.ConvertToUnixTimestamp();
+            this.subModuleCategoryId = dto.subModuleCategoryId;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.createdBy = dto.createdBy;
+            this.createdByFirstName = dto.createdByFirstName;
+            this.createdByLastName = dto.createdByLastName;
+            this.userId = dto.userId;
+            this.firstName = dto.firstName;
+            this.lastName = dto.lastName;
         }
 
         #region Public Properties
@@ -41,7 +63,7 @@
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.

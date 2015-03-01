@@ -104,7 +104,7 @@
         // ReSharper disable ImplicitlyCapturedClosure
         public IEnumerable<ReportDTO> GetSplashScreenReportsPaged(int userId, int pageIndex, int pageSize, out int totalCount)
         {
-            ReportDTO dto = null;
+            ReportFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             var queryOver = new DefaultQueryOver<ACSession, int>().GetQueryOver()
@@ -121,11 +121,15 @@
                                                                   .WithAlias(() => dto.subModuleItemId)
                                                                   .Select(x => smc.SubModule.Id)
                                                                   .WithAlias(() => dto.type))
-                                                          .TransformUsing(Transformers.AliasToBean<ReportDTO>());
+                                                          .TransformUsing(Transformers.AliasToBean<ReportFromStoredProcedureDTO>());
             var rowCountQuery = queryOver.ToRowCountQuery();
             totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
             var pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
-            var reports = this.Repository.FindAll<ReportDTO>(pagedQuery).ToList();
+            var reports =
+                this.Repository.FindAll<ReportFromStoredProcedureDTO>(pagedQuery)
+                    .ToList()
+                    .Select(x => new ReportDTO(x))
+                    .ToList();
             List<int> reportsIds = reports.Select(x => x.subModuleItemId).ToList();
             Dictionary<int, RecentReportDTO> crosswords = this.appletItemModel.GetCrosswords(reportsIds);
             Dictionary<int, RecentReportDTO> quizes = this.quizModel.GetQuizes(reportsIds);
@@ -145,9 +149,12 @@
         /// <returns>
         /// The <see cref="IEnumerable{SNSessionDTO}"/>.
         /// </returns>
-        public IEnumerable<SNSessionDTO> GetSNSessionsByUserId(int userId)
+        public IEnumerable<SNSessionFromStoredProcedureDTO> GetSNSessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SNSessionDTO>("getSNSessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+            return
+                this.Repository.StoreProcedureForMany<SNSessionFromStoredProcedureDTO>(
+                    "getSNSessionsByUserId",
+                    new StoreProcedureParam<int>("userId", userId)).ToList();
         }
 
         /// <summary>
@@ -159,9 +166,11 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizSessionDTO}"/>.
         /// </returns>
-        public IEnumerable<QuizSessionDTO> GetQuizSessionsByUserId(int userId)
+        public IEnumerable<QuizSessionFromStoredProcedureDTO> GetQuizSessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<QuizSessionDTO>("getQuizSessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+            return this.Repository.StoreProcedureForMany<QuizSessionFromStoredProcedureDTO>(
+                "getQuizSessionsByUserId",
+                new StoreProcedureParam<int>("userId", userId));
         }
 
         /// <summary>
@@ -175,7 +184,10 @@
         /// </returns>
         public IEnumerable<TestSessionDTO> GetTestSessionsByUserId(int userId)
         {
-			return this.Repository.StoreProcedureForMany<TestSessionDTO>("getTestSessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+            return
+                this.Repository.StoreProcedureForMany<TestSessionFromStoredProcedureDTO>(
+                    "getTestSessionsByUserId",
+                    new StoreProcedureParam<int>("userId", userId)).ToList().Select(x => new TestSessionDTO(x));
         }
 
         /// <summary>
@@ -187,9 +199,9 @@
         /// <returns>
         /// The <see cref="IEnumerable{QuizSessionDTO}"/>.
         /// </returns>
-        public IEnumerable<SurveySessionDTO> GetSurveySessionsByUserId(int userId)
+        public IEnumerable<SurveySessionFromStoredProcedureDTO> GetSurveySessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SurveySessionDTO>("getSurveySessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+            return this.Repository.StoreProcedureForMany<SurveySessionFromStoredProcedureDTO>("getSurveySessionsByUserId", new StoreProcedureParam<int>("userId", userId));
         }
 
         /// <summary>

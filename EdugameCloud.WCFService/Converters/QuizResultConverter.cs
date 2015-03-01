@@ -161,14 +161,14 @@
                         quizAnswer.answers =
                             answer.answers.Where(a => a.surveyDistractorAnswerId != null)
                                 .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
-                                .ToList();
+                                .ToArray();
                     }
                     else
                     {
                         quizAnswer.answers =
                             answer.answers.Where(a => a.value != null)
                                 .Select(a => a.value)
-                                .ToList();
+                                .ToArray();
                     }
                     var answers = this.ProcessAnswers(question, quizAnswer);
 
@@ -414,7 +414,7 @@
                         var userAnswers = new Dictionary<string, string>();
                         if (r.answers != null)
                         {
-                            r.answers.ForEach(
+                            r.answers.ToList().ForEach(
                                 answer =>
                                     {
                                         int splitInd = answer.IndexOf("$$", System.StringComparison.Ordinal);
@@ -541,7 +541,7 @@
                         var userAnswers = new Dictionary<string, string>();
                         if (answer.answers != null)
                         {
-                            answer.answers.ForEach(
+                            answer.answers.ToList().ForEach(
                                 a =>
                                 {
                                     int splitInd = a.IndexOf("$$", System.StringComparison.Ordinal);
@@ -604,7 +604,7 @@
                         foreach (var key in answersDict.Keys)
                         {
                             var order = answersDict[key];
-                            if (answer.answers.Count > order)
+                            if (answer.answers.Length > order)
                             {
                                 var userText = answer.answers[order];
 

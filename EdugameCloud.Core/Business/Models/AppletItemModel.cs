@@ -70,10 +70,10 @@
         /// <returns>
         /// The <see cref="IEnumerable{CrosswordResultByAcSessionDTO}"/>.
         /// </returns>
-        public IEnumerable<CrosswordResultByAcSessionDTO> GetCrosswordResultByACSessionId(int adobeConnectSessionId)
+        public IEnumerable<CrosswordResultByAcSessionFromStoredProcedureDTO> GetCrosswordResultByACSessionId(int adobeConnectSessionId)
         {
             return
-                this.Repository.StoreProcedureForMany<CrosswordResultByAcSessionDTO>(
+                this.Repository.StoreProcedureForMany<CrosswordResultByAcSessionFromStoredProcedureDTO>(
                     "getCrosswordResultByACSessionId", 
                     new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId));
         }
@@ -87,9 +87,9 @@
         /// <returns>
         /// The <see cref="IEnumerable{CrosswordSessionDTO}"/>.
         /// </returns>
-        public IEnumerable<CrosswordSessionDTO> GetCrosswordSessionsByUserId(int userId)
+        public IEnumerable<CrosswordSessionFromStoredProcedureDTO> GetCrosswordSessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<CrosswordSessionDTO>(
+            return this.Repository.StoreProcedureForMany<CrosswordSessionFromStoredProcedureDTO>(
                 "getCrosswordSessionsByUserId", 
                 new StoreProcedureParam<int>("userId", userId));
         }
@@ -166,7 +166,7 @@
                             .Select(() => smi.CreatedBy.Id)
                             .WithAlias(() => dto.createdBy)
                             .Select(() => smi.DateModified)
-                            .WithAlias(() => dto.dateModified)
+                            .WithAlias(() => dto.dateModifiedData)
                             .Select(() => smi.Id)
                             .WithAlias(() => dto.subModuleItemId)
                             .Select(() => smc.CategoryName)
@@ -244,7 +244,7 @@
                             .Select(() => smi.CreatedBy.Id)
                             .WithAlias(() => dto.createdBy)
                             .Select(() => smi.DateModified)
-                            .WithAlias(() => dto.dateModified)
+                            .WithAlias(() => dto.dateModifiedData)
                             .Select(() => smi.Id)
                             .WithAlias(() => dto.subModuleItemId)
                             .Select(() => smc.CategoryName)

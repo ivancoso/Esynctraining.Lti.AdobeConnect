@@ -36,8 +36,8 @@
                 this.consumerKey = instance.ConsumerKey;
                 this.createdBy = instance.CreatedBy.Return(x => x, 0);
                 this.modifiedBy = instance.ModifiedBy.Return(x => x.Value, 0);
-                this.dateCreated = instance.DateCreated;
-                this.dateModified = instance.DateModified;
+                this.dateCreated = instance.DateCreated.ConvertToUnixTimestamp();
+                this.dateModified = instance.DateModified.ConvertToUnixTimestamp();
                 this.lmsProvider = instance.LmsProvider.Return(x => x.ShortName, string.Empty);
                 this.sharedSecret = instance.SharedSecret;
                 this.lmsAdmin = instance.AdminUser.With(x => x.Username);
@@ -164,13 +164,13 @@
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the primary color.

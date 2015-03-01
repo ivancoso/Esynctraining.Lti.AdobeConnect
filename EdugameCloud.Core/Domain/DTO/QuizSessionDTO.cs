@@ -1,93 +1,123 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The quiz session dto.
+    ///     The quiz session DTO.
     /// </summary>
     [DataContract]
     public class QuizSessionDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizSessionDTO"/> class.
+        /// </summary>
+        public QuizSessionDTO()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuizSessionDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public QuizSessionDTO(QuizSessionFromStoredProcedureDTO dto)
+        {
+            this.TotalQuestion = dto.TotalQuestion;
+            this.TotalScore = dto.TotalScore;
+            this.acSessionId = dto.acSessionId;
+            this.includeAcEmails = dto.includeAcEmails;
+            this.acUserModeId = dto.acUserModeId;
+            this.categoryName = dto.categoryName;
+            this.dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
+            this.language = dto.language;
+            this.activeParticipants = dto.activeParticipants;
+            this.totalParticipants = dto.totalParticipants;
+            this.quizName = dto.quizName;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.userId = dto.userId;
+        }
+
         #region Public Properties
 
         /// <summary>
         /// Gets or sets the total question.
         /// </summary>
         [DataMember]
-        public virtual int TotalQuestion { get; set; }
+        public int TotalQuestion { get; set; }
 
         /// <summary>
         /// Gets or sets the total score.
         /// </summary>
         [DataMember]
-        public virtual int TotalScore { get; set; }
+        public int TotalScore { get; set; }
 
         /// <summary>
         /// Gets or sets the ac session id.
         /// </summary>
         [DataMember]
-        public virtual int acSessionId { get; set; }
+        public int acSessionId { get; set; }
 
         /// <summary>
         /// Gets or sets the include ac emails.
         /// </summary>
         [DataMember]
-        public virtual bool? includeAcEmails { get; set; }
+        public bool? includeAcEmails { get; set; }
 
         /// <summary>
         /// Gets or sets the ac user mode id.
         /// </summary>
         [DataMember]
-        public virtual int acUserModeId { get; set; }
+        public int acUserModeId { get; set; }
 
         /// <summary>
         /// Gets or sets the category name.
         /// </summary>
         [DataMember]
-        public virtual string categoryName { get; set; }
+        public string categoryName { get; set; }
 
         /// <summary>
         /// Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the language.
         /// </summary>
         [DataMember]
-        public virtual string language { get; set; }
+        public string language { get; set; }
 
         /// <summary>
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int activeParticipants { get; set; }
+        public int activeParticipants { get; set; }
 
         /// <summary>
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int totalParticipants { get; set; }
+        public int totalParticipants { get; set; }
 
         /// <summary>
         /// Gets or sets the quiz name.
         /// </summary>
         [DataMember]
-        public virtual string quizName { get; set; }
+        public string quizName { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleItemId { get; set; }
+        public int subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         #endregion
     }

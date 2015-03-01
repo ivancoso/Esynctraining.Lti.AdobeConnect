@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -430,11 +431,29 @@
                 }
                 if (!(xmlRoot.links is string) && !((IDictionary<string, object>)xmlRoot.links).ContainsKey("value"))
                 {
-                    foreach (var link in xmlRoot.links.link)
+                    var val = xmlRoot.links.link as IDictionary<string, object>;
+                    if (val != null && val.ContainsKey("url"))
                     {
-                        if (!string.IsNullOrWhiteSpace(link.url))
+                        var urlVal = val["url"].Return(s => s.ToString(), string.Empty);
+                        if (!string.IsNullOrWhiteSpace(urlVal))
                         {
-                            vcfCard.Websites.Add(new vCardWebsite(link.url, vCardWebsiteTypes.Work));
+                            vcfCard.Websites.Add(new vCardWebsite(urlVal, vCardWebsiteTypes.Work));
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            foreach (var link in xmlRoot.links.link)
+                            {
+                                if (!string.IsNullOrWhiteSpace(link.url))
+                                {
+                                    vcfCard.Websites.Add(new vCardWebsite(link.url, vCardWebsiteTypes.Work));
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
                         }
                     }
                 }

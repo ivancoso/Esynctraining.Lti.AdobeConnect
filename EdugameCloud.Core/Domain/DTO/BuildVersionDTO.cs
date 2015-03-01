@@ -4,6 +4,9 @@
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
+
+    using Esynctraining.Core.Extensions;
 
     /// <summary>
     ///     The build version DTO.
@@ -32,8 +35,8 @@
             this.buildVersionType = build.Type.BuildVersionTypeName;
             this.buildVersionId = build.Id;
             this.buildNumber = build.BuildNumber;
-            this.dateCreated = build.DateCreated;
-            this.dateModified = build.DateModified;
+            this.dateCreated = build.DateCreated.With(x => x.ConvertToUnixTimestamp());
+            this.dateModified = build.DateModified.With(x => x.ConvertToUnixTimestamp());
             this.descriptionHTML = build.DescriptionHTML;
             this.descriptionSmall = build.DescriptionSmall;
             this.isActive = build.IsActive;
@@ -49,49 +52,49 @@
         ///     Gets or sets the build number.
         /// </summary>
         [DataMember]
-        public virtual string buildNumber { get; set; }
+        public string buildNumber { get; set; }
 
         /// <summary>
         ///     Gets or sets the version id.
         /// </summary>
         [DataMember]
-        public virtual int buildVersionId { get; set; }
+        public int buildVersionId { get; set; }
 
         /// <summary>
         ///     Gets or sets the type name.
         /// </summary>
         [DataMember]
-        public virtual string buildVersionType { get; set; }
+        public string buildVersionType { get; set; }
 
         /// <summary>
         ///     Gets or sets the type id.
         /// </summary>
         [DataMember]
-        public virtual int buildVersionTypeId { get; set; }
+        public int buildVersionTypeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets the description html.
         /// </summary>
         [DataMember]
-        public virtual string descriptionHTML { get; set; }
+        public string descriptionHTML { get; set; }
 
         /// <summary>
         ///     Gets or sets the description small.
         /// </summary>
         [DataMember]
-        public virtual string descriptionSmall { get; set; }
+        public string descriptionSmall { get; set; }
 
         /// <summary>
         ///     Gets or sets the file id.
@@ -109,7 +112,7 @@
         ///     Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
-        public virtual bool isActive { get; set; }
+        public bool isActive { get; set; }
 
         #endregion
     }

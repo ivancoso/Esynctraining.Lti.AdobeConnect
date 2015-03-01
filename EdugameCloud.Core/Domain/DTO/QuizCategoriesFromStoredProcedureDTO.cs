@@ -4,22 +4,11 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    ///     The categories item dto.
+    ///     The categories item DTO.
     /// </summary>
     [DataContract]
-    public class QuizCategoriesFromStoredProcedureDTO
+    public class QuizCategoriesFromStoredProcedureDTO2
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuizCategoriesFromStoredProcedureDTO"/> class.
-        /// </summary>
-        public QuizCategoriesFromStoredProcedureDTO()
-        {
-        }
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>

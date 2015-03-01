@@ -23,7 +23,7 @@
         /// Gets or sets the members.
         /// </summary>
         [DataMember]
-        public List<SNMemberDTO> members { get; set; }
+        public SNMemberDTO[] members { get; set; }
 
         #endregion
     }

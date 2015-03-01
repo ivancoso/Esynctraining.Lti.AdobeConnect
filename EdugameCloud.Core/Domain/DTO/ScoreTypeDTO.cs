@@ -1,21 +1,12 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ScoreTypeDTO.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The score type dto.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace EdugameCloud.Core.Domain.DTO
+﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The score type dto.
+    ///     The score type DTO.
     /// </summary>
     [DataContract]
     public class ScoreTypeDTO
@@ -41,7 +32,7 @@ namespace EdugameCloud.Core.Domain.DTO
             {
                 this.scoreTypeId = result.Id;
                 this.scoreTypeName = result.ScoreTypeName;
-                this.dateCreated = result.DateCreated;
+                this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
                 this.isActive = result.IsActive;
                 this.defaultValue = result.DefaultValue;
                 this.prefix = result.Prefix;
@@ -56,7 +47,7 @@ namespace EdugameCloud.Core.Domain.DTO
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the default value.

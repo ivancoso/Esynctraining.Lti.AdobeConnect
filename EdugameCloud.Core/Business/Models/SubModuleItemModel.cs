@@ -166,7 +166,7 @@
                     .Select(res => res.Company.Id);
             IFutureValue<int> companyId = this.userRepository.FindOne<int>(query);
 
-            SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             Quiz quiz = null;
@@ -201,8 +201,12 @@
                             .WithAlias(() => dto.isActive)
                             .Select(() => theme.Id)
                             .WithAlias(() => dto.themeId))
-                            .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-            var result = this.Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result =
+                this.Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList();
             var themeIds = result.Where(x => x.themeId.HasValue).Select(x => x.themeId.Value).ToList();
             var themeQuery = new DefaultQueryOver<SubModuleItemTheme, int>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsIn(themeIds);
             var themes = this.themeRepository.FindAll(themeQuery).ToList();
@@ -221,7 +225,7 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetAppletSubModuleItemsByUserId(int userId)
         {
-            SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             AppletItem appletItem = null;
@@ -253,8 +257,12 @@
                             .WithAlias(() => dto.isActive)
                             .Select(() => theme.Id)
                             .WithAlias(() => dto.themeId))
-                            .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-            var result = this.Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result =
+                this.Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList();
             var themeIds = result.Where(x => x.themeId.HasValue).Select(x => x.themeId.Value).ToList();
             var themeQuery = new DefaultQueryOver<SubModuleItemTheme, int>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsIn(themeIds);
             var themes = this.themeRepository.FindAll(themeQuery).ToList();
@@ -284,7 +292,7 @@
         public IEnumerable<RecentReportDTO> GetRecentSplashScreenReportsPaged(
             int userId, int pageIndex, int pageSize, out int totalCount)
         {
-            RecentReportDTO dto = null;
+            RecentReportFromStoredProcedureDTO dto = null;
             SubModuleCategory category = null;
             QueryOver<SubModuleItem, SubModuleItem> queryOver =
                 new DefaultQueryOver<SubModuleItem, int>().GetQueryOver()
@@ -301,11 +309,15 @@
                                                                   .WithAlias(() => dto.subModuleItemId)
                                                                   .Select(() => category.SubModule.Id)
                                                                   .WithAlias(() => dto.type))
-                                                          .TransformUsing(Transformers.AliasToBean<RecentReportDTO>());
+                                                          .TransformUsing(Transformers.AliasToBean<RecentReportFromStoredProcedureDTO>());
             QueryOver<SubModuleItem, SubModuleItem> rowCountQuery = queryOver.ToRowCountQuery();
             totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
             QueryOver<SubModuleItem> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
-            var reports = this.Repository.FindAll<RecentReportDTO>(pagedQuery).ToList();
+            var reports =
+                this.Repository.FindAll<RecentReportFromStoredProcedureDTO>(pagedQuery)
+                    .ToList()
+                    .Select(x => new RecentReportDTO(x))
+                    .ToList();
             List<int> reportsIds = reports.Select(x => x.subModuleItemId).ToList();
             Dictionary<int, RecentReportDTO> crosswords = this.appletItemModel.GetCrosswords(reportsIds);
             Dictionary<int, RecentReportDTO> quizes = this.quizModel.GetQuizes(reportsIds);
@@ -327,7 +339,7 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetSNProfileSubModuleItemsByUserId(int userId)
         {
-            SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             SNProfile survey = null;
@@ -359,8 +371,10 @@
                             .WithAlias(() => dto.isActive)
                             .Select(() => theme.Id)
                             .WithAlias(() => dto.themeId))
-                            .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-            var result = this.Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result = this.Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver).ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList();
             var themeIds = result.Where(x => x.themeId.HasValue).Select(x => x.themeId.Value).ToList();
             var themeQuery = new DefaultQueryOver<SubModuleItemTheme, int>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsIn(themeIds);
             var themes = this.themeRepository.FindAll(themeQuery).ToList();
@@ -379,7 +393,7 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetSurveySubModuleItemsByUserId(int userId)
         {
-            SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             Survey survey = null;
@@ -411,8 +425,10 @@
                             .WithAlias(() => dto.isActive)
                             .Select(() => theme.Id)
                             .WithAlias(() => dto.themeId))
-                            .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-            var result = this.Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result = this.Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver).ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList(); 
             var themeIds = result.Where(x => x.themeId.HasValue).Select(x => x.themeId.Value).ToList();
             var themeQuery = new DefaultQueryOver<SubModuleItemTheme, int>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsIn(themeIds);
             var themes = this.themeRepository.FindAll(themeQuery).ToList();
@@ -431,7 +447,7 @@
         /// </returns>
         public IEnumerable<SubModuleItemDTO> GetTestSubModuleItemsByUserId(int userId)
         {
-            SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             Test test = null;
@@ -463,8 +479,12 @@
                             .WithAlias(() => dto.isActive)
                             .Select(() => theme.Id)
                             .WithAlias(() => dto.themeId))
-                            .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-            var result = this.Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                            .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result =
+                this.Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList();
             var themeIds = result.Where(x => x.themeId.HasValue).Select(x => x.themeId.Value).ToList();
             var themeQuery = new DefaultQueryOver<SubModuleItemTheme, int>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsIn(themeIds);
             var themes = this.themeRepository.FindAll(themeQuery).ToList();
@@ -486,7 +506,7 @@
 	        SubModuleItem smi = null;
 	        SubModuleCategory smc = null;
 	        Quiz q = null;
-	        SubModuleItemDTO dto = null;
+            SubModuleItemFromStoredProcedureDTO dto = null;
 	        var queryOver = new DefaultQueryOver<SubModuleItem, int>().GetQueryOver(() => smi)
 		        .JoinQueryOver(x => x.SubModuleCategory, () => smc, JoinType.InnerJoin)
 		        .JoinQueryOver(() => smi.Quizes, () => q, JoinType.LeftOuterJoin)
@@ -510,8 +530,10 @@
 				        .WithAlias(() => dto.subModuleId)
 				        .Select(() => smi.Id)
 				        .WithAlias(() => dto.subModuleItemId))
-		        .TransformUsing(Transformers.AliasToBean<SubModuleItemDTO>());
-	        var result = Repository.FindAll<SubModuleItemDTO>(queryOver).ToList();
+                .TransformUsing(Transformers.AliasToBean<SubModuleItemFromStoredProcedureDTO>());
+            var result = Repository.FindAll<SubModuleItemFromStoredProcedureDTO>(queryOver).ToList()
+                    .Select(x => new SubModuleItemDTO(x))
+                    .ToList();
 	        return result;
         }
 

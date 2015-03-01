@@ -7,7 +7,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The survey dto.
+    ///     The survey DTO.
     /// </summary>
     [DataContract]
     public class SurveyDTO

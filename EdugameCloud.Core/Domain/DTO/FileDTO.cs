@@ -4,6 +4,7 @@
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -31,7 +32,7 @@
         public FileDTO(File file)
         {
             this.fileId = file.Id;
-            this.dateCreated = file.DateCreated;
+            this.dateCreated = file.DateCreated.ConvertToUnixTimestamp();
             this.height = file.Height;
             this.width = file.Width;
             this.x = file.X;
@@ -48,7 +49,7 @@
         ///     Gets or sets the date.
         /// </summary>
         [DataMember(IsRequired = false)]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the height.

@@ -13,6 +13,11 @@
     [KnownType(typeof(SurveyQuestionResultAnswerDTO))]
     public class SurveyQuestionResultDTO
     {
+        /// <summary>
+        /// The answers field.
+        /// </summary>
+        private SurveyQuestionResultAnswerDTO[] answersField = { };
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -20,7 +25,6 @@
         /// </summary>
         public SurveyQuestionResultDTO()
         {
-            this.answers = new List<SurveyQuestionResultAnswerDTO>();
         }
 
         /// <summary>
@@ -40,7 +44,7 @@
             this.question = result.Question;
             this.questionTypeId = result.QuestionType.With(x => x.Id);
             this.isCorrect = result.IsCorrect;
-            this.answers = answers.With(x => x.Select(a => new SurveyQuestionResultAnswerDTO(a)).ToList());
+            this.answers = answers.With(x => x.Select(a => new SurveyQuestionResultAnswerDTO(a)).ToArray());
         }
 
         #endregion
@@ -57,7 +61,18 @@
         /// Gets or sets the answers.
         /// </summary>
         [DataMember]
-        public List<SurveyQuestionResultAnswerDTO> answers { get; set; }
+        public SurveyQuestionResultAnswerDTO[] answers
+        {
+            get
+            {
+                return this.answersField ?? new SurveyQuestionResultAnswerDTO[] { };
+            }
+
+            set
+            {
+                this.answersField = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether is correct.

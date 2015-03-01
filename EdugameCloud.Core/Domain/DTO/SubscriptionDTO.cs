@@ -1,10 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The subscription dto.
+    /// The subscription DTO.
     /// </summary>
     [DataContract]
     public class SubscriptionDTO
@@ -16,7 +15,7 @@
         /// </summary>
         public SubscriptionDTO()
         {
-            this.data = new List<SubscriptionItem>();
+            this.data = new SubscriptionItem[] { };
         }
 
         #endregion
@@ -27,7 +26,7 @@
         /// Gets or sets the data.
         /// </summary>
         [DataMember]
-        public List<SubscriptionItem> data { get; set; }
+        public SubscriptionItem[] data { get; set; }
 
         /// <summary>
         /// Gets or sets the meta.

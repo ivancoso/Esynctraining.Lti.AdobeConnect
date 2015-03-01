@@ -88,8 +88,15 @@
         public SurveyResultDataDTO GetSurveyResultByACSessionId(int adobeConnectSessionId, int smiId)
         {
             var res = new SurveyResultDataDTO();
-            res.questions = new List<QuestionForAdminDTO>(this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getSurveyQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)));
-            res.players = new List<SurveyPlayerDTO>(this.Repository.StoreProcedureForMany<SurveyPlayerDTO>("getSurveyResultByACSessionId", new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId), new StoreProcedureParam<int>("subModuleItemId", smiId)));
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getSurveyQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+            res.players =
+                this.Repository.StoreProcedureForMany<SurveyPlayerFromStoredProcedureDTO>(
+                    "getSurveyResultByACSessionId",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId))
+                    .ToList()
+                    .Select(x => new SurveyPlayerDTO(x))
+                    .ToArray();
 
             var questionIds = res.questions.Select(q => q.questionId).ToList();
 
@@ -111,14 +118,14 @@
 
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.questionResultIds = playerAnswers.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToList();
-                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToList();
+                questionForAdminDTO.questionResultIds = playerAnswers.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToArray();
+                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
             }
 
             foreach (var surveyPlayerDTO in res.players)
             {
                 var playerAnswersIds = playerAnswers.Where(x => x.SurveyResult.Id == surveyPlayerDTO.surveyResultId).Select(x => x.Id).ToList();
-                surveyPlayerDTO.answers = realAnswers.Where(x => playerAnswersIds.Contains(x.SurveyQuestionResult.Id)).Select(x => new SurveyQuestionResultAnswerDTO(x)).ToList();
+                surveyPlayerDTO.answers = realAnswers.Where(x => playerAnswersIds.Contains(x.SurveyQuestionResult.Id)).Select(x => new SurveyQuestionResultAnswerDTO(x)).ToArray();
             }
 
             return res;

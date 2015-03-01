@@ -80,7 +80,11 @@
             instance.Address1 = addressVo.address1;
             instance.Address2 = addressVo.address2;
             instance.City = addressVo.city;
-            instance.DateCreated = addressVo.dateCreated ?? DateTime.Now;
+            if (instance.IsTransient())
+            {
+                instance.DateCreated = DateTime.Now;
+            }
+
             instance.DateModified = DateTime.Now;
             instance.Country = addressVo.countryId.HasValue
                                    ? this.countryModel.GetOneById(addressVo.countryId.Value).Value

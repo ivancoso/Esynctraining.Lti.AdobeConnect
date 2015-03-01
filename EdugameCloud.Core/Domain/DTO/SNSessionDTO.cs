@@ -1,7 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
+
+    using EdugameCloud.Core.Extensions;
 
     /// <summary>
     ///     The SN session DTO.
@@ -9,6 +10,29 @@
     [DataContract]
     public class SNSessionDTO
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SNSessionDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public SNSessionDTO(SNSessionFromStoredProcedureDTO dto)
+        {
+            this.acSessionId = dto.acSessionId;
+            this.acUserModeId = dto.acUserModeId;
+            this.categoryName = dto.categoryName;
+            this.dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
+            this.snGroupDiscussionId = dto.snGroupDiscussionId;
+            this.groupDiscussionTitle = dto.groupDiscussionTitle;
+            this.language = dto.language;
+            this.activeParticipants = dto.activeParticipants;
+            this.totalParticipants = dto.totalParticipants;
+            this.profileName = dto.profileName;
+            this.snProfileId = dto.snProfileId;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.userId = dto.userId;
+        }
+
         #region Public Properties
 
         /// <summary>
@@ -33,7 +57,7 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the group discussion id.
@@ -57,13 +81,13 @@
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int activeParticipants { get; set; }
+        public int activeParticipants { get; set; }
 
         /// <summary>
         /// Gets or sets the participants.
         /// </summary>
         [DataMember]
-        public virtual int totalParticipants { get; set; }
+        public int totalParticipants { get; set; }
 
         /// <summary>
         ///     Gets or sets the SN profile name.

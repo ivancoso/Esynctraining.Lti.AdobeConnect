@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
 
-    using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     /// The MoodleService interface.
@@ -16,22 +16,17 @@
         #region Public Methods and Operators
 
         /// <summary>
-        /// The save.
+        /// The get quiz.
         /// </summary>
         /// <param name="userInfo">
-        /// The user info
+        /// The user Info.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        /// <summary>
-        /// The get quizes.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="MoodleQuizInfoDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<MoodleQuizInfoDTO> GetQuizzesForUser(MoodleUserInfoDTO userInfo);
+        [FaultContract(typeof(Error))]
+        MoodleQuizInfoDTO GetQuizzesForUser(MoodleUserInfoDTO userInfo);
 
         /// <summary>
         /// The get surveys for user
@@ -39,21 +34,25 @@
         /// <param name="userInfo">
         /// The user info
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// The <see cref="MoodleQuizInfoDTO"/>.
+        /// </returns>
         [OperationContract]
-        ServiceResponse<MoodleQuizInfoDTO> GetSurveysForUser(MoodleUserInfoDTO userInfo);
+        [FaultContract(typeof(Error))]
+        MoodleQuizInfoDTO GetSurveysForUser(MoodleUserInfoDTO userInfo);
 
         /// <summary>
-        /// The convert quizes.
+        /// The convert quiz.
         /// </summary>
         /// <param name="quiz">
         /// The quiz
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="QuizesAndSubModuleItemsDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<QuizesAndSubModuleItemsDTO> ConvertQuizzes(LmsQuizConvertDTO quiz);
+        [FaultContract(typeof(Error))]
+        QuizesAndSubModuleItemsDTO ConvertQuizzes(LmsQuizConvertDTO quiz);
 
         /// <summary>
         /// The convert surveys.
@@ -62,10 +61,11 @@
         /// The survey
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="SurveysAndSubModuleItemsDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SurveysAndSubModuleItemsDTO> ConvertSurveys(LmsQuizConvertDTO survey);
+        [FaultContract(typeof(Error))]
+        SurveysAndSubModuleItemsDTO ConvertSurveys(LmsQuizConvertDTO survey);
 
         /// <summary>
         /// The get authentication parameters by id
@@ -74,12 +74,17 @@
         /// The id
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="LmsUserParametersDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<LmsUserParametersDTO> GetAuthenticationParametersById(string id);
+        [FaultContract(typeof(Error))]
+        LmsUserParametersDTO GetAuthenticationParametersById(string id);
 
+        /// <summary>
+        /// The test.
+        /// </summary>
         [OperationContract]
+        [FaultContract(typeof(Error))]
         void Test();
 
         #endregion

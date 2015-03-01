@@ -50,14 +50,6 @@
         /// </param>
         public static void RegisterComponents(this IWindsorContainer container, bool console = false, bool wcf = false, bool web = false)
         {
-            if (wcf)
-            {
-                container.AddFacility<WcfFacility>();
-                container.Register(Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-                container.Register(Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(BaseConverter<,>)).WithService.Base().LifestyleTransient());
-                container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
-            }
-
             container.Register(Component.For<FluentConfiguration>().LifeStyle.Singleton);
             container.Register(Component.For<Configuration>().LifeStyle.Singleton.Activator<NHibernateConfigurationActivator>());
             container.Register(Component.For<ISessionFactory>().LifeStyle.Singleton.Activator<NHibernateSessionFactoryActivator>());
@@ -66,17 +58,13 @@
             {
                 container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.Transient);   
             }
-            else if (wcf)
-            {
-                container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());   
-            }
             else if (web)
             {
                 container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
             }
 
             container.Register(Component.For(typeof(IRepository<,>)).ImplementedBy(typeof(Repository<,>)).LifeStyle.Transient);
-            container.Register(Component.For(typeof(RTMPModel)).ImplementedBy(typeof(RTMPModel)).LifeStyle.Transient);
+            container.Register(Component.For(typeof(RealTimeNotificationModel)).ImplementedBy(typeof(RealTimeNotificationModel)).LifeStyle.Transient);
             
 
             if (!console)

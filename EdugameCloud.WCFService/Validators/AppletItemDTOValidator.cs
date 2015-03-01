@@ -19,6 +19,5 @@
         {
             this.RuleFor(model => model.appletName).NotEmpty().WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Applet name is empty");
         }
-
     }
 }

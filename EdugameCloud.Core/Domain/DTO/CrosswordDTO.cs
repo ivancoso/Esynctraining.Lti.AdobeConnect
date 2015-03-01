@@ -3,96 +3,104 @@
     using System;
     using System.Runtime.Serialization;
 
+    using EdugameCloud.Core.Extensions;
+
     /// <summary>
-    ///     The applet item dto.
+    ///     The crossword item DTO.
     /// </summary>
     [DataContract]
     public class CrosswordDTO
     {
-        #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CrosswordDTO"/> class.
-        /// </summary>
-        public CrosswordDTO()
-        {
-        }
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
         /// Gets or sets the applet item id.
         /// </summary>
         [DataMember]
-        public virtual int appletItemId { get; set; }
+        public int appletItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the applet name.
         /// </summary>
         [DataMember]
-        public virtual string appletName { get; set; }
+        public string appletName { get; set; }
 
         /// <summary>
         /// Gets or sets the category name.
         /// </summary>
         [DataMember]
-        public virtual string categoryName { get; set; }
+        public string categoryName { get; set; }
 
         /// <summary>
         /// Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int createdBy { get; set; }
+        public int createdBy { get; set; }
 
         /// <summary>
         /// Gets or sets the created by last name.
         /// </summary>
         [DataMember]
-        public virtual string createdByLastName { get; set; }
+        public string createdByLastName { get; set; }
 
         /// <summary>
         /// Gets or sets the created by name.
         /// </summary>
         [DataMember]
-        public virtual string createdByName { get; set; }
+        public string createdByName { get; set; }
 
         /// <summary>
         /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified
+        {
+            get
+            {
+                return this.dateModifiedData.ConvertToUnixTimestamp();
+            }
+
+            // ReSharper disable once ValueParameterNotUsed
+            set
+            {
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the date modified.
+        /// </summary>
+        [IgnoreDataMember]
+        public DateTime dateModifiedData { get; set; }
 
         /// <summary>
         /// Gets or sets the first name.
         /// </summary>
         [DataMember]
-        public virtual string firstName { get; set; }
+        public string firstName { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
         [DataMember]
-        public virtual string lastName { get; set; }
+        public string lastName { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.
         /// </summary>
         [DataMember]
-        public virtual int subModuleCategoryId { get; set; }
+        public int subModuleCategoryId { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleItemId { get; set; }
+        public int subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
         [DataMember]
-        public virtual int userId { get; set; }
+        public int userId { get; set; }
 
         #endregion
     }

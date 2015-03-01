@@ -10,6 +10,7 @@ namespace EdugameCloud.Core.Business.Models
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
@@ -126,15 +127,22 @@ namespace EdugameCloud.Core.Business.Models
 		        .TransformUsing(Transformers.AliasToBean<QuestionForAdminDTO>());
 			var questionqsWithCorrectAnswerCount = Repository.FindAll<QuestionForAdminDTO>(queryOver1).ToList();
 			questionqs.ForEach(x => x.CorrectAnswerCount = (questionqsWithCorrectAnswerCount.Any(t => t.questionId == x.questionId)? questionqsWithCorrectAnswerCount.First(t => t.questionId == x.questionId).CorrectAnswerCount: 0));
-			res.questions = questionqs; 
-            res.players = new List<TestPlayerDTO>(this.Repository.StoreProcedureForMany<TestPlayerDTO>("getTestResultByACSessionId", new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId), new StoreProcedureParam<int>("subModuleItemId", smiId)));
+            res.questions = questionqs.ToArray();
+            res.players =
+                this.Repository.StoreProcedureForMany<TestPlayerFromStoredProcedureDTO>(
+                    "getTestResultByACSessionId",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId))
+                    .ToList()
+                    .Select(x => new TestPlayerDTO(x))
+                    .ToArray();
 
             if (res.players != null && res.players.Any())
             {
                 foreach (var player in res.players)
                 {
-                    long duration = (player.endTime - player.startTime).Ticks;
-                    var passingScore = test.PassingScore.HasValue ? (res.questions.Count * (test.PassingScore.Value / 100)) : 0;
+                    long duration = (player.endTime.ConvertFromUnixTimeStamp() - player.startTime.ConvertFromUnixTimeStamp()).Ticks;
+                    var passingScore = test.PassingScore.HasValue ? (res.questions.Length * (test.PassingScore.Value / 100)) : 0;
                     bool scorePassed = !test.PassingScore.HasValue ? player.score > 0 : test.PassingScore == 0 || passingScore <= player.score;
                     bool timePassed = !test.TimeLimit.HasValue || test.TimeLimit == 0 || test.TimeLimit > TimeSpan.FromTicks(duration).TotalMinutes;
                     player.passingScore = passingScore;
@@ -152,7 +160,7 @@ namespace EdugameCloud.Core.Business.Models
 
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToList();
+                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
             }
 
             return res;

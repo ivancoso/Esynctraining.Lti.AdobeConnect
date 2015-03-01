@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
@@ -16,6 +15,16 @@
     [KnownType(typeof(SNMapSettingsDTO))]
     public class SNProfileDTO
     {
+        /// <summary>
+        /// The links field.
+        /// </summary>
+        private SNLinkDTO[] linksField = { };
+
+        /// <summary>
+        /// The services field.
+        /// </summary>
+        private SNProfileSNServiceDTO[] servicesField = { };
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -23,8 +32,6 @@
         /// </summary>
         public SNProfileDTO()
         {
-            this.links = new List<SNLinkDTO>();
-            this.services = new List<SNProfileSNServiceDTO>();
         }
 
         /// <summary>
@@ -41,8 +48,8 @@
                 this.about = profile.About;
                 this.addressVO = profile.Address == null ? null : new AddressDTO(profile.Address);
                 this.email = profile.Email;
-                this.links = profile.Links.Select(x => new SNLinkDTO(x)).ToList();
-                this.services = profile.Services.Select(x => new SNProfileSNServiceDTO(x)).ToList();
+                this.links = profile.Links.Select(x => new SNLinkDTO(x)).ToArray();
+                this.services = profile.Services.Select(x => new SNProfileSNServiceDTO(x)).ToArray();
                 this.profileName = profile.ProfileName;
                 this.userName = profile.UserName;
                 this.jobTitle = profile.JobTitle;
@@ -90,7 +97,17 @@
         ///     Gets or sets the links.
         /// </summary>
         [DataMember]
-        public List<SNLinkDTO> links { get; set; }
+        public SNLinkDTO[] links
+        {
+            get
+            {
+                return this.linksField;
+            }
+            set
+            {
+                this.linksField = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the name.
@@ -120,7 +137,17 @@
         ///     Gets or sets the services.
         /// </summary>
         [DataMember]
-        public List<SNProfileSNServiceDTO> services { get; set; }
+        public SNProfileSNServiceDTO[] services
+        {
+            get
+            {
+                return this.servicesField ?? new SNProfileSNServiceDTO[] { };
+            }
+            set
+            {
+                this.servicesField = value;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the SN profile id.

@@ -43,7 +43,7 @@
         /// <summary>
         /// The RTMP model.
         /// </summary>
-        private readonly RTMPModel rtmpModel;
+        private readonly RealTimeNotificationModel realTimeNotificationModel;
 
         private readonly ILogger logger;
 
@@ -55,17 +55,17 @@
         /// <param name="socialUserTokensModel">
         /// The social User Tokens Model.
         /// </param>
-        /// <param name="rtmpModel">
+        /// <param name="realTimeNotificationModel">
         /// The RTMP Model.
         /// </param>
         /// <param name="settings">
         /// The settings
         /// </param>
-        public SocialController(SocialUserTokensModel socialUserTokensModel, RTMPModel rtmpModel, ILogger logger, ApplicationSettingsProvider settings)
+        public SocialController(SocialUserTokensModel socialUserTokensModel, RealTimeNotificationModel realTimeNotificationModel, ILogger logger, ApplicationSettingsProvider settings)
             : base(settings)
         {
             this.socialUserTokensModel = socialUserTokensModel;
-            this.rtmpModel = rtmpModel;
+            this.realTimeNotificationModel = realTimeNotificationModel;
             this.logger = logger;
         }
 
@@ -118,7 +118,7 @@
             {
                 data = System.Text.Encoding.ASCII.GetString(HttpContext.Request.InputStream.ReadToEnd());
                 var des = (SubscriptionUpdateWrapper)Newtonsoft.Json.JsonConvert.DeserializeObject("{data:" + data + "}", typeof(SubscriptionUpdateWrapper));
-                updates = des.data;
+                updates = des.data.ToList();
             }
             catch (Exception ex)
             {
@@ -233,7 +233,7 @@
                             this.socialUserTokensModel.RegisterSave(tokens, true);
                             try
                             {
-                                this.rtmpModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
+                                this.realTimeNotificationModel.NotifyClientsAboutSocialTokens(new SocialUserTokensDTO(tokens));
                             }
                             catch (Exception ex)
                             {

@@ -5,7 +5,7 @@
 
 
     /// <summary>
-    ///     The survey grouping type dto.
+    ///     The survey grouping type DTO.
     /// </summary>
     [DataContract]
     public class SurveyGroupingTypeDTO

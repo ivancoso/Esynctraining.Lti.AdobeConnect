@@ -2,24 +2,11 @@
 {
     using System;
     using System.Web;
-    using System.Web.Configuration;
-
-    using Castle.MicroKernel.Registration;
+    using Castle.Core.Logging;
     using Castle.Windsor;
 
-    using EdugameCloud.Core.Extensions;
-    using EdugameCloud.Core.Keys;
-    using EdugameCloud.Core.RTMP;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Persistence;
-    using EdugameCloud.WCFService.Converters;
-    using EdugameCloud.WCFService.Providers;
-
-    using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
-
-    using Weborb.Messaging;
 
     /// <summary>
     /// The global.
@@ -29,25 +16,18 @@
         #region Methods
 
         /// <summary>
-        /// The application_ end.
+        /// The application error.
         /// </summary>
         /// <param name="sender">
         /// The sender.
         /// </param>
         /// <param name="e">
-        /// The e.
+        /// The event arguments.
         /// </param>
-        protected void Application_End(object sender, EventArgs e)
+        protected void Application_Error(object sender, EventArgs e)
         {
-            IoC.Container.Dispose();
-            if (WebConfigurationManager.AppSettings.HasKey("RTMPServerPort"))
-            {
-                var server = Application[ApplicationKeys.WebOrbRTMPServerKey] as RTMPServer;
-                if (server != null)
-                {
-                    server.shutdown();
-                }
-            }
+            // Code that runs when an unhandled error occurs
+            IoC.Resolve<ILogger>().Error("Unhandled exception: ", this.Server.GetLastError());
         }
 
         /// <summary>
@@ -63,65 +43,7 @@
         {
             var container = new WindsorContainer();
             IoC.Initialize(container);
-            container.RegisterComponents(wcf: true);
-            container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
-            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
-            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-            RegisterLtiComponents(container);
-            try
-            {
-                // Initialize WebORB configuration before starting messaging server
-                var config = Weborb.Config.ORBConfig.GetInstance();
-
-                // Create Messaging server. 2037 is the port number, 500 is connection backlog
-                var name = typeof(DBChangesNotifier).Name;
-                if (WebConfigurationManager.AppSettings.HasKey("RTMPServerPort"))
-                {
-                    var port = int.Parse(WebConfigurationManager.AppSettings["RTMPServerPort"]);
-
-                    var server = new RTMPServer(name, port, 500, config);
-                    // Start the messaging server
-                    server.start();
-
-                    // Store the server instance in the Application context, so it can be cleared out when application stops     
-                    Application[ApplicationKeys.WebOrbRTMPServerKey] = server;
-                }
-            }
-            catch (Exception ex)
-            {
-                var logger = IoC.Resolve<Castle.Core.Logging.ILogger>();
-                logger.Error("Failed to initialize RTMP server", ex);
-            }  
-        }
-
-        /// <summary>
-        /// The register LTI components.
-        /// </summary>
-        /// <param name="container">
-        /// The container.
-        /// </param>
-        private static void RegisterLtiComponents(WindsorContainer container)
-        {
-            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
-            container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
-        }
-
-        /// <summary>
-        /// The application authenticate request.
-        /// </summary>
-        /// <param name="sender">
-        /// The sender.
-        /// </param>
-        /// <param name="e">
-        /// The event arguments.
-        /// </param>
-        protected void Application_AuthenticateRequest(Object sender, EventArgs e)
-        {
-            Weborb.Util.ThreadContext.setCurrentHttpContext(HttpContext.Current);
-            Weborb.Security.ORBSecurity.AuthenticateRequest();
+            DIConfig.RegisterComponents(container);
         }
 
         #endregion

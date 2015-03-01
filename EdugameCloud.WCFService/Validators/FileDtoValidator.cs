@@ -20,7 +20,6 @@
         public FileDtoValidator()
         {
             this.CascadeMode = CascadeMode.StopOnFirstFailure;
-            this.RuleFor(x => x.dateCreated).NotEqual(default(DateTime)).WithError(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Date is invalid");
             this.RuleFor(x => x.fileName)
                 .Must((model, x) =>
                     (model.fileId != default(Guid) && (string.IsNullOrWhiteSpace(x) || Path.GetExtension(x) != null))

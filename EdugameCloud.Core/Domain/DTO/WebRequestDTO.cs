@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System;
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Xml.Serialization;
 
@@ -13,6 +12,11 @@
     [Serializable]
     public class WebRequestDTO
     {
+        /// <summary>
+        /// The headers field.
+        /// </summary>
+        private WebHeaderDTO[] headersField = { };
+
         #region Public Properties
 
         /// <summary>
@@ -32,7 +36,18 @@
         /// Gets or sets the headers.
         /// </summary>
         [DataMember]
-        public List<WebHeaderDTO> headers { get; set; }
+        public WebHeaderDTO[] headers
+        {
+            get
+            {
+                return this.headersField ?? new WebHeaderDTO[] { };
+            }
+
+            set
+            {
+                this.headersField = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the content type.

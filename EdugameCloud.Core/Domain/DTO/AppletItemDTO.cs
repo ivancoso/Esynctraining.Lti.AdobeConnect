@@ -7,13 +7,16 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The applet item dto.
+    ///     The applet item DTO.
     /// </summary>
     [DataContract]
     public class AppletItemDTO
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppletItemDTO"/> class.
+        /// </summary>
         public AppletItemDTO()
         {
         }
@@ -36,27 +39,29 @@
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the applet name.
+        /// </summary>
         [DataMember]
-        public virtual string appletName { get; set; }
-
+        public string appletName { get; set; }
 
         /// <summary>
         ///     Gets or sets the document xml.
         /// </summary>
         [DataMember]
-        public virtual string documentXML { get; set; }
+        public string documentXML { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.
         /// </summary>
         [DataMember]
-        public virtual int? subModuleItemId { get; set; }
+        public int? subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
         [DataMember]
-        public virtual int appletItemId { get; set; }
+        public int appletItemId { get; set; }
 
         #endregion
     }

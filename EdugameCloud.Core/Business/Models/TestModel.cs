@@ -141,7 +141,7 @@ namespace EdugameCloud.Core.Business.Models
         /// </returns>
         public IEnumerable<TestFromStoredProcedureDTO> GetTestsByUserId(int userId)
         {
-			TestFromStoredProcedureDTO dto = null;
+			TestFromStoredProcedureExDTO dto = null;
 	        Test t = null;
 			SubModuleItem smi = null;
 			SubModuleCategory smc = null;
@@ -192,9 +192,12 @@ namespace EdugameCloud.Core.Business.Models
 							.Select(() => smc.Id)
 							.WithAlias(() => dto.subModuleCategoryId)
 							)
-							 .TransformUsing(Transformers.AliasToBean<TestFromStoredProcedureDTO>());
+                             .TransformUsing(Transformers.AliasToBean<TestFromStoredProcedureExDTO>());
 
-			var result = this.Repository.FindAll<TestFromStoredProcedureDTO>(queryOver).ToList();
+            var result =
+                this.Repository.FindAll<TestFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new TestFromStoredProcedureDTO(x));
 			return result;
         }
 
@@ -221,7 +224,7 @@ namespace EdugameCloud.Core.Business.Models
 			Test t = null;
 	        User u = null;
 	        User u2 = null;
-			TestFromStoredProcedureDTO dto = null;
+            TestFromStoredProcedureExDTO dto = null;
 			var qieryOver = new DefaultQueryOver<Test, int>().GetQueryOver(() => t)
 				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(()=>smi.IsActive == true && smi.IsShared == true)
 				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(()=>smc.IsActive == true)
@@ -256,8 +259,11 @@ namespace EdugameCloud.Core.Business.Models
 					.Select(() => smc.Id)
 					.WithAlias(() => dto.subModuleCategoryId)
 				)
-				.TransformUsing(Transformers.AliasToBean<TestFromStoredProcedureDTO>());
-			var result = Repository.FindAll<TestFromStoredProcedureDTO>(qieryOver).ToList();
+                .TransformUsing(Transformers.AliasToBean<TestFromStoredProcedureExDTO>());
+            var result =
+                Repository.FindAll<TestFromStoredProcedureExDTO>(qieryOver)
+                    .ToList()
+                    .Select(x => new TestFromStoredProcedureDTO(x));
 			return result;
         }
 
@@ -275,7 +281,7 @@ namespace EdugameCloud.Core.Business.Models
 			SubModuleItem smi = null;
 			SubModuleCategory smc = null;
 			Test t = null;
-			SMICategoriesFromStoredProcedureDTO dto = null;
+            SMICategoriesFromStoredProcedureExDTO dto = null;
 			var qieryOver = new DefaultQueryOver<Test, int>().GetQueryOver(() => t)
 				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.RightOuterJoin)
 				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
@@ -305,8 +311,12 @@ namespace EdugameCloud.Core.Business.Models
 					.Select(() => smc.Id)
 					.WithAlias(() => dto.subModuleCategoryId)
 				)
-				.TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureDTO>());
-			var result = Repository.FindAll<SMICategoriesFromStoredProcedureDTO>(qieryOver).ToList();
+                .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureExDTO>());
+            var result =
+                Repository.FindAll<SMICategoriesFromStoredProcedureExDTO>(qieryOver)
+                    .ToList()
+                    .Select(x => new SMICategoriesFromStoredProcedureDTO(x))
+                    .ToList();
 	        return result;
         }
 
@@ -324,8 +334,8 @@ namespace EdugameCloud.Core.Business.Models
             var result = new TestDataDTO { testVO = new TestDTO(this.GetOneById(testId).Value) };
             if (result.testVO != null && result.testVO.subModuleItemId.HasValue)
             {
-                result.questions = this.GetTestQuestionsBySMIId(result.testVO.subModuleItemId.Value).ToList();
-                result.distractors = this.GetTestDistractorsBySMIId(result.testVO.subModuleItemId.Value).ToList();
+                result.questions = this.GetTestQuestionsBySMIId(result.testVO.subModuleItemId.Value).ToArray();
+                result.distractors = this.GetTestDistractorsBySMIId(result.testVO.subModuleItemId.Value).ToArray();
             }
 
             return result;

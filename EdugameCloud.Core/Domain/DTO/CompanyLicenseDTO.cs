@@ -2,8 +2,10 @@
 {
     using System;
     using System.Runtime.Serialization;
-
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
+
+    using Esynctraining.Core.Extensions;
 
     /// <summary>
     ///     The company license DTO.
@@ -32,10 +34,10 @@
             this.licenseNumber = l.LicenseNumber;
             this.createdBy = l.CreatedBy.Id;
             this.modifiedBy = l.ModifiedBy.Id;
-            this.dateCreated = l.DateCreated;
-            this.dateModified = l.DateModified;
-            this.startDate = l.DateStart;
-            this.expiryDate = l.ExpiryDate;
+            this.dateCreated = l.DateCreated.With(x => x.ConvertToUnixTimestamp());
+            this.dateModified = l.DateModified.With(x => x.ConvertToUnixTimestamp());
+            this.startDate = l.DateStart.With(x => x.ConvertToUnixTimestamp());
+            this.expiryDate = l.ExpiryDate.With(x => x.ConvertToUnixTimestamp());
             this.totalLicensesCount = l.TotalLicensesCount;
             this.totalParticipantsCount = l.TotalParticipantsCount;
             this.isTrial = l.LicenseStatus == CompanyLicenseStatus.Trial;
@@ -85,19 +87,19 @@
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         /// Gets or sets the start date.
         /// </summary>
         [DataMember]
-        public DateTime startDate { get; set; }
+        public double startDate { get; set; }
 
         /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         /// Gets or sets the domain.
@@ -109,7 +111,7 @@
         /// Gets or sets the expiry date.
         /// </summary>
         [DataMember]
-        public DateTime expiryDate { get; set; }
+        public double expiryDate { get; set; }
 
         /// <summary>
         /// Gets or sets the license number.
@@ -129,6 +131,9 @@
         [DataMember]
         public int totalLicensesCount { get; set; }
 
+        /// <summary>
+        /// Gets or sets the total participants count.
+        /// </summary>
         [DataMember]
         public int totalParticipantsCount { get; set; }
 

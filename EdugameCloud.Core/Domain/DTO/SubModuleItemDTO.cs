@@ -1,9 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Linq;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -21,7 +21,28 @@
         /// </summary>
         public SubModuleItemDTO()
         {
-            themeVO = new SubModuleItemThemeDTO();
+            this.themeVO = new SubModuleItemThemeDTO();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SubModuleItemDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public SubModuleItemDTO(SubModuleItemFromStoredProcedureDTO dto)
+        {
+            this.themeId = dto.themeId;
+            this.createdBy = dto.createdBy;
+            this.dateCreated = dto.dateCreated.ConvertToUnixTimestamp();
+            this.dateModified = dto.dateModified.ConvertToUnixTimestamp();
+            this.isActive = dto.isActive;
+            this.isShared = dto.isShared;
+            this.modifiedBy = dto.modifiedBy;
+            this.subModuleCategoryId = dto.subModuleCategoryId;
+            this.subModuleItemId = dto.subModuleItemId;
+            this.subModuleId = dto.subModuleId;
+            this.themeVO = dto.themeVO;
         }
 
         /// <summary>
@@ -37,11 +58,11 @@
             this.subModuleCategoryId = result.SubModuleCategory.With(x => x.Id);
             this.createdBy = result.CreatedBy.Return(x => x.Id, (int?)null);
             this.modifiedBy = result.ModifiedBy.Return(x => x.Id, (int?)null);
-            this.themeId = (int?)null;
+            this.themeId = null;
             this.isActive = result.IsActive;
             this.isShared = result.IsShared;
-            this.dateCreated = result.DateCreated;
-            this.dateModified = result.DateModified;
+            this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
+            this.dateModified = result.DateModified.ConvertToUnixTimestamp();
             var theme = result.Themes.FirstOrDefault();
             if (theme != null)
             {
@@ -58,67 +79,67 @@
         ///     Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int? themeId { get; set; }
+        public int? themeId { get; set; }
 
         /// <summary>
         ///     Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int? createdBy { get; set; }
+        public int? createdBy { get; set; }
 
         /// <summary>
         ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
         ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
-        public virtual bool? isActive { get; set; }
+        public bool? isActive { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is shared.
         /// </summary>
         [DataMember]
-        public virtual bool? isShared { get; set; }
+        public bool? isShared { get; set; }
 
         /// <summary>
         ///     Gets or sets the modified by.
         /// </summary>
         [DataMember]
-        public virtual int? modifiedBy { get; set; }
+        public int? modifiedBy { get; set; }
 
         /// <summary>
         ///     Gets or sets the sub module category.
         /// </summary>
         [DataMember]
-        public virtual int subModuleCategoryId { get; set; }
+        public int subModuleCategoryId { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleItemId { get; set; }
+        public int subModuleItemId { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module id.
         /// </summary>
         [DataMember]
-        public virtual int subModuleId { get; set; }
+        public int subModuleId { get; set; }
 
         /// <summary>
         /// Gets or sets the theme.
         /// </summary>
         [DataMember]
-        public virtual SubModuleItemThemeDTO themeVO { get; set; }
+        public SubModuleItemThemeDTO themeVO { get; set; }
 
         #endregion
     }

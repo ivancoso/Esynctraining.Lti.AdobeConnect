@@ -3,10 +3,12 @@
     using System;
     using System.Runtime.Serialization;
 
+    using EdugameCloud.Core.Extensions;
+
     using TweetSharp;
 
     /// <summary>
-    ///     The twitter profile dto.
+    ///     The twitter profile DTO.
     /// </summary>
     [DataContract]
     [KnownType(typeof(TwitterProfileDTO))]
@@ -31,7 +33,7 @@
         {
             this.statusId = twitterStatus.Id;
             this.author = new TwitterProfileDTO(twitterStatus.Author);
-            this.createdDate = twitterStatus.CreatedDate;
+            this.createdDate = twitterStatus.CreatedDate.ConvertToUnixTimestamp();
             this.text = twitterStatus.Text;
         }
 
@@ -49,7 +51,7 @@
         /// Gets or sets the created date.
         /// </summary>
         [DataMember]
-        public DateTime createdDate { get; set; }
+        public double createdDate { get; set; }
 
         /// <summary>
         ///     Gets or sets the twitter id.

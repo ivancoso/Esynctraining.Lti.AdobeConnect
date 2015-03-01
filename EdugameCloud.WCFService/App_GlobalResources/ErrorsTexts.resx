@@ -216,6 +216,12 @@
   <data name="SessionError_Subject" xml:space="preserve">
     <value>GetSessionError</value>
   </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Some unexpected error happen. Please contact administration.</value>
+  </data>
+  <data name="UnexpectedError_Subject" xml:space="preserve">
+    <value>Unhandled WCF Error</value>
+  </data>
   <data name="UserActivationError_ExpiredActivationCode" xml:space="preserve">
     <value>Activation code expired</value>
   </data>

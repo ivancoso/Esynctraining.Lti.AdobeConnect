@@ -1,10 +1,11 @@
-﻿namespace EdugameCloud.Lti.Contracts
+﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
 
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     /// The MOODLE authorization service interface
@@ -22,6 +23,7 @@
         /// The <see cref="ServiceResponse"/>.
         /// </returns>
         [OperationContract(Action = "Save")]
-        ServiceResponse<LmsUserParametersDTO> Save(LmsUserParametersDTO param);
+        [FaultContract(typeof(Error))]
+        LmsUserParametersDTO Save(LmsUserParametersDTO param);
     }
 }

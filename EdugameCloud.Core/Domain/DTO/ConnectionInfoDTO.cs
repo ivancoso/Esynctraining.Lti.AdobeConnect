@@ -3,7 +3,7 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The connection info dto.
+    /// The connection info DTO.
     /// </summary>
     [DataContract]
     public class ConnectionInfoDTO

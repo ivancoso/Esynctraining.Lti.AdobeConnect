@@ -7,7 +7,7 @@
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.DTO;
 
-    using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     ///     The Company Service interface.
@@ -23,11 +23,9 @@
         /// <param name="companyId">
         /// The company id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse ActivateById(int companyId);
+        [FaultContract(typeof(Error))]
+        void ActivateById(int companyId);
 
         /// <summary>
         /// The deactivate by id.
@@ -35,11 +33,9 @@
         /// <param name="companyId">
         /// The company id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse DeactivateById(int companyId);
+        [FaultContract(typeof(Error))]
+        void DeactivateById(int companyId);
 
         /// <summary>
         /// Deletes company by id.
@@ -48,10 +44,11 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="int"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<int> DeleteById(int id);
+        [FaultContract(typeof(Error))]
+        int DeleteById(int id);
 
         /// <summary>
         /// Deletes company theme by id.
@@ -60,10 +57,11 @@
         /// The id
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse{Guid}"/>.
+        /// The <see cref="Guid"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<Guid> DeleteThemeById(Guid id);
+        [FaultContract(typeof(Error))]
+        Guid DeleteThemeById(Guid id);
 
         /// <summary>
         /// The request license upgrade.
@@ -71,20 +69,19 @@
         /// <param name="companyId">
         /// The company id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse RequestLicenseUpgrade(int companyId);
+        [FaultContract(typeof(Error))]
+        void RequestLicenseUpgrade(int companyId);
 
         /// <summary>
         ///     The all.
         /// </summary>
         /// <returns>
-        ///     The <see cref="ServiceResponse" />.
+        ///     The <see cref="CompanyDTO" />.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyDTO> GetAll();
+        [FaultContract(typeof(Error))]
+        CompanyDTO[] GetAll();
 
         /// <summary>
         /// The get license history by company id.
@@ -93,10 +90,11 @@
         /// The company id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyLicenseDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyLicenseDTO> GetLicenseHistoryByCompanyId(int companyId);
+        [FaultContract(typeof(Error))]
+        CompanyLicenseDTO[] GetLicenseHistoryByCompanyId(int companyId);
 
         /// <summary>
         /// Get user by id.
@@ -105,10 +103,11 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyDTO> GetById(int id);
+        [FaultContract(typeof(Error))]
+        CompanyDTO GetById(int id);
 
         /// <summary>
         /// Gets theme by company id.
@@ -117,10 +116,11 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyThemeDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyThemeDTO> GetThemeByCompanyId(int id);
+        [FaultContract(typeof(Error))]
+        CompanyThemeDTO GetThemeByCompanyId(int id);
 
         /// <summary>
         /// The get theme by id.
@@ -129,10 +129,11 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyThemeDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyThemeDTO> GetThemeById(Guid id);
+        [FaultContract(typeof(Error))]
+        CompanyThemeDTO GetThemeById(Guid id);
 
         /// <summary>
         /// The save.
@@ -141,10 +142,11 @@
         /// The user.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyDTO> Save(CompanyDTO resultDto);
+        [FaultContract(typeof(Error))]
+        CompanyDTO Save(CompanyDTO resultDto);
 
         /// <summary>
         /// The save theme.
@@ -153,10 +155,11 @@
         /// The company theme DTO.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyThemeDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyThemeDTO> SaveTheme(CompanyThemeDTO companyThemeDTO);
+        [FaultContract(typeof(Error))]
+        CompanyThemeDTO SaveTheme(CompanyThemeDTO companyThemeDTO);
 
         /// <summary>
         /// The get LMS history by company id.
@@ -165,10 +168,11 @@
         /// The company id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="CompanyLmsDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<CompanyLmsDTO> GetLMSHistoryByCompanyId(int companyId);
+        [FaultContract(typeof(Error))]
+        CompanyLmsDTO[] GetLMSHistoryByCompanyId(int companyId);
 
         #endregion
     }

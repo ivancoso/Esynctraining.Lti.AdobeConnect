@@ -35,13 +35,13 @@
         /// Gets or sets the build version type.
         /// </summary>
         [DataMember]
-        public virtual string buildVersionType { get; set; }
+        public string buildVersionType { get; set; }
 
         /// <summary>
         /// Gets or sets the build version type id.
         /// </summary>
         [DataMember]
-        public virtual int buildVersionTypeId { get; set; }
+        public int buildVersionTypeId { get; set; }
 
         #endregion
     }

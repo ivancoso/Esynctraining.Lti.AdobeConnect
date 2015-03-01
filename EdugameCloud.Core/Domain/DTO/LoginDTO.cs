@@ -3,7 +3,7 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The login dto.
+    /// The login DTO.
     /// </summary>
     [DataContract]
     public class LoginDTO

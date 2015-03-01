@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Domain.Entities;
 
     /// <summary>
-    ///     The question type dto.
+    ///     The question type DTO.
     /// </summary>
     [DataContract]
     public class QuestionTypeDTO

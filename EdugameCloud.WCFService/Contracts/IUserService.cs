@@ -1,13 +1,13 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System;
-    using System.Collections.Generic;
     using System.ServiceModel;
+    using System.ServiceModel.Web;
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.WCFService.DTO;
 
-    using Esynctraining.Core.Domain.Contracts;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     ///     The AccountService interface.
@@ -21,10 +21,12 @@
         /// The all.
         /// </summary>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserDTO> GetAll();
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        UserDTO[] GetAll();
 
         /// <summary>
         /// Gets all users by company Id
@@ -33,10 +35,12 @@
         /// The id of company to search for
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse{UserDTO}"/>.
+        /// The <see cref="UserWithLoginHistoryDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserWithLoginHistoryDTO> GetAllForCompany(int companyId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetAllForCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        UserWithLoginHistoryDTO[] GetAllForCompany(int companyId);
 
         /// <summary>
         /// Gets all login history for user
@@ -45,10 +49,12 @@
         /// The id of company to search for
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse{ContactLoginHistoryDTO}"/>.
+        /// The <see cref="UserLoginHistoryDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryForUser(int userId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetLoginHistoryForUser?userId={userId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        UserLoginHistoryDTO[] GetLoginHistoryForUser(int userId);
 
         /// <summary>
         /// The get login history for company.
@@ -57,10 +63,12 @@
         /// The company id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserLoginHistoryDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryForCompany(int companyId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetLoginHistoryForCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        UserLoginHistoryDTO[] GetLoginHistoryForCompany(int companyId);
 
         /// <summary>
         /// The get login history paged.
@@ -72,10 +80,12 @@
         /// The page size.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="PagedUserLoginHistoryDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserLoginHistoryDTO> GetLoginHistoryPaged(int pageIndex, int pageSize);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetLoginHistoryPaged?pageIndex={pageIndex}&pageSize={pageSize}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        PagedUserLoginHistoryDTO GetLoginHistoryPaged(int pageIndex, int pageSize);
 
         /// <summary>
         /// The forgot password.
@@ -83,11 +93,10 @@
         /// <param name="email">
         /// The email.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse ForgotPassword(string email);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "ForgotPassword?email={email}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void ForgotPassword(string email);
 
         /// <summary>
         /// The update password.
@@ -101,11 +110,10 @@
         /// <param name="newPassword">
         /// The new password.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse UpdatePassword(string email, string oldPasswordHash, string newPassword);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "UpdatePassword?email={email}&oldPasswordHash={oldPasswordHash}&newPassword={newPassword}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void UpdatePassword(string email, string oldPasswordHash, string newPassword);
 
         /// <summary>
         /// The upload batch users.
@@ -114,10 +122,13 @@
         /// The batch.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserDTO> UploadBatchUsers(BatchUsersDTO batch);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "UploadBatchUsers", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        UserDTO[] UploadBatchUsers(BatchUsersDTO batch);
 
         /// <summary>
         /// The get company id by email.
@@ -126,10 +137,12 @@
         /// The email.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="int"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<int> GetCompanyIdByEmail(string email);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetCompanyIdByEmail?email={email}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int GetCompanyIdByEmail(string email);
 
         /// <summary>
         /// The login.
@@ -138,10 +151,13 @@
         /// The DTO.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserWithSplashScreenDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserWithSplashScreenDTO> Login(LoginWithHistoryDTO dto);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "Login", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        UserWithSplashScreenDTO Login(LoginWithHistoryDTO dto);
 
         /// <summary>
         /// The request session token.
@@ -150,10 +166,12 @@
         /// The user id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="SessionDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SessionDTO> RequestSessionToken(int userId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "RequestSessionToken?userId={userId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        SessionDTO RequestSessionToken(int userId);
 
         /// <summary>
         /// Deletes user by id.
@@ -162,10 +180,12 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="int"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<int> DeleteById(int id);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "DeleteById?id={id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        int DeleteById(int id);
 
         /// <summary>
         /// Deletes user by id.
@@ -174,10 +194,13 @@
         /// The user Ids.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="int"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<int> DeleteByIds(List<int> userIds);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "DeleteByIds", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        int[] DeleteByIds(int[] userIds);
 
         /// <summary>
         /// The activate by id.
@@ -185,11 +208,10 @@
         /// <param name="userId">
         /// The user id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse ActivateById(int userId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "ActivateById?userId={userId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void ActivateById(int userId);
 
         /// <summary>
         /// The update logo.
@@ -200,11 +222,10 @@
         /// <param name="logoId">
         /// The logo id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse UpdateLogo(int userId, Guid logoId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "UpdateLogo?userId={userId}&logoId={logoId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void UpdateLogo(int userId, Guid logoId);
 
         /// <summary>
         /// The get social user tokens.
@@ -213,10 +234,12 @@
         /// The key.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="SocialUserTokensDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<SocialUserTokensDTO> GetSocialUserTokens(string key);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetSocialUserTokens?key={key}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        SocialUserTokensDTO GetSocialUserTokens(string key);
 
         /// <summary>
         /// The deactivate by id.
@@ -224,11 +247,10 @@
         /// <param name="userId">
         /// The user id.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse DeactivateById(int userId);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "DeactivateById?userId={userId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void DeactivateById(int userId);
 
         /// <summary>
         /// The activate by ids.
@@ -236,11 +258,11 @@
         /// <param name="userIds">
         /// The user ids.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse ActivateByIds(List<int> userIds);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "ActivateByIds", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void ActivateByIds(int[] userIds);
 
         /// <summary>
         /// The deactivate by ids.
@@ -248,11 +270,11 @@
         /// <param name="userIds">
         /// The user ids.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse DeactivateByIds(List<int> userIds);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "DeactivateByIds", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        void DeactivateByIds(int[] userIds);
 
         /// <summary>
         /// Get user by id.
@@ -261,10 +283,12 @@
         /// The id.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserDTO> GetById(int id);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetById?id={id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        UserDTO GetById(int id);
 
         /// <summary>
         /// The save.
@@ -273,10 +297,13 @@
         /// The user.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="UserDTO"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<UserDTO> Save(UserDTO user);
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "Save", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Bare)]
+        UserDTO Save(UserDTO user);
         
         /// <summary>
         /// The send activation.
@@ -285,10 +312,12 @@
         /// The email.
         /// </param>
         /// <returns>
-        /// The <see cref="ServiceResponse"/>.
+        /// The <see cref="string"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<string> SendActivation(string email);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "SendActivation?email={email}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        string SendActivation(string email);
 
         /// <summary>
         /// The update password by code.
@@ -299,11 +328,10 @@
         /// <param name="newPassword">
         /// The new password.
         /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
         [OperationContract]
-        ServiceResponse UpdatePasswordByCode(string code, string newPassword);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "UpdatePasswordByCode?code={code}&newPassword={newPassword}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        void UpdatePasswordByCode(string code, string newPassword);
 
         /// <summary>
         /// The activate by code.
@@ -312,10 +340,12 @@
         /// The code.
         /// </param>
         /// <returns>
-        /// The <see cref="Esynctraining.Core.Domain.Contracts.ServiceResponse"/>.
+        /// The <see cref="bool"/>.
         /// </returns>
         [OperationContract]
-        ServiceResponse<bool> ActivateByCode(string code);
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "ActivateByCode?code={code}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        bool ActivateByCode(string code);
 
         #endregion
     }

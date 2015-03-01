@@ -3,7 +3,7 @@
     using System.Runtime.Serialization;
 
     /// <summary>
-    /// The quiz smi wrapper dto.
+    /// The quiz SMI wrapper DTO.
     /// </summary>
     [DataContract]
     [KnownType(typeof(SurveyDTO))]
@@ -13,13 +13,13 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the quiz dto.
+        /// Gets or sets the quiz DTO.
         /// </summary>
         [DataMember]
         public SurveyDTO SurveyDTO { get; set; }
 
         /// <summary>
-        /// Gets or sets the smi dto.
+        /// Gets or sets the SMI DTO.
         /// </summary>
         [DataMember]
         public SubModuleItemDTO SmiDTO { get; set; }

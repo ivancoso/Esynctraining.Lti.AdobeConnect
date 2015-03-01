@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
     using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
@@ -12,6 +13,7 @@
 
     using Castle.Core.Logging;
 
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
@@ -45,6 +47,8 @@
         /// <summary>
         ///     Initializes static members of the <see cref="FileModel" /> class.
         /// </summary>
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1409:RemoveUnnecessaryCode", Justification = "Reviewed. Suppression is OK here.")]
+        // ReSharper disable once EmptyConstructor
         static FileModel()
         {
         }
@@ -67,6 +71,58 @@
         #endregion
 
         #region Public Methods and Operators
+
+        /// <summary>
+        /// The try parse image.
+        /// </summary>
+        /// <param name="bytes">
+        /// The bytes.
+        /// </param>
+        /// <param name="img">
+        /// The image.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public static bool TryParseImage(byte[] bytes, out Image img)
+        {
+            img = null;
+            try
+            {
+                img = Image.FromStream(new MemoryStream(bytes));
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The delete folder.
+        /// </summary>
+        /// <param name="target_dir">
+        /// The target directory.
+        /// </param>
+        public static void DeleteFolder(string target_dir)
+        {
+            string[] files = Directory.GetFiles(target_dir);
+            string[] dirs = Directory.GetDirectories(target_dir);
+
+            foreach (string file in files)
+            {
+                System.IO.File.SetAttributes(file, FileAttributes.Normal);
+                System.IO.File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteFolder(dir);
+            }
+
+            Directory.Delete(target_dir, false);
+        }
 
         /// <summary>
         /// The read stream fully.
@@ -121,12 +177,12 @@
             string permanentFileName = this.PermanentFileName(file);
             using (FileStream fileStream = System.IO.File.OpenWrite(permanentFileName))
             {
-                string webOrbFolderName = this.WebOrbFolderName(file);
+                string webOrbFolderName = this.WebOrbFolderName(file.Id);
                 string webOrbFile;
                 if (Directory.Exists(webOrbFolderName) && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
                 {
                     byte[] content = System.IO.File.ReadAllBytes(webOrbFile);
-                    ResizeImage(content, permanentFileName, fileStream);
+                    this.ResizeImage(content, permanentFileName, fileStream);
 
                     try
                     {
@@ -145,125 +201,6 @@
             }
         }
 
-        private static ImageCodecInfo GetPngImageCodecInfo()
-        {
-            ImageCodecInfo iciPng = null;
-            foreach (ImageCodecInfo ici in ImageCodecInfo.GetImageDecoders())
-            {
-                if (ici.FilenameExtension.ToLower().Contains("png"))
-                {
-                    iciPng = ici;
-                    break;
-                }
-            }
-            iciPng = iciPng ?? ImageCodecInfo.GetImageDecoders()[1];
-            return iciPng;
-        }
-
-        /// <summary>
-        /// The try parse image.
-        /// </summary>
-        /// <param name="bytes">
-        /// The bytes.
-        /// </param>
-        /// <param name="img">
-        /// The img.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool TryParseImage(byte[] bytes, out Image img)
-        {
-            img = null;
-            try
-            {
-                img = Image.FromStream(new MemoryStream(bytes));
-            }
-            catch (ArgumentException)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// The resize image.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <param name="maxCanvasWidth">
-        /// The max canvas width.
-        /// </param>
-        /// <param name="maxCanvasHeight">
-        /// The max canvas height.
-        /// </param>
-        /// <param name="img">
-        /// The img.
-        /// </param>
-        /// <param name="originalWidth">
-        /// The original width.
-        /// </param>
-        /// <param name="originalHeight">
-        /// The original height.
-        /// </param>
-        private Image ResizeImage(string path, 
-                     /* note changed names */
-                     int maxCanvasWidth, int maxCanvasHeight,
-                     /* new */
-                     Image img = null,
-                     int? originalWidth = null, int? originalHeight = null)
-        {
-            Image image = img ?? Image.FromFile(path);
-            if (originalWidth == null)
-            {
-                originalWidth = image.Width;
-            }
-
-            if (originalHeight == null)
-            {
-                originalHeight = image.Height;
-            }
-
-            var canvasWidth = Math.Min(maxCanvasWidth, originalWidth.Value);
-            var canvasHeight = Math.Min(maxCanvasHeight, originalHeight.Value);
-
-          
-
-            /* ------------------ new code --------------- */
-
-            // Figure out the ratio
-            double ratioX = (double)canvasWidth / (double)originalWidth;
-            double ratioY = (double)canvasHeight / (double)originalHeight;
-
-            // use whichever multiplier is smaller
-            double ratio = ratioX < ratioY ? ratioX : ratioY;
-
-            // now we can get the new height and width
-            int newHeight = Convert.ToInt32(originalHeight * ratio);
-            int newWidth = Convert.ToInt32(originalWidth * ratio);
-
-            // Now calculate the X,Y position of the upper-left corner 
-            // (one of these will always be zero)
-            int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
-            int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
-
-
-            Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names
-
-            var graphic = Graphics.FromImage(thumbnail);
-            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphic.SmoothingMode = SmoothingMode.HighQuality;
-            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
-            graphic.CompositingQuality = CompositingQuality.HighQuality;
-            graphic.Clear(Color.Transparent); // white padding
-            graphic.DrawImage(image, 0, 0, newWidth, newHeight);
-
-            /* ------------- end new code ---------------- */
-            return thumbnail;
-        }
-
         /// <summary>
         /// The resize image.
         /// </summary>
@@ -277,7 +214,7 @@
             {
                 try
                 {
-                    var resizedImage = this.ResizeImage(permanentFileName, int.Parse(settings.MaxImageWidth), int.Parse(settings.MaxImageHeight), img);
+                    var resizedImage = this.ResizeImage(permanentFileName, int.Parse(this.settings.MaxImageWidth), int.Parse(this.settings.MaxImageHeight), img);
                     var iciPng = GetPngImageCodecInfo();
                     var encoderParameters = new EncoderParameters(1);
                     encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
@@ -288,37 +225,11 @@
                     IoC.Resolve<ILogger>().Error("Fail during image resize", ex);
                     fileStream.Write(content, 0, content.Length);
                 }
-
             }
             else
             {
                 fileStream.Write(content, 0, content.Length);
             }
-        }
-
-        /// <summary>
-        /// The delete folder.
-        /// </summary>
-        /// <param name="target_dir">
-        /// The target_dir.
-        /// </param>
-        public static void DeleteFolder(string target_dir)
-        {
-            string[] files = Directory.GetFiles(target_dir);
-            string[] dirs = Directory.GetDirectories(target_dir);
-
-            foreach (string file in files)
-            {
-                System.IO.File.SetAttributes(file, FileAttributes.Normal);
-                System.IO.File.Delete(file);
-            }
-
-            foreach (string dir in dirs)
-            {
-                DeleteFolder(dir);
-            }
-
-            Directory.Delete(target_dir, false);
         }
 
         /// <summary>
@@ -346,29 +257,6 @@
 
             base.RegisterDelete(file, flush);
         }
-
-//        /// <summary>
-//        /// The register save.
-//        /// </summary>
-//        /// <param name="entity">
-//        /// The entity.
-//        /// </param>
-//        /// <param name="flush">
-//        /// The flush.
-//        /// </param>
-//        public override void RegisterSave(File entity, bool flush)
-//        {
-//            if (entity.IsTransient() && entity.Id == default(Guid))
-//            {
-//                entity.Id = Guid.NewGuid();
-//                while (this.GetOneByWebOrbId(entity.Id).Value != null)
-//                {
-//                    entity.Id = Guid.NewGuid();
-//                }
-//            }
-//
-//            base.RegisterSave(entity, flush);
-//        }
 
         /// <summary>
         /// The create file.
@@ -454,10 +342,10 @@
         /// The file.
         /// </param>
         /// <param name="data">
-        /// Thi file data.
+        /// The file data.
         /// </param>
         /// <returns>
-        /// The file.
+        /// The file object.
         /// </returns>
         public File SetData(File file, byte[] data)
         {
@@ -515,9 +403,151 @@
             return this.Repository.FindAll(queryOver);
         }
 
+        /// <summary>
+        /// The permanent file name.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public string PermanentFileName(File file)
+        {
+            var companyId = file.CreatedBy.With(x => x.Company).With(x => x.Id.ToString(CultureInfo.InvariantCulture));
+            var folder = Path.Combine(this.FileStoragePhysicalPath(), companyId);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+
+            return Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString()));
+        }
+
+        /// <summary>
+        /// The save WEBORB file.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        public void SaveWeborbFile(UploadedFileDTO file)
+        {
+            var workingDir = this.WebOrbFolderName(file.fileId);
+            if (!Directory.Exists(workingDir))
+            {
+                Directory.CreateDirectory(workingDir);
+            }
+
+            System.IO.File.WriteAllBytes(Path.Combine(workingDir, file.fileName), file.content);
+        }
+
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// The get PNG image codec info.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="ImageCodecInfo"/>.
+        /// </returns>
+        private static ImageCodecInfo GetPngImageCodecInfo()
+        {
+            ImageCodecInfo iciPng = null;
+            foreach (ImageCodecInfo ici in ImageCodecInfo.GetImageDecoders())
+            {
+                if (ici.FilenameExtension.ToLower().Contains("png"))
+                {
+                    iciPng = ici;
+                    break;
+                }
+            }
+
+            iciPng = iciPng ?? ImageCodecInfo.GetImageDecoders()[1];
+            return iciPng;
+        }
+
+        /// <summary>
+        /// The resize image.
+        /// </summary>
+        /// <param name="path">
+        /// The path.
+        /// </param>
+        /// <param name="maxCanvasWidth">
+        /// The max canvas width.
+        /// </param>
+        /// <param name="maxCanvasHeight">
+        /// The max canvas height.
+        /// </param>
+        /// <param name="img">
+        /// The image.
+        /// </param>
+        /// <param name="originalWidth">
+        /// The original width.
+        /// </param>
+        /// <param name="originalHeight">
+        /// The original height.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Image"/>.
+        /// </returns>
+        private Image ResizeImage(
+            string path,
+            int maxCanvasWidth,
+            int maxCanvasHeight,
+                                  Image img = null,
+                                  int? originalWidth = null,
+                                  int? originalHeight = null)
+        {
+            Image image = img ?? Image.FromFile(path);
+            if (originalWidth == null)
+            {
+                originalWidth = image.Width;
+            }
+
+            if (originalHeight == null)
+            {
+                originalHeight = image.Height;
+            }
+
+            var canvasWidth = Math.Min(maxCanvasWidth, originalWidth.Value);
+            var canvasHeight = Math.Min(maxCanvasHeight, originalHeight.Value);
+
+            /* ------------------ new code --------------- */
+
+            // Figure out the ratio
+            // ReSharper disable once RedundantCast
+            double ratioX = (double)canvasWidth / (double)originalWidth;
+            // ReSharper disable once RedundantCast
+            double ratioY = (double)canvasHeight / (double)originalHeight;
+
+            // use whichever multiplier is smaller
+            double ratio = ratioX < ratioY ? ratioX : ratioY;
+
+            // now we can get the new height and width
+            int newHeight = Convert.ToInt32(originalHeight * ratio);
+            int newWidth = Convert.ToInt32(originalWidth * ratio);
+
+            // Now calculate the X,Y position of the upper-left corner 
+            // (one of these will always be zero)
+            // ReSharper disable once UnusedVariable
+            int posX = Convert.ToInt32((canvasWidth - (originalWidth * ratio)) / 2);
+            // ReSharper disable once UnusedVariable
+            int posY = Convert.ToInt32((canvasHeight - (originalHeight * ratio)) / 2);
+
+            Image thumbnail = new Bitmap(newWidth, newHeight); // changed parm names
+
+            var graphic = Graphics.FromImage(thumbnail);
+            graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphic.SmoothingMode = SmoothingMode.HighQuality;
+            graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+            graphic.CompositingQuality = CompositingQuality.HighQuality;
+            graphic.Clear(Color.Transparent); // white padding
+            graphic.DrawImage(image, 0, 0, newWidth, newHeight);
+
+            /* ------------- end new code ---------------- */
+            return thumbnail;
+        }
 
         /// <summary>
         /// The file storage physical path.
@@ -546,36 +576,15 @@
         /// <summary>
         /// The permanent file name.
         /// </summary>
-        /// <param name="file">
-        /// The file.
+        /// <param name="fileId">
+        /// The fileId.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string PermanentFileName(File file)
+        private string WebOrbFolderName(Guid fileId)
         {
-            var companyId = file.CreatedBy.With(x => x.Company).With(x => x.Id.ToString(CultureInfo.InvariantCulture));
-            var folder = Path.Combine(this.FileStoragePhysicalPath(), companyId);
-            if (!Directory.Exists(folder))
-            {
-                Directory.CreateDirectory(folder);
-            }
-
-            return Path.Combine(folder, this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString()));
-        }
-
-        /// <summary>
-        /// The permanent file name.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string WebOrbFolderName(File file)
-        {
-            return Path.Combine(this.WebOrbStoragePhysicalPath(), file.Id.ToString());
+            return Path.Combine(this.WebOrbStoragePhysicalPath(), fileId.ToString());
         }
 
         #endregion

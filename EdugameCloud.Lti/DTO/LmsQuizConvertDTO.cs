@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
 
     /// <summary>
@@ -9,6 +8,11 @@
     [DataContract]
     public class LmsQuizConvertDTO
     {
+        /// <summary>
+        /// The quiz ids field.
+        /// </summary>
+        private int[] quizIdsField = { };
+
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
@@ -22,9 +26,20 @@
         public virtual int lmsUserParametersId { get; set; }
 
         /// <summary>
-        /// Gets or sets the quiz ids.
+        /// Gets or sets the quiz id.
         /// </summary>
         [DataMember]
-        public virtual List<int> quizIds { get; set; }
+        public virtual int[] quizIds
+        {
+            get
+            {
+                return this.quizIdsField ?? new int[] { };
+            }
+
+            set
+            {
+                this.quizIdsField = value;
+            }
+        }
     }
 }

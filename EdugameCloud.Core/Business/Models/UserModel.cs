@@ -133,6 +133,29 @@
         }
 
         /// <summary>
+        /// The get all by emails.
+        /// </summary>
+        /// <param name="emails">
+        /// The emails.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{Contact}"/>.
+        /// </returns>
+        public virtual IEnumerable<User> GetAllByEmails(List<string> emails)
+        {
+            var queryOver = new QueryOverUser().GetQueryOver();
+            var disjunction = new Disjunction();
+            foreach (var email in emails)
+            {
+                disjunction.Add(Restrictions.On<User>(x => x.Email).IsInsensitiveLike(email));
+            }
+
+            queryOver.Where(disjunction);
+
+            return this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
         /// The get all by ids.
         /// </summary>
         /// <param name="ids">
@@ -182,12 +205,12 @@
             var usersIds = users.Select(x => x.Id).ToList();
             User u = null;
             UserLoginHistory h = null;
-            UserLastLoginDTO dto = null;
+            UserLastLoginFromStoredProcedureDTO dto = null;
             var queryOver2 = new QueryOverUser().GetQueryOver(() => u).WhereRestrictionOn(() => u.Id).IsIn(usersIds)
                 .JoinQueryOver(() => u.LoginHistory, () => h).OrderBy(() => h.DateCreated).Desc
                 .SelectList(l => l.Select(() => u.Id).WithAlias(() => dto.userId).Select(() => h.DateCreated).WithAlias(() => dto.loginDate))
-                .TransformUsing(Transformers.AliasToBean<UserLastLoginDTO>()).Take(1);
-            var logindatesForUsers = this.Repository.FindAll<UserLastLoginDTO>(queryOver2).ToList();
+                .TransformUsing(Transformers.AliasToBean<UserLastLoginFromStoredProcedureDTO>()).Take(1);
+            var logindatesForUsers = this.Repository.FindAll<UserLastLoginFromStoredProcedureDTO>(queryOver2).ToList();
 
             return users.Select(x => new UserWithLoginHistoryDTO(x, logindatesForUsers.FirstOrDefault(hl => hl.userId == x.Id).Return(hl => hl.loginDate, (DateTime?)null)));
         }
@@ -496,7 +519,7 @@
                                 this.RegisterSave(instance, true);
                                 if (notifyViaRTMP)
                                 {
-                                    IoC.Resolve<RTMPModel>()
+                                    IoC.Resolve<RealTimeNotificationModel>()
                                         .NotifyClientsAboutChangesInTable<User>(
                                             NotificationType.Update, 
                                             instance.Company.Id, 

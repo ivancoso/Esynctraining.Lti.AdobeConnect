@@ -1,27 +1,51 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
+    using EdugameCloud.Core.Extensions;
+
     /// <summary>
-    ///     The crossword result dto.
+    ///     The crossword result DTO.
     /// </summary>
     [DataContract]
     public class CrosswordResultByAcSessionDTO
     {
-        #region Constructors and Destructors
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CrosswordResultByAcSessionDTO"/> class.
+        /// </summary>
         public CrosswordResultByAcSessionDTO()
         {
         }
 
-        #endregion
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CrosswordResultByAcSessionDTO"/> class.
+        /// </summary>
+        /// <param name="dto">
+        /// The DTO.
+        /// </param>
+        public CrosswordResultByAcSessionDTO(CrosswordResultByAcSessionFromStoredProcedureDTO dto)
+        {
+            this.documentXML = dto.documentXML;
+            this.position = dto.position;
+            this.appletResultId = dto.appletResultId;
+            this.endTime = dto.endTime.ConvertToUnixTimestamp();
+            this.startTime = dto.startTime.ConvertToUnixTimestamp();
+            this.participantName = dto.participantName;
+            this.position = dto.position;
+            this.score = dto.score;
+        }
 
         #region Public Properties
 
+        /// <summary>
+        /// Gets or sets the document xml.
+        /// </summary>
         [DataMember]
         public string documentXML { get; set; }
 
+        /// <summary>
+        /// Gets or sets the position.
+        /// </summary>
         [DataMember]
         public long position { get; set; }
 
@@ -29,7 +53,7 @@
         ///     Gets or sets the end time.
         /// </summary>
         [DataMember]
-        public DateTime endTime { get; set; }
+        public double endTime { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
@@ -53,7 +77,7 @@
         ///     Gets or sets the start time.
         /// </summary>
         [DataMember]
-        public DateTime startTime { get; set; }
+        public double startTime { get; set; }
 
         #endregion
     }

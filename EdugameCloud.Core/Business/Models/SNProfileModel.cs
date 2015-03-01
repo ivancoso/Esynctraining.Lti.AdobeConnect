@@ -75,41 +75,48 @@
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            SNProfileExtraDTO dto = null;
+            SNProfileExtraFromStoredProcedureDTO dto = null;
             const UserStatus ActiveStatus = UserStatus.Active;
             return
-                this.Repository.FindAll<SNProfileExtraDTO>(QueryOver.Of(() => profile)
-                                                    .JoinAlias(x => x.SubModuleItem, () => smi).Where(() => smi.IsActive == true)
-                                                    .JoinAlias(() => smi.SubModuleCategory, () => smc).Where(() => smc.IsActive == true)
-                                                    .JoinAlias(() => smc.User, () => u)
-                                                    .JoinAlias(() => smi.CreatedBy, () => u2, JoinType.LeftOuterJoin)
-                                                    .Where(() => u2.Id == userId && u2.Status == ActiveStatus)
-                                                     .SelectList(list =>
-                                                         list.Select(() => smc.Id)
-                                                             .WithAlias(() => dto.subModuleCategoryId)
-                                                             .Select(() => smc.CategoryName)
-                                                             .WithAlias(() => dto.categoryName)
-                                                             .Select(() => smi.Id)
-                                                             .WithAlias(() => dto.subModuleItemId)
-                                                             .Select(() => smi.DateModified)
-                                                             .WithAlias(() => dto.dateModified)
-                                                             .Select(() => smi.CreatedBy.Id)
-                                                             .WithAlias(() => dto.createdBy)
-                                                             .Select(() => u2.FirstName)
-                                                             .WithAlias(() => dto.createdByFirstName)
-                                                             .Select(() => u2.LastName)
-                                                             .WithAlias(() => dto.createdByLastName)
-                                                             .Select(() => u.Id)
-                                                             .WithAlias(() => dto.userId)
-                                                             .Select(() => u.FirstName)
-                                                             .WithAlias(() => dto.firstName)
-                                                             .Select(() => u.LastName)
-                                                             .WithAlias(() => dto.lastName)
-                                                             .Select(() => profile.Id)
-                                                             .WithAlias(() => dto.snProfileId)
-                                                             .Select(() => profile.ProfileName)
-                                                             .WithAlias(() => dto.profileName))
-                                                     .TransformUsing(Transformers.AliasToBean<SNProfileExtraDTO>()));
+                this.Repository.FindAll<SNProfileExtraFromStoredProcedureDTO>(
+                    QueryOver.Of(() => profile)
+                        .JoinAlias(x => x.SubModuleItem, () => smi)
+                        .Where(() => smi.IsActive == true)
+                        .JoinAlias(() => smi.SubModuleCategory, () => smc)
+                        .Where(() => smc.IsActive == true)
+                        .JoinAlias(() => smc.User, () => u)
+                        .JoinAlias(() => smi.CreatedBy, () => u2, JoinType.LeftOuterJoin)
+                        .Where(() => u2.Id == userId && u2.Status == ActiveStatus)
+                        .SelectList(
+                            list =>
+                            list.Select(() => smc.Id)
+                                .WithAlias(() => dto.subModuleCategoryId)
+                                .Select(() => smc.CategoryName)
+                                .WithAlias(() => dto.categoryName)
+                                .Select(() => smi.Id)
+                                .WithAlias(() => dto.subModuleItemId)
+                                .Select(() => smi.DateModified)
+                                .WithAlias(() => dto.dateModified)
+                                .Select(() => smi.CreatedBy.Id)
+                                .WithAlias(() => dto.createdBy)
+                                .Select(() => u2.FirstName)
+                                .WithAlias(() => dto.createdByFirstName)
+                                .Select(() => u2.LastName)
+                                .WithAlias(() => dto.createdByLastName)
+                                .Select(() => u.Id)
+                                .WithAlias(() => dto.userId)
+                                .Select(() => u.FirstName)
+                                .WithAlias(() => dto.firstName)
+                                .Select(() => u.LastName)
+                                .WithAlias(() => dto.lastName)
+                                .Select(() => profile.Id)
+                                .WithAlias(() => dto.snProfileId)
+                                .Select(() => profile.ProfileName)
+                                .WithAlias(() => dto.profileName))
+                        .TransformUsing(Transformers.AliasToBean<SNProfileExtraFromStoredProcedureDTO>()))
+                    .ToList()
+                    .Select(x => new SNProfileExtraDTO(x))
+                    .ToList();
         }
 
         /// <summary>
@@ -128,44 +135,50 @@
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            SNProfileExtraDTO dto = null;
+            SNProfileExtraFromStoredProcedureDTO dto = null;
             const UserStatus ActiveStatus = UserStatus.Active;
             var user = this.userModel.GetOneById(userId).Value;
             var companyId = user.Company.Id;
-            
+
             return
-                this.Repository.FindAll<SNProfileExtraDTO>(QueryOver.Of(() => profile)
-                                                    .JoinAlias(x => x.SubModuleItem, () => smi).Where(() => smi.IsActive == true && smi.IsShared == true)
-                                                    .JoinAlias(() => smi.SubModuleCategory, () => smc).Where(() => smc.IsActive == true)
-                                                    .JoinAlias(() => smc.User, () => u)
-                                                    .JoinAlias(() => smi.CreatedBy, () => u2)
-                                                    .Where(() => u2.Id != userId && u2.Status == ActiveStatus && u2.Company.Id == companyId)
-                                                     .SelectList(list =>
-                                                         list.Select(() => smc.Id)
-                                                             .WithAlias(() => dto.subModuleCategoryId)
-                                                             .Select(() => smc.CategoryName)
-                                                             .WithAlias(() => dto.categoryName)
-                                                             .Select(() => smi.Id)
-                                                             .WithAlias(() => dto.subModuleItemId)
-                                                             .Select(() => smi.DateModified)
-                                                             .WithAlias(() => dto.dateModified)
-                                                             .Select(() => u2.Id)
-                                                             .WithAlias(() => dto.createdBy)
-                                                             .Select(() => u2.FirstName)
-                                                             .WithAlias(() => dto.createdByFirstName)
-                                                             .Select(() => u2.LastName)
-                                                             .WithAlias(() => dto.createdByLastName)
-                                                             .Select(() => u.Id)
-                                                             .WithAlias(() => dto.userId)
-                                                             .Select(() => u.FirstName)
-                                                             .WithAlias(() => dto.firstName)
-                                                             .Select(() => u.LastName)
-                                                             .WithAlias(() => dto.lastName)
-                                                             .Select(() => profile.Id)
-                                                             .WithAlias(() => dto.snProfileId)
-                                                             .Select(() => profile.ProfileName)
-                                                             .WithAlias(() => dto.profileName))
-                                                     .TransformUsing(Transformers.AliasToBean<SNProfileExtraDTO>()));
+                this.Repository.FindAll<SNProfileExtraFromStoredProcedureDTO>(
+                    QueryOver.Of(() => profile)
+                        .JoinAlias(x => x.SubModuleItem, () => smi)
+                        .Where(() => smi.IsActive == true && smi.IsShared == true)
+                        .JoinAlias(() => smi.SubModuleCategory, () => smc)
+                        .Where(() => smc.IsActive == true)
+                        .JoinAlias(() => smc.User, () => u)
+                        .JoinAlias(() => smi.CreatedBy, () => u2)
+                        .Where(() => u2.Id != userId && u2.Status == ActiveStatus && u2.Company.Id == companyId)
+                        .SelectList(
+                            list =>
+                            list.Select(() => smc.Id)
+                                .WithAlias(() => dto.subModuleCategoryId)
+                                .Select(() => smc.CategoryName)
+                                .WithAlias(() => dto.categoryName)
+                                .Select(() => smi.Id)
+                                .WithAlias(() => dto.subModuleItemId)
+                                .Select(() => smi.DateModified)
+                                .WithAlias(() => dto.dateModified)
+                                .Select(() => u2.Id)
+                                .WithAlias(() => dto.createdBy)
+                                .Select(() => u2.FirstName)
+                                .WithAlias(() => dto.createdByFirstName)
+                                .Select(() => u2.LastName)
+                                .WithAlias(() => dto.createdByLastName)
+                                .Select(() => u.Id)
+                                .WithAlias(() => dto.userId)
+                                .Select(() => u.FirstName)
+                                .WithAlias(() => dto.firstName)
+                                .Select(() => u.LastName)
+                                .WithAlias(() => dto.lastName)
+                                .Select(() => profile.Id)
+                                .WithAlias(() => dto.snProfileId)
+                                .Select(() => profile.ProfileName)
+                                .WithAlias(() => dto.profileName))
+                        .TransformUsing(Transformers.AliasToBean<SNProfileExtraFromStoredProcedureDTO>()))
+                    .ToList()
+                    .Select(x => new SNProfileExtraDTO(x));
         }
         // ReSharper restore ImplicitlyCapturedClosure
 

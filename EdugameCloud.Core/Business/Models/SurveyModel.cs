@@ -197,7 +197,7 @@ namespace EdugameCloud.Core.Business.Models
 	        SubModuleCategory smc = null;
 	        User u = null;
 	        User u2 = null;
-	        SurveyFromStoredProcedureDTO dto = null;
+            SurveyFromStoredProcedureExDTO dto = null;
 	        var queryOver =new DefaultQueryOver<Survey, int>().GetQueryOver(()=>s)
                 .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true).And(() => s.LmsSurveyId == null || showLms == true)
 				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
@@ -235,9 +235,13 @@ namespace EdugameCloud.Core.Business.Models
 					.WithAlias(()=>dto.categoryName)
 					.Select(()=>smc.Id)
 					.WithAlias(()=>dto.subModuleCategoryId))
-					.TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
-	        var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
-	        return result;
+                    .TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureExDTO>());
+            var result =
+                this.Repository.FindAll<SurveyFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SurveyFromStoredProcedureDTO(x));
+
+            return result;
         }
 
         /// <summary>
@@ -269,7 +273,7 @@ namespace EdugameCloud.Core.Business.Models
             SubModuleCategory smc = null;
             User u = null;
             User u2 = null;
-            SurveyFromStoredProcedureDTO dto = null;
+            SurveyFromStoredProcedureExDTO dto = null;
             var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
                 .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
                 .Where(() => smi.IsActive == true)
@@ -309,8 +313,11 @@ namespace EdugameCloud.Core.Business.Models
                     .WithAlias(() => dto.categoryName)
                     .Select(() => smc.Id)
                     .WithAlias(() => dto.subModuleCategoryId))
-                    .TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
-            var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
+                    .TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureExDTO>());
+            var result =
+                this.Repository.FindAll<SurveyFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SurveyFromStoredProcedureDTO(x));
             return result;
         }
 
@@ -337,7 +344,7 @@ namespace EdugameCloud.Core.Business.Models
 			SubModuleCategory smc = null;
 			User u = null;
 			User u2 = null;
-			SurveyFromStoredProcedureDTO dto = null;
+			SurveyFromStoredProcedureExDTO dto = null;
 			var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
 				.JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin).Where(() => smi.IsActive == true && smi.IsShared == true)
 				.JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin).Where(() => smc.IsActive == true)
@@ -375,8 +382,12 @@ namespace EdugameCloud.Core.Business.Models
 					.WithAlias(() => dto.categoryName)
 					.Select(() => smc.Id)
 					.WithAlias(() => dto.subModuleCategoryId))
-					.TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureDTO>());
-			var result = this.Repository.FindAll<SurveyFromStoredProcedureDTO>(queryOver).ToList();
+                    .TransformUsing(Transformers.AliasToBean<SurveyFromStoredProcedureExDTO>());
+            var result =
+                this.Repository.FindAll<SurveyFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SurveyFromStoredProcedureDTO(x));
+
 			return result;
         }
 
@@ -394,7 +405,7 @@ namespace EdugameCloud.Core.Business.Models
 			Survey s = null;
 	        SubModuleCategory smc = null;
 	        SubModuleItem smi = null;
-	        SMICategoriesFromStoredProcedureDTO dto = null;
+            SMICategoriesFromStoredProcedureExDTO dto = null;
 	        var queryOver = new DefaultQueryOver<Survey, int>().GetQueryOver(() => s)
 		        .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.RightOuterJoin)
 		        .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
@@ -423,8 +434,12 @@ namespace EdugameCloud.Core.Business.Models
 				        .WithAlias(() => dto.userId)
 				        .Select(() => smc.Id)
 				        .WithAlias(() => dto.subModuleCategoryId))
-		        .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureDTO>());
-	        var result = Repository.FindAll<SMICategoriesFromStoredProcedureDTO>(queryOver).ToList();
+		        .TransformUsing(Transformers.AliasToBean<SMICategoriesFromStoredProcedureExDTO>());
+            var result =
+                Repository.FindAll<SMICategoriesFromStoredProcedureExDTO>(queryOver)
+                    .ToList()
+                    .Select(x => new SMICategoriesFromStoredProcedureDTO(x))
+                    .ToList();
 	        return result;
         }
 
@@ -442,8 +457,8 @@ namespace EdugameCloud.Core.Business.Models
             var result = new SurveyDataDTO { surveyVO = new SurveyDTO(this.GetOneById(surveyId).Value) };
             if (result.surveyVO != null && result.surveyVO.subModuleItemId.HasValue)
             {
-                result.questions = this.GetSurveyQuestionsBySMIId(result.surveyVO.subModuleItemId.Value).ToList();
-                result.distractors = this.GetSurveyDistractorsBySMIId(result.surveyVO.subModuleItemId.Value).ToList();
+                result.questions = this.GetSurveyQuestionsBySMIId(result.surveyVO.subModuleItemId.Value).ToArray();
+                result.distractors = this.GetSurveyDistractorsBySMIId(result.surveyVO.subModuleItemId.Value).ToArray();
             }
 
             return result;

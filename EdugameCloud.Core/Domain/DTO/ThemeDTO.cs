@@ -1,14 +1,14 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
 
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The theme dto.
+    ///     The theme DTO.
     /// </summary>
     [DataContract]
     public class ThemeDTO
@@ -16,7 +16,7 @@
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ThemeDTO"/> class.
+        ///     Initializes a new instance of the <see cref="ThemeDTO" /> class.
         /// </summary>
         public ThemeDTO()
         {
@@ -34,8 +34,8 @@
             this.themeName = tm.ThemeName;
             this.createdBy = tm.CreatedBy.Return(x => x.Id, (int?)null);
             this.modifiedBy = tm.ModifiedBy.Return(x => x.Id, (int?)null);
-            this.dateCreated = tm.DateCreated;
-            this.dateModified = tm.DateModified;
+            this.dateCreated = tm.DateCreated.ConvertToUnixTimestamp();
+            this.dateModified = tm.DateModified.ConvertToUnixTimestamp();
             this.isActive = tm.IsActive;
         }
 
@@ -43,35 +43,47 @@
 
         #region Public Properties
 
-        [DataMember]
-        public virtual int themeId { get; set; }
-
-        [DataMember]
-        public virtual string themeName { get; set; }
-
         /// <summary>
-        /// Gets or sets the created by.
+        ///     Gets or sets the created by.
         /// </summary>
         [DataMember]
-        public virtual int? createdBy { get; set; }
-
-        [DataMember]
-        public virtual int? modifiedBy { get; set; }
-
-        [DataMember]
-        public virtual bool? isActive { get; set; }
+        public int? createdBy { get; set; }
 
         /// <summary>
-        /// Gets or sets the date created.
+        ///     Gets or sets the date created.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateCreated { get; set; }
+        public double dateCreated { get; set; }
 
         /// <summary>
-        /// Gets or sets the date modified.
+        ///     Gets or sets the date modified.
         /// </summary>
         [DataMember]
-        public virtual DateTime dateModified { get; set; }
+        public double dateModified { get; set; }
+
+        /// <summary>
+        /// Gets or sets the is active.
+        /// </summary>
+        [DataMember]
+        public bool? isActive { get; set; }
+
+        /// <summary>
+        /// Gets or sets the modified by.
+        /// </summary>
+        [DataMember]
+        public int? modifiedBy { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the theme id.
+        /// </summary>
+        [DataMember]
+        public int themeId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the theme name.
+        /// </summary>
+        [DataMember]
+        public string themeName { get; set; }
 
         #endregion
     }

@@ -358,6 +358,24 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some unexpected error happen. Please contact administration..
+        /// </summary>
+        internal static string UnexpectedError {
+            get {
+                return ResourceManager.GetString("UnexpectedError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unhandled WCF Error.
+        /// </summary>
+        internal static string UnexpectedError_Subject {
+            get {
+                return ResourceManager.GetString("UnexpectedError_Subject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Activation code expired.
         /// </summary>
         internal static string UserActivationError_ExpiredActivationCode {
