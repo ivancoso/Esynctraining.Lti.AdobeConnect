@@ -159,13 +159,12 @@ namespace EdugameCloud.WCFService
                     cc,
                     bcc);
 
-                var newHistoryItem = item.DeepClone();
-                newHistoryItem.Date = DateTime.Now;
-                newHistoryItem.Id = 0;
-                newHistoryItem.User = item.User;
-                var newHistory = new EmailHistoryDTO(newHistoryItem);
-
-                return this.SaveHistory(newHistory);
+                var newHistoryItem = new EmailHistoryDTO(item);
+                newHistoryItem.body = item.Body;
+                newHistoryItem.date = DateTime.Now.ConvertToUnixTimestamp();
+                newHistoryItem.emailHistoryId = 0;
+                
+                return this.SaveHistory(newHistoryItem);
             }
 
             var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, ErrorsTexts.GetResultError_NotFound, "No item with such id found");
