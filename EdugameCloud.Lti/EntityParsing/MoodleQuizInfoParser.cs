@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using System.Xml;
 
-    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
 
     /// <summary>

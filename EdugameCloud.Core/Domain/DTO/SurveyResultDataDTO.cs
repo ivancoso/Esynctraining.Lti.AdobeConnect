@@ -5,6 +5,8 @@
     /// <summary>
     /// The quiz result data DTO.
     /// </summary>
+    [KnownType(typeof(SurveyPlayerDTO))]
+    [KnownType(typeof(QuestionForAdminDTO))]
     [DataContract]
     public class SurveyResultDataDTO
     {
