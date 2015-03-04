@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VaStart.Common.ImportExport.Excel.ImportModels
+namespace Esynctraining.ImportExport.Excel.ImportModels
 {
     public interface IFileImportModel
     {

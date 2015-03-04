@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace VaStart.Common.ImportExport.Excel.ImportModels
+namespace Esynctraining.ImportExport.Excel.ImportModels
 {
     public class FileUploadModel
     {

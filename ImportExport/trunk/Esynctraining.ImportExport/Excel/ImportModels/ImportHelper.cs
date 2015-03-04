@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Esynctraining.ImportExport.Excel.Import;
 
-namespace VaStart.Common.ImportExport.Excel.ImportModels
+namespace Esynctraining.ImportExport.Excel.ImportModels
 {
     public sealed class ImportHelper
     {

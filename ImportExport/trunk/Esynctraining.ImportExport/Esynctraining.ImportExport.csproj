@@ -7,8 +7,8 @@
     <ProjectGuid>{B7C81151-B756-4F9A-A87D-462C78894E81}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VaStart.Common.ImportExport</RootNamespace>
-    <AssemblyName>VaStart.Common.ImportExport</AssemblyName>
+    <RootNamespace>Esynctraining.ImportExport</RootNamespace>
+    <AssemblyName>Esynctraining.ImportExport</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SolutionFiles\</SolutionDir>
