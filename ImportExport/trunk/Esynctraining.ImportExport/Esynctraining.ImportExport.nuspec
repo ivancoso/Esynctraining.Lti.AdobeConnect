@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.ImportExport</id>
+        <version>1.0.0.0</version>
+        <title>Esynctraining.ImportExport</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Import\Export functionality.</description>
+        <releaseNotes />
+        <copyright>Copyright © 2015 eSyncTraining.com</copyright>
+        <tags>import export excel upload</tags>
+        <dependencies>
+            <dependency id="ExcelHandler" version="1.0.1" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Release\Esynctraining.ImportExport.dll" target="lib\Esynctraining.ImportExport.dll" />
+    </files>
+</package>
