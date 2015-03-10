@@ -9,12 +9,12 @@
 namespace DotAmf.Serialization
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
     using System.Runtime.Serialization;
-
     using DotAmf.Serialization.TypeAdapters;
 
     /// <summary>
@@ -22,57 +22,19 @@ namespace DotAmf.Serialization
     /// </summary>
     public static class DataContractHelper
     {
-        private static List<BaseTypeAdapter> adapters = new List<BaseTypeAdapter>(); 
+        private static readonly DateTime _origin;
+        private static readonly DateTime _originLocalTime;
+        private static readonly ConcurrentDictionary<RuntimeTypeHandle, ExpressionCreator> _creators;
+
 
         static DataContractHelper()
         {
-            try
-            {
-                var args = new object[0];
-                var typeAdaptersTypes = FindDerivedTypes(Assembly.GetExecutingAssembly(), typeof(BaseTypeAdapter), typeof(BaseTypeAdapter<>), typeof(BaseTypeAdapter<,>), typeof(BaseTypeAdapter<,,>));
-                foreach (var adaptersType in typeAdaptersTypes)
-                {
-                    adapters.Add((BaseTypeAdapter)CreateConstructorDelegate(adaptersType.GetConstructor(new Type[0]))(args));
-                }
-            }
-            catch (Exception ex)
-            {
-            }
+            _origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            _originLocalTime = _origin.ToLocalTime();
+            _creators = new ConcurrentDictionary<RuntimeTypeHandle, ExpressionCreator>();            
         }
 
         #region Public Methods and Operators
-
-        public static IEnumerable<Type> FindDerivedTypes(Assembly assembly, Type baseType, params Type[] exceptions)
-        {
-            var exceptionsList = exceptions != null ? new List<Type>(exceptions) : new List<Type>();
-            exceptionsList.Add(baseType);
-            return assembly.GetTypes().Where(t => !exceptionsList.Contains(t) && baseType.IsAssignableFrom(t));
-
-        }
-
-        public static Func<object[], object> CreateConstructorDelegate(ConstructorInfo method)
-        {
-            var args = Expression.Parameter(typeof(object[]), "args");
-
-            var parameters = new List<Expression>();
-
-            var methodParameters = method.GetParameters().ToList();
-            for (var i = 0; i < methodParameters.Count; i++)
-            {
-                parameters.Add(Expression.Convert(
-                                   Expression.ArrayIndex(args, Expression.Constant(i)),
-                                   methodParameters[i].ParameterType));
-            }
-
-            var call = Expression.Convert(Expression.New(method, parameters), typeof(object));
-
-            Expression body = call;
-
-            var callExpression = Expression.Lambda<Func<object[], object>>(body, args);
-            var result = callExpression.Compile();
-
-            return result;
-        }
 
         /// <summary>
         /// Convert a <c>DateTime</c> to a UNIX timestamp in milliseconds.
@@ -83,16 +45,13 @@ namespace DotAmf.Serialization
         /// <returns>
         /// The <see cref="double"/>.
         /// </returns>
-        public static double ConvertToTimestamp(DateTime value)
+        internal static double ConvertToTimestamp(DateTime value)
         {
-            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
             if (value.Kind != DateTimeKind.Utc)
             {
-                origin = origin.ToLocalTime();
+                return (value - _originLocalTime).TotalSeconds * 1000;
             }
-
-            return (value - origin).TotalSeconds * 1000;
+            return (value - _origin).TotalSeconds * 1000;
         }
 
         /// <summary>
@@ -107,7 +66,7 @@ namespace DotAmf.Serialization
         /// <exception cref="ArgumentException">
         /// Type is not a valid data contract.
         /// </exception>
-        public static string GetContractAlias(Type type)
+        internal static string GetContractAlias(Type type)
         {
             if (type == null)
             {
@@ -129,109 +88,7 @@ namespace DotAmf.Serialization
                 string.Format(Errors.DataContractUtil_GetContractAlias_InvalidContract, type.FullName), 
                 "type");
         }
-
-        /// <summary>
-        /// Get fields of data contract type.
-        /// </summary>
-        /// <param name="type">
-        /// Data contract type.
-        /// </param>
-        /// <returns>
-        /// A set of name-field pairs.
-        /// </returns>
-        public static IEnumerable<KeyValuePair<string, FieldInfo>> GetContractFields(Type type)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            IEnumerable<FieldInfo> validFields = from field in type.GetFields()
-                                                 where field.IsPublic && !field.IsStatic
-                                                 select field;
-
-            foreach (FieldInfo field in validFields)
-            {
-                // Look for a data contract attribute first
-                var contractAttribute =
-                    field.GetCustomAttributes(typeof(DataMemberAttribute), true).FirstOrDefault() as DataMemberAttribute;
-
-                if (contractAttribute != null)
-                {
-                    string propertyName = !string.IsNullOrEmpty(contractAttribute.Name)
-                                              ? contractAttribute.Name
-                                              : field.Name;
-
-                    yield return new KeyValuePair<string, FieldInfo>(propertyName, field);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get contract members from a contract type.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        public static IEnumerable<Type> GetContractMembers(Type type)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            IEnumerable<Type> properties = from pair in GetContractProperties(type) select pair.Value.PropertyType;
-
-            IEnumerable<Type> fields = from pair in GetContractFields(type) select pair.Value.FieldType;
-
-            return properties.Concat(fields).Distinct();
-        }
-
-        /// <summary>
-        /// Get data contract object's properties.
-        /// </summary>
-        /// <param name="instance">
-        /// Object instance.
-        /// </param>
-        /// <returns>
-        /// A set of property name-value pairs.
-        /// </returns>
-        public static Dictionary<string, object> GetContractProperties(object instance)
-        {
-            if (instance == null)
-            {
-                throw new ArgumentNullException("instance");
-            }
-
-            Type type = instance.GetType();
-
-            IEnumerable<KeyValuePair<string, object>> fields = from data in GetContractFields(type)
-                                                               select
-                                                                   new KeyValuePair<string, object>(
-                                                                   data.Key, 
-                                                                   data.Value.GetValue(instance));
-
-            IEnumerable<KeyValuePair<string, object>> properties = from data in GetContractProperties(type)
-                                                                   select
-                                                                       new KeyValuePair<string, object>(
-                                                                       data.Key, 
-                                                                       data.Value.GetValue(instance, null));
-
-            IEnumerable<KeyValuePair<string, object>> contents = fields.Concat(properties);
-
-            var map = new Dictionary<string, object>();
-
-            foreach (var pair in contents)
-            {
-                map[pair.Key] = pair.Value;
-            }
-
-            return map;
-        }
-
+        
         /// <summary>
         /// Get data contract object's properties.
         /// </summary>
@@ -241,41 +98,22 @@ namespace DotAmf.Serialization
         /// <param name="properties">
         /// Type's properties.
         /// </param>
-        /// <param name="fields">
-        /// Type's fields.
-        /// </param>
         /// <returns>
         /// A set of property name-value pairs.
         /// </returns>
-        public static Dictionary<string, object> GetContractProperties(
+        internal static Dictionary<string, object> CollectPropertyValues(
             object instance, 
-            IEnumerable<KeyValuePair<string, PropertyInfo>> properties, 
-            IEnumerable<KeyValuePair<string, FieldInfo>> fields)
+            IEnumerable<PropertyDescriptor> properties)
         {
             if (instance == null)
-            {
                 throw new ArgumentNullException("instance");
-            }
+            if (properties == null)
+                throw new ArgumentNullException("properties");
 
-            IEnumerable<KeyValuePair<string, object>> fieldValues = from data in fields
-                                                                    select
-                                                                        new KeyValuePair<string, object>(
-                                                                        data.Key, 
-                                                                        data.Value.GetValue(instance));
-
-            IEnumerable<KeyValuePair<string, object>> propertiyValues = from data in properties
-                                                                        select
-                                                                            new KeyValuePair<string, object>(
-                                                                            data.Key, 
-                                                                            data.Value.GetValue(instance, null));
-
-            IEnumerable<KeyValuePair<string, object>> contents = fieldValues.Concat(propertiyValues);
-
-            var map = new Dictionary<string, object>();
-
-            foreach (var pair in contents)
+            var map = new Dictionary<string, object>(properties.Count());
+            foreach (PropertyDescriptor property in properties)
             {
-                map[pair.Key] = pair.Value;
+                map.Add(property.Name, property.GetValue(instance));
             }
 
             return map;
@@ -290,33 +128,43 @@ namespace DotAmf.Serialization
         /// <returns>
         /// A set of name-property pairs.
         /// </returns>
-        public static IEnumerable<KeyValuePair<string, PropertyInfo>> GetContractProperties(Type type)
+        public static IDictionary<string, PropertyInfo> GetContractProperties(Type type)
         {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
 
-            IEnumerable<PropertyInfo> validProperties = from property in type.GetProperties()
-                                                        where property.CanWrite && property.CanRead
-                                                        select property;
+            var properties = from property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public |BindingFlags.SetProperty | BindingFlags.GetProperty)
+                                  select property;
 
-            foreach (PropertyInfo property in validProperties)
+            //if (type.FullName == "EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO")
+            //{
+            //using (var log = System.IO.File.CreateText(@"C:\tmp\amf\" + type.FullName + "-" + Guid.NewGuid().ToString() + ".txt"))
+            //{
+            //    log.WriteLine(type.AssemblyQualifiedName);
+            //    log.Write(string.Join(";", properties.Select(x => x.Name)));
+            //}
+            //}
+
+            var result = new SortedDictionary<string, PropertyInfo>();
+
+            foreach (PropertyInfo property in properties)
             {
                 // Look for a data contract attribute first
-                var contractAttribute =
-                    property.GetCustomAttributes(typeof(DataMemberAttribute), true).FirstOrDefault() as
-                    DataMemberAttribute;
+                var contractAttribute = property.GetCustomAttributes(typeof(DataMemberAttribute), true).FirstOrDefault() as DataMemberAttribute;
 
                 if (contractAttribute != null)
                 {
                     string propertyName = !string.IsNullOrEmpty(contractAttribute.Name)
-                                              ? contractAttribute.Name
-                                              : property.Name;
+                        ? contractAttribute.Name
+                        : property.Name;
 
-                    yield return new KeyValuePair<string, PropertyInfo>(propertyName, property);
+                    result.Add(propertyName, property);
                 }
             }
+
+            return result;
         }
 
         /// <summary>
@@ -328,7 +176,7 @@ namespace DotAmf.Serialization
         /// <returns>
         /// The <see cref="Dictionary"/>.
         /// </returns>
-        public static Dictionary<object, object> GetEnumValues(Type type)
+        internal static Dictionary<object, object> GetEnumValues(Type type)
         {
             if (type == null)
             {
@@ -369,113 +217,25 @@ namespace DotAmf.Serialization
         /// <summary>
         /// Instantiate a data contract object and populate it with provided properties.
         /// </summary>
-        /// <param name="type">
-        /// Data contract type.
-        /// </param>
-        /// <param name="values">
-        /// Values to use.
-        /// </param>
-        /// <returns>
-        /// Data contract instance.
-        /// </returns>
-        public static object InstantiateContract(Type type, IEnumerable<KeyValuePair<string, object>> values)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            if (values == null)
-            {
-                throw new ArgumentNullException("values");
-            }
-
-            object instance = Activator.CreateInstance(type);
-
-            var fieldMap = from data in GetContractFields(type)
-                           join prop in values on data.Key equals prop.Key
-                           select new { field = data.Value, value = prop.Value };
-
-            foreach (var pair in fieldMap)
-            {
-                pair.field.SetValue(instance, pair.value);
-            }
-
-            var propertyMap = from data in GetContractProperties(type)
-                              join prop in values on data.Key equals prop.Key
-                              select new { property = data.Value, value = prop.Value };
-
-            foreach (var pair in propertyMap)
-            {
-                pair.property.SetValue(instance, pair.value, null);
-            }
-
-            return instance;
-        }
-
-        /// <summary>
-        /// Instantiate a data contract object and populate it with provided properties.
-        /// </summary>
-        /// <param name="type">
-        /// Data contract type.
-        /// </param>
-        /// <param name="values">
-        /// Values to use.
-        /// </param>
-        /// <param name="properties">
-        /// Type's properties.
-        /// </param>
-        /// <param name="fields">
-        /// Type's fields.
-        /// </param>
+        /// <param name="type">Data contract type.</param>
+        /// <param name="values">Values to use.</param>
+        /// <param name="properties">Type's properties.</param>
         /// <returns>
         /// Type instance.
         /// </returns>
-        public static object InstantiateContract(
+        internal static object InstantiateContract(
             Type type, 
-            IEnumerable<KeyValuePair<string, object>> values, 
-            IEnumerable<KeyValuePair<string, PropertyInfo>> properties, 
-            IEnumerable<KeyValuePair<string, FieldInfo>> fields)
+            Dictionary<string, object> values, 
+            IEnumerable<PropertyDescriptor> properties
+            )
         {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
 
-            object instance = Activator.CreateInstance(type);
-
-            var fieldMap = from data in fields
-                           join prop in values on data.Key equals prop.Key
-                           select new { field = data.Value, value = prop.Value };
-
-            foreach (var pair in fieldMap)
-            {
-                pair.field.SetValue(instance, pair.value);
-            }
-
-            var propertyMap = from data in properties
-                              join prop in values on data.Key equals prop.Key
-                              select new { property = data.Value, value = prop.Value };
-
-            foreach (var pair in propertyMap)
-            {
-                var adapter = adapters.FirstOrDefault(x => x.BinderTypes.Contains(pair.property.PropertyType)); 
-                if (adapter != null)
-                {
-                    var adaptedValue = adapter.Adapt(pair.property.PropertyType, pair.value);
-                    pair.property.SetValue(instance, adaptedValue, null);
-                }
-                else if (pair.value is object[] && ((object[])pair.value).Length == 0)
-                {
-                    pair.property.SetValue(instance, null, null);
-                }
-                else
-                {
-                    pair.property.SetValue(instance, pair.value, null);
-                }
-            }
-
-            return instance;
+            ExpressionCreator creator = _creators.GetOrAdd(type.TypeHandle, (typeHandle) => new ExpressionCreator(type, properties));
+            return creator.Create(values);
         }
 
         /// <summary>
@@ -501,23 +261,6 @@ namespace DotAmf.Serialization
             return contractAttribute != null;
         }
 
-        /// <summary>
-        /// Check if type is a numeric type.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <param name="typecode">
-        /// The typecode.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool IsNumericType(Type type, TypeCode typecode)
-        {
-            bool isInteger;
-            return IsNumericType(type, typecode, out isInteger);
-        }
 
         /// <summary>
         /// Check if type is a numeric type.
@@ -534,7 +277,7 @@ namespace DotAmf.Serialization
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public static bool IsNumericType(Type type, TypeCode typecode, out bool isInteger)
+        internal static bool IsNumericType(Type type, TypeCode typecode, out bool isInteger)
         {
             isInteger = false;
 
@@ -577,5 +320,7 @@ namespace DotAmf.Serialization
         }
 
         #endregion
+
     }
+
 }

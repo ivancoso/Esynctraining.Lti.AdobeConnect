@@ -18,9 +18,9 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <param name="binderType">
         /// The binder type.
         /// </param>
-        public BaseTypeAdapter(Type binderType)
+        public BaseTypeAdapter(RuntimeTypeHandle binderType)
         {
-            this.BinderTypes = new List<Type> { binderType };
+            this.BinderTypes = new List<RuntimeTypeHandle> { binderType };
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <param name="binderTypes">
         /// The binder type.
         /// </param>
-        public BaseTypeAdapter(params Type[] binderTypes)
+        public BaseTypeAdapter(params RuntimeTypeHandle[] binderTypes)
         {
-            var types = new List<Type>();
+            var types = new List<RuntimeTypeHandle>();
             types.AddRange(binderTypes);
             this.BinderTypes = types;
         }
@@ -43,7 +43,7 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <summary>
         ///     Gets or sets the binder type.
         /// </summary>
-        public IList<Type> BinderTypes { get; set; }
+        public ICollection<RuntimeTypeHandle> BinderTypes { get; private set; }
 
         #endregion
 
@@ -61,7 +61,7 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public abstract object Adapt(Type type, object value);
+        public abstract object Adapt(RuntimeTypeHandle type, object value);
 
         #endregion
     }
@@ -80,7 +80,7 @@ namespace DotAmf.Serialization.TypeAdapters
         ///     Initializes a new instance of the <see cref="BaseTypeAdapter{T}" /> class.
         /// </summary>
         public BaseTypeAdapter()
-            : base(typeof(T))
+            : base(typeof(T).TypeHandle)
         {
         }
 
@@ -90,7 +90,7 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <param name="binderTypes">
         /// The binder types.
         /// </param>
-        protected BaseTypeAdapter(params Type[] binderTypes)
+        protected BaseTypeAdapter(params RuntimeTypeHandle[] binderTypes)
             : base(binderTypes)
         {
         }
@@ -113,7 +113,7 @@ namespace DotAmf.Serialization.TypeAdapters
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseTypeAdapter{T,T1}"/> class. 
         /// </summary>
-        public BaseTypeAdapter() : base(typeof(T), typeof(T1))
+        public BaseTypeAdapter() : base(typeof(T).TypeHandle, typeof(T1).TypeHandle)
         {
         }
 
@@ -136,10 +136,13 @@ namespace DotAmf.Serialization.TypeAdapters
         /// Initializes a new instance of the <see cref="BaseTypeAdapter{T,T1,T2}"/> class. 
         /// Initializes a new instance of the <see cref="BaseTypeAdapter{T,T1}"/> class. 
         /// </summary>
-        public BaseTypeAdapter() : base(typeof(T), typeof(T1), typeof(T2))
+        public BaseTypeAdapter()
+            : base(typeof(T).TypeHandle, typeof(T1).TypeHandle, typeof(T2).TypeHandle)
         {
         }
 
         #endregion
+
     }
+
 }

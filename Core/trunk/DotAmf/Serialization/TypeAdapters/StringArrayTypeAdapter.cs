@@ -8,7 +8,7 @@
     /// <summary>
     ///     The float null type adapter.
     /// </summary>
-    public class StringArrayTypeAdapter : BaseTypeAdapter<string[]>
+    public sealed class StringArrayTypeAdapter : BaseTypeAdapter<string[]>
     {
         #region Static Fields
 
@@ -41,26 +41,26 @@
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public override object Adapt(Type type, object value)
+        public override object Adapt(RuntimeTypeHandle type, object value)
         {
             if (value is float[])
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             if (value is int[])
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             if (value is double[])
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             if (value is bool[])
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             return value;
@@ -79,7 +79,7 @@
         /// <returns>
         /// The <see cref="decimal"/>.
         /// </returns>
-        private string[] Convert(object value)
+        private static string[] Convert(object value)
         {
             if (value != null)
             {

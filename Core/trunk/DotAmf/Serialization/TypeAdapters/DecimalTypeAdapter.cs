@@ -6,7 +6,7 @@
     /// <summary>
     ///     The decimal type adapter.
     /// </summary>
-    public class DecimalTypeAdapter : BaseTypeAdapter<decimal, decimal?>
+    public sealed class DecimalTypeAdapter : BaseTypeAdapter<decimal, decimal?>
     {
         #region Static Fields
 
@@ -39,22 +39,22 @@
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public override object Adapt(Type type, object value)
+        public override object Adapt(RuntimeTypeHandle type, object value)
         {
-            if (type == typeof(decimal))
+            if (typeof(decimal).TypeHandle.Equals(type))
             {
-                decimal? convertedValue = this.Convert(value);
+                decimal? convertedValue = Convert(value);
                 return convertedValue.HasValue ? convertedValue.Value : value;
             }
 
-            if (type == typeof(decimal?))
+            if (typeof(decimal?).TypeHandle.Equals(type))
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             if (value is int)
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             return null;
@@ -73,7 +73,7 @@
         /// <returns>
         /// The <see cref="decimal"/>.
         /// </returns>
-        private decimal? Convert(object value)
+        private static decimal? Convert(object value)
         {
             if (value != null)
             {

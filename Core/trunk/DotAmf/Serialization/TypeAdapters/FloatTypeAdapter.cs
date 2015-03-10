@@ -6,7 +6,7 @@
     /// <summary>
     ///     The float null type adapter.
     /// </summary>
-    public class FloatTypeAdapter : BaseTypeAdapter<float?>
+    public sealed class FloatTypeAdapter : BaseTypeAdapter<float?>
     {
         #region Static Fields
 
@@ -39,16 +39,16 @@
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        public override object Adapt(Type type, object value)
+        public override object Adapt(RuntimeTypeHandle type, object value)
         {
-            if (type == typeof(float?))
+            if (typeof(float?).TypeHandle.Equals(type))
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             if (value is int)
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             return null;
@@ -67,7 +67,7 @@
         /// <returns>
         /// The <see cref="decimal"/>.
         /// </returns>
-        private float? Convert(object value)
+        private static float? Convert(object value)
         {
             if (value != null)
             {

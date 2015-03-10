@@ -76,11 +76,9 @@ namespace DotAmf.ServiceModel.Dispatcher
         #region Public Methods and Operators
 
         /// <summary>
-        ///     The dispose.
+        /// The dispose.
         /// </summary>
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         #endregion
 
@@ -134,7 +132,7 @@ namespace DotAmf.ServiceModel.Dispatcher
 
             if (type.IsClass)
             {
-                IEnumerable<Type> memberTypes = this.ProcessClass(type);
+                IEnumerable<Type> memberTypes = ProcessClass(type);
 
                 foreach (Type subtype in memberTypes)
                 {
@@ -180,7 +178,7 @@ namespace DotAmf.ServiceModel.Dispatcher
         /// </exception>
         /// <exception cref="ArgumentException">
         /// </exception>
-        private IEnumerable<Type> ProcessClass(Type classType)
+        private static IEnumerable<Type> ProcessClass(Type classType)
         {
             if (classType == null)
             {
@@ -189,20 +187,12 @@ namespace DotAmf.ServiceModel.Dispatcher
 
             if (!classType.IsClass)
             {
-                throw new ArgumentException();
+                throw new ArgumentException(string.Format("Type '{0}' is not class.", classType), "classType");
             }
-
-            var types = new List<Type>();
 
             IEnumerable<Type> properties = from property in DataContractHelper.GetContractProperties(classType)
                                            select property.Value.PropertyType;
-
-            types.AddRange(properties);
-
-            IEnumerable<Type> fields = from field in DataContractHelper.GetContractFields(classType)
-                                       select field.Value.FieldType;
-
-            types.AddRange(fields);
+            var types = properties.ToList();
 
             // Handle complex types
             for (int i = 0; i < types.Count; i++)
@@ -275,5 +265,7 @@ namespace DotAmf.ServiceModel.Dispatcher
         }
 
         #endregion
+
     }
+
 }

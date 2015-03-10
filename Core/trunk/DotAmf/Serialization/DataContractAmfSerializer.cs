@@ -244,7 +244,7 @@ namespace DotAmf.Serialization
                 var decoder = new AmfPacketDecoder(this._encodingOptions);
                 decoder.Decode(stream, output);
             }
-                
+
                 // Decode generic AMF data
             else
             {
@@ -434,7 +434,7 @@ namespace DotAmf.Serialization
                 var encoder = new AmfPacketEncoder(this._encodingOptions);
                 encoder.Encode(stream, input);
             }
-                
+
                 // Encode generic AMF data
             else
             {
@@ -711,8 +711,6 @@ namespace DotAmf.Serialization
                     return false;
             }
 
-            
-
             object value;
 
             switch (reader.Name)
@@ -759,8 +757,6 @@ namespace DotAmf.Serialization
             }
 
             return value;
-
-            
         }
 
         /// <summary>
@@ -803,7 +799,7 @@ namespace DotAmf.Serialization
                 {
                     var header = new AmfHeader
                                      {
-                                         Name = reader.GetAttribute(AmfxContent.PacketHeaderName), 
+                                         Name = reader.GetAttribute(AmfxContent.PacketHeaderName),
                                          MustUnderstand =
                                              reader.GetAttribute(AmfxContent.PacketHeaderMustUnderstand)
                                              == AmfxContent.True
@@ -825,13 +821,11 @@ namespace DotAmf.Serialization
                     continue;
                 }
 
-                
-
                 if (reader.Name == AmfxContent.PacketBody)
                 {
                     var message = new AmfMessage
                                       {
-                                          Target = reader.GetAttribute(AmfxContent.PacketBodyTarget), 
+                                          Target = reader.GetAttribute(AmfxContent.PacketBodyTarget),
                                           Response = reader.GetAttribute(AmfxContent.PacketBodyResponse)
                                       };
 
@@ -849,8 +843,6 @@ namespace DotAmf.Serialization
 
                     packet.Messages.Add(message);
                 }
-
-                
             }
 
             return packet;
@@ -876,15 +868,15 @@ namespace DotAmf.Serialization
 
             switch (typecode)
             {
-                    // A boolean value
+                // A boolean value
                 case TypeCode.Boolean:
                     return AmfxContent.Boolean;
 
-                    // A string
+                // A string
                 case TypeCode.String:
                     return AmfxContent.String;
 
-                    // A date
+                // A date
                 case TypeCode.DateTime:
                     return AmfxContent.Date;
 
@@ -981,7 +973,7 @@ namespace DotAmf.Serialization
             {
                 throw new SerializationException(
                     string.Format(
-                        "Unable to resolve type '{0}'. Check if type was registered within the serializer.", 
+                        "Unable to resolve type '{0}'. Check if type was registered within the serializer.",
                         type.FullName));
             }
 
@@ -1032,13 +1024,11 @@ namespace DotAmf.Serialization
 
                 descriptor.Alias = alias;
                 descriptor.Type = type;
-                descriptor.IsPrimitive = !isDataContract;
                 descriptor.AmfxType = amfxType;
 
                 if (isDataContract)
                 {
-                    descriptor.FieldMap = DataContractHelper.GetContractFields(type);
-                    descriptor.PropertyMap = DataContractHelper.GetContractProperties(type);
+                    descriptor.PropertyMap = DataContractHelper.GetContractProperties(type).Select(x => new PropertyDescriptor(x.Key, x.Value));
                 }
 
                 return new KeyValuePair<string, DataContractDescriptor>(alias, descriptor);
@@ -1046,7 +1036,7 @@ namespace DotAmf.Serialization
             catch (Exception e)
             {
                 throw new InvalidDataContractException(
-                    string.Format("Type '{0}' is not a valid data contract.", type.FullName), 
+                   string.Format("Type '{0}' is not a valid data contract.", type.FullName),
                     e);
             }
         }
@@ -1122,7 +1112,7 @@ namespace DotAmf.Serialization
 
                 context.References[referenceIndex] = new AmfReference
                                                          {
-                                                             Reference = convertedArray, 
+                                                             Reference = convertedArray,
                                                              AmfxType = AmfxContent.Array
                                                          };
 
@@ -1270,8 +1260,6 @@ namespace DotAmf.Serialization
                 throw new SerializationException("Object traits not found.");
             }
 
-            
-
             for (int i = 0; i < traits.ClassMembers.Length; i++)
             {
                 object memberValue = Deserialize(reader, context);
@@ -1280,8 +1268,6 @@ namespace DotAmf.Serialization
                 properties[memberName] = memberValue;
                 reader.Read();
             }
-
-            
 
             #region Instantiate type
 
@@ -1298,10 +1284,9 @@ namespace DotAmf.Serialization
                 DataContractDescriptor typeDescriptor = context.KnownTypes[traits.TypeName];
 
                 result = DataContractHelper.InstantiateContract(
-                    typeDescriptor.Type, 
-                    properties, 
-                    typeDescriptor.PropertyMap, 
-                    typeDescriptor.FieldMap);
+                    typeDescriptor.Type,
+                    properties,
+                    typeDescriptor.PropertyMap);
             }
             else
             {
@@ -1437,7 +1422,7 @@ namespace DotAmf.Serialization
                     {
                         throw new SerializationException(
                             string.Format(
-                                "Unable to resolve type '{0}'. Check if type was registered within the serializer.", 
+                                "Unable to resolve type '{0}'. Check if type was registered within the serializer.",
                                 type.FullName));
                     }
                 }
@@ -1456,8 +1441,8 @@ namespace DotAmf.Serialization
                 case AmfxContent.Integer:
                     {
                         WriteElement(
-                            writer, 
-                            amfxtype, 
+                            writer,
+                            amfxtype,
                             type.IsEnum ? GetEnumValue(context, type, value).ToString() : value.ToString());
                         break;
                     }
@@ -1596,7 +1581,7 @@ namespace DotAmf.Serialization
 
                 writer.WriteEndElement();
             }
-                
+
                 // Write an array reference. Only in AMF+
             else
             {
@@ -1629,7 +1614,7 @@ namespace DotAmf.Serialization
                 context.References.Add(new AmfReference { Reference = value, AmfxType = AmfxContent.ByteArray });
                 WriteElement(writer, AmfxContent.ByteArray, data);
             }
-                
+
                 // Write a byte array reference. Only in AMF+
             else
             {
@@ -1657,10 +1642,10 @@ namespace DotAmf.Serialization
         /// The is Data Contract.
         /// </param>
         private static void WriteDataContract(
-            XmlWriter writer, 
-            object graph, 
-            Type type, 
-            SerializationContext context, 
+            XmlWriter writer,
+            object graph,
+            Type type,
+            SerializationContext context,
             bool isDataContract)
         {
             int index = context.References.IndexOf(graph);
@@ -1685,7 +1670,7 @@ namespace DotAmf.Serialization
                 {
                     throw new SerializationException(
                         string.Format(
-                            "Unable to resolve type '{0}'. Check if type was registered within the serializer.", 
+                            "Unable to resolve type '{0}'. Check if type was registered within the serializer.",
                             type.FullName));
                 }
 
@@ -1708,10 +1693,7 @@ namespace DotAmf.Serialization
                     }
                 }
 
-                properties = DataContractHelper.GetContractProperties(
-                    graph, 
-                    descriptor.PropertyMap, 
-                    descriptor.FieldMap);
+                properties = DataContractHelper.CollectPropertyValues(graph, descriptor.PropertyMap);
 
                 // Write traits by reference
                 if (context.AmfVersion == AmfVersion.Amf3 && traitsindex != -1)
@@ -1719,7 +1701,7 @@ namespace DotAmf.Serialization
                     var attributes = new Dictionary<string, string> { { AmfxContent.TraitsId, traitsindex.ToString() } };
                     WriteEmptyElement(writer, AmfxContent.Traits, attributes);
                 }
-                    
+
                     // Write traits
                 else
                 {
@@ -1806,7 +1788,7 @@ namespace DotAmf.Serialization
                 context.References.Add(new AmfReference { Reference = value, AmfxType = AmfxContent.Date });
                 WriteElement(writer, AmfxContent.Date, timestamp.ToString());
             }
-                
+
                 // Write a date reference. Only in AMF+
             else
             {
@@ -1831,9 +1813,9 @@ namespace DotAmf.Serialization
         /// The attributes.
         /// </param>
         private static void WriteElement(
-            XmlWriter writer, 
-            string elementName, 
-            string value, 
+            XmlWriter writer,
+            string elementName,
+            string value,
             IEnumerable<KeyValuePair<string, string>> attributes = null)
         {
             writer.WriteStartElement(elementName);
@@ -1863,8 +1845,8 @@ namespace DotAmf.Serialization
         /// The attributes.
         /// </param>
         private static void WriteEmptyElement(
-            XmlWriter writer, 
-            string elementName, 
+            XmlWriter writer,
+            string elementName,
             IEnumerable<KeyValuePair<string, string>> attributes = null)
         {
             writer.WriteStartElement(elementName);
@@ -1903,8 +1885,8 @@ namespace DotAmf.Serialization
                                           out stringReferencesEnabled) || stringReferencesEnabled;
 
             // Write a string
-            if (!stringReferencesEnabled 
-                || value == string.Empty 
+            if (!stringReferencesEnabled
+                || value == string.Empty
                 || context.AmfVersion != AmfVersion.Amf3
                 || (index = context.StringReferences.IndexOf(value)) == -1)
             {
@@ -1915,7 +1897,7 @@ namespace DotAmf.Serialization
 
                 WriteElement(writer, AmfxContent.String, value);
             }
-                
+
                 // Write a string reference. Only in AMF+
             else
             {
@@ -1955,7 +1937,7 @@ namespace DotAmf.Serialization
 
                 WriteElement(writer, AmfxContent.Xml, content);
             }
-                
+
                 // Write an XML reference. Only in AMF+
             else
             {
@@ -1967,39 +1949,29 @@ namespace DotAmf.Serialization
         #endregion
 
         /// <summary>
-        ///     Data contract descriptor.
+        /// Data contract descriptor.
         /// </summary>
         private class DataContractDescriptor
         {
             #region Public Properties
 
             /// <summary>
-            ///     Data contract type's alias.
+            /// Data contract type's alias.
             /// </summary>
             public string Alias { get; set; }
 
             /// <summary>
-            ///     Data contract type's AMFX type.
+            /// Data contract type's AMFX type.
             /// </summary>
             public string AmfxType { get; set; }
 
             /// <summary>
-            ///     Data contract field map.
-            /// </summary>
-            public IEnumerable<KeyValuePair<string, FieldInfo>> FieldMap { get; set; }
+            /// Data contract property map.
+            /// </summary>            
+            public IEnumerable<PropertyDescriptor> PropertyMap { get; set; }
 
             /// <summary>
-            ///     Type is a primitive type.
-            /// </summary>
-            public bool IsPrimitive { get; set; }
-
-            /// <summary>
-            ///     Data contract property map.
-            /// </summary>
-            public IEnumerable<KeyValuePair<string, PropertyInfo>> PropertyMap { get; set; }
-
-            /// <summary>
-            ///     Data contract type type.
+            /// Data contract type type.
             /// </summary>
             public Type Type { get; set; }
 
@@ -2009,7 +1981,7 @@ namespace DotAmf.Serialization
         /// <summary>
         ///     Enum descriptor.
         /// </summary>
-        private class EnumDescriptor : DataContractDescriptor
+        private sealed class EnumDescriptor : DataContractDescriptor
         {
             #region Public Properties
 
@@ -2088,5 +2060,7 @@ namespace DotAmf.Serialization
 
             #endregion
         }
+
     }
+
 }

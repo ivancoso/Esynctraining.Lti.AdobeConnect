@@ -5,19 +5,19 @@
     /// <summary>
     /// The decimal type adapter.
     /// </summary>
-    public class GuidTypeAdapter : BaseTypeAdapter<Guid, Guid?>
+    public sealed class GuidTypeAdapter : BaseTypeAdapter<Guid, Guid?>
     {
-        public override object Adapt(Type type, object value)
+        public override object Adapt(RuntimeTypeHandle type, object value)
         {
             if (type == typeof(Guid))
             {
-                var convertedValue = this.Convert(value);
+                var convertedValue = Convert(value);
                 return convertedValue.HasValue ? convertedValue.Value : value;
             }
 
             if (type == typeof(Guid?))
             {
-                return this.Convert(value);
+                return Convert(value);
             }
 
             return null;
@@ -32,7 +32,7 @@
         /// <returns>
         /// The <see cref="decimal"/>.
         /// </returns>
-        private Guid? Convert(object value)
+        private static Guid? Convert(object value)
         {
             if (value != null)
             {
