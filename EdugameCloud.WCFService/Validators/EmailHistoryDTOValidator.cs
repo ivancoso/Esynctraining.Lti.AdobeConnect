@@ -1,8 +1,5 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
-    using System;
-    using System.Linq;
-
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Enums;

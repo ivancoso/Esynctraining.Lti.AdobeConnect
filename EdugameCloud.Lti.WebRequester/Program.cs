@@ -2,7 +2,7 @@
 {
     using System;
     using System.Net;
-
+    
     using log4net;
     using log4net.Config;
 
@@ -21,7 +21,6 @@
         /// </param>
         public static void Main(string[] args)
         {
-
             XmlConfigurator.Configure();
             string url = args[0];
             if (!string.IsNullOrEmpty(url))

@@ -2,7 +2,6 @@
 {
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.MVC.ViewModels;
-    using Esynctraining.Core.Extensions;
     using FluentValidation;
 
     /// <summary>

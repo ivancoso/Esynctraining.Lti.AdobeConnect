@@ -6,7 +6,6 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
-    using System.Security.Policy;
     using System.Text.RegularExpressions;
     using System.Threading;
 
@@ -22,7 +21,6 @@
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
-    using Esynctraining.Core.Providers.Mailer.Models;
     using Esynctraining.Core.Utils;
 
     using global::MailSender.Mail.Models;

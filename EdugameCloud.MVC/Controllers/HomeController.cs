@@ -11,8 +11,6 @@
 
     using Castle.Core.Logging;
 
-    using DocumentFormat.OpenXml.Math;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.MVC.Resources;
@@ -22,8 +20,6 @@
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
-    using NHibernate.Mapping;
 
     /// <summary>
     ///     The home controller.

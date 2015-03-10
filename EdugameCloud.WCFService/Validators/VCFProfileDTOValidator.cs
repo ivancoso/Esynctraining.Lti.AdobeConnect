@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
     using System;
-    using System.Web;
     using System.Xml.Linq;
     using System.Xml.Schema;
 

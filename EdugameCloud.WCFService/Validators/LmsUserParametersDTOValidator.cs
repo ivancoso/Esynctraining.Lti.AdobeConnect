@@ -1,7 +1,5 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.DTO;
 

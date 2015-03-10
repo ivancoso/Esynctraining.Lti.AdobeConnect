@@ -20,7 +20,7 @@
         /// <param name="binderType">
         /// The binder type.
         /// </param>
-        public BaseModelBinder(Type binderType)
+        protected BaseModelBinder(Type binderType)
         {
             this.BinderTypes = new List<Type>() { binderType };
         }
@@ -31,7 +31,7 @@
         /// <param name="binderTypes">
         /// The binder type.
         /// </param>
-        public BaseModelBinder(params Type[] binderTypes)
+        protected BaseModelBinder(params Type[] binderTypes)
         {
             var types = new List<Type>();
             types.AddRange(binderTypes);
@@ -99,7 +99,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseModelBinder{T}"/> class.
         /// </summary>
-        public BaseModelBinder()
+        protected BaseModelBinder()
             : base(typeof(T))
         {
         }
@@ -125,7 +125,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseModelBinder{T}"/> class.
         /// </summary>
-        public BaseModelBinder()
+        protected BaseModelBinder()
             : base(typeof(T), typeof(V))
         {
         }

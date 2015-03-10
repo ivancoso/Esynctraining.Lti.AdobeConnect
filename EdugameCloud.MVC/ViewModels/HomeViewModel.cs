@@ -2,8 +2,6 @@
 {
     using System.Web;
 
-    using EdugameCloud.Core.Extensions;
-
     using Esynctraining.Core.Extensions;
     using BaseController = EdugameCloud.MVC.Controllers.BaseController;
 

@@ -9,7 +9,6 @@
 
 namespace EdugameCloud.MVC.Attributes
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
@@ -23,8 +22,6 @@ namespace EdugameCloud.MVC.Attributes
 
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
-
-    using NHibernate.Mapping;
 
     /// <summary>
     ///     The custom authorize.
@@ -116,26 +113,6 @@ namespace EdugameCloud.MVC.Attributes
             {
                 base.HandleUnauthorizedRequest(filterContext);    
             }
-        }
-
-        /// <summary>
-        /// The safe split.
-        /// </summary>
-        /// <param name="toSplit">
-        /// The to split.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string[]"/>.
-        /// </returns>
-        private static string[] SafeSplit(string toSplit)
-        {
-            if (string.IsNullOrEmpty(toSplit))
-            {
-                return new string[0];
-            }
-
-            string[] splitString = toSplit.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            return splitString;
         }
 
         #endregion

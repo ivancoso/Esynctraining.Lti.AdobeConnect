@@ -1,9 +1,6 @@
 ﻿namespace EdugameCloud.MVC.ViewModels
 {
     using System;
-
-    using EdugameCloud.MVC.Controllers;
-
     using Esynctraining.Core.Domain.Entities;
 
     using BaseController = EdugameCloud.MVC.Controllers.BaseController;

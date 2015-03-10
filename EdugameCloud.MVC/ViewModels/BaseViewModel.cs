@@ -4,7 +4,6 @@
     using System.Web.Mvc;
 
     using EdugameCloud.MVC.Attributes;
-    using EdugameCloud.MVC.Controllers;
 
     using Esynctraining.Core.Extensions;
 

@@ -146,7 +146,7 @@
         public void FormsAuthentication_OnAuthenticate(Object sender, FormsAuthenticationEventArgs e)
         {
 
-            if (Request.QueryString != null && Request.QueryString.HasKey("egcSession"))
+            if (Request.QueryString.HasKey("egcSession"))
             {
                 try
                 {
@@ -175,8 +175,7 @@
                     //somehting went wrong
                 }
             }
-            else if (FormsAuthentication.CookiesSupported && Request.Cookies != null
-                     && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
+            else if (FormsAuthentication.CookiesSupported && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
             {
                 var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
                 FormsAuthenticationTicket ticket = null;

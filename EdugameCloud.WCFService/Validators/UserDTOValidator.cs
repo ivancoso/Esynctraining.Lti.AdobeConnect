@@ -1,18 +1,13 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
-    using System;
-    using System.Text.RegularExpressions;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Providers;
 
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
 
     using FluentValidation;
-
-    using Resources;
 
     /// <summary>
     /// The user DTO validator.

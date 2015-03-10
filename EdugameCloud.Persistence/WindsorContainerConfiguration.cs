@@ -9,8 +9,6 @@
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
-    using EdugameCloud.Core.Authentication;
-    using EdugameCloud.Core.Business;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Persistence.Extensions;

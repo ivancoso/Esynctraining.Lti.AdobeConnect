@@ -2,8 +2,6 @@
 {
     using EdugameCloud.Core.Domain.Entities;
 
-    using Esynctraining.Core.Utils;
-
     /// <summary>
     /// The question mapping
     /// </summary>

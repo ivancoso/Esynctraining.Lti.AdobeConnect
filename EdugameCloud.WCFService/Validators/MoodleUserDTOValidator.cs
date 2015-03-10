@@ -1,10 +1,6 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
-    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
-
-    using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
 
     using FluentValidation;
 

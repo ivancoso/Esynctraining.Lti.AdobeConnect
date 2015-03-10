@@ -5,7 +5,6 @@
     using System.Data.SqlClient;
     using System.Linq;
     using System.Net;
-    using System.Text;
     using System.Threading.Tasks;
     using System.Web.Mvc;
 
@@ -14,20 +13,15 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.RTMP;
     using EdugameCloud.MVC.HtmlHelpers;
     using EdugameCloud.MVC.Social.OAuth;
     using EdugameCloud.MVC.Social.Subscriptions;
     using EdugameCloud.MVC.ViewModels;
 
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
 
     using Microsoft.Web.WebPages.OAuth;
-
-    using RazorEngine;
 
     /// <summary>
     ///     The social controller.

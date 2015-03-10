@@ -7,7 +7,8 @@
     ///     The question from stored procedure DTO.
     /// </summary>
     [DataContract]
-    public class QuestionFromStoredProcedureDTO
+    [KnownType(typeof(FileDTO))]
+    public sealed class QuestionFromStoredProcedureDTO
     {
         #region Public Properties
 
@@ -15,145 +16,145 @@
         /// Gets or sets the correct message.
         /// </summary>
         [DataMember]
-        public virtual string correctMessage { get; set; }
+        public string correctMessage { get; set; }
 
         /// <summary>
         /// Gets or sets the correct message.
         /// </summary>
         [DataMember]
-        public virtual string correctReference { get; set; }
+        public string correctReference { get; set; }
 
         /// <summary>
         /// Gets or sets the total weight bucket.
         /// </summary>
         [DataMember]
-        public virtual decimal? totalWeightBucket { get; set; }
+        public decimal? totalWeightBucket { get; set; }
 
         /// <summary>
         /// Gets or sets the weight bucket type.
         /// </summary>
         [DataMember]
-        public virtual int? weightBucketType { get; set; }
+        public int? weightBucketType { get; set; }
 
         /// <summary>
         /// Gets or sets the restrictions.
         /// </summary>
         [DataMember]
-        public virtual string restrictions { get; set; }
+        public string restrictions { get; set; }
 
         /// <summary>
         /// Gets or sets the allow other.
         /// </summary>
         [DataMember]
-        public virtual bool? allowOther { get; set; }
+        public bool? allowOther { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is mandatory.
         /// </summary>
         [DataMember]
-        public virtual bool isMandatory { get; set; }
+        public bool isMandatory { get; set; }
 
         /// <summary>
         /// Gets or sets the height.
         /// </summary>
         [DataMember]
-        public virtual int? height { get; set; }
+        public int? height { get; set; }
 
         /// <summary>
         /// Gets or sets the hint.
         /// </summary>
         [DataMember]
-        public virtual string hint { get; set; }
+        public string hint { get; set; }
 
         /// <summary>
         /// Gets or sets the File id.
         /// </summary>
         [DataMember]
-        public virtual Guid? imageId { get; set; }
+        public Guid? imageId { get; set; }
 
         /// <summary>
         /// Gets or sets the image vo.
         /// </summary>
         [DataMember]
-        public virtual FileDTO imageVO { get; set; }
+        public FileDTO imageVO { get; set; }
 
         /// <summary>
         /// Gets or sets the incorrect message.
         /// </summary>
         [DataMember]
-        public virtual string incorrectMessage { get; set; }
+        public string incorrectMessage { get; set; }
 
         /// <summary>
         /// Gets or sets the instruction.
         /// </summary>
         [DataMember]
-        public virtual string instruction { get; set; }
+        public string instruction { get; set; }
 
         /// <summary>
         /// Gets or sets the question.
         /// </summary>
         [DataMember]
-        public virtual string question { get; set; }
+        public string question { get; set; }
 
         /// <summary>
         /// Gets or sets the question id.
         /// </summary>
         [DataMember]
-        public virtual int questionId { get; set; }
+        public int questionId { get; set; }
 
         /// <summary>
         /// Gets or sets the question order.
         /// </summary>
         [DataMember]
-        public virtual int questionOrder { get; set; }
+        public int questionOrder { get; set; }
 
         /// <summary>
         /// Gets or sets the room number.
         /// </summary>
         [DataMember]
-        public virtual int? pageNumber { get; set; }
+        public int? pageNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the question type id.
         /// </summary>
         [DataMember]
-        public virtual int questionTypeId { get; set; }
+        public int questionTypeId { get; set; }
 
         /// <summary>
         /// Gets or sets the score value.
         /// </summary>
         [DataMember]
-        public virtual int scoreValue { get; set; }
+        public int scoreValue { get; set; }
 
         /// <summary>
         /// Gets or sets the width.
         /// </summary>
         [DataMember]
-        public virtual int? width { get; set; }
+        public int? width { get; set; }
 
         /// <summary>
         /// Gets or sets the x.
         /// </summary>
         [DataMember]
-        public virtual int? x { get; set; }
+        public int? x { get; set; }
 
         /// <summary>
         /// Gets or sets the y.
         /// </summary>
         [DataMember]
-        public virtual int? y { get; set; }
+        public int? y { get; set; }
 
         /// <summary>
         /// Gets or sets the value indicating whether randomize answers.
         /// </summary>
         [DataMember]
-        public virtual bool? randomizeAnswers { get; set; }
+        public bool? randomizeAnswers { get; set; }
 
         /// <summary>
         /// Gets or sets the is always rate dropdown.
         /// </summary>
         [DataMember]
-        public virtual bool? isAlwaysRateDropdown { get; set; }
+        public bool? isAlwaysRateDropdown { get; set; }
 
         #endregion
     }
