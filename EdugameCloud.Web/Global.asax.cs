@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Web
+﻿using EdugameCloud.Lti.API.Desire2Learn;
+
+namespace EdugameCloud.Web
 {
     using System;
     using System.IO;
@@ -89,6 +91,13 @@
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
+            container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>()
+                .DynamicParameters((k, d) =>
+                {
+                    var settings = k.Resolve<ApplicationSettingsProvider>();
+                    d["providerKey"] = ((dynamic)settings).D2LApiKey;
+                    d["providerSecret"] = ((dynamic)settings).D2LApiSecret;
+                }).LifestyleTransient());
         }
 
         /// <summary>
