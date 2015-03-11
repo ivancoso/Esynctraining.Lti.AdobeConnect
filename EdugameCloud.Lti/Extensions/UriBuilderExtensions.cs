@@ -46,6 +46,12 @@
             AppendQueryArgs(builder, new[] { new KeyValuePair<string, string>(name, value) });
         }
 
+        public static string AddQueryStringParameter(string url, string name, string value)
+        {
+            var builder = new UriBuilder(url);
+            builder.AppendQueryArgument(name, value);
+            return builder.Uri.AbsoluteUri;
+        }
         #endregion
 
         #region Methods

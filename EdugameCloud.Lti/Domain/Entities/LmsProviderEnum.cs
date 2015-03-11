@@ -28,6 +28,11 @@
         /// <summary>
         /// The Sakai
         /// </summary>
-        Sakai = 5
+        Sakai = 5,
+
+        /// <summary>
+        /// The Desire2Learn
+        /// </summary>
+        Desire2Learn = 6
     }
 }

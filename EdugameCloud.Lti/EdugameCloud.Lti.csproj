@@ -58,6 +58,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="D2L.Extensibility.AuthSdk, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\D2L.Extensibility.AuthSdk.1.2.0\lib\net40\D2L.Extensibility.AuthSdk.dll</HintPath>
+    </Reference>
+    <Reference Include="D2L.Extensibility.AuthSdk.Restsharp">
+      <HintPath>..\packages\D2L.Extensibility.AuthSdk.Restsharp.1.1.1\lib\net40\D2L.Extensibility.AuthSdk.Restsharp.dll</HintPath>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet">
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.4.12333\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
@@ -234,6 +241,17 @@
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />
     <Compile Include="OAuth\Canvas\CanvasClient.cs" />
     <Compile Include="OAuth\Canvas\CanvasUser.cs" />
+    <Compile Include="API\Desire2Learn\Desire2LearnApiService.cs" />
+    <Compile Include="OAuth\Desire2Learn\ClasslistUser.cs" />
+    <Compile Include="OAuth\Desire2Learn\OrgUnitUser.cs" />
+    <Compile Include="OAuth\Desire2Learn\PagedResultSet.cs" />
+    <Compile Include="OAuth\Desire2Learn\PagingInfo.cs" />
+    <Compile Include="OAuth\Desire2Learn\Role.cs" />
+    <Compile Include="OAuth\Desire2Learn\RoleInfo.cs" />
+    <Compile Include="OAuth\Desire2Learn\User.cs" />
+    <Compile Include="OAuth\Desire2Learn\UserActivationData.cs" />
+    <Compile Include="OAuth\Desire2Learn\UserData.cs" />
+    <Compile Include="OAuth\Desire2Learn\WhoAmIUser.cs" />
     <Compile Include="OAuth\LtiOpenAuthSecurityManager.cs" />
     <Compile Include="OAuth\NonceData.cs" />
     <Compile Include="OAuth\OAuthExtensions.cs" />
@@ -245,6 +263,7 @@
     <Compile Include="Routes\LtiRoutes.cs" />
     <Compile Include="Routes\RoutesExtensions.cs" />
     <Compile Include="Utils\AESGCM.cs" />
+    <Compile Include="Utils\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

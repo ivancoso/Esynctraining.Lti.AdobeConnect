@@ -1,4 +1,10 @@
-﻿namespace EdugameCloud.Lti.API.AdobeConnect
+﻿using D2L.Extensibility.AuthSdk;
+using D2L.Extensibility.AuthSdk.Restsharp;
+using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.OAuth.Desire2Learn;
+using RestSharp;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
@@ -504,7 +510,7 @@
                 u.ac_role = "Remove";
             }
 
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner"))
+            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("administrator") || role.Contains("super admin"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
@@ -1018,6 +1024,8 @@
                     return this.GetMoodleUsers(credentials, courseId, out error);
                 case LmsProviderNames.Sakai:
                     return this.GetSakaiUsers(credentials, extraData as LtiParamDTO, out error);
+                case LmsProviderNames.Desire2Learn:
+                    return this.GetDesire2LearnUsers(credentials, extraData as LtiParamDTO, lmsUserId, out error);
             }
 
             error = null;
@@ -1109,6 +1117,35 @@
             Session session = extraData == null ? null : (Session)extraData;
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, session);
             return GroupUsers(users);
+        }
+
+        private List<LmsUserDTO> GetDesire2LearnUsers(CompanyLms credentials, LtiParamDTO param, string lmsUserId, out string error)
+        {
+            error = null; //todo: set when something is wrong
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, credentials.Id).Value;
+            var tokens = lmsUser.Token.Split(' ');
+            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+
+            var result = new List<OrgUnitUser>();
+            PagedResultSet<OrgUnitUser> enrollments = null;
+            do
+            {
+                enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1], param.lms_domain,
+                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat, Desire2LearnApiService.ApiVersion, param.context_id) +
+                    (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
+                result.AddRange(enrollments.Items);
+            }
+            while (enrollments.PagingInfo.HasMoreItems);
+
+            return result.Where(x=>!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress))
+                .Select(x => new LmsUserDTO
+                {
+                    lms_role = x.Role.Name, 
+                    id = x.User.Identifier, 
+                    login_id = x.User.OrgDefinedId, 
+                    name = x.User.DisplayName, 
+                    primary_email = x.User.EmailAddress
+                }).ToList();
         }
 
         /// <summary>

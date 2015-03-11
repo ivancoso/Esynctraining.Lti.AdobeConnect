@@ -241,6 +241,11 @@
         public string tool_consumer_instance_guid { get; set; }
 
         /// <summary>
+        /// Gets or sets the LIST outcome service url.
+        /// </summary>
+        public string lis_outcome_service_url { get; set; }
+
+        /// <summary>
         ///     Gets or sets the user id.
         /// </summary>
         public string user_id { get; set; }
@@ -332,7 +337,8 @@
         {
             if (string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
             {
-                if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid))
+                if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
+                    || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
                 {
                     return this.LmsDomainFromUrls();
                 }
@@ -357,6 +363,11 @@
         /// </returns>
         private string LmsDomainFromUrls()
         {
+            if (!string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
+            {
+                return new Uri(this.lis_outcome_service_url).GetLeftPart(UriPartial.Authority);
+            }
+
             if (string.IsNullOrWhiteSpace(this.referer))
             {
                 return string.IsNullOrWhiteSpace(this.launch_presentation_return_url)

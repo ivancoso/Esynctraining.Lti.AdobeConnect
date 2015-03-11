@@ -27,11 +27,6 @@
         #region Constants and Fields
 
         /// <summary>
-        ///     The return uri extension parameter.
-        /// </summary>
-        public const string ReturnUriExtensionQueryParameterName = "canvasUrl";
-
-        /// <summary>
         ///     The authorization endpoint.
         /// </summary>
         private const string AuthorizationEndpoint = "{0}/login/oauth2/auth";
@@ -121,7 +116,7 @@
         public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
         {
             var builder = new UriBuilder(returnUrl);
-            builder.AppendQueryArgument(ReturnUriExtensionQueryParameterName, canvasUrl);
+            builder.AppendQueryArgument(Utils.Constants.ReturnUriExtensionQueryParameterName, canvasUrl);
             return builder.Uri.AbsoluteUri;
         }
 
@@ -156,9 +151,9 @@
         protected override Uri GetServiceLoginUrl(Uri returnUrl)
         {
             var collection = HttpUtility.ParseQueryString(returnUrl.Query);
-            if (collection.HasKey(ReturnUriExtensionQueryParameterName))
+            if (collection.HasKey(Utils.Constants.ReturnUriExtensionQueryParameterName))
             {
-                var canvasUrl = collection[ReturnUriExtensionQueryParameterName];
+                var canvasUrl = collection[Utils.Constants.ReturnUriExtensionQueryParameterName];
                 var returnUri = ClearReturnUrl(returnUrl, collection);
                 var returnUrlFixed = returnUri.AbsoluteUri;
 
@@ -343,7 +338,7 @@
                 if (keyObject != null)
                 {
                     var key = keyObject.ToString();
-                    if (!key.Equals(ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
+                    if (!key.Equals(Utils.Constants.ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
                     {
                         returnUrlBuilder.AppendQueryArgument(key, collection[key]);
                     }

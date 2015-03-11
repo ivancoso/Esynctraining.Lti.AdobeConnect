@@ -1,18 +1,17 @@
-﻿namespace EdugameCloud.Lti.Web
+﻿using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using EdugameCloud.Lti.API;
+using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.Web.Providers;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+
+namespace EdugameCloud.Lti.Web
 {
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Routing;
-
-    using Castle.MicroKernel.Registration;
-    using Castle.Windsor;
-
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Web.Providers;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-
     /// <summary>
     /// The MVC application.
     /// </summary>
@@ -55,6 +54,13 @@
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
+            container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>()
+                .DynamicParameters((k, d) =>
+                {
+                    var settings = k.Resolve<ApplicationSettingsProvider>();
+                    d["providerKey"] = ((dynamic)settings).D2LApiKey;
+                    d["providerSecret"] = ((dynamic)settings).D2LApiSecret;
+                }).LifestyleTransient());
         }
 
         /// <summary>

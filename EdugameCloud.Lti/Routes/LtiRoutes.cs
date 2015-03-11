@@ -16,6 +16,9 @@
         /// </param>
         public static void AppendTo(RouteCollection routes)
         {
+            routes.MapLowercaseRoute("LtiOAuthLogin", "lti/{provider}-login", new { controller = "Lti", action = "login" });
+            routes.MapLowercaseRoute("LtiOAuthCallback", "lti/oauth-callback", new { controller = "Lti", action = "callback" });
+
             routes.MapLowercaseRoute("DefaultLti", "Lti", new { controller = "Lti", action = "Index" });
             routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });
             routes.MapLowercaseRoute("UserParameters", "Lti/GetAuthenticationParameters", new { controller = "Lti", action = "GetAuthenticationParameters" });

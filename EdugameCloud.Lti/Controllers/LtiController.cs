@@ -1,4 +1,10 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using D2L.Extensibility.AuthSdk;
+using D2L.Extensibility.AuthSdk.Restsharp;
+using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.OAuth.Desire2Learn;
+using RestSharp;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -212,61 +218,57 @@
             __provider__ = FixExtraDataIssue(__provider__);
             providerKey = FixExtraDataIssue(providerKey);
             string provider = __provider__;
-            
-            try
+
+            if (provider.ToLower() == LmsProviderNames.Desire2Learn)
             {
-                AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
-                if (result.IsSuccessful)
+                var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+
+                string scheme = Request.UrlReferrer.GetLeftPart(UriPartial.Scheme).ToLowerInvariant();
+                string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
+                var hostUrl = authority.Replace(scheme, string.Empty);
+
+                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, Desire2LearnApiService.ApiVersion));
+                var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.GetUserUrlFormat, Desire2LearnApiService.ApiVersion, user.Identifier));
+                string userId = Request.QueryString["x_a"];
+                string userKey = Request.QueryString["x_b"];
+                string token = null;
+                if (!userId.Contains(' ') && !userKey.Contains(' '))
                 {
-                    LmsUser lmsUser = null;
-                    var session = this.GetSession(providerKey);
-                    var company = session.With(x => x.CompanyLms);
-                    if (result.ExtraData.ContainsKey("accesstoken"))
-                    {
-                        var token = result.ExtraData["accesstoken"];
-                        var userId = result.ExtraData["id"];
-                        var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
-                        var userName = this.GetUserNameOrEmail(param);
-                        lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = userName };
-                        lmsUser.Username = userName;
-                        lmsUser.Token = token;
-                        if (lmsUser.IsTransient())
-                        {
-                            this.SaveSessionUser(session, lmsUser);
-                        }
-
-                        this.lmsUserModel.RegisterSave(lmsUser);
-                    }
-
-                    if (company != null)
-                    {
-                        if (company.AdminUser == null && this.IsAdminRole(providerKey))
-                        {
-                            company.AdminUser = lmsUser;
-                            CompanyLmsModel.RegisterSave(company);
-                        }
-
-                        return this.RedirectToExtJs(company, lmsUser, providerKey);
-                    }
-
-                    this.ViewBag.Error = string.Format("Credentials not found");
+                    token = userId + " " + userKey;
                 }
-                else
-                {
-                    var sid = Request.QueryString["__sid__"] ?? string.Empty;
-                    var cookie = Request.Cookies[sid];
-                    
-                    this.ViewBag.Error = string.Format(
-                        "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
-                        Request.QueryString["code"] ?? string.Empty,
-                        Request.QueryString["__provider__"] ?? string.Empty,
-                        sid,
-                        cookie != null ? cookie.Value : string.Empty);
-                }
+
+                return AuthCallbackSave(providerKey, token, user.Identifier, userInfo.UserName, "Error");
             }
-            catch (ApplicationException ex)
+            else
             {
-                this.ViewBag.Error = string.Format(ex.ToString());
+                try
+                {
+                    AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
+                    if (result.IsSuccessful)
+                    {
+                        return AuthCallbackSave(providerKey,
+                            result.ExtraData.ContainsKey("accesstoken")
+                                ? result.ExtraData["accesstoken"]
+                                : null,
+                            result.ExtraData["id"], null, "Error");
+                    }
+                    else
+                    {
+                        var sid = Request.QueryString["__sid__"] ?? string.Empty;
+                        var cookie = Request.Cookies[sid];
+
+                        this.ViewBag.Error = string.Format(
+                            "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
+                            Request.QueryString["code"] ?? string.Empty,
+                            Request.QueryString["__provider__"] ?? string.Empty,
+                            sid,
+                            cookie != null ? cookie.Value : string.Empty);
+                    }
+                }
+                catch (ApplicationException ex)
+                {
+                    this.ViewBag.Error = string.Format(ex.ToString());
+                }
             }
 
             return this.View("Error");
@@ -290,7 +292,7 @@
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser == null)
             {
-                lmsUser = new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id, Username = this.GetUserNameOrEmail(param) };
+                lmsUser = session.LmsUser ?? new LmsUser { CompanyLms = companyLms, UserId = param.lms_user_id, Username = this.GetUserNameOrEmail(param) };
             }
 
             lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
@@ -866,7 +868,14 @@
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
             string lmsProvider = param.GetLtiProviderName(provider);
-
+            if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !String.IsNullOrEmpty(param.user_id))
+            {
+                var parsedIdArray = param.user_id.Split('_');
+                if (parsedIdArray.Length == 2)
+                {
+                    param.user_id = parsedIdArray[1];
+                }
+            }
             CompanyLms companyLms = this.CompanyLmsModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
             if (companyLms != null)
             {
@@ -888,7 +897,6 @@
             string email, login;
             this.usersSetup.GetParamLoginAndEmail(param, companyLms, adobeConnectProvider, out email, out login);
             param.ext_user_username = login;
-
             var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, companyLms.Id);
             
             var session = this.SaveSession(companyLms, param, lmsUser);
@@ -917,7 +925,27 @@
                             param.lis_person_name_family,
                             companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
                         break;
+                    case LmsProviderNames.Desire2Learn:
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
+                        {
+                            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+                            string returnUrl = this.Url.AbsoluteAction(
+                                "callback",
+                                "Lti",
+                                new {__provider__ = provider, providerKey = key},
+                                Request.Url.Scheme);
 
+                            return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
+                        }
+
+                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.lis_person_name_given,
+                            param.lis_person_name_family,
+                            companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                        break;
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
@@ -1278,10 +1306,63 @@
         /// </param>
         private void StartOAuth2Authentication(string provider, string providerKey, LtiParamDTO model)
         {
-            string returnUrl = this.Url.AbsoluteAction("callback", "Lti", new { __provider__ = provider, providerKey });
-            returnUrl = CanvasClient.AddCanvasUrlToReturnUrl(returnUrl, "https://" + model.lms_domain);
-            returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
-            OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+            string returnUrl = this.Url.AbsoluteAction(
+                        "callback",
+                        "Lti",
+                        new { __provider__ = provider, providerKey },
+                        Request.Url.Scheme);
+            switch (provider)
+            {
+                case LmsProviderNames.Canvas:
+                    returnUrl = UriBuilderExtensions.AddQueryStringParameter(
+                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, "https://" + model.lms_domain);
+
+                    returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
+                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+                    break;
+                case LmsProviderNames.Desire2Learn:
+                    UriBuilderExtensions.AddQueryStringParameter(
+                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, "https://" + model.lms_domain);
+
+                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+                    break;
+
+            }
+        }
+
+        private ActionResult AuthCallbackSave(string providerKey, string token, string userId, string username, string viewName)
+        {
+            LmsUser lmsUser = null;
+            var session = this.GetSession(providerKey);
+            var company = session.With(x => x.CompanyLms);
+            if (!string.IsNullOrEmpty(token))
+            {
+                var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
+                var userName = username ?? this.GetUserNameOrEmail(param);
+                lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, CompanyLms = company, Username = userName };
+                lmsUser.Username = userName;
+                lmsUser.Token = token;
+                if (lmsUser.IsTransient())
+                {
+                    this.SaveSessionUser(session, lmsUser);
+                }
+
+                this.lmsUserModel.RegisterSave(lmsUser);
+            }
+
+            if (company != null)
+            {
+                if (company.AdminUser == null && this.IsAdminRole(providerKey))
+                {
+                    company.AdminUser = lmsUser;
+                    CompanyLmsModel.RegisterSave(company);
+                }
+
+                return this.RedirectToExtJs(company, lmsUser, providerKey);
+            }
+
+            this.ViewBag.Error = string.Format("Credentials not found");
+            return View(viewName);
         }
 
         /// <summary>

@@ -29,5 +29,10 @@
         /// The Sakai.
         /// </summary>
         public const string Sakai = "sakai";
+
+        /// <summary>
+        /// The Sakai.
+        /// </summary>
+        public const string Desire2Learn = "desire2learn";
     }
 }
