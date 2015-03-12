@@ -15,7 +15,7 @@
                 return convertedValue.HasValue ? convertedValue.Value : value;
             }
 
-            if (type.Equals(typeof(Guid?).TypeHandle)
+            if (type.Equals(typeof(Guid?).TypeHandle))
             {
                 return Convert(value);
             }
