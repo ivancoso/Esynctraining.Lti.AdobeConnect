@@ -403,6 +403,9 @@
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Redirect.cshtml">
       <Link>Views\Lti\Redirect.cshtml</Link>
     </Content>
+    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\LoginToAC.cshtml">
+      <Link>Views\Lti\LoginToAC.cshtml</Link>
+    </Content>
     <None Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -566,7 +569,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2345</IISUrl>
+          <IISUrl>http://localhost:2348</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

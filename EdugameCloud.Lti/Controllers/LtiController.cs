@@ -651,10 +651,13 @@ namespace EdugameCloud.Lti.Controllers
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            var url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, this.GetAdobeConnectProvider(credentials));
+            string breezeSession = null;
+            var url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
             if (url is string)
             {
-                return this.Redirect(url as string);
+                this.ViewBag.MeetingUrl = url as string;
+                this.ViewBag.BreezeSession = breezeSession;
+                return this.View("LoginToAC");
             }
 
             return this.Json(url, JsonRequestBehavior.AllowGet);

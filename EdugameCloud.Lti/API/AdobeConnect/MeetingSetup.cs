@@ -526,13 +526,16 @@
         /// <param name="scoId">
         /// The SCO Id.
         /// </param>
+        /// <param name="breezeSession">
+        /// The breeze Session.
+        /// </param>
         /// <param name="adobeConnectProvider">
         /// The adobe connect Provider.
         /// </param>
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object JoinMeeting(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, AdobeConnectProvider adobeConnectProvider = null)
+        public object JoinMeeting(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, ref string breezeSession, AdobeConnectProvider adobeConnectProvider = null)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
@@ -619,7 +622,8 @@
                             };
             }
 
-            return string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
+            breezeSession = breezeToken ?? string.Empty;
+            return meetingUrl;
         }
 
         /// <summary>

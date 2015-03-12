@@ -199,6 +199,7 @@
     <Content Include="Views\Lti\Redirect.cshtml" />
     <Content Include="Views\Lti\ProxyToolPassword.cshtml" />
     <Content Include="Views\Lti\ProxyToolRegistrationSucceeded.cshtml" />
+    <Content Include="Views\Lti\LoginToAC.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extjs\" />
