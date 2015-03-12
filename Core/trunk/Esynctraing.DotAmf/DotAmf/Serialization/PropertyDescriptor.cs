@@ -6,21 +6,25 @@ namespace DotAmf.Serialization
     internal sealed class PropertyDescriptor
     {
         private readonly string _name;
-        private readonly PropertyInfo _propInfo;
+        private readonly PropertyInfo _property;
         private readonly Func<object, object> _getValue;
 
 
-        public string Name { get { return _name; } }
+        public string ContractPropertyName { get { return _name; } }
 
-        public PropertyInfo PropInfo { get { return _propInfo; } }
+        public PropertyInfo Property { get { return _property; } }
 
 
         public PropertyDescriptor(string name, PropertyInfo property)
         {
+            if (name == null)
+                throw new ArgumentNullException("name");
+            if (name.Length == 0)
+                throw new ArgumentException("Name can't be empty", "name");
             if (property == null)
                 throw new ArgumentNullException("property");
 
-            _propInfo = property;
+            _property = property;
 
             _name = name;
             _getValue = ExpressionUtility.GetPropertyGetter(property).Compile();

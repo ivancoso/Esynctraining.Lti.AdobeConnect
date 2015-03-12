@@ -113,7 +113,7 @@ namespace DotAmf.Serialization
             var map = new Dictionary<string, object>(properties.Count());
             foreach (PropertyDescriptor property in properties)
             {
-                map.Add(property.Name, property.GetValue(instance));
+                map.Add(property.ContractPropertyName, property.GetValue(instance));
             }
 
             return map;
@@ -185,7 +185,7 @@ namespace DotAmf.Serialization
 
             if (!type.IsEnum)
             {
-                throw new ArgumentException("Type is not an enum.");
+                throw new ArgumentException("Type is not an enum.", "type");
             }
 
             var result = new Dictionary<object, object>();
@@ -230,9 +230,11 @@ namespace DotAmf.Serialization
             )
         {
             if (type == null)
-            {
                 throw new ArgumentNullException("type");
-            }
+            if (values == null)
+                throw new ArgumentNullException("values");
+            if (properties == null)
+                throw new ArgumentNullException("properties");
 
             ExpressionCreator creator = _creators.GetOrAdd(type.TypeHandle, (typeHandle) => new ExpressionCreator(type, properties));
             return creator.Create(values);

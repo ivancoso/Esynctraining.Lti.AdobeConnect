@@ -9,13 +9,13 @@
     {
         public override object Adapt(RuntimeTypeHandle type, object value)
         {
-            if (type == typeof(Guid))
+            if (type.Equals(typeof(Guid).TypeHandle))
             {
                 var convertedValue = Convert(value);
                 return convertedValue.HasValue ? convertedValue.Value : value;
             }
 
-            if (type == typeof(Guid?))
+            if (type.Equals(typeof(Guid?).TypeHandle)
             {
                 return Convert(value);
             }

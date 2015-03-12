@@ -14,6 +14,11 @@ namespace DotAmf.Serialization
 
         public ExpressionCreator(Type type, IEnumerable<PropertyDescriptor> properties)
         {
+            if (type == null)
+                throw new ArgumentNullException("type");
+            if (properties == null)
+                throw new ArgumentNullException("properties");
+
             var newExpression = Expression.New(type);
             var dictParam = Expression.Parameter(typeof(Dictionary<string, object>), "d");
 
@@ -23,14 +28,14 @@ namespace DotAmf.Serialization
                 Expression call = Expression.Call(
                     typeof(DictionaryExtension),
                     "GetValue", 
-                    new[] { propertyInfo.PropInfo.PropertyType },
+                    new[] { propertyInfo.Property.PropertyType },
                     new Expression[]
                     {
                         dictParam,
-                        Expression.Constant(propertyInfo.Name)
+                        Expression.Constant(propertyInfo.ContractPropertyName)
                     });
 
-                MemberBinding mb = Expression.Bind(propertyInfo.PropInfo, call);
+                MemberBinding mb = Expression.Bind(propertyInfo.Property, call);
                 list.Add(mb);
             }
 
@@ -44,6 +49,9 @@ namespace DotAmf.Serialization
 
         public object Create(Dictionary<string, object> props)
         {
+            if (props == null)
+                throw new ArgumentNullException("props");
+
             return _creator(props);
         }
 
