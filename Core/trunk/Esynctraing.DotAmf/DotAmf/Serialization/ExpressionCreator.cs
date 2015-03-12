@@ -53,6 +53,7 @@ namespace DotAmf.Serialization
     {
         private static readonly List<BaseTypeAdapter> adapters = new List<BaseTypeAdapter>();
 
+
         static DictionaryExtension()
         {
             try
@@ -69,6 +70,7 @@ namespace DotAmf.Serialization
                 // TODO: add logging
             }
         }
+
 
         private static IEnumerable<Type> FindDerivedTypes(Assembly assembly, Type baseType, params Type[] exceptions)
         {
@@ -121,16 +123,33 @@ namespace DotAmf.Serialization
 
             if (!value.GetType().TypeHandle.Equals(typeof(TType).TypeHandle) && !typeof(TType).IsEnum && (value is IConvertible))
             {
-                return (TType)Convert.ChangeType(value, typeof(TType));
+                return (TType)ChangeType(value, typeof(TType));
             }
 
-            object[] array = value as object[];
+            var array = value as object[];
             if ((array != null) && (array.Length == 0))
             {
                 return default(TType);
             }
 
             return (TType)value;
+        }
+
+        private static object ChangeType(object value, Type conversion)
+        {
+            var t = conversion;
+
+            if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
+            {
+                if (value == null)
+                {
+                    return null;
+                }
+
+                t = Nullable.GetUnderlyingType(t);
+            }
+
+            return Convert.ChangeType(value, t);
         }
 
     }
