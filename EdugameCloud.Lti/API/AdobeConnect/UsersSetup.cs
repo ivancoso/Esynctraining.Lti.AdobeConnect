@@ -1137,7 +1137,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             while (enrollments.PagingInfo.HasMoreItems);
 
-            return result.Where(x=>!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress))
+            var excludedRoles = new List<string> {"administrator", "super admin"};
+            return result.Where(x=>(!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress)) 
+                && !excludedRoles.Contains(x.Role.Name.ToLower()))
                 .Select(x => new LmsUserDTO
                 {
                     lms_role = x.Role.Name, 
