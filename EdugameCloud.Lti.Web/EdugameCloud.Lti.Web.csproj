@@ -65,9 +65,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.4.12333\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Esynctraining.Core, Version=1.0.0.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.0\lib\net40\Esynctraining.Core.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.9\lib\net40\Esynctraining.Core.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Persistence, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

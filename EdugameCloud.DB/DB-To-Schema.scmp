@@ -3,7 +3,7 @@
   <Version>10</Version>
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=(local)\ms2008;Initial Catalog=EdugameCloud;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False</ConnectionString>
+      <ConnectionString>Data Source=(local);Initial Catalog=EdugameCloud.Dev;Integrated Security=True;Pooling=False;MultipleActiveResultSets=False</ConnectionString>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>

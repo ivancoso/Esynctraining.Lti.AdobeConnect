@@ -24,10 +24,10 @@
     CONSTRAINT [FK_Question_Image] FOREIGN KEY ([imageId]) REFERENCES [dbo].[File] ([fileId]),
     CONSTRAINT [FK_Question_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),
     CONSTRAINT [FK_Question_QuestionType] FOREIGN KEY ([questionTypeId]) REFERENCES [dbo].[QuestionType] ([questionTypeId]),
-    CONSTRAINT [FK_Question_SubModuleItem] FOREIGN KEY ([subModuleItemId]) REFERENCES [dbo].[SubModuleItem] ([subModuleItemId]),
-    CONSTRAINT [FK_Question_UserCreated] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
-    CONSTRAINT [FK_Question_UserModified] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId])
+    CONSTRAINT [FK_Question_SubModuleItem] FOREIGN KEY ([subModuleItemId]) REFERENCES [dbo].[SubModuleItem] ([subModuleItemId])
 );
+
+
 
 
 

@@ -175,6 +175,8 @@
     <Build Include="dbo\Tables\LmsCourseMeeting.sql" />
     <Build Include="dbo\Tables\Schedule.sql" />
     <Build Include="dbo\Tables\LmsUserSession.sql" />
+    <Build Include="dbo\Tables\OfficeHours.sql" />
+    <Build Include="dbo\Tables\LmsMeetingType.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
