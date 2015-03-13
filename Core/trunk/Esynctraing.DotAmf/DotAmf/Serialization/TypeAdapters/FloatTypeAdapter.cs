@@ -58,15 +58,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="decimal"/>.
-        /// </returns>
         private static float? Convert(object value)
         {
             if (value != null)
@@ -82,5 +73,7 @@
         }
 
         #endregion
+
     }
+
 }

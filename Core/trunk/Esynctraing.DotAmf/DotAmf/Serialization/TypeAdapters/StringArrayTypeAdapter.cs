@@ -2,31 +2,10 @@
 {
     using System;
     using System.Collections;
-    using System.Globalization;
     using System.Linq;
 
-    /// <summary>
-    ///     The float null type adapter.
-    /// </summary>
     public sealed class StringArrayTypeAdapter : BaseTypeAdapter<string[]>
     {
-        #region Static Fields
-
-        /// <summary>
-        /// The custom format.
-        /// </summary>
-        private static readonly NumberFormatInfo CustomFormat = new NumberFormatInfo
-                                                                    {
-                                                                        NegativeSign = "-", 
-                                                                        NumberDecimalSeparator = ".", 
-                                                                        NumberGroupSeparator = ",", 
-                                                                        CurrencySymbol = "$", 
-                                                                        CurrencyDecimalSeparator = ".", 
-                                                                        CurrencyGroupSeparator = ",", 
-                                                                    };
-
-        #endregion
-
         #region Public Methods and Operators
 
         /// <summary>
@@ -70,15 +49,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="decimal"/>.
-        /// </returns>
         private static string[] Convert(object value)
         {
             if (value != null)
@@ -96,5 +66,7 @@
         }
 
         #endregion
+
     }
+
 }

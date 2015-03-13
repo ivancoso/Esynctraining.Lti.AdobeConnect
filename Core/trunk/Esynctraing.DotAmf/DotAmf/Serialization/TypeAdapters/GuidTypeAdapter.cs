@@ -2,20 +2,17 @@
 {
     using System;
 
-    /// <summary>
-    /// The decimal type adapter.
-    /// </summary>
     public sealed class GuidTypeAdapter : BaseTypeAdapter<Guid, Guid?>
     {
         public override object Adapt(RuntimeTypeHandle type, object value)
         {
-            if (type.Equals(typeof(Guid).TypeHandle))
+            if (typeof(Guid).TypeHandle.Equals(type))
             {
                 var convertedValue = Convert(value);
                 return convertedValue.HasValue ? convertedValue.Value : value;
             }
 
-            if (type.Equals(typeof(Guid?).TypeHandle))
+            if (typeof(Guid?).TypeHandle.Equals(type))
             {
                 return Convert(value);
             }
@@ -23,15 +20,6 @@
             return null;
         }
 
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="value">
-        /// The value.
-        /// </param>
-        /// <returns>
-        /// The <see cref="decimal"/>.
-        /// </returns>
         private static Guid? Convert(object value)
         {
             if (value != null)
@@ -43,7 +31,9 @@
                 }
             }
 
-            return Guid.Empty;
+            return null;
         }
+
     }
+
 }
