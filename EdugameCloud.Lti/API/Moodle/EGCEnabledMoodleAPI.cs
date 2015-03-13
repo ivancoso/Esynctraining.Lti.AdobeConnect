@@ -3,11 +3,11 @@
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Globalization;
+    using System.Linq;
     using Castle.Core.Logging;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.EntityParsing;
-
     using Esynctraining.Core.Providers;
 
     /// <summary>
@@ -85,7 +85,7 @@
             if (quizResult == null)
             {
                 error = error ?? "Moodle XML. Unable to retrive result from API";
-                return new List<LmsQuizInfoDTO>();
+                return Enumerable.Empty<LmsQuizInfoDTO>();
             }
 
             error = string.Empty;

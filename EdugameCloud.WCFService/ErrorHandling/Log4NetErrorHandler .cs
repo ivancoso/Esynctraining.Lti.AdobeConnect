@@ -85,6 +85,12 @@
         {
             get
             {
+                if (HttpContext.Current == null)
+                {
+                    // TODO: ADD LOGGING??
+                    return false;
+                }
+
                 return HttpContext.Current.IsDebuggingEnabled;
             }
         }

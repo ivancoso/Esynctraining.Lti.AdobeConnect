@@ -231,17 +231,15 @@
         public Dictionary<int, int> ConvertQuizzes(IEnumerable<LmsQuizDTO> quizzes, User user, bool isSurvey, int companyLmsId)
         {
             var submoduleQuiz = new Dictionary<int, int>();
-            
-            foreach (var quiz in quizzes)
+
+            foreach (var quiz in quizzes.Where(x => x.questions.Length > 0))
             {
-                if (quiz.questions.Length > 0)
+                SubModuleCategory submoduleCategory = this.ProcessSubModuleCategory(quiz, user, companyLmsId, isSurvey);
+
+                var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey, companyLmsId);
+                if (!submoduleQuiz.ContainsKey(item.Item1))
                 {
-                    var submoduleCategory = this.ProcessSubModuleCategory(quiz, user, companyLmsId);
-                    var item = this.ConvertQuiz(quiz, user, submoduleCategory, isSurvey, companyLmsId);
-                    if (!submoduleQuiz.ContainsKey(item.Item1))
-                    {
-                        submoduleQuiz.Add(item.Item1, item.Item2);
-                    }
+                    submoduleQuiz.Add(item.Item1, item.Item2);
                 }
             }
 
@@ -315,7 +313,7 @@
         /// <returns>
         /// The <see cref="SubModuleCategory"/>.
         /// </returns>
-        private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId)
+        private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId, bool isSurvey)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
             var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
@@ -328,7 +326,7 @@
                                               DateModified = DateTime.Now,
                                               IsActive = true,
                                               ModifiedBy = user,
-                                              SubModule = this.SubModuleModel.GetOneById((int)SubModuleItemType.Quiz).Value
+                                              SubModule = this.SubModuleModel.GetOneById(isSurvey ? (int)SubModuleItemType.Survey :(int)SubModuleItemType.Quiz).Value,
                                           };
             if (subModuleCategory.IsTransient())
             {
