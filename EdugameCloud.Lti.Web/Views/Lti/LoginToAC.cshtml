@@ -19,7 +19,7 @@
 <body>
     Please wait while you are being redirected... <br /><br />
 
-    <iframe src="https://connect.esynctraining.com/api/xml?action=principal-list&principal-id=1&session=@this.ViewBag.BreezeSession" onload="loaded()" id="session-frame" style="width:1px; height: 1px; margin-left: -100px; position: absolute"></iframe>
+    <iframe src="@(this.ViewBag.AcServer)api/xml?action=sco-shortcuts&session=@this.ViewBag.BreezeSession" onload="loaded()" id="session-frame" style="width:1px; height: 1px; margin-left: -100px; position: absolute"></iframe>
 
     <div id="meeting-link" style="display: none">
         Or follow the link: <a href="@this.ViewBag.MeetingUrl">@this.ViewBag.MeetingUrl</a>

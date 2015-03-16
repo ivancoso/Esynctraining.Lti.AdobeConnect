@@ -657,6 +657,9 @@ namespace EdugameCloud.Lti.Controllers
             {
                 this.ViewBag.MeetingUrl = url as string;
                 this.ViewBag.BreezeSession = breezeSession;
+                this.ViewBag.AcServer = credentials.AcServer.EndsWith("/")
+                                            ? credentials.AcServer
+                                            : credentials.AcServer + "/";
                 return this.View("LoginToAC");
             }
 
