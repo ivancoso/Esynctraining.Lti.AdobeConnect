@@ -165,7 +165,6 @@
     <Build Include="dbo\Tables\SubscriptionHistoryLog_1.sql" />
     <Build Include="dbo\Tables\SocialUserTokens_1.sql" />
     <Build Include="dbo\Tables\NewsletterSubscription_1.sql" />
-    <Build Include="dbo\Tables\MoodleUser.sql" />
     <Build Include="dbo\Tables\LmsUser.sql" />
     <Build Include="dbo\Tables\LmsProvider.sql" />
     <Build Include="dbo\Tables\EmailHistory_1.sql" />

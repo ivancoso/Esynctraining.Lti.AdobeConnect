@@ -97,7 +97,6 @@
     <Compile Include="Mappings\LmsUserMap.cs" />
     <Compile Include="Mappings\LmsUserParametersMap.cs" />
     <Compile Include="Mappings\LmsUserSessionMap.cs" />
-    <Compile Include="Mappings\MoodleUserMap.cs" />
     <Compile Include="Mappings\OfficeHoursMap.cs" />
     <Compile Include="Mappings\ScheduleMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

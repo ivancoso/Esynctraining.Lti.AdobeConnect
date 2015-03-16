@@ -197,7 +197,6 @@
     <Content Include="RestService.svc" />
     <Content Include="FileService.svc" />
     <Content Include="ErrorService.svc" />
-    <Content Include="MoodleService.svc" />
     <Content Include="Uploads\dummy.js" />
     <Content Include="UserService.svc" />
     <Content Include="Global.asax" />
@@ -236,8 +235,6 @@
     <Compile Include="Contracts\IImportService.cs" />
     <Compile Include="Contracts\ILmsService.cs" />
     <Compile Include="Contracts\ILookupService.cs" />
-    <Compile Include="Contracts\IMoodleAuthorizationService.cs" />
-    <Compile Include="Contracts\IMoodleService.cs" />
     <Compile Include="Contracts\IQuestionService.cs" />
     <Compile Include="Contracts\IQuestionTypeService.cs" />
     <Compile Include="Contracts\IQuizQuestionResultService.cs" />
@@ -378,9 +375,6 @@
     <Compile Include="ErrorService.svc.cs">
       <DependentUpon>ErrorService.svc</DependentUpon>
     </Compile>
-    <Compile Include="MoodleService.svc.cs">
-      <DependentUpon>MoodleService.svc</DependentUpon>
-    </Compile>
     <Compile Include="UserService.svc.cs">
       <DependentUpon>UserService.svc</DependentUpon>
     </Compile>
@@ -413,7 +407,6 @@
     <Compile Include="Validators\AppletResultDTOValidator.cs" />
     <Compile Include="Validators\AppletItemDTOValidator.cs" />
     <Compile Include="Validators\CompanyLmsValidator.cs" />
-    <Compile Include="Validators\MoodleUserDTOValidator.cs" />
     <Compile Include="Validators\LmsUserParametersDTOValidator.cs" />
     <Compile Include="Validators\NewsletterSubscriptionDTOValidator.cs" />
     <Compile Include="Validators\EmailHistoryDTOValidator.cs" />
@@ -533,7 +526,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

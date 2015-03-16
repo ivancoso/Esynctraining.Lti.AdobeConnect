@@ -68,7 +68,6 @@
     <Build Include="dbo\Tables\User.sql" />
     <Build Include="dbo\Tables\Company.sql" />
     <Build Include="Security\RoleMemberships.sql" />
-    <Build Include="dbo\Tables\MoodleUser.sql" />
     <Build Include="dbo\Tables\LmsUser.sql" />
     <Build Include="dbo\Tables\LmsProvider.sql" />
     <Build Include="dbo\Tables\CompanyLms.sql" />
