@@ -515,7 +515,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
             }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("teaching assistant") || role.Contains("course builder") || role.Contains("evaluator"))
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("teaching assistant") 
+                || role.Contains("course builder") || role.Contains("evaluator") || role == "advisor")
             {
                 u.ac_role = "Presenter";
                 permission = MeetingPermissionId.mini_host;

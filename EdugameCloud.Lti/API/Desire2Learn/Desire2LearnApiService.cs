@@ -49,7 +49,7 @@ namespace EdugameCloud.Lti.API.Desire2Learn
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
-        public T MakeApiCall<T>(ID2LUserContext userContext, string hostUrl, string apiUrl) where T : new()
+        private T MakeApiCall<T>(ID2LUserContext userContext, string hostUrl, string apiUrl) where T : new()
         {
             if (userContext == null)
             {
@@ -69,10 +69,10 @@ namespace EdugameCloud.Lti.API.Desire2Learn
             return appContext.CreateUserContext(url, host);
         }
 
-        public ID2LUserContext GetUserContext(string userId, string userKey, string hostUrl)
+        private ID2LUserContext GetUserContext(string userId, string userKey, string hostUrl)
         {
-            var m_valenceHost = new HostSpec("https", hostUrl, 443);
-            return appContext.CreateUserContext(userId, userKey, m_valenceHost);
+            var host = new HostSpec("https", hostUrl, 443);
+            return appContext.CreateUserContext(userId, userKey, host);
         }
     }
 }
