@@ -703,7 +703,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object JoinRecording(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
+        public object JoinRecording(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, ref string breezeSession, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
         {
             var breezeToken = string.Empty;
 
@@ -740,11 +740,12 @@
                           + (companyLms.AcServer != null && companyLms.AcServer.EndsWith(@"/") ? string.Empty : "/")
                           + recordingUrl;
 
+            breezeSession = breezeToken ?? string.Empty;
+
             return string.Format(
-                           "{0}?session={1}{2}",
+                           "{0}?{1}",
                            baseUrl,
-                           breezeToken ?? "null",
-                           mode != null ? string.Format("&pbMode={0}", mode) : string.Empty);
+                           mode != null ? string.Format("pbMode={0}", mode) : string.Empty);
         }
 
         /// <summary>

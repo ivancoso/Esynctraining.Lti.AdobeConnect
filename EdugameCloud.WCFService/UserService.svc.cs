@@ -115,6 +115,14 @@
             }
         }
 
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
         /// <summary>
         ///     Gets the social user tokens
         /// </summary>
@@ -630,6 +638,25 @@
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
+            var companyLms = this.CompanyLmsModel.GetAllByCompanyId(user.Company.Id);
+
+            if (dto.lmsUserParametersId != null)
+            {
+                var lmsUserParameters = this.LmsUserParametersModel.GetOneById(dto.lmsUserParametersId.Value).Value;
+                if (lmsUserParameters != null && !companyLms.Any(c => c.Id == lmsUserParameters.CompanyLms.Id))
+                {
+                    var company = this.CompanyModel.GetOneById(lmsUserParameters.CompanyLms.CompanyId).Value;
+
+                    var error =
+                    new Error(
+                        Errors.CODE_ERRORTYPE_INVALID_ACCESS,
+                        ErrorsTexts.AccessError_Subject,
+                        string.Format("This meeting belongs to company {0}.", company != null ? company.CompanyName : string.Empty));
+                    this.LogError("User.Login", error);
+                    throw new FaultException<Error>(error, error.errorMessage);
+                }
+            }
+
             var result = new UserWithSplashScreenDTO(user);
             var userHistory = new UserLoginHistory
                                   {
@@ -651,7 +678,6 @@
                                           };
             }
 
-            var companyLms = this.CompanyLmsModel.GetAllByCompanyId(user.Company.Id);
             result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c)).ToArray();
 
             return result;

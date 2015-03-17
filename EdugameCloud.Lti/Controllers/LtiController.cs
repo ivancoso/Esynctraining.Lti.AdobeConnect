@@ -653,17 +653,8 @@ namespace EdugameCloud.Lti.Controllers
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             string breezeSession = null;
             var url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
-            if (url is string)
-            {
-                this.ViewBag.MeetingUrl = url as string;
-                this.ViewBag.BreezeSession = breezeSession;
-                this.ViewBag.AcServer = credentials.AcServer.EndsWith("/")
-                                            ? credentials.AcServer
-                                            : credentials.AcServer + "/";
-                return this.View("LoginToAC");
-            }
-
-            return this.Json(url, JsonRequestBehavior.AllowGet);
+            
+            return this.LoginToAC(url, breezeSession, credentials);
         }
 
         /// <summary>
@@ -706,14 +697,10 @@ namespace EdugameCloud.Lti.Controllers
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl);
+            var breezeSession = string.Empty;
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession);
 
-            if (url is string)
-            {
-                return this.Redirect(url as string);
-            }
-
-            return this.Json(url, JsonRequestBehavior.AllowGet);
+            return this.LoginToAC(url, breezeSession, credentials);
         }
 
         /// <summary>
@@ -761,14 +748,10 @@ namespace EdugameCloud.Lti.Controllers
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "edit");
+            var breezeSession = string.Empty;
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "edit");
 
-            if (url is string)
-            {
-                return this.Redirect(url as string);
-            }
-
-            return this.Json(url, JsonRequestBehavior.AllowGet);
+            return this.LoginToAC(url, breezeSession, credentials);
         }
 
         /// <summary>
@@ -789,14 +772,10 @@ namespace EdugameCloud.Lti.Controllers
             var credentials = session.CompanyLms;
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, "offline");
+            var breezeSession = string.Empty;
+            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "offline");
 
-            if (url is string)
-            {
-                return this.Redirect(url as string);
-            }
-
-            return this.Json(url, JsonRequestBehavior.AllowGet);
+            return this.LoginToAC(url, breezeSession, credentials);
         }
 
         /// <summary>
@@ -1666,6 +1645,36 @@ namespace EdugameCloud.Lti.Controllers
         private void SetAdobeConnectProvider(int key, AdobeConnectProvider acp)
         {
             this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
+        }
+
+        /// <summary>
+        /// The login to ac.
+        /// </summary>
+        /// <param name="url">
+        /// The url.
+        /// </param>
+        /// <param name="breezeSession">
+        /// The breeze session.
+        /// </param>
+        /// <param name="credentials">
+        /// The credentials.
+        /// </param>
+        /// <returns>
+        /// The <see cref="ActionResult"/>.
+        /// </returns>
+        private ActionResult LoginToAC(object url, string breezeSession, CompanyLms credentials)
+        {
+            if (url is string)
+            {
+                this.ViewBag.MeetingUrl = url as string;
+                this.ViewBag.BreezeSession = breezeSession;
+                this.ViewBag.AcServer = credentials.AcServer.EndsWith("/")
+                                            ? credentials.AcServer
+                                            : credentials.AcServer + "/";
+                return this.View("LoginToAC");
+            }
+
+            return this.Json(url, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

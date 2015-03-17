@@ -40,6 +40,12 @@
         [DataMember]
         public string application { get; set; }
 
+        /// <summary>
+        /// Gets or sets the lms user parameters id.
+        /// </summary>
+        [DataMember]
+        public int? lmsUserParametersId { get; set; }
+
         #endregion
     }
 }
