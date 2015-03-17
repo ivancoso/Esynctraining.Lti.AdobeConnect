@@ -9,9 +9,11 @@
     [userEmail]           NVARCHAR (50)  NULL,
     [lastLoggedIn]        NVARCHAR (25)  NULL,
     CONSTRAINT [PK_LmsUserParameters] PRIMARY KEY CLUSTERED ([lmsUserParametersId] ASC),
-    CONSTRAINT [FK_LmsUserParameters_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]),
+    CONSTRAINT [FK_LmsUserParameters_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]) ON DELETE CASCADE,
     CONSTRAINT [FK_LmsUserParameters_LmsUser] FOREIGN KEY ([lmsUserId]) REFERENCES [dbo].[LmsUser] ([lmsUserId])
 );
+
+
 
 
 

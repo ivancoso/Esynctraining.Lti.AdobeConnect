@@ -9,8 +9,10 @@
     [primaryColor]     NVARCHAR (50)  NULL,
     [principalId]      NVARCHAR (30)  NULL,
     CONSTRAINT [PK_LmsUser] PRIMARY KEY CLUSTERED ([lmsUserId] ASC),
-    CONSTRAINT [FK_LmsUser_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId])
+    CONSTRAINT [FK_LmsUser_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]) ON DELETE CASCADE
 );
+
+
 
 
 
