@@ -33,6 +33,6 @@
         /// <summary>
         /// The Desire2Learn
         /// </summary>
-        Desire2Learn = 6
+        Desire2Learn = 6,
     }
 }

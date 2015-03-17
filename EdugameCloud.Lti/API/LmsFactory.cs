@@ -44,28 +44,6 @@
 
         #region Public Methods and Operators
 
-        ///// <summary>
-        ///// The get LMS API.
-        ///// </summary>
-        ///// <param name="lmsId">
-        ///// The LMS id.
-        ///// </param>
-        ///// <returns>
-        ///// The <see cref="ILmsAPI"/>.
-        ///// </returns>
-        //public ILmsAPI GetLmsAPI(LmsProviderEnum lmsId)
-        //{
-        //    switch (lmsId)
-        //    {
-        //        case LmsProviderEnum.Canvas:
-        //            return this.canvasApi;
-        //        case LmsProviderEnum.Moodle:
-        //            return this.moodleApi;
-        //    }
-
-        //    return null;
-        //}
-
         /// <summary>
         /// The get LMS API.
         /// </summary>

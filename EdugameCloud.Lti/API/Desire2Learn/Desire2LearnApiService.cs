@@ -1,6 +1,7 @@
 ﻿using System;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
+using EdugameCloud.Lti.Constants;
 using RestSharp;
 
 namespace EdugameCloud.Lti.API.Desire2Learn
@@ -55,7 +56,7 @@ namespace EdugameCloud.Lti.API.Desire2Learn
             {
                 throw new Exception("This method can only be used for an authenticated user");
             }
-            var client = new RestClient("https://" + hostUrl);
+            var client = new RestClient(HttpScheme.Https + hostUrl);
             var authenticator = new ValenceAuthenticator(userContext);
             var request = new RestRequest(apiUrl);
             authenticator.Authenticate(client, request);

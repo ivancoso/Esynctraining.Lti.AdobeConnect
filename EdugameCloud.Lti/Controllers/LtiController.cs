@@ -1300,14 +1300,14 @@ namespace EdugameCloud.Lti.Controllers
             {
                 case LmsProviderNames.Canvas:
                     returnUrl = UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, "https://" + model.lms_domain);
+                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
                     OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
                     break;
                 case LmsProviderNames.Desire2Learn:
                     UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, "https://" + model.lms_domain);
+                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
                     break;
