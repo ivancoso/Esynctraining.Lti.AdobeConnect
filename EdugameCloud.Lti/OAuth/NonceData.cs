@@ -5,7 +5,7 @@
     /// <summary>
     /// The nonce data.
     /// </summary>
-    public class NonceData
+    internal sealed class NonceData
     {
         #region Constructors and Destructors
 

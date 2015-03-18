@@ -8,7 +8,7 @@
     /// The OAuth extensions.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public static class OAuthExtensions
+    internal static class OAuthExtensions
     {
         #region Public Methods and Operators
 

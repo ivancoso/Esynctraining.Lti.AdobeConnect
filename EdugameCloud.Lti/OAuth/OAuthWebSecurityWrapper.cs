@@ -15,7 +15,7 @@
     /// <summary>
     /// The OAUTH web security wrapper.
     /// </summary>
-    public static class OAuthWebSecurityWrapper
+    internal static class OAuthWebSecurityWrapper
     {
         #region Public Methods and Operators
 

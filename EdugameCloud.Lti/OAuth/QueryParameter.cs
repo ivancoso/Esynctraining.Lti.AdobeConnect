@@ -3,7 +3,7 @@
     /// <summary>
     /// The query parameter.
     /// </summary>
-    public class QueryParameter
+    internal sealed class QueryParameter
     {
         #region Constructors and Destructors
 

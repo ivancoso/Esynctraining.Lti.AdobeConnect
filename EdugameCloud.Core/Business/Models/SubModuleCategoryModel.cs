@@ -60,18 +60,6 @@ namespace EdugameCloud.Core.Business.Models
             return this.Repository.FindOne(query);
         }
 
-        /// <summary>
-        /// The get one by name and user.
-        /// </summary>
-        /// <param name="lmsCourseId">
-        /// The lms id.
-        /// </param>
-        /// <param name="companyLmsId">
-        /// The company Lms Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{SubModuleCategory}"/>.
-        /// </returns>
         public IFutureValue<SubModuleCategory> GetOneByLmsCourseIdAndCompanyLms(int lmsCourseId, int companyLmsId)
         {
             var query =

@@ -5,7 +5,7 @@
     /// <summary>
     /// The query parameter comparer.
     /// </summary>
-    public class QueryParameterComparer : IComparer<QueryParameter>
+    internal sealed class QueryParameterComparer : IComparer<QueryParameter>
     {
         #region Public Methods and Operators
 

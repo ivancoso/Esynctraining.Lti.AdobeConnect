@@ -1,6 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Utils
 {
-    public static class Constants
+    internal static class Constants
     {
         /// <summary>
         ///     The return uri extension parameter.

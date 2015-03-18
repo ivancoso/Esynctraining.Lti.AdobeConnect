@@ -5,7 +5,7 @@
     /// <summary>
     /// The lowercase route.
     /// </summary>
-    public class LowercaseRoute : Route
+    internal sealed class LowercaseRoute : Route
     {
         #region Constructors and Destructors
 

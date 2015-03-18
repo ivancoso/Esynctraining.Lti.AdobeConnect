@@ -11,7 +11,7 @@
     /// <summary>
     /// The LTI open AUTH security manager.
     /// </summary>
-    public class LtiOpenAuthSecurityManager : OpenAuthSecurityManager
+    internal sealed class LtiOpenAuthSecurityManager : OpenAuthSecurityManager
     {
         #region Constants
 

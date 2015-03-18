@@ -10,7 +10,7 @@
     /// <summary>
     /// The BLTI provider helper.
     /// </summary>
-    public class BltiProviderHelper
+    internal sealed class BltiProviderHelper
     {
         // THIS CODE MAY BE FREELY USED, MODIFIED, AND REDISTRIBUTED
         // ANY USE OF THIS CODE IS AT YOUR OWN RISK

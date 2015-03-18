@@ -11,7 +11,7 @@
     using Org.BouncyCastle.Crypto.Parameters;
     using Org.BouncyCastle.Security;
 
-    public static class AESGCM
+    internal static class AESGCM
     {
         private static readonly SecureRandom Random = new SecureRandom();
 
