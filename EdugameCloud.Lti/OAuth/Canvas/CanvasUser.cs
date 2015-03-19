@@ -6,7 +6,7 @@
     /// The Instagram user.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class CanvasUser
+    public sealed class CanvasUser
     {
         #region Public Properties
 

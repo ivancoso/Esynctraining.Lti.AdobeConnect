@@ -8,7 +8,7 @@
     /// <summary>
     ///     The extended web http behavior.
     /// </summary>
-    public class ExtendedWebHttpBehavior : WebHttpBehavior
+    public sealed class ExtendedWebHttpBehavior : WebHttpBehavior
     {
         #region Methods
 
@@ -32,7 +32,7 @@
     /// <summary>
     /// The http behavior extension element.
     /// </summary>
-    public class HttpBehaviorExtensionElement : BehaviorExtensionElement
+    public sealed class HttpBehaviorExtensionElement : BehaviorExtensionElement
     {
         #region Public Properties
 

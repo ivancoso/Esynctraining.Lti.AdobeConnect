@@ -5,7 +5,7 @@
     /// <summary>
     /// The date extensions.
     /// </summary>
-    public static class DateExtensions
+    internal static class DateExtensions
     {
         #region Static Fields
 

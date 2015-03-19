@@ -7,7 +7,7 @@
     /// <summary>
     ///     The company theme DTO converter.
     /// </summary>
-    public class CompanyThemeDTOConverter : BaseConverter<CompanyThemeDTO, CompanyTheme>
+    public sealed class CompanyThemeDTOConverter : BaseConverter<CompanyThemeDTO, CompanyTheme>
     {
         #region Fields
 

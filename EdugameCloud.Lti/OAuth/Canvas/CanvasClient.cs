@@ -20,7 +20,7 @@
     /// The canvas client.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-    public class CanvasClient : OAuth2Client
+    public sealed class CanvasClient : OAuth2Client
     {
         #region Constants
 

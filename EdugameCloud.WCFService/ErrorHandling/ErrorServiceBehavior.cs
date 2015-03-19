@@ -9,7 +9,7 @@
     /// <summary>
     ///     The error service behavior.
     /// </summary>
-    public class ErrorServiceBehavior : IServiceBehavior
+    public sealed class ErrorServiceBehavior : IServiceBehavior
     {
         #region Public Methods and Operators
 

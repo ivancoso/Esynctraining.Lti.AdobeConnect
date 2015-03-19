@@ -24,7 +24,7 @@
     /// <summary>
     /// The quiz result converter.
     /// </summary>
-    public class QuizResultConverter
+    public sealed class QuizResultConverter
     {
         #region Properties
 

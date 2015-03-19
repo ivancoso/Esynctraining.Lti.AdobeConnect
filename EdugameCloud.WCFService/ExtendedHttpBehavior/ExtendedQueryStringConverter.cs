@@ -6,7 +6,7 @@
     /// <summary>
     /// The extended query string converter.
     /// </summary>
-    public class ExtendedQueryStringConverter : QueryStringConverter
+    public sealed class ExtendedQueryStringConverter : QueryStringConverter
     {
         #region Public Methods and Operators
 

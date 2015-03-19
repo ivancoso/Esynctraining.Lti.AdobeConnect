@@ -10,6 +10,19 @@
     /// </summary>
     public static class DateConverter
     {
+        private static readonly DateTime _origin;
+        private static readonly DateTime _originLocalTime;
+        private static readonly DateTime _utcOrigin;
+
+
+        static DateConverter()
+        {
+            _origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            _originLocalTime = _origin.ToLocalTime();
+            _utcOrigin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local).ToLocalTime();
+        }
+        
+
         /// <summary>
         /// The convert to utc timestamp.
         /// </summary>
@@ -21,9 +34,8 @@
         /// </returns>
         public static int ConvertToUTCTimestamp(this DateTime date)
         {
-            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
-            TimeSpan diff = date - origin.ToLocalTime();
-            return (int)Math.Floor(diff.TotalSeconds);
+            //TimeSpan diff = date - _utcOrigin;
+            return (int)Math.Floor((date - _utcOrigin).TotalSeconds);
         }
 
         /// <summary>
@@ -37,7 +49,7 @@
         /// </returns>
         public static DateTime ConvertFromUnixTimeStamp(this double dt)
         {
-            return new DateTime(1970, 1, 1).Add(TimeSpan.FromMilliseconds(dt)).AdaptToSQL();
+            return _origin.Add(TimeSpan.FromMilliseconds(dt)).AdaptToSQL();
         }
 
         /// <summary>
@@ -51,14 +63,11 @@
         /// </returns>
         public static double ConvertToUnixTimestamp(this DateTime value)
         {
-            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
             if (value.Kind != DateTimeKind.Utc)
             {
-                origin = origin.ToLocalTime();
+                return (value - _originLocalTime).TotalSeconds * 1000;
             }
-
-            return (value - origin).TotalMilliseconds;
+            return (value - _origin).TotalSeconds * 1000;
         }
 
         /// <summary>
@@ -72,9 +81,10 @@
         /// </returns>
         public static int ConvertToTimestamp(this DateTime date)
         {
-            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            TimeSpan diff = date - origin;
-            return (int)Math.Floor(diff.TotalSeconds);
+            //TimeSpan diff = date - _origin;
+            return (int)Math.Floor((date - _origin).TotalSeconds);
         }
+
     }
+
 }

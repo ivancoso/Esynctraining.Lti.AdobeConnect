@@ -10,7 +10,7 @@
     /// <summary>
     /// The sub module item DTO converter.
     /// </summary>
-    public class SubModuleItemDTOConverter : BaseConverter<SubModuleItemDTO, SubModuleItem>
+    public sealed class SubModuleItemDTOConverter : BaseConverter<SubModuleItemDTO, SubModuleItem>
     {
         #region Fields
 

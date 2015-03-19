@@ -21,7 +21,7 @@
     /// <summary>
     /// The quiz converter.
     /// </summary>
-    public class QuizConverter
+    public sealed class QuizConverter
     {
         /// <summary>
         ///     Gets the quiz model.
@@ -269,7 +269,7 @@
         /// </returns>
         private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey, int companyLmsId)
         {
-            SubModuleItem submodule;
+            SubModuleItem subModuleItem;
             Tuple<int, int> result;
 
             if (isSurvey)
@@ -277,10 +277,9 @@
                 var egcSurvey = this.SurveyModel.GetOneByLmsSurveyId(user.Id, quiz.id, companyLmsId).Value
                     ?? new Survey();
 
+                subModuleItem = this.ProcessSubModule(user, subModuleCategory, egcSurvey.IsTransient() ? null : egcSurvey.SubModuleItem, quiz);
 
-                submodule = this.ProcessSubModule(user, subModuleCategory, egcSurvey.IsTransient() ? null : egcSurvey.SubModuleItem, quiz);
-
-                result = this.ProcessSurveyData(quiz, egcSurvey, submodule);
+                result = this.ProcessSurveyData(quiz, egcSurvey, subModuleItem);
             }
             else
             {
@@ -288,12 +287,12 @@
                     ?? new Quiz();
 
 
-                submodule = this.ProcessSubModule(user, subModuleCategory, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
+                subModuleItem = this.ProcessSubModule(user, subModuleCategory, egcQuiz.IsTransient() ? null : egcQuiz.SubModuleItem, quiz);
 
-                result = this.ProcessQuizData(quiz, egcQuiz, submodule);
+                result = this.ProcessQuizData(quiz, egcQuiz, subModuleItem);
             }
 
-            this.ProcessQuizQuestions(quiz, user, submodule, isSurvey, companyLmsId);
+            this.ProcessQuizQuestions(quiz, user, subModuleItem, isSurvey, companyLmsId);
 
             return result;
         }
@@ -317,17 +316,17 @@
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
             var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
-                                          ?? new SubModuleCategory
-                                          {
-                                              CompanyLmsId = this.CompanyLmsModel.GetOneById(companyLmsId).Value.With(x => x.Id),
-                                              CategoryName = quiz.courseName,
-                                              LmsCourseId = quiz.course,
-                                              User = user,
-                                              DateModified = DateTime.Now,
-                                              IsActive = true,
-                                              ModifiedBy = user,
-                                              SubModule = this.SubModuleModel.GetOneById(isSurvey ? (int)SubModuleItemType.Survey :(int)SubModuleItemType.Quiz).Value,
-                                          };
+                ?? new SubModuleCategory
+                {
+                    CompanyLmsId = this.CompanyLmsModel.GetOneById(companyLmsId).Value.With(x => x.Id),
+                    CategoryName = quiz.courseName,
+                    LmsCourseId = quiz.course,
+                    User = user,
+                    DateModified = DateTime.Now,
+                    IsActive = true,
+                    ModifiedBy = user,
+                    SubModule = this.SubModuleModel.GetOneById(isSurvey ? (int)SubModuleItemType.Survey :(int)SubModuleItemType.Quiz).Value,
+                };
             if (subModuleCategory.IsTransient())
             {
                 subModuleCategoryModel.RegisterSave(subModuleCategory);
@@ -360,7 +359,7 @@
                 new SubModuleItem()
                 {
                     DateCreated = DateTime.Now,
-                    CreatedBy = user
+                    CreatedBy = user,
                 };
 
             submodule.IsActive = true;

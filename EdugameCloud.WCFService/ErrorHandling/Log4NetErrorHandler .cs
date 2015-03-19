@@ -65,7 +65,7 @@
     /// <summary>
     ///     The log 4 net error handler.
     /// </summary>
-    public class Log4NetErrorHandler : IErrorHandler
+    public sealed class Log4NetErrorHandler : IErrorHandler
     {
         #region Fields
 

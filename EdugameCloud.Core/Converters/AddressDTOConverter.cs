@@ -9,7 +9,7 @@
     /// <summary>
     ///     The company theme DTO converter.
     /// </summary>
-    public class AddressDTOConverter : BaseConverter<AddressDTO, Address>
+    public sealed class AddressDTOConverter : BaseConverter<AddressDTO, Address>
     {
         #region Fields
 

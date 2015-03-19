@@ -13,7 +13,7 @@
         /// <summary>
         ///     The JSON date time converter.
         /// </summary>
-        public class JsonDateTimeConverter : DateTimeConverterBase
+        public sealed class JsonDateTimeConverter : DateTimeConverterBase
         {
             #region Public Methods and Operators
 

@@ -8,10 +8,7 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.DTO;
 
-    /// <summary>
-    /// The sub module item DTO converter.
-    /// </summary>
-    public class CompanyDTOConverter : BaseConverter<CompanyDTO, Company>
+    public sealed class CompanyDTOConverter : BaseConverter<CompanyDTO, Company>
     {
         #region Fields
 

@@ -10,7 +10,7 @@
     /// <summary>
     /// The wcf resource provider.
     /// </summary>
-    public class WcfResourceProvider : IResourceProvider
+    public sealed class WcfResourceProvider : IResourceProvider
     {
         #region Fields
 

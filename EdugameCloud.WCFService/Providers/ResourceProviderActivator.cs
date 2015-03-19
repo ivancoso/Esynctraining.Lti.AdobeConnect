@@ -10,7 +10,7 @@
     /// <summary>
     /// The resource provider activator.
     /// </summary>
-    public class ResourceProviderActivator : DefaultComponentActivator
+    public sealed class ResourceProviderActivator : DefaultComponentActivator
     {
         #region Constants
 

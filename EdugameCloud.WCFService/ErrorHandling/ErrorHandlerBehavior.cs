@@ -6,7 +6,7 @@
     /// <summary>
     ///     The error handler behavior.
     /// </summary>
-    public class ErrorHandlerBehavior : BehaviorExtensionElement
+    public sealed class ErrorHandlerBehavior : BehaviorExtensionElement
     {
         #region Public Properties
 
