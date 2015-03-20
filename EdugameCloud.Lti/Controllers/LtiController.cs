@@ -1,10 +1,4 @@
-﻿using D2L.Extensibility.AuthSdk;
-using D2L.Extensibility.AuthSdk.Restsharp;
-using EdugameCloud.Lti.API.Desire2Learn;
-using EdugameCloud.Lti.OAuth.Desire2Learn;
-using RestSharp;
-
-namespace EdugameCloud.Lti.Controllers
+﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -19,9 +13,11 @@ namespace EdugameCloud.Lti.Controllers
     using System.Xml.XPath;
 
     using DotNetOpenAuth.AspNet;
+
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
+    using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Domain.Entities;
@@ -30,7 +26,9 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.Models;
     using EdugameCloud.Lti.OAuth;
     using EdugameCloud.Lti.OAuth.Canvas;
+    using EdugameCloud.Lti.OAuth.Desire2Learn;
     using EdugameCloud.Lti.Utils;
+
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
@@ -1666,6 +1664,11 @@ namespace EdugameCloud.Lti.Controllers
         {
             if (url is string)
             {
+                if (!credentials.LoginUsingCookie.GetValueOrDefault())
+                {
+                    return this.Redirect(url as string);
+                }
+
                 this.ViewBag.MeetingUrl = url as string;
                 this.ViewBag.BreezeSession = breezeSession;
                 this.ViewBag.AcServer = credentials.AcServer.EndsWith("/")

@@ -623,7 +623,7 @@
             }
 
             breezeSession = breezeToken ?? string.Empty;
-            return meetingUrl;
+            return companyLms.LoginUsingCookie.GetValueOrDefault() ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
         }
 
         /// <summary>
@@ -743,9 +743,11 @@
             breezeSession = breezeToken ?? string.Empty;
 
             return string.Format(
-                           "{0}?{1}",
+                           "{0}?{1}{2}{3}",
                            baseUrl,
-                           mode != null ? string.Format("pbMode={0}", mode) : string.Empty);
+                           mode != null ? string.Format("pbMode={0}", mode) : string.Empty,
+                           mode != null && !companyLms.LoginUsingCookie.GetValueOrDefault() ? "&" : string.Empty,
+                           !companyLms.LoginUsingCookie.GetValueOrDefault() ? "session=" + breezeToken : string.Empty);
         }
 
         /// <summary>

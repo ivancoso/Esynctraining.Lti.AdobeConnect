@@ -99,6 +99,11 @@
         public virtual string ProxyToolSharedPassword { get; set; }
 
         /// <summary>
+        /// Gets or sets the login using cookie.
+        /// </summary>
+        public virtual bool? LoginUsingCookie { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS domain.
         /// </summary>
         public virtual string LmsDomain
