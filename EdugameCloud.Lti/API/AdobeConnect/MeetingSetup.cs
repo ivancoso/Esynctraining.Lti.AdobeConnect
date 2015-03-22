@@ -1,25 +1,24 @@
-﻿namespace EdugameCloud.Lti.API.AdobeConnect
+﻿using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.Business.Models;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.Business.Models;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    using Esynctraining.AC.Provider;
-    using Esynctraining.AC.Provider.DataObjects;
-    using Esynctraining.AC.Provider.DataObjects.Results;
-    using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Utils;
-
-    using Newtonsoft.Json;
-
     /// <summary>
     ///     The meeting setup.
     /// </summary>
@@ -90,6 +89,14 @@
             get
             {
                 return IoC.Resolve<UsersSetup>();
+            }
+        }
+
+        private SoapAPI BlackboardApi
+        {
+            get
+            {
+                return IoC.Resolve<SoapAPI>();
             }
         }
 
@@ -1263,36 +1270,15 @@
             return enrollments.Any(e => e.PrincipalId != null && e.PrincipalId.Equals(lmsUser.PrincipalId));
         }
 
-        /// <summary>
-        /// The create announcement.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <param name="startDate">
-        /// The start date.
-        /// </param>
-        /// <param name="startTime">
-        /// The start time.
-        /// </param>
-        /// <param name="duration">
-        /// The duration.
-        /// </param>
         private void CreateAnnouncement(
-            CompanyLms credentials, 
+            CompanyLms companyLms, 
             LtiParamDTO param, 
             string name, 
             string startDate, 
             string startTime, 
             string duration)
         {
-            if (!credentials.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
+            if (!companyLms.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
             {
                 return;
             }
@@ -1309,19 +1295,22 @@
                 duration,
                 param.referer ?? string.Empty);
 
-            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
+            switch (companyLms.LmsProvider.ShortName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
-                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
+                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
                     var token = lmsUser.Return(
                             u => u.Token,
-                            credentials.AdminUser.Return(a => a.Token, string.Empty));
+                            companyLms.AdminUser.Return(a => a.Token, string.Empty));
                     CanvasAPI.CreateAnnouncement(
-                        credentials.LmsDomain,
+                        companyLms.LmsDomain,
                         token,
                         param.course_id,
                         announcementTitle,
                         announcementMessage);
+                    break;
+                case LmsProviderNames.Blackboard:
+                    BlackboardApi.CreateAnnouncement(param.course_id, companyLms, announcementTitle, announcementMessage);
                     break;
                 case LmsProviderNames.BrainHoney:
                     // string error;

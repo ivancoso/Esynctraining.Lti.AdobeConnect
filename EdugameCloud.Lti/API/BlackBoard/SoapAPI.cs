@@ -1,26 +1,24 @@
-﻿namespace EdugameCloud.Lti.API.BlackBoard
+﻿using BbWsClient;
+using BbWsClient.Announcements;
+using BbWsClient.CourseMembership;
+using BbWsClient.User;
+using Castle.Core.Logging;
+using EdugameCloud.Lti.Constants;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace EdugameCloud.Lti.API.BlackBoard
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using BbWsClient;
-    using BbWsClient.CourseMembership;
-    using BbWsClient.User;
-    using Castle.Core.Logging;
-
-    using EdugameCloud.Lti.Constants;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-
-    using RestSharp;
-
     /// <summary>
     ///     The SOAP API.
     /// </summary>
@@ -681,6 +679,33 @@
             }
 
             return false;
+        }
+
+        public string[] CreateAnnouncement(int courseId, CompanyLms companyLms, string announcementTitle, string announcementMessage)
+        {
+            string error;
+            var courseIdFixed = string.Format("_{0}_1", courseId);
+
+            var client = BeginBatch(out error, companyLms);
+            var announcementVO = new AnnouncementVO
+            {
+                body = announcementMessage,
+                courseId = courseIdFixed,
+                permanent = true,
+                permanentSpecified = true,
+                position = 1,
+                positionSpecified = true,
+                pushNotify = true,
+                pushNotifySpecified = true,
+                showOnCourses = true,
+                showOnCoursesSpecified = true,
+                title = announcementTitle
+            };
+
+            var annWS = client.getAnnouncementWrapper();
+            var results = annWS.saveCourseAnnouncements(courseId.ToString(), new[] { announcementVO });
+
+            return results;
         }
 
         #endregion

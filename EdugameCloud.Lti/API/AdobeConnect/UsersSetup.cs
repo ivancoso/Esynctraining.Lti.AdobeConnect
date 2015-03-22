@@ -1,39 +1,31 @@
-﻿using D2L.Extensibility.AuthSdk;
-using D2L.Extensibility.AuthSdk.Restsharp;
+﻿using BbWsClient;
+using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.API.BrainHoney;
+using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.API.Common;
 using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.API.Moodle;
+using EdugameCloud.Lti.Business.Models;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
 using EdugameCloud.Lti.OAuth.Desire2Learn;
-using RestSharp;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
+using System.Web.Security;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Threading;
-    using System.Web.Security;
-
-    using BbWsClient;
-
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.API.Common;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Business.Models;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    using Esynctraining.AC.Provider;
-    using Esynctraining.AC.Provider.DataObjects.Results;
-    using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-
-    using Newtonsoft.Json;
-
     /// <summary>
     /// The users setup.
     /// </summary>
@@ -1120,10 +1112,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return GroupUsers(users);
         }
 
-        private List<LmsUserDTO> GetDesire2LearnUsers(CompanyLms credentials, LtiParamDTO param, string lmsUserId, out string error)
+        private List<LmsUserDTO> GetDesire2LearnUsers(CompanyLms companyLms, LtiParamDTO param, string lmsUserId, out string error)
         {
             error = null; //todo: set when something is wrong
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, credentials.Id).Value;
+            var adminRoles = new List<string> { "administrator", "super admin" };
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, companyLms.Id).Value;
+            var currentUserRoles = param.roles.ToLower();
+            if (!adminRoles.Any(currentUserRoles.Contains) && companyLms.AdminUser != null)
+            {
+                lmsUser = companyLms.AdminUser;
+            }
             var tokens = lmsUser.Token.Split(' ');
             var d2lService = IoC.Resolve<IDesire2LearnApiService>();
 
@@ -1138,9 +1136,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             while (enrollments.PagingInfo.HasMoreItems);
 
-            var excludedRoles = new List<string> {"administrator", "super admin"};
-            return result.Where(x=>(!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress)) 
-                && (x.User.Identifier == lmsUser.UserId || !excludedRoles.Contains(x.Role.Name.ToLower())))
+            return result.Where(x=>(!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress))
+                && (x.User.Identifier == lmsUserId || !adminRoles.Contains(x.Role.Name.ToLower())))
                 .Select(x => new LmsUserDTO
                 {
                     lms_role = x.Role.Name, 
@@ -1203,27 +1200,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return GroupUsers(users);
         }
 
-        /// <summary>
-        /// The get brain honey users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="blackBoardCourseId">
-        /// The black board course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force Update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, LmsCourseMeeting meeting, int blackBoardCourseId, out string error, bool forceUpdate = false)
         {
             var timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
