@@ -5,12 +5,11 @@
     using System.Reflection;
     using System.Web;
     using System.Web.Configuration;
-
     using Castle.Facilities.Logging;
+    using Castle.Facilities.TypedFactory;
     using Castle.Facilities.WcfIntegration;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Lti.API;
@@ -20,16 +19,12 @@
     using EdugameCloud.Persistence.Extensions;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
-
     using FluentValidation;
-
     using NHibernate;
-
     using Configuration = NHibernate.Cfg.Configuration;
 
     /// <summary>
@@ -52,6 +47,9 @@
             Assembly egcCoreAssembly = egcCoremodelsType.Assembly;
 
             container.AddFacility<WcfFacility>();
+            //https://groups.google.com/forum/#!msg/castle-project-users/TewcYkiP_Uc/yLW4HrbSUJgJ
+            container.AddFacility<TypedFactoryFacility>();
+
             container.Register(
                 Classes.FromAssemblyNamed("EdugameCloud.WCFService")
                     .BasedOn(typeof(IValidator<>))
