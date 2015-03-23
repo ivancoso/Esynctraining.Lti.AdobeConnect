@@ -91,6 +91,14 @@ namespace EdugameCloud.Core.Business.Models
             return this.Repository.FindAll(pagedQuery);
         }
 
+        public IEnumerable<SubModuleCategory> GetByUser(int userId)
+        {
+            var queryOver = new DefaultQueryOver<SubModuleCategory, int>().GetQueryOver()
+                .Where(x => x.User.Id == userId);
+
+            return this.Repository.FindAll(queryOver);
+        }
+
         /// <summary>
         /// The get applet categories by user id.
         /// </summary>
@@ -277,5 +285,7 @@ namespace EdugameCloud.Core.Business.Models
         }
 
         #endregion
+
     }
+
 }
