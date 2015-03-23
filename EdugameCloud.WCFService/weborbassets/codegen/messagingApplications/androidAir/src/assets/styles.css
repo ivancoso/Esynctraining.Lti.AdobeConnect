@@ -1,7 +1,0 @@
-/* CSS file */
-@namespace s "library://ns.adobe.com/flex/spark";
-
-s|Button
-{
-	skinClass: ClassReference("ui.controls.skins.ButtonSkin");
-}
