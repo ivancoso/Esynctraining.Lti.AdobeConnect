@@ -69,6 +69,11 @@ namespace EdugameCloud.WCFService
             return this.SubModuleCategoryModel.GetAll().Select(x => new SubModuleCategoryDTO(x)).ToArray();
         }
 
+        public SubModuleCategoryDTO[] GetByUser(int userId)
+        {
+            return this.SubModuleCategoryModel.GetByUser(userId).Select(x => new SubModuleCategoryDTO(x)).ToArray();
+        }
+
         /// <summary>
         /// The save update.
         /// </summary>

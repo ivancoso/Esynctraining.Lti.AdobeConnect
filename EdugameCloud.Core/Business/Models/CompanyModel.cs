@@ -33,16 +33,18 @@
 
         #endregion
 
-        /// <summary>
-        /// The get all for company.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IEnumerable{T}"/>.
-        /// </returns>
-        public override IEnumerable<Company> GetAll()
+        public IEnumerable<Company> GetAllWithRelated()
         {
-            var defaultQuery = new QueryOverCompany().GetQueryOver();
-            return this.Repository.FindAll(defaultQuery);
+            var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()
+                .Fetch(x => x.Address).Eager
+                .Fetch(x => x.Address.State).Eager
+                .Fetch(x => x.Address.Country).Eager
+                .Fetch(x => x.PrimaryContact).Eager
+                .Fetch(x => x.PrimaryContact.UserRole).Eager
+                .Fetch(x => x.Licenses).Eager
+                .Fetch(x => x.Theme).Eager;
+
+            return this.Repository.FindAll(queryOver);
         }
 
         /// <summary>

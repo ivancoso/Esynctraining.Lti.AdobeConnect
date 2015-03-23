@@ -40,6 +40,10 @@
         [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         SubModuleCategoryDTO[] GetAll();
 
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        SubModuleCategoryDTO[] GetByUser(int userId);
+
         /// <summary>
         /// The get applet categories by user id.
         /// </summary>

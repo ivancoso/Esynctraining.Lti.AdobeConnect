@@ -46,15 +46,14 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     All items test.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="AppletItemDTO" />.
-        /// </returns>
         public AppletItemDTO[] GetAll()
         {
             return this.AppletItemModel.GetAll().Select(x => new AppletItemDTO(x)).ToArray();
+        }
+
+        public AppletItemDTO[] GetByUser(int userId)
+        {
+            return this.AppletItemModel.GetByUser(userId).Select(x => new AppletItemDTO(x)).ToArray();
         }
 
         /// <summary>

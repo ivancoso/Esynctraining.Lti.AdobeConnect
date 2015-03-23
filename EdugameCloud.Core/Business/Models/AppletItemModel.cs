@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -60,6 +61,29 @@
             QueryOver<AppletItem> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
             return this.Repository.FindAll(pagedQuery);
         }
+
+        public IEnumerable<AppletItem> GetByUser(int userId)
+        {
+            if (userId <= 0)
+                throw new ArgumentOutOfRangeException("userId");
+
+            AppletItem ai = null;
+            SubModuleItem smi = null;
+            SubModuleCategory smc = null;
+            User u2 = null;
+            CrosswordDTO dto = null;
+            var queryOver =
+                new DefaultQueryOver<AppletItem, int>().GetQueryOver(() => ai)
+                .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                .Where(() => smi.IsActive == true)
+                .JoinQueryOver(() => smi.SubModuleCategory, () => smc, JoinType.InnerJoin)
+                .Where(() => smc.IsActive == true)
+                .JoinQueryOver(() => smi.CreatedBy, () => u2, JoinType.LeftOuterJoin)
+                .Where(() => u2.Id == userId);
+
+            return this.Repository.FindAll(queryOver).ToList();
+        }
+
 
         /// <summary>
         /// The get crossword result by AC session id.
@@ -257,5 +281,7 @@
         }
 
         #endregion
+
     }
+
 }

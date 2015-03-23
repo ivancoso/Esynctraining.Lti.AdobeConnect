@@ -23,6 +23,10 @@
         [FaultContract(typeof(Error))]
         AppletItemDTO[] GetAll();
 
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        AppletItemDTO[] GetByUser(int userId);
+
         /// <summary>
         /// Get user by id.
         /// </summary>
