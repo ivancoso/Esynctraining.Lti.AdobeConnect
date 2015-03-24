@@ -41,18 +41,3 @@
     CONSTRAINT [FK_CompanyLms_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
     CONSTRAINT [FK_CompanyLms_User2] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId]) ON DELETE SET NULL
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

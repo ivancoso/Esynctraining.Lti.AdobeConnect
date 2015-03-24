@@ -842,7 +842,8 @@
                 Company company = user.Company;
                 if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
                 {
-                    var ms = new MemoryStream();
+                    // NOTE: current POD size is about 960kb
+                    var ms = new MemoryStream(960 * 1024);
 
                     using (var archive = ZipArchive.OpenOnFile(physicalPath))
                     {
@@ -868,6 +869,7 @@
                         }
                     }
 
+                    ms.Position = 0;
                     return this.File(ms, "application/zip", Path.GetFileName(physicalPath));
                 }
 
