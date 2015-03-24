@@ -13,7 +13,7 @@
     using System.Web.Mvc;
     using System.Web.UI;
     using System.Xml.Linq;
-
+    using Castle.Core.Logging;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -21,17 +21,13 @@
     using EdugameCloud.MVC.Attributes;
     using EdugameCloud.MVC.ViewModels;
     using EdugameCloud.MVC.ViewResults;
-
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
     using Esynctraining.Core.Wrappers;
-
     using Microsoft.Reporting.WebForms;
-
     using NHibernate.Util;
-
     using File = EdugameCloud.Core.Domain.Entities.File;
 
     /// <summary>
@@ -40,6 +36,8 @@
     [HandleError]
     public partial class FileController : BaseController
     {
+        private static readonly object _publicBuildZipLocker = new object();
+
         #region Fields
 
         /// <summary>
@@ -818,7 +816,7 @@
             var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), fileName));
             if (file.Exists)
             {
-                return this.File(System.IO.File.ReadAllBytes(file.FullName), file.Extension.EndsWith("zip") ? "application/zip" : "application/x-shockwave-flash", file.Name);
+                return File(file.FullName, file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase) ? "application/zip" : "application/x-shockwave-flash", file.Name);
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
@@ -839,47 +837,113 @@
             var user = this.CurrentUser;
             if (user != null && user.Company != null)
             {
-                var publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
-                var physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
-                var company = user.Company;
-                if (System.IO.File.Exists(physicalPath) && company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && company.Theme != null)
+                string publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
+                string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
+                Company company = user.Company;
+                if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
                 {
-                        var str = new MemoryStream();
+                    var ms = new MemoryStream();
 
-                        using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                    using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                    {
+                        using (var arc = ZipArchive.OpenOnStream(ms))
                         {
-                            using (var arc = ZipArchive.OpenOnStream(str))
+                            foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
                             {
-                                foreach (var file in archive.Files)
+                                using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
                                 {
-                                    var buffer = file.GetStream().ReadToEnd();
-                                    if (buffer != null)
-                                    {
-                                        using (
-                                            var fs = arc.AddFile(file.Name)
-                                                .GetStream(FileMode.Open, FileAccess.ReadWrite))
-                                        {
-                                            fs.Write(buffer, 0, buffer.Length);
-                                        }
-                                    }
-                                }
-
-                                using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
-                                {
-                                    var xml = string.Format("<config><themeId>{0}</themeId></config>", company.Theme.With(x => x.Id));
-                                    var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
-                                    fs.Write(xmlBuffer, 0, xmlBuffer.Length);
+                                    file.GetStream().CopyTo(fs);
                                 }
                             }
-                        }
 
-                        return this.File(str.ToArray(), "application/zip", Path.GetFileName(physicalPath));
+                            using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                            {
+                                var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>", 
+                                    company.Theme.With(x => x.Id), 
+                                    Settings.BaseServiceUrl);
+
+                                var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
+                                fs.Write(xmlBuffer, 0, xmlBuffer.Length);
+                            }
+                        }
+                    }
+
+                    return this.File(ms, "application/zip", Path.GetFileName(physicalPath));
                 }
 
+                EnsureServicePathConfigExists(physicalPath);
                 return this.Redirect("/public/" + publicBuild);
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+        }
+
+        private void EnsureServicePathConfigExists(string physicalPath)
+        {
+            if (!System.IO.File.Exists(physicalPath))
+                return;
+
+            if (string.IsNullOrWhiteSpace(Settings.BaseServiceUrl as string))
+            {
+                IoC.Resolve<ILogger>().Error("EnsureServicePathConfigExists. Settings.BaseServiceUrl is empty.");
+                return;
+            }
+
+            int fileCount;
+            using (var archive = ZipArchive.OpenOnFile(physicalPath))
+            {
+                fileCount = archive.Files.Count();
+            }
+            // NOTE: swf + config
+            if (fileCount != 2)
+            {
+                lock (_publicBuildZipLocker)
+                {
+                    using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                    {
+                        fileCount = archive.Files.Count();
+                    }
+
+                    if (fileCount != 2)
+                    {
+                        try
+                        {
+                            var ms = new MemoryStream();
+                            using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                            {
+                                using (var arc = ZipArchive.OpenOnStream(ms))
+                                {
+                                    foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                                    {
+                                        using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                        {
+                                            file.GetStream().CopyTo(fs);
+                                        }
+                                    }
+
+                                    using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    {
+                                        var xml = string.Format("<config><gateway>{0}</gateway></config>", Settings.BaseServiceUrl);
+                                        var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
+                                        fs.Write(xmlBuffer, 0, xmlBuffer.Length);
+                                    }
+                                }
+                            }
+
+                            using (var file = new FileStream(physicalPath, FileMode.Create, FileAccess.Write))
+                            {
+                                ms.WriteTo(file);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            IoC.Resolve<ILogger>().Error("EnsureServicePathConfigExists. Error during config writing.", ex);
+                            throw;
+                        }
+                    }
+                }
+            }
+
         }
 
         /// <summary>

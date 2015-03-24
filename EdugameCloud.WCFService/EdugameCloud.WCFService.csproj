@@ -167,7 +167,6 @@
     <Content Include="Mail\Templates\Trial.html" />
     <Content Include="CompanyLmsService.svc" />
     <Content Include="EmailService.svc" />
-    <Content Include="SocialService.svc" />
     <Content Include="TestQuestionResultService.svc" />
     <Content Include="TestResultService.svc" />
     <Content Include="TestService.svc" />
@@ -285,9 +284,6 @@
     </Compile>
     <Compile Include="ExtendedHttpBehavior\ExtendedQueryStringConverter.cs" />
     <Compile Include="ExtendedHttpBehavior\ExtendedWebHttpBehaviour.cs" />
-    <Compile Include="SocialService.svc.cs">
-      <DependentUpon>SocialService.svc</DependentUpon>
-    </Compile>
     <Compile Include="TestQuestionResultService.svc.cs">
       <DependentUpon>TestQuestionResultService.svc</DependentUpon>
     </Compile>

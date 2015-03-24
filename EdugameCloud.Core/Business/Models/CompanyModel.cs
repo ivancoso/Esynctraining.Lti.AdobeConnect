@@ -12,6 +12,7 @@
 
     using NHibernate;
     using NHibernate.Criterion;
+    using NHibernate.Transform;
 
     /// <summary>
     ///     The company model.
@@ -42,7 +43,8 @@
                 .Fetch(x => x.PrimaryContact).Eager
                 .Fetch(x => x.PrimaryContact.UserRole).Eager
                 .Fetch(x => x.Licenses).Eager
-                .Fetch(x => x.Theme).Eager;
+                .Fetch(x => x.Theme).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindAll(queryOver);
         }

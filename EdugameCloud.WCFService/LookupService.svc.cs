@@ -196,16 +196,16 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// Gets the twitter model.
-        /// </summary>
-        private TwitterModel TwitterModel
-        {
-            get
-            {
-                return IoC.Resolve<TwitterModel>();
-            }
-        }
+        ///// <summary>
+        ///// Gets the twitter model.
+        ///// </summary>
+        //private TwitterModel TwitterModel
+        //{
+        //    get
+        //    {
+        //        return IoC.Resolve<TwitterModel>();
+        //    }
+        //}
 
         #endregion
 
@@ -285,19 +285,19 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-        /// <summary>
-        /// The get twitter profiles.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-       /// The <see cref="TwitterProfileDTO"/>.
-        /// </returns>
-       public TwitterProfileDTO[] GetTwitterProfiles(string name)
-       {
-           return this.TwitterModel.SearchForUsers(name).ToArray();
-       }
+       // /// <summary>
+       // /// The get twitter profiles.
+       // /// </summary>
+       // /// <param name="name">
+       // /// The name.
+       // /// </param>
+       // /// <returns>
+       ///// The <see cref="TwitterProfileDTO"/>.
+       // /// </returns>
+       //public TwitterProfileDTO[] GetTwitterProfiles(string name)
+       //{
+       //    return this.TwitterModel.SearchForUsers(name).ToArray();
+       //}
 
         /// <summary>
         /// The get google social profiles.
@@ -370,19 +370,19 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(error, error.errorMessage);
         }
 
-        /// <summary>
-        /// The get tweets.
-        /// </summary>
-        /// <param name="screenname">
-        /// The screen name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TwitterStatusDTO"/>.
-        /// </returns>
-        public TwitterStatusDTO[] GetTweets(string screenname)
-        {
-            return this.TwitterModel.SearchForTweets(screenname).ToArray();
-        }
+        ///// <summary>
+        ///// The get tweets.
+        ///// </summary>
+        ///// <param name="screenname">
+        ///// The screen name.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="TwitterStatusDTO"/>.
+        ///// </returns>
+        //public TwitterStatusDTO[] GetTweets(string screenname)
+        //{
+        //    return this.TwitterModel.SearchForTweets(screenname).ToArray();
+        //}
 
         /// <summary>
         /// The get states.

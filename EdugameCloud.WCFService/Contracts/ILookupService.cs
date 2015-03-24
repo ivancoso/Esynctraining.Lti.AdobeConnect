@@ -198,19 +198,19 @@
 ////    [WebORBCache(CacheScope = CacheScope.Global)]
         GeoResultDTO GetLocation(GeoDTO geoDTO);
 
-        /// <summary>
-        /// Gets the twitter search result by query.
-        /// </summary>
-        /// <param name="name">
-        /// The name query.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TwitterProfileDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetTwitterProfiles?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        TwitterProfileDTO[] GetTwitterProfiles(string name);
+        ///// <summary>
+        ///// Gets the twitter search result by query.
+        ///// </summary>
+        ///// <param name="name">
+        ///// The name query.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="TwitterProfileDTO"/>.
+        ///// </returns>
+        //[OperationContract]
+        //[FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "GetTwitterProfiles?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        //TwitterProfileDTO[] GetTwitterProfiles(string name);
 
         /// <summary>
         /// Gets the twitter search result by query.
@@ -256,19 +256,19 @@
             BodyStyle = WebMessageBodyStyle.Bare)]
         byte[] ConvertToVCF(string xmlProfile);
 
-        /// <summary>
-        /// Gets the twitter search result by query.
-        /// </summary>
-        /// <param name="name">
-        /// The name query.
-        /// </param>
-        /// <returns>
-        /// The <see cref="TwitterStatusDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetTweets?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        TwitterStatusDTO[] GetTweets(string name);
+        ///// <summary>
+        ///// Gets the twitter search result by query.
+        ///// </summary>
+        ///// <param name="name">
+        ///// The name query.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="TwitterStatusDTO"/>.
+        ///// </returns>
+        //[OperationContract]
+        //[FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "GetTweets?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        //TwitterStatusDTO[] GetTweets(string name);
 
         /// <summary>
         /// The save.

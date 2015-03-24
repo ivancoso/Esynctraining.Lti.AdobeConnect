@@ -248,7 +248,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public CompanyDTO[] GetAll()
         {
-            return this.CompanyModel.GetAll().Select(x => new CompanyDTO(x)).ToArray();
+            return this.CompanyModel.GetAllWithRelated().Select(x => new CompanyDTO(x)).ToArray();
         }
 
         /// <summary>
