@@ -1,10 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
-
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -12,20 +11,6 @@
     /// </summary>
     public class Company : Entity
     {
-        #region Fields
-
-        /// <summary>
-        /// The users.
-        /// </summary>
-        private ISet<User> users = new HashedSet<User>();
-
-        /// <summary>
-        /// The licenses.
-        /// </summary>
-        private ISet<CompanyLicense> licenses = new HashedSet<CompanyLicense>(); 
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -91,34 +76,12 @@
         /// <summary>
         /// Gets or sets the users.
         /// </summary>
-        public virtual ISet<User> Users
-        {
-            get
-            {
-                return this.users;
-            }
-
-            set
-            {
-                this.users = value;
-            }
-        }
+        public virtual IList<User> Users { get; protected set; }
 
         /// <summary>
         /// Gets or sets the licenses.
         /// </summary>
-        public virtual ISet<CompanyLicense> Licenses
-        {
-            get
-            {
-                return this.licenses;
-            }
-
-            set
-            {
-                this.licenses = value;
-            }
-        }
+        public virtual IList<CompanyLicense> Licenses { get; protected set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is active.

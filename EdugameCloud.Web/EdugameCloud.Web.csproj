@@ -20,7 +20,6 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
-    <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -42,13 +41,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.4.1.9004, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
+    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Core, Version=3.2.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Core.3.3.0\lib\net40-client\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net40-client\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Facilities.Logging, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,73 +55,118 @@
     </Reference>
     <Reference Include="Castle.Services.Logging.Log4netIntegration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Core-log4net.3.3.0\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
+      <HintPath>..\packages\Castle.Core-log4net.3.3.3\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
     </Reference>
     <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.AspNet">
-      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.1.4.12333\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.AspNet, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.Core">
-      <HintPath>..\packages\DotNetOpenAuth.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.Core, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.Core.4.3.4.13329\lib\net40-full\DotNetOpenAuth.Core.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OAuth.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.OAuth, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Core.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OAuth.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.OAuth.Consumer">
-      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.OAuth.Consumer, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.OAuth.Consumer.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OAuth.Consumer.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.OpenId, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.Core.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
-      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.1.4.12333\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
+    <Reference Include="DotNetOpenAuth.OpenId.RelyingParty, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Esynctraining.Core.Common.1.0.0.4\lib\net40\Esynctraining.Core.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation, Version=4.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FluentValidation, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluentValidation.4.0.0.1\lib\Net40\FluentValidation.dll</HintPath>
+      <HintPath>..\packages\FluentValidation.5.1.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
-    <Reference Include="FluentValidation.Mvc">
-      <HintPath>..\packages\FluentValidation.MVC3.4.0.0.1\lib\Net40\FluentValidation.Mvc.dll</HintPath>
-    </Reference>
-    <Reference Include="Iesi.Collections, Version=1.0.1.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="FluentValidation.Mvc, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
+      <HintPath>..\packages\FluentValidation.MVC4.5.1.0.0\lib\Net40\FluentValidation.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.Edm.5.2.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Data.OData.5.2.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.1\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.2.0.30506.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NHibernate, Version=3.3.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+      <HintPath>..\packages\NHibernate.4.0.3.4000\lib\net40\NHibernate.dll</HintPath>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.2.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+    <Reference Include="RazorEngine, Version=3.6.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RazorEngine.3.2.0\lib\net40\RazorEngine.dll</HintPath>
+      <HintPath>..\packages\RazorEngine.3.6.3\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.IO">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Spatial, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\System.Spatial.5.2.0\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks">
+      <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core">
@@ -134,9 +178,24 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System\System.Web.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.OData">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.OData.4.0.30506\lib\net40\System.Web.Http.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.30506.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\System\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -167,19 +226,15 @@
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20715.0\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="T4MVCExtensions">
       <HintPath>..\packages\T4MVCExtensions.3.6.4\lib\net40\T4MVCExtensions.dll</HintPath>
     </Reference>
     <Reference Include="WcfRestContrib">
       <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
     </Reference>
-    <Reference Include="WebGrease, Version=1.5.2.14234, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +300,257 @@
     <Compile Include="Providers\ResourceProviderActivator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\flags\ad.gif" />
+    <Content Include="Content\images\flags\ae.gif" />
+    <Content Include="Content\images\flags\af.gif" />
+    <Content Include="Content\images\flags\ag.gif" />
+    <Content Include="Content\images\flags\ai.gif" />
+    <Content Include="Content\images\flags\al.gif" />
+    <Content Include="Content\images\flags\am.gif" />
+    <Content Include="Content\images\flags\an.gif" />
+    <Content Include="Content\images\flags\ao.gif" />
+    <Content Include="Content\images\flags\ar.gif" />
+    <Content Include="Content\images\flags\as.gif" />
+    <Content Include="Content\images\flags\at.gif" />
+    <Content Include="Content\images\flags\au.gif" />
+    <Content Include="Content\images\flags\aw.gif" />
+    <Content Include="Content\images\flags\ax.gif" />
+    <Content Include="Content\images\flags\az.gif" />
+    <Content Include="Content\images\flags\ba.gif" />
+    <Content Include="Content\images\flags\bb.gif" />
+    <Content Include="Content\images\flags\bd.gif" />
+    <Content Include="Content\images\flags\be.gif" />
+    <Content Include="Content\images\flags\bf.gif" />
+    <Content Include="Content\images\flags\bg.gif" />
+    <Content Include="Content\images\flags\bh.gif" />
+    <Content Include="Content\images\flags\bi.gif" />
+    <Content Include="Content\images\flags\bj.gif" />
+    <Content Include="Content\images\flags\bm.gif" />
+    <Content Include="Content\images\flags\bn.gif" />
+    <Content Include="Content\images\flags\bo.gif" />
+    <Content Include="Content\images\flags\br.gif" />
+    <Content Include="Content\images\flags\bs.gif" />
+    <Content Include="Content\images\flags\bt.gif" />
+    <Content Include="Content\images\flags\bv.gif" />
+    <Content Include="Content\images\flags\bw.gif" />
+    <Content Include="Content\images\flags\by.gif" />
+    <Content Include="Content\images\flags\bz.gif" />
+    <Content Include="Content\images\flags\ca.gif" />
+    <Content Include="Content\images\flags\catalonia.gif" />
+    <Content Include="Content\images\flags\cc.gif" />
+    <Content Include="Content\images\flags\cd.gif" />
+    <Content Include="Content\images\flags\cf.gif" />
+    <Content Include="Content\images\flags\cg.gif" />
+    <Content Include="Content\images\flags\ch.gif" />
+    <Content Include="Content\images\flags\ci.gif" />
+    <Content Include="Content\images\flags\ck.gif" />
+    <Content Include="Content\images\flags\cl.gif" />
+    <Content Include="Content\images\flags\cm.gif" />
+    <Content Include="Content\images\flags\cn.gif" />
+    <Content Include="Content\images\flags\co.gif" />
+    <Content Include="Content\images\flags\cr.gif" />
+    <Content Include="Content\images\flags\cs.gif" />
+    <Content Include="Content\images\flags\cu.gif" />
+    <Content Include="Content\images\flags\cv.gif" />
+    <Content Include="Content\images\flags\cx.gif" />
+    <Content Include="Content\images\flags\cy.gif" />
+    <Content Include="Content\images\flags\cz.gif" />
+    <Content Include="Content\images\flags\de.gif" />
+    <Content Include="Content\images\flags\dj.gif" />
+    <Content Include="Content\images\flags\dk.gif" />
+    <Content Include="Content\images\flags\dm.gif" />
+    <Content Include="Content\images\flags\do.gif" />
+    <Content Include="Content\images\flags\dz.gif" />
+    <Content Include="Content\images\flags\ec.gif" />
+    <Content Include="Content\images\flags\ee.gif" />
+    <Content Include="Content\images\flags\eg.gif" />
+    <Content Include="Content\images\flags\eh.gif" />
+    <Content Include="Content\images\flags\england.gif" />
+    <Content Include="Content\images\flags\er.gif" />
+    <Content Include="Content\images\flags\es.gif" />
+    <Content Include="Content\images\flags\et.gif" />
+    <Content Include="Content\images\flags\europeanunion.gif" />
+    <Content Include="Content\images\flags\fam.gif" />
+    <Content Include="Content\images\flags\fi.gif" />
+    <Content Include="Content\images\flags\fj.gif" />
+    <Content Include="Content\images\flags\fk.gif" />
+    <Content Include="Content\images\flags\fm.gif" />
+    <Content Include="Content\images\flags\fo.gif" />
+    <Content Include="Content\images\flags\fr.gif" />
+    <Content Include="Content\images\flags\ga.gif" />
+    <Content Include="Content\images\flags\gb.gif" />
+    <Content Include="Content\images\flags\gb.png" />
+    <Content Include="Content\images\flags\gd.gif" />
+    <Content Include="Content\images\flags\ge.gif" />
+    <Content Include="Content\images\flags\gf.gif" />
+    <Content Include="Content\images\flags\gh.gif" />
+    <Content Include="Content\images\flags\gi.gif" />
+    <Content Include="Content\images\flags\gl.gif" />
+    <Content Include="Content\images\flags\gm.gif" />
+    <Content Include="Content\images\flags\gn.gif" />
+    <Content Include="Content\images\flags\gp.gif" />
+    <Content Include="Content\images\flags\gq.gif" />
+    <Content Include="Content\images\flags\gr.gif" />
+    <Content Include="Content\images\flags\gs.gif" />
+    <Content Include="Content\images\flags\gt.gif" />
+    <Content Include="Content\images\flags\gu.gif" />
+    <Content Include="Content\images\flags\gw.gif" />
+    <Content Include="Content\images\flags\gy.gif" />
+    <Content Include="Content\images\flags\hk.gif" />
+    <Content Include="Content\images\flags\hm.gif" />
+    <Content Include="Content\images\flags\hn.gif" />
+    <Content Include="Content\images\flags\hr.gif" />
+    <Content Include="Content\images\flags\ht.gif" />
+    <Content Include="Content\images\flags\hu.gif" />
+    <Content Include="Content\images\flags\id.gif" />
+    <Content Include="Content\images\flags\ie.gif" />
+    <Content Include="Content\images\flags\il.gif" />
+    <Content Include="Content\images\flags\in.gif" />
+    <Content Include="Content\images\flags\in.png" />
+    <Content Include="Content\images\flags\io.gif" />
+    <Content Include="Content\images\flags\iq.gif" />
+    <Content Include="Content\images\flags\ir.gif" />
+    <Content Include="Content\images\flags\is.gif" />
+    <Content Include="Content\images\flags\it.gif" />
+    <Content Include="Content\images\flags\jm.gif" />
+    <Content Include="Content\images\flags\jo.gif" />
+    <Content Include="Content\images\flags\jp.gif" />
+    <Content Include="Content\images\flags\jp.png" />
+    <Content Include="Content\images\flags\ke.gif" />
+    <Content Include="Content\images\flags\kg.gif" />
+    <Content Include="Content\images\flags\kh.gif" />
+    <Content Include="Content\images\flags\ki.gif" />
+    <Content Include="Content\images\flags\km.gif" />
+    <Content Include="Content\images\flags\kn.gif" />
+    <Content Include="Content\images\flags\kp.gif" />
+    <Content Include="Content\images\flags\kr.gif" />
+    <Content Include="Content\images\flags\kw.gif" />
+    <Content Include="Content\images\flags\ky.gif" />
+    <Content Include="Content\images\flags\kz.gif" />
+    <Content Include="Content\images\flags\la.gif" />
+    <Content Include="Content\images\flags\lb.gif" />
+    <Content Include="Content\images\flags\lc.gif" />
+    <Content Include="Content\images\flags\li.gif" />
+    <Content Include="Content\images\flags\lk.gif" />
+    <Content Include="Content\images\flags\lr.gif" />
+    <Content Include="Content\images\flags\ls.gif" />
+    <Content Include="Content\images\flags\lt.gif" />
+    <Content Include="Content\images\flags\lu.gif" />
+    <Content Include="Content\images\flags\lv.gif" />
+    <Content Include="Content\images\flags\ly.gif" />
+    <Content Include="Content\images\flags\ma.gif" />
+    <Content Include="Content\images\flags\mc.gif" />
+    <Content Include="Content\images\flags\md.gif" />
+    <Content Include="Content\images\flags\me.gif" />
+    <Content Include="Content\images\flags\mg.gif" />
+    <Content Include="Content\images\flags\mh.gif" />
+    <Content Include="Content\images\flags\mk.gif" />
+    <Content Include="Content\images\flags\ml.gif" />
+    <Content Include="Content\images\flags\mm.gif" />
+    <Content Include="Content\images\flags\mn.gif" />
+    <Content Include="Content\images\flags\mo.gif" />
+    <Content Include="Content\images\flags\mp.gif" />
+    <Content Include="Content\images\flags\mq.gif" />
+    <Content Include="Content\images\flags\mr.gif" />
+    <Content Include="Content\images\flags\ms.gif" />
+    <Content Include="Content\images\flags\mt.gif" />
+    <Content Include="Content\images\flags\mu.gif" />
+    <Content Include="Content\images\flags\mv.gif" />
+    <Content Include="Content\images\flags\mw.gif" />
+    <Content Include="Content\images\flags\mx.gif" />
+    <Content Include="Content\images\flags\my.gif" />
+    <Content Include="Content\images\flags\mz.gif" />
+    <Content Include="Content\images\flags\na.gif" />
+    <Content Include="Content\images\flags\nc.gif" />
+    <Content Include="Content\images\flags\ne.gif" />
+    <Content Include="Content\images\flags\nf.gif" />
+    <Content Include="Content\images\flags\ng.gif" />
+    <Content Include="Content\images\flags\ni.gif" />
+    <Content Include="Content\images\flags\nl.gif" />
+    <Content Include="Content\images\flags\no.gif" />
+    <Content Include="Content\images\flags\np.gif" />
+    <Content Include="Content\images\flags\nr.gif" />
+    <Content Include="Content\images\flags\nu.gif" />
+    <Content Include="Content\images\flags\nz.gif" />
+    <Content Include="Content\images\flags\om.gif" />
+    <Content Include="Content\images\flags\pa.gif" />
+    <Content Include="Content\images\flags\pe.gif" />
+    <Content Include="Content\images\flags\pf.gif" />
+    <Content Include="Content\images\flags\pg.gif" />
+    <Content Include="Content\images\flags\ph.gif" />
+    <Content Include="Content\images\flags\pk.gif" />
+    <Content Include="Content\images\flags\pl.gif" />
+    <Content Include="Content\images\flags\pm.gif" />
+    <Content Include="Content\images\flags\pn.gif" />
+    <Content Include="Content\images\flags\pr.gif" />
+    <Content Include="Content\images\flags\ps.gif" />
+    <Content Include="Content\images\flags\pt.gif" />
+    <Content Include="Content\images\flags\pw.gif" />
+    <Content Include="Content\images\flags\py.gif" />
+    <Content Include="Content\images\flags\qa.gif" />
+    <Content Include="Content\images\flags\re.gif" />
+    <Content Include="Content\images\flags\ro.gif" />
+    <Content Include="Content\images\flags\rs.gif" />
+    <Content Include="Content\images\flags\ru.gif" />
+    <Content Include="Content\images\flags\rw.gif" />
+    <Content Include="Content\images\flags\sa.gif" />
+    <Content Include="Content\images\flags\sb.gif" />
+    <Content Include="Content\images\flags\sc.gif" />
+    <Content Include="Content\images\flags\scotland.gif" />
+    <Content Include="Content\images\flags\sd.gif" />
+    <Content Include="Content\images\flags\se.gif" />
+    <Content Include="Content\images\flags\sg.gif" />
+    <Content Include="Content\images\flags\sh.gif" />
+    <Content Include="Content\images\flags\si.gif" />
+    <Content Include="Content\images\flags\sj.gif" />
+    <Content Include="Content\images\flags\sk.gif" />
+    <Content Include="Content\images\flags\sl.gif" />
+    <Content Include="Content\images\flags\sm.gif" />
+    <Content Include="Content\images\flags\sn.gif" />
+    <Content Include="Content\images\flags\so.gif" />
+    <Content Include="Content\images\flags\sr.gif" />
+    <Content Include="Content\images\flags\st.gif" />
+    <Content Include="Content\images\flags\sv.gif" />
+    <Content Include="Content\images\flags\sy.gif" />
+    <Content Include="Content\images\flags\sz.gif" />
+    <Content Include="Content\images\flags\tc.gif" />
+    <Content Include="Content\images\flags\td.gif" />
+    <Content Include="Content\images\flags\tf.gif" />
+    <Content Include="Content\images\flags\tg.gif" />
+    <Content Include="Content\images\flags\th.gif" />
+    <Content Include="Content\images\flags\tj.gif" />
+    <Content Include="Content\images\flags\tk.gif" />
+    <Content Include="Content\images\flags\tl.gif" />
+    <Content Include="Content\images\flags\tm.gif" />
+    <Content Include="Content\images\flags\tn.gif" />
+    <Content Include="Content\images\flags\to.gif" />
+    <Content Include="Content\images\flags\tr.gif" />
+    <Content Include="Content\images\flags\tt.gif" />
+    <Content Include="Content\images\flags\tv.gif" />
+    <Content Include="Content\images\flags\tw.gif" />
+    <Content Include="Content\images\flags\tz.gif" />
+    <Content Include="Content\images\flags\ua.gif" />
+    <Content Include="Content\images\flags\ug.gif" />
+    <Content Include="Content\images\flags\um.gif" />
+    <Content Include="Content\images\flags\us.gif" />
+    <Content Include="Content\images\flags\us.png" />
+    <Content Include="Content\images\flags\uy.gif" />
+    <Content Include="Content\images\flags\uz.gif" />
+    <Content Include="Content\images\flags\va.gif" />
+    <Content Include="Content\images\flags\vc.gif" />
+    <Content Include="Content\images\flags\ve.gif" />
+    <Content Include="Content\images\flags\vg.gif" />
+    <Content Include="Content\images\flags\vi.gif" />
+    <Content Include="Content\images\flags\vn.gif" />
+    <Content Include="Content\images\flags\vu.gif" />
+    <Content Include="Content\images\flags\wales.gif" />
+    <Content Include="Content\images\flags\wf.gif" />
+    <Content Include="Content\images\flags\ws.gif" />
+    <Content Include="Content\images\flags\ye.gif" />
+    <Content Include="Content\images\flags\yt.gif" />
+    <Content Include="Content\images\flags\za.gif" />
+    <Content Include="Content\images\flags\zm.gif" />
+    <Content Include="Content\images\flags\zw.gif" />
     <Content Include="Content\images\header.png" />
     <Content Include="Content\images\logos\engage.jpg" />
     <Content Include="Content\images\logos\esynctrainig_ce.jpg" />
@@ -259,7 +565,7 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
-    <Content Include="Content\swf\admin\Adm_EdugameCloud_1.0.1.7.swf" />
+    <Content Include="Content\swf\admin\Adm_EdugameCloud_1.5.6579.swf" />
     <Content Include="Content\swf\admin\appStyles.css" />
     <Content Include="Content\swf\admin\resources\icons\add.png" />
     <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
@@ -358,6 +664,112 @@
     <Content Include="Content\swf\admin\resources\images\flags\jp.png" />
     <Content Include="Content\swf\admin\resources\images\flags\us.png" />
     <Content Include="Content\swf\admin\resources\images\headeBG.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\aboutMeProfile.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\add.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\addSmall.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\announce.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\bird.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\blog.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\closeRed.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\collapse.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\columnChart.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\companyIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\cross.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\crossListIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\crosswordIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\crosswordIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\deleteIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\dislike.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\downArrow.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\downListIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\errorBig.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\expand.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\facebook.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\gearBox.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\helpIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\hexagonIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\hSplit.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconFillIn.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconHelp.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconHotspot.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconImageChoice.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconLikert.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconMatching.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconMultiChoice.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconOrder.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconRate.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconSppedoMeter.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconTextLong.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconTextShort.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\iconTrueFalse.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\icon_excel.gif" />
+    <Content Include="Content\swf\admin\resources\images\icons\info.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\infoGreyIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\leftArrow.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\like.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\linkedin.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\links.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\listIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\location.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\logout.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\mail.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\MAIL_White.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\mapLink.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\multiUser.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\ovalIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\pdf_icon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\pencil.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\pentagonIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\percentageIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\phone.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\pieChart.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\pieFlat.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\preview.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\profileDownload.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\questionStep.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\quizIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\quizIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\quizRight.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\quizWrong.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\rankBG.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\rectangleIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\remove.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\reportIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\reportIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\reset.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\review.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\rightArrow.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\searchClear.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\searchSmall.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\shared.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\singleUser.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\slideShare.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\smallNo.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\smallYes.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\socialIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\starIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\supportIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\surveyIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\surveyIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\testIconColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\testIconSolidColor.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\textIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\ticMark.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\topArrow.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\tringleIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\upDownIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\user.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\videoIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\vSplit.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardGeneral.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardMap.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardMy.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardPreview.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardText.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wizardTheme.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wordCloud.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\wordSearchIcon.png" />
+    <Content Include="Content\swf\admin\resources\images\icons\yesIcon.png" />
     <Content Include="Content\swf\admin\resources\images\leftIcon.png" />
     <Content Include="Content\swf\admin\resources\images\loader.swf" />
     <Content Include="Content\swf\admin\resources\images\logo.png" />
@@ -367,6 +779,7 @@
     <Content Include="Content\swf\admin\resources\images\mapPreview\bing.jpg" />
     <Content Include="Content\swf\admin\resources\images\mapPreview\google.jpg" />
     <Content Include="Content\swf\admin\resources\images\mapPreview\ilog.jpg" />
+    <Content Include="Content\swf\admin\resources\images\mapPreview\mapQuest.jpg" />
     <Content Include="Content\swf\admin\resources\images\mask.png" />
     <Content Include="Content\swf\admin\resources\images\maskBG.png" />
     <Content Include="Content\swf\admin\resources\images\preview.png" />
@@ -379,6 +792,8 @@
     <Content Include="Content\lti-config\index.html" />
     <Content Include="Content\lti-config\brainhoney.xml" />
     <Content Include="Content\lti-config\canvas.xml" />
+    <Content Include="Content\swf\admin\resources\xml\surveyPredefinedData.xml" />
+    <Content Include="Content\swf\admin\resources\xml\weightBucketPreDefinedData.xml" />
     <Content Include="Content\swf\playerProductInstall.swf" />
     <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="crossdomain.xml" />
@@ -408,12 +823,12 @@
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\LoginToAC.cshtml">
       <Link>Views\Lti\LoginToAC.cshtml</Link>
     </Content>
-    <None Include="Content\xsd\snGroupDiscussion.xsd">
+    <Content Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
-    </None>
-    <None Include="Content\xsd\vcfProfile.xsd">
+    </Content>
+    <Content Include="Content\xsd\vcfProfile.xsd">
       <SubType>Designer</SubType>
-    </None>
+    </Content>
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="PublishProfiles\EdugameCloud.Web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
@@ -571,7 +986,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:2348</IISUrl>
+          <IISUrl>http://localhost/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -587,6 +1002,11 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
+  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
+    <Error Condition="!Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
+    <Error Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

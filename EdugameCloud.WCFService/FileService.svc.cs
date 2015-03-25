@@ -187,27 +187,27 @@ namespace EdugameCloud.WCFService
             throw new FaultException<Error>(validationError, validationError.errorMessage);
         }
 
-        /// <summary>
-        /// The get by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="FileDTO"/>.
-        /// </returns>
-        public FileDTO GetById(Guid id)
-        {
-            File session;
-            if ((session = this.FileModel.GetOneById(id).Value) == null)
-            {
-                var error = new Error(Errors.CODE_ERRORTYPE_OBJECT_NOT_FOUND, ErrorsTexts.EntityGetError_Subject, ErrorsTexts.GetResultError_NotFound);
-                this.LogError("File.GetById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
+        ///// <summary>
+        ///// The get by id.
+        ///// </summary>
+        ///// <param name="id">
+        ///// The id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="FileDTO"/>.
+        ///// </returns>
+        //public FileDTO GetById(Guid id)
+        //{
+        //    File session;
+        //    if ((session = this.FileModel.GetOneById(id).Value) == null)
+        //    {
+        //        var error = new Error(Errors.CODE_ERRORTYPE_OBJECT_NOT_FOUND, ErrorsTexts.EntityGetError_Subject, ErrorsTexts.GetResultError_NotFound);
+        //        this.LogError("File.GetById", error);
+        //        throw new FaultException<Error>(error, error.errorMessage);
+        //    }
 
-            return new FileDTO(session);
-        }
+        //    return new FileDTO(session);
+        //}
 
         #endregion
 

@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
-
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -11,36 +10,6 @@
     /// </summary>
     public class ACSession : Entity
     {
-        /// <summary>
-        /// The group discussions.
-        /// </summary>
-        private ISet<SNGroupDiscussion> groupDiscussions = new HashedSet<SNGroupDiscussion>();
-
-        /// <summary>
-        /// The SN members.
-        /// </summary>
-        private ISet<SNMember> members = new HashedSet<SNMember>();
-
-        /// <summary>
-        /// The survey results.
-        /// </summary>
-        private ISet<SurveyResult> surveyResults = new HashedSet<SurveyResult>();
-
-        /// <summary>
-        /// The quiz results.
-        /// </summary>
-        private ISet<QuizResult> quizResults = new HashedSet<QuizResult>();
-
-        /// <summary>
-        /// The quiz results.
-        /// </summary>
-        private ISet<TestResult> testResults = new HashedSet<TestResult>();
-
-        /// <summary>
-        /// The applet results.
-        /// </summary>
-        private ISet<AppletResult> appletResults = new HashedSet<AppletResult>();
-
         #region Public Properties
 
         /// <summary>
@@ -96,97 +65,32 @@
         /// <summary>
         /// Gets or sets the group discussions.
         /// </summary>
-        public virtual ISet<SNGroupDiscussion> GroupDiscussions
-        {
-            get
-            {
-                return this.groupDiscussions;
-            }
-
-            set
-            {
-                this.groupDiscussions = value;
-            }
-        }
+        public virtual IList<SNGroupDiscussion> GroupDiscussions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the SN members.
         /// </summary>
-        public virtual ISet<SNMember> SNMembers
-        {
-            get
-            {
-                return this.members;
-            }
-
-            set
-            {
-                this.members = value;
-            }
-        }
+        public virtual IList<SNMember> SNMembers { get; protected set; }
 
         /// <summary>
         /// Gets or sets the quiz results.
         /// </summary>
-        public virtual ISet<QuizResult> QuizResults
-        {
-            get
-            {
-                return this.quizResults;
-            }
-
-            set
-            {
-                this.quizResults = value;
-            }
-        }
+        public virtual IList<QuizResult> QuizResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the test results.
         /// </summary>
-        public virtual ISet<TestResult> TestResults
-        {
-            get
-            {
-                return this.testResults;
-            }
-
-            set
-            {
-                this.testResults = value;
-            }
-        }
+        public virtual IList<TestResult> TestResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the survey results.
         /// </summary>
-        public virtual ISet<SurveyResult> SurveyResults
-        {
-            get
-            {
-                return this.surveyResults;
-            }
-
-            set
-            {
-                this.surveyResults = value;
-            }
-        }
+        public virtual IList<SurveyResult> SurveyResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the applet results.
         /// </summary>
-        public virtual ISet<AppletResult> AppletResults
-        {
-            get
-            {
-                return this.appletResults;
-            }
-            set
-            {
-                this.appletResults = value;
-            }
-        }
+        public virtual IList<AppletResult> AppletResults { get; protected set; }
 
         #endregion
     }

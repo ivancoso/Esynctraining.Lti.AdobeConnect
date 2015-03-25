@@ -186,40 +186,40 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        /// <summary>
-        /// Deletes company theme by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id
-        /// </param>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        public Guid DeleteThemeById(Guid id)
-        {
-            CompanyTheme companyTheme;
-            var model = this.CompanyThemeModel;
-            if ((companyTheme = model.GetOneById(id).Value) == null)
-            {
-                var error = new Error(
-                        Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                        ErrorsTexts.GetResultError_Subject,
-                        ErrorsTexts.GetResultError_NotFound);
-                this.LogError("Company.DeleteThemeById", error);
-                throw new FaultException<Error>(error, error.errorMessage);
-            }
+        ///// <summary>
+        ///// Deletes company theme by id.
+        ///// </summary>
+        ///// <param name="id">
+        ///// The id
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="Guid"/>.
+        ///// </returns>
+        //public Guid DeleteThemeById(Guid id)
+        //{
+        //    CompanyTheme companyTheme;
+        //    var model = this.CompanyThemeModel;
+        //    if ((companyTheme = model.GetOneById(id).Value) == null)
+        //    {
+        //        var error = new Error(
+        //                Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+        //                ErrorsTexts.GetResultError_Subject,
+        //                ErrorsTexts.GetResultError_NotFound);
+        //        this.LogError("Company.DeleteThemeById", error);
+        //        throw new FaultException<Error>(error, error.errorMessage);
+        //    }
 
-            var companyModel = this.CompanyModel;
-            var companies = companyModel.GetAllByCompanyThemeId(id);
-            foreach (var company in companies)
-            {
-                company.Theme = null;
-                companyModel.RegisterSave(company);
-            }
+        //    var companyModel = this.CompanyModel;
+        //    var companies = companyModel.GetAllByCompanyThemeId(id);
+        //    foreach (var company in companies)
+        //    {
+        //        company.Theme = null;
+        //        companyModel.RegisterSave(company);
+        //    }
 
-            model.RegisterDelete(companyTheme, true);
-            return id;
-        }
+        //    model.RegisterDelete(companyTheme, true);
+        //    return id;
+        //}
 
         /// <summary>
         /// The request license upgrade.
@@ -341,11 +341,24 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="CompanyThemeDTO"/>.
         /// </returns>
-        public CompanyThemeDTO GetThemeById(Guid id)
+        public CompanyThemeDTO GetThemeById(string id)
         {
+            Guid themeId;
+            if (!Guid.TryParse(id, out themeId))
+            {
+                var error = new Error(
+                    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                    ErrorsTexts.GetResultError_Subject,
+                    ErrorsTexts.GetResultError_NotFound);
+                this.LogError(string.Format("Company.GetThemeById. id={0}", id), error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+
             CompanyTheme companyTheme;
             Company company;
-            if ((companyTheme = this.CompanyThemeModel.GetOneById(id).Value) == null || ((company = this.CompanyModel.GetOneByCompanyThemeId(companyTheme.Id).Value) == null) || (company.CurrentLicense ?? company.FutureActiveLicense).With(cl => cl.LicenseStatus != CompanyLicenseStatus.Enterprise))
+            if ((companyTheme = this.CompanyThemeModel.GetOneById(themeId).Value) == null 
+                || ((company = this.CompanyModel.GetOneByCompanyThemeId(companyTheme.Id).Value) == null) 
+                || (company.CurrentLicense ?? company.FutureActiveLicense).With(cl => cl.LicenseStatus != CompanyLicenseStatus.Enterprise))
             {
                 var error = new Error(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
@@ -512,7 +525,7 @@ namespace EdugameCloud.WCFService
 
                 if (isTransient && dto.lmsVO != null)
                 {
-                    var lms = new LmsCompany
+                    var lms = new CompanyLms
                                   {
                                       AcPassword = dto.lmsVO.acPassword,
                                       AcServer = dto.lmsVO.acServer,

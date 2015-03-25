@@ -1,9 +1,9 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -18,10 +18,6 @@
         ///     The state.
         /// </summary>
         private ImageStatus? status = ImageStatus.Created;
-
-        private ISet<Distractor> distractors = new HashedSet<Distractor>();
-
-        private ISet<Question> questions = new HashedSet<Question>();
 
         #endregion
 
@@ -40,31 +36,9 @@
 
         #region Public Properties
 
-        public virtual ISet<Distractor> Distractors
-        {
-            get
-            {
-                return this.distractors;
-            }
+        public virtual IList<Distractor> Distractors { get; protected set; }
 
-            set
-            {
-                this.distractors = value;
-            }
-        }
-
-        public virtual ISet<Question> Questions
-        {
-            get
-            {
-                return this.questions;
-            }
-
-            set
-            {
-                this.questions = value;
-            }
-        }
+        public virtual IList<Question> Questions { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the owner.

@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
-
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -11,15 +10,6 @@
     /// </summary>
     public class SubModule : Entity
     {
-        #region Fields
-
-        /// <summary>
-        /// The sub module categories.
-        /// </summary>
-        private ISet<SubModuleCategory> subModuleCategories = new HashedSet<SubModuleCategory>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -40,18 +30,7 @@
         /// <summary>
         /// Gets or sets the sub module categories.
         /// </summary>
-        public virtual ISet<SubModuleCategory> SubModuleCategories
-        {
-            get
-            {
-                return this.subModuleCategories;
-            }
-
-            set
-            {
-                this.subModuleCategories = value;
-            }
-        }
+        public virtual IList<SubModuleCategory> SubModuleCategories { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the sub module name.

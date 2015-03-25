@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Lti.Domain.Entities
 {
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -9,11 +9,6 @@
     /// </summary>
     public class LmsUser : Entity
     {
-        /// <summary>
-        /// The LMS user parameters.
-        /// </summary>
-        private ISet<LmsUserParameters> lmsUserParameters = new HashedSet<LmsUserParameters>();
-
         #region Public Properties
 
         /// <summary>
@@ -59,18 +54,7 @@
         /// <summary>
         /// Gets or sets the LMS user parameters.
         /// </summary>
-        public virtual ISet<LmsUserParameters> LmsUserParameters
-        {
-            get
-            {
-                return this.lmsUserParameters;
-            }
-
-            set
-            {
-                this.lmsUserParameters = value;
-            }
-        }
+        public virtual IList<LmsUserParameters> LmsUserParameters { get; protected set; }
 
         #endregion
     }

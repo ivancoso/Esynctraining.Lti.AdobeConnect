@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
-
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -11,15 +10,6 @@
     /// </summary>
     public class Address : Entity
     {
-        #region Fields
-
-        /// <summary>
-        /// The companies.
-        /// </summary>
-        private ISet<Company> companies = new HashedSet<Company>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -55,18 +45,7 @@
         /// <summary>
         /// Gets or sets the companies.
         /// </summary>
-        public virtual ISet<Company> Companies
-        {
-            get
-            {
-                return this.companies;
-            }
-
-            set
-            {
-                this.companies = value;
-            }
-        }
+        public virtual IList<Company> Companies { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the country.

@@ -63,18 +63,18 @@
         [FaultContract(typeof(Error))]
         FileDTO Save(FileDTO file);
 
-        /// <summary>
-        /// Get file by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="FileDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        FileDTO GetById(Guid id);
+        ///// <summary>
+        ///// Get file by id.
+        ///// </summary>
+        ///// <param name="id">
+        ///// The id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="FileDTO"/>.
+        ///// </returns>
+        //[OperationContract]
+        //[FaultContract(typeof(Error))]
+        //FileDTO GetById(Guid id);
 
         #endregion
     }

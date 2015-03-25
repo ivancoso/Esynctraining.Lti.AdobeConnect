@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
-
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -11,15 +10,6 @@
     /// </summary>
     public class QuizResult : Entity
     {
-        #region Fields
-
-        /// <summary>
-        /// The results.
-        /// </summary>
-        private ISet<QuizQuestionResult> results = new HashedSet<QuizQuestionResult>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -65,18 +55,7 @@
         /// <summary>
         /// Gets or sets the results.
         /// </summary>
-        public virtual ISet<QuizQuestionResult> Results
-        {
-            get
-            {
-                return this.results;
-            }
-
-            set
-            {
-                this.results = value;
-            }
-        }
+        public virtual IList<QuizQuestionResult> Results { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the score.

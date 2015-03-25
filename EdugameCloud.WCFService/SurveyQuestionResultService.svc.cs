@@ -148,7 +148,8 @@ namespace EdugameCloud.WCFService
                 if (isTransient && resultDto.answers != null && resultDto.answers.Any())
                 {
                     var answers = this.CreateAnswers(resultDto, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
-                    surveyQuestionResult.Answers.AddAll(answers);
+                    foreach (var answ in answers)
+                        surveyQuestionResult.Answers.Add(answ);
                 }
 
                 return new SurveyQuestionResultDTO(surveyQuestionResult, surveyQuestionResult.Answers);
@@ -187,7 +188,8 @@ namespace EdugameCloud.WCFService
                     if (isTransient && surveyQuestionResultDTO.answers != null && surveyQuestionResultDTO.answers.Any())
                     {
                         var answers = this.CreateAnswers(surveyQuestionResultDTO, surveyQuestionResult, this.SurveyQuestionResultAnswerModel);
-                        surveyQuestionResult.Answers.AddAll(answers);
+                        foreach (var answ in answers)
+                            surveyQuestionResult.Answers.Add(answ);
                     }
 
                     created.Add(surveyQuestionResult);

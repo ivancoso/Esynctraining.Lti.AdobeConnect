@@ -1,14 +1,13 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
-
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Utils;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -17,94 +16,17 @@
     [DataContract]
     public class User : Entity
     {
-        #region Fields
-
-        /// <summary>
-        ///     The AC sessions.
-        /// </summary>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "Reviewed. Suppression is OK here.")]
-        private ISet<ACSession> acSessions = new HashedSet<ACSession>();
-
-        /// <summary>
-        ///     The activations.
-        /// </summary>
-        private ISet<UserActivation> activations = new HashedSet<UserActivation>();
-
-        /// <summary>
-        ///     The distractors created.
-        /// </summary>
-        private ISet<Distractor> distractorsCreated = new HashedSet<Distractor>();
-
-        /// <summary>
-        ///     The distractors modified.
-        /// </summary>
-        private ISet<Distractor> distractorsModified = new HashedSet<Distractor>();
-
-        /// <summary>
-        ///     The files.
-        /// </summary>
-        private ISet<File> files = new HashedSet<File>();
-
-        /// <summary>
-        ///     The ac sessions.
-        /// </summary>
-        private ISet<UserLoginHistory> loginHistory = new HashedSet<UserLoginHistory>();
-
-        /// <summary>
-        ///     The sub module categories.
-        /// </summary>
-        private ISet<SubModuleCategory> subModuleCategories = new HashedSet<SubModuleCategory>();
-
-        /// <summary>
-        ///     The sub module categories modified.
-        /// </summary>
-        private ISet<SubModuleCategory> subModuleCategoriesModified = new HashedSet<SubModuleCategory>();
-
-        /// <summary>
-        ///     The theme attributes created.
-        /// </summary>
-        private ISet<ThemeAttribute> themeAttributesCreated = new HashedSet<ThemeAttribute>();
-
-        /// <summary>
-        ///     The theme attributes modified.
-        /// </summary>
-        private ISet<ThemeAttribute> themeAttributesModified = new HashedSet<ThemeAttribute>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
         ///     Gets or sets the ac sessions.
         /// </summary>
-        public virtual ISet<ACSession> ACSessions
-        {
-            get
-            {
-                return this.acSessions;
-            }
-
-            set
-            {
-                this.acSessions = value;
-            }
-        }
+        public virtual IList<ACSession> ACSessions { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the activations.
         /// </summary>
-        public virtual ISet<UserActivation> Activations
-        {
-            get
-            {
-                return this.activations;
-            }
-
-            set
-            {
-                this.activations = value;
-            }
-        }
+        public virtual IList<UserActivation> Activations { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the age of a user.
@@ -129,34 +51,12 @@
         /// <summary>
         /// Gets or sets the distractors created.
         /// </summary>
-        public virtual ISet<Distractor> DistractorsCreated
-        {
-            get
-            {
-                return this.distractorsCreated;
-            }
-
-            set
-            {
-                this.distractorsCreated = value;
-            }
-        }
+        public virtual IList<Distractor> DistractorsCreated { get; protected set; }
 
         /// <summary>
         /// Gets or sets the distractors modified.
         /// </summary>
-        public virtual ISet<Distractor> DistractorsModified
-        {
-            get
-            {
-                return this.distractorsModified;
-            }
-
-            set
-            {
-                this.distractorsModified = value;
-            }
-        }
+        public virtual IList<Distractor> DistractorsModified { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the email.
@@ -166,18 +66,7 @@
         /// <summary>
         ///     Gets or sets the ac sessions.
         /// </summary>
-        public virtual ISet<File> Files
-        {
-            get
-            {
-                return this.files;
-            }
-
-            set
-            {
-                this.files = value;
-            }
-        }
+        public virtual IList<File> Files { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the first name.
@@ -208,18 +97,7 @@
         /// <summary>
         ///     Gets or sets the ac sessions.
         /// </summary>
-        public virtual ISet<UserLoginHistory> LoginHistory
-        {
-            get
-            {
-                return this.loginHistory;
-            }
-
-            set
-            {
-                this.loginHistory = value;
-            }
-        }
+        public virtual IList<UserLoginHistory> LoginHistory { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the created by.
@@ -254,66 +132,22 @@
         /// <summary>
         ///     Gets or sets the sub module categories.
         /// </summary>
-        public virtual ISet<SubModuleCategory> SubModuleCategories
-        {
-            get
-            {
-                return this.subModuleCategories;
-            }
-
-            set
-            {
-                this.subModuleCategories = value;
-            }
-        }
+        public virtual IList<SubModuleCategory> SubModuleCategories { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the sub module categories modified.
         /// </summary>
-        public virtual ISet<SubModuleCategory> SubModuleCategoriesModified
-        {
-            get
-            {
-                return this.subModuleCategoriesModified;
-            }
-
-            set
-            {
-                this.subModuleCategoriesModified = value;
-            }
-        }
+        public virtual IList<SubModuleCategory> SubModuleCategoriesModified { get; protected set; }
 
         /// <summary>
         /// Gets or sets the theme attributes created.
         /// </summary>
-        public virtual ISet<ThemeAttribute> ThemeAttributesCreated
-        {
-            get
-            {
-                return this.themeAttributesCreated;
-            }
-
-            set
-            {
-                this.themeAttributesCreated = value;
-            }
-        }
+        public virtual IList<ThemeAttribute> ThemeAttributesCreated { get; protected set; }
 
         /// <summary>
         /// Gets or sets the theme attributes modified.
         /// </summary>
-        public virtual ISet<ThemeAttribute> ThemeAttributesModified
-        {
-            get
-            {
-                return this.themeAttributesModified;
-            }
-
-            set
-            {
-                this.themeAttributesModified = value;
-            }
-        }
+        public virtual IList<ThemeAttribute> ThemeAttributesModified { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the time zone id.

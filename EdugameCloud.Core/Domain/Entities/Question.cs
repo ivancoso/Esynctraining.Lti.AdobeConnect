@@ -1,9 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
     using System;
-
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-
     using Iesi.Collections.Generic;
 
     /// <summary>
@@ -11,60 +10,6 @@
     /// </summary>
     public class Question : Entity
     {
-        #region Fields
-
-        /// <summary>
-        /// The quiz question results.
-        /// </summary>
-        private ISet<QuizQuestionResult> quizQuestionResults = new HashedSet<QuizQuestionResult>();
-
-        /// <summary>
-        /// The survey question results.
-        /// </summary>
-        private ISet<SurveyQuestionResult> surveyQuestionResults = new HashedSet<SurveyQuestionResult>();
-
-        /// <summary>
-        /// The test question results.
-        /// </summary>
-        private ISet<TestQuestionResult> testQuestionResults = new HashedSet<TestQuestionResult>();
-
-        /// <summary>
-        /// The like questions.
-        /// </summary>
-        private ISet<QuestionForLikert> likertQuestions = new HashedSet<QuestionForLikert>();
-
-        /// <summary>
-        /// The rate questions.
-        /// </summary>
-        private ISet<QuestionForRate> rateQuestions = new HashedSet<QuestionForRate>();
-
-        /// <summary>
-        /// The true false questions.
-        /// </summary>
-        private ISet<QuestionForTrueFalse> trueFalseQuestions = new HashedSet<QuestionForTrueFalse>();
-
-        /// <summary>
-        /// The open answer questions.
-        /// </summary>
-        private ISet<QuestionForOpenAnswer> openAnswerQuestions = new HashedSet<QuestionForOpenAnswer>();
-
-        /// <summary>
-        /// The weight questions.
-        /// </summary>
-        private ISet<QuestionForWeightBucket> weightQuestions = new HashedSet<QuestionForWeightBucket>();
-
-        /// <summary>
-        /// The single multiple choice questions.
-        /// </summary>
-        private ISet<QuestionForSingleMultipleChoice> singleMultipleChoiceQuestions = new HashedSet<QuestionForSingleMultipleChoice>();
-
-        /// <summary>
-        /// The distractors.
-        /// </summary>
-        private ISet<Distractor> distractors = new HashedSet<Distractor>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -165,162 +110,52 @@
         /// <summary>
         /// Gets or sets the quiz question results.
         /// </summary>
-        public virtual ISet<QuizQuestionResult> QuizQuestionResults
-        {
-            get
-            {
-                return this.quizQuestionResults;
-            }
-
-            set
-            {
-                this.quizQuestionResults = value;
-            }
-        }
+        public virtual IList<QuizQuestionResult> QuizQuestionResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the quiz question results.
         /// </summary>
-        public virtual ISet<SurveyQuestionResult> SurveyQuestionResults
-        {
-            get
-            {
-                return this.surveyQuestionResults;
-            }
-
-            set
-            {
-                this.surveyQuestionResults = value;
-            }
-        }
+        public virtual IList<SurveyQuestionResult> SurveyQuestionResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the quiz question results.
         /// </summary>
-        public virtual ISet<TestQuestionResult> TestQuestionResults
-        {
-            get
-            {
-                return this.testQuestionResults;
-            }
-
-            set
-            {
-                this.testQuestionResults = value;
-            }
-        }
+        public virtual IList<TestQuestionResult> TestQuestionResults { get; protected set; }
 
         /// <summary>
         /// Gets or sets the distractors.
         /// </summary>
-        public virtual ISet<Distractor> Distractors
-        {
-            get
-            {
-                return this.distractors;
-            }
-
-            set
-            {
-                this.distractors = value;
-            }
-        }
+        public virtual IList<Distractor> Distractors { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for like.
         /// </summary>
-        public virtual ISet<QuestionForLikert> LikertQuestions
-        {
-            get
-            {
-                return this.likertQuestions;
-            }
-
-            set
-            {
-                this.likertQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForLikert> LikertQuestions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for rate.
         /// </summary>
-        public virtual ISet<QuestionForRate> RateQuestions
-        {
-            get
-            {
-                return this.rateQuestions;
-            }
-
-            set
-            {
-                this.rateQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForRate> RateQuestions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for true false questions.
         /// </summary>
-        public virtual ISet<QuestionForTrueFalse> TrueFalseQuestions
-        {
-            get
-            {
-                return this.trueFalseQuestions;
-            }
-
-            set
-            {
-                this.trueFalseQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForTrueFalse> TrueFalseQuestions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for open answer.
         /// </summary>
-        public virtual ISet<QuestionForOpenAnswer> OpenAnswerQuestions
-        {
-            get
-            {
-                return this.openAnswerQuestions;
-            }
-
-            set
-            {
-                this.openAnswerQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForOpenAnswer> OpenAnswerQuestions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for single multiple choice.
         /// </summary>
-        public virtual ISet<QuestionForSingleMultipleChoice> SingleMultipleChoiceQuestions
-        {
-            get
-            {
-                return this.singleMultipleChoiceQuestions;
-            }
-
-            set
-            {
-                this.singleMultipleChoiceQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForSingleMultipleChoice> SingleMultipleChoiceQuestions { get; protected set; }
 
         /// <summary>
         /// Gets or sets the questions for single multiple choice.
         /// </summary>
-        public virtual ISet<QuestionForWeightBucket> WeightBucketQuestions
-        {
-            get
-            {
-                return this.weightQuestions;
-            }
-
-            set
-            {
-                this.weightQuestions = value;
-            }
-        }
+        public virtual IList<QuestionForWeightBucket> WeightBucketQuestions { get; protected set; }
 
         /// <summary>
         ///     Gets or sets the sub module item.

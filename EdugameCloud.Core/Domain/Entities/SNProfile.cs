@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
     using Iesi.Collections.Generic;
 
@@ -8,20 +9,6 @@
     /// </summary>
     public class SNProfile : Entity
     {
-        #region Fields
-
-        /// <summary>
-        ///     The links.
-        /// </summary>
-        private ISet<SNLink> links = new HashedSet<SNLink>();
-
-        /// <summary>
-        ///     The services.
-        /// </summary>
-        private ISet<SNProfileSNService> services = new HashedSet<SNProfileSNService>();
-
-        #endregion
-
         #region Public Properties
 
         /// <summary>
@@ -62,18 +49,7 @@
         /// <summary>
         ///     Gets or sets the links.
         /// </summary>
-        public virtual ISet<SNLink> Links
-        {
-            get
-            {
-                return this.links;
-            }
-
-            set
-            {
-                this.links = value;
-            }
-        }
+        public virtual IList<SNLink> Links { get; protected set; }
 
         /// <summary>
         /// Gets or sets the map settings.
@@ -88,18 +64,7 @@
         /// <summary>
         ///     Gets or sets the services.
         /// </summary>
-        public virtual ISet<SNProfileSNService> Services
-        {
-            get
-            {
-                return this.services;
-            }
-
-            set
-            {
-                this.services = value;
-            }
-        }
+        public virtual IList<SNProfileSNService> Services { get; protected set; }
 
         #endregion
     }
