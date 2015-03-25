@@ -154,7 +154,7 @@
 
 	.NOTES
 	Author: Daniel Schroeder
-	Version: 1.5.0
+	Version: 1.5.5
 	
 	This script is designed to be called from PowerShell or ran directly from Windows Explorer.
 	If this script is ran without the $NuSpecFilePath, $ProjectFilePath, and $PackageFilePath parameters, it will automatically search for a .nuspec, project, or package file in the 
@@ -177,7 +177,7 @@ param
 
 	[parameter(Position=2,Mandatory=$false,HelpMessage="The new version number to use for the NuGet Package.",ParameterSetName="PackUsingNuSpec")]
     [parameter(Position=2,Mandatory=$false,HelpMessage="The new version number to use for the NuGet Package.",ParameterSetName="PackUsingProject")]
-	[ValidatePattern('(?i)(^(\d{1,5}(\.\d{1,5}){1,3})$)|(^(\d{1,5}\.\d{1,5}\.\d{1,5}-[a-zA-Z0-9\-\.\+]+)$)|(^(\$version\$)$)|(^$)')]	# This validation is duplicated in the Update-NuSpecFile function, so update it in both places.
+	[ValidatePattern('(?i)(^(\d{1,5}(\.\d{1,5}){1,3})$)|(^(\d{1,5}\.\d{1,5}\.\d{1,5}-[a-zA-Z0-9\-\.\+]+)$)|(^(\$version\$)$)|(^$)')]	# This validation is duplicated in the Update-NuSpecFile function, so update it in both places. This regex does not represent Sematic Versioning, but the versioning that NuGet.exe allows.
 	[Alias("Version")]
 	[Alias("V")]
 	[string] $VersionNumber,
@@ -234,7 +234,10 @@ param
 	[string] $NuGetExecutableFilePath,
 	
 	[Alias("UNE")]
-	[switch] $UpdateNuGetExecutable
+	[switch] $UpdateNuGetExecutable,
+	
+	[Alias("FSV")]
+	[switch] $ForceSemanticVersioning
 )
 
 # Turn on Strict Mode to help catch syntax-related errors.
@@ -263,7 +266,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName Microsoft.VisualBasic
 
 # Get the directory that this script is in.
-$THIS_SCRIPTS_DIRECTORY = Split-Path $script:MyInvocation.MyCommand.Path
+$THIS_SCRIPTS_DIRECTORY_PATH = Split-Path $script:MyInvocation.MyCommand.Path
 
 # The list of project type extensions that NuGet supports packing.
 $VALID_NUGET_PROJECT_TYPE_EXTENSIONS_ARRAY = @(".csproj", ".vbproj", ".fsproj")
@@ -297,7 +300,7 @@ $TF_EXE_KEYWORD_IN_PENDING_CHANGES_MESSAGE = 'change\(s\)'	# Escape regular expr
 $NUGET_EXE_SUCCESSFULLY_CREATED_PACKAGE_MESSAGE_REGEX = [regex] "(?i)(Successfully created package '(?<FilePath>.*?)'.)"
 $NUGET_EXE_SUCCESSFULLY_PUSHED_PACKAGE_MESSAGE = 'Your package was pushed.'
 $NUGET_EXE_SUCCESSFULLY_SAVED_API_KEY_MESSAGE = "The API Key '{0}' was saved for '{1}'."
-$NUGET_EXE_SUCCESSFULLY_UPDATED_TO_NEW_VERSION = "Update successful."
+$NUGET_EXE_SUCCESSFULLY_UPDATED_TO_NEW_VERSION = 'Update successful.'
 
 #==========================================================
 # Define functions used by the script.
@@ -311,8 +314,8 @@ trap [Exception]
 	
 	if (!$NoPromptForInputOnError)
 	{
-		# If we should prompt directly from Powershell.
-		if ($UsePowershellPrompts)
+		# If we should prompt directly from PowerShell.
+		if ($UsePowerShellPrompts)
 		{
 			Write-Host "Press any key to continue ..."
 			$x = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp")
@@ -330,7 +333,7 @@ trap [Exception]
 function Get-NuSpecBackupFilePath { return "$NuSpecFilePath.backup" }
 
 # PowerShell v2.0 compatible version of [string]::IsNullOrWhitespace.
-function String-IsNullOrWhitespace([string] $string)
+function Test-StringIsNullOrWhitespace([string] $string)
 {
     if ($string -ne $null) { $string = $string.Trim() }
     return [string]::IsNullOrEmpty($string)
@@ -339,14 +342,29 @@ function String-IsNullOrWhitespace([string] $string)
 # Function to update the $NuSpecFilePath (.nuspec file) with the appropriate information before using it to create the NuGet package.
 function Update-NuSpecFile
 {
-    # If we dont' have a NuSpec file to update, throw an error that something went wrong.
+	Write-Verbose "Starting process to update the nuspec file '$NuSpecFilePath'..."
+
+    # If we don't have a NuSpec file to update, throw an error that something went wrong.
     if (!(Test-Path $NuSpecFilePath))
     {
         throw "The Update-NuSpecFile function was called with an invalid NuSpecFilePath; this should not happen. There must be a bug in this script."
     }
 
-    # Get the NuSpec file contents before we make any changes to it, so we can determine if we did in fact make changes to it later (and undo the checkout from TFS if we didn't).
+	# Validate that the NuSpec file is a valid xml file.
+	try
+	{
+		$nuSpecXml = New-Object System.Xml.XmlDocument
+		$nuSpecXml.Load($NuSpecFilePath)	# Will throw an exception if it is unable to load the xml properly.
+		$nuSpecXml = $null					# Release the memory.
+	}
+	catch
+	{
+		throw ("An error occurred loading the nuspec xml file '{0}': {1}" -f $NuSpecFilePath, $_.Exception.Message)
+	}
+
+    # Get the NuSpec file contents and Last Write Time before we make any changes to it, so we can determine if we did in fact make changes to it later (and undo the checkout from TFS if we didn't).
     $script:nuSpecFileContentsBeforeCheckout = [System.IO.File]::ReadAllText($NuSpecFilePath)
+	$script:nuSpecLastWriteTimeBeforeCheckout = [System.IO.File]::GetLastWriteTime($NuSpecFilePath)
 
 	# Try and check the file out of TFS.
     $script:nuSpecFileWasAlreadyCheckedOut = Tfs-IsItemCheckedOut -Path $NuSpecFilePath
@@ -362,7 +380,7 @@ function Update-NuSpecFile
 	$currentVersionNumber = Get-NuSpecVersionNumber -NuSpecFilePath $NuSpecFilePath
 
 	# If an explicit Version Number was not provided, prompt for it.
-	if (String-IsNullOrWhitespace $VersionNumber)
+	if (Test-StringIsNullOrWhitespace $VersionNumber)
 	{
 		# If we shouldn't prompt for a version number, just use the existing one from the NuSpec file (if it exists).
 		if ($NoPromptForVersionNumber)
@@ -374,8 +392,8 @@ function Update-NuSpecFile
 		{
 			$promptMessage = 'Enter the NuGet package version number to use (x.x[.x.x] or $version$ if packing a project file)'
 			
-			# If we should prompt directly from Powershell.
-			if ($UsePowershellPrompts)
+			# If we should prompt directly from PowerShell.
+			if ($UsePowerShellPrompts)
 			{
 				$VersionNumber = Read-Host "$promptMessage. Current value in the .nuspec file is:`n$currentVersionNumber`n"
 			}
@@ -387,13 +405,12 @@ function Update-NuSpecFile
 		}
 		
 		# The script's parameter validation does not seem to be enforced (probably because this is inside a function), so re-enforce it here.
-        # This validation is duplicated in the script's parameter validation, so update it in both places.
-		$rxVersionNumberValidation = [regex] '(?i)(^(\d{1,5}(\.\d{1,5}){1,3})$)|(^(\d{1,5}\.\d{1,5}\.\d{1,5}-[a-zA-Z0-9\-\.\+]+)$)|(^(\$version\$)$)|(^$)'
+		$rxVersionNumberValidation = [regex] '(?i)(^(\d{1,5}(\.\d{1,5}){1,3})$)|(^(\d{1,5}\.\d{1,5}\.\d{1,5}-[a-zA-Z0-9\-\.\+]+)$)|(^(\$version\$)$)|(^$)'	# This validation is duplicated in the Update-NuSpecFile function, so update it in both places. This regex does not represent Sematic Versioning, but the versioning that NuGet.exe allows.
 		
 		# If the user cancelled the prompt or did not provide a valid version number, exit the script.
-		if ((String-IsNullOrWhitespace $VersionNumber) -or !$rxVersionNumberValidation.IsMatch($VersionNumber))
+		if ((Test-StringIsNullOrWhitespace $VersionNumber) -or !$rxVersionNumberValidation.IsMatch($VersionNumber))
 		{
-			throw "A valid version number to use for the NuGet package was not provided, so exiting script."
+			throw "A valid version number to use for the NuGet package was not provided, so exiting script. The version number provided was '$VersionNumber', which does not conform to the Semantic Versioning guidelines specified at http://semver.org."
 		}
 	}
 	
@@ -407,7 +424,7 @@ function Update-NuSpecFile
 	$currentReleaseNotes = Get-NuSpecReleaseNotes -NuSpecFilePath $NuSpecFilePath
 	
 	# If the Release Notes were not provided, prompt for them.
-	if (String-IsNullOrWhitespace $ReleaseNotes)
+	if (Test-StringIsNullOrWhitespace $ReleaseNotes)
 	{		
 		# If we shouldn't prompt for the release notes, just use the existing ones from the NuSpec file (if it exists).
 		if ($NoPromptForReleaseNotes)
@@ -419,8 +436,8 @@ function Update-NuSpecFile
 		{
 			$promptMessage = "Please enter the release notes to include in the new NuGet package"
 			
-			# If we should prompt directly from Powershell.
-			if ($UsePowershellPrompts)
+			# If we should prompt directly from PowerShell.
+			if ($UsePowerShellPrompts)
 			{
 				$ReleaseNotes = Read-Host "$promptMessage. Current value in the .nuspec file is:`n$currentReleaseNotes`n"
 			}
@@ -429,13 +446,13 @@ function Update-NuSpecFile
 			{
 				$ReleaseNotes = Read-MultiLineInputBoxDialog -Message "$promptMessage`:" -WindowTitle "Enter Release Notes For New Package" -DefaultText $currentReleaseNotes
 			}
+			
+			# If the user cancelled the release notes prompt, exit the script.
+			if ($ReleaseNotes -eq $null)
+			{ 
+				throw "User cancelled the Release Notes prompt, so exiting script."
+			}
 		}		
-	}
-	
-	# If the user cancelled the release notes prompt, exit the script.
-	if ($ReleaseNotes -eq $null)
-	{ 
-		throw "User cancelled the Release Notes prompt, so exiting script."
 	}
 
 	# Insert the given Release Notes into the .nuspec file if some were provided, and they are different than the current ones.
@@ -443,6 +460,8 @@ function Update-NuSpecFile
 	{
 		Set-NuSpecReleaseNotes -NuSpecFilePath $NuSpecFilePath -NewReleaseNotes $ReleaseNotes
 	}
+	
+	Write-Verbose "Finished process to update the nuspec file '$NuSpecFilePath'."
 }
 
 function Get-NuSpecVersionNumber([parameter(Position=1,Mandatory=$true)][ValidateScript({Test-Path $_ -PathType Leaf})][string] $NuSpecFilePath)
@@ -564,7 +583,7 @@ function Read-OpenFileDialog([string]$WindowTitle, [string]$InitialDirectory, [s
 	Add-Type -AssemblyName System.Windows.Forms
 	$openFileDialog = New-Object System.Windows.Forms.OpenFileDialog
 	$openFileDialog.Title = $WindowTitle
-	if (!(String-IsNullOrWhitespace $InitialDirectory)) { $openFileDialog.InitialDirectory = $InitialDirectory }
+	if (!(Test-StringIsNullOrWhitespace $InitialDirectory)) { $openFileDialog.InitialDirectory = $InitialDirectory }
 	$openFileDialog.Filter = $Filter
 	if ($AllowMultiSelect) { $openFileDialog.MultiSelect = $true }
 	$openFileDialog.ShowHelp = $true	# Without this line the ShowDialog() function may hang depending on system configuration and running from console vs. ISE.
@@ -589,113 +608,113 @@ function Read-InputBoxDialog([string]$Message, [string]$WindowTitle, [string]$De
 function Read-MultiLineInputBoxDialog([string]$Message, [string]$WindowTitle, [string]$DefaultText)
 {
 <#
-	.SYNOPSIS
-	Prompts the user with a multi-line input box and returns the text they enter, or null if they cancelled the prompt.
-	
-	.DESCRIPTION
-	Prompts the user with a multi-line input box and returns the text they enter, or null if they cancelled the prompt.
-	
-	.PARAMETER Message
-	The message to display to the user explaining what text we are asking them to enter.
-	
-	.PARAMETER WindowTitle
-	The text to display on the prompt window's title.
-	
-	.PARAMETER DefaultText
-	The default text to show in the input box.
-	
-	.EXAMPLE
-	$userText = Read-MultiLineInputDialog "Input some text please:" "Get User's Input"
-	
-	Shows how to create a simple prompt to get mutli-line input from a user.
-	
-	.EXAMPLE
-	# Setup the default multi-line address to fill the input box with.
-	$defaultAddress = @'
-	John Doe
-	123 St.
-	Some Town, SK, Canada
-	A1B 2C3
-	'@
-	
-	$address = Read-MultiLineInputDialog "Please enter your full address, including name, street, city, and postal code:" "Get User's Address" $defaultAddress
-	if ($address -eq $null)
-	{
-		Write-Error "You pressed the Cancel button on the multi-line input box."
-	}
-	
-	Prompts the user for their address and stores it in a variable, pre-filling the input box with a default multi-line address.
-	If the user pressed the Cancel button an error is written to the console.
-	
-	.EXAMPLE
-	$inputText = Read-MultiLineInputDialog -Message "If you have a really long message you can break it apart`nover two lines with the powershell newline character:" -WindowTitle "Window Title" -DefaultText "Default text for the input box."
-	
-	Shows how to break the second parameter (Message) up onto two lines using the powershell newline character (`n).
-	If you break the message up into more than two lines the extra lines will be hidden behind or show ontop of the TextBox.
-	
-	.NOTES
-	Name: Show-MultiLineInputDialog
-	Author: Daniel Schroeder (originally based on the code shown at http://technet.microsoft.com/en-us/library/ff730941.aspx)
-	Version: 1.0
+    .SYNOPSIS
+    Prompts the user with a multi-line input box and returns the text they enter, or null if they cancelled the prompt.
+     
+    .DESCRIPTION
+    Prompts the user with a multi-line input box and returns the text they enter, or null if they cancelled the prompt.
+     
+    .PARAMETER Message
+    The message to display to the user explaining what text we are asking them to enter.
+     
+    .PARAMETER WindowTitle
+    The text to display on the prompt window's title.
+     
+    .PARAMETER DefaultText
+    The default text to show in the input box.
+     
+    .EXAMPLE
+    $userText = Read-MultiLineInputDialog "Input some text please:" "Get User's Input"
+     
+    Shows how to create a simple prompt to get mutli-line input from a user.
+     
+    .EXAMPLE
+    # Setup the default multi-line address to fill the input box with.
+    $defaultAddress = @'
+    John Doe
+    123 St.
+    Some Town, SK, Canada
+    A1B 2C3
+    '@
+     
+    $address = Read-MultiLineInputDialog "Please enter your full address, including name, street, city, and postal code:" "Get User's Address" $defaultAddress
+    if ($address -eq $null)
+    {
+        Write-Error "You pressed the Cancel button on the multi-line input box."
+    }
+     
+    Prompts the user for their address and stores it in a variable, pre-filling the input box with a default multi-line address.
+    If the user pressed the Cancel button an error is written to the console.
+     
+    .EXAMPLE
+    $inputText = Read-MultiLineInputDialog -Message "If you have a really long message you can break it apart`nover two lines with the powershell newline character:" -WindowTitle "Window Title" -DefaultText "Default text for the input box."
+     
+    Shows how to break the second parameter (Message) up onto two lines using the powershell newline character (`n).
+    If you break the message up into more than two lines the extra lines will be hidden behind or show ontop of the TextBox.
+     
+    .NOTES
+    Name: Show-MultiLineInputDialog
+    Author: Daniel Schroeder (originally based on the code shown at http://technet.microsoft.com/en-us/library/ff730941.aspx)
+    Version: 1.0
 #>
-	Add-Type -AssemblyName System.Drawing
-	Add-Type -AssemblyName System.Windows.Forms
-	
-	# Create the Label.
-	$label = New-Object System.Windows.Forms.Label
-	$label.Location = New-Object System.Drawing.Size(10,10) 
-	$label.Size = New-Object System.Drawing.Size(280,20)
-	$label.AutoSize = $true
-	$label.Text = $Message
-	
-	# Create the TextBox used to capture the user's text.
-	$textBox = New-Object System.Windows.Forms.TextBox 
-	$textBox.Location = New-Object System.Drawing.Size(10,40) 
-	$textBox.Size = New-Object System.Drawing.Size(575,200)
-	$textBox.AcceptsReturn = $true
-	$textBox.AcceptsTab = $false
-	$textBox.Multiline = $true
-	$textBox.ScrollBars = 'Both'
-	$textBox.Text = $DefaultText
-	
-	# Create the OK button.
-	$okButton = New-Object System.Windows.Forms.Button
-	$okButton.Location = New-Object System.Drawing.Size(510,250)
-	$okButton.Size = New-Object System.Drawing.Size(75,25)
-	$okButton.Text = "OK"
-	$okButton.Add_Click({ $form.Tag = $textBox.Text; $form.Close() })
-	
-	# Create the Cancel button.
-	$cancelButton = New-Object System.Windows.Forms.Button
-	$cancelButton.Location = New-Object System.Drawing.Size(415,250)
-	$cancelButton.Size = New-Object System.Drawing.Size(75,25)
-	$cancelButton.Text = "Cancel"
-	$cancelButton.Add_Click({ $form.Tag = $null; $form.Close() })
-	
-	# Create the form.
-	$form = New-Object System.Windows.Forms.Form 
-	$form.Text = $WindowTitle
-	$form.Size = New-Object System.Drawing.Size(610,320)
-	$form.FormBorderStyle = 'FixedSingle'
-	$form.StartPosition = "CenterScreen"
-	$form.AutoSizeMode = 'GrowAndShrink'
-	$form.Topmost = $True
-	$form.AcceptButton = $okButton
-	$form.CancelButton = $cancelButton
-	$form.ShowInTaskbar = $true
-	
-	# Add all of the controls to the form.
-	$form.Controls.Add($label)
-	$form.Controls.Add($textBox)
-	$form.Controls.Add($okButton)
-	$form.Controls.Add($cancelButton)
-	
-	# Initialize and show the form.
-	$form.Add_Shown({$form.Activate()})
-	$form.ShowDialog() > $null	# Trash the text of the button that was clicked.
-	
-	# Return the text that the user entered.
-	return $form.Tag
+    Add-Type -AssemblyName System.Drawing
+    Add-Type -AssemblyName System.Windows.Forms
+     
+    # Create the Label.
+    $label = New-Object System.Windows.Forms.Label
+    $label.Location = New-Object System.Drawing.Size(10,10)
+    $label.Size = New-Object System.Drawing.Size(280,20)
+    $label.AutoSize = $true
+    $label.Text = $Message
+     
+    # Create the TextBox used to capture the user's text.
+    $textBox = New-Object System.Windows.Forms.TextBox
+    $textBox.Location = New-Object System.Drawing.Size(10,40)
+    $textBox.Size = New-Object System.Drawing.Size(575,200)
+    $textBox.AcceptsReturn = $true
+    $textBox.AcceptsTab = $false
+    $textBox.Multiline = $true
+    $textBox.ScrollBars = 'Both'
+    $textBox.Text = $DefaultText
+     
+    # Create the OK button.
+    $okButton = New-Object System.Windows.Forms.Button
+    $okButton.Location = New-Object System.Drawing.Size(415,250)
+    $okButton.Size = New-Object System.Drawing.Size(75,25)
+    $okButton.Text = "OK"
+    $okButton.Add_Click({ $form.Tag = $textBox.Text; $form.Close() })
+     
+    # Create the Cancel button.
+    $cancelButton = New-Object System.Windows.Forms.Button
+    $cancelButton.Location = New-Object System.Drawing.Size(510,250)
+    $cancelButton.Size = New-Object System.Drawing.Size(75,25)
+    $cancelButton.Text = "Cancel"
+    $cancelButton.Add_Click({ $form.Tag = $null; $form.Close() })
+     
+    # Create the form.
+    $form = New-Object System.Windows.Forms.Form
+    $form.Text = $WindowTitle
+    $form.Size = New-Object System.Drawing.Size(610,320)
+    $form.FormBorderStyle = 'FixedSingle'
+    $form.StartPosition = "CenterScreen"
+    $form.AutoSizeMode = 'GrowAndShrink'
+    $form.Topmost = $True
+    $form.AcceptButton = $okButton
+    $form.CancelButton = $cancelButton
+    $form.ShowInTaskbar = $true
+     
+    # Add all of the controls to the form.
+    $form.Controls.Add($label)
+    $form.Controls.Add($textBox)
+    $form.Controls.Add($okButton)
+    $form.Controls.Add($cancelButton)
+     
+    # Initialize and show the form.
+    $form.Add_Shown({$form.Activate()})
+    $form.ShowDialog() > $null   # Trash the text of the button that was clicked.
+     
+    # Return the text that the user entered.
+    return $form.Tag
 }
 
 function Get-TfExecutablePath
@@ -742,7 +761,7 @@ function Tfs-Checkout
 	$tfPath = Get-TfExecutablePath
 
     # If we couldn't find TF.exe, just return without doing anything.
-    if (String-IsNullOrWhitespace $tfPath) 
+    if (Test-StringIsNullOrWhitespace $tfPath) 
     {
         Write-Verbose "Unable to locate TF.exe, so will skip attempting to check '$Path' out of TFS source control." 
         return 
@@ -752,7 +771,7 @@ function Tfs-Checkout
 	$tfCheckoutCommand = "& ""$tfPath"" checkout /lock:none ""$Path"""
 	if ($Recursive) { $tfCheckoutCommand += " /recursive" }
 	
-	# Check the file out of TFS, eating any output.
+	# Check the file out of TFS, eating any output and errors.
 	Write-Verbose "About to run command '$tfCheckoutCommand'."
 	Invoke-Expression -Command $tfCheckoutCommand 2>&1 > $null
 }
@@ -771,24 +790,25 @@ function Tfs-IsItemCheckedOut
 	$tfPath = Get-TfExecutablePath
 
     # If we couldn't find TF.exe, just return without doing anything.
-    if (String-IsNullOrWhitespace $tfPath) 
+    if (Test-StringIsNullOrWhitespace $tfPath) 
     {
         Write-Verbose "Unable to locate TF.exe, so will skip attempting to check if '$Path' is checked out of TFS source control." 
         return $null
     }
 	
 	# Construct the status command to run.
-	$tfCheckoutCommand = "& ""$tfPath"" status ""$Path"""
-	if ($Recursive) { $tfCheckoutCommand += " /recursive" }
+	$tfStatusCommand = "& ""$tfPath"" status ""$Path"""
+	if ($Recursive) { $tfStatusCommand += " /recursive" }
 	
-	# Check the file out of TFS, capturing the output.
-	$status = (Invoke-Expression -Command $tfCheckoutCommand 2>&1)
+	# Check the file out of TFS, capturing the output and errors.
+	Write-Verbose "About to run command '$tfStatusCommand'."
+	$status = (Invoke-Expression -Command $tfStatusCommand 2>&1)
 
     # Get the escaped path of the file or directory to search the status output for.
     $escapedPath = $Path.Replace('\', '\\')
 
     # Examine the returned text to return if the given Path is checked out or not.
-    if ((String-IsNullOrWhitespace $status) -or ($status -imatch $TF_EXE_NO_WORKING_FOLDER_MAPPING_ERROR_MESSAGE)) { return $null }	# An error was returned, so likely TFS is not used for this item.
+    if ((Test-StringIsNullOrWhitespace $status) -or ($status -imatch $TF_EXE_NO_WORKING_FOLDER_MAPPING_ERROR_MESSAGE)) { return $null }	# An error was returned, so likely TFS is not used for this item.
     elseif ($status -imatch $TF_EXE_NO_PENDING_CHANGES_MESSAGE) { return $false }	# The item was found in TFS, but is not checked out.
     elseif ($status -imatch $escapedPath -and $status -imatch $TF_EXE_KEYWORD_IN_PENDING_CHANGES_MESSAGE) { return $true }	# If the file path and "change(s)" are in the message then it means the path is checked out.
     else { return $false }	# Else we're not sure, so return that it is not checked out.
@@ -808,7 +828,7 @@ function Tfs-Undo
 	$tfPath = Get-TfExecutablePath
 
     # If we couldn't find TF.exe, just return without doing anything.
-    if (String-IsNullOrWhitespace $tfPath) 
+    if (Test-StringIsNullOrWhitespace $tfPath) 
     {
         Write-Verbose "Unable to locate TF.exe, so will skip attempting to undo '$Path' from TFS source control." 
         return 
@@ -818,7 +838,7 @@ function Tfs-Undo
 	$tfCheckoutCommand = "& ""$tfPath"" undo ""$Path"" /noprompt"
 	if ($Recursive) { $tfCheckoutCommand += " /recursive" }
 	
-	# Check the file out of TFS, eating any output.
+	# Check the file out of TFS, eating any output and errors.
 	Write-Verbose "About to run command '$tfCheckoutCommand'."
 	Invoke-Expression -Command $tfCheckoutCommand 2>&1 > $null
 }
@@ -863,10 +883,14 @@ function Get-NuSpecsAssociatedProjectFilePath([parameter(Position=1,Mandatory=$t
 # Define some variables that we need to access within both the Try and Finally blocks of the script.
 $script:nuSpecFileWasAlreadyCheckedOut = $false
 $script:nuSpecFileContentsBeforeCheckout = $null
+$script:nuSpecLastWriteTimeBeforeCheckout = $null
 
 # Display the time that this script started running.
 $scriptStartTime = Get-Date
 Write-Verbose "New-NuGetPackage script started running at $($scriptStartTime.TimeOfDay.ToString())."
+
+# Display the version of PowerShell being used to run the script, as this can help solve some problems that are hard to reproduce on other machines.
+Write-Verbose "Using PowerShell Version: $($PSVersionTable.PSVersion.ToString())."
 
 try
 {
@@ -880,16 +904,16 @@ try
 	}
 	
 	# If a path to a NuSpec, Project, or Package file to use was not provided, look for one in the same directory as this script or prompt for one.
-	if ((String-IsNullOrWhitespace $NuSpecFilePath) -and (String-IsNullOrWhitespace $ProjectFilePath) -and (String-IsNullOrWhitespace $PackageFilePath))
+	if ((Test-StringIsNullOrWhitespace $NuSpecFilePath) -and (Test-StringIsNullOrWhitespace $ProjectFilePath) -and (Test-StringIsNullOrWhitespace $PackageFilePath))
 	{
 		# Get all of the .nuspec files in the script's directory.
-		$nuSpecFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY\*" -Include "*.nuspec" -Name
+		$nuSpecFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY_PATH\*" -Include "*.nuspec" -Name
 		
 		# Get all of the project files in the script's directory.
-		$projectFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY\*" -Include $VALID_NUGET_PROJECT_TYPE_EXTENSIONS_WITH_WILDCARD_ARRAY -Name
+		$projectFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY_PATH\*" -Include $VALID_NUGET_PROJECT_TYPE_EXTENSIONS_WITH_WILDCARD_ARRAY -Name
 
         # Get all of the NuGet package files in this script's directory.
-        $packageFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY\*" -Include "*.nupkg" -Name
+        $packageFiles = Get-ChildItem "$THIS_SCRIPTS_DIRECTORY_PATH\*" -Include "*.nupkg" -Name
 	
 		# Get the number of files found.
 		$numberOfNuSpecFilesFound = @($nuSpecFiles).Length
@@ -899,7 +923,7 @@ try
 		# If we only found one project file and no package files, see if we should use the project file.
 		if (($numberOfProjectFilesFound -eq 1) -and ($numberOfPackageFilesFound -eq 0))
 		{
-			$projectPath = Join-Path $THIS_SCRIPTS_DIRECTORY ($projectFiles | Select-Object -First 1)
+			$projectPath = Join-Path $THIS_SCRIPTS_DIRECTORY_PATH ($projectFiles | Select-Object -First 1)
 			$projectsNuSpecFilePath = Get-ProjectsAssociatedNuSpecFilePath -ProjectFilePath $projectPath
 			
 			# If we didn't find any .nuspec files, then use this project file.
@@ -911,8 +935,8 @@ try
 			elseif ($numberOfNuSpecFilesFound -eq 1)
 			{
 				# If the .nuspec file belongs to this project file, use this project file.
-				$nuSpecFilePathInThisScriptsDirectory = Join-Path $THIS_SCRIPTS_DIRECTORY ($nuSpecFiles | Select-Object -First 1)
-				if ((!(String-IsNullOrWhitespace $projectsNuSpecFilePath)) -and ($projectsNuSpecFilePath -eq $nuSpecFilePathInThisScriptsDirectory))
+				$nuSpecFilePathInThisScriptsDirectory = Join-Path $THIS_SCRIPTS_DIRECTORY_PATH ($nuSpecFiles | Select-Object -First 1)
+				if ((!(Test-StringIsNullOrWhitespace $projectsNuSpecFilePath)) -and ($projectsNuSpecFilePath -eq $nuSpecFilePathInThisScriptsDirectory))
 				{
 					$ProjectFilePath = $projectPath
 				}
@@ -921,19 +945,19 @@ try
 		# Else if we only found one .nuspec file and no project or package files, use the .nuspec file.
 		elseif (($numberOfNuSpecFilesFound -eq 1) -and ($numberOfProjectFilesFound -eq 0) -and ($numberOfPackageFilesFound -eq 0))
 		{
-			$NuSpecFilePath = Join-Path $THIS_SCRIPTS_DIRECTORY ($nuSpecFiles | Select-Object -First 1)
+			$NuSpecFilePath = Join-Path $THIS_SCRIPTS_DIRECTORY_PATH ($nuSpecFiles | Select-Object -First 1)
 		}
         # Else if we only found one package file and no .nuspec or project files, use the package file.
         elseif (($numberOfPackageFilesFound -eq 1) -and ($numberOfNuSpecFilesFound -eq 0) -and ($numberOfProjectFilesFound -eq 0))
         {
-            $PackageFilePath = Join-Path $THIS_SCRIPTS_DIRECTORY ($packageFiles | Select-Object -First 1)
+            $PackageFilePath = Join-Path $THIS_SCRIPTS_DIRECTORY_PATH ($packageFiles | Select-Object -First 1)
         }
 		
 		# If we didn't find a clear .nuspec, project, or package file to use, prompt for one.
-		if ((String-IsNullOrWhitespace $NuSpecFilePath) -and (String-IsNullOrWhitespace $ProjectFilePath) -and (String-IsNullOrWhitespace $PackageFilePath))
+		if ((Test-StringIsNullOrWhitespace $NuSpecFilePath) -and (Test-StringIsNullOrWhitespace $ProjectFilePath) -and (Test-StringIsNullOrWhitespace $PackageFilePath))
 		{
-			# If we should prompt directly from Powershell.
-			if ($UsePowershellPrompts)
+			# If we should prompt directly from PowerShell.
+			if ($UsePowerShellPrompts)
 			{
 				# Construct the prompt message with all of the supported project extensions.
 				# $promptmessage should end up looking like: "Enter the path to the .nuspec or project file (.csproj, .vbproj, .fsproj) to pack, or the package file (.nupkg) to push"
@@ -965,11 +989,11 @@ try
 				$filterTypes = $filterTypes.Substring(0, $filterTypes.Length - 1)			# Trim off the last character, as it will be a ";".
 				$filter = "$filterMessage|$filterTypes"
 			
-				$filePathToUse = Read-OpenFileDialog -WindowTitle "Select the .nuspec or project file to pack, or the package file (.nupkg) to push..." -InitialDirectory $THIS_SCRIPTS_DIRECTORY -Filter $filter
+				$filePathToUse = Read-OpenFileDialog -WindowTitle "Select the .nuspec or project file to pack, or the package file (.nupkg) to push..." -InitialDirectory $THIS_SCRIPTS_DIRECTORY_PATH -Filter $filter
 			}
 			
 			# If the user cancelled the file dialog, throw an error since we don't have a .nuspec file to use.
-			if (String-IsNullOrWhitespace $filePathToUse)
+			if (Test-StringIsNullOrWhitespace $filePathToUse)
 			{
 				throw "No .nuspec, project, or package file was specified. You must specify a valid file to use."
 			}
@@ -979,7 +1003,7 @@ try
 			{
 				# If this .nuspec file is associated with a project file, prompt to see if they want to pack the project instead (as that is preferred).
 				$projectPath = Get-NuSpecsAssociatedProjectFilePath -NuSpecFilePath $filePathToUse
-				if (!(String-IsNullOrWhitespace $projectPath))
+				if (!(Test-StringIsNullOrWhitespace $projectPath))
 				{
                     # If we are not allowed to prompt the user, just assume we should only use the .nuspec file.
                     if ($NoPrompt)
@@ -991,8 +1015,8 @@ try
                     {
 					    $promptMessage = "The selected .nuspec file appears to be associated with the project file:`n`n$projectPath`n`nIt is generally preferred to pack the project file, and the .nuspec file will automatically get picked up.`nDo you want to pack the project file instead?"
 				
-					    # If we should prompt directly from Powershell.
-					    if ($UsePowershellPrompts)
+					    # If we should prompt directly from PowerShell.
+					    if ($UsePowerShellPrompts)
 					    {
 						    $promptMessage += " (Yes|No|Cancel)"
 						    $answer = Read-Host $promptMessage
@@ -1040,15 +1064,15 @@ try
 	}
 	
 	# Make sure we have the absolute file paths.
-	if (!(String-IsNullOrWhitespace $NuSpecFilePath)) { $NuSpecFilePath = Resolve-Path $NuSpecFilePath }
-	if (!(String-IsNullOrWhitespace $ProjectFilePath)) { $ProjectFilePath = Resolve-Path $ProjectFilePath }
-	if (!(String-IsNullOrWhitespace $PackageFilePath)) { $PackageFilePath = Resolve-Path $PackageFilePath }
+	if (!(Test-StringIsNullOrWhitespace $NuSpecFilePath)) { $NuSpecFilePath = Resolve-Path $NuSpecFilePath }
+	if (!(Test-StringIsNullOrWhitespace $ProjectFilePath)) { $ProjectFilePath = Resolve-Path $ProjectFilePath }
+	if (!(Test-StringIsNullOrWhitespace $PackageFilePath)) { $PackageFilePath = Resolve-Path $PackageFilePath }
 
     # If a path to the NuGet executable was not provided, try and find it.
-    if (String-IsNullOrWhitespace $NuGetExecutableFilePath)
+    if (Test-StringIsNullOrWhitespace $NuGetExecutableFilePath)
     {
         # If the NuGet executable is in the same directory as this script, use it.
-        $nuGetExecutablePathInThisDirectory = Join-Path $THIS_SCRIPTS_DIRECTORY "NuGet.exe"
+        $nuGetExecutablePathInThisDirectory = Join-Path $THIS_SCRIPTS_DIRECTORY_PATH "NuGet.exe"
         if (Test-Path $nuGetExecutablePathInThisDirectory)
         {
             $NuGetExecutableFilePath = $nuGetExecutablePathInThisDirectory
@@ -1075,45 +1099,66 @@ try
 	    $updateCommand = "& ""$NuGetExecutableFilePath"" update -self"
 
 		# Have the NuGet executable try and auto-update itself.
-		$updateOutput = [string]::Empty	# Variable to hold the NuGet.exe output.
 	    Write-Verbose "About to run Update command '$updateCommand'."
-	    Invoke-Expression -Command $updateCommand -OutVariable updateOutput > $null
+	    $updateOutput = (Invoke-Expression -Command $updateCommand | Out-String).Trim()
 		
-		# Convert the output of the above command from an ArrayList of strings to a single string and write it to the Verbose stream.
-		$updateOutput = $($updateOutput -join [Environment]::NewLine)
+		# Write the output of the above command to the Verbose stream.
 		Write-Verbose $updateOutput
 		
 		# If we have the path to the NuGet executable, we checked it out of TFS, and it did not auto-update itself, then undo the changes from TFS.
-		if ((Test-Path $NuGetExecutableFilePath) -and ($nuGetExecutableWasAlreadyCheckedOut -eq $false) -and !$updateOutput.EndsWith($NUGET_EXE_SUCCESSFULLY_UPDATED_TO_NEW_VERSION))
+		if ((Test-Path $NuGetExecutableFilePath) -and ($nuGetExecutableWasAlreadyCheckedOut -eq $false) -and !$updateOutput.EndsWith($NUGET_EXE_SUCCESSFULLY_UPDATED_TO_NEW_VERSION.Trim()))
 		{
 			Tfs-Undo -Path $NuGetExecutableFilePath
 		}
     }
+	
+	# Get and display the version of NuGet.exe that will be used. If NuGet.exe is not found an exception will be thrown automatically.
+	# Create the command to use to get the Nuget Help info.
+    $helpCommand = "& ""$NuGetExecutableFilePath"""
+
+	# Get the NuGet.exe Help output.
+    Write-Verbose "About to run Help command '$helpCommand'."
+    $helpOutput = (Invoke-Expression -Command $helpCommand | Out-String).Trim()	
+	
+	# If no Help output was retrieved, the NuGet.exe likely returned an error.
+	if (Test-StringIsNullOrWhitespace $helpOutput)
+	{
+		# Get the error information returned by NuGet.exe, and throw an error that we could not run NuGet.exe as expected.
+		$helpError = (Invoke-Expression -Command $helpCommand 2>&1 | Out-String).Trim()	
+		throw "NuGet information could not be retrieved by running '$NuGetExecutableFilePath'.`r`n`r`nRunning '$NuGetExecutableFilePath' returns the following information:`r`n`r`n$helpError"
+	}
+	
+	# Display the version of the NuGet.exe. This information is the first line of the NuGet Help output.
+	$nuGetVersionString = ($helpOutput -split "`r`n")[0]
+	Write-Verbose "Using $($nuGetVersionString)."
+	
+	# Declare the backup directory to create the NuGet Package in, as not all code paths will set it (i.e. when pushing an existing package), but we check it later.
+	$defaultDirectoryPathToPutNuGetPackageIn = $null
 
     # If we were not given a package file, then we need to pack something.
-    if (String-IsNullOrWhitespace $PackageFilePath)
+    if (Test-StringIsNullOrWhitespace $PackageFilePath)
     {
 	    # If we were given a Project to package.
-	    if (!(String-IsNullOrWhitespace $ProjectFilePath))
+	    if (!(Test-StringIsNullOrWhitespace $ProjectFilePath))
 	    {
 		    # Get the project's .nuspec file path, if it has a .nuspec file.
 		    $projectNuSpecFilePath = Get-ProjectsAssociatedNuSpecFilePath -ProjectFilePath $ProjectFilePath
 	
 		    # If this Project has a .nuspec that will be used to package with.
-		    if (!(String-IsNullOrWhitespace $projectNuSpecFilePath))
+		    if (!(Test-StringIsNullOrWhitespace $projectNuSpecFilePath))
 		    {
 			    # Update .nuspec file based on user input.
 			    $NuSpecFilePath = $projectNuSpecFilePath
 			    Update-NuSpecFile
 		    }
 		    # Else we aren't using a .nuspec file, so if a Version Number was given in the script parameters but not the pack parameters, add it to the pack parameters.
-		    elseif (!(String-IsNullOrWhitespace $VersionNumber) -and $PackOptions -notmatch '-Version')
+		    elseif (!(Test-StringIsNullOrWhitespace $VersionNumber) -and $PackOptions -notmatch '-Version')
 		    {
 			    $PackOptions += " -Version ""$VersionNumber"""
 		    }
 		
 		    # Save the directory that the project file is in as the directory to create the package in.
-		    $backupOutputDirectory = [System.IO.Path]::GetDirectoryName($ProjectFilePath)
+		    $defaultDirectoryPathToPutNuGetPackageIn = [System.IO.Path]::GetDirectoryName($ProjectFilePath)
 		
 		    # Record that we want to pack using the project file, not a NuSpec file.
 		    $fileToPack = $ProjectFilePath
@@ -1125,31 +1170,32 @@ try
 		    Update-NuSpecFile
 		
 		    # Save the directory that the .nuspec file is in as the directory to create the package in.
-		    $backupOutputDirectory = [System.IO.Path]::GetDirectoryName($NuSpecFilePath)
+		    $defaultDirectoryPathToPutNuGetPackageIn = [System.IO.Path]::GetDirectoryName($NuSpecFilePath)
 		
 		    # Record that we want to pack using the NuSpec file, not a project file.
 		    $fileToPack = $NuSpecFilePath
 	    }
 	
-	    # Make sure our Backup Output Directory is an absolute path.
-	    if (![System.IO.Path]::IsPathRooted($backupOutputDirectory))
+	    # Make sure our backup Output Directory is an absolute path.
+	    if (![System.IO.Path]::IsPathRooted($defaultDirectoryPathToPutNuGetPackageIn))
 	    {
-		    $backupOutputDirectory = Resolve-Path $directoryToPackFrom
+		    $defaultDirectoryPathToPutNuGetPackageIn = Resolve-Path $directoryToPackFrom
 	    }
 
-        $backupOutputDirectory = Join-Path $backupOutputDirectory $DEFAULT_DIRECTORY_TO_PUT_NUGET_PACKAGES_IN
+		# When an Output Directory is not explicitly provided, we want to put generated packages into their own directory.
+        $defaultDirectoryPathToPutNuGetPackageIn = Join-Path $defaultDirectoryPathToPutNuGetPackageIn $DEFAULT_DIRECTORY_TO_PUT_NUGET_PACKAGES_IN
 	
 	    # If the user did not specify an Output Directory.
 	    if ($PackOptions -notmatch '-OutputDirectory')
 	    {
-            # Insert our Backup Output Directory into the Additional Pack Options.
-            Write-Verbose "Specifying to use the default Output Directory '$backupOutputDirectory'."
-		    $PackOptions += " -OutputDirectory ""$backupOutputDirectory"""
+            # Insert our default Output Directory into the Additional Pack Options.
+            Write-Verbose "Specifying to use the default Output Directory '$defaultDirectoryPathToPutNuGetPackageIn'."
+		    $PackOptions += " -OutputDirectory ""$defaultDirectoryPathToPutNuGetPackageIn"""
 
             # Make sure the Output Directory we are adding exists.
-            if (!(Test-Path -Path $backupOutputDirectory))
+            if (!(Test-Path -Path $defaultDirectoryPathToPutNuGetPackageIn))
             {
-                New-Item -Path $backupOutputDirectory -ItemType Directory > $null
+                New-Item -Path $defaultDirectoryPathToPutNuGetPackageIn -ItemType Directory > $null
             }
 	    }
 
@@ -1158,12 +1204,10 @@ try
 		$packCommand = $packCommand -ireplace ';', '`;'		# Escape any semicolons so they are not interpreted as the start of a new command.
 
 		# Create the package.
-		$packOutput = [string]::Empty	# Variable to hold the NuGet.exe output.
 	    Write-Verbose "About to run Pack command '$packCommand'."
-	    Invoke-Expression -Command $packCommand -OutVariable packOutput > $null
+	    $packOutput = (Invoke-Expression -Command $packCommand | Out-String).Trim()
 	
-		# Convert the output of the above command from an ArrayList of strings to a single string and write it to the Verbose stream.
-		$packOutput = $($packOutput -join [Environment]::NewLine)
+		# Write the output of the above command to the Verbose stream.
 		Write-Verbose $packOutput
 	
 	    # Get the path the NuGet Package was created to, and write it to the output stream.
@@ -1171,6 +1215,9 @@ try
 	    if ($match.Success)
 	    {
 		    $nuGetPackageFilePath = $match.Groups["FilePath"].Value
+			
+			# Have this cmdlet return the path that the new NuGet Package was created to.
+			# This should be the only code that uses Write-Output, as it is the only thing that should be returned by the cmdlet.
 			Write-Output $nuGetPackageFilePath
 	    }
 	    else
@@ -1208,8 +1255,8 @@ try
 	{
 		$promptMessage = "Do you want to push this package:`n'$nuGetPackageFilePath'`nto the NuGet Gallery '$sourceToPushPackageTo'?"
 		
-		# If we should prompt directly from Powershell.
-		if ($UsePowershellPrompts)
+		# If we should prompt directly from PowerShell.
+		if ($UsePowerShellPrompts)
 		{
 			$promptMessage += " (Yes|No)"
 			$answer = Read-Host $promptMessage
@@ -1243,8 +1290,8 @@ try
             {
                 $promptMessage = "It appears that you do not have an API key saved on this PC for the source to push the package to '$sourceToPushPackageTo'.`n`nYou must provide an API key to push this package to the NuGet Gallery.`n`nPlease enter your API key"
 		
-		        # If we should prompt directly from Powershell.
-		        if ($UsePowershellPrompts)
+		        # If we should prompt directly from PowerShell.
+		        if ($UsePowerShellPrompts)
 		        {
 			        $apiKey = Read-Host $promptMessage
 		        }
@@ -1255,7 +1302,7 @@ try
 		        }
 		
 		        # If the user supplied an Api Key.
-                if (!(String-IsNullOrWhitespace $apiKey))
+                if (!(Test-StringIsNullOrWhitespace $apiKey))
                 {
                     # Add the given Api Key to the Push Options.
                     $PushOptions += " -ApiKey $apiKey"
@@ -1271,16 +1318,14 @@ try
 		$pushCommand = $pushCommand -ireplace ';', '`;'		# Escape any semicolons so they are not interpreted as the start of a new command.
 
         # Push the package to the gallery.
-		$pushOutput = [string]::Empty	# Variable to hold the NuGet.exe output.
 		Write-Verbose "About to run Push command '$pushCommand'."
-		Invoke-Expression -Command $pushCommand -OutVariable pushOutput > $null
+		$pushOutput = (Invoke-Expression -Command $pushCommand | Out-String).Trim()
 		
-		# Convert the output of the above command from an ArrayList of strings to a single string and write it to the Verbose stream.
-		$pushOutput = $($pushOutput -join [Environment]::NewLine)
+		# Write the output of the above command to the Verbose stream.
 		Write-Verbose $pushOutput
 
 		# If an error occurred while pushing the package, throw and error. Else it was pushed successfully.
-		if (!$pushOutput.EndsWith($NUGET_EXE_SUCCESSFULLY_PUSHED_PACKAGE_MESSAGE))
+		if (!$pushOutput.EndsWith($NUGET_EXE_SUCCESSFULLY_PUSHED_PACKAGE_MESSAGE.Trim()))
         {
             throw "Could not determine if package was pushed to gallery successfully. Perhaps an error occurred while pushing it. Look for errors from NuGet.exe above (in the console window), or in the following NuGet.exe output. You can also try running this command with the -Verbose switch for more information:{0}{1}" -f [Environment]::NewLine, $pushOutput
         }
@@ -1292,14 +1337,14 @@ try
             Write-Verbose "Deleting NuGet Package '$nuGetPackageFilePath'."
             Remove-Item -Path $nuGetPackageFilePath -Force
 
-            # If the package was output to the default directory, and the directory is now empty, delete the default directory too.
-            if (Test-Path $backupOutputDirectory)
+            # If the package was output to the default directory, and the directory is now empty, delete the default directory too since we would have created it above.
+            if (!(Test-StringIsNullOrWhitespace $defaultDirectoryPathToPutNuGetPackageIn) -and (Test-Path -Path $defaultDirectoryPathToPutNuGetPackageIn))
             {
-                [int]$numberOfFilesInDefaultOutputDirectory = ((Get-ChildItem -Path $backupOutputDirectory -Force) | Measure-Object).Count
-                if ((Split-Path -Path $nuGetPackageFilePath -Parent) -eq $backupOutputDirectory -and $numberOfFilesInDefaultOutputDirectory -eq 0)
+                [int]$numberOfFilesInDefaultOutputDirectory = ((Get-ChildItem -Path $defaultDirectoryPathToPutNuGetPackageIn -Force) | Measure-Object).Count
+                if ((Split-Path -Path $nuGetPackageFilePath -Parent) -eq $defaultDirectoryPathToPutNuGetPackageIn -and $numberOfFilesInDefaultOutputDirectory -eq 0)
                 {
-                    Write-Verbose "Deleting empty default NuGet package directory '$backupOutputDirectory'."
-                    Remove-Item -Path $backupOutputDirectory -Force
+                    Write-Verbose "Deleting empty default NuGet package directory '$defaultDirectoryPathToPutNuGetPackageIn'."
+                    Remove-Item -Path $defaultDirectoryPathToPutNuGetPackageIn -Force
                 }
             }
         }
@@ -1318,7 +1363,7 @@ try
 				$promptMessage = "Do you want to save the API key you provided on this PC so that you don't have to enter it again next time?"
 			
 				# If we should prompt directly from PowerShell.
-				if ($UsePowershellPrompts)
+				if ($UsePowerShellPrompts)
 				{
 					$promptMessage += " (Yes|No)"
 					$answer = Read-Host $promptMessage
@@ -1338,16 +1383,15 @@ try
 				$setApiKeyCommand = $setApiKeyCommand -ireplace ';', '`;'		# Escape any semicolons so they are not interpreted as the start of a new command.
 
 				# Save the Api key on this PC.
-				$setApiKeyOutput = [string]::Empty	# Variable to hold the NuGet.exe output.
 	            Write-Verbose "About to run command '$setApiKeyCommand'."
-	            Invoke-Expression -Command $setApiKeyCommand -OutVariable setApiKeyOutput
+	            $setApiKeyOutput = (Invoke-Expression -Command $setApiKeyCommand | Out-String).Trim()
 				
-				# Convert the output of the above command from an ArrayList of strings to a single string and write it to the Verbose stream.
-				$setApiKeyOutput = $($setApiKeyOutput -join [Environment]::NewLine)
+				# Write the output of the above command to the Verbose stream.
 				Write-Verbose $setApiKeyOutput
-
+				
+				# Determine if the API Key was saved successfully, and throw an error if it wasn't.
                 $expectedSuccessfulNuGetSetApiKeyOutput = ($NUGET_EXE_SUCCESSFULLY_SAVED_API_KEY_MESSAGE -f $apiKey, $sourceToPushPackageTo)	# "The API Key '$apiKey' was saved for '$sourceToPushPackageTo'."
-                if ($setApiKeyOutput -ne $expectedSuccessfulNuGetSetApiKeyOutput)
+                if ($setApiKeyOutput -ne $expectedSuccessfulNuGetSetApiKeyOutput.Trim())
                 {
                     throw "Could not determine if the API key was saved successfully. Perhaps an error occurred while saving it. Look for errors from NuGet.exe above (in the console window), or in the following NuGet.exe output. You can also try running this command with the -Verbose switch for more information:{0}{1}" -f [Environment]::NewLine, $packOutput
                 }
@@ -1360,7 +1404,7 @@ finally
     Write-Verbose "Performing any required New-NuGetPackage script cleanup..."
 
 	# If we have a NuSpec file path.
-	if (!(String-IsNullOrWhitespace $NuSpecFilePath))
+	if (!(Test-StringIsNullOrWhitespace $NuSpecFilePath))
 	{
 		# If we should revert any changes we made to the NuSpec file.
 		if ($DoNotUpdateNuSpecFile)
@@ -1377,9 +1421,25 @@ finally
 		# If we checked the NuSpec file out from TFS.
 		if ((Test-Path $NuSpecFilePath) -and ($script:nuSpecFileWasAlreadyCheckedOut -eq $false))
 		{
-			# If the NuSpec file should not be updated, or the contents have not been changed, try and undo our checkout from TFS.
+			# If the NuSpec file should not be updated, or the contents have not been changed.
 			$newNuSpecFileContents = [System.IO.File]::ReadAllText($NuSpecFilePath)
-			if ($DoNotUpdateNuSpecFile -or ($script:nuSpecFileContentsBeforeCheckout -eq $newNuSpecFileContents)) { Tfs-Undo -Path $NuSpecFilePath }
+			if ($DoNotUpdateNuSpecFile -or ($script:nuSpecFileContentsBeforeCheckout -eq $newNuSpecFileContents))
+			{
+				# Try and undo our checkout from TFS.
+				Tfs-Undo -Path $NuSpecFilePath
+				
+				# Also reset the file's LastWriteTime so that MSBuild does not always rebuild the project because it thinks the .nuspec file was modified after the project's .pdb file.
+				# If we recorded the NuSpec file's last write time, then reset it.
+				if ($script:nuSpecLastWriteTimeBeforeCheckout -ne $null)
+				{
+					# We first have to make sure the file is writable before trying to set the LastWriteTime, and then restore the Read-Only attribute if it was set before.
+					$nuspecFileInfo = New-Object System.IO.FileInfo($NuSpecFilePath)
+					$nuspecFileIsReadOnly = $nuspecFileInfo.IsReadOnly
+					$nuspecFileInfo.IsReadOnly = $false
+					[System.IO.File]::SetLastWriteTime($NuSpecFilePath, $script:nuSpecLastWriteTimeBeforeCheckout)
+					if ($nuspecFileIsReadOnly) { $nuspecFileInfo.IsReadOnly = $true }
+				}
+			}
 		}
 	}
 }
