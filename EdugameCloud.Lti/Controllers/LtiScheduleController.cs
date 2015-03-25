@@ -28,7 +28,7 @@
         /// <summary>
         ///     The company LMS model.
         /// </summary>
-        private readonly CompanyLmsModel companyLmsModel;
+        private readonly LmsCompanyModel lmsCompanyModel;
 
         /// <summary>
         /// The LMS session model.
@@ -68,7 +68,7 @@
         /// <param name="meetingSetup">
         /// The meeting Setup.
         /// </param>
-        /// <param name="companyLmsModel">
+        /// <param name="lmsCompanyModel">
         /// The company LMS Model.
         /// </param>
         /// <param name="lmsSessionModel">
@@ -86,7 +86,7 @@
         public LtiScheduleController(
             DlapAPI dlapApi, 
             MeetingSetup meetingSetup, 
-            CompanyLmsModel companyLmsModel, 
+            LmsCompanyModel lmsCompanyModel, 
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel, 
             ApplicationSettingsProvider settings, 
@@ -94,7 +94,7 @@
         {
             this.dlapApi = dlapApi;
             this.meetingSetup = meetingSetup;
-            this.companyLmsModel = companyLmsModel;
+            this.lmsCompanyModel = lmsCompanyModel;
             this.lmsSessionModel = lmsSessionModel;
             this.scheduleModel = scheduleModel;
             this.Settings = settings;
@@ -202,7 +202,7 @@
         /// <param name="brainHoneyCompany">
         /// The brain honey company.
         /// </param>
-        private static void AddToErrors(List<string> errors, string error, CompanyLms brainHoneyCompany)
+        private static void AddToErrors(List<string> errors, string error, LmsCompany brainHoneyCompany)
         {
             errors.Add(string.Format("Error with company {0}:{1}", brainHoneyCompany.With(x => x.LmsDomain), error));
         }
@@ -251,9 +251,9 @@
         {
             var errors = new List<string>();
             DlapAPI api = this.dlapApi;
-            IEnumerable<CompanyLms> brainHoneyCompanies =
-                this.companyLmsModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-            foreach (CompanyLms brainHoneyCompany in brainHoneyCompanies)
+            IEnumerable<LmsCompany> brainHoneyCompanies =
+                this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
+            foreach (LmsCompany brainHoneyCompany in brainHoneyCompanies)
             {
                 string error;
                 Session session = api.BeginBatch(out error, brainHoneyCompany);
@@ -460,7 +460,7 @@
         private List<LmsUserDTO> ProcessCourseCreated(
             Signal signal, 
             DlapAPI api, 
-            CompanyLms brainHoneyCompany, 
+            LmsCompany brainHoneyCompany, 
             Session session, 
             List<string> errors, 
             AdobeConnectProvider adobeConnectProvider, 
@@ -533,7 +533,7 @@
         /// </returns>
         private List<string> ProcessCourseDeleted(
             Signal signal, 
-            CompanyLms brainHoneyCompany, 
+            LmsCompany brainHoneyCompany, 
             List<string> errors, 
             AdobeConnectProvider adobeConnectProvider,
             string scoId)
@@ -582,7 +582,7 @@
 
         // ReSharper disable once UnusedParameter.Local
         private void ProcessSoleEnrollments(
-            CompanyLms brainHoneyCompany, 
+            LmsCompany brainHoneyCompany, 
             IEnumerable<Signal> soleEnrollments, 
             List<string> errors, 
             DlapAPI api, 
@@ -672,10 +672,10 @@
         /// <param name="signalId">
         /// The signal id.
         /// </param>
-        private void UpdateLastSignalId(CompanyLms brainHoneyCompany, long signalId)
+        private void UpdateLastSignalId(LmsCompany brainHoneyCompany, long signalId)
         {
             brainHoneyCompany.LastSignalId = signalId;
-            this.companyLmsModel.RegisterSave(brainHoneyCompany);
+            this.lmsCompanyModel.RegisterSave(brainHoneyCompany);
         }
 
         #endregion

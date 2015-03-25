@@ -24,7 +24,7 @@
             this.Map(x => x.AcConnectionMode).Default("0");
             this.Map(x => x.PrincipalId).Nullable();
 
-            this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
+            this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
 
             this.HasMany(x => x.LmsUserParameters).KeyColumn("lmsUserId").Cascade.Delete().Inverse();
         }

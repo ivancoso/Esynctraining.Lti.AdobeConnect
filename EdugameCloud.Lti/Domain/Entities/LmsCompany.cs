@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Domain.Entities
+﻿using System.Linq;
+
+namespace EdugameCloud.Lti.Domain.Entities
 {
     using System;
     using EdugameCloud.Lti.Extensions;
@@ -9,7 +11,7 @@
     /// <summary>
     /// The company LMS.
     /// </summary>
-    public class CompanyLms : Entity
+    public class LmsCompany : Entity
     {
         /// <summary>
         /// The LMS users.
@@ -248,6 +250,17 @@
             }
         }
 
+        public virtual ISet<LmsCompanySetting> Settings { get; set; }
+
+        public virtual bool DenyACUserCreation
+        {
+            get
+            {
+                bool denyACUserCreation = false;
+                var setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "DenyACUserCreation", true) == 0);
+                return setting != null && bool.TryParse(setting.Value, out denyACUserCreation) && denyACUserCreation;
+            }
+        }
         #endregion
     }
 }

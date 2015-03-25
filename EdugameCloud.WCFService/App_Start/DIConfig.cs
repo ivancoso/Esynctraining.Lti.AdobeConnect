@@ -119,7 +119,7 @@
         /// </param>
         private static void RegisterLtiComponents(IWindsorContainer container)
         {
-            Type modelsType = typeof(CompanyLmsModel);
+            Type modelsType = typeof(LmsCompanyModel);
             Assembly ltiAssmebly = modelsType.Assembly;
 
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());

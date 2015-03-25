@@ -38,11 +38,11 @@ namespace EdugameCloud.WCFService
         /// <summary>
         ///     Gets the company license model.
         /// </summary>
-        private CompanyLmsModel CompanyLmsModel
+        private LmsCompanyModel LmsCompanyModel
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                return IoC.Resolve<LmsCompanyModel>();
             }
         }
 
@@ -131,7 +131,7 @@ namespace EdugameCloud.WCFService
             if (this.IsValid(resultDto, out validationResult))
             {
                 bool isTransient = resultDto.id == 0;
-                CompanyLms entity = isTransient ? null : this.CompanyLmsModel.GetOneById(resultDto.id).Value;
+                LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
                 entity = this.ConvertDto(resultDto, entity);
                 if (isTransient)
                 {
@@ -139,10 +139,10 @@ namespace EdugameCloud.WCFService
                     entity.SharedSecret = Guid.NewGuid().ToString();
                 }
 
-                this.CompanyLmsModel.RegisterSave(entity);
+                this.LmsCompanyModel.RegisterSave(entity);
                 if (entity.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !resultDto.enableProxyToolMode)
                 {
-                    var lmsUser = entity.AdminUser ?? new LmsUser { CompanyLms = entity, UserId = "0" };
+                    var lmsUser = entity.AdminUser ?? new LmsUser { LmsCompany = entity, UserId = "0" };
 
                     lmsUser.Username = resultDto.lmsAdmin;
                     if (!string.IsNullOrEmpty(resultDto.lmsAdminPassword))
@@ -154,7 +154,7 @@ namespace EdugameCloud.WCFService
 
                     LmsUserModel.RegisterSave(lmsUser, true);
                     entity.AdminUser = lmsUser;
-                    CompanyLmsModel.RegisterSave(entity);
+                    LmsCompanyModel.RegisterSave(entity);
                 }
 
                 this.UpdateAdobeConnectFolder(isTransient, entity);
@@ -219,7 +219,7 @@ namespace EdugameCloud.WCFService
         /// <param name="instance">
         /// The instance.
         /// </param>
-        private void UpdateAdobeConnectFolder(bool isTransient, CompanyLms instance)
+        private void UpdateAdobeConnectFolder(bool isTransient, LmsCompany instance)
         {
             if (!isTransient && instance.UseUserFolder.GetValueOrDefault() == false)
             {
@@ -239,7 +239,7 @@ namespace EdugameCloud.WCFService
                     if (scoId != resultedId)
                     {
                         instance.ACScoId = resultedId;
-                        this.CompanyLmsModel.RegisterSave(instance);
+                        this.LmsCompanyModel.RegisterSave(instance);
                     }
                 }
             }
@@ -384,11 +384,11 @@ namespace EdugameCloud.WCFService
         /// The instance.
         /// </param>
         /// <returns>
-        /// The <see cref="CompanyLms"/>.
+        /// The <see cref="LmsCompany"/>.
         /// </returns>
-        private CompanyLms ConvertDto(CompanyLmsDTO dto, CompanyLms instance)
+        private LmsCompany ConvertDto(CompanyLmsDTO dto, LmsCompany instance)
         {
-            instance = instance ?? new CompanyLms();
+            instance = instance ?? new LmsCompany();
             if (!string.IsNullOrEmpty(dto.acPassword))
             {
                 instance.AcPassword = dto.acPassword;

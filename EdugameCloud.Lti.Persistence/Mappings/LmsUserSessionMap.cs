@@ -20,7 +20,7 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Nullable();
             this.Map(x => x.LmsCourseId).Not.Nullable();
-            this.References(x => x.CompanyLms).Not.Nullable();
+            this.References(x => x.LmsCompany).Column("companyLmsId").Not.Nullable();
             this.References(x => x.LmsUser).Nullable();
         }
 

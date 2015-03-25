@@ -87,24 +87,24 @@
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="MoodleSession"/>.
         /// </returns>
-        private MoodleSession BeginBatch(out string error, CompanyLms companyLms)
+        private MoodleSession BeginBatch(out string error, LmsCompany lmsCompany)
         {
-            if (companyLms == null)
+            if (lmsCompany == null)
             {
                 error = "No company lms settings";
                 return null;
             }
-            LmsUser lmsUser = companyLms.AdminUser;
+            LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser != null)
             {
-                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
-                bool useSsl = lmsUser.CompanyLms.UseSSL ?? false;
+                string lmsDomain = lmsUser.LmsCompany.LmsDomain;
+                bool useSsl = lmsUser.LmsCompany.UseSSL ?? false;
                 return this.LoginAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
@@ -131,7 +131,7 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            CompanyLms company, 
+            LmsCompany company, 
             int courseid, 
             out string error, 
             MoodleSession token = null)
@@ -367,7 +367,7 @@
             LmsUser lmsUser = null)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, lmsUser.Return(x => x.CompanyLms, null));
+            session = session ?? this.BeginBatch(out error, lmsUser.Return(x => x.LmsCompany, null));
             if (session != null)
             {
                 return action(session);
@@ -388,7 +388,7 @@
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="error">
@@ -400,11 +400,11 @@
         protected T LoginIfNecessary<T>(
             MoodleSession session, 
             Func<MoodleSession, T> action, 
-            CompanyLms companyLms, 
+            LmsCompany lmsCompany, 
             out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, companyLms);
+            session = session ?? this.BeginBatch(out error, lmsCompany);
             if (session != null)
             {
                 return action(session);
@@ -425,7 +425,7 @@
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="error">
@@ -437,11 +437,11 @@
         protected T LoginIfNecessary<T>(
             MoodleSession session,
             Func<MoodleSession, Tuple<T, string>> action,
-            CompanyLms companyLms,
+            LmsCompany lmsCompany,
             out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, companyLms);
+            session = session ?? this.BeginBatch(out error, lmsCompany);
             if (session != null && string.IsNullOrWhiteSpace(error))
             {
                 var res = action(session);

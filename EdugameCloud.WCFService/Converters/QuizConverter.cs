@@ -202,11 +202,11 @@
         /// <summary>
         /// Gets the company lms model.
         /// </summary>
-        private CompanyLmsModel CompanyLmsModel
+        private LmsCompanyModel LmsCompanyModel
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                return IoC.Resolve<LmsCompanyModel>();
             }
         }
 
@@ -318,7 +318,7 @@
             var subModuleCategory = subModuleCategoryModel.GetOneByLmsCourseIdAndCompanyLms(quiz.course, companyLmsId).Value
                 ?? new SubModuleCategory
                 {
-                    CompanyLmsId = this.CompanyLmsModel.GetOneById(companyLmsId).Value.With(x => x.Id),
+                    CompanyLmsId = this.LmsCompanyModel.GetOneById(companyLmsId).Value.With(x => x.Id),
                     CategoryName = quiz.courseName,
                     LmsCourseId = quiz.course,
                     User = user,
@@ -497,7 +497,7 @@
         /// </param>
         private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int companyLmsId)
         {
-            var companyLms = this.CompanyLmsModel.GetOneById(companyLmsId).Value;
+            var companyLms = this.LmsCompanyModel.GetOneById(companyLmsId).Value;
             var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(companyLms.LmsProvider.Id).ToList();
 
             foreach (var quizQuestion in quiz.questions.Where(qs => qs.question_type != null))

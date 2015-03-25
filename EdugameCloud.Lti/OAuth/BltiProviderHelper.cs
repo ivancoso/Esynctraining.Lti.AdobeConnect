@@ -47,7 +47,7 @@
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(CompanyLms credentials, Func<bool> validateLmsCaller)
+        public static bool VerifyBltiRequest(LmsCompany credentials, Func<bool> validateLmsCaller)
         {
             var request = HttpContext.Current.Request;
             //// First check the nonce to make sure it has not been used
@@ -156,7 +156,7 @@
         /// <exception cref="InvalidOperationException">
         /// If secret is not associated with the key
         /// </exception>
-        private static string RetrieveSecretForKey(string key, CompanyLms credentials)
+        private static string RetrieveSecretForKey(string key, LmsCompany credentials)
         {
             // Use this method to return back the secret associated with this key.
             // In this example I am using the key/secret pair { "MyKey", "Secret12345" }

@@ -107,11 +107,11 @@
         /// <summary>
         /// Gets the company LMS model.
         /// </summary>
-        private CompanyLmsModel CompanyLmsModel
+        private LmsCompanyModel LmsCompanyModel
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                return IoC.Resolve<LmsCompanyModel>();
             }
         }
 
@@ -638,7 +638,7 @@
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
-            var companyLms = this.CompanyLmsModel.GetAllByCompanyId(user.Company.Id);
+            var companyLms = this.LmsCompanyModel.GetAllByCompanyId(user.Company.Id);
 
             if (dto.lmsUserParametersId != null)
             {

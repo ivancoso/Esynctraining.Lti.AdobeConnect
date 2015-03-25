@@ -55,11 +55,11 @@ namespace EdugameCloud.WCFService
         /// <summary>
         /// Gets the company license model.
         /// </summary>
-        private CompanyLmsModel CompanyLmsModel
+        private LmsCompanyModel LmsCompanyModel
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                return IoC.Resolve<LmsCompanyModel>();
             }
         }
 
@@ -448,7 +448,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public CompanyLmsDTO[] GetLMSHistoryByCompanyId(int companyId)
         {
-            return this.CompanyLmsModel.GetAllByCompanyId(companyId).Select(x => new CompanyLmsDTO(x)).ToArray();
+            return this.LmsCompanyModel.GetAllByCompanyId(companyId).Select(x => new CompanyLmsDTO(x)).ToArray();
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace EdugameCloud.WCFService
 
                 if (isTransient && dto.lmsVO != null)
                 {
-                    var lms = new CompanyLms
+                    var lms = new LmsCompany
                                   {
                                       AcPassword = dto.lmsVO.acPassword,
                                       AcServer = dto.lmsVO.acServer,
@@ -543,13 +543,13 @@ namespace EdugameCloud.WCFService
                                       ProxyToolSharedPassword = dto.lmsVO.proxyToolPassword
                                   };
 
-                    CompanyLmsModel.RegisterSave(lms);
+                    LmsCompanyModel.RegisterSave(lms);
 
                     if (lms.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !dto.lmsVO.enableProxyToolMode)
                     {
                         var lmsUser = new LmsUser
                                           {
-                                              CompanyLms = lms,
+                                              LmsCompany = lms,
                                               Username = dto.lmsVO.lmsAdmin,
                                               Password = dto.lmsVO.lmsAdminPassword,
                                               Token = dto.lmsVO.lmsAdminToken,
@@ -557,7 +557,7 @@ namespace EdugameCloud.WCFService
                                           };
                         LmsUserModel.RegisterSave(lmsUser, true);
                         lms.AdminUser = lmsUser;
-                        CompanyLmsModel.RegisterSave(lms);
+                        LmsCompanyModel.RegisterSave(lms);
                     }
                 }
 
@@ -637,7 +637,7 @@ namespace EdugameCloud.WCFService
 
                 IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
                 var dtoResult = new CompanyDTO(instance);
-                var lmses = isTransient ? CompanyLmsModel.GetAllByCompanyId(instance.Id).ToList() : new List<CompanyLms>();
+                var lmses = isTransient ? LmsCompanyModel.GetAllByCompanyId(instance.Id).ToList() : new List<LmsCompany>();
                 dtoResult.lmsVO = new CompanyLmsDTO(lmses.FirstOrDefault());
                 return dtoResult;
             }

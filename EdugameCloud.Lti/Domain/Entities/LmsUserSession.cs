@@ -27,7 +27,7 @@
         /// <summary>
         /// Gets or sets the company LMS.
         /// </summary>
-        public virtual CompanyLms CompanyLms { get; set; }
+        public virtual LmsCompany LmsCompany { get; set; }
 
         /// <summary>
         /// Gets or sets the LMS user Id.

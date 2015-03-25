@@ -61,7 +61,7 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            CompanyLms company, 
+            LmsCompany company, 
             string servicePattern, 
             string lis_result_sourcedid, 
             out string error, 
@@ -129,7 +129,7 @@
         /// The <see cref="XElement"/>.
         /// </returns>
         private static XElement CreateSignedRequestAndGetResponse(
-            CompanyLms company, 
+            LmsCompany company, 
             string serviceUrl, 
             string lis_result_sourcedid, 
             string ltiVersion)

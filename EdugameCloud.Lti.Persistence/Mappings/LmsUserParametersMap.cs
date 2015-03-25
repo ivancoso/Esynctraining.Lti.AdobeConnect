@@ -25,7 +25,7 @@
             this.Map(x => x.Wstoken).Length(50).Nullable();
 
             this.References(x => x.LmsUser).Nullable();
-            this.References(x => x.CompanyLms).Nullable();
+            this.References(x => x.CompanyLms).Column("companyLmsId").Nullable();
         }
 
         #endregion

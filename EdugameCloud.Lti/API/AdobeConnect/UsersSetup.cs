@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="param">
         /// The param.
         /// </param>
-        /// <param name="credentials">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -144,7 +144,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         public void GetParamLoginAndEmail(
             LtiParamDTO param,
-            CompanyLms credentials,
+            LmsCompany lmsCompany,
             AdobeConnectProvider provider,
             out string email,
             out string login)
@@ -154,8 +154,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
             {
                 string error;
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, null).Value;
-                List<LmsUserDTO> users = this.GetLMSUsers(credentials, meeting, param.lms_user_id, param.course_id, out error, param, true);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, null).Value;
+                List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, true);
                 var user =
                     users.FirstOrDefault(
                         u => u.lti_id != null && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
@@ -169,7 +169,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The get users.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -192,10 +192,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<LmsUserDTO> GetUsers(CompanyLms companyLms, AdobeConnectProvider provider, LtiParamDTO param, string scoId, out string error, bool forceUpdate = false)
+        public List<LmsUserDTO> GetUsers(LmsCompany lmsCompany, AdobeConnectProvider provider, LtiParamDTO param, string scoId, out string error, bool forceUpdate = false)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
-            List<LmsUserDTO> users = this.GetLMSUsers(companyLms, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
+            List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
 
             if (meeting == null)
             {
@@ -209,17 +209,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             foreach (LmsUserDTO user in users)
             {
                 string login = user.GetLogin(), email = user.GetEmail();
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, companyLms.Id).Value
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value
                      ?? new LmsUser()
                      {
-                         CompanyLms = companyLms,
+                         LmsCompany = lmsCompany,
                          Username = login,
                          UserId = user.lti_id ?? user.id
                      };
 
                 if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, user.GetFirstName(), user.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, user.GetFirstName(), user.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), lmsCompany.DenyACUserCreation);
                     if (principal != null)
                     {
                         lmsUser.PrincipalId = principal.PrincipalId;
@@ -287,7 +287,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The update user.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -306,16 +306,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
-            CompanyLms companyLms,
+            LmsCompany lmsCompany,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             string scoId,
-            bool forceUpdate)
+            bool forceUpdate,
+            out string error)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
-            string error;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
        
-            var users = this.GetLMSUsers(companyLms, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
+            var users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
             
             if (meeting == null)
             {
@@ -327,6 +327,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
+            var denyACUserCreation = lmsCompany.DenyACUserCreation;
+
             foreach (var lmsUser in users)
             {
                 string login = lmsUser.GetLogin(), email = lmsUser.GetEmail();
@@ -334,20 +336,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsUser.lti_id ?? lmsUser.id,
                     login,
                     email,
-                    companyLms.Id) ?? new LmsUser()
+                    lmsCompany.Id) ?? new LmsUser()
                     {
-                        CompanyLms = companyLms,
+                        LmsCompany = lmsCompany,
                         Username = login,
                         UserId = lmsUser.lti_id ?? lmsUser.id
                     };
 
                 if (string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), denyACUserCreation);
                     if (principal != null)
                     {
                         user.PrincipalId = principal.PrincipalId;
                         this.LmsUserModel.RegisterSave(user);
+                    }
+                    else if (denyACUserCreation)
+                    {
+                        error = "At least one user does not exist in AC database. You must create AC accounts manually";
+                        return null;
                     }
                 }
 
@@ -380,7 +387,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The update user.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -405,7 +412,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> UpdateUser(
-            CompanyLms companyLms,
+            LmsCompany lmsCompany,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             LmsUserDTO user,
@@ -414,39 +421,45 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool skipReturningUsers = false)
         {
             error = null;
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
             if (meeting == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
             }
 
             if (user.ac_id == null)
             {
                 string email = user.GetEmail(), login = user.GetLogin();
-
+                var denyACUserCreation = lmsCompany.DenyACUserCreation;
                 var principal = this.GetOrCreatePrincipal(
                     provider,
                     login,
                     email,
                     user.GetFirstName(),
                     user.GetLastName(),
-                    companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                    lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(),
+                    denyACUserCreation);
 
                 if (principal != null)
                 {
                     user.ac_id = principal.PrincipalId;
                 }
+                else if (denyACUserCreation)
+                {
+                    error = "User does not exist in AC database. You must create AC accounts manually";
+                    return null;
+                }
             }
 
             if (user.ac_id == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
             }
 
             if (user.ac_role == null)
             {
                 provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, MeetingPermissionId.remove);
-                return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
+                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
             }
 
             var permission = MeetingPermissionId.view;
@@ -465,7 +478,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 this.AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
 
-            return skipReturningUsers ? null : this.GetUsers(companyLms, provider, param, scoId, out error);
+            return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
         }
 
         /// <summary>
@@ -585,7 +598,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The get AC password.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="userSettings">
@@ -600,15 +613,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetACPassword(CompanyLms companyLms, LmsUserSettingsDTO userSettings, string email, string login)
+        public string GetACPassword(LmsCompany lmsCompany, LmsUserSettingsDTO userSettings, string email, string login)
         {
             var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
             switch (connectionMode)
             {
                 case AcConnectionMode.Overwrite:
-                    string password = companyLms.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
-                                        || companyLms.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
-                                          ? companyLms.AcPassword
+                    string password = lmsCompany.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
+                                        || lmsCompany.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
+                                          ? lmsCompany.AcPassword
                                           : Membership.GeneratePassword(8, 2);
                     return password;
                 case AcConnectionMode.DontOverwriteLocalPassword:
@@ -641,7 +654,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The set default users.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="meeting">
@@ -663,7 +676,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The extra Data.
         /// </param>
         public void SetDefaultUsers(
-            CompanyLms companyLms,
+            LmsCompany lmsCompany,
             LmsCourseMeeting meeting,
             AdobeConnectProvider provider,
             string lmsUserId,
@@ -672,12 +685,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             object extraData = null)
         {
             string error;
-            List<LmsUserDTO> users = this.GetLMSUsers(companyLms, meeting, lmsUserId, courseId, out error, extraData);
+            List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, lmsUserId, courseId, out error, extraData);
 
             foreach (LmsUserDTO u in users)
             {
                 string email = u.GetEmail(), login = u.GetLogin();
-                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), lmsCompany.DenyACUserCreation);
 
                 if (principal != null)
                 {
@@ -685,14 +698,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         u.lti_id ?? u.id,
                         login,
                         email,
-                        companyLms.Id);
+                        lmsCompany.Id);
                     if (lmsUser == null || !principal.PrincipalId.Equals(lmsUser.PrincipalId))
                     {
                         if (lmsUser == null)
                         {
                             lmsUser = new LmsUser()
                                           {
-                                              CompanyLms = companyLms,
+                                              LmsCompany = lmsCompany,
                                               UserId = u.lti_id ?? u.id,
                                               Username = login
                                           };
@@ -765,41 +778,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return principal;
         }
 
-        /// <summary>
-        /// The get or create ac user.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="lastName">
-        /// The last name.
-        /// </param>
-        /// <param name="searchByEmailFirst">
-        /// The search By Email First.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
         public Principal GetOrCreatePrincipal(
             AdobeConnectProvider provider,
             string login,
             string email,
             string firstName,
             string lastName,
-            bool searchByEmailFirst)
+            bool searchByEmailFirst,
+            bool denyUserCreation)
         {
             var principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
 
-            if (principal == null)
+            if (principal == null && !denyUserCreation)
             {
                 var setup = new PrincipalSetup
                 {
@@ -1002,7 +992,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(CompanyLms credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        private List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {
@@ -1040,7 +1030,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetCanvasUsers(CompanyLms credentials, string canvasUserId, int canvasCourseId)
+        private List<LmsUserDTO> GetCanvasUsers(LmsCompany credentials, string canvasUserId, int canvasCourseId)
         {
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(canvasUserId, credentials.Id).Value;
             var token = lmsUser.Return(
@@ -1105,22 +1095,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBrainHoneyUsers(CompanyLms credentials, int brainHoneyCourseId, out string error, object extraData = null)
+        private List<LmsUserDTO> GetBrainHoneyUsers(LmsCompany credentials, int brainHoneyCourseId, out string error, object extraData = null)
         {
             Session session = extraData == null ? null : (Session)extraData;
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, session);
             return GroupUsers(users);
         }
 
-        private List<LmsUserDTO> GetDesire2LearnUsers(CompanyLms companyLms, LtiParamDTO param, string lmsUserId, out string error)
+        private List<LmsUserDTO> GetDesire2LearnUsers(LmsCompany lmsCompany, LtiParamDTO param, string lmsUserId, out string error)
         {
             error = null; //todo: set when something is wrong
             var adminRoles = new List<string> { "administrator", "super admin" };
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, companyLms.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var currentUserRoles = param.roles.ToLower();
-            if (!adminRoles.Any(currentUserRoles.Contains) && companyLms.AdminUser != null)
+            if (!adminRoles.Any(currentUserRoles.Contains) && lmsCompany.AdminUser != null)
             {
-                lmsUser = companyLms.AdminUser;
+                lmsUser = lmsCompany.AdminUser;
             }
             var tokens = lmsUser.Token.Split(' ');
             var d2lService = IoC.Resolve<IDesire2LearnApiService>();
@@ -1163,7 +1153,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetSakaiUsers(CompanyLms credentials, LtiParamDTO param, out string error)
+        private List<LmsUserDTO> GetSakaiUsers(LmsCompany credentials, LtiParamDTO param, out string error)
         {
             if (param != null)
             {
@@ -1194,13 +1184,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetMoodleUsers(CompanyLms credentials, int moodleCourseId, out string error)
+        private List<LmsUserDTO> GetMoodleUsers(LmsCompany credentials, int moodleCourseId, out string error)
         {
             var users = this.moodleApi.GetUsersForCourse(credentials, moodleCourseId, out error);
             return GroupUsers(users);
         }
 
-        private List<LmsUserDTO> GetBlackBoardUsers(CompanyLms credentials, LmsCourseMeeting meeting, int blackBoardCourseId, out string error, bool forceUpdate = false)
+        private List<LmsUserDTO> GetBlackBoardUsers(LmsCompany credentials, LmsCourseMeeting meeting, int blackBoardCourseId, out string error, bool forceUpdate = false)
         {
             var timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
             var key = credentials.LmsDomain + ".course." + blackBoardCourseId;

@@ -73,11 +73,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         ///     Gets the company LMS model.
         /// </summary>
-        private CompanyLmsModel СompanyLmsModel
+        private LmsCompanyModel LmsСompanyModel
         {
             get
             {
-                return IoC.Resolve<CompanyLmsModel>();
+                return IoC.Resolve<LmsCompanyModel>();
             }
         }
 
@@ -125,7 +125,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly",
             Justification = "Reviewed. Suppression is OK here.")]
         public object DeleteMeeting(
-            CompanyLms credentials,
+            LmsCompany credentials,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             string scoId)
@@ -182,7 +182,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
-        public object GetMeetings(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param)
+        public object GetMeetings(LmsCompany credentials, AdobeConnectProvider provider, LtiParamDTO param)
         {
             var ret = new List<MeetingDTO>();
             
@@ -233,7 +233,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                                           {
                                               OfficeHours = officeHours,
                                               LmsMeetingType = (int)LmsMeetingType.OfficeHours,
-                                              CompanyLms = credentials,
+                                              LmsCompany = credentials,
                                               CourseId = param.course_id
                                           };
                         }
@@ -291,7 +291,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="AdobeConnectProvider"/>.
         /// </returns>
-        public AdobeConnectProvider GetProvider(CompanyLms credentials, bool login = true)
+        public AdobeConnectProvider GetProvider(LmsCompany credentials, bool login = true)
         {
             string apiUrl = credentials.AcServer + (credentials.AcServer.EndsWith("/") ? string.Empty : "/");
 
@@ -339,7 +339,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{RecordingDTO}"/>.
         /// </returns>
-        public List<RecordingDTO> GetRecordings(CompanyLms credentials, AdobeConnectProvider provider, int courseId, string scoId)
+        public List<RecordingDTO> GetRecordings(LmsCompany credentials, AdobeConnectProvider provider, int courseId, string scoId)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId).Value;
 
@@ -400,7 +400,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public string UpdateRecording(CompanyLms credentials, AdobeConnectProvider provider, string id, bool isPublic, string password)
+        public string UpdateRecording(LmsCompany credentials, AdobeConnectProvider provider, string id, bool isPublic, string password)
         {
             var recording = provider.GetScoInfo(id).ScoInfo;
 
@@ -468,7 +468,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionDTO> GetSessionsReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
+        public List<ACSessionDTO> GetSessionsReport(LmsCompany credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
@@ -506,7 +506,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionParticipantDTO> GetAttendanceReport(CompanyLms credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
+        public List<ACSessionParticipantDTO> GetAttendanceReport(LmsCompany credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
 
@@ -521,7 +521,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The join meeting.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="param">
@@ -542,11 +542,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object JoinMeeting(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, ref string breezeSession, AdobeConnectProvider adobeConnectProvider = null)
+        public object JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, ref string breezeSession, AdobeConnectProvider adobeConnectProvider = null)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
+                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
 
             if (currentMeeting == null)
             {
@@ -554,7 +554,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
-            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(companyLms);
+            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(lmsCompany);
             var meetingUrl = string.Empty;
 
             if (!string.IsNullOrEmpty(currentMeetingScoId))
@@ -562,20 +562,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
                 if (currentMeetingSco != null)
                 {
-                    meetingUrl = (companyLms.AcServer.EndsWith("/")
-                                        ? companyLms.AcServer.Substring(0, companyLms.AcServer.Length - 1)
-                                        : companyLms.AcServer) + currentMeetingSco.UrlPath;
+                    meetingUrl = (lmsCompany.AcServer.EndsWith("/")
+                                        ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
+                                        : lmsCompany.AcServer) + currentMeetingSco.UrlPath;
                 }
             }
 
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
                 return new { error = string.Format("No user with id {0} found in the database.", param.lms_user_id) };
             }
 
-            var password = this.UsersSetup.GetACPassword(companyLms, userSettings, email, login);
+            var password = this.UsersSetup.GetACPassword(lmsCompany, userSettings, email, login);
             var principalInfo = lmsUser.PrincipalId != null ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
             var registeredUser = principalInfo != null ? principalInfo.Principal : null;
             
@@ -604,7 +604,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (connectionMode != AcConnectionMode.DontOverwriteACPassword)
                 {
                     breezeToken = this.LoginIntoAC(
-                        companyLms,
+                        lmsCompany,
                         param,
                         registeredUser,
                         connectionMode,
@@ -614,7 +614,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         provider);
                 }
 
-                this.SaveLMSUserParameters(param, companyLms, registeredUser.PrincipalId);
+                this.SaveLMSUserParameters(param, lmsCompany, registeredUser.PrincipalId);
             }
             else
             {
@@ -630,13 +630,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             breezeSession = breezeToken ?? string.Empty;
-            return companyLms.LoginUsingCookie.GetValueOrDefault() ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
+            return lmsCompany.LoginUsingCookie.GetValueOrDefault() ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
         }
 
         /// <summary>
         /// The leave meeting.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="param">
@@ -651,12 +651,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object LeaveMeeting(CompanyLms companyLms, LtiParamDTO param, string scoId, AdobeConnectProvider adobeConnectProvider = null)
+        public object LeaveMeeting(LmsCompany lmsCompany, LtiParamDTO param, string scoId, AdobeConnectProvider adobeConnectProvider = null)
         {
-            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(companyLms);
+            AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(lmsCompany);
 
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
 
             if (currentMeeting == null)
             {
@@ -672,7 +672,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-            Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email, companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+            Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email, lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (registeredUser != null)
             {
@@ -689,7 +689,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The join recording.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="param">
@@ -710,7 +710,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public object JoinRecording(CompanyLms companyLms, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, ref string breezeSession, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
+        public object JoinRecording(LmsCompany lmsCompany, LtiParamDTO param, LmsUserSettingsDTO userSettings, string recordingUrl, ref string breezeSession, string mode = null, AdobeConnectProvider adobeConnectProvider = null)
         {
             var breezeToken = string.Empty;
 
@@ -718,13 +718,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (connectionMode == AcConnectionMode.Overwrite
                 || connectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(companyLms);
+                AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(lmsCompany);
 
                 string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-                var password = this.UsersSetup.GetACPassword(companyLms, userSettings, email, login);
+                var password = this.UsersSetup.GetACPassword(lmsCompany, userSettings, email, login);
 
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
                     return new { error = string.Format("No user with id {0} found in the database.", param.lms_user_id) };
@@ -735,7 +735,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (registeredUser != null)
                 {
-                    breezeToken = this.LoginIntoAC(companyLms, param, registeredUser, connectionMode, email, login, password, provider);
+                    breezeToken = this.LoginIntoAC(lmsCompany, param, registeredUser, connectionMode, email, login, password, provider);
                 }
                 else
                 {
@@ -743,8 +743,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            var baseUrl = companyLms.AcServer
-                          + (companyLms.AcServer != null && companyLms.AcServer.EndsWith(@"/") ? string.Empty : "/")
+            var baseUrl = lmsCompany.AcServer
+                          + (lmsCompany.AcServer != null && lmsCompany.AcServer.EndsWith(@"/") ? string.Empty : "/")
                           + recordingUrl;
 
             breezeSession = breezeToken ?? string.Empty;
@@ -753,8 +753,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                            "{0}?{1}{2}{3}",
                            baseUrl,
                            mode != null ? string.Format("pbMode={0}", mode) : string.Empty,
-                           mode != null && !companyLms.LoginUsingCookie.GetValueOrDefault() ? "&" : string.Empty,
-                           !companyLms.LoginUsingCookie.GetValueOrDefault() ? "session=" + breezeToken : string.Empty);
+                           mode != null && !lmsCompany.LoginUsingCookie.GetValueOrDefault() ? "&" : string.Empty,
+                           !lmsCompany.LoginUsingCookie.GetValueOrDefault() ? "session=" + breezeToken : string.Empty);
         }
 
         /// <summary>
@@ -779,7 +779,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="bool"/>.
         /// </returns>
         public bool RemoveRecording(
-            CompanyLms credentials, 
+            LmsCompany credentials, 
             AdobeConnectProvider provider, 
             int courseId, 
             string recordingId,
@@ -806,7 +806,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The save meeting.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="provider">
@@ -825,7 +825,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
         public object SaveMeeting(
-            CompanyLms companyLms, 
+            LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             MeetingDTO meetingDTO,
@@ -834,13 +834,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.FixMeetingDTOFields(meetingDTO, param);
             
             var type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
-                return new { error = string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, companyLms.Id) };                
+                return new { error = string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id) };                
             }
 
-            var meeting = this.GetLmsCourseMeeting(companyLms, param.course_id, meetingDTO.id, type);
+            var meeting = this.GetLmsCourseMeeting(lmsCompany, param.course_id, meetingDTO.id, type);
             var meetingSco = meeting.GetMeetingScoId();
             
             var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
@@ -861,14 +861,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 provider,
                 param.lms_user_login,
                 param.lis_person_contact_email_primary,
-                companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (type == (int)LmsMeetingType.StudyGroup)
             {
                 this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
             }
 
-            var meetingFolder = this.GetMeetingFolder(companyLms, provider, registeredUser);
+            var meetingFolder = this.GetMeetingFolder(lmsCompany, provider, registeredUser);
             
             this.SetMeetingUpateItemFields(
                 meetingDTO,
@@ -895,7 +895,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
                 {
                     this.UsersSetup.SetDefaultUsers(
-                        companyLms,
+                        lmsCompany,
                         meeting,
                         provider,
                         param.lms_user_id,
@@ -904,7 +904,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         extraData ?? param);
 
                     this.CreateAnnouncement(
-                        companyLms,
+                        lmsCompany,
                         param,
                         meetingDTO.name,
                         meetingDTO.start_date,
@@ -916,7 +916,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     var user = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, 
                         param.lms_user_login, 
                         param.lis_person_contact_email_primary, 
-                        companyLms.ACUsesEmailAsLogin.GetValueOrDefault());
+                        lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
                     if (user != null)
                     {
                         provider.UpdateScoPermissionForPrincipal(
@@ -963,7 +963,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     .Values.Return(x => x.ToList(), new List<PermissionInfo>());
 
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
-                companyLms,
+                lmsCompany,
                 provider,
                 param,
                 result.ScoInfo,
@@ -995,7 +995,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
         public List<string> DeleteMeeting(
-            CompanyLms credentials,
+            LmsCompany credentials,
             AdobeConnectProvider provider,
             LtiParamDTO param,
             string scoId,
@@ -1027,12 +1027,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        public void SetupFolders(CompanyLms credentials, AdobeConnectProvider provider)
+        public void SetupFolders(LmsCompany credentials, AdobeConnectProvider provider)
         {
             this.SetupTemplateFolder(credentials, provider);
             
-            this.СompanyLmsModel.RegisterSave(credentials);
-            this.СompanyLmsModel.Flush();   
+            this.LmsСompanyModel.RegisterSave(credentials);
+            this.LmsСompanyModel.Flush();   
         }
 
         /// <summary>
@@ -1050,7 +1050,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetMeetingFolder(CompanyLms credentials, AdobeConnectProvider provider, Principal user)
+        public string GetMeetingFolder(LmsCompany credentials, AdobeConnectProvider provider, Principal user)
         {
             string adobeConnectScoId = null;
 
@@ -1063,8 +1063,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (adobeConnectScoId == null)
             {
                 this.SetupSharedMeetingsFolder(credentials, provider);
-                this.СompanyLmsModel.RegisterSave(credentials);
-                this.СompanyLmsModel.Flush();
+                this.LmsСompanyModel.RegisterSave(credentials);
+                this.LmsСompanyModel.Flush();
                 adobeConnectScoId = credentials.ACScoId;
             }
 
@@ -1098,7 +1098,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var serverCourseMeetings = courseMeetings.Where(
                 cm =>
                 {
-                    var acServer = cm.Return(c => c.CompanyLms.Return(cl => cl.AcServer, null), null);
+                    var acServer = cm.Return(c => c.LmsCompany.Return(cl => cl.AcServer, null), null);
                     if (acServer == null)
                     {
                         return false;
@@ -1123,12 +1123,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             foreach (var courseMeeting in serverCourseMeetings)
             {
-                if (courseMeeting.CompanyLms == null)
+                if (courseMeeting.LmsCompany == null)
                 {
                     continue;
                 }
 
-                var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, courseMeeting.CompanyLms.Id).Value;
+                var param = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(acId, courseMeeting.CourseId, courseMeeting.LmsCompany.Id).Value;
                 if (param != null)
                 {
                     paramList.Add(param);
@@ -1165,7 +1165,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         private void SaveLMSUserParameters(
             int lmsCourseId,
-            CompanyLms lmsCompany,
+            LmsCompany lmsCompany,
             string lmsUserId,
             string adobeConnectUserId,
             string courseName,
@@ -1230,7 +1230,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="type">
@@ -1247,7 +1247,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         private bool CanJoin(
             AdobeConnectProvider provider,
-            CompanyLms companyLms,
+            LmsCompany lmsCompany,
             int type,
             LtiParamDTO param,
             string meetingSco)
@@ -1257,7 +1257,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return true;
             }
 
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             
             // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
             if (lmsUser == null || lmsUser.PrincipalId == null)
@@ -1271,14 +1271,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void CreateAnnouncement(
-            CompanyLms companyLms, 
+            LmsCompany lmsCompany, 
             LtiParamDTO param, 
             string name, 
             string startDate, 
             string startTime, 
             string duration)
         {
-            if (!companyLms.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
+            if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
             {
                 return;
             }
@@ -1295,22 +1295,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 duration,
                 param.referer ?? string.Empty);
 
-            switch (companyLms.LmsProvider.ShortName.ToLowerInvariant())
+            switch (lmsCompany.LmsProvider.ShortName.ToLowerInvariant())
             {
                 case LmsProviderNames.Canvas:
-                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                     var token = lmsUser.Return(
                             u => u.Token,
-                            companyLms.AdminUser.Return(a => a.Token, string.Empty));
+                            lmsCompany.AdminUser.Return(a => a.Token, string.Empty));
                     CanvasAPI.CreateAnnouncement(
-                        companyLms.LmsDomain,
+                        lmsCompany.LmsDomain,
                         token,
                         param.course_id,
                         announcementTitle,
                         announcementMessage);
                     break;
                 case LmsProviderNames.Blackboard:
-                    BlackboardApi.CreateAnnouncement(param.course_id, companyLms, announcementTitle, announcementMessage);
+                    BlackboardApi.CreateAnnouncement(param.course_id, lmsCompany, announcementTitle, announcementMessage);
                     break;
                 case LmsProviderNames.BrainHoney:
                     // string error;
@@ -1482,7 +1482,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The get meeting DTO by SCO info.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The credentials.
         /// </param>
         /// <param name="provider">
@@ -1504,7 +1504,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="MeetingDTO"/>.
         /// </returns>
         private MeetingDTO GetMeetingDTOByScoInfo(
-            CompanyLms companyLms, 
+            LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             ScoInfo result, 
@@ -1514,13 +1514,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
             var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();
             int bracketIndex = result.Name.IndexOf("]", StringComparison.Ordinal);
-            var canJoin = this.CanJoin(provider, companyLms, type, param, result.ScoId);
+            var canJoin = this.CanJoin(provider, lmsCompany, type, param, result.ScoId);
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
             string officeHoursString = null;
             
             if (type == (int)LmsMeetingType.OfficeHours)
             {
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser != null)
                 {
                     var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
@@ -1582,7 +1582,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="string"/>.
         /// </returns>
         private string LoginIntoAC(
-            CompanyLms credentials, 
+            LmsCompany credentials, 
             LtiParamDTO param, 
             Principal registeredUser, 
             AcConnectionMode connectionMode,
@@ -1648,7 +1648,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="adobeConnectUserId">
         /// The current AC user SCO id.
         /// </param>
-        private void SaveLMSUserParameters(LtiParamDTO param, CompanyLms lmsCompany, string adobeConnectUserId)
+        private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsCompany, string adobeConnectUserId)
         {
             this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary);
         }
@@ -1687,7 +1687,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <summary>
         /// The get LMS course meeting.
         /// </summary>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="courseId">
@@ -1702,14 +1702,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="LmsCourseMeeting"/>.
         /// </returns>
-        private LmsCourseMeeting GetLmsCourseMeeting(CompanyLms companyLms, int courseId, string scoId, int type)
+        private LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(companyLms.Id, courseId, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId).Value;
             if (meeting == null && type == (int)LmsMeetingType.OfficeHours)
             {
                 meeting =
                     this.LmsCourseMeetingModel.GetOneByCourseAndType(
-                        companyLms.Id,
+                        lmsCompany.Id,
                         courseId,
                         (int)LmsMeetingType.OfficeHours).Value;
             }
@@ -1718,7 +1718,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 meeting = new LmsCourseMeeting
                 {
-                    CompanyLms = companyLms,
+                    LmsCompany = lmsCompany,
                     CourseId = courseId,
                     LmsMeetingType = type,
                     ScoId = type == (int)LmsMeetingType.OfficeHours ? scoId : null
@@ -1799,7 +1799,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        private void SetupTemplateFolder(CompanyLms credentials, AdobeConnectProvider provider)
+        private void SetupTemplateFolder(LmsCompany credentials, AdobeConnectProvider provider)
         {
             string templatesSco = null;
             if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
@@ -1830,7 +1830,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        private void SetupSharedMeetingsFolder(CompanyLms credentials, AdobeConnectProvider provider)
+        private void SetupSharedMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider)
         {
             string ltiFolderSco = null;
             string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
@@ -1900,7 +1900,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string SetupUserMeetingsFolder(CompanyLms credentials, AdobeConnectProvider provider, Principal user)
+        private string SetupUserMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider, Principal user)
         {
             string ltiFolderSco = null;
 

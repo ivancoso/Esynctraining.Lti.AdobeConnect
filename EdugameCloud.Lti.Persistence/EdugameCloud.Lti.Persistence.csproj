@@ -90,7 +90,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FluentConfiguration.cs" />
-    <Compile Include="Mappings\CompanyLmsMap.cs" />
+    <Compile Include="Mappings\LmsCompanyMap.cs" />
+    <Compile Include="Mappings\LmsCompanySetting.cs" />
     <Compile Include="Mappings\LmsCourseMeetingMap.cs" />
     <Compile Include="Mappings\LmsProviderMap.cs" />
     <Compile Include="Mappings\LmsQuestionTypeMap.cs" />

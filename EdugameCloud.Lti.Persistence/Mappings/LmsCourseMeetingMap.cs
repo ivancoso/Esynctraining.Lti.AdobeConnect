@@ -24,7 +24,7 @@
             this.Map(x => x.AddedToCache).Nullable();
             this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Nullable();
             
-            this.References(x => x.CompanyLms).Nullable();
+            this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
             this.References(x => x.OfficeHours).Nullable();
             this.References(x => x.Owner).Column("ownerId").Nullable();
         }

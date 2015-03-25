@@ -184,7 +184,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            CompanyLms company, 
+            LmsCompany company, 
             int courseid, 
             out string error, 
             ref WebserviceWrapper client,
@@ -462,25 +462,25 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        private WebserviceWrapper BeginBatch(out string error, CompanyLms companyLms)
+        private WebserviceWrapper BeginBatch(out string error, LmsCompany lmsCompany)
         {
-            var lmsUser = companyLms.AdminUser;
+            var lmsUser = lmsCompany.AdminUser;
 
-            if (lmsUser != null || companyLms.EnableProxyToolMode == true)
+            if (lmsUser != null || lmsCompany.EnableProxyToolMode == true)
             {
                 string defaultToolRegistrationPassword = ConfigurationManager.AppSettings["InitialBBPassword"];
-                string toolPassword = string.IsNullOrWhiteSpace(companyLms.ProxyToolSharedPassword)
+                string toolPassword = string.IsNullOrWhiteSpace(lmsCompany.ProxyToolSharedPassword)
                                           ? defaultToolRegistrationPassword
-                                          : companyLms.ProxyToolSharedPassword;
-                string lmsDomain = companyLms.LmsDomain;
-                bool useSsl = companyLms.UseSSL ?? false;
-                return companyLms.EnableProxyToolMode == true
+                                          : lmsCompany.ProxyToolSharedPassword;
+                string lmsDomain = lmsCompany.LmsDomain;
+                bool useSsl = lmsCompany.UseSSL ?? false;
+                return lmsCompany.EnableProxyToolMode == true
                            ? this.LoginToolAndCreateAClient(out error, useSsl, lmsDomain, toolPassword)
                            : this.LoginUserAndCreateAClient(out error, useSsl, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
@@ -593,7 +593,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="error">
@@ -603,10 +603,10 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// The <see cref="bool"/>.
         /// </returns>
         // ReSharper disable once UnusedMember.Local
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, CompanyLms companyLms, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, LmsCompany lmsCompany, out string error)
         {
             error = null;
-            client = client ?? this.BeginBatch(out error, companyLms);
+            client = client ?? this.BeginBatch(out error, lmsCompany);
             if (client != null)
             {
                 return action(client);
@@ -627,7 +627,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="error">
@@ -636,10 +636,10 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, CompanyLms companyLms, out string error)
+        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, Tuple<T, string>> action, LmsCompany lmsCompany, out string error)
         {
             error = null;
-            client = client ?? this.BeginBatch(out error, companyLms);
+            client = client ?? this.BeginBatch(out error, lmsCompany);
             if (client != null)
             {
                 var result = action(client);
@@ -681,12 +681,12 @@ namespace EdugameCloud.Lti.API.BlackBoard
             return false;
         }
 
-        public string[] CreateAnnouncement(int courseId, CompanyLms companyLms, string announcementTitle, string announcementMessage)
+        public string[] CreateAnnouncement(int courseId, LmsCompany lmsCompany, string announcementTitle, string announcementMessage)
         {
             string error;
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
-            var client = BeginBatch(out error, companyLms);
+            var client = BeginBatch(out error, lmsCompany);
             var announcementVO = new AnnouncementVO
             {
                 body = announcementMessage,

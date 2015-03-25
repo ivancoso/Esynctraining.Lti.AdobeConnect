@@ -32,7 +32,7 @@
         /// <summary>
         /// Gets or sets the company LMS.
         /// </summary>
-        public virtual CompanyLms CompanyLms { get; set; }
+        public virtual LmsCompany CompanyLms { get; set; }
 
         /// <summary>
         /// Gets or sets the course name.

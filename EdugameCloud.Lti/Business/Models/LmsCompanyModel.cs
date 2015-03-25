@@ -12,17 +12,17 @@
     /// <summary>
     /// The company LMS model.
     /// </summary>
-    public class CompanyLmsModel : BaseModel<CompanyLms, int>
+    public class LmsCompanyModel : BaseModel<LmsCompany, int>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CompanyLmsModel"/> class.
+        /// Initializes a new instance of the <see cref="LmsCompanyModel"/> class.
         /// </summary>
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public CompanyLmsModel(IRepository<CompanyLms, int> repository)
+        public LmsCompanyModel(IRepository<LmsCompany, int> repository)
             : base(repository)
         {
         }
@@ -38,12 +38,12 @@
         /// The company id.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue{CompanyLms}"/>.
+        /// The <see cref="IFutureValue{LmsCompany}"/>.
         /// </returns>
-        public IEnumerable<CompanyLms> GetAllByCompanyId(int companyId)
+        public IEnumerable<LmsCompany> GetAllByCompanyId(int companyId)
         {
             var queryOver =
-                new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+                new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
                     .Where(c => c.CompanyId == companyId);
             return this.Repository.FindAll(queryOver);
         }
@@ -57,9 +57,9 @@
         /// <returns>
         /// The canvas ac meeting
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByDomain(string domain)
+        public IFutureValue<LmsCompany> GetOneByDomain(string domain)
         {
-            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
                 .Where(x => x.LmsDomain == domain).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
@@ -71,15 +71,15 @@
         /// The ac domain.
         /// </param>
         /// <returns>
-        /// The <see cref="IFutureValue{CompanyLms}"/>.
+        /// The <see cref="IFutureValue{LmsCompany}"/>.
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByAcDomain(string adobeConnectDomain)
+        public IFutureValue<LmsCompany> GetOneByAcDomain(string adobeConnectDomain)
         {
             if (adobeConnectDomain.EndsWith("/"))
             {
                 adobeConnectDomain = adobeConnectDomain.Remove(adobeConnectDomain.Length - 1);
             }
-            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
                 .WhereRestrictionOn(x => x.AcServer).IsInsensitiveLike(adobeConnectDomain, MatchMode.Start)
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);
@@ -97,9 +97,9 @@
         /// <returns>
         /// The canvas AC meeting
         /// </returns>
-        public IFutureValue<CompanyLms> GetOneByProviderAndConsumerKey(string providerName, string consumerKey)
+        public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(string providerName, string consumerKey)
         {
-            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver()
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
                 .Where(x => (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
                 .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.ShortName).IsInsensitiveLike(providerName)
                 .Take(1);
@@ -115,13 +115,20 @@
         /// <returns>
         /// The canvas AC meeting
         /// </returns>
-        public IEnumerable<CompanyLms> GetAllByProviderId(int providerId)
+        public IEnumerable<LmsCompany> GetAllByProviderId(int providerId)
         {
-            var defaultQuery = new DefaultQueryOver<CompanyLms, int>().GetQueryOver().Where(x => x.LmsProvider.Id == providerId);
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver().Where(x => x.LmsProvider.Id == providerId);
             return this.Repository.FindAll(defaultQuery);
         }
 
 
         #endregion
+    }
+
+    public class LmsCompanySettingModel : BaseModel<LmsCompanySetting, int>
+    {
+        protected LmsCompanySettingModel(IRepository<LmsCompanySetting, int> repository) : base(repository)
+        {
+        }
     }
 }

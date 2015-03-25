@@ -160,7 +160,7 @@
     <Compile Include="API\Moodle\MoodleAPI.cs" />
     <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />
     <Compile Include="API\Moodle\MoodleSession.cs" />
-    <Compile Include="Business\Models\CompanyLmsModel.cs" />
+    <Compile Include="Business\Models\LmsCompanyModel.cs" />
     <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
     <Compile Include="Business\Models\LmsQuestionTypeModel.cs" />
@@ -174,7 +174,8 @@
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
-    <Compile Include="Domain\Entities\CompanyLms.cs" />
+    <Compile Include="Domain\Entities\LmsCompany.cs" />
+    <Compile Include="Domain\Entities\LmsCompanySetting.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
     <Compile Include="Domain\Entities\LmsMeetingType.cs" />
     <Compile Include="Domain\Entities\LmsProvider.cs" />

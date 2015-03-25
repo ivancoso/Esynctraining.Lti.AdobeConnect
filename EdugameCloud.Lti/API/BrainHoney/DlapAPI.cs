@@ -62,19 +62,19 @@
         /// <param name="error">
         /// The error.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <returns>
         /// The <see cref="RestClient"/>.
         /// </returns>
-        public Session BeginBatch(out string error, CompanyLms companyLms)
+        public Session BeginBatch(out string error, LmsCompany lmsCompany)
         {
-            var lmsUser = companyLms.AdminUser;
+            var lmsUser = lmsCompany.AdminUser;
 
             if (lmsUser != null)
             {
-                string lmsDomain = lmsUser.CompanyLms.LmsDomain;
+                string lmsDomain = lmsUser.LmsCompany.LmsDomain;
                 return this.LoginAndCreateASession(out error, lmsDomain, lmsUser.Username, lmsUser.Password);
             }
 
@@ -149,7 +149,7 @@
         ///// <param name="session">
         ///// The session.
         ///// </param>
-        //public void CreateAnnouncement(CompanyLms credentials, int courseId, string announcementTitle, string announcementMessage, out string error, Session session = null)
+        //public void CreateAnnouncement(LmsCompany credentials, int courseId, string announcementTitle, string announcementMessage, out string error, Session session = null)
         //{
         //    XElement courseResult = this.LoginIfNecessary(
         //        session,
@@ -218,7 +218,7 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            CompanyLms company, 
+            LmsCompany company, 
             int courseid, 
             out string error, 
             Session session = null)
@@ -316,7 +316,7 @@
         /// The <see cref="Course"/>.
         /// </returns>
         public Course GetCourse(
-            CompanyLms company,
+            LmsCompany company,
             int courseId,
             out string error,
             Session session = null)
@@ -382,7 +382,7 @@
         /// The <see cref="Enrollment"/>.
         /// </returns>
         public Enrollment GetEnrollment(
-            CompanyLms company,
+            LmsCompany company,
             long enrollmentId,
             out string error,
             Session session = null)
@@ -449,7 +449,7 @@
         /// <returns>
         /// The <see cref="Nullable{Int64}"/>.
         /// </returns>
-        public long? GetLastSignalId(CompanyLms company, out string error, Session session = null)
+        public long? GetLastSignalId(LmsCompany company, out string error, Session session = null)
         {
             long? result = null;
             XElement signalsResult = this.LoginIfNecessary(session, s => s.Get(Commands.Signals.GetLastSignalId), company, out error);
@@ -497,7 +497,7 @@
         /// The <see cref="List{BrainHoneySignal}"/>.
         /// </returns>
         public List<Signal> GetSignalsList(
-            CompanyLms company,
+            LmsCompany company,
             out string error,
             Session session = null,
             string types = "1.2|4.3|4.8")
@@ -1062,7 +1062,7 @@
         /// <param name="action">
         /// The action.
         /// </param>
-        /// <param name="companyLms">
+        /// <param name="lmsCompany">
         /// The company LMS.
         /// </param>
         /// <param name="error">
@@ -1071,10 +1071,10 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, CompanyLms companyLms, out string error)
+        private T LoginIfNecessary<T>(Session session, Func<Session, T> action, LmsCompany lmsCompany, out string error)
         {
             error = null;
-            session = session ?? this.BeginBatch(out error, companyLms);
+            session = session ?? this.BeginBatch(out error, lmsCompany);
             if (session != null)
             {
                 return action(session);

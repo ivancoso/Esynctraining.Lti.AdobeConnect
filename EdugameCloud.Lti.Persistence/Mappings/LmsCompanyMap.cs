@@ -1,4 +1,8 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using System;
+using System.Linq.Expressions;
+using NHibernate.Mapping;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
     using EdugameCloud.Lti.Domain.Entities;
 
@@ -7,15 +11,17 @@
     /// <summary>
     /// The company LMS map.
     /// </summary>
-    public class CompanyLmsMap : BaseClassMap<CompanyLms>
+    public class LmsCompanyMap : BaseClassMap<LmsCompany>
     {
         #region Constructors and Destructors
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CompanyLmsMap" /> class.
+        ///     Initializes a new instance of the <see cref="LmsCompanyMap" /> class.
         /// </summary>
-        public CompanyLmsMap()
+        public LmsCompanyMap()
         {
+            this.Table("CompanyLms");
+            this.Id(x => x.Id).Column("companyLmsId");
             this.Map(x => x.AcPassword).Not.Nullable();
             this.Map(x => x.AcServer).Not.Nullable();
             this.Map(x => x.AcUsername).Not.Nullable();
@@ -55,6 +61,7 @@
             this.References(x => x.AdminUser).Column("adminUserId").Not.LazyLoad().Nullable();
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.LmsCourseMeetings).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
+            this.HasMany(x => x.Settings).KeyColumn("lmsCompanyId").Cascade.Delete().Inverse();
         }
 
         #endregion

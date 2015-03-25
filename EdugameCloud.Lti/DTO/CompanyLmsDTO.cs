@@ -25,7 +25,7 @@
         /// <param name="instance">
         /// The instance.
         /// </param>
-        public CompanyLmsDTO(CompanyLms instance)
+        public CompanyLmsDTO(LmsCompany instance)
         {
             if (instance != null)
             {
