@@ -31,7 +31,6 @@
         public static Version GetBuildVersion(this string fileName)
         {
             string result = string.Empty;
-            int res;
             try
             {
                 var firstMatch = regex.Match(fileName);

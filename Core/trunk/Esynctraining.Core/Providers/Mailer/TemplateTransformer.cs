@@ -1,7 +1,6 @@
-﻿namespace Esynctraining.Core.Providers.Mailer
+﻿using RazorEngine;
+namespace Esynctraining.Core.Providers.Mailer
 {
-    using RazorEngine;
-
     /// <summary>
     /// Transforms template
     /// </summary>
