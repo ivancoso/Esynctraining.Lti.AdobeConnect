@@ -186,41 +186,6 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        ///// <summary>
-        ///// Deletes company theme by id.
-        ///// </summary>
-        ///// <param name="id">
-        ///// The id
-        ///// </param>
-        ///// <returns>
-        ///// The <see cref="Guid"/>.
-        ///// </returns>
-        //public Guid DeleteThemeById(Guid id)
-        //{
-        //    CompanyTheme companyTheme;
-        //    var model = this.CompanyThemeModel;
-        //    if ((companyTheme = model.GetOneById(id).Value) == null)
-        //    {
-        //        var error = new Error(
-        //                Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-        //                ErrorsTexts.GetResultError_Subject,
-        //                ErrorsTexts.GetResultError_NotFound);
-        //        this.LogError("Company.DeleteThemeById", error);
-        //        throw new FaultException<Error>(error, error.errorMessage);
-        //    }
-
-        //    var companyModel = this.CompanyModel;
-        //    var companies = companyModel.GetAllByCompanyThemeId(id);
-        //    foreach (var company in companies)
-        //    {
-        //        company.Theme = null;
-        //        companyModel.RegisterSave(company);
-        //    }
-
-        //    model.RegisterDelete(companyTheme, true);
-        //    return id;
-        //}
-
         /// <summary>
         /// The request license upgrade.
         /// </summary>
@@ -525,7 +490,7 @@ namespace EdugameCloud.WCFService
 
                 if (isTransient && dto.lmsVO != null)
                 {
-                    var lms = new CompanyLms
+                    var lms = new LmsCompany
                                   {
                                       AcPassword = dto.lmsVO.acPassword,
                                       AcServer = dto.lmsVO.acServer,

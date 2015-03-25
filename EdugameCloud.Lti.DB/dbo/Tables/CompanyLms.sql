@@ -35,9 +35,11 @@
     [acUsesEmailAsLogin]      BIT            NULL,
     [loginUsingCookie]        BIT            NULL,
     CONSTRAINT [PK_CompanyLms] PRIMARY KEY CLUSTERED ([companyLmsId] ASC),
-    CONSTRAINT [FK_CompanyLms_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]) ON DELETE CASCADE,
+	-- TRICK: not actual for LMS-only database
+    --CONSTRAINT [FK_CompanyLms_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]) ON DELETE CASCADE,
     CONSTRAINT [FK_CompanyLms_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),
-    CONSTRAINT [FK_CompanyLms_LmsUser] FOREIGN KEY ([adminUserId]) REFERENCES [dbo].[LmsUser] ([lmsUserId]),
-    CONSTRAINT [FK_CompanyLms_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
-    CONSTRAINT [FK_CompanyLms_User2] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId]) ON DELETE SET NULL
+    CONSTRAINT [FK_CompanyLms_LmsUser] FOREIGN KEY ([adminUserId]) REFERENCES [dbo].[LmsUser] ([lmsUserId])
+	-- TRICK: not actual for LMS-only database
+    --CONSTRAINT [FK_CompanyLms_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
+    --CONSTRAINT [FK_CompanyLms_User2] FOREIGN KEY ([modifiedBy]) REFERENCES [dbo].[User] ([userId]) ON DELETE SET NULL
 );

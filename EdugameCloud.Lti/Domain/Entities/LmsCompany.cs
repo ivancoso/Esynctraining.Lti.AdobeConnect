@@ -3,6 +3,7 @@
 namespace EdugameCloud.Lti.Domain.Entities
 {
     using System;
+    using System.Collections.Generic;
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
@@ -13,16 +14,6 @@ namespace EdugameCloud.Lti.Domain.Entities
     /// </summary>
     public class LmsCompany : Entity
     {
-        /// <summary>
-        /// The LMS users.
-        /// </summary>
-        private ISet<LmsUser> lmsUsers = new HashedSet<LmsUser>();
-
-        /// <summary>
-        /// The LMS course meetings.
-        /// </summary>
-        private ISet<LmsCourseMeeting> lmsCourseMeetings = new HashedSet<LmsCourseMeeting>();
-
         /// <summary>
         /// The LMS domain.
         /// </summary>
@@ -221,36 +212,14 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
-        public virtual ISet<LmsUser> LmsUsers
-        {
-            get
-            {
-                return this.lmsUsers;
-            }
-
-            set
-            {
-                this.lmsUsers = value;
-            }
-        }
+        public virtual IList<LmsUser> LmsUsers { get; protected set; }
 
         /// <summary>
         /// Gets or sets the LMS course meetings.
         /// </summary>
-        public virtual ISet<LmsCourseMeeting> LmsCourseMeetings
-        {
-            get
-            {
-                return this.lmsCourseMeetings;
-            }
+        public virtual IList<LmsCourseMeeting> LmsCourseMeetings { get; protected set; }
 
-            set
-            {
-                this.lmsCourseMeetings = value;
-            }
-        }
-
-        public virtual ISet<LmsCompanySetting> Settings { get; set; }
+        public virtual IList<LmsCompanySetting> Settings { get; set; }
 
         public virtual bool DenyACUserCreation
         {

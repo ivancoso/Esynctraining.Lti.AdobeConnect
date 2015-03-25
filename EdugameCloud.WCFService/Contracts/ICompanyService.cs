@@ -51,19 +51,6 @@
         int DeleteById(int id);
 
         /// <summary>
-        /// Deletes company theme by id.
-        /// </summary>
-        /// <param name="id">
-        /// The id
-        /// </param>
-        /// <returns>
-        /// The <see cref="Guid"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        Guid DeleteThemeById(Guid id);
-
-        /// <summary>
         /// The request license upgrade.
         /// </summary>
         /// <param name="companyId">
@@ -133,7 +120,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        CompanyThemeDTO GetThemeById(Guid id);
+        CompanyThemeDTO GetThemeById(string id);
 
         /// <summary>
         /// The save.
