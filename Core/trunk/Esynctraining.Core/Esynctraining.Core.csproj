@@ -169,6 +169,7 @@
     <None Include="Esynctraining.Core.nuspec">
       <SubType>Designer</SubType>
     </None>
+    <None Include="nuget.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
