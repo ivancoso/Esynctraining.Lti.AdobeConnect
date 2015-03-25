@@ -427,158 +427,160 @@
         [CustomAuthorize]
         public virtual ActionResult GetCollaborationReport(int userId, int? sessionId, string format = "pdf")
         {
-            var cu = this.CurrentUser;
-            if (cu != null)
+            try
             {
-                User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
-                string outputName = user.FullName.Replace(" ", "-") + "-collaboration-report-";
-
-                var userSessions = this.sessionModel.GetSNSessionsByUserId(userId).ToList();
-                if (sessionId.HasValue)
+                var cu = this.CurrentUser;
+                if (cu != null)
                 {
-                    userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
-                    outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
-                }
-                else
-                {
-                    outputName += DateTime.Today.ToString("MM-dd-yyyy");
-                }
+                    User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
+                    string outputName = user.FullName.Replace(" ", "-") + "-collaboration-report-";
 
-                var sessionsById = userSessions.ToDictionary(s => s.acSessionId, s => s);
+                    var userSessions = this.sessionModel.GetSNSessionsByUserId(userId).ToList();
+                    if (sessionId.HasValue)
+                    {
+                        userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
+                        outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
+                    }
+                    else
+                    {
+                        outputName += DateTime.Today.ToString("MM-dd-yyyy");
+                    }
 
-                Dictionary<int, SNGroupDiscussion> discussions =
-                    IoC.Resolve<SNGroupDiscussionModel>()
-                        .GetAllByACSessionIds(sessionsById.Keys.ToList())
-                        .GroupBy(o => o.ACSessionId, o => o)
-                        .ToDictionary(g => g.Key, g => g.FirstOrDefault());
-                Dictionary<int, List<dynamic>> members =
-                    IoC.Resolve<SNMemberModel>()
-                        .GetAllByACSessionIds(sessionsById.Keys.ToList())
-                        .Select(x => this.ConvertParticipant(x))
-                        .ToList()
-                        .GroupBy(o => (int)o.ACSessionId, o => o)
-                        .ToDictionary(g => g.Key, g => g.ToList());
+                    var sessionsById = userSessions.ToDictionary(s => s.acSessionId, s => s);
 
-                List<dynamic> messageData = this.FillMessageData(discussions);
+                    Dictionary<int, SNGroupDiscussion> discussions =
+                        IoC.Resolve<SNGroupDiscussionModel>()
+                            .GetAllByACSessionIds(sessionsById.Keys.ToList())
+                            .GroupBy(o => o.ACSessionId, o => o)
+                            .ToDictionary(g => g.Key, g => g.FirstOrDefault());
+                    Dictionary<int, List<dynamic>> members =
+                        IoC.Resolve<SNMemberModel>()
+                            .GetAllByACSessionIds(sessionsById.Keys.ToList())
+                            .Select(x => this.ConvertParticipant(x))
+                            .ToList()
+                            .GroupBy(o => (int)o.ACSessionId, o => o)
+                            .ToDictionary(g => g.Key, g => g.ToList());
 
-                Dictionary<dynamic, List<dynamic>> messages =
-                    messageData.GroupBy(o => o.ACSessionId, o => o).ToDictionary(g => g.Key, g => g.ToList());
+                    List<dynamic> messageData = this.FillMessageData(discussions);
 
-                var sessionResults = sessionsById.ToDictionary(
-                    kvp => kvp.Value,
-                    kvp =>
-                    new 
+                    Dictionary<dynamic, List<dynamic>> messages =
+                        messageData.GroupBy(o => o.ACSessionId, o => o).ToDictionary(g => g.Key, g => g.ToList());
+
+                    var sessionResults = sessionsById.ToDictionary(
+                        kvp => kvp.Value,
+                        kvp =>
+                        new
+                            {
+                                discussion = discussions.ContainsKey(kvp.Key) ? discussions[kvp.Key] : null,
+                                members = members.ContainsKey(kvp.Key) ? members[kvp.Key] : new List<dynamic>()
+                            });
+
+                    Func<SNSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
+                        (s, userModes) =>
+                        new
+                            {
+                                s.acSessionId,
+                                acUserMode = userModes[s.acUserModeId],
+                                showUserMode = false,
+                                name = s.groupDiscussionTitle,
+                                reportType = "collaboration",
+                                s.categoryName,
+                                s.dateCreated,
+                            };
+
+                    SubreportProcessingEventHandler detailsHandler = (sender, args) =>
                         {
-                            discussion = discussions.ContainsKey(kvp.Key) ? discussions[kvp.Key] : null,
-                            members = members.ContainsKey(kvp.Key) ? members[kvp.Key] : new List<dynamic>()
-                        });
-
-                Func<SNSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
-                    (s, userModes) =>
-                    new
-                        {
-                            s.acSessionId,
-                            acUserMode = userModes[s.acUserModeId],
-                            showUserMode = false,
-                            name = s.groupDiscussionTitle,
-                            reportType = "collaboration",
-                            s.categoryName,
-                            s.dateCreated,
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                            List<dynamic> sessionMessages =
+                                messages.Return(
+                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                    new List<dynamic>());
+                            var details =
+                                new[] { acSession }.Select(
+                                    s =>
+                                    new
+                                        {
+                                            acSessionId,
+                                            discussion =
+                                        sessionResults[s].discussion.Return(d => d.GroupDiscussionTitle, string.Empty),
+                                            dateCreated =
+                                        sessionResults[s].discussion.Return(d => d.DateCreated, DateTime.MinValue),
+                                            totalMessages = sessionMessages.Count,
+                                            totalLikes = sessionMessages.Sum(m => m.likes),
+                                            totalDislikes = sessionMessages.Sum(m => m.dislikes),
+                                            total = sessionResults[s].members.Count,
+                                            active = s.activeParticipants,
+                                        }).ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
                         };
 
-                SubreportProcessingEventHandler detailsHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                        List<dynamic> sessionMessages =
-                            messages.Return(
-                                map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                new List<dynamic>());
-                        var details =
-                            new[] { acSession }.Select(
-                                s =>
-                                new
-                                    {
-                                        acSessionId,
-                                        discussion =
-                                    sessionResults[s].discussion.Return(d => d.GroupDiscussionTitle, string.Empty),
-                                        dateCreated =
-                                    sessionResults[s].discussion.Return(d => d.DateCreated, DateTime.MinValue),
-                                        totalMessages = sessionMessages.Count,
-                                        totalLikes = sessionMessages.Sum(m => m.likes),
-                                        totalDislikes = sessionMessages.Sum(m => m.dislikes),
-                                        total = sessionResults[s].members.Count,
-                                        active = s.activeParticipants,
-                                    }).ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
-                    };
+                    SubreportProcessingEventHandler participantsHandler = (sender, args) =>
+                        {
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                            List<dynamic> sessionMessages =
+                                messages.Return(
+                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                    new List<dynamic>());
+                            var participants =
+                                sessionResults[acSession].members.Select(
+                                    p =>
+                                    new
+                                        {
+                                            acSessionId,
+                                            profile =
+                                        string.IsNullOrWhiteSpace(p.ParticipantProfile)
+                                            ? null
+                                            : Url.ActionAbsolute(
+                                                EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id))
+                                              + (!string.IsNullOrWhiteSpace(user.SessionToken)
+                                                     ? "&egcSession=" + user.SessionToken
+                                                     : string.Empty),
+                                            participant = p.Participant,
+                                            totalMessages =
+                                        (int)p.ParsedProfile.id != 0
+                                            ? sessionMessages.Count(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                            : sessionMessages.Count(
+                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name),
+                                            totalLikes =
+                                        (int)p.ParsedProfile.id != 0
+                                            ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                                  .Sum(m => m.likes)
+                                            : sessionMessages.Where(
+                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
+                                                  .Sum(m => m.likes),
+                                            totalDislikes =
+                                        (int)p.ParsedProfile.id != 0
+                                            ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                                  .Sum(m => m.dislikes)
+                                            : sessionMessages.Where(
+                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
+                                                  .Sum(m => m.dislikes),
+                                        }).ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
+                        };
 
-                SubreportProcessingEventHandler participantsHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                        List<dynamic> sessionMessages =
-                            messages.Return(
-                                map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                new List<dynamic>());
-                        var participants =
-                            sessionResults[acSession].members.Select(
-                                p =>
-                                new
-                                    {
-                                        acSessionId,
-                                        profile =
-                                    string.IsNullOrWhiteSpace(p.ParticipantProfile)
-                                        ? null
-                                        : Url.ActionAbsolute(
-                                            EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id))
-                                          + (!string.IsNullOrWhiteSpace(user.SessionToken)
-                                                 ? "&egcSession=" + user.SessionToken
-                                                 : string.Empty),
-                                        participant = p.Participant,
-                                        totalMessages =
-                                    (int)p.ParsedProfile.id != 0
-                                        ? sessionMessages.Count(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                        : sessionMessages.Count(
-                                            m => m.userName == p.Participant || m.userName == p.ParsedProfile.name),
-                                        totalLikes =
-                                    (int)p.ParsedProfile.id != 0
-                                        ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                              .Sum(m => m.likes)
-                                        : sessionMessages.Where(
-                                            m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
-                                              .Sum(m => m.likes),
-                                        totalDislikes =
-                                    (int)p.ParsedProfile.id != 0
-                                        ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                              .Sum(m => m.dislikes)
-                                        : sessionMessages.Where(
-                                            m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
-                                              .Sum(m => m.dislikes),
-                                    }).ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
-                    };
+                    SubreportProcessingEventHandler messagesHandler = (sender, args) =>
+                        {
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            List<dynamic> sessionMessages =
+                                messages.Return(
+                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                    new List<dynamic>());
 
-                SubreportProcessingEventHandler messagesHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        List<dynamic> sessionMessages =
-                            messages.Return(
-                                map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                new List<dynamic>());
+                            var messageList =
+                                sessionMessages.Select(
+                                    m => new { acSessionId, m.text, participant = m.userName, m.likes, m.dislikes, })
+                                    .ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", messageList));
+                        };
 
-                        var messageList =
-                            sessionMessages.Select(
-                                m => new { acSessionId, m.text, participant = m.userName, m.likes, m.dislikes, })
-                                .ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", messageList));
-                    };
-
-                Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports =
-                    new[]
+                    Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports =
+                        new[]
                         {
                             new
                                 {
@@ -599,18 +601,24 @@
                                     action = messagesHandler
                                 }
                         }.ToDictionary(
-                            o => o.placeholder,
-                            o =>
-                            new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
+                                o => o.placeholder,
+                                o =>
+                                new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
 
-                return this.GetResultReport(
-                    sessionResults,
-                    s => s.acUserModeId,
-                    resultConverter,
-                    "SessionsReport",
-                    outputName,
-                    format,
-                    subReports);
+                    return this.GetResultReport(
+                        sessionResults,
+                        s => s.acUserModeId,
+                        resultConverter,
+                        "SessionsReport",
+                        outputName,
+                        format,
+                        subReports);
+                }
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("FileController.GetCollaborationReport.", ex);
+                throw;
             }
 
             return null;
@@ -637,97 +645,99 @@
         [CustomAuthorize]
         public virtual ActionResult GetCrosswordsReport(int userId, int? sessionId, string format = "pdf")
         {
-            var cu = this.CurrentUser;
-            if (cu != null)
+            try
             {
-                User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
-                string outputName = user.FullName.Replace(" ", "-") + "-crossword-report-";
-                var appletItemModel = IoC.Resolve<AppletItemModel>();
-                var userSessions = appletItemModel.GetCrosswordSessionsByUserId(userId).ToList();
-                if (sessionId.HasValue)
+                var cu = this.CurrentUser;
+                if (cu != null)
                 {
-                    userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
-                    outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
-                }
-                else
-                {
-                    outputName += DateTime.Today.ToString("MM-dd-yyyy");
-                }
+                    User user = IoC.Resolve<UserModel>().GetOneById(userId).Value;
+                    string outputName = user.FullName.Replace(" ", "-") + "-crossword-report-";
+                    var appletItemModel = IoC.Resolve<AppletItemModel>();
+                    var userSessions = appletItemModel.GetCrosswordSessionsByUserId(userId).ToList();
+                    if (sessionId.HasValue)
+                    {
+                        userSessions = userSessions.Where(us => us.acSessionId == sessionId.Value).ToList();
+                        outputName += userSessions.FirstOrDefault().Return(x => x.dateCreated, DateTime.Today).ToString("MM-dd-yyyy");
+                    }
+                    else
+                    {
+                        outputName += DateTime.Today.ToString("MM-dd-yyyy");
+                    }
 
-                var sessionResults = userSessions.ToDictionary(s => s, s => appletItemModel.GetCrosswordResultByACSessionId(s.acSessionId).ToList());
-                var crosswords = sessionResults.ToDictionary(s => s.Key, s => this.ReadCrosswordDefinition(s.Value.First().documentXML));
+                    var sessionResults = userSessions.ToDictionary(s => s, s => appletItemModel.GetCrosswordResultByACSessionId(s.acSessionId).ToList());
+                    var crosswords = sessionResults.ToDictionary(s => s.Key, s => this.ReadCrosswordDefinition(s.Value.First().documentXML));
 
-                Func<CrosswordSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
-                    (s, userModes) =>
-                    new
+                    Func<CrosswordSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
+                        (s, userModes) =>
+                        new
+                            {
+                                s.acSessionId,
+                                acUserMode = userModes[s.acUserModeId],
+                                showUserMode = true,
+                                name = s.appletName,
+                                reportType = "crossword",
+                                s.categoryName,
+                                s.dateCreated,
+                            };
+
+                    SubreportProcessingEventHandler detailsHandler = (sender, args) =>
                         {
-                            s.acSessionId,
-                            acUserMode = userModes[s.acUserModeId],
-                            showUserMode = true,
-                            name = s.appletName,
-                            reportType = "crossword",
-                            s.categoryName,
-                            s.dateCreated,
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                            var details =
+                                new[] { acSession }.Select(
+                                    s =>
+                                    new
+                                        {
+                                            acSessionId,
+                                            total = s.totalParticipants,
+                                            active = s.activeParticipants,
+                                            averageScore = sessionResults[s].Average(p => p.score),
+                                            averageTime =
+                                        (long)sessionResults[s].Average(p => (p.endTime - p.startTime).Ticks)
+                                        }).ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
                         };
 
-                SubreportProcessingEventHandler detailsHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                        var details =
-                            new[] { acSession }.Select(
-                                s =>
-                                new
-                                    {
-                                        acSessionId,
-                                        total = s.totalParticipants,
-                                        active = s.activeParticipants,
-                                        averageScore = sessionResults[s].Average(p => p.score),
-                                        averageTime =
-                                    (long)sessionResults[s].Average(p => (p.endTime - p.startTime).Ticks)
-                                    }).ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
-                    };
+                    SubreportProcessingEventHandler participantsHandler = (sender, args) =>
+                        {
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                            var questions = crosswords[acSession];
+                            var participants =
+                                sessionResults[acSession].Select(
+                                    p =>
+                                    new
+                                        {
+                                            acSessionId,
+                                            rank = p.position,
+                                            p.score,
+                                            p.startTime,
+                                            p.endTime,
+                                            p.participantName,
+                                            totalQuestions = questions.Count,
+                                            scorePercent = ((double)p.score / questions.Count).ToString("0.0%")
+                                        }).ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
+                        };
 
-                SubreportProcessingEventHandler participantsHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                        var questions = crosswords[acSession];
-                        var participants =
-                            sessionResults[acSession].Select(
-                                p =>
-                                new
-                                    {
-                                        acSessionId,
-                                        rank = p.position,
-                                        p.score,
-                                        p.startTime,
-                                        p.endTime,
-                                        p.participantName,
-                                        totalQuestions = questions.Count,
-                                        scorePercent = ((double)p.score / questions.Count).ToString("0.0%")
-                                    }).ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
-                    };
+                    SubreportProcessingEventHandler questionsHandler = (sender, args) =>
+                        {
+                            args.DataSources.Clear();
+                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                            var count = crosswords[acSession].Count;
+                            var questions =
+                                crosswords[acSession].Select(
+                                    q => new { acSessionId, question = q.Key, answer = q.Value, totalQuestions = count })
+                                    .ToList();
+                            args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
+                        };
 
-                SubreportProcessingEventHandler questionsHandler = (sender, args) =>
-                    {
-                        args.DataSources.Clear();
-                        int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                        var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                        var count = crosswords[acSession].Count;
-                        var questions =
-                            crosswords[acSession].Select(
-                                q => new { acSessionId, question = q.Key, answer = q.Value, totalQuestions = count })
-                                .ToList();
-                        args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
-                    };
-
-                Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports =
-                    new[]
+                    Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports =
+                        new[]
                         {
                             new
                                 {
@@ -748,18 +758,24 @@
                                     action = questionsHandler
                                 }
                         }.ToDictionary(
-                            o => o.placeholder,
-                            o =>
-                            new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
+                                o => o.placeholder,
+                                o =>
+                                new KeyValuePair<string, SubreportProcessingEventHandler>(o.reportName, o.action));
 
-                return this.GetResultReport(
-                    sessionResults,
-                    s => s.acUserModeId,
-                    resultConverter,
-                    "SessionsReport",
-                    outputName,
-                    format,
-                    subReports);
+                    return this.GetResultReport(
+                        sessionResults,
+                        s => s.acUserModeId,
+                        resultConverter,
+                        "SessionsReport",
+                        outputName,
+                        format,
+                        subReports);
+                }
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("FileController.GetCrosswordsReport.", ex);  
+                throw;
             }
 
             return null;
@@ -834,47 +850,55 @@
         [CustomAuthorize]
         public virtual ActionResult GetPublicBuild()
         {
-            var user = this.CurrentUser;
-            if (user != null && user.Company != null)
+            try
             {
-                string publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
-                string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
-                Company company = user.Company;
-                if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
+                var user = this.CurrentUser;
+                if (user != null && user.Company != null)
                 {
-                    // NOTE: current POD size is about 960kb
-                    var ms = new MemoryStream(960 * 1024);
-
-                    using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                    string publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
+                    string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
+                    Company company = user.Company;
+                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
                     {
-                        using (var arc = ZipArchive.OpenOnStream(ms))
+                        // NOTE: current POD size is about 960kb
+                        var ms = new MemoryStream(960 * 1024);
+
+                        using (var archive = ZipArchive.OpenOnFile(physicalPath))
                         {
-                            foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                            using (var arc = ZipArchive.OpenOnStream(ms))
                             {
-                                using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
                                 {
-                                    file.GetStream().CopyTo(fs);
+                                    using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    {
+                                        file.GetStream().CopyTo(fs);
+                                    }
+                                }
+
+                                using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                {
+                                    var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>",
+                                        company.Theme.With(x => x.Id),
+                                        Settings.BaseServiceUrl);
+
+                                    var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
+                                    fs.Write(xmlBuffer, 0, xmlBuffer.Length);
                                 }
                             }
-
-                            using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
-                            {
-                                var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>", 
-                                    company.Theme.With(x => x.Id), 
-                                    Settings.BaseServiceUrl);
-
-                                var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
-                                fs.Write(xmlBuffer, 0, xmlBuffer.Length);
-                            }
                         }
+
+                        ms.Position = 0;
+                        return this.File(ms, "application/zip", Path.GetFileName(physicalPath));
                     }
 
-                    ms.Position = 0;
-                    return this.File(ms, "application/zip", Path.GetFileName(physicalPath));
+                    EnsureServicePathConfigExists(physicalPath);
+                    return this.Redirect("/public/" + publicBuild);
                 }
-
-                EnsureServicePathConfigExists(physicalPath);
-                return this.Redirect("/public/" + publicBuild);
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("FileController.GetPublicBuild.", ex);
+                throw;
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
