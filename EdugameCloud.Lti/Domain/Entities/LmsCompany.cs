@@ -210,6 +210,11 @@ namespace EdugameCloud.Lti.Domain.Entities
         public virtual bool? ACUsesEmailAsLogin { get; set; }
 
         /// <summary>
+        /// Gets or sets the add prefix to meeting name.
+        /// </summary>
+        public virtual bool? AddPrefixToMeetingName { get; set; }
+
+        /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>
         public virtual IList<LmsUser> LmsUsers { get; protected set; }

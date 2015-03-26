@@ -419,6 +419,7 @@ namespace EdugameCloud.WCFService
             instance.EnableCourseMeetings = dto.enableCourseMeetings;
             instance.ShowEGCHelp = dto.showEGCHelp;
             instance.ShowLmsHelp = dto.showLmsHelp;
+            instance.AddPrefixToMeetingName = dto.addPrefixToMeetingName;
             instance.UserFolderName = dto.userFolderName;
             instance.EnableProxyToolMode = dto.enableProxyToolMode;
             instance.ProxyToolSharedPassword = dto.proxyToolPassword;

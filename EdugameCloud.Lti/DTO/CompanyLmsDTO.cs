@@ -54,6 +54,7 @@
                 this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
                 this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
                 this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
+                this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
                 this.userFolderName = instance.UserFolderName;
                 this.setupUrl = instance.LmsProvider != null ? 
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
@@ -243,6 +244,12 @@
         /// </summary>
         [DataMember]
         public bool showEGCHelp { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether add prefix to meeting name.
+        /// </summary>
+        [DataMember]
+        public bool addPrefixToMeetingName { get; set; }
 
         /// <summary>
         /// Gets or sets the setup url.

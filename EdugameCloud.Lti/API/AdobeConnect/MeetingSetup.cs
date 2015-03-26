@@ -875,7 +875,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 updateItem,
                 meetingFolder,
                 type == (int)LmsMeetingType.OfficeHours ? lmsUser.Id.ToString(CultureInfo.InvariantCulture) : param.course_id.ToString(CultureInfo.InvariantCulture),
-                isNewMeeting);
+                isNewMeeting,
+                lmsCompany.AddPrefixToMeetingName.GetValueOrDefault());
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
@@ -1746,15 +1747,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="isNew">
         /// The is New.
         /// </param>
+        /// <param name="addPrefix">
+        /// The add prefix
+        /// </param>
         private void SetMeetingUpateItemFields(
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
             string courseId,
-            bool isNew)
+            bool isNew,
+            bool addPrefix)
         {
             updateItem.Name = string.Format(
-                "[{0}] {1}", 
+                addPrefix ? "[{0}] {1}" : "{1}", 
                 courseId,
                 meetingDTO.name);
             updateItem.Name = updateItem.Name.TruncateIfMoreThen(60);
