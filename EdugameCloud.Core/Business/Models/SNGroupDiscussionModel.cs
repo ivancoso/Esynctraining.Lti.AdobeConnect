@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using Castle.Core.Logging;
+using Esynctraining.Core.Utils;
+
+namespace EdugameCloud.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;
@@ -97,7 +100,6 @@
                         counter++;
                     }
                 }
-                byte[] buffer;
                 using (var memoryStream = new MemoryStream())
                 {
                     workbook.SaveAs(memoryStream);
@@ -106,6 +108,7 @@
             }
             catch (Exception ex)
             {
+                IoC.Resolve<ILogger>().Error("SNGroupDiscussionModel.ConvertGroupDiscussionToExcel", ex);
                 return null;
             }
         }

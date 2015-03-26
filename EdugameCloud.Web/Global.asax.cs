@@ -13,6 +13,7 @@ namespace EdugameCloud.Web
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
+    using Esynctraining.Core.Extensions;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;

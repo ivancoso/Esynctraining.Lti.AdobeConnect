@@ -14,7 +14,7 @@
     /// The Moodle API.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class EGCEnabledMoodleAPI : MoodleAPI, IEGCEnabledLmsAPI
+    public sealed class EGCEnabledMoodleAPI : MoodleAPI, IEGCEnabledLmsAPI
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EGCEnabledMoodleAPI"/> class.

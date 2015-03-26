@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Core.Extensions
 {
     using System;
-    using System.Data.SqlTypes;
 
     using Esynctraining.Core.Extensions;
 

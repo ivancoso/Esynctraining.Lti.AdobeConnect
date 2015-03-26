@@ -71,7 +71,6 @@
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             User u2 = null;
-            CrosswordDTO dto = null;
             var queryOver =
                 new DefaultQueryOver<AppletItem, int>().GetQueryOver(() => ai)
                 .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)

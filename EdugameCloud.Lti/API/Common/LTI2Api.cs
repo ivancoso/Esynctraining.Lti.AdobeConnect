@@ -235,7 +235,7 @@
         /// <summary>
         /// The LTI versions.
         /// </summary>
-        public class LtiVersions
+        private static class LtiVersions
         {
             #region Constants
 
@@ -251,7 +251,7 @@
         /// <summary>
         /// The message types.
         /// </summary>
-        public class MessageTypes
+        private static class MessageTypes
         {
             #region Constants
 

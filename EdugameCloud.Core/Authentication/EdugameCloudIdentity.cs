@@ -9,7 +9,7 @@
     /// <summary>
     ///     The Edugame cloud identity.
     /// </summary>
-    public class EdugameCloudIdentity : IWebOrbIdentity
+    public sealed class EdugameCloudIdentity : IWebOrbIdentity
     {
         #region Fields
 
@@ -108,22 +108,6 @@
 
         #endregion
 
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The parse.
-        /// </summary>
-        /// <param name="identity">
-        /// The identity.
-        /// </param>
-        /// <returns>
-        /// The <see cref="EdugameCloudIdentity"/>.
-        /// </returns>
-        public static EdugameCloudIdentity Parse(string identity)
-        {
-            return new EdugameCloudIdentity { Name = identity };
-        }
-
-        #endregion
     }
+
 }

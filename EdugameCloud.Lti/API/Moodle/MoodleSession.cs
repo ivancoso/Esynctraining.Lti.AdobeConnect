@@ -3,7 +3,7 @@
     /// <summary>
     /// The Moodle session.
     /// </summary>
-    public class MoodleSession
+    public sealed class MoodleSession
     {
         #region Public Properties
 

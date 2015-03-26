@@ -7,21 +7,18 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-
+    using Castle.Core.Logging;
     using ClosedXML.Excel;
-
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Linq;
@@ -382,6 +379,7 @@
             }
             catch (Exception ex)
             {
+                IoC.Resolve<ILogger>().Error("UserModel.RealDelete", ex);
             }
 
             this.fileModel.Flush();
