@@ -34,14 +34,14 @@
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
         // ReSharper disable once InconsistentNaming
-        protected readonly ILogger logger;
+        private readonly ILogger logger;
 
         /// <summary>
         ///     The settings.
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
         // ReSharper disable once InconsistentNaming
-        protected readonly dynamic settings;
+        private readonly dynamic settings;
 
         #endregion
 
@@ -284,18 +284,16 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        protected string FixDomain(string domain, bool useSsl)
+        private string FixDomain(string domain, bool useSsl)
         {
-            domain = domain.ToLower();
-
-            domain = domain.AddHttpProtocol(useSsl);
+            domain = domain.ToLower().AddHttpProtocol(useSsl);
 
             if (domain.Last() != '/')
             {
                 domain = domain + '/';
             }
 
-            if (((string)this.settings.MoodleChangeUrl).ToLower().Equals("true"))
+            if (((string)this.settings.MoodleChangeUrl).Equals("TRUE", StringComparison.OrdinalIgnoreCase))
             {
                 return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60").Replace("moodle.esynctraining.com", "192.168.10.60");
             }
@@ -315,7 +313,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        protected string GetServicesUrl(string domain, bool useSsl)
+        private string GetServicesUrl(string domain, bool useSsl)
         {
             var serviceUrl = (string)this.settings.MoodleServiceUrl;
             return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
@@ -333,7 +331,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        protected string GetTokenUrl(string domain, bool useSsl)
+        private string GetTokenUrl(string domain, bool useSsl)
         {
             var tokenUrl = (string)this.settings.MoodleTokenUrl;
             return this.FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
@@ -361,9 +359,9 @@
         /// The <see cref="bool"/>.
         /// </returns>
         protected T LoginIfNecessary<T>(
-            MoodleSession session, 
-            Func<MoodleSession, T> action, 
-            out string error, 
+            MoodleSession session,
+            Func<MoodleSession, T> action,
+            out string error,
             LmsUser lmsUser = null)
         {
             error = null;
@@ -398,9 +396,9 @@
         /// The <see cref="bool"/>.
         /// </returns>
         protected T LoginIfNecessary<T>(
-            MoodleSession session, 
-            Func<MoodleSession, T> action, 
-            LmsCompany lmsCompany, 
+            MoodleSession session,
+            Func<MoodleSession, T> action,
+            LmsCompany lmsCompany,
             out string error)
         {
             error = null;
