@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Persistence</id>
-        <version>1.0.0.4</version>
+        <version>1.0.0.5</version>
         <title>Esynctraining.Persistence</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -15,7 +15,7 @@
         <tags>persistence</tags>
         <dependencies>
             <dependency id="FluentNHibernate" version="2.0.1.0" />
-            <dependency id="Esynctraining.Core.Only" version="1.0.0.10" />
+            <dependency id="Esynctraining.Core.Only" version="1.0.0.11" />
         </dependencies>
         <references>
             <reference file="Esynctraining.Persistence.dll" />

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Core.Only</id>
-        <version>1.0.0.10</version>
+        <version>1.0.0.11</version>
         <title>Esynctraining.Core.Only</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -20,7 +20,7 @@
             <dependency id="RazorEngine" version="3.6.3" />
             <dependency id="wcfrestcontrib" version="1.7.14.0" />
             <dependency id="NHibernate" version="4.0.3.4000" />
-            <dependency id="FluentValidation" version="5.5.0.0" />
+            <dependency id="FluentValidation" version="5.1.0.0" />
         </dependencies>
         <references>
             <reference file="Esynctraining.Core.dll" />
