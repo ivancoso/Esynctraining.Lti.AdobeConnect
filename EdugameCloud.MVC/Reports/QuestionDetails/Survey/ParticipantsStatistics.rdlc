@@ -336,6 +336,11 @@
       <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
+    <ReportParameter Name="trickQuestionPaticipants">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>ReportParamete2</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
   <rd:ReportID>00000000-0000-0000-0001-000000000002</rd:ReportID>

@@ -490,93 +490,117 @@
 
                     SubreportProcessingEventHandler detailsHandler = (sender, args) =>
                         {
-                            args.DataSources.Clear();
-                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                            List<dynamic> sessionMessages =
-                                messages.Return(
-                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                    new List<dynamic>());
-                            var details =
-                                new[] { acSession }.Select(
-                                    s =>
-                                    new
-                                        {
-                                            acSessionId,
-                                            discussion =
-                                        sessionResults[s].discussion.Return(d => d.GroupDiscussionTitle, string.Empty),
-                                            dateCreated =
-                                        sessionResults[s].discussion.Return(d => d.DateCreated, DateTime.MinValue),
-                                            totalMessages = sessionMessages.Count,
-                                            totalLikes = sessionMessages.Sum(m => m.likes),
-                                            totalDislikes = sessionMessages.Sum(m => m.dislikes),
-                                            total = sessionResults[s].members.Count,
-                                            active = s.activeParticipants,
-                                        }).ToList();
-                            args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
+                            try
+                            {
+                                args.DataSources.Clear();
+                                int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                                var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                                List<dynamic> sessionMessages =
+                                    messages.Return(
+                                        map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                        new List<dynamic>());
+                                var details =
+                                    new[] { acSession }.Select(
+                                        s =>
+                                        new
+                                            {
+                                                acSessionId,
+                                                discussion =
+                                            sessionResults[s].discussion.Return(d => d.GroupDiscussionTitle, string.Empty),
+                                                dateCreated =
+                                            sessionResults[s].discussion.Return(d => d.DateCreated, DateTime.MinValue),
+                                                totalMessages = sessionMessages.Count,
+                                                totalLikes = sessionMessages.Sum(m => m.likes),
+                                                totalDislikes = sessionMessages.Sum(m => m.dislikes),
+                                                total = sessionResults[s].members.Count,
+                                                active = s.activeParticipants,
+                                            }).ToList();
+                                args.DataSources.Add(new ReportDataSource("ItemDataSet", details));
+                            }
+                            catch (Exception ex)
+                            {
+                                IoC.Resolve<ILogger>().Error("FileController.GetCollaborationReport.detailsHandler", ex);
+                                throw;
+                            }
                         };
 
                     SubreportProcessingEventHandler participantsHandler = (sender, args) =>
                         {
-                            args.DataSources.Clear();
-                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                            var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
-                            List<dynamic> sessionMessages =
-                                messages.Return(
-                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                    new List<dynamic>());
-                            var participants =
-                                sessionResults[acSession].members.Select(
-                                    p =>
-                                    new
-                                        {
-                                            acSessionId,
-                                            profile =
-                                        string.IsNullOrWhiteSpace(p.ParticipantProfile)
-                                            ? null
-                                            : Url.ActionAbsolute(
-                                                EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id))
-                                              + (!string.IsNullOrWhiteSpace(user.SessionToken)
-                                                     ? "&egcSession=" + user.SessionToken
-                                                     : string.Empty),
-                                            participant = p.Participant,
-                                            totalMessages =
-                                        (int)p.ParsedProfile.id != 0
-                                            ? sessionMessages.Count(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                            : sessionMessages.Count(
-                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name),
-                                            totalLikes =
-                                        (int)p.ParsedProfile.id != 0
-                                            ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                                  .Sum(m => m.likes)
-                                            : sessionMessages.Where(
-                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
-                                                  .Sum(m => m.likes),
-                                            totalDislikes =
-                                        (int)p.ParsedProfile.id != 0
-                                            ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
-                                                  .Sum(m => m.dislikes)
-                                            : sessionMessages.Where(
-                                                m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
-                                                  .Sum(m => m.dislikes),
-                                        }).ToList();
-                            args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
+                            try
+                            {
+                                args.DataSources.Clear();
+                                int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                                var acSession = sessionResults.Keys.First(s => s.acSessionId == acSessionId);
+                                List<dynamic> sessionMessages =
+                                    messages.Return(
+                                        map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                        new List<dynamic>());
+                                var participants =
+                                    sessionResults[acSession].members.Select(
+                                        p =>
+                                        new
+                                            {
+                                                acSessionId,
+                                                profile =
+                                            string.IsNullOrWhiteSpace(p.ParticipantProfile)
+                                                ? null
+                                                : Url.ActionAbsolute(
+                                                    EdugameCloudT4.File.GetProfileVCard(acSessionId, (int)p.Id))
+                                                  + (!string.IsNullOrWhiteSpace(user.SessionToken)
+                                                         ? "&egcSession=" + user.SessionToken
+                                                         : string.Empty),
+                                                participant = p.Participant,
+                                                totalMessages =
+                                            (int)p.ParsedProfile.id != 0
+                                                ? sessionMessages.Count(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                                : sessionMessages.Count(
+                                                    m => m.userName == p.Participant || m.userName == p.ParsedProfile.name),
+                                                totalLikes =
+                                            (int)p.ParsedProfile.id != 0
+                                                ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                                      .Sum(m => m.likes)
+                                                : sessionMessages.Where(
+                                                    m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
+                                                      .Sum(m => m.likes),
+                                                totalDislikes =
+                                            (int)p.ParsedProfile.id != 0
+                                                ? sessionMessages.Where(m => (int)m.userId == (int)p.ParsedProfile.id)
+                                                      .Sum(m => m.dislikes)
+                                                : sessionMessages.Where(
+                                                    m => m.userName == p.Participant || m.userName == p.ParsedProfile.name)
+                                                      .Sum(m => m.dislikes),
+                                            }).ToList();
+                                args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
+                            }
+                            catch (Exception ex)
+                            {
+                                IoC.Resolve<ILogger>().Error("FileController.GetCollaborationReport.participantsHandler", ex);
+                                throw;
+                            }
                         };
 
                     SubreportProcessingEventHandler messagesHandler = (sender, args) =>
                         {
-                            args.DataSources.Clear();
-                            int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
-                            List<dynamic> sessionMessages =
-                                messages.Return(
-                                    map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
-                                    new List<dynamic>());
+                            try
+                            {
+                                args.DataSources.Clear();
+                                int acSessionId = int.Parse(args.Parameters["acSessionId"].Values.First());
+                                List<dynamic> sessionMessages =
+                                    messages.Return(
+                                        map => map.ContainsKey(acSessionId) ? map[acSessionId] : new List<dynamic>(),
+                                        new List<dynamic>());
 
-                            var messageList =
-                                sessionMessages.Select(
-                                    m => new { acSessionId, m.text, participant = m.userName, m.likes, m.dislikes, })
-                                    .ToList();
-                            args.DataSources.Add(new ReportDataSource("ItemDataSet", messageList));
+                                var messageList =
+                                    sessionMessages.Select(
+                                        m => new { acSessionId, m.text, participant = m.userName, m.likes, m.dislikes, })
+                                        .ToList();
+                                args.DataSources.Add(new ReportDataSource("ItemDataSet", messageList));
+                            }
+                            catch (Exception ex)
+                            {
+                                IoC.Resolve<ILogger>().Error("FileController.GetCollaborationReport.messagesHandler", ex);
+                                throw;
+                            }
                         };
 
                     Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports =
@@ -2213,7 +2237,7 @@
             Func<TSession, IDictionary<int, string>, object> resultConverter, 
             string reportName, 
             string outputName, 
-            string format = "pdf", 
+            string format = "PDF", 
             IDictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports = null)
         {
             format = format.ToUpper();
@@ -2228,6 +2252,7 @@
             string reportPath = string.Format("EdugameCloud.MVC.Reports.{0}.rdlc", reportName);
             Stream reportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(reportPath);
             localReport.LoadReportDefinition(reportSource);
+
             if (null != subReports)
             {
                 foreach (string placeholder in subReports.Keys)
@@ -2246,9 +2271,28 @@
                 localReport.SubreportProcessing += (sender, args) =>
                     {
                         string placeholder = args.ReportPath;
-                        if (subReports.ContainsKey(placeholder))
+
+                        if (!string.IsNullOrEmpty(placeholder))
                         {
-                            subReports[placeholder].Value(sender, args);
+                            KeyValuePair<string, SubreportProcessingEventHandler> rep;
+                                if (subReports.TryGetValue(placeholder, out rep))
+                                { 
+                                    rep.Value(sender, args);
+                                }
+                        }
+                        else
+                        {
+                            var trickReportName = args.Parameters.FirstOrDefault(x => x.Name.StartsWith("trick"));
+                            if (trickReportName != null)
+                            {
+                                string rptName = trickReportName.Name.Substring("trick".Length);
+
+                                KeyValuePair<string, SubreportProcessingEventHandler> rep;
+                                if (subReports.TryGetValue(rptName, out rep))
+                                {
+                                    rep.Value(sender, args);
+                                }
+                            }
                         }
                     };
             }
