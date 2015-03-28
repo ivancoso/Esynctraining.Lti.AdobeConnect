@@ -28,6 +28,7 @@ namespace EdugameCloud.Web
     using FluentValidation.Mvc;
 
     using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
+    using Castle.Core.Logging;
 
     /// <summary>
     /// The MVC application.
@@ -155,7 +156,6 @@ namespace EdugameCloud.Web
         /// </param>
         public void FormsAuthentication_OnAuthenticate(Object sender, FormsAuthenticationEventArgs e)
         {
-
             if (Request.QueryString.HasKey("egcSession"))
             {
                 try
@@ -183,6 +183,7 @@ namespace EdugameCloud.Web
                 catch (Exception ex)
                 {
                     //somehting went wrong
+                    IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate", ex);
                 }
             }
             else if (FormsAuthentication.CookiesSupported && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
@@ -192,10 +193,10 @@ namespace EdugameCloud.Web
                 try
                 {
                     ticket = FormsAuthentication.Decrypt(cookie.Value);
-
                 }
-                catch (Exception decryptError)
+                catch (Exception ex)
                 {
+                    IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate:FormsAuthentication.Decrypt", ex);
                 }
 
                 if (ticket == null) return; // Not authorised
