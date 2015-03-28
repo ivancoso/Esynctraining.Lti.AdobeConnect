@@ -174,16 +174,16 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// Gets the facebook model.
-        /// </summary>
-        private GoogleSearchAPIModel GoogleSearchAPIModel
-        {
-            get
-            {
-                return IoC.Resolve<GoogleSearchAPIModel>();
-            }
-        }
+        ///// <summary>
+        ///// Gets the facebook model.
+        ///// </summary>
+        //private GoogleSearchAPIModel GoogleSearchAPIModel
+        //{
+        //    get
+        //    {
+        //        return IoC.Resolve<GoogleSearchAPIModel>();
+        //    }
+        //}
 
         /// <summary>
         /// Gets the VCF model.
@@ -299,27 +299,27 @@ namespace EdugameCloud.WCFService
        //    return this.TwitterModel.SearchForUsers(name).ToArray();
        //}
 
-        /// <summary>
-        /// The get google social profiles.
-        /// </summary>
-        /// <param name="fullName">
-        /// The full name.
-        /// </param>
-        /// <returns>
-       /// The <see cref="GoogleSearchDTO"/>.
-        /// </returns>
-       public GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName)
-        {
-            var result = this.GoogleSearchAPIModel.Search(fullName);
-            if (result != null)
-            {
-                return result.ToArray();
-            }
+       // /// <summary>
+       // /// The get google social profiles.
+       // /// </summary>
+       // /// <param name="fullName">
+       // /// The full name.
+       // /// </param>
+       // /// <returns>
+       ///// The <see cref="GoogleSearchDTO"/>.
+       // /// </returns>
+       //public GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName)
+       // {
+       //     var result = this.GoogleSearchAPIModel.Search(fullName);
+       //     if (result != null)
+       //     {
+       //         return result.ToArray();
+       //     }
 
-            var error = new Error(Errors.TOO_MANY_DEPOSITIONS, "GoogleReachedTheLimit", "Daily request limit reached");
-            this.LogError("Lookup.SearchSocialLinksUsingGoogleAPI", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
+       //     var error = new Error(Errors.TOO_MANY_DEPOSITIONS, "GoogleReachedTheLimit", "Daily request limit reached");
+       //     this.LogError("Lookup.SearchSocialLinksUsingGoogleAPI", error);
+       //     throw new FaultException<Error>(error, error.errorMessage);
+       // }
 
         /// <summary>
         /// The get google social profiles.

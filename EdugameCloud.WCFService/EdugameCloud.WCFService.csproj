@@ -73,8 +73,7 @@
     <Reference Include="DotAmf.Wcf">
       <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.13, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Esynctraining.AC.Provider">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.13\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
@@ -468,20 +467,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
-      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
-      <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
-      <Name>EdugameCloud.Lti</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
-      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
-      <Name>EdugameCloud.Persistence</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="App_GlobalResources\Common.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Common.designer.cs</LastGenOutput>
@@ -502,6 +487,20 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
+      <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
+      <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
+      <Name>EdugameCloud.Lti</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
+      <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
+      <Name>EdugameCloud.Persistence</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -212,19 +212,19 @@
         //[WebGet(UriTemplate = "GetTwitterProfiles?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         //TwitterProfileDTO[] GetTwitterProfiles(string name);
 
-        /// <summary>
-        /// Gets the twitter search result by query.
-        /// </summary>
-        /// <param name="fullName">
-        /// The full name query.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GoogleSearchDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "SearchSocialLinksUsingGoogleAPI?fullName={fullName}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName);
+        ///// <summary>
+        ///// Gets the twitter search result by query.
+        ///// </summary>
+        ///// <param name="fullName">
+        ///// The full name query.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="GoogleSearchDTO"/>.
+        ///// </returns>
+        //[OperationContract]
+        //[FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "SearchSocialLinksUsingGoogleAPI?fullName={fullName}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        //GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName);
 
         /// <summary>
         /// Converts profile to XML

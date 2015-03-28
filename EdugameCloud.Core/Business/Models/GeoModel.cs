@@ -8,11 +8,12 @@
     using System.Linq;
     using System.Net;
     using System.Web;
-    using System.Web.Helpers;
+    //using System.Web.Helpers;
 
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Providers;
+    using Newtonsoft.Json;
 
     /// <summary>
     ///     The geo model.
@@ -98,7 +99,7 @@
                 using (var stIn = new StreamReader(res.GetResponseStream()))
                 {
                     string strResponse = stIn.ReadToEnd();
-                    dynamic result = Json.Decode(string.Format("{{ dataResult: {0}}}", strResponse));
+                    dynamic result = JsonConvert.DeserializeObject(string.Format("{{ dataResult: {0}}}", strResponse));
                     stIn.Close();
                     var dataResult = new List<dynamic>(result.dataResult);
                     if (dataResult.Any())
