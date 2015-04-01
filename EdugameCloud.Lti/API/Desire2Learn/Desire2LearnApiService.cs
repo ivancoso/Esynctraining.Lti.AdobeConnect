@@ -2,6 +2,7 @@
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
 using EdugameCloud.Lti.Constants;
+using Esynctraining.Core.Providers;
 using RestSharp;
 
 namespace EdugameCloud.Lti.API.Desire2Learn
@@ -14,9 +15,8 @@ namespace EdugameCloud.Lti.API.Desire2Learn
         T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl) where T : new();
     }
 
-    public class Desire2LearnApiService : IDesire2LearnApiService//,ILmsApi
+    public class Desire2LearnApiService : IDesire2LearnApiService
     {
-        public const string ApiVersion = "1.4";
         public const string WhoAmIUrlFormat = "/d2l/api/lp/{0}/users/whoami";
         public const string GetUserUrlFormat = "/d2l/api/lp/{0}/users/{1}";
         public const string EnrollmentsUrlFormat = "/d2l/api/lp/{0}/enrollments/orgUnits/{1}/users/";
@@ -25,10 +25,10 @@ namespace EdugameCloud.Lti.API.Desire2Learn
         private readonly string appSecret;
         private readonly ID2LAppContext appContext;
 
-        public Desire2LearnApiService(string providerKey, string providerSecret)
+        public Desire2LearnApiService(ApplicationSettingsProvider settings)
         {
-            appId = providerKey;
-            appSecret = providerSecret;
+            appId = ((dynamic)settings).D2LApiKey;
+            appSecret = ((dynamic)settings).D2LApiSecret;
             appContext = new D2LAppContextFactory().Create(appId, appSecret);
         }
 

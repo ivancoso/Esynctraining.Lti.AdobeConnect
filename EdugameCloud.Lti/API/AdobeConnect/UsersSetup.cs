@@ -1120,7 +1120,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             do
             {
                 enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1], param.lms_domain,
-                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat, Desire2LearnApiService.ApiVersion, param.context_id) +
+                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat, (string)settings.D2LApiVersion, param.context_id) +
                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
                 result.AddRange(enrollments.Items);
             }

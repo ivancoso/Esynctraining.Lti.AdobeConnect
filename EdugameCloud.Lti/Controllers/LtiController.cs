@@ -44,6 +44,8 @@
     /// </summary>
     public class LtiController : Controller
     {
+        private const string ProviderKeyCookieName = "providerKey";
+
         #region Static Fields
 
         /// <summary>
@@ -214,6 +216,18 @@
             string providerKey = null)
         {
             __provider__ = FixExtraDataIssue(__provider__);
+            if (string.IsNullOrEmpty(providerKey))
+            {
+                if (Request.Cookies.AllKeys.Contains(ProviderKeyCookieName))
+                {
+                    providerKey = Request.Cookies[ProviderKeyCookieName].Value;
+                }
+                else
+                {
+                    this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
+                    return this.View("Error");
+                }
+            }
             providerKey = FixExtraDataIssue(providerKey);
             string provider = __provider__;
 
@@ -225,8 +239,8 @@
                 string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
                 var hostUrl = authority.Replace(scheme, string.Empty);
 
-                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, Desire2LearnApiService.ApiVersion));
-                var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.GetUserUrlFormat, Desire2LearnApiService.ApiVersion, user.Identifier));
+                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion));
+                var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.GetUserUrlFormat, (string)Settings.D2LApiVersion, user.Identifier));
                 string userId = Request.QueryString["x_a"];
                 string userKey = Request.QueryString["x_b"];
                 string token = null;
@@ -916,9 +930,9 @@
                             string returnUrl = this.Url.AbsoluteAction(
                                 "callback",
                                 "Lti",
-                                new {__provider__ = provider, providerKey = key},
+                                null,
                                 Request.Url.Scheme);
-
+                            Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
                             return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
                         }
 
