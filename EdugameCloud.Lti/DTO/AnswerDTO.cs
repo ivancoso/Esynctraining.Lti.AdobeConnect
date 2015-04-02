@@ -102,6 +102,16 @@
         /// </summary>
         public string question_text { get; set; }
 
+        /// <summary>
+        /// Gets or sets the order.
+        /// </summary>
+        public int order { get; set; }
+
+        /// <summary>
+        /// Gets or sets the html.
+        /// </summary>
+        public string html { get; set; }
+        
         #endregion
     }
 }

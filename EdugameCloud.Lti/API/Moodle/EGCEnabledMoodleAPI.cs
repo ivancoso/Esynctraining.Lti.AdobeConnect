@@ -166,7 +166,7 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey)
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
         {
             string error;
 

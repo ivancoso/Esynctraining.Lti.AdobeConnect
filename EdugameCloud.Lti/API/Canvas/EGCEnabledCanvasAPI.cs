@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using Antlr.Runtime;
+
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
 
@@ -67,13 +70,13 @@
         /// <returns>
         /// The <see cref="List{QuizSubmissionDTO}"/>.
         /// </returns>
-        public static List<QuizSubmissionDTO> GetSubmissionForQuiz(
+        public static List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
             string api,
             string usertoken,
             int courseid,
             int quizid)
         {
-            var ret = new List<QuizSubmissionDTO>();
+            var ret = new List<CanvasQuizSubmissionDTO>();
             var client = CreateRestClient(api);
 
             RestRequest request = CreateRequest(
@@ -82,7 +85,7 @@
                 Method.POST,
                 usertoken);
 
-            IRestResponse<QuizSubmissionResultDTO> response = client.Execute<QuizSubmissionResultDTO>(request);
+            IRestResponse<CanvasQuizSubmissionResultDTO> response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
 
             ret.AddRange(response.Data.quiz_submissions);
 
@@ -192,7 +195,7 @@
             string api,
             string usertoken,
             int courseid,
-            QuizSubmissionDTO submission)
+            CanvasQuizSubmissionDTO submission)
         {
             var client = CreateRestClient(api);
 
@@ -241,7 +244,7 @@
                 Method.GET,
                 lmsUserParameters.LmsUser.Token);
             request.AddParameter("per_page", 1000);
-            IRestResponse<List<LmsQuizDTO>> response = client.Execute<List<LmsQuizDTO>>(request);
+            IRestResponse<List<CanvasQuizDTO>> response = client.Execute<List<CanvasQuizDTO>>(request);
 
             if (quizIds != null)
             {
@@ -253,9 +256,8 @@
                     q =>
                     isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
                     .ToList();
-
             
-            foreach (LmsQuizDTO q in response.Data)
+            foreach (CanvasQuizDTO q in response.Data)
             {
                 if (quizIds != null)
                 {
@@ -265,9 +267,32 @@
                             lmsUserParameters.LmsUser.Token,
                             lmsUserParameters.Course,
                             q.id).ToArray();
+
+                    CanvasQuizParser.Parse(q);
+
+                    foreach (var question in q.questions)
+                    {
+                        foreach (var fileIndex in question.files.Keys)
+                        {
+                            var file = question.files[fileIndex];
+                            if (!file.fileUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                var canvasFile = GetFile(
+                                    lmsUserParameters.CompanyLms.LmsDomain,
+                                    lmsUserParameters.LmsUser.Token,
+                                    CanvasQuizParser.GetFileId(file.fileUrl));
+
+                                file.fileUrl = canvasFile.url;
+                            }
+
+                            question.question_text = CanvasQuizParser.ReplaceFilePlaceHolder(question.question_text, fileIndex, file);
+                            question.answers.ForEach(
+                                a => a.text = CanvasQuizParser.ReplaceFilePlaceHolder(a.text, fileIndex, file));
+                        }
+                    }
                 }
                 q.course = course.id;
-                q.courseName = course.name;
+                q.courseName = course.name;                
             }
             
             ret.AddRange(response.Data);
@@ -291,7 +316,7 @@
         /// <exception cref="NotImplementedException">
         /// Not yet implemented
         /// </exception>
-        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey)
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers)
         {
             throw new NotImplementedException();
         }

@@ -60,6 +60,9 @@
         /// <param name="isSurvey">
         /// The is Survey.
         /// </param>
-        void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey);
+        /// <param name="answers">
+        /// The answers.
+        /// </param>
+        void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null);
     }
 }

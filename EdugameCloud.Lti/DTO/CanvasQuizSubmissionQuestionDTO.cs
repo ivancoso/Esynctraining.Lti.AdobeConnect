@@ -3,7 +3,7 @@
     /// <summary>
     /// The quiz submission question DTO.
     /// </summary>
-    public class QuizSubmissionQuestionDTO
+    public class CanvasQuizSubmissionQuestionDTO
     {
         #region Public Properties
 

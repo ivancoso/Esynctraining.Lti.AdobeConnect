@@ -614,7 +614,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         provider);
                 }
 
-                this.SaveLMSUserParameters(param, lmsCompany, registeredUser.PrincipalId);
+                string wstoken = null;
+
+                if (lmsCompany.LmsProvider.Id == (int)LmsProviderEnum.Blackboard)
+                {
+                    string error;
+                    var users = this.UsersSetup.GetLMSUsers(
+                        lmsCompany,
+                        currentMeeting,
+                        param.lms_user_id,
+                        param.course_id,
+                        out error,
+                        param);
+                    var currentUser = users.FirstOrDefault(u => u.lti_id == param.lms_user_id);
+                    if (currentUser != null)
+                    {
+                        wstoken = currentUser.id;
+                    }
+                }
+
+                this.SaveLMSUserParameters(param, lmsCompany, registeredUser.PrincipalId, wstoken);
             }
             else
             {
@@ -1164,13 +1183,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="userEmail">
         /// The user Email.
         /// </param>
+        /// <param name="userId">
+        /// The user id.
+        /// </param>
         private void SaveLMSUserParameters(
             int lmsCourseId,
             LmsCompany lmsCompany,
             string lmsUserId,
             string adobeConnectUserId,
             string courseName,
-            string userEmail)
+            string userEmail,
+            string userId)
         {
             LmsUserParameters lmsUserParameters = this.LmsUserParametersModel.GetOneByAcIdCourseIdAndCompanyLmsId(adobeConnectUserId, lmsCourseId, lmsCompany.Id).Value;
 
@@ -1184,6 +1207,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 };
             }
 
+            lmsUserParameters.Wstoken = userId;
             lmsUserParameters.LastLoggedIn = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ssZ");
             lmsUserParameters.CourseName = courseName;
             lmsUserParameters.UserEmail = userEmail;
@@ -1720,9 +1744,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="adobeConnectUserId">
         /// The current AC user SCO id.
         /// </param>
-        private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsCompany, string adobeConnectUserId)
+        private void SaveLMSUserParameters(LtiParamDTO param, LmsCompany lmsCompany, string adobeConnectUserId, string wstoken)
         {
-            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary);
+            this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary, wstoken);
         }
 
         /// <summary>

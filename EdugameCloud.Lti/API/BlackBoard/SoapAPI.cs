@@ -426,12 +426,12 @@ namespace EdugameCloud.Lti.API.BlackBoard
         //        {
         //            return null;
         //        }
-
+                /*
         //        if (client.loginTicket(password))
         //        {
         //            return client;
         //        }
-
+                */
         //        if (HadError(client, out error))
         //        {
         //            return null;
@@ -604,7 +604,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// The <see cref="bool"/>.
         /// </returns>
         // ReSharper disable once UnusedMember.Local
-        private T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, LmsCompany lmsCompany, out string error)
+        public T LoginIfNecessary<T>(ref WebserviceWrapper client, Func<WebserviceWrapper, T> action, LmsCompany lmsCompany, out string error)
         {
             error = null;
             client = client ?? this.BeginBatch(out error, lmsCompany);

@@ -93,7 +93,7 @@
         /// <param name="submission">
         /// The submission.
         /// </param>
-        public static void AnswerQuestionsForQuiz(string api, string usertoken, QuizSubmissionDTO submission)
+        public static void AnswerQuestionsForQuiz(string api, string usertoken, CanvasQuizSubmissionDTO submission)
         {
             var client = CreateRestClient(api);
 
@@ -170,9 +170,9 @@
         /// <returns>
         /// The <see cref="List{QuizQuestionDTO}"/>.
         /// </returns>
-        public static List<QuizQuestionDTO> GetQuestionsForQuiz(string api, string usertoken, int courseid, int quizid)
+        public static List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string usertoken, int courseid, int quizid)
         {
-            var ret = new List<QuizQuestionDTO>();
+            var ret = new List<CanvasQuestionDTO>();
             var client = CreateRestClient(api);
 
             RestRequest request = CreateRequest(
@@ -181,7 +181,7 @@
                 Method.GET, 
                 usertoken);
             request.AddParameter("per_page", 1000);
-            IRestResponse<List<QuizQuestionDTO>> response = client.Execute<List<QuizQuestionDTO>>(request);
+            IRestResponse<List<CanvasQuestionDTO>> response = client.Execute<List<CanvasQuestionDTO>>(request);
 
             ret.AddRange(response.Data);
 
@@ -201,9 +201,9 @@
         /// The course id.
         /// </param>
         /// <returns>
-        /// The <see cref="CourseDTO"/>.
+        /// The <see cref="LmsCourseDTO"/>.
         /// </returns>
-        public static CourseDTO GetCourse(string api, string usertoken, int courseid)
+        public static LmsCourseDTO GetCourse(string api, string usertoken, int courseid)
         {
             var client = CreateRestClient(api);
 
@@ -213,7 +213,37 @@
                 Method.GET,
                 usertoken);
 
-            IRestResponse<CourseDTO> response = client.Execute<CourseDTO>(request);
+            IRestResponse<LmsCourseDTO> response = client.Execute<LmsCourseDTO>(request);
+
+            return response.Data;
+        }
+
+        /// <summary>
+        /// The get file.
+        /// </summary>
+        /// <param name="api">
+        /// The api.
+        /// </param>
+        /// <param name="usertoken">
+        /// The usertoken.
+        /// </param>
+        /// <param name="fileid">
+        /// The fileid.
+        /// </param>
+        /// <returns>
+        /// The <see cref="CanvasFileDTO"/>.
+        /// </returns>
+        public static CanvasFileDTO GetFile(string api, string usertoken, string fileid)
+        {
+            var client = CreateRestClient(api);
+
+            RestRequest request = CreateRequest(
+                api,
+                string.Format("/api/v1/files/{0}", fileid),
+                Method.GET,
+                usertoken);
+
+            IRestResponse<CanvasFileDTO> response = client.Execute<CanvasFileDTO>(request);
 
             return response.Data;
         }

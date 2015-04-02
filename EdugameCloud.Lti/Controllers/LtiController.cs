@@ -9,6 +9,8 @@
     using System.Web.Mvc;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using BbWsClient;
+
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
@@ -71,6 +73,8 @@
         /// </summary>
         private readonly UsersSetup usersSetup;
 
+        private readonly SoapAPI soapApi;
+
         #endregion
 
         #region Constructors and Destructors
@@ -102,7 +106,7 @@
             LmsUserModel lmsUserModel, 
             MeetingSetup meetingSetup, 
             ApplicationSettingsProvider settings, 
-            UsersSetup usersSetup)
+            UsersSetup usersSetup, SoapAPI soapApi)
         {
             this.lmsCompanyModel = lmsCompanyModel;
             this.userSessionModel = userSessionModel;
@@ -110,6 +114,7 @@
             this.meetingSetup = meetingSetup;
             this.Settings = settings;
             this.usersSetup = usersSetup;
+            this.soapApi = soapApi;
         }
 
         #endregion
@@ -175,6 +180,107 @@
         #endregion
 
         #region Public Methods and Operators
+
+        public JsonResult TestBB(string courseid = "_5488_1")
+        {
+            WebserviceWrapper client = null;
+            var companyLms = lmsCompanyModel.GetOneById(50).Value;
+            string error;
+            var enrollmentsResult = this.soapApi.LoginIfNecessary(
+                ref client,
+                c =>
+                    {
+                        var egc = c.getEdugameCloudWrapper();
+                        /*
+                        var content = c.getContentWrapper();
+                        
+                        var tos = content.getTOCsByCourseId(courseid);
+                        if (tos == null)
+                        {
+                            tos = content.getTOCsByCourseId(courseid);
+                        }
+                        if (tos == null)
+                        {
+                            tos = content.getTOCsByCourseId(courseid);
+                        }
+                        if (tos != null)
+                        {
+                            tos =
+                                tos.Where(
+                                    to =>
+                                    to.label != null
+                                    && to.label.Equals("content", StringComparison.InvariantCultureIgnoreCase))
+                                    .ToArray();
+                        }
+                        
+                        ContentVO[] tests = null;
+                        ContentVO[] surveys = null;
+
+                        if (tos != null && tos.Any())
+                        {
+                            var contentFilter = new ContentFilter()
+                            {
+                                filterType = 3,
+                                filterTypeSpecified = true,
+                                contentId = tos.First().courseContentsId
+                            };
+
+                            var loaded = content.loadFilteredContent(courseid, contentFilter);
+                            if (loaded != null)
+                            {
+                                tests =
+                                    loaded.Where(
+                                        l =>
+                                        l.contentHandler != null
+                                        && l.contentHandler.Equals("resource/x-bb-asmt-test-link")).ToArray();
+                                surveys =
+                                    loaded.Where(
+                                        l =>
+                                        l.contentHandler != null
+                                        && l.contentHandler.Equals("resource/x-bb-asmt-survey-link")).ToArray();
+                            }
+                        }
+                        
+                        string testData = string.Empty;
+
+                        if (tests != null)
+                        {
+                            foreach (var t in tests)
+                            {
+                                testData = egc.getAssessmentDetails(t.id, true);
+                            }
+                        }
+                        */
+                        /*
+                        var ret = egc.getAssessments(courseid);
+
+                        if (ret != null)
+                        {
+                            ret = ret.Replace("=\"", "='").Replace(";\"", ";'").Replace("\" ", "' ");
+                            var list = JsonConvert.DeserializeObject<BBAssessmentsList>(ret);
+
+                            foreach (var test in list.tests)
+                            {
+                                var contentTo = tos == null ? null : tos.FirstOrDefault(to => to.id != null && to.id.Equals(test.id));
+                                if (contentTo == null)
+                                {
+                                    //continue;
+                                }
+
+
+                                var testData = egc.getAssessmentDetails(contentTo == null ? "_106_1" : contentTo.id);
+                            }
+                        }
+                        */
+
+                        return string.Empty;// testData;
+                    },
+                    companyLms,
+                    out error
+                    );
+            return this.Json(enrollmentsResult, JsonRequestBehavior.AllowGet);
+        }
+
 
         /// <summary>
         /// The authentication callback.

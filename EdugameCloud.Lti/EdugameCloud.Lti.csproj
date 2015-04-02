@@ -93,6 +93,9 @@
     <Reference Include="FluentValidation">
       <HintPath>..\packages\FluentValidation.5.1.0.0\lib\Net40\FluentValidation.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net40\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -110,8 +113,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
+    <Reference Include="Microsoft.Web.Services3">
       <HintPath>..\packages\Microsoft.Web.Services3.3.0.0.0\lib\net20\Microsoft.Web.Services3.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -213,6 +215,7 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
+    <Compile Include="API\BlackBoard\EGCEnabledBlackboardAPI.cs" />
     <Compile Include="API\BlackBoard\CastleLoggerAdapter.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
     <Compile Include="API\BrainHoney\Enrollment.cs" />
@@ -228,6 +231,7 @@
     <Compile Include="API\BrainHoney\RightsFlags.cs" />
     <Compile Include="API\BrainHoney\Session.cs" />
     <Compile Include="API\Canvas\CanvasAPI.cs" />
+    <Compile Include="API\Canvas\CanvasQuizParser.cs" />
     <Compile Include="API\Canvas\EGCEnabledCanvasAPI.cs" />
     <Compile Include="API\Common\LTI2Api.cs" />
     <Compile Include="API\IEGCEnabledLmsAPI.cs" />
@@ -251,6 +255,7 @@
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
+    <Compile Include="DTO\BBAssessmentDTO.cs" />
     <Compile Include="Domain\Entities\LmsCompany.cs" />
     <Compile Include="Domain\Entities\LmsCompanySetting.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
@@ -259,14 +264,15 @@
     <Compile Include="Domain\Entities\LmsProviderEnum.cs" />
     <Compile Include="Domain\Entities\LmsProviderNames.cs" />
     <Compile Include="Domain\Entities\LmsQuestionType.cs" />
+    <Compile Include="DTO\CanvasQuestionDTO.cs" />
+    <Compile Include="DTO\CanvasQuizDTO.cs" />
+    <Compile Include="DTO\CanvasFileDTO.cs" />
+    <Compile Include="DTO\LmsQuestionFileDTO.cs" />
     <Compile Include="DTO\LmsQuizInfoDTO.cs" />
     <Compile Include="Domain\Entities\LmsUser.cs" />
     <Compile Include="Domain\Entities\LmsUserParameters.cs" />
     <Compile Include="Domain\Entities\MoodleDataset.cs" />
     <Compile Include="Domain\Entities\MoodleDataSetItem.cs" />
-    <Compile Include="Domain\Entities\MoodleQuestion.cs" />
-    <Compile Include="Domain\Entities\MoodleQuestionOptionAnswer.cs" />
-    <Compile Include="Domain\Entities\MoodleQuiz.cs" />
     <Compile Include="Domain\Entities\OfficeHours.cs" />
     <Compile Include="Domain\Entities\Schedule.cs" />
     <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
@@ -276,12 +282,12 @@
     <Compile Include="DTO\AnnouncementDTO.cs" />
     <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\BBConsumerProfileDTO.cs" />
+    <Compile Include="DTO\BBQuestionDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\CompanyLmsDTO.cs" />
-    <Compile Include="DTO\CourseDTO.cs" />
+    <Compile Include="DTO\LmsCourseDTO.cs" />
     <Compile Include="DTO\LmsAuthenticationParametersDTO.cs" />
     <Compile Include="DTO\LmsProviderDTO.cs" />
-    <Compile Include="DTO\LmsQuizConvertDTO.cs" />
     <Compile Include="DTO\LmsQuizDTO.cs" />
     <Compile Include="DTO\LmsSettingsDTO.cs" />
     <Compile Include="API\BrainHoney\Signal.cs" />
@@ -290,22 +296,20 @@
     <Compile Include="DTO\LtiSessionDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
-    <Compile Include="DTO\MoodleCourseInfoDTO.cs" />
     <Compile Include="DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="DTO\MoodleTokenDTO.cs" />
-    <Compile Include="DTO\MoodleUserInfoDTO.cs" />
-    <Compile Include="DTO\QuizQuestionDTO.cs" />
-    <Compile Include="DTO\QuizSubmissionDTO.cs" />
-    <Compile Include="DTO\QuizSubmissionQuestionDTO.cs" />
-    <Compile Include="DTO\QuizSubmissionResultDTO.cs" />
+    <Compile Include="DTO\LmsQuestionDTO.cs" />
+    <Compile Include="DTO\CanvasQuizSubmissionDTO.cs" />
+    <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />
+    <Compile Include="DTO\CanvasQuizSubmissionResultDTO.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\LmsUserDTO.cs" />
     <Compile Include="DTO\VariableDTO.cs" />
-    <Compile Include="EntityParsing\MoodleExpressionParser.cs" />
-    <Compile Include="EntityParsing\MoodleQuizInfoParser.cs" />
-    <Compile Include="EntityParsing\MoodleQuizParser.cs" />
+    <Compile Include="API\Moodle\MoodleExpressionParser.cs" />
+    <Compile Include="API\Moodle\MoodleQuizInfoParser.cs" />
+    <Compile Include="API\Moodle\MoodleQuizParser.cs" />
     <Compile Include="Extensions\DateConverter.cs" />
     <Compile Include="Extensions\LmsCourseMeetingExtension.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />

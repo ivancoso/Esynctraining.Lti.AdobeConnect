@@ -3,7 +3,7 @@
     /// <summary>
     /// The course dto.
     /// </summary>
-    public class CourseDTO
+    public class LmsCourseDTO
     {
         /// <summary>
         /// Gets or sets the id.

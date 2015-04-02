@@ -2,10 +2,10 @@
 {
     using System.Runtime.Serialization;
 
-    [DataContract]
     /// <summary>
     /// The LMS quiz info DTO.
     /// </summary>
+    [DataContract]
     public class LmsQuizInfoDTO
     {
         #region Constructor
@@ -21,7 +21,7 @@
         #endregion
 
         #region Public Properties
-        
+
         /// <summary>
         /// Gets or sets the id.
         /// </summary>

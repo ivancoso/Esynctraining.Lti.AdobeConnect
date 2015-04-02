@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.WCFService.Converters
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -9,6 +10,7 @@
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
+    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Business.Models;
@@ -80,6 +82,14 @@
             }
         }
 
+        private EGCEnabledBlackboardAPI BlackboardApi
+        {
+            get
+            {
+                return IoC.Resolve<EGCEnabledBlackboardAPI>();
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -117,6 +127,9 @@
                         break;
                     case (int)LmsProviderEnum.Canvas:
                         this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
+                        break;
+                    case (int)LmsProviderEnum.Blackboard:
+                        this.ConvertAndSendSurveyResultToBlackboard(userAnswer, lmsUserParameters, lmsSurveyId.Value, surveyResult.Survey.SubModuleItem.Id);
                         break;
                 }
             }
@@ -170,12 +183,12 @@
                                 .Select(a => a.value)
                                 .ToArray();
                     }
-                    var answers = this.ProcessAnswers(question, quizAnswer);
+                    var answers = this.ProcessCanvasAnswers(question, quizAnswer);
 
                     if (answers != null)
                     {
                         submission.quiz_questions.Add(
-                            new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
+                            new CanvasQuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
                     }
                 }
 
@@ -228,6 +241,9 @@
                     case (int)LmsProviderEnum.Canvas:
                         this.ConvertAndSendQuizResultToCanvas(userAnswer, lmsUserParameters, lmsQuizId.Value);
                         break;
+                    case (int)LmsProviderEnum.Blackboard:
+                        this.ConvertAndSendQuizResultToBlackboard(userAnswer, lmsUserParameters, lmsQuizId.Value, quizResult.Quiz.SubModuleItem.Id);
+                        break;
                 }
             }
         }
@@ -262,12 +278,12 @@
                         continue;
                     }
 
-                    var answers = this.ProcessAnswers(question, answer);
+                    var answers = this.ProcessCanvasAnswers(question, answer);
 
                     if (answers != null)
                     {
                         submission.quiz_questions.Add(
-                            new QuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
+                            new CanvasQuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
                     }
                 }
 
@@ -283,6 +299,303 @@
                     submission);
             }
         }
+
+        /// <summary>
+        /// The convert and send quiz result to blackboard.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="lmsQuizId">
+        /// The lms quiz id.
+        /// </param>
+        public void ConvertAndSendQuizResultToBlackboard(IEnumerable<QuizQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsQuizId, int submoduleItemId)
+        {
+            Dictionary<int, string> answers = new Dictionary<int, string>();
+
+            foreach (var answer in results)
+            {
+                Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                if (question.LmsQuestionId == null)
+                {
+                    continue;
+                }
+
+                var userAnswer = this.ProcessBlackboardAnswers(question, answer);
+
+                answers.Add(question.LmsQuestionId.GetValueOrDefault(), userAnswer);
+            }
+
+            var questions = this.QuestionModel.GetAllBySubModuleItemId(submoduleItemId);
+
+            var ret = new List<string>();
+            foreach (var question in questions)
+            {
+                ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
+            }
+
+            BlackboardApi.SendAnswers(lmsUserParameters, lmsQuizId.ToString(), false, ret.ToArray());
+        }
+
+        /// <summary>
+        /// The convert and send survey result to blackboard.
+        /// </summary>
+        /// <param name="results">
+        /// The results.
+        /// </param>
+        /// <param name="lmsUserParameters">
+        /// The lms user parameters.
+        /// </param>
+        /// <param name="surveyResult">
+        /// The survey result.
+        /// </param>
+        private void ConvertAndSendSurveyResultToBlackboard(IEnumerable<SurveyQuestionResultDTO> results, LmsUserParameters lmsUserParameters, int lmsSurveyId, int submoduleItemId)
+        {
+            Dictionary<int, string> answers = new Dictionary<int, string>();
+
+            foreach (var answer in results)
+            {
+                Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                if (question.LmsQuestionId == null)
+                {
+                    continue;
+                }
+
+                QuizQuestionResultDTO quizAnswer = new QuizQuestionResultDTO();
+                quizAnswer.isCorrect = answer.isCorrect;
+                if (question.QuestionType.Id == (int)QuestionTypeEnum.SingleMultipleChoiceText
+                    || question.QuestionType.Id == (int)QuestionTypeEnum.RateScaleLikert)
+                {
+                    quizAnswer.answers =
+                        answer.answers.Where(a => a.surveyDistractorAnswerId != null)
+                            .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
+                            .ToArray();
+                }
+                else
+                {
+                    quizAnswer.answers = answer.answers.Where(a => a.value != null).Select(a => a.value).ToArray();
+                }
+                var userAnswer = this.ProcessBlackboardAnswers(question, quizAnswer);
+
+                answers.Add(question.LmsQuestionId.GetValueOrDefault(), userAnswer);
+            }
+
+            var questions = this.QuestionModel.GetAllBySubModuleItemId(submoduleItemId);
+
+            var ret = new List<string>();
+            foreach (var question in questions)
+            {
+                ret.Add(answers.ContainsKey(question.LmsQuestionId.GetValueOrDefault()) ? answers[question.LmsQuestionId.GetValueOrDefault()] : "0");
+            }
+
+            BlackboardApi.SendAnswers(lmsUserParameters, lmsSurveyId.ToString(), true, ret.ToArray());
+        }
+
+        private string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
+        {
+            Distractor distractor = question.Distractors != null
+                                                    ? question.Distractors.FirstOrDefault()
+                                                    : null;
+            if (distractor != null)
+            {
+                var answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                            || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                return answ ? distractor.LmsAnswer : distractor.LmsAnswerId.ToString();
+            }
+
+            return string.Empty;
+        }
+
+        private string GetTrueFalseStringAnswer(Question question, QuizQuestionResultDTO answer)
+        {
+            Distractor distractor = question.Distractors != null
+                                                    ? question.Distractors.FirstOrDefault()
+                                                    : null;
+            if (distractor != null)
+            {
+                bool answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                            || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                return string.Format(
+                    "{0}{1}",
+                    distractor.DistractorName == null || distractor.DistractorName.Equals("truefalse")
+                        ? string.Empty
+                        : (distractor.DistractorName + "."),
+                    answ ? "true" : "false");
+            }
+            return string.Empty;
+        }
+        
+        /// <summary>
+        /// The process blackboard answers.
+        /// </summary>
+        /// <param name="question">
+        /// The question.
+        /// </param>
+        /// <param name="answer">
+        /// The answer.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        private string ProcessBlackboardAnswers(Question question, QuizQuestionResultDTO answer)
+        {
+            switch (question.QuestionType.Id)
+            {
+                case (int)QuestionTypeEnum.TrueFalse:
+                    {
+                        return this.GetTrueFalseStringAnswer(question, answer);
+                    }
+                case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                case (int)QuestionTypeEnum.RateScaleLikert:
+                    {
+                        var distractors =
+                            question.Distractors.Where(
+                                q =>
+                                answer.answers != null
+                                && answer.answers.Contains(q.Id.ToString(CultureInfo.InvariantCulture)));
+                        if (answer.answers != null && answer.answers.Count() == 1)
+                        {
+                            return
+                                question.Distractors.First(
+                                    d => answer.answers.Contains(d.Id.ToString(CultureInfo.InvariantCulture)))
+                                    .LmsAnswerId.ToString();
+                        }
+                        else
+                        {
+                            return string.Join(
+                                ";",
+                                question.Distractors.Select(
+                                    d =>
+                                    answer.answers.Contains(d.Id.ToString(CultureInfo.InvariantCulture))
+                                        ? "true"
+                                        : "false"));
+                        }
+                    }
+                case (int)QuestionTypeEnum.Calculated:
+                    {
+                        return string.Format("{0};{1}", question.Distractors.First().LmsAnswer, answer.answers.First());
+                    }
+                case (int)QuestionTypeEnum.Hotspot:
+                    {
+                        return answer.isCorrect ? question.Distractors.First().LmsAnswer : "0, 0";
+                    }
+                case (int)QuestionTypeEnum.MultipleDropdowns:
+                    {
+                        var distractor = question.Distractors != null ? question.Distractors.FirstOrDefault() : null;
+
+                        if (distractor == null || distractor.LmsAnswer == null)
+                        {
+                            return string.Empty;
+                        }
+
+                        var answersDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(distractor.LmsAnswer);
+
+                        List<string> userAnswers = new List<string>();
+
+                        var xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(distractor.DistractorName);
+                        var textTags = xmlDoc.SelectNodes(string.Format("data//text[@isBlank='true']"));
+
+                        foreach (var key in answersDict.Keys)
+                        {
+                            var order = answersDict[key];
+                            if (answer.answers.Length > order)
+                            {
+                                var userText = answer.answers[order];
+
+                                var textTag = textTags.Count > order ? textTags[order] : null;
+                                if (textTag != null)
+                                {
+                                    var id = textTag.Attributes["id"].Value;
+                                    var optionTag =
+                                        xmlDoc.SelectSingleNode(
+                                            string.Format("data//options[@id='{0}']//option[@name='{1}']", id, userText));
+                                    if (optionTag != null && optionTag.Attributes["lmsid"] != null)
+                                    {
+                                        userAnswers.Add(optionTag.Attributes["lmsid"].Value);
+                                    }
+                                    else
+                                    {
+                                        userAnswers.Add("");
+                                    }
+                                }
+                            }
+                        }
+                        return string.Join(";", userAnswers);
+                    }
+                case (int)QuestionTypeEnum.Sequence:
+                    {
+                        var distractors = question.Distractors.OrderBy(d => d.DistractorOrder).ToList();
+                        if (answer.isCorrect)
+                        {
+                            return string.Join(";", distractors.Select(d => d.LmsAnswerId.ToString()));
+                        }
+                        else
+                        {
+                            return string.Join(";", distractors.Select(d => (d.DistractorOrder - 1).ToString()));
+                        }
+                    }
+                case (int)QuestionTypeEnum.Matching:
+                    {
+                        Dictionary<string, string> userAnswers = new Dictionary<string, string>();
+                        if (answer.answers != null)
+                        {
+                            answer.answers.ToList().ForEach(
+                                a =>
+                                    {
+                                        int splitInd = a.IndexOf("$$", System.StringComparison.Ordinal);
+                                        if (splitInd > -1)
+                                        {
+                                            string left = a.Substring(0, splitInd),
+                                                   right = a.Substring(splitInd + 2, a.Length - splitInd - 2);
+                                            if (!userAnswers.ContainsKey(left))
+                                            {
+                                                userAnswers.Add(left, right);
+                                            }
+                                        }
+                                    });
+                        }
+
+                        var match = new List<string>();
+
+                        foreach (var distractor in question.Distractors.OrderBy(d => d.LmsAnswerId))
+                        {
+                            var left = distractor.DistractorName.Substring(
+                                0,
+                                distractor.DistractorName.IndexOf("$$", System.StringComparison.Ordinal));
+                            if (userAnswers.ContainsKey(left))
+                            {
+                                var answerId =
+                                    question.Distractors.FirstOrDefault(
+                                        d => d.DistractorName.EndsWith(userAnswers[left]));
+                                if (answerId != null)
+                                {
+                                    match.Add(answerId.LmsAnswerId.ToString());
+                                }
+                                else
+                                {
+                                    match.Add("0");
+                                }
+                            }
+                            else
+                            {
+                                match.Add("0");
+                            }
+                        }
+                        return string.Join(";", match);
+                    }
+                default:
+                    {
+                        return answer.answers != null
+                                   ? string.Join(";", answer.answers.Select(a => a ?? string.Empty))
+                                   : string.Empty;
+                    }
+            }
+        }
+
 
         /// <summary>
         /// The convert and send survey result to moodle.
@@ -355,7 +668,7 @@
                         });
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
-            this.MoodleApi.SendAnswers(lmsUserParameters, json, true);
+            this.MoodleApi.SendAnswers(lmsUserParameters, json, true, null);
         }
 
         /// <summary>
@@ -390,16 +703,7 @@
                 switch (question.QuestionType.Id)
                 {
                     case (int)QuestionTypeEnum.TrueFalse:
-                        Distractor distractor = question.Distractors != null
-                                                    ? question.Distractors.FirstOrDefault()
-                                                    : null;
-                        if (distractor != null)
-                        {
-                            bool answer = (r.isCorrect && distractor.IsCorrect.GetValueOrDefault())
-                                            || (!r.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
-                            m.answers = new List<string> { answer ? "true" : "false" }.ToArray();
-                        }
-
+                        m.answers = new [] { this.GetTrueFalseStringAnswer(question, r) };
                         break;
                     case (int)QuestionTypeEnum.CalculatedMultichoice:
                     case (int)QuestionTypeEnum.SingleMultipleChoiceText:
@@ -482,7 +786,7 @@
                             });
 
             string json = (new RestSharp.Serializers.JsonSerializer()).Serialize(ret);
-            this.MoodleApi.SendAnswers(lmsUserParameters, json, false);
+            this.MoodleApi.SendAnswers(lmsUserParameters, json, false, null);
         }
 
         /// <summary>
@@ -497,7 +801,7 @@
         /// <returns>
         /// The <see cref="object"/>.
         /// </returns>
-        private object ProcessAnswers(Question question, QuizQuestionResultDTO answer)
+        private object ProcessCanvasAnswers(Question question, QuizQuestionResultDTO answer)
         {
             object answers = null;
 
@@ -508,17 +812,7 @@
                 case (int)QuestionTypeEnum.TextNoQuestion:
                     return null;
                 case (int)QuestionTypeEnum.TrueFalse:
-                    distractor = question.Distractors != null
-                                        ? question.Distractors.FirstOrDefault()
-                                        : null;
-
-                    if (distractor != null)
-                    {
-                        bool tfAnswer = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
-                                       || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
-                        answers = tfAnswer ? distractor.LmsAnswer : distractor.LmsAnswerId.ToString();
-                    }
-
+                    answers = this.GetTrueFalseLmsIdAnswer(question, answer);
                     break;
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                     var multAnswers =

@@ -1092,7 +1092,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {

@@ -124,12 +124,12 @@
 
             XmlNodeList questions = quiz.SelectNodes(QuestionsPath);
 
-            var quizQuestions = new List<QuizQuestionDTO>();
+            var quizQuestions = new List<LmsQuestionDTO>();
             if (questions != null)
             {
                 foreach (XmlNode quest in questions)
                 {
-                    var q = new QuizQuestionDTO();
+                    var q = new LmsQuestionDTO();
                     quizQuestions.Add(q);
 
                     q.id = int.Parse(quest.GetNodeValue("id") ?? "0");
@@ -231,7 +231,7 @@
                 }
             }
 
-            ret.questions = quizQuestions.ToArray();
+            ret.question_list = quizQuestions.ToArray();
 
             return ret;
         }

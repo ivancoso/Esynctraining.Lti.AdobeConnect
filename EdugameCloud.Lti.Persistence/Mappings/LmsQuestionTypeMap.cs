@@ -18,6 +18,7 @@
         {
             this.Map(x => x.LmsQuestionTypeName).Column("lmsQuestionType").Not.Nullable();
             this.Map(x => x.QuestionTypeId).Not.Nullable();
+            this.Map(x => x.SubModuleId).Nullable();
             this.References(x => x.LmsProvider).Not.Nullable();
         }
 

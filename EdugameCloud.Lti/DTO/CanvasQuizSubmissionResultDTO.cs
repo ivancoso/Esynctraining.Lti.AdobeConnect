@@ -5,16 +5,16 @@
     /// <summary>
     /// The quiz submission result DTO.
     /// </summary>
-    public class QuizSubmissionResultDTO
+    public class CanvasQuizSubmissionResultDTO
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuizSubmissionResultDTO"/> class.
+        /// Initializes a new instance of the <see cref="CanvasQuizSubmissionResultDTO"/> class.
         /// </summary>
-        public QuizSubmissionResultDTO()
+        public CanvasQuizSubmissionResultDTO()
         {
-            this.quiz_submissions = new List<QuizSubmissionDTO>();
+            this.quiz_submissions = new List<CanvasQuizSubmissionDTO>();
         }
 
         #endregion
@@ -24,7 +24,7 @@
         /// <summary>
         /// Gets or sets the quiz_submissions.
         /// </summary>
-        public List<QuizSubmissionDTO> quiz_submissions { get; set; }
+        public List<CanvasQuizSubmissionDTO> quiz_submissions { get; set; }
 
         #endregion
     }

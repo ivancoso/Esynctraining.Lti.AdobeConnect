@@ -3,7 +3,7 @@
     /// <summary>
     /// The quiz DTO.
     /// </summary>
-    public class LmsQuizDTO
+    public class LmsQuizDTO : LmsQuizInfoDTO
     {
         #region Public Properties
 
@@ -13,14 +13,9 @@
         public string description { get; set; }
 
         /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
-        public int id { get; set; }
-
-        /// <summary>
         /// Gets or sets the questions.
         /// </summary>
-        public QuizQuestionDTO[] questions { get; set; }
+        public virtual LmsQuestionDTO[] question_list { get; set; }
 
         /// <summary>
         /// Gets or sets the title.
@@ -36,21 +31,6 @@
         /// Gets or sets the quiz_type.
         /// </summary>
         public string quiz_type { get; set; }
-
-        /// <summary>
-        /// Gets or sets the course.
-        /// </summary>
-        public int course { get; set; }
-
-        /// <summary>
-        /// Gets or sets the course name.
-        /// </summary>
-        public string courseName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the last modified lms.
-        /// </summary>
-        public int lastModifiedLMS { get; set; }
 
         #endregion
     }

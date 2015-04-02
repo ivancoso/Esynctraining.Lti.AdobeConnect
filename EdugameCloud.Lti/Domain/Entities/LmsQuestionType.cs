@@ -21,5 +21,10 @@
         /// Gets or sets the LMS question type name.
         /// </summary>
         public virtual string LmsQuestionTypeName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sub module id.
+        /// </summary>
+        public virtual int? SubModuleId { get; set; }
     }
 }

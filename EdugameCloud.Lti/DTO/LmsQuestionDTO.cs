@@ -6,17 +6,18 @@
     /// <summary>
     /// The quiz question DTO.
     /// </summary>
-    public class QuizQuestionDTO
+    public class LmsQuestionDTO
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="QuizQuestionDTO"/> class.
+        /// Initializes a new instance of the <see cref="LmsQuestionDTO"/> class.
         /// </summary>
-        public QuizQuestionDTO()
+        public LmsQuestionDTO()
         {
             this.answers = new List<AnswerDTO>();
             this.datasets = new List<MoodleDataset>();
+            this.files = new Dictionary<int, LmsQuestionFileDTO>();
         }
 
         #endregion
@@ -49,11 +50,6 @@
         public string question_type { get; set; }
 
         /// <summary>
-        /// Gets or sets the quiz id.
-        /// </summary>
-        public int quiz_id { get; set; }
-
-        /// <summary>
         /// Gets or sets the presentation.
         /// </summary>
         public string presentation { get; set; }
@@ -72,6 +68,11 @@
         /// Gets or sets a value indicating whether is_mandatory.
         /// </summary>
         public bool is_mandatory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the files.
+        /// </summary>
+        public Dictionary<int, LmsQuestionFileDTO> files { get; set; } 
 
         #endregion
     }
