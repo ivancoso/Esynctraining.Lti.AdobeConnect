@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
-    using System;
     using System.ServiceModel;
 
     using EdugameCloud.Core.Domain.DTO;
