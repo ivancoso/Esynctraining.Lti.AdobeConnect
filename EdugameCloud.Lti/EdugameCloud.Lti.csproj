@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BbWsClient">
-      <HintPath>..\packages\BbWsClient.1.0.0.3\lib\net20\BbWsClient.dll</HintPath>
+      <HintPath>..\packages\BbWsClient.1.0.0.5\lib\net40\BbWsClient.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>
@@ -85,7 +85,7 @@
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.AC.Provider">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.13\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.14\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.11\lib\net40\Esynctraining.Core.dll</HintPath>
@@ -110,8 +110,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Web.Services2">
-      <HintPath>..\packages\BbWsClient.1.0.0.3\lib\net20\Microsoft.Web.Services2.dll</HintPath>
+    <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Services3.3.0.0.0\lib\net20\Microsoft.Web.Services3.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.WebPages.OAuth, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.2.0.30506.0\lib\net40\Microsoft.Web.WebPages.OAuth.dll</HintPath>
@@ -212,6 +213,7 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
+    <Compile Include="API\BlackBoard\CastleLoggerAdapter.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
     <Compile Include="API\BrainHoney\Enrollment.cs" />
     <Compile Include="API\BrainHoney\Course.cs" />

@@ -1,4 +1,9 @@
-﻿using BbWsClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Text.RegularExpressions;
+using BbWsClient;
 using BbWsClient.Announcements;
 using BbWsClient.CourseMembership;
 using BbWsClient.User;
@@ -11,11 +16,6 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using RestSharp;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace EdugameCloud.Lti.API.BlackBoard
 {
@@ -184,14 +184,11 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company, 
-            int courseid, 
-            out string error, 
-            ref WebserviceWrapper client,
-            bool forceUpdate = false)
+            LmsCompany company,
+            int courseid,
+            out string error,
+            ref WebserviceWrapper client)
         {
-            var result = new List<LmsUserDTO>();
-
             var courseIdFixed = string.Format("_{0}_1", courseid);
 
             var enrollmentsResult = this.LoginIfNecessary(
@@ -201,16 +198,17 @@ namespace EdugameCloud.Lti.API.BlackBoard
                         string errorDuringEnrollments = null;
                         var resultedList = new List<LmsUserDTO>();
                         var membershipFilter = new MembershipFilter
-                                                   {
-                                                       filterType = 2,
-                                                       filterTypeSpecified = true,
-                                                       courseIds = new[] { courseIdFixed }
-                                                   };
-                        
-                        var membership = c.getCourseMembershipWrapper();
+                        {
+                            filterType = 2,
+                            filterTypeSpecified = true,
+                            courseIds = new[] { courseIdFixed },
+                        };
+
+                        CourseMembershipWrapper membership = c.getCourseMembershipWrapper();
+
                         if (membership != null)
                         {
-                            var enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
+                            CourseMembershipVO[] enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
                             if (HadError(c, out errorDuringEnrollments))
                             {
                                 return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
@@ -218,17 +216,17 @@ namespace EdugameCloud.Lti.API.BlackBoard
 
                             if (enrollments != null)
                             {
-                                var roles = membership.loadRoles(null);
+                                CourseMembershipRoleVO[] roles = membership.loadRoles(null);
                                 var userFilter = new UserFilter
-                                                     {
-                                                         filterTypeSpecified = true,
-                                                         filterType = 2,
-                                                         id = enrollments.Select(x => x.userId).ToArray()
-                                                     };
-                                var userService = c.getUserWrapper();
+                                {
+                                    filterTypeSpecified = true,
+                                    filterType = 2,
+                                    id = enrollments.Select(x => x.userId).ToArray(),
+                                };
+                                UserWrapper userService = c.getUserWrapper();
                                 if (userService != null)
                                 {
-                                    var users = userService.getUser(userFilter);
+                                    UserVO[] users = userService.getUser(userFilter);
                                     if (users == null)
                                     {
                                         HadError(c, out errorDuringEnrollments);
@@ -240,24 +238,22 @@ namespace EdugameCloud.Lti.API.BlackBoard
                                             {
                                                 var user = users.FirstOrDefault(u => e.userId == u.id);
                                                 var ltiIdString = user != null && user.expansionData != null
-                                                                      ? user.expansionData.FirstOrDefault(
-                                                                          ed =>
-                                                                          ed.StartsWith("USER.UUID", StringComparison.OrdinalIgnoreCase))
-                                                                      : null;
+                                                    ? user.expansionData.FirstOrDefault(ed => ed.StartsWith("USER.UUID", StringComparison.OrdinalIgnoreCase))
+                                                    : null;
                                                 if (ltiIdString != null)
                                                 {
-                                                    ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);
+                                                    ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);                                                
                                                 }
 
                                                 return new LmsUserDTO
-                                                           {
-                                                               id = e.userId,
-                                                               login_id = user.With(x => x.name),
-                                                               primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
-                                                               name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
-                                                               lms_role = GetRole(e.roleId, roles),
-                                                               lti_id = ltiIdString
-                                                           };
+                                                {
+                                                    id = e.userId,
+                                                    login_id = user.With(x => x.name),
+                                                    primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
+                                                    name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
+                                                    lms_role = GetRole(e.roleId, roles),
+                                                    lti_id = ltiIdString,
+                                                };
                                             }).ToList();
                                 }
                             }
@@ -271,9 +267,8 @@ namespace EdugameCloud.Lti.API.BlackBoard
             if (enrollmentsResult == null)
             {
                 error = error ?? "SOAP. Unable to retrive result from API";
-                return result;
+                return new List<LmsUserDTO>();
             }
-
             return enrollmentsResult;
         }
 
@@ -352,7 +347,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
-        public WebserviceWrapper LoginToolAndCreateAClient(
+        private WebserviceWrapper LoginToolAndCreateAClient(
             out string error,
             bool useSsl,
             string lmsDomain,
@@ -504,9 +499,15 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private static bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
+        private bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
         {
-            client = new WebserviceWrapper(lmsDomain, VendorEgc, ProgramLti, TimeSpan.FromMinutes(30).Seconds);
+            client = new WebserviceWrapper(
+                lmsDomain, 
+                VendorEgc, 
+                ProgramLti,
+                TimeSpan.FromMinutes(30).Seconds,
+                new CastleLoggerAdapter(logger));
+
             if (HadError(client, out error))
             {
                 return false;
@@ -532,11 +533,11 @@ namespace EdugameCloud.Lti.API.BlackBoard
         {
             var role =
                 availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
-                    .Return(x => x.courseRoleDescription, string.Empty)
-                    .ToLowerInvariant()
-                    .Trim(':')
-                    .Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                    .IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
+                .Return(x => x.courseRoleDescription, string.Empty)
+                .ToLowerInvariant()
+                .Trim(':')
+                .Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                .IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
             return Inflector.Capitalize(role);
         }
 

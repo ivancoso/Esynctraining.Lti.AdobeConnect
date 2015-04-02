@@ -100,6 +100,7 @@
         public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(string providerName, string consumerKey)
         {
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
+                .Fetch(x => x.Settings).Eager
                 .Where(x => (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
                 .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.ShortName).IsInsensitiveLike(providerName)
                 .Take(1);

@@ -1,12 +1,13 @@
 ﻿namespace EdugameCloud.Lti.Business.Models
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Lti.Domain.Entities;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-
     using NHibernate;
+    using NHibernate.Linq;
 
     /// <summary>
     /// The LMS user model
@@ -43,8 +44,19 @@
         /// </returns>
         public IFutureValue<LmsUser> GetOneByUserIdAndCompanyLms(string userId, int companyLmsId)
         {
-            var queryOver = new DefaultQueryOver<LmsUser, int>().GetQueryOver().Where(u => u.UserId == userId && u.LmsCompany.Id == companyLmsId);
+            var queryOver = new DefaultQueryOver<LmsUser, int>()
+                .GetQueryOver()
+                .Where(u => u.UserId == userId && u.LmsCompany.Id == companyLmsId);
             return this.Repository.FindOne(queryOver);
+        }
+
+        public IEnumerable<LmsUser> GetByUserIdAndCompanyLms(string[] userIds, int companyLmsId)
+        {
+            var query = from u in this.Repository.Session.Query<LmsUser>()
+                        where u.LmsCompany.Id == companyLmsId && userIds.Contains(u.UserId)
+                        select u;
+
+            return query.ToList().AsReadOnly();
         }
 
         /// <summary>

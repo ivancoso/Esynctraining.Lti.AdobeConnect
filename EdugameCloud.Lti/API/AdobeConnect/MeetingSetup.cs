@@ -1,4 +1,9 @@
-﻿using EdugameCloud.Lti.API.BlackBoard;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
+using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
@@ -11,11 +16,6 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -1374,7 +1374,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static List<ACSessionDTO> GetSessionsWithParticipantsBySessionTime(string meetingId, List<MeetingAttendee> meetingAttendees, 
             AdobeConnectProvider acp, int startIndex = 0, int limit = 0)
         {
-            var sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
+            List<MeetingSession> sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
             var result = sessions.Select(sco => new ACSessionDTO
             {
                 scoId = int.Parse(sco.ScoId),
@@ -1449,15 +1449,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             try
             {
-                var meetingAttendees = acp.ReportMettingAttendance(meetingId).Values.ToList();
+                List<MeetingAttendee> meetingAttendees = acp.ReportMettingAttendance(meetingId).Values.ToList();
                 if (meetingAttendees.All(x => string.IsNullOrEmpty(x.AssetId)))
                 {
                     //todo: we should not rely on AssetId parameter and probably use following method in all cases
                     return GetSessionsWithParticipantsBySessionTime(meetingId, meetingAttendees, acp, startIndex, limit);
                 }
+
                 //left previous version to avoid any possible errors
-                var userSessions = meetingAttendees.Where(x => !String.IsNullOrEmpty(x.AssetId))
-                    .GroupBy(v => v.AssetId, v => v).ToDictionary(g => int.Parse(g.Key), g => g.ToList());
+                var userSessions = meetingAttendees.Where(x => !string.IsNullOrEmpty(x.AssetId))
+                    .GroupBy(v => v.AssetId, v => v)
+                    .ToDictionary(g => int.Parse(g.Key), g => g.ToList());
 
                 var sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
 

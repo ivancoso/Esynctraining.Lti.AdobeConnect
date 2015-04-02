@@ -5,15 +5,11 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net;
-    using System.Reflection;
     using System.Web;
     using System.Web.Mvc;
-    using System.Web.SessionState;
     using System.Xml.Linq;
     using System.Xml.XPath;
-
     using DotNetOpenAuth.AspNet;
-
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
@@ -28,15 +24,12 @@
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
     using EdugameCloud.Lti.Utils;
-
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
     using Microsoft.Web.WebPages.OAuth;
-
     using Newtonsoft.Json;
 
     /// <summary>
@@ -369,19 +362,10 @@
         public virtual JsonResult GetSettings(string lmsProviderName)
         {
             var session = this.GetSession(lmsProviderName);
-            var companyLms = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var lmsUser = this.GetUser(companyLms, param);
-            var password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword);
-            return
-                this.Json(
-                    new LmsUserSettingsDTO
-                        {
-                            acConnectionMode = lmsUser.Item1,
-                            primaryColor = lmsUser.Item2,
-                            lmsProviderName = lmsProviderName,
-                            password = string.IsNullOrWhiteSpace(password) ? null : password
-                        });
+            LmsUserSettingsDTO settings = GetLmsUserSettingsForJoin(lmsProviderName, session.LmsCompany, param, session);
+
+            return this.Json(settings);
         }
 
         /// <summary>
@@ -865,7 +849,7 @@
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
             string lmsProvider = param.GetLtiProviderName(provider);
-            if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !String.IsNullOrEmpty(param.user_id))
+            if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !string.IsNullOrEmpty(param.user_id))
             {
                 var parsedIdArray = param.user_id.Split('_');
                 if (parsedIdArray.Length == 2)
@@ -876,7 +860,8 @@
             LmsCompany lmsCompany = this.LmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
             if (lmsCompany != null)
             {
-                if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !string.Equals(lmsCompany.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) 
+                    && !string.Equals(lmsCompany.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.ViewBag.Error = "This LTI integration is already set for different domain";
                     return this.View("Error");
@@ -920,8 +905,7 @@
                             param.lis_person_contact_email_primary,
                             param.lis_person_name_given,
                             param.lis_person_name_family,
-                            lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(),
-                            lmsCompany.DenyACUserCreation);
+                            lmsCompany);
                         break;
                     case LmsProviderNames.Desire2Learn:
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
@@ -942,8 +926,7 @@
                             param.lis_person_contact_email_primary,
                             param.lis_person_name_given,
                             param.lis_person_name_family,
-                            lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(),
-                            lmsCompany.DenyACUserCreation);
+                            lmsCompany);
                         break;
                     case LmsProviderNames.BrainHoney:
                     case LmsProviderNames.Blackboard:
@@ -955,17 +938,16 @@
                             param.lis_person_contact_email_primary,
                             param.lis_person_name_given,
                             param.lis_person_name_family,
-                            lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(),
-                            lmsCompany.DenyACUserCreation);
+                            lmsCompany);
                         if (lmsUser == null)
                         {
                             lmsUser = new LmsUser
-                                          {
-                                              LmsCompany = lmsCompany,
-                                              UserId = param.lms_user_id,
-                                              Username = this.GetUserNameOrEmail(param),
-                                              PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null
-                                          };
+                            {
+                                LmsCompany = lmsCompany,
+                                UserId = param.lms_user_id,
+                                Username = this.GetUserNameOrEmail(param),
+                                PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
+                            };
                             this.lmsUserModel.RegisterSave(lmsUser);
                         }
 
@@ -1269,7 +1251,7 @@
                 acConnectionMode = lmsUser.Item1,
                 primaryColor = lmsUser.Item2,
                 lmsProviderName = lmsProviderName,
-                password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword)
+                password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword),
             };
         }
 
@@ -1430,11 +1412,11 @@
         private LmsUserSession GetSession(string key)
         {
             Guid uid;
-            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetOneById(uid).Value : null;
+            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
 
             if (this.IsDebug && session == null)
             {
-                session = this.userSessionModel.GetOneById(Guid.Empty).Value;
+                session = this.userSessionModel.GetByIdWithRelated(Guid.Empty).Value;
             }
 
             if (session == null)
@@ -1482,9 +1464,9 @@
         /// <returns>
         /// The <see cref="AdobeConnectProvider"/>.
         /// </returns>
-        private AdobeConnectProvider GetAdobeConnectProvider(LmsCompany lmsCompany, LmsUserSession lmsUserSession = null)
+        private AdobeConnectProvider GetAdobeConnectProvider(LmsCompany lmsCompany)
         {
-            lmsCompany = lmsCompany ?? lmsUserSession.Return(x => x.LmsCompany, null);
+            //lmsCompany = lmsCompany ?? lmsUserSession.Return(x => x.LmsCompany, null);
             AdobeConnectProvider provider = null;
             if (lmsCompany != null)
             {
@@ -1516,63 +1498,63 @@
         ///     The regenerate id.
         /// </summary>
         // ReSharper disable once UnusedMember.Local
-        private void RegenerateId()
-        {
-            HttpContext httpContext = System.Web.HttpContext.Current;
-            var manager = new SessionIDManager();
-            string oldId = manager.GetSessionID(httpContext);
-            string newId = manager.CreateSessionID(httpContext);
+        //private void RegenerateId()
+        //{
+        //    HttpContext httpContext = System.Web.HttpContext.Current;
+        //    var manager = new SessionIDManager();
+        //    string oldId = manager.GetSessionID(httpContext);
+        //    string newId = manager.CreateSessionID(httpContext);
 
-            bool isAdd, isRedirected;
-            manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
-            HttpApplication application = httpContext.ApplicationInstance;
-            HttpModuleCollection modules = application.Modules;
-            var ssm = (SessionStateModule)modules.Get("Session");
-            FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-            SessionStateStoreProviderBase store = null;
-            FieldInfo requiredIdField = null, requiredLockIdField = null, requiredStateNotFoundField = null;
-            foreach (FieldInfo field in fields)
-            {
-                if (field.Name.Equals("_store"))
-                {
-                    store = (SessionStateStoreProviderBase)field.GetValue(ssm);
-                }
+        //    bool isAdd, isRedirected;
+        //    manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
+        //    HttpApplication application = httpContext.ApplicationInstance;
+        //    HttpModuleCollection modules = application.Modules;
+        //    var ssm = (SessionStateModule)modules.Get("Session");
+        //    FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        //    SessionStateStoreProviderBase store = null;
+        //    FieldInfo requiredIdField = null, requiredLockIdField = null, requiredStateNotFoundField = null;
+        //    foreach (FieldInfo field in fields)
+        //    {
+        //        if (field.Name.Equals("_store"))
+        //        {
+        //            store = (SessionStateStoreProviderBase)field.GetValue(ssm);
+        //        }
 
-                if (field.Name.Equals("_rqId"))
-                {
-                    requiredIdField = field;
-                }
+        //        if (field.Name.Equals("_rqId"))
+        //        {
+        //            requiredIdField = field;
+        //        }
 
-                if (field.Name.Equals("_rqLockId"))
-                {
-                    requiredLockIdField = field;
-                }
+        //        if (field.Name.Equals("_rqLockId"))
+        //        {
+        //            requiredLockIdField = field;
+        //        }
 
-                if (field.Name.Equals("_rqSessionStateNotFound"))
-                {
-                    requiredStateNotFoundField = field;
-                }
-            }
+        //        if (field.Name.Equals("_rqSessionStateNotFound"))
+        //        {
+        //            requiredStateNotFoundField = field;
+        //        }
+        //    }
 
-            if (requiredLockIdField != null)
-            {
-                object lockId = requiredLockIdField.GetValue(ssm);
-                if (lockId != null && oldId != null && store != null)
-                {
-                    store.ReleaseItemExclusive(httpContext, oldId, lockId);
-                }
-            }
+        //    if (requiredLockIdField != null)
+        //    {
+        //        object lockId = requiredLockIdField.GetValue(ssm);
+        //        if (lockId != null && oldId != null && store != null)
+        //        {
+        //            store.ReleaseItemExclusive(httpContext, oldId, lockId);
+        //        }
+        //    }
 
-            if (requiredStateNotFoundField != null)
-            {
-                requiredStateNotFoundField.SetValue(ssm, true);
-            }
+        //    if (requiredStateNotFoundField != null)
+        //    {
+        //        requiredStateNotFoundField.SetValue(ssm, true);
+        //    }
 
-            if (requiredIdField != null)
-            {
-                requiredIdField.SetValue(ssm, newId);
-            }
-        }
+        //    if (requiredIdField != null)
+        //    {
+        //        requiredIdField.SetValue(ssm, newId);
+        //    }
+        //}
 
         /// <summary>
         /// Sets the parameter.
@@ -1643,11 +1625,11 @@
                 var session = this.GetSession(key);
                 var sharedKey = AESGCM.NewKey();
                 var sessionData = new LtiSessionDTO
-                                      {
-                                          LtiParam = param,
-                                          ACPasswordData = AESGCM.SimpleEncrypt(adobeConnectPassword, sharedKey),
-                                          SharedKey = Convert.ToBase64String(sharedKey)
-                                      };
+                {
+                    LtiParam = param,
+                    ACPasswordData = AESGCM.SimpleEncrypt(adobeConnectPassword, sharedKey),
+                    SharedKey = Convert.ToBase64String(sharedKey),
+                };
                 session.SessionData = JsonConvert.SerializeObject(sessionData);
                 this.userSessionModel.RegisterSave(session);
             }
@@ -1684,14 +1666,15 @@
         /// </returns>
         private ActionResult LoginToAC(object url, string breezeSession, LmsCompany credentials)
         {
-            if (url is string)
+            string realUrl = url as string;
+            if (!string.IsNullOrEmpty(realUrl))
             {
                 if (!credentials.LoginUsingCookie.GetValueOrDefault())
                 {
-                    return this.Redirect(url as string);
+                    return this.Redirect(realUrl);
                 }
 
-                this.ViewBag.MeetingUrl = url as string;
+                this.ViewBag.MeetingUrl = realUrl;
                 this.ViewBag.BreezeSession = breezeSession;
                 this.ViewBag.AcServer = credentials.AcServer.EndsWith("/")
                                             ? credentials.AcServer

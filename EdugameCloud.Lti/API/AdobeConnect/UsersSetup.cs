@@ -1,4 +1,9 @@
-﻿using BbWsClient;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Security;
+using BbWsClient;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.BrainHoney;
 using EdugameCloud.Lti.API.Canvas;
@@ -17,12 +22,6 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Web.Security;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -206,56 +205,80 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var nonEditable = new HashSet<string>();
             GetMeetingAttendees(provider, meeting.GetMeetingScoId(), out hosts, out presenters, out participants, nonEditable);
 
-            foreach (LmsUserDTO user in users)
-            {
-                string login = user.GetLogin(), email = user.GetEmail();
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value
-                     ?? new LmsUser()
-                     {
-                         LmsCompany = lmsCompany,
-                         Username = login,
-                         UserId = user.lti_id ?? user.id
-                     };
+            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+            IEnumerable<LmsUser> lmsUsers = LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+            //Debug.Assert(userIds.Length == lmsUsers.Count(), "Should return single user by userId+lmsCompany.Id");
 
-                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+            // NOTE: sometimes we have no users here - for example due any security issue in LMS service (BlackBoard)
+            // So skip this step for better performance
+            if (users.Count > 0)
+            {
+                IEnumerable<Principal> principalCache = GetAllPrincipals(provider);
+                bool uncommitedChangesInLms = false;
+                foreach (LmsUserDTO user in users)
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, user.GetFirstName(), user.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), lmsCompany.DenyACUserCreation);
-                    if (principal != null)
+                    string login = user.GetLogin();
+                    var lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id))
+                        ?? new LmsUser
+                        {
+                            LmsCompany = lmsCompany,
+                            Username = login,
+                            UserId = user.lti_id ?? user.id,
+                        };
+
+                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
-                        lmsUser.PrincipalId = principal.PrincipalId;
-                        this.LmsUserModel.RegisterSave(lmsUser);
+                        var principal = this.GetOrCreatePrincipal2(provider,
+                            login, user.GetEmail(),
+                            user.GetFirstName(), user.GetLastName(),
+                            lmsCompany, principalCache);
+
+                        if (principal != null)
+                        {
+                            lmsUser.PrincipalId = principal.PrincipalId;
+                            this.LmsUserModel.RegisterSave(lmsUser, flush: false);
+                            uncommitedChangesInLms = true;
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                    {
+                        continue;
+                    }
+
+                    user.ac_id = lmsUser.PrincipalId;
+                    user.is_editable = !nonEditable.Contains(user.ac_id);
+
+                    if (hosts.Any(v => v.PrincipalId == user.ac_id))
+                    {
+                        user.ac_role = "Host";
+                        hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
+                    }
+                    else if (presenters.Any(v => v.PrincipalId == user.ac_id))
+                    {
+                        user.ac_role = "Presenter";
+                        presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+                    }
+                    else if (participants.Any(v => v.PrincipalId == user.ac_id))
+                    {
+                        user.ac_role = "Participant";
+                        participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
                 }
 
-                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
-                {
-                    continue;
-                }
-
-                user.ac_id = lmsUser.PrincipalId;
-                user.is_editable = !nonEditable.Contains(user.ac_id);
-
-                if (hosts.Any(v => v.PrincipalId == user.ac_id))
-                {
-                    user.ac_role = "Host";
-                    hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
-                }
-                else if (presenters.Any(v => v.PrincipalId == user.ac_id))
-                {
-                    user.ac_role = "Presenter";
-                    presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
-                }
-                else if (participants.Any(v => v.PrincipalId == user.ac_id))
-                {
-                    user.ac_role = "Participant";
-                    participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
-                }
+                if (uncommitedChangesInLms)
+                    this.LmsUserModel.Flush();
             }
 
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
             {
-                users.Add(new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host" });
+                users.Add(new LmsUserDTO 
+                {
+                    ac_id = permissionInfo.PrincipalId,
+                    name = permissionInfo.Name,
+                    ac_role = "Host",
+                });
             }
 
             // ReSharper disable once LoopCanBeConvertedToQuery
@@ -265,20 +288,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     ac_id = permissionInfo.PrincipalId,
                     name = permissionInfo.Name,
-                    ac_role = "Presenter"
+                    ac_role = "Presenter",
                 });
             }
 
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in participants.Where(h => !h.HasChildren))
             {
-                users.Add(
-                    new LmsUserDTO
-                    {
-                        ac_id = permissionInfo.PrincipalId,
-                        name = permissionInfo.Name,
-                        ac_role = "Participant"
-                    });
+                users.Add(new LmsUserDTO
+                {
+                    ac_id = permissionInfo.PrincipalId,
+                    name = permissionInfo.Name,
+                    ac_role = "Participant",
+                });
             }
 
             return users;
@@ -315,13 +337,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
        
-            var users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
+            List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
             
             if (meeting == null)
             {
                 return users;
             }
-            var meetingSco = meeting.GetMeetingScoId();
+            string meetingSco = meeting.GetMeetingScoId();
 
             List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
@@ -336,7 +358,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsUser.lti_id ?? lmsUser.id,
                     login,
                     email,
-                    lmsCompany.Id) ?? new LmsUser()
+                    lmsCompany.Id) ?? new LmsUser
                     {
                         LmsCompany = lmsCompany,
                         Username = login,
@@ -345,7 +367,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), denyACUserCreation);
+                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), lmsCompany);
                     if (principal != null)
                     {
                         user.PrincipalId = principal.PrincipalId;
@@ -429,22 +451,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (user.ac_id == null)
             {
-                string email = user.GetEmail(), login = user.GetLogin();
-                var denyACUserCreation = lmsCompany.DenyACUserCreation;
                 var principal = this.GetOrCreatePrincipal(
                     provider,
-                    login,
-                    email,
+                    user.GetLogin(),
+                    user.GetEmail(),
                     user.GetFirstName(),
                     user.GetLastName(),
-                    lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(),
-                    denyACUserCreation);
+                    lmsCompany);
 
                 if (principal != null)
                 {
                     user.ac_id = principal.PrincipalId;
                 }
-                else if (denyACUserCreation)
+                else if (lmsCompany.DenyACUserCreation)
                 {
                     error = "User does not exist in AC database. You must create AC accounts manually";
                     return null;
@@ -689,8 +708,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             foreach (LmsUserDTO u in users)
             {
-                string email = u.GetEmail(), login = u.GetLogin();
-                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault(), lmsCompany.DenyACUserCreation);
+                string email = u.GetEmail();
+                string login = u.GetLogin();
+                var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), lmsCompany);
 
                 if (principal != null)
                 {
@@ -750,7 +770,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
                 }
 
-                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
             }
 
             if (principal == null && !string.IsNullOrWhiteSpace(login))
@@ -761,7 +781,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
                 }
 
-                principal = resultByLogin.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                principal = resultByLogin.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
             }
             
             if (!searchByEmailFirst && principal == null && !string.IsNullOrWhiteSpace(email))
@@ -772,7 +792,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
                 }
 
-                principal = resultByEmail.Return(x => x.Values, new List<Principal>()).FirstOrDefault();
+                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
+            }
+
+            return principal;
+        }
+
+        private Principal GetPrincipalByLoginOrEmail(IEnumerable<Principal> principalCache, string login, string email, bool searchByEmailFirst)
+        {
+            Principal principal = null;
+
+            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
+            {
+                principal = principalCache.FirstOrDefault(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if ((principal == null) && !string.IsNullOrWhiteSpace(login))
+            {
+                principal = principalCache.FirstOrDefault(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!searchByEmailFirst && (principal == null) && !string.IsNullOrWhiteSpace(email))
+            {
+                principal = principalCache.FirstOrDefault(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
             }
 
             return principal;
@@ -784,9 +826,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             string firstName,
             string lastName,
-            bool searchByEmailFirst,
-            bool denyUserCreation)
+            LmsCompany lmsCompany)
         {
+            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
+            bool denyUserCreation = lmsCompany.DenyACUserCreation;
             var principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
 
             if (principal == null && !denyUserCreation)
@@ -798,10 +841,67 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LastName = lastName,
                     Name = login,
                     Login = login,
-                    Type = PrincipalTypes.user
+                    Type = PrincipalTypes.user,
                 };
 
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
+
+                // TODO: review and add
+                //if (!pu.Success)
+                //{
+                //    throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
+                //}
+
+                if (pu.Principal != null)
+                {
+                    principal = pu.Principal;
+                }
+            }
+
+            return principal;
+        }
+
+        public Principal GetOrCreatePrincipal2(
+            AdobeConnectProvider provider,
+            string login,
+            string email,
+            string firstName,
+            string lastName,
+            LmsCompany lmsCompany,
+            IEnumerable<Principal> principalCache)
+        {
+            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
+            bool denyUserCreation = lmsCompany.DenyACUserCreation;
+
+            Principal principal;
+            if (principalCache != null)
+            {
+                principal = GetPrincipalByLoginOrEmail(principalCache, login, email, searchByEmailFirst);
+            }
+            else
+            {
+                principal = GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
+            }
+
+            if (!denyUserCreation && (principal == null))
+            {
+                var setup = new PrincipalSetup
+                {
+                    Email = string.IsNullOrWhiteSpace(email) ? null : email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Name = login,
+                    Login = login,
+                    Type = PrincipalTypes.user,
+                };
+
+                PrincipalResult pu = provider.PrincipalUpdate(setup);
+
+                // TODO: review and add
+                //if (!pu.Success)
+                //{
+                //    throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
+                //}
 
                 if (pu.Principal != null)
                 {
@@ -1195,7 +1295,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
             var key = credentials.LmsDomain + ".course." + blackBoardCourseId;
             error = null;
-            List<LmsUserDTO> cachedUsers = this.CheckCachedUsers(meeting, forceUpdate, timeout);
+            List<LmsUserDTO> cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
             if (cachedUsers == null)
             {
                 var lockMe = GetLocker(key);
@@ -1206,7 +1306,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         this.LmsCourseMeetingModel.Refresh(ref meeting);
                     }
 
-                    cachedUsers = this.CheckCachedUsers(meeting, forceUpdate, timeout);
+                    cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
                     if (cachedUsers == null)
                     {
                         WebserviceWrapper client = null;
@@ -1215,9 +1315,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             blackBoardCourseId,
                             out error,
                             ref client);
-                        if (users.Count == 0 && error.Return(x => x.ToLowerInvariant().Contains("access denied"), false))
+
+                        if ((users.Count == 0) && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
                         {
-                            Thread.Sleep(TimeSpan.FromSeconds(10));
+                            // NOTE: seems that session dies on BB; set to null to recreate session.
+                            client = null;
                             users = this.soapApi.GetUsersForCourse(
                                 credentials,
                                 blackBoardCourseId,
@@ -1231,9 +1333,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             meeting.CachedUsers = JsonConvert.SerializeObject(users);
                             this.LmsCourseMeetingModel.RegisterSave(meeting, true);
                         }
-                        else if (users.Count == 0 && error.Return(x => x.ToLowerInvariant().Contains("access denied"), false))
+                        else if ((users.Count == 0) && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
                         {
-                            users = this.CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
+                            users = CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
                         }
 
                         cachedUsers = users;
@@ -1259,7 +1361,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
+        private static List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
         {
             return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
         }
@@ -1443,6 +1545,31 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             hosts = ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
             presenters = ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
             participants = ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
+        }
+
+        private static IEnumerable<Principal> GetAllPrincipals(AdobeConnectProvider provider)
+        {
+            //var sw = Stopwatch.StartNew();
+            PrincipalCollectionResult result = provider.GetAllPrincipal();
+            if (result.Success)
+            {
+                //sw.Stop();
+                //var time = sw.Elapsed;
+                return result.Values;
+            }
+            else
+            {
+                // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
+                bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
+                if (!tooBigPrincipalCount)
+                {
+                    if (result.Status.UnderlyingExceptionInfo != null)
+                        throw new InvalidOperationException("UsersSetup.GetAllPrincipals error", result.Status.UnderlyingExceptionInfo);
+                    throw new InvalidOperationException("UsersSetup.GetAllPrincipals error");
+                }
+
+                return null;
+            }
         }
 
         #endregion

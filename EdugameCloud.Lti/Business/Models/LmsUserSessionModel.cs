@@ -10,6 +10,7 @@
 
     using NHibernate;
     using NHibernate.Criterion;
+    using NHibernate.Transform;
 
     /// <summary>
     ///     The LMS User Session model.
@@ -51,6 +52,20 @@
             var queryOver =
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
                     .Where(c => c.LmsUser != null && c.LmsUser.Id == userId && c.LmsCompany.Id == companyId && c.LmsCourseId == courseId);
+            return this.Repository.FindOne(queryOver);
+        }
+
+        public IFutureValue<LmsUserSession> GetByIdWithRelated(Guid sessionId)
+        {
+            var queryOver =
+                new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
+                .Fetch(x => x.LmsCompany).Eager
+                .Fetch(x => x.LmsCompany.AdminUser).Eager
+                .Fetch(x => x.LtiSession).Eager
+                .Fetch(x => x.LtiSession.LtiParam).Eager
+                .Where(c => c.Id == sessionId)
+                .TransformUsing(Transformers.DistinctRootEntity);
+
             return this.Repository.FindOne(queryOver);
         }
 
