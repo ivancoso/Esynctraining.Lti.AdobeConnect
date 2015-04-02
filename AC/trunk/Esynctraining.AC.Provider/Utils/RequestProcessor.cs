@@ -6,14 +6,12 @@
     using System.Net;
     using System.Net.Http;
     using System.Text;
-    using System.Threading.Tasks;
     using System.Xml;
 
     using Esynctraining.AC.Provider.Constants;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
-    using Esynctraining.Core.Extensions;
 
     /// <summary>
     ///     The request processor.

@@ -747,6 +747,24 @@
         }
 
         /// <summary>
+        /// Provides a list of users.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalCollectionResult GetAllPrincipal()
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Empty, out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
+        /// <summary>
         /// Provides a list of users by email
         /// </summary>
         /// <param name="email">
