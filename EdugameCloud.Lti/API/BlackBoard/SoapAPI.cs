@@ -347,7 +347,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
-        private WebserviceWrapper LoginToolAndCreateAClient(
+        public WebserviceWrapper LoginToolAndCreateAClient(
             out string error,
             bool useSsl,
             string lmsDomain,
