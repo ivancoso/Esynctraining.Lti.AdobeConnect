@@ -542,6 +542,10 @@
     <Content Include="Content\images\logos\logoSmall.png" />
     <Content Include="Content\images\logos\meetingone.jpg" />
     <Content Include="Content\images\logos\singleUser.png" />
+    <Content Include="Content\lti-config\blackboard.xml" />
+    <Content Include="Content\lti-config\desire2learn.xml" />
+    <Content Include="Content\lti-config\moodle.xml" />
+    <Content Include="Content\lti-config\sakai.xml" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
     <Content Include="Content\swf\admin\Adm_EdugameCloud_1.5.6579.swf" />
@@ -768,7 +772,6 @@
     <Content Include="Content\swf\admin\resources\images\swfIcon.png" />
     <Content Include="Content\swf\admin\resources\images\videoHelpThumb.jpg" />
     <Content Include="Content\swf\admin\resources\images\wordsbg.png" />
-    <Content Include="Content\lti-config\index.html" />
     <Content Include="Content\lti-config\brainhoney.xml" />
     <Content Include="Content\lti-config\canvas.xml" />
     <Content Include="Content\swf\admin\resources\xml\surveyPredefinedData.xml" />
@@ -785,8 +788,6 @@
     <Content Include="Content\lti-instructions\BrainHoney.pdf" />
     <Content Include="Content\lti-instructions\Canvas.pdf" />
     <Content Include="Content\lti-instructions\Moodle.pdf" />
-    <Content Include="Content\lti-config\Blackboard.pdf" />
-    <Content Include="Content\lti-config\Moodle.pdf" />
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Error.cshtml">
       <Link>Views\Lti\Error.cshtml</Link>
     </Content>
@@ -808,6 +809,8 @@
     <Content Include="Content\xsd\vcfProfile.xsd">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Content\lti-instructions\Desire2Learn.pdf" />
+    <Content Include="Content\lti-instructions\Sakai.pdf" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="PublishProfiles\EdugameCloud.Web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
