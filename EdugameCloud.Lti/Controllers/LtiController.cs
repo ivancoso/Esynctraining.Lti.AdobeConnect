@@ -914,7 +914,7 @@
                             string returnUrl = this.Url.AbsoluteAction(
                                 "callback",
                                 "Lti",
-                                null,
+                                new {__provider__ = provider},
                                 Request.Url.Scheme);
                             Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
                             return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
