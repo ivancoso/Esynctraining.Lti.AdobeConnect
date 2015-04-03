@@ -4,7 +4,7 @@ namespace EdugameCloud.WCFService
     using System;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
+    using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
@@ -16,13 +16,11 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using FluentValidation.Results;
 
     /// <summary>
@@ -230,6 +228,7 @@ namespace EdugameCloud.WCFService
                 }
                 catch (Exception ex)
                 {
+                    IoC.Resolve<ILogger>().Error(ex);
                 }
 
                 if (acp != null)

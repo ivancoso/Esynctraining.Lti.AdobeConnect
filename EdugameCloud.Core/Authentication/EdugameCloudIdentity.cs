@@ -47,13 +47,6 @@
             this.Name = email;
         }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="EdugameCloudIdentity" /> class.
-        /// </summary>
-        protected EdugameCloudIdentity()
-        {
-        }
-
         #endregion
 
         #region Public Properties

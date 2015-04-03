@@ -1,16 +1,14 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
-    
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-
     using NHibernate;
     using NHibernate.Transform;
 
@@ -91,7 +89,7 @@
                     .Select(x => new QuizPlayerDTO(x))
                     .ToArray();
 
-            res.questions.ForEach(q => q.question = Regex.Replace(q.question ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "));
+            Array.ForEach(res.questions, q => q.question = Regex.Replace(q.question ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "));
 
             var questionIds = res.questions.Select(q => q.questionId).ToList();
 
