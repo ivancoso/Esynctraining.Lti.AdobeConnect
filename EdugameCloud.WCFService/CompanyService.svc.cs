@@ -446,8 +446,8 @@ namespace EdugameCloud.WCFService
                 var companyModel = this.CompanyModel;
                 var companyLicenseModel = this.CompanyLicenseModel;
                 var instance = (dto.companyId == 0)
-                                              ? null
-                                              : companyModel.GetOneById(dto.companyId).Value;
+                    ? null
+                    : companyModel.GetOneById(dto.companyId).Value;
 
                 instance = this.Convert(dto, instance);
                 var isTransient = instance.IsTransient();

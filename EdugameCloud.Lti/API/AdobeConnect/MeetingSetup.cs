@@ -208,20 +208,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ret.Add(meetingDTO);
             }
 
-            if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
-            {
+            //if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
+            //{
                // var empty = this.CreateEmptyMeetingResponse(param);
                // ret.Add(empty);
-            }
+            //}
 
             if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
             {
-                var meeting =
-                    this.LmsCourseMeetingModel.GetOneByUserAndType(
-                        credentials.Id,
-                        param.lms_user_id,
-                        (int)LmsMeetingType.OfficeHours).Value;
-                if (meeting == null)
+                var officeHours =
+                    this.LmsCourseMeetingModel.GetOneByUserAndType(credentials.Id, param.lms_user_id, (int)LmsMeetingType.OfficeHours).Value;
+
+                if (officeHours == null)
                 {
                     var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, credentials.Id).Value;
                     if (lmsUser != null)
@@ -229,7 +227,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
                         if (officeHours != null)
                         {
-                            meeting = new LmsCourseMeeting
+                            officeHours = new LmsCourseMeeting
                                           {
                                               OfficeHours = officeHours,
                                               LmsMeetingType = (int)LmsMeetingType.OfficeHours,
@@ -240,12 +238,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                 }
                 
-                if (meeting != null)
+                if (officeHours != null)
                 {
-                    ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
+                    ScoInfoResult result = provider.GetScoInfo(officeHours.GetMeetingScoId());
                     if (result.Success && result.ScoInfo != null)
                     {
-                        IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
+                        IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(officeHours.GetMeetingScoId()).Values;
 
                         MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
                             credentials,
@@ -253,7 +251,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             param,
                             result.ScoInfo,
                             permission,
-                            meeting);
+                            officeHours);
                         meetingDTO.is_disabled_for_this_course = true;
                         ret.Add(meetingDTO);
                     }
