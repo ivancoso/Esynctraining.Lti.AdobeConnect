@@ -6,6 +6,7 @@
     using System.Web;
 
     using BbWsClient;
+    using BbWsClient.Content;
 
     using Castle.Core.Logging;
 
@@ -47,13 +48,9 @@
                 c =>
                 {
                     var egc = c.getEdugameCloudWrapper();
-                    /*var content = c.getContentWrapper();
+                    var content = c.getContentWrapper();
 
                     var tocs = content.getTOCsByCourseId("_34_1");
-
-                    //var webClient = new WebClient();
-                    //webClient.DownloadData(
-                    //    "http://blackboard.advantageconnectpro.com/courses/1/egc07/assessment/009f64c3ab3a4327ad2bfcc808930683/night.jpg");
 
                     var tos = content.getTOCsByCourseId(lmsUserParameters.Course.ToString());
 
@@ -88,10 +85,10 @@
                                     && l.contentHandler.Equals(isSurvey ? "resource/x-bb-asmt-survey-link" : "resource/x-bb-asmt-test-link")).ToArray();
                         }
                     }
-                    */
+                    
 
                     string testData = string.Empty;
-                    /*
+                    
                     if (tsts != null)
                     {
                         var quizDTO = new List<LmsQuizDTO>();
@@ -134,7 +131,7 @@
 
                         return quizDTO.ToList();
                     }
-                    */
+                    
                     return new List<LmsQuizDTO> { };
                 },
                 lmsUserParameters.CompanyLms,
