@@ -228,7 +228,7 @@ namespace EdugameCloud.WCFService
                 }
                 catch (Exception ex)
                 {
-                    IoC.Resolve<ILogger>().Error(ex);
+                    IoC.Resolve<ILogger>().Error("UpdateAdobeConnectFolder", ex);
                 }
 
                 if (acp != null)
