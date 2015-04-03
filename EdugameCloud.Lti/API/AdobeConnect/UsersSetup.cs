@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Security;
 using BbWsClient;
+using Castle.Core.Logging;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.BrainHoney;
 using EdugameCloud.Lti.API.Canvas;
@@ -1318,7 +1319,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                         if ((users.Count == 0) && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
                         {
-                            // NOTE: seems that session dies on BB; set to null to recreate session.
+                            IoC.Resolve<ILogger>().Warn("GetBlackBoardUsers.AccessDenied. " + error);
+                            // NOTE: set to null to re-create session.
                             client = null;
                             users = this.soapApi.GetUsersForCourse(
                                 credentials,
@@ -1327,7 +1329,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                                 ref client);
                         }
 
-                        if (string.IsNullOrWhiteSpace(error) && meeting != null)
+                        // TODO: try to call logout
+                        //client.logout();
+
+                        if (string.IsNullOrWhiteSpace(error) && (meeting != null))
                         {
                             meeting.AddedToCache = DateTime.Now;
                             meeting.CachedUsers = JsonConvert.SerializeObject(users);

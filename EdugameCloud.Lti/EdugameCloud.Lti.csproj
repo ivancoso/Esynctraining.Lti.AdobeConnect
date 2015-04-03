@@ -36,9 +36,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BbWsClient, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="BbWsClient, Version=1.0.0.7, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\BbWsClient.1.0.0.6\lib\net40\BbWsClient.dll</HintPath>
+      <HintPath>..\packages\BbWsClient.1.0.0.7\lib\net40\BbWsClient.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.7.0\lib\Net40-Client\BouncyCastle.Crypto.dll</HintPath>

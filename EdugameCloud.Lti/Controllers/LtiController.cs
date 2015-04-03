@@ -41,38 +41,15 @@
     {
         private const string ProviderKeyCookieName = "providerKey";
 
-        #region Static Fields
+        #region Fields
 
-        /// <summary>
-        ///     The is debug.
-        /// </summary>
         private static bool? isDebug;
 
-        /// <summary>
-        /// The company LMS model.
-        /// </summary>
         private readonly LmsCompanyModel lmsCompanyModel;
-
-        /// <summary>
-        /// The user session model.
-        /// </summary>
         private readonly LmsUserSessionModel userSessionModel;
-
-        /// <summary>
-        /// The LMS user model.
-        /// </summary>
         private readonly LmsUserModel lmsUserModel;
-
-        /// <summary>
-        /// The Meeting setup.
-        /// </summary>
         private readonly MeetingSetup meetingSetup;
-
-        /// <summary>
-        /// The users setup.
-        /// </summary>
         private readonly UsersSetup usersSetup;
-
         private readonly SoapAPI soapApi;
 
         #endregion
@@ -127,28 +104,6 @@
         public dynamic Settings { get; private set; }
 
         /// <summary>
-        ///     Gets the company LMS model.
-        /// </summary>
-        private LmsCompanyModel LmsCompanyModel
-        {
-            get
-            {
-                return this.lmsCompanyModel;
-            }
-        }
-
-        /// <summary>
-        ///     Gets the LMS user model.
-        /// </summary>
-        private LmsUserModel LmsUserModel
-        {
-            get
-            {
-                return this.lmsUserModel;
-            }
-        }
-
-        /// <summary>
         ///     Gets a value indicating whether is debug.
         /// </summary>
         private bool IsDebug
@@ -163,17 +118,6 @@
                 bool val;
                 isDebug = bool.TryParse(this.Settings.IsDebug, out val) && val;
                 return isDebug.Value;
-            }
-        }
-
-        /// <summary>
-        ///     Gets the meeting setup.
-        /// </summary>
-        private MeetingSetup MeetingSetup
-        {
-            get
-            {
-                return this.meetingSetup;
             }
         }
 
@@ -393,7 +337,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            bool res = this.MeetingSetup.RemoveRecording(
+            bool res = this.meetingSetup.RemoveRecording(
                 credentials, 
                 this.GetAdobeConnectProvider(credentials), 
                 param.course_id, 
@@ -430,7 +374,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var meetings = this.MeetingSetup.GetMeetings(
+            var meetings = this.meetingSetup.GetMeetings(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param);
@@ -456,7 +400,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var success = this.MeetingSetup.DeleteMeeting(
+            var success = this.meetingSetup.DeleteMeeting(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param,
@@ -483,7 +427,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            List<RecordingDTO> recordings = this.MeetingSetup.GetRecordings(
+            List<RecordingDTO> recordings = this.meetingSetup.GetRecordings(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param.course_id,
@@ -506,7 +450,7 @@
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
-            List<TemplateDTO> templates = this.MeetingSetup.GetTemplates(
+            List<TemplateDTO> templates = this.meetingSetup.GetTemplates(
                 this.GetAdobeConnectProvider(credentials), 
                 credentials.ACTemplateScoId);
 
@@ -573,7 +517,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var report = this.MeetingSetup.GetAttendanceReport(
+            var report = this.meetingSetup.GetAttendanceReport(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param, 
@@ -607,7 +551,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var report = this.MeetingSetup.GetSessionsReport(
+            var report = this.meetingSetup.GetSessionsReport(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
                 param,
@@ -653,7 +597,7 @@
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             string breezeSession = null;
-            var url = this.MeetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+            var url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
             
             return this.LoginToAC(url, breezeSession, credentials);
         }
@@ -675,7 +619,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var result = this.MeetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
+            var result = this.meetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
 
             return this.Json(result);
         }
@@ -699,7 +643,7 @@
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             var breezeSession = string.Empty;
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession);
+            var url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession);
 
             return this.LoginToAC(url, breezeSession, credentials);
         }
@@ -726,7 +670,7 @@
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
-            var link = this.MeetingSetup.UpdateRecording(credentials, this.GetAdobeConnectProvider(credentials), recordingId, isPublic, password);
+            var link = this.meetingSetup.UpdateRecording(credentials, this.GetAdobeConnectProvider(credentials), recordingId, isPublic, password);
             
             return link;
         }
@@ -750,7 +694,7 @@
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             var breezeSession = string.Empty;
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "edit");
+            var url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "edit");
 
             return this.LoginToAC(url, breezeSession, credentials);
         }
@@ -774,7 +718,7 @@
             var param = session.LtiSession.With(x => x.LtiParam);
             var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
             var breezeSession = string.Empty;
-            var url = this.MeetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "offline");
+            var url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "offline");
 
             return this.LoginToAC(url, breezeSession, credentials);
         }
@@ -862,7 +806,7 @@
                     param.user_id = parsedIdArray[1];
                 }
             }
-            LmsCompany lmsCompany = this.LmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
+            LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
             if (lmsCompany != null)
             {
                 if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) 
@@ -889,7 +833,7 @@
             var session = this.SaveSession(lmsCompany, param, lmsUser);
             var key = session.Id.ToString();
             
-            this.MeetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
+            this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
             
             if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
             {
@@ -1005,7 +949,7 @@
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
             var param = session.LtiSession.With(x => x.LtiParam);
-            var ret = this.MeetingSetup.SaveMeeting(
+            var ret = this.meetingSetup.SaveMeeting(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
                 param, 
@@ -1104,7 +1048,7 @@
         public virtual JsonResult GetAuthenticationParameters(string acId, string acDomain, string scoId)
         {
             string error = null;
-            var param = this.MeetingSetup.GetLmsParameters(acId, acDomain, scoId, ref error);
+            var param = this.meetingSetup.GetLmsParameters(acId, acDomain, scoId, ref error);
             if (param != null)
             {
                 return this.Json(param, JsonRequestBehavior.AllowGet);
@@ -1277,7 +1221,7 @@
             if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
             {
                 credentials.LmsDomain = param.lms_domain;
-                this.LmsCompanyModel.RegisterSave(credentials, true);
+                this.lmsCompanyModel.RegisterSave(credentials, true);
                 return true;
             }
 
@@ -1331,7 +1275,7 @@
             {
                 var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
                 var userName = username ?? this.GetUserNameOrEmail(param);
-                lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
+                lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
                 if (lmsUser.IsTransient())
@@ -1347,7 +1291,7 @@
                 if (company.AdminUser == null && this.IsAdminRole(providerKey))
                 {
                     company.AdminUser = lmsUser;
-                    LmsCompanyModel.RegisterSave(company);
+                    lmsCompanyModel.RegisterSave(company);
                 }
 
                 return this.RedirectToExtJs(company, lmsUser, providerKey);
@@ -1478,7 +1422,7 @@
                 provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as AdobeConnectProvider;
                 if (provider == null)
                 {
-                    provider = this.MeetingSetup.GetProvider(lmsCompany);
+                    provider = this.meetingSetup.GetProvider(lmsCompany);
                     this.SetAdobeConnectProvider(lmsCompany.Id, provider);
                 }
             }
