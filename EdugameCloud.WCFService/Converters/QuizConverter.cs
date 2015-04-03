@@ -1015,7 +1015,7 @@
             bool option)
         {
             var splitText = new List<string>();
-            var questionText = q.question_text;
+            var questionText = this.ClearName(q.question_text);
             while (questionText.Length > 0)
             {
                 int nextPlaceholderStart = questionText.IndexOf("["), nextPlaceholderEnd = questionText.IndexOf("]");
