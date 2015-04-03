@@ -518,6 +518,8 @@
 
             int subModuleId = isSurvey ? (int)SubModuleItemType.Survey : (int)SubModuleItemType.Quiz;
 
+            int questionOrder = 0;
+
             foreach (var quizQuestion in quiz.question_list.Where(qs => qs.question_type != null))
             {
                 bool isNumeric = false;
@@ -636,6 +638,7 @@
                 question.DateModified = DateTime.Now;
                 question.ModifiedBy = user;
                 question.IsActive = true;
+                question.QuestionOrder = questionOrder++;
                 
                 var isTransient = question.Id == 0;
 
