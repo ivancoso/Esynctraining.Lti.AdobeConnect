@@ -83,5 +83,12 @@
         public virtual int? LmsUserParametersId { get; set; }
 
         #endregion
+
+        public QuizResult()
+        {
+            Results = new List<QuizQuestionResult>();
+        }
+
     }
+
 }

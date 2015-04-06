@@ -73,5 +73,12 @@
         public virtual bool? IsCompleted { get; set; }
 
         #endregion
+
+        public TestResult()
+        {
+            Results = new List<TestQuestionResult>();
+        }
+
     }
+
 }

@@ -337,5 +337,21 @@
         }
 
         #endregion
+
+        public User()
+        { 
+            ACSessions = new List<ACSession>();
+            Activations = new List<UserActivation>();
+            DistractorsCreated = new List<Distractor>();
+            DistractorsModified = new List<Distractor>();
+            Files = new List<File>();
+            LoginHistory = new List<UserLoginHistory>();
+            SubModuleCategories = new List<SubModuleCategory>();
+            SubModuleCategoriesModified = new List<SubModuleCategory>();
+            ThemeAttributesCreated = new List<ThemeAttribute>();
+            ThemeAttributesModified = new List<ThemeAttribute>();
+        }
+
     }
+
 }

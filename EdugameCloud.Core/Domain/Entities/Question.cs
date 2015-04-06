@@ -163,5 +163,21 @@
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         #endregion
+
+        public Question()
+        { 
+            QuizQuestionResults = new List<QuizQuestionResult>();
+            SurveyQuestionResults = new List<SurveyQuestionResult>();
+            TestQuestionResults = new List<TestQuestionResult>();
+            LikertQuestions = new List<QuestionForLikert>();
+            RateQuestions = new List<QuestionForRate>();
+            TrueFalseQuestions = new List<QuestionForTrueFalse>();
+            OpenAnswerQuestions = new List<QuestionForOpenAnswer>();
+            WeightBucketQuestions = new List<QuestionForWeightBucket>();
+            SingleMultipleChoiceQuestions = new List<QuestionForSingleMultipleChoice>();
+            Distractors = new List<Distractor>();
+        }
+
     }
+
 }

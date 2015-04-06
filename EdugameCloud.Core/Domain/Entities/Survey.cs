@@ -42,5 +42,12 @@
         public virtual int? LmsSurveyId { get; set; }
 
         #endregion
+
+        public Survey()
+        {
+            Results = new List<SurveyResult>();
+        }
+
     }
+
 }

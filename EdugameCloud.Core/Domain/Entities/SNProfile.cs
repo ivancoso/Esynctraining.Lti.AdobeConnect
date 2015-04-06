@@ -67,5 +67,13 @@
         public virtual IList<SNProfileSNService> Services { get; protected set; }
 
         #endregion
+
+        public SNProfile()
+        { 
+            Links = new List<SNLink>();
+            Services = new List<SNProfileSNService>();
+        }
+
     }
+
 }

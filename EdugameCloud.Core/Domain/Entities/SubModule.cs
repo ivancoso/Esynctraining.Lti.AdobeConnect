@@ -38,5 +38,12 @@
         public virtual string SubModuleName { get; set; }
 
         #endregion
+
+        public SubModule()
+        {
+            SubModuleCategories = new List<SubModuleCategory>();
+        }
+
     }
+
 }

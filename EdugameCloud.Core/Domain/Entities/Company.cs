@@ -89,5 +89,13 @@
         public virtual CompanyStatus Status { get; set; }
 
         #endregion
+
+        public Company()
+        {
+            Licenses = new List<CompanyLicense>();
+            Users = new List<User>();
+        }
+
     }
+
 }

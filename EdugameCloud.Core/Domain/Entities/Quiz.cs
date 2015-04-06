@@ -47,5 +47,10 @@
         public virtual int? LmsQuizId { get; set; }
 
         #endregion
+
+        public Quiz()
+        { 
+            Results = new List<QuizResult>();
+        }
     }
 }

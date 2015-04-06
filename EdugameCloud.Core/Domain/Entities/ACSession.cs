@@ -93,5 +93,17 @@
         public virtual IList<AppletResult> AppletResults { get; protected set; }
 
         #endregion
+
+        public ACSession()
+        {
+            GroupDiscussions = new List<SNGroupDiscussion>();
+            SNMembers = new List<SNMember>();
+            SurveyResults = new List<SurveyResult>();
+            QuizResults = new List<QuizResult>();
+            TestResults = new List<TestResult>();
+            AppletResults = new List<AppletResult>();
+        }
+
     }
+
 }

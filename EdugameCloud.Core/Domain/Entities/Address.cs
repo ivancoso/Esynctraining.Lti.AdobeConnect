@@ -68,5 +68,12 @@
         public virtual State State { get; set; }
 
         #endregion
+
+        public Address()
+        {
+            Companies = new List<Company>();
+        }
+
     }
+
 }

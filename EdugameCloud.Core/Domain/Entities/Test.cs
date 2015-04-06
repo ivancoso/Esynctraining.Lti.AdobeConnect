@@ -62,5 +62,12 @@
         public virtual string TestName { get; set; }
 
         #endregion
+
+        public Test()
+        {
+            Results = new List<TestResult>();
+        }
+
     }
+
 }

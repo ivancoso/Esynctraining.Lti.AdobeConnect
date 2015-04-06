@@ -89,5 +89,19 @@
         public virtual IList<SNProfile> SNProfiles { get; protected set; }
 
         #endregion
+
+        public SubModuleItem()
+        {
+            ACSessions = new List<ACSession>();
+            Themes = new List<SubModuleItemTheme>();
+            AppletItems = new List<AppletItem>();
+            SNProfiles = new List<SNProfile>();
+            Questions = new List<Question>();
+            Quizes = new List<Quiz>();
+            Surveys = new List<Survey>();
+            Tests = new List<Test>();
+        }
+
     }
+
 }

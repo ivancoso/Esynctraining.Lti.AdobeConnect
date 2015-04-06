@@ -33,5 +33,12 @@
         public virtual IList<SubModule> SubModules { get; protected set; }
 
         #endregion
+
+        public Module()
+        {
+            SubModules = new List<SubModule>();
+        }
+
     }
+
 }

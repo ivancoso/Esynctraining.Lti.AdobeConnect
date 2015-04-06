@@ -32,5 +32,12 @@
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         #endregion
+
+        public AppletItem()
+        {
+            Results = new List<AppletResult>();
+        }
+
     }
+
 }

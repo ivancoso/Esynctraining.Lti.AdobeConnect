@@ -58,5 +58,12 @@
         public virtual int? CompanyLmsId { get; set; }
 
         #endregion
+
+        public SubModuleCategory()
+        {
+            SubModuleItems = new List<SubModuleItem>();
+        }
+
     }
+
 }

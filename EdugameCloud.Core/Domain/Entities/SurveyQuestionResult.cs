@@ -42,5 +42,12 @@
         public virtual IList<SurveyQuestionResultAnswer> Answers { get; protected set; }
 
         #endregion
+
+        public SurveyQuestionResult()
+        {
+            Answers = new List<SurveyQuestionResultAnswer>();
+        }
+
     }
+
 }
