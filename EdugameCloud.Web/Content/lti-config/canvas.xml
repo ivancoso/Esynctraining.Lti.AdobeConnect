@@ -11,13 +11,13 @@
   <blti:title>Adobe Connect Stage</blti:title>
   <blti:description>Adobe Connect integration</blti:description>
   <blti:icon></blti:icon>
-  <blti:launch_url>https://dev.edugamecloud.com:4443/lti/canvas-login</blti:launch_url>
+  <blti:launch_url>https://dev.edugamecloud.com/lti/canvas-login</blti:launch_url>
   <blti:extensions platform="canvas.instructure.com">
     <lticm:property name="tool_id">egc_ac_stage</lticm:property>
     <lticm:property name="privacy_level">public</lticm:property>
-    <lticm:property name="domain">https://dev.edugamecloud.com:4443/lti/canvas-login</lticm:property>
+    <lticm:property name="domain">https://dev.edugamecloud.com/lti/canvas-login</lticm:property>
     <lticm:options name="course_navigation">
-      <lticm:property name="url">https://dev.edugamecloud.com:4443/lti/canvas-login</lticm:property>
+      <lticm:property name="url">https://dev.edugamecloud.com/lti/canvas-login</lticm:property>
       <lticm:property name="text">Adobe Connect Stage</lticm:property>
       <lticm:property name="visibility">public</lticm:property>
       <lticm:property name="default">enabled</lticm:property>
