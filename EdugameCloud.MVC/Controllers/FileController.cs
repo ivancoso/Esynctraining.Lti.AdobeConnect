@@ -877,9 +877,15 @@
             try
             {
                 var user = this.CurrentUser;
-                if (user != null && user.Company != null)
+                if ((user != null) && (user.Company != null))
                 {
                     string publicBuild = this.ProcessVersion(PublicFolderPath, (string)this.Settings.PublicBuildSelector);
+                    if (string.IsNullOrEmpty(publicBuild))
+                    {
+                        IoC.Resolve<ILogger>().Warn("Could'n find any POD build");
+                        return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                    }
+
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
                     if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
