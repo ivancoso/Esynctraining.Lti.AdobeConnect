@@ -216,6 +216,7 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
+    <Compile Include="API\BlackBoard\BlackboardQuizParser.cs" />
     <Compile Include="API\BlackBoard\EGCEnabledBlackboardAPI.cs" />
     <Compile Include="API\BlackBoard\CastleLoggerAdapter.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />

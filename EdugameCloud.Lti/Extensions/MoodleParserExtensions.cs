@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Xml;
 
     /// <summary>
@@ -9,6 +10,20 @@
     /// </summary>
     public static class MoodleParserExtensions
     {
+        /// <summary>
+        /// The clear name.
+        /// </summary>
+        /// <param name="name">
+        /// The name.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static string ClearName(this string name)
+        {
+            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ");
+        }
+
         /// <summary>
         /// The get node value.
         /// </summary>

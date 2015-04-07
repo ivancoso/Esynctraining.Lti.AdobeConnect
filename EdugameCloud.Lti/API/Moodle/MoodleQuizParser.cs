@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.Lti.EntityParsing
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Xml;
 
     using EdugameCloud.Lti.Domain.Entities;
@@ -233,7 +235,65 @@
 
             ret.question_list = quizQuestions.ToArray();
 
+            ProcessQuiz(ret);
+
             return ret;
+        }
+
+        private static void ProcessQuiz(LmsQuizDTO quiz)
+        {
+            foreach (var quizQuestion in quiz.question_list)
+            {
+                if (quizQuestion.question_text == null)
+                {
+                    quizQuestion.question_text = quizQuestion.question_name;
+                }
+
+                if (quizQuestion.presentation != null)
+                {
+                    if (quizQuestion.presentation.IndexOf("|", StringComparison.Ordinal) > -1)
+                    {
+                        var presentationIndex = quizQuestion.presentation.IndexOf("|");
+                        quizQuestion.question_text = string.Format(
+                            "{0} ({1}-{2})",
+                            quizQuestion.question_text,
+                            quizQuestion.presentation.Substring(0, presentationIndex),
+                            quizQuestion.presentation.Substring(presentationIndex + 1));                        
+                    }
+
+                    if (quizQuestion.presentation.IndexOf(">>>>>", StringComparison.Ordinal) > -1)
+                    {
+                        var separatorIndex = quizQuestion.presentation.IndexOf(">>>>>", System.StringComparison.Ordinal);
+                        string answers = separatorIndex > 0
+                                             ? quizQuestion.presentation.Substring(separatorIndex + 5)
+                                             : quizQuestion.presentation,
+                               type = separatorIndex > 0
+                                          ? quizQuestion.presentation.Substring(0, separatorIndex)
+                                          : string.Empty;
+                        if (type.Equals("d"))
+                        {
+                            quizQuestion.question_type = "dummy_rate";
+                        }
+
+                        quizQuestion.is_single = !type.Equals("c");
+                        quizQuestion.answers =
+                            answers.Split('|')
+                                .Select(
+                                    (a, i) =>
+                                    new AnswerDTO()
+                                        {
+                                            text =
+                                                a.IndexOf("####", StringComparison.Ordinal) > -1
+                                                    ? a.Substring(
+                                                        a.IndexOf("####", StringComparison.Ordinal)
+                                                        + 4)
+                                                    : a,
+                                            id = i
+                                        })
+                                .ToList();
+                    }
+                }
+            }
         }
 
         #endregion

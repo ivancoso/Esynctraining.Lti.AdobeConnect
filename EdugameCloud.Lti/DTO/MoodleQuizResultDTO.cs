@@ -39,12 +39,6 @@
         public virtual object[] answers { get; set; }
 
         /// <summary>
-        /// Gets or sets the is single.
-        /// </summary>
-        [DataMember]
-        public virtual bool? isSingle { get; set; }
-
-        /// <summary>
         /// Gets or sets the question type.
         /// </summary>
         [DataMember]

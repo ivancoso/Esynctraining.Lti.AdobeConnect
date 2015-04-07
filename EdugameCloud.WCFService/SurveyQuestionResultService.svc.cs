@@ -11,6 +11,8 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
@@ -107,6 +109,22 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<QuizResultConverter>();
+            }
+        }
+
+        private ConverterFactory ConverterFactory
+        {
+            get
+            {
+                return IoC.Resolve<ConverterFactory>();
+            }
+        }
+
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
             }
         }
 
@@ -210,7 +228,7 @@ namespace EdugameCloud.WCFService
                 result.faults = faults.ToArray();
             }
             
-            QuizResultConverter.ConvertAndSendSurveyResult(results);
+            this.ConvertAndSendSurveyResult(results);
             
             return result;
         }
@@ -314,6 +332,50 @@ namespace EdugameCloud.WCFService
             }
 
             return created;
+        }
+
+
+        public void ConvertAndSendSurveyResult(IEnumerable<SurveyQuestionResultDTO> results)
+        {
+            foreach (var userAnswer in results.GroupBy(r => r.surveyResultId))
+            {
+                var surveyResult = this.SurveyResultModel.GetOneById(userAnswer.Key).Value;
+                if (surveyResult == null)
+                {
+                    continue;
+                }
+
+                var lmsUserParameters = surveyResult.LmsUserParametersId.HasValue ? this.LmsUserParametersModel.GetOneById(surveyResult.LmsUserParametersId.Value).Value : null;
+                if (lmsUserParameters == null)
+                {
+                    return;
+                }
+
+                var lmsSurveyId = surveyResult.Survey.LmsSurveyId;
+                if (lmsSurveyId == null)
+                {
+                    continue;
+                }
+
+                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id);
+
+                converter.ConvertAndSendSurveyResultToLms(results, surveyResult, lmsUserParameters);
+
+                /*
+                switch (lmsUserParameters.CompanyLms.LmsProvider.Id)
+                {
+                    case (int)LmsProviderEnum.Moodle:
+                        this.ConvertAndSendSurveyResultToMoodle(userAnswer, lmsUserParameters, surveyResult);
+                        break;
+                    case (int)LmsProviderEnum.Canvas:
+                        this.ConvertAndSendSurveyResultToCanvas(userAnswer, lmsUserParameters, lmsSurveyId.Value);
+                        break;
+                    case (int)LmsProviderEnum.Blackboard:
+                        this.ConvertAndSendSurveyResultToBlackboard(userAnswer, lmsUserParameters, lmsSurveyId.Value, surveyResult.Survey.SubModuleItem.Id);
+                        break;
+                }
+                 * */
+            }
         }
 
         /// <summary>

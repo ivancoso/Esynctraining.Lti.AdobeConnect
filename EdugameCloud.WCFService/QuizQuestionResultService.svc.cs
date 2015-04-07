@@ -9,6 +9,8 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.Converters;
@@ -75,14 +77,19 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// Gets the quiz result converter.
-        /// </summary>
-        private QuizResultConverter QuizResultConverter
+        private ConverterFactory ConverterFactory
         {
             get
             {
-                return IoC.Resolve<QuizResultConverter>();
+                return IoC.Resolve<ConverterFactory>();
+            }
+        }
+
+        private LmsUserParametersModel LmsUserParametersModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsUserParametersModel>();
             }
         }
 
@@ -230,7 +237,7 @@ namespace EdugameCloud.WCFService
                 result.faults = faults.ToArray();
             }
 
-            QuizResultConverter.ConvertAndSendQuizResult(results);
+            this.ConvertAndSendQuizResult(results);
             
             return result;
         }
@@ -238,6 +245,35 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Methods
+
+        private void ConvertAndSendQuizResult(IEnumerable<QuizQuestionResultDTO> results)
+        {
+            foreach (var userAnswer in results.GroupBy(r => r.quizResultId))
+            {
+                var quizResult = this.QuizResultModel.GetOneById(userAnswer.Key).Value;
+                if (quizResult == null)
+                {
+                    continue;
+                }
+
+                var lmsUserParameters = quizResult.LmsUserParametersId.HasValue ? this.LmsUserParametersModel.GetOneById(quizResult.LmsUserParametersId.Value).Value : null;
+                if (lmsUserParameters == null || lmsUserParameters.LmsUser == null)
+                {
+                    return;
+                }
+
+                var lmsQuizId = quizResult.Quiz.LmsQuizId;
+                if (lmsQuizId == null)
+                {
+                    continue;
+                }
+
+                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id);
+                
+                converter.ConvertAndSendQuizResultToLms(results, quizResult, lmsUserParameters);
+            }
+        }
+
 
         /// <summary>
         /// The convert DTO.

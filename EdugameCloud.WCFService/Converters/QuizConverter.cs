@@ -15,6 +15,7 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.EntityParsing;
+    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
@@ -225,7 +226,7 @@
                 return IoC.Resolve<LmsCompanyModel>();
             }
         }
-
+        
         /// <summary>
         /// The convert quizzes.
         /// </summary>
@@ -406,9 +407,9 @@
         private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
             egcQuiz.LmsQuizId = quiz.id;
-            egcQuiz.QuizName = this.ClearName(quiz.title);
+            egcQuiz.QuizName = quiz.title;
             egcQuiz.SubModuleItem = submoduleItem;
-            egcQuiz.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
+            egcQuiz.Description = quiz.description == null ? null : quiz.description.ClearName();
             egcQuiz.ScoreType = this.ScoreTypeModel.GetOneById(1).Value;
             egcQuiz.QuizFormat = this.QuizFormatModel.GetOneById(1).Value;
             egcQuiz.SubModuleItem.IsShared = true;
@@ -452,9 +453,9 @@
         private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem)
         {
             egcSurvey.LmsSurveyId = quiz.id;
-            egcSurvey.SurveyName = this.ClearName(quiz.title);
+            egcSurvey.SurveyName = quiz.title;
             egcSurvey.SubModuleItem = submoduleItem;
-            egcSurvey.Description = this.ClearName(Regex.Replace(quiz.description, "<[^>]*(>|$)", string.Empty));
+            egcSurvey.Description = quiz.description;
             egcSurvey.SubModuleItem.IsShared = true;
             egcSurvey.SurveyGroupingType = this.SurveyGroupingTypeModel.GetOneById(1).Value;
 
@@ -477,20 +478,6 @@
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// The clear name.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string ClearName(string name)
-        {
-            return Regex.Replace(name ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ");
         }
 
         /// <summary>
@@ -522,61 +509,12 @@
 
             foreach (var quizQuestion in quiz.question_list.Where(qs => qs.question_type != null))
             {
-                bool isNumeric = false;
-                
                 var questionType = qtypes.FirstOrDefault(qt => qt.LmsQuestionTypeName.Equals(quizQuestion.question_type) && (qt.SubModuleId == null || qt.SubModuleId.GetValueOrDefault() == subModuleId));
                 if (questionType == null)
                 {
                     continue;
                 }
 
-                if (isSurvey && (companyLms.LmsProvider.Id == (int)LmsProviderEnum.Moodle))
-                {
-                    var separatorIndex = quizQuestion.presentation.IndexOf(">>>>>", System.StringComparison.Ordinal);
-                    string text = quizQuestion.question_text ?? quizQuestion.question_name,
-                        answers = separatorIndex > 0
-                            ? quizQuestion.presentation.Substring(separatorIndex + 5)
-                            : string.Empty,
-                        type = separatorIndex > 0 ? quizQuestion.presentation.Substring(0, separatorIndex) : string.Empty;
-                    if (type.Equals("d"))
-                    {
-                        questionType = new LmsQuestionType()
-                                           {
-                                               QuestionTypeId = (int)QuestionTypeEnum.Rate,
-                                               LmsQuestionTypeName = string.Empty
-                                           };
-                            
-                    }
-                    if (questionType.QuestionTypeId == (int)QuestionTypeEnum.Numerical)
-                    {
-                        isNumeric = true;
-                        questionType = new LmsQuestionType()
-                        {
-                            QuestionTypeId = (int)QuestionTypeEnum.OpenAnswerSingleLine,
-                            LmsQuestionTypeName = string.Empty
-                        };
-                    }
-
-                    quizQuestion.is_single = !type.Equals("c");
-
-                    quizQuestion.question_text = this.ClearName(text);
-                    quizQuestion.answers = answers.Split('|').Select((a, i) => new AnswerDTO()
-                    {
-                        text = a.IndexOf("####", System.StringComparison.Ordinal) > -1 ? a.Substring(a.IndexOf("####", System.StringComparison.Ordinal) + 4) : a,
-                        id = i
-                    }).ToList();
-                }
-                else if (isSurvey && (companyLms.LmsProvider.Id == (int)LmsProviderEnum.Canvas))
-                {
-                    quizQuestion.is_single = quizQuestion.answers.Count(a => a.weight == 100) == 1;
-                }
-                else if (isSurvey && (companyLms.LmsProvider.Id == (int)LmsProviderEnum.Blackboard))
-                {
-                    quizQuestion.is_single = quizQuestion.question_type.Equals(
-                        "Multiple Choice",
-                        StringComparison.InvariantCultureIgnoreCase);
-                }
-                
                 var lmsQuestionId = quizQuestion.id;
 
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
@@ -588,7 +526,7 @@
                             LmsQuestionId = lmsQuestionId
                         };
 
-                string questionText = null;
+                string questionText = quizQuestion.question_text;
 
                 if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
@@ -600,39 +538,7 @@
                 {
                     questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProvider.Id);
                 }
-                else if (questionType.QuestionTypeId == (int)QuestionTypeEnum.OpenAnswerSingleLine && isNumeric)
-                {
-                    if (companyLms.LmsProvider.Id != (int)LmsProviderEnum.Canvas)
-                    {
-                        questionText = this.ClearName(quizQuestion.question_text ?? quizQuestion.question_name);                        
-                    }
-                    else
-                    {
-                        questionText = quizQuestion.question_text ?? quizQuestion.question_name;
-                    }
-                    if (quizQuestion.presentation != null && quizQuestion.presentation.IndexOf("|") > -1)
-                    {
-                        var presentationIndex = quizQuestion.presentation.IndexOf("|");
-                        questionText = string.Format(
-                            "{0} ({1}-{2})", 
-                            questionText, 
-                            quizQuestion.presentation.Substring(0, presentationIndex),
-                            quizQuestion.presentation.Substring(presentationIndex + 1));
-                    }
-                }
-                else
-                {
-                    if (companyLms.LmsProvider.Id != (int)LmsProviderEnum.Canvas)
-                    {
-                        questionText = this.ClearName(quizQuestion.question_text ?? quizQuestion.question_name);
-                    }
-                    else
-                    {
-                        questionText = quizQuestion.question_text ?? quizQuestion.question_name;
-                    }
-                }
 
-                question.IsMoodleSingle = !questionType.LmsQuestionTypeName.Equals("multiple_answers_question"); 
                 question.QuestionName = questionText;
                 question.QuestionType = this.QuestionTypeModel.GetOneById(questionType.QuestionTypeId).Value;
                 question.DateModified = DateTime.Now;
@@ -686,29 +592,6 @@
                 }
 
                 this.ProcessDistractors(user, companyLms, questionType.QuestionTypeId, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProvider.Id);
-
-                if (isSurvey)
-                {
-                    if (question.QuestionType.Id == (int)QuestionTypeEnum.Calculated
-                        || question.QuestionType.Id == (int)QuestionTypeEnum.Numerical)
-                    {
-                        question.QuestionType =
-                            this.QuestionTypeModel.GetOneById((int)QuestionTypeEnum.OpenAnswerSingleLine).Value;
-                        this.QuestionModel.RegisterSave(question);
-                    }
-                    if (question.QuestionType.Id == (int)QuestionTypeEnum.Essay)
-                    {
-                        question.QuestionType =
-                            this.QuestionTypeModel.GetOneById((int)QuestionTypeEnum.OpenAnswerMultiLine).Value;
-                        this.QuestionModel.RegisterSave(question);
-                    }
-                    if (question.QuestionType.Id == (int)QuestionTypeEnum.ShortAnswer)
-                    {
-                        question.QuestionType =
-                            this.QuestionTypeModel.GetOneById((int)QuestionTypeEnum.OpenAnswerSingleLine).Value;
-                        this.QuestionModel.RegisterSave(question);
-                    }
-                }
             }
         }
 
@@ -833,7 +716,7 @@
         private string ProcessFillInTheBlankQuestionTextMoodle(LmsQuestionDTO q)
         {
             var i = 1;
-            var questionText = this.ClearName(q.question_text);
+            var questionText = q.question_text.ClearName();
             foreach (var a in q.answers)
             {
                 if (a.question_text == null) continue;
@@ -933,7 +816,7 @@
             string blankTrue = "<text id=\"0\" isBlank=\"true\">",
                 blankFalse = "<text id=\"0\" isBlank=\"false\">",
                 closing = "</text>";
-            var distractorText = this.ClearName(q.question_text);
+            var distractorText = q.question_text.ClearName();
             if (!distractorText.StartsWith("{#"))
             {
                 distractorText = blankTrue + distractorText;
@@ -1018,7 +901,7 @@
             bool option)
         {
             var splitText = new List<string>();
-            var questionText = this.ClearName(q.question_text);
+            var questionText = q.question_text.ClearName();
             while (questionText.Length > 0)
             {
                 int nextPlaceholderStart = questionText.IndexOf("["), nextPlaceholderEnd = questionText.IndexOf("]");
@@ -1246,7 +1129,7 @@
                 distractor.DistractorOrder = a.order + 1;
                 distractor.DateModified = DateTime.Now;
                 distractor.ModifiedBy = user;
-                distractor.DistractorName = this.ClearName(a.text);
+                distractor.DistractorName = a.text;
                 distractor.IsActive = true;
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = a.weight == 100;
@@ -1344,10 +1227,10 @@
         /// </param>
         private void ProcessCalculatedDistractorsMoodle(User user, LmsQuestionDTO q, Question question)
         {
-            var answerNumber = question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
+            var answerNumber = 1;//question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
             foreach (var a in q.answers)
             {
-                var expression = new MoodleExpressionParser(this.ClearName(a.text));
+                var expression = new MoodleExpressionParser(a.text.ClearName());
                 foreach (var ds in q.datasets)
                 {
                     var variable = ds.Name;
@@ -1443,7 +1326,7 @@
         /// </returns>
         private string ProcessCalculatedQuestionText(LmsQuestionDTO q, LmsProviderEnum lmsProvider)
         {
-            var questionText = this.ClearName(q.question_text);
+            var questionText = q.question_text;
             switch (lmsProvider)
             {
                 case LmsProviderEnum.Canvas:
@@ -1499,8 +1382,8 @@
             {
                 var lmsId = a.id;
                 var name = a.right != null ? 
-                    string.Format("{0}$${1}", this.ClearName(a.text), this.ClearName(a.right))
-                    : string.Format("{0}$${1}", this.ClearName(a.question_text), this.ClearName(a.text));
+                    string.Format("{0}$${1}", a.text, a.right)
+                    : string.Format("{0}$${1}", a.question_text, a.text);
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
                     new Distractor
                     {
@@ -1556,7 +1439,7 @@
                     };
                 distractor.DateModified = DateTime.Now;
                 distractor.ModifiedBy = user;
-                distractor.DistractorName = a.text.Contains("<img src") ? a.text : this.ClearName(a.text);
+                distractor.DistractorName = a.text;
                 distractor.IsActive = true;
                 distractor.DistractorType = distractorType;
                 distractor.IsCorrect = a.weight > 0;
@@ -1596,7 +1479,7 @@
                 };
             distractor.DateModified = DateTime.Now;
             distractor.ModifiedBy = user;
-            distractor.DistractorName = this.ClearName(q.question_text);
+            distractor.DistractorName = q.question_text;
             distractor.IsActive = true;
             distractor.DistractorType = 1;
             distractor.LmsAnswerId = lmsId;

@@ -69,6 +69,10 @@
                     .WithService.FirstInterface()
                     .LifestylePerWcfOperation());
 
+            container.Register(
+                Classes.FromAssemblyNamed("EdugameCloud.WCFService").BasedOn(typeof(QuizResultConverter)).WithServiceSelf().LifestyleTransient());
+            container.Register(Component.For<ConverterFactory>().ImplementedBy<ConverterFactory>());
+
             container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
 
             container.Register(Component.For<FluentConfiguration>().LifeStyle.Singleton);
@@ -132,7 +136,6 @@
             container.Register(
                 Classes.FromAssembly(ltiAssmebly).BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
-            container.Register(Component.For<QuizResultConverter>().ImplementedBy<QuizResultConverter>());
 
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());

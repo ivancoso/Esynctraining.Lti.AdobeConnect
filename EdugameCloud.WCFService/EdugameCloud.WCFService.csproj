@@ -246,7 +246,11 @@
     <Compile Include="Contracts\IThemeService.cs" />
     <Compile Include="Contracts\IUploader.cs" />
     <Compile Include="Contracts\IUserService.cs" />
+    <Compile Include="Converters\BlackboardResultConverter.cs" />
+    <Compile Include="Converters\CanvasResultConverter.cs" />
     <Compile Include="Converters\CompanyDTOConverter.cs" />
+    <Compile Include="Converters\ConverterFactory.cs" />
+    <Compile Include="Converters\MoodleResultConverter.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
     <Compile Include="CORS\CustomHeaderMessageInspector.cs" />

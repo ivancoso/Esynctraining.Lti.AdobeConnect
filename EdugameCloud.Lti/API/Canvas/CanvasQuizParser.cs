@@ -7,6 +7,7 @@
     using System.Xml;
 
     using EdugameCloud.Lti.DTO;
+    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.Core.Extensions;
 
@@ -39,7 +40,19 @@
 
             foreach (var question in quiz.questions)
             {
-                ExtractFiles(question);                
+                ExtractFiles(question);
+                if (question.question_type != null
+                    && question.question_type.Equals(
+                        "multiple_choice_question",
+                        StringComparison.InvariantCultureIgnoreCase))
+                {
+                    question.is_single = true;
+                }
+
+                if (question.question_text == null)
+                {
+                    question.question_text = question.question_name;
+                }
             }
         }
 
@@ -105,6 +118,7 @@
         {
             var index = 0;
             question.question_text = ExtractFilesFromText(question.question_text, ref index, question.files);
+
             foreach (var answer in question.answers)
             {
                 answer.text = ExtractFilesFromText(answer.html ?? answer.text, ref index, question.files);

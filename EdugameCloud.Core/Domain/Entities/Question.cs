@@ -96,11 +96,6 @@
         /// Gets or sets the LMS provider
         /// </summary>
         public virtual int? LmsProviderId { get; set; }
-        
-        /// <summary>
-        /// Gets or sets the value indicating whether is single.
-        /// </summary>
-        public virtual bool? IsMoodleSingle { get; set; }
 
         /// <summary>
         /// Gets or sets the value indicating whether randomize answers.
