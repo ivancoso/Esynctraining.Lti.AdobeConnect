@@ -1554,26 +1554,33 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private static IEnumerable<Principal> GetAllPrincipals(AdobeConnectProvider provider)
         {
-            //var sw = Stopwatch.StartNew();
-            PrincipalCollectionResult result = provider.GetAllPrincipal();
-            if (result.Success)
+            try
             {
-                //sw.Stop();
-                //var time = sw.Elapsed;
-                return result.Values;
-            }
-            else
-            {
-                // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
-                bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
-                if (!tooBigPrincipalCount)
+                PrincipalCollectionResult result = provider.GetAllPrincipal();
+                if (result.Success)
                 {
-                    if (result.Status.UnderlyingExceptionInfo != null)
-                        throw new InvalidOperationException("UsersSetup.GetAllPrincipals error", result.Status.UnderlyingExceptionInfo);
-                    throw new InvalidOperationException("UsersSetup.GetAllPrincipals error");
+                    //sw.Stop();
+                    //var time = sw.Elapsed;
+                    return result.Values;
                 }
+                else
+                {
+                    // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
+                    bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
+                    if (!tooBigPrincipalCount)
+                    {
+                        if (result.Status.UnderlyingExceptionInfo != null)
+                            throw new InvalidOperationException("UsersSetup.GetAllPrincipals error", result.Status.UnderlyingExceptionInfo);
+                        throw new InvalidOperationException("UsersSetup.GetAllPrincipals error");
+                    }
 
-                return null;
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("GetAllPrincipals", ex);
+                throw;
             }
         }
 
