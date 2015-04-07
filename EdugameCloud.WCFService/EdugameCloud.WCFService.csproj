@@ -149,6 +149,7 @@
   <ItemGroup>
     <Content Include="FileStorage\Export\ReadMe.txt" />
     <Content Include="FileStorage\Import\ReadMe.txt" />
+    <Content Include="FileStorage\Uploads\Placeholder.txt" />
     <Content Include="LmsService.svc" />
     <Content Include="Mail\Templates\ActivationLink.html" />
     <Content Include="Mail\Templates\ErrorMail.html" />
