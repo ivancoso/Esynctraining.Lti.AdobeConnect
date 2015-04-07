@@ -103,22 +103,23 @@
         /// </typeparam>
         public void NotifyClientsAboutChangesInTable<T>(NotificationType notificationType, int companyId, int id)
         {
-            var allowedTypes = new List<Type>
-                                   {
-                                       typeof(User), 
-                                       typeof(AppletResult), 
-                                       typeof(QuizResult), 
-                                       typeof(TestResult), 
-                                       typeof(SurveyResult), 
-                                       typeof(Company), 
-                                       typeof(SNGroupDiscussion), 
-                                       typeof(SNMember), 
-                                   };
-            if (allowedTypes.Contains(typeof(T)) && !string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
-            {
-                this.logger.Error(
-                    string.Format("starting RTMP call: {0}, companyId={1}, id={2}", notificationType, companyId, id));
-            }
+            // NOTE: we don't support RTMP
+            //var allowedTypes = new List<Type>
+            //                       {
+            //                           typeof(User), 
+            //                           typeof(AppletResult), 
+            //                           typeof(QuizResult), 
+            //                           typeof(TestResult), 
+            //                           typeof(SurveyResult), 
+            //                           typeof(Company), 
+            //                           typeof(SNGroupDiscussion), 
+            //                           typeof(SNMember), 
+            //                       };
+            //if (allowedTypes.Contains(typeof(T)) && !string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
+            //{
+            //    this.logger.Error(
+            //        string.Format("starting RTMP call: {0}, companyId={1}, id={2}", notificationType, companyId, id));
+            //}
         }
 
         /// <summary>
@@ -129,13 +130,14 @@
         /// </param>
         public void NotifyClientsAboutSocialTokens(SocialUserTokensDTO tokens)
         {
-            if (!string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
-            {
-                // ReSharper disable once UnusedVariable
-                string vo = this.ConvertToJson(tokens);
-                this.logger.Info(
-                    string.Format("starting social RTMP call: key={0}, provider={1}", tokens.key, tokens.provider));
-            }
+            // NOTE: we don't support RTMP
+            //if (!string.IsNullOrWhiteSpace(this.settings.RTMPServerPort))
+            //{
+            //    // ReSharper disable once UnusedVariable
+            //    string vo = this.ConvertToJson(tokens);
+            //    this.logger.Info(
+            //        string.Format("starting social RTMP call: key={0}, provider={1}", tokens.key, tokens.provider));
+            //}
         }
 
         #endregion
