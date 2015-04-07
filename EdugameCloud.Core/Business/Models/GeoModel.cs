@@ -91,6 +91,7 @@
         {
             error = null;
             string url = (string)this.settings.NominatimApiUrl + this.ToQueryString(geoNameValue);
+            string strResponse = string.Empty;
             try
             {
                 var req = (HttpWebRequest)WebRequest.Create(url);
@@ -98,35 +99,28 @@
                 WebResponse res = req.GetResponse();
                 using (var stIn = new StreamReader(res.GetResponseStream()))
                 {
-                    string strResponse = stIn.ReadToEnd();
+                    strResponse = stIn.ReadToEnd();
                     dynamic result = JsonConvert.DeserializeObject(string.Format("{{ dataResult: {0}}}", strResponse));
                     stIn.Close();
                     var dataResult = new List<dynamic>(result.dataResult);
                     if (dataResult.Any())
                     {
                         dynamic firstEntry = dataResult.First();
+
                         return new GeoResultDTO
-                                   {
-                                       latitude =
-                                           double.Parse(
-                                               firstEntry.lat,
-                                               NumberStyles.Any,
-                                               CultureInfo.InvariantCulture),
-                                       longitude =
-                                           double.Parse(
-                                               firstEntry.lon,
-                                               NumberStyles.Any,
-                                               CultureInfo.InvariantCulture)
-                                   };
+                        {
+                            latitude = double.Parse((string)firstEntry.lat, NumberStyles.Any, CultureInfo.InvariantCulture),
+                            longitude = double.Parse((string)firstEntry.lon, NumberStyles.Any, CultureInfo.InvariantCulture),
+                        };
                     }
 
-                    error = string.Format("Invalid response: url={0}", url);
+                    error = string.Format("Invalid response: url={0}; response: {1}", url, strResponse);
                     return null;
                 }
             }
             catch (Exception ex)
             {
-                error = string.Format("Invalid response: url={0} {1}", url, ex);
+                error = string.Format("Invalid response: url={0}; response: {1}", url, strResponse);
                 return null;
             }
         }
