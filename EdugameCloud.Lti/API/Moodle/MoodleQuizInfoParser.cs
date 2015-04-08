@@ -4,7 +4,6 @@
     using System.Xml;
 
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
 
     /// <summary>
