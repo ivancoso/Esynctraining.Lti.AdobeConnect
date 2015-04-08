@@ -24,28 +24,28 @@
             //// you must update this site. For more information visit http://go.microsoft.com/fwlink/?LinkID=252166
 
             // NOTE: not in use within EGC\LTI
-            //RegisterTwitterClient((string)settings.TWConsumerKey, (string)settings.TWConsumerSecret);
+            RegisterTwitterClient((string)settings.TWConsumerKey, (string)settings.TWConsumerSecret);
             //OAuthWebSecurity.RegisterFacebookClient((string)settings.FBAppId, (string)settings.FBAppSecret);
-            //RegisterInstagramClient((string)settings.InstagramClientId, (string)settings.InstagramClientSecret);
+            RegisterInstagramClient((string)settings.InstagramClientId, (string)settings.InstagramClientSecret);
 
             RegisterCanvasClient((string)settings.CanvasClientId, (string)settings.CanvasClientSecret);
         }
 
-        ///// <summary>
-        ///// The authentication web security register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterInstagramClient(string appId, string appSecret)
-        //{
-        //    string displayName = "Instagram";
-        //    RegisterInstagramClient(appId, appSecret, displayName);
-        //}
+        /// <summary>
+        /// The authentication web security register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterInstagramClient(string appId, string appSecret)
+        {
+            string displayName = "Instagram";
+            RegisterInstagramClient(appId, appSecret, displayName);
+        }
 
         /// <summary>
         /// The authentication web security register Canvas client.
@@ -63,24 +63,24 @@
             RegisterCanvasClient(appId, appSecret, displayName);
         }
 
-        ///// <summary>
-        ///// The register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        ///// <param name="displayName">
-        ///// The display name.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterInstagramClient(string appId, string appSecret, string displayName)
-        //{
-        //    IDictionary<string, object> extraData = new Dictionary<string, object>();
-        //    RegisterInstagramClient(appId, appSecret, displayName, extraData);
-        //}
+        /// <summary>
+        /// The register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        /// <param name="displayName">
+        /// The display name.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterInstagramClient(string appId, string appSecret, string displayName)
+        {
+            IDictionary<string, object> extraData = new Dictionary<string, object>();
+            RegisterInstagramClient(appId, appSecret, displayName, extraData);
+        }
 
         /// <summary>
         /// The register Canvas client.
@@ -101,26 +101,26 @@
             RegisterCanvasClient(appId, appSecret, displayName, extraData);
         }
 
-        ///// <summary>
-        ///// The register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        ///// <param name="displayName">
-        ///// The display name.
-        ///// </param>
-        ///// <param name="extraData">
-        ///// The extra data.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterInstagramClient(string appId, string appSecret, string displayName, IDictionary<string, object> extraData)
-        //{
-        //    OAuthWebSecurity.RegisterClient(new InstagramClient(appId, appSecret), displayName, extraData);
-        //}
+        /// <summary>
+        /// The register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        /// <param name="displayName">
+        /// The display name.
+        /// </param>
+        /// <param name="extraData">
+        /// The extra data.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterInstagramClient(string appId, string appSecret, string displayName, IDictionary<string, object> extraData)
+        {
+            OAuthWebSecurity.RegisterClient(new InstagramClient(appId, appSecret), displayName, extraData);
+        }
 
         /// <summary>
         /// The register Canvas client.
@@ -143,60 +143,60 @@
             OAuthWebSecurity.RegisterClient(new CanvasClient(appId, appSecret), displayName, extraData);
         }
 
-        ///// <summary>
-        ///// The authentication web security register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterTwitterClient(string appId, string appSecret)
-        //{
-        //    string displayName = "Twitter";
-        //    RegisterTwitterClient(appId, appSecret, displayName);
-        //}
+        /// <summary>
+        /// The authentication web security register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterTwitterClient(string appId, string appSecret)
+        {
+            string displayName = "Twitter";
+            RegisterTwitterClient(appId, appSecret, displayName);
+        }
 
-        ///// <summary>
-        ///// The register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        ///// <param name="displayName">
-        ///// The display name.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterTwitterClient(string appId, string appSecret, string displayName)
-        //{
-        //    IDictionary<string, object> extraData = new Dictionary<string, object>();
-        //    RegisterTwitterClient(appId, appSecret, displayName, extraData);
-        //}
+        /// <summary>
+        /// The register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        /// <param name="displayName">
+        /// The display name.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterTwitterClient(string appId, string appSecret, string displayName)
+        {
+            IDictionary<string, object> extraData = new Dictionary<string, object>();
+            RegisterTwitterClient(appId, appSecret, displayName, extraData);
+        }
 
-        ///// <summary>
-        ///// The register Instagram client.
-        ///// </summary>
-        ///// <param name="appId">
-        ///// The app id.
-        ///// </param>
-        ///// <param name="appSecret">
-        ///// The app secret.
-        ///// </param>
-        ///// <param name="displayName">
-        ///// The display name.
-        ///// </param>
-        ///// <param name="extraData">
-        ///// The extra data.
-        ///// </param>
-        //[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
-        //private static void RegisterTwitterClient(string appId, string appSecret, string displayName, IDictionary<string, object> extraData)
-        //{
-        //    OAuthWebSecurity.RegisterClient(new TwitterClient2(appId, appSecret), displayName, extraData);
-        //}
+        /// <summary>
+        /// The register Instagram client.
+        /// </summary>
+        /// <param name="appId">
+        /// The app id.
+        /// </param>
+        /// <param name="appSecret">
+        /// The app secret.
+        /// </param>
+        /// <param name="displayName">
+        /// The display name.
+        /// </param>
+        /// <param name="extraData">
+        /// The extra data.
+        /// </param>
+        [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
+        private static void RegisterTwitterClient(string appId, string appSecret, string displayName, IDictionary<string, object> extraData)
+        {
+            OAuthWebSecurity.RegisterClient(new TwitterClient2(appId, appSecret), displayName, extraData);
+        }
     }
 }
