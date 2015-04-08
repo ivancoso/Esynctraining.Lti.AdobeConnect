@@ -1471,17 +1471,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<PermissionInfo> values,
             HashSet<string> alreadyAdded)
         {
-            var groupValues = GetGroupPrincipals(provider, values.Where(x => x.HasChildren).Select(v => v.PrincipalId));
-            foreach (var g in groupValues)
+            var groupPrincipalList = values.Where(x => x.HasChildren).Select(v => v.PrincipalId);
+            if (groupPrincipalList.Any())
             {
-                if (alreadyAdded.Contains(g.PrincipalId))
+                var groupValues = GetGroupPrincipals(provider, groupPrincipalList);
+                foreach (var g in groupValues)
                 {
-                    continue;
-                }
+                    if (alreadyAdded.Contains(g.PrincipalId))
+                    {
+                        continue;
+                    }
 
-                values.Add(new PermissionInfo { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary });
-                nonEditable.Add(g.PrincipalId);
-                alreadyAdded.Add(g.PrincipalId);
+                    values.Add(new PermissionInfo { PrincipalId = g.PrincipalId, Name = g.Name, Login = g.Login, IsPrimary = g.IsPrimary });
+                    nonEditable.Add(g.PrincipalId);
+                    alreadyAdded.Add(g.PrincipalId);
+                }
             }
 
             return values;
@@ -1554,6 +1558,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private static IEnumerable<Principal> GetAllPrincipals(AdobeConnectProvider provider)
         {
+            // TRICK: remove to check for CSU
+            return null;
+
             try
             {
                 PrincipalCollectionResult result = provider.GetAllPrincipal();

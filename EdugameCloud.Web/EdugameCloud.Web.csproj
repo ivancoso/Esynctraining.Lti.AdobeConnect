@@ -564,6 +564,7 @@
     <Content Include="Content\swf\admin\resources\icons\dislike.png" />
     <Content Include="Content\swf\admin\resources\icons\downArrow.png" />
     <Content Include="Content\swf\admin\resources\icons\downListIcon.png" />
+    <Content Include="Content\swf\admin\resources\icons\download.png" />
     <Content Include="Content\swf\admin\resources\icons\errorBig.png" />
     <Content Include="Content\swf\admin\resources\icons\expand.png" />
     <Content Include="Content\swf\admin\resources\icons\facebook.png" />

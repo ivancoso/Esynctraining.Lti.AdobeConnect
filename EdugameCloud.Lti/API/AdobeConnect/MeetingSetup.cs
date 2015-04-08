@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using Castle.Core.Logging;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Business.Models;
@@ -298,18 +299,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                          : apiUrl + "api/xml";
 
             var connectionDetails = new ConnectionDetails
-                                        {
-                                            ServiceUrl = apiUrl, 
-                                            EventMaxParticipants = 10, 
-                                            Proxy =
-                                                new ProxyCredentials
-                                                    {
-                                                        Domain = string.Empty, 
-                                                        Login = string.Empty, 
-                                                        Password = string.Empty, 
-                                                        Url = string.Empty
-                                                    }
-                                        };
+            {
+                ServiceUrl = apiUrl,
+                EventMaxParticipants = 10,
+                Proxy =
+                new ProxyCredentials
+                {
+                    Domain = string.Empty,
+                    Login = string.Empty,
+                    Password = string.Empty,
+                    Url = string.Empty,
+                },
+            };
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
@@ -848,9 +849,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingDTO meetingDTO,
             object extraData = null)
         {
-            this.FixMeetingDTOFields(meetingDTO, param);
+            FixMeetingDTOFields(meetingDTO, param);
             
-            var type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
+            int type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
@@ -859,13 +860,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var meeting = this.GetLmsCourseMeeting(lmsCompany, param.course_id, meetingDTO.id, type);
             var meetingSco = meeting.GetMeetingScoId();
-            
-            var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
 
-            if (string.IsNullOrEmpty(meetingSco) && type == (int)LmsMeetingType.OfficeHours && officeHours != null)
-            {    
-                meetingSco = officeHours.ScoId;
-                meetingDTO.id = meetingSco;
+            OfficeHours officeHours = null;
+            if (type == (int)LmsMeetingType.OfficeHours)
+            {
+                officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
+                if (string.IsNullOrEmpty(meetingSco) && (officeHours != null))
+                {
+                    meetingSco = officeHours.ScoId;
+                    meetingDTO.id = meetingSco;
+                }
             }
 
             var existingMeeting = provider.GetScoInfo(meetingSco);
@@ -887,7 +891,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var meetingFolder = this.GetMeetingFolder(lmsCompany, provider, registeredUser);
             
-            this.SetMeetingUpateItemFields(
+            SetMeetingUpateItemFields(
                 meetingDTO,
                 updateItem,
                 meetingFolder,
@@ -1047,7 +1051,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         public void SetupFolders(LmsCompany credentials, AdobeConnectProvider provider)
         {
-            this.SetupTemplateFolder(credentials, provider);
+            SetupTemplateFolder(credentials, provider);
             
             this.LmsСompanyModel.RegisterSave(credentials);
             this.LmsСompanyModel.Flush();   
@@ -1075,12 +1079,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
             {
                 ////TODO Think about user folders + renaming directory
-                adobeConnectScoId = this.SetupUserMeetingsFolder(credentials, provider, user);
+                adobeConnectScoId = SetupUserMeetingsFolder(credentials, provider, user);
             }
 
             if (adobeConnectScoId == null)
             {
-                this.SetupSharedMeetingsFolder(credentials, provider);
+                SetupSharedMeetingsFolder(credentials, provider);
                 this.LmsСompanyModel.RegisterSave(credentials);
                 this.LmsСompanyModel.Flush();
                 adobeConnectScoId = credentials.ACScoId;
@@ -1369,24 +1373,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             try
             {
-                {
-                    var meetingAttendees = acp.ReportMettingAttendance(meetingId, startIndex, limit).Values.ToList();
-                    return meetingAttendees.Select(
-                            us =>
-                            new ACSessionParticipantDTO
-                            {
-                                firstName = us.SessionName,
-                                login = us.Login,
-                                dateTimeEntered = us.DateCreated,
-                                dateTimeLeft = us.DateEnd.FixACValue(),
-                                durationInHours = (float)us.Duration.TotalHours,
-                                transcriptId = int.Parse(us.TranscriptId)
-                            }).OrderByDescending(x => x.dateTimeEntered).ToList();
-                }
+                var meetingAttendees = acp.ReportMettingAttendance(meetingId, startIndex, limit).Values.ToList();
+                return meetingAttendees.Select(
+                        us =>
+                        new ACSessionParticipantDTO
+                        {
+                            firstName = us.SessionName,
+                            login = us.Login,
+                            dateTimeEntered = us.DateCreated,
+                            dateTimeLeft = us.DateEnd.FixACValue(),
+                            durationInHours = (float)us.Duration.TotalHours,
+                            transcriptId = int.Parse(us.TranscriptId)
+                        }).OrderByDescending(x => x.dateTimeEntered).ToList();
+                
             }
-            // ReSharper disable once EmptyGeneralCatchClause
-            catch
+            catch (Exception ex)
             {
+                IoC.Resolve<ILogger>().Error("GetAttendanceReport.Exception", ex);
             }
 
             return new List<ACSessionParticipantDTO>();
@@ -1548,9 +1551,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 return sessionList.OrderBy(s => s.sessionNumber).ToList();
             }
-                // ReSharper disable once EmptyGeneralCatchClause
-            catch
+            catch (Exception ex)
             {
+                IoC.Resolve<ILogger>().Error("GetSessionsWithParticipants.Exception", ex);
             }
 
             return new List<ACSessionDTO>();
@@ -1756,7 +1759,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="param">
         /// The parameter.
         /// </param>
-        private void FixMeetingDTOFields(MeetingDTO meetingDTO, LtiParamDTO param)
+        private static void FixMeetingDTOFields(MeetingDTO meetingDTO, LtiParamDTO param)
         {
             if (meetingDTO.start_time != null)
             {
@@ -1843,7 +1846,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="addPrefix">
         /// The add prefix
         /// </param>
-        private void SetMeetingUpateItemFields(
+        private static void SetMeetingUpateItemFields(
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
@@ -1897,7 +1900,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        private void SetupTemplateFolder(LmsCompany credentials, AdobeConnectProvider provider)
+        private static void SetupTemplateFolder(LmsCompany credentials, AdobeConnectProvider provider)
         {
             string templatesSco = null;
             if (!string.IsNullOrWhiteSpace(credentials.ACTemplateScoId))
@@ -1928,7 +1931,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="provider">
         /// The provider.
         /// </param>
-        private void SetupSharedMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider)
+        private static void SetupSharedMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider)
         {
             string ltiFolderSco = null;
             string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
@@ -1998,7 +2001,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string SetupUserMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider, Principal user)
+        private static string SetupUserMeetingsFolder(LmsCompany credentials, AdobeConnectProvider provider, Principal user)
         {
             string ltiFolderSco = null;
 
