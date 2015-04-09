@@ -140,8 +140,9 @@ namespace EdugameCloud.ASMXService
                 validationResult = IoC.Resolve<IValidator<T>>().Validate(obj);
                 return validationResult.IsValid;
             }
-            catch (ComponentNotFoundException)
+            catch (ComponentNotFoundException ex)
             {
+                Logger.Error("MoodleAuthorization.IsValid.", ex);
                 return false;
             }
         }

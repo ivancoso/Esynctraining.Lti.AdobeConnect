@@ -18,7 +18,6 @@ namespace EdugameCloud.MVC.Attributes
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.MVC.Exceptions;
 
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
@@ -99,8 +98,6 @@ namespace EdugameCloud.MVC.Attributes
         /// <param name="filterContext">
         /// The filter context.
         /// </param>
-        /// <exception cref="AccessDeniedException">
-        /// </exception>
         protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
         {
             if (!RedirectToLogin)

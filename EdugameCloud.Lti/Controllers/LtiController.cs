@@ -1415,7 +1415,6 @@
         /// </returns>
         private AdobeConnectProvider GetAdobeConnectProvider(LmsCompany lmsCompany)
         {
-            //lmsCompany = lmsCompany ?? lmsUserSession.Return(x => x.LmsCompany, null);
             AdobeConnectProvider provider = null;
             if (lmsCompany != null)
             {
