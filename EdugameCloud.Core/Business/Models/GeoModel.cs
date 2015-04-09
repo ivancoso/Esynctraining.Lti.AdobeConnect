@@ -8,11 +8,11 @@
     using System.Linq;
     using System.Net;
     using System.Web;
-    //using System.Web.Helpers;
+    using Castle.Core.Logging;
 
     using EdugameCloud.Core.Domain.DTO;
-
     using Esynctraining.Core.Providers;
+    using Esynctraining.Core.Utils;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -120,6 +120,7 @@
             }
             catch (Exception ex)
             {
+                IoC.Resolve<ILogger>().Error("ParseNominatimResult", ex);
                 error = string.Format("Invalid response: url={0}; response: {1}", url, strResponse);
                 return null;
             }
