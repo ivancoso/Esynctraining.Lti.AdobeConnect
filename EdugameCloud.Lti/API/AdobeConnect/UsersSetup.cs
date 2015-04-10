@@ -1160,11 +1160,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 if (lmsCompany.AdminUser == null)
                 {
-                    logger.WarnFormat("GetD2LUsers: AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
+                    logger.WarnFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
                     return new List<LmsUserDTO>();
                 }
 
                 lmsUser = lmsCompany.AdminUser;
+            }
+
+            if (string.IsNullOrEmpty(lmsUser.Token))
+            {
+                logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}", lmsUser.Id);
+                return new List<LmsUserDTO>();
             }
 
             var tokens = lmsUser.Token.Split(' ');
