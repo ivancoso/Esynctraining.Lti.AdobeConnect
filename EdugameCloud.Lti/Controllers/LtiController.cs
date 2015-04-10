@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using Castle.Core.Logging;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -50,40 +52,20 @@
         private readonly LmsUserModel lmsUserModel;
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
-        private readonly SoapAPI soapApi;
+        private readonly ILogger logger;
 
         #endregion
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtiController"/> class.
-        /// </summary>
-        /// <param name="lmsCompanyModel">
-        /// Company LMS model
-        /// </param>
-        /// <param name="userSessionModel">
-        /// The user Session Model.
-        /// </param>
-        /// <param name="lmsUserModel">
-        /// LMS user model
-        /// </param>
-        /// <param name="meetingSetup">
-        /// The meeting Setup.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <param name="usersSetup">
-        /// The users setup.
-        /// </param>
         public LtiController(
             LmsCompanyModel lmsCompanyModel,
             LmsUserSessionModel userSessionModel,
             LmsUserModel lmsUserModel, 
             MeetingSetup meetingSetup, 
             ApplicationSettingsProvider settings, 
-            UsersSetup usersSetup, SoapAPI soapApi)
+            UsersSetup usersSetup,
+            ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
             this.userSessionModel = userSessionModel;
@@ -91,7 +73,7 @@
             this.meetingSetup = meetingSetup;
             this.Settings = settings;
             this.usersSetup = usersSetup;
-            this.soapApi = soapApi;
+            this.logger = logger;
         }
 
         #endregion
@@ -125,27 +107,6 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The authentication callback.
-        /// </summary>
-        /// <param name="__provider__">
-        /// The __provider__.
-        /// </param>
-        /// <param name="__sid__">
-        /// The __sid__.
-        /// </param>
-        /// <param name="code">
-        /// The code.
-        /// </param>
-        /// <param name="state">
-        /// The state.
-        /// </param>
-        /// <param name="providerKey">
-        /// The provider Key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."), ActionName("callback")]
         [AllowAnonymous]
         public virtual ActionResult AuthenticationCallback(
@@ -157,6 +118,12 @@
             string state = null,
             string providerKey = null)
         {
+            if (string.IsNullOrEmpty(__provider__))
+            {
+                logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
+                this.ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
+                return this.View("Error");
+            }
             __provider__ = FixExtraDataIssue(__provider__);
             if (string.IsNullOrEmpty(providerKey))
             {
@@ -166,6 +133,7 @@
                 }
                 else
                 {
+                    logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
                     this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
                     return this.View("Error");
                 }
@@ -189,6 +157,12 @@
                 if (!userId.Contains(' ') && !userKey.Contains(' '))
                 {
                     token = userId + " " + userKey;
+                }
+                else
+                {
+                    logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
+                    this.ViewBag.Error = "Could not save user information in database. Please contact system administrator.";
+                    return this.View("Error");
                 }
 
                 return AuthCallbackSave(providerKey, token, user.Identifier, userInfo.UserName, "Error");
@@ -800,6 +774,7 @@
             string lmsProvider = param.GetLtiProviderName(provider);
             if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !string.IsNullOrEmpty(param.user_id))
             {
+                logger.InfoFormat("[D2L login attempt]. Original user_id: {0}", param.user_id);
                 var parsedIdArray = param.user_id.Split('_');
                 if (parsedIdArray.Length == 2)
                 {
@@ -826,7 +801,7 @@
             this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
             
             string email, login;
-            this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, adobeConnectProvider, out email, out login);
+            this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
             param.ext_user_username = login;
             var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
             
@@ -857,6 +832,7 @@
                             lmsCompany);
                         break;
                     case LmsProviderNames.Desire2Learn:
+                        //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
                         if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                         {
                             var d2lService = IoC.Resolve<IDesire2LearnApiService>();

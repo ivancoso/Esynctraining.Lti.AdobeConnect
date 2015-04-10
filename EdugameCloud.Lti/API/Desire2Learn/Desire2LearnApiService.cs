@@ -1,4 +1,5 @@
 ﻿using System;
+using Castle.Core.Logging;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
 using EdugameCloud.Lti.Constants;
@@ -24,12 +25,14 @@ namespace EdugameCloud.Lti.API.Desire2Learn
         private readonly string appId;
         private readonly string appSecret;
         private readonly ID2LAppContext appContext;
+        private readonly ILogger logger;
 
-        public Desire2LearnApiService(ApplicationSettingsProvider settings)
+        public Desire2LearnApiService(ApplicationSettingsProvider settings, ILogger logger)
         {
             appId = ((dynamic)settings).D2LApiKey;
             appSecret = ((dynamic)settings).D2LApiSecret;
             appContext = new D2LAppContextFactory().Create(appId, appSecret);
+            this.logger = logger;
         }
 
         public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl)
@@ -56,11 +59,14 @@ namespace EdugameCloud.Lti.API.Desire2Learn
             {
                 throw new Exception("This method can only be used for an authenticated user");
             }
+
             var client = new RestClient(HttpScheme.Https + hostUrl);
             var authenticator = new ValenceAuthenticator(userContext);
             var request = new RestRequest(apiUrl);
             authenticator.Authenticate(client, request);
             var response = client.Execute<T>(request);
+            logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}", 
+                apiUrl, (int)response.StatusCode, response.StatusDescription, response.ErrorMessage, response.Content);
             return response.Data;
         }
 

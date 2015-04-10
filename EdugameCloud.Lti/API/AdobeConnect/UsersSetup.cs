@@ -38,60 +38,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </summary>
         private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
 
-        /// <summary>
-        /// The DLAP API.
-        /// </summary>
         private readonly DlapAPI dlapApi;
-
-        /// <summary>
-        /// The SOAP API.
-        /// </summary>
         private readonly SoapAPI soapApi;
-
-        /// <summary>
-        /// The Moodle API.
-        /// </summary>
         private readonly MoodleAPI moodleApi;
-
-        /// <summary>
-        /// The LTI 2 API.
-        /// </summary>
         private readonly LTI2Api lti2Api;
-
-        /// <summary>
-        /// The settings.
-        /// </summary>
         private readonly dynamic settings;
+        private readonly ILogger logger;
 
         #endregion
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UsersSetup"/> class.
-        /// </summary>
-        /// <param name="dlapApi">
-        /// The DLAP API.
-        /// </param>
-        /// <param name="soapApi">
-        /// The SOAP API.
-        /// </param>
-        /// <param name="moodleApi">
-        /// The Moodle API.
-        /// </param>
-        /// <param name="lti2Api">
-        /// The LTI 2 API.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        public UsersSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, ApplicationSettingsProvider settings)
+        public UsersSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, 
+            ApplicationSettingsProvider settings, ILogger logger)
         {
             this.dlapApi = dlapApi;
             this.soapApi = soapApi;
             this.moodleApi = moodleApi;
             this.lti2Api = lti2Api;
             this.settings = settings;
+            this.logger = logger;
         }
 
         #endregion
@@ -124,28 +90,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Public Methods
 
-        /// <summary>
-        /// The get param login and email.
-        /// </summary>
-        /// <param name="param">
-        /// The param.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
         public void GetParamLoginAndEmail(
             LtiParamDTO param,
             LmsCompany lmsCompany,
-            AdobeConnectProvider provider,
             out string email,
             out string login)
         {
@@ -153,6 +100,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             login = param.lms_user_login;
             if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
             {
+                //todo: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, null).Value;
                 List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, true);
@@ -196,7 +144,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
             List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, param.lms_user_id, param.course_id, out error, param, forceUpdate);
-
             if (meeting == null)
             {
                 return users;
@@ -1209,10 +1156,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var adminRoles = new List<string> { "administrator", "super admin" };
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var currentUserRoles = param.roles.ToLower();
-            if (!adminRoles.Any(currentUserRoles.Contains) && lmsCompany.AdminUser != null)
+            if (lmsUser == null || !adminRoles.Any(currentUserRoles.Contains) && lmsCompany.AdminUser != null)
             {
+                if (lmsCompany.AdminUser == null)
+                {
+                    logger.WarnFormat("GetD2LUsers: AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
+                    return new List<LmsUserDTO>();
+                }
+
                 lmsUser = lmsCompany.AdminUser;
             }
+
             var tokens = lmsUser.Token.Split(' ');
             var d2lService = IoC.Resolve<IDesire2LearnApiService>();
 
@@ -1223,12 +1177,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1], param.lms_domain,
                     String.Format(Desire2LearnApiService.EnrollmentsUrlFormat, (string)settings.D2LApiVersion, param.context_id) +
                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
+                if (enrollments == null || enrollments.Items == null)
+                {
+                    error = "Incorrect API call or returned data. Please contact site administrator";
+                    logger.Error("[D2L Enrollments]: Object returned from API has null value");
+                    return new List<LmsUserDTO>();
+                }
+
                 result.AddRange(enrollments.Items);
             }
             while (enrollments.PagingInfo.HasMoreItems);
 
-            return result.Where(x=>(!String.IsNullOrEmpty(x.User.OrgDefinedId) || !String.IsNullOrEmpty(x.User.EmailAddress))
-                && (x.User.Identifier == lmsUserId || !adminRoles.Contains(x.Role.Name.ToLower())))
+            return result.Where(x => x.User.Identifier == lmsUserId || !adminRoles.Contains(x.Role.Name.ToLower()))
                 .Select(x => new LmsUserDTO
                 {
                     lms_role = x.Role.Name, 
