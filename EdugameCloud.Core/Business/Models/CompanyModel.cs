@@ -2,21 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-
+    using System.Linq;
     using EdugameCloud.Core.Business.Queries;
+    using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;
 
-    /// <summary>
-    ///     The company model.
-    /// </summary>
     public class CompanyModel : BaseModel<Company, int>
     {
         #region Constructors and Destructors
@@ -34,7 +30,36 @@
 
         #endregion
 
-        public IEnumerable<Company> GetAllWithRelated()
+        public IEnumerable<CompanyFlatDTO> GetAllFlat()
+        {
+            var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()
+                .Fetch(x => x.Licenses).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            var companies = this.Repository.FindAll(queryOver);
+
+            DateTime now = DateTime.Now;
+            return companies.Select(x =>
+            {
+                CompanyLicense license = x.CurrentLicense ?? x.FutureActiveLicense;
+
+                bool isTrial = (license != null) && (license.LicenseStatus == CompanyLicenseStatus.Trial);
+                
+                var dto = new CompanyFlatDTO
+                {
+                    id = x.Id,
+                    name = x.CompanyName,
+                    isActive = x.Status == CompanyStatus.Active,
+
+                    isActiveTrial = isTrial && (license.ExpiryDate >= now),
+                    isExpiredTrial = isTrial && (license.ExpiryDate < now),
+                };
+                return dto;
+
+                }).ToList();
+        }
+
+        public Company GetWithRelated(int companyId)
         {
             var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()
                 .Fetch(x => x.Address).Eager
@@ -44,9 +69,10 @@
                 .Fetch(x => x.PrimaryContact.UserRole).Eager
                 .Fetch(x => x.Licenses).Eager
                 .Fetch(x => x.Theme).Eager
+                .Where(x => x.Id == companyId)
                 .TransformUsing(Transformers.DistinctRootEntity);
 
-            return this.Repository.FindAll(queryOver);
+            return this.Repository.FindOne(queryOver).Value;
         }
 
         /// <summary>

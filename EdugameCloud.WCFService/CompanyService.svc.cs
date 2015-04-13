@@ -5,10 +5,11 @@ namespace EdugameCloud.WCFService
     using System;
     using System.Collections.Generic;
     using System.Data.SqlTypes;
+    using System.Diagnostics;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
+    using Castle.Core.Logging;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -20,15 +21,12 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.DTO;
-
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using FluentValidation.Results;
-
     using Resources;
 
     /// <summary>
@@ -211,9 +209,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="CompanyDTO"/>.
         /// </returns>
-        public CompanyDTO[] GetAll()
+        public CompanyFlatDTO[] GetAll()
         {
-            return this.CompanyModel.GetAllWithRelated().Select(x => new CompanyDTO(x)).ToArray();
+            return this.CompanyModel.GetAllFlat().ToArray();
         }
 
         /// <summary>
@@ -257,7 +255,7 @@ namespace EdugameCloud.WCFService
         public CompanyDTO GetById(int id)
         {
             Company company;
-            if ((company = this.CompanyModel.GetOneById(id).Value) == null)
+            if ((company = this.CompanyModel.GetWithRelated(id)) == null)
             {
                 var error =
                     new Error(

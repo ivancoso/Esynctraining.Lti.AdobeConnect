@@ -192,6 +192,7 @@
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
     <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
+    <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />
     <Compile Include="Domain\DTO\UploadedFileDTO.cs" />
     <Compile Include="Domain\DTO\QuizFromStoredProcedureExDTO.cs" />
     <Compile Include="Domain\DTO\QuizPlayerFromStoredProcedureDTO.cs" />

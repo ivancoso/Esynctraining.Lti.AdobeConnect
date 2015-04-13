@@ -67,7 +67,7 @@
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
-        CompanyDTO[] GetAll();
+        CompanyFlatDTO[] GetAll();
 
         /// <summary>
         /// The get license history by company id.
