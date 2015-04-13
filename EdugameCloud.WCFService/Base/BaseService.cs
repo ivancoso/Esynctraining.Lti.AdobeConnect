@@ -54,7 +54,7 @@
         /// <summary>
         ///     The error message title.
         /// </summary>
-        protected const string ACErrorMessageTitle = "Adobe Connect Error";
+        private const string ACErrorMessageTitle = "Adobe Connect Error";
 
         /// <summary>
         ///     The authentication header name.
@@ -137,17 +137,6 @@
                 }
 
                 return Guid.Empty;
-            }
-        }
-
-        /// <summary>
-        ///     Gets a value indicating whether is development environment.
-        /// </summary>
-        protected bool IsDev
-        {
-            get
-            {
-                return HttpContext.Current.IsDebuggingEnabled;
             }
         }
 
@@ -408,8 +397,10 @@
                 validationResult = IoC.Resolve<IValidator<T>>().Validate(obj);
                 return validationResult.IsValid;
             }
-            catch (ComponentNotFoundException)
+            catch (ComponentNotFoundException ex)
             {
+                Logger.Error("BaseService.IsValid", ex);
+
                 return false;
             }
         }
@@ -440,37 +431,37 @@
             return IoC.Resolve<BaseConverter<TDataTransferObject, TObjectInstance>>().Convert(transferObject, instance, flush);
         }
 
-        /// <summary>
-        /// The update cache.
-        /// </summary>
-        /// <param name="method">
-        /// The method.
-        /// </param>
-        /// <param name="args">
-        /// The args.
-        /// </param>
-        protected void UpdateCache(MethodInfo method, params object[] args)
-        {
-        }
+        ///// <summary>
+        ///// The update cache.
+        ///// </summary>
+        ///// <param name="method">
+        ///// The method.
+        ///// </param>
+        ///// <param name="args">
+        ///// The args.
+        ///// </param>
+        //protected void UpdateCache(MethodInfo method, params object[] args)
+        //{
+        //}
 
-        /// <summary>
-        /// The update cache.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Type of entity
-        /// </typeparam>
-        /// <param name="target">
-        /// The target.
-        /// </param>
-        /// <param name="methodName">
-        /// The method Name.
-        /// </param>
-        /// <param name="args">
-        /// The args.
-        /// </param>
-        protected void UpdateCache<T>(T target, string methodName, params object[] args)
-        {
-        }
+        ///// <summary>
+        ///// The update cache.
+        ///// </summary>
+        ///// <typeparam name="T">
+        ///// Type of entity
+        ///// </typeparam>
+        ///// <param name="target">
+        ///// The target.
+        ///// </param>
+        ///// <param name="methodName">
+        ///// The method Name.
+        ///// </param>
+        ///// <param name="args">
+        ///// The args.
+        ///// </param>
+        //protected void UpdateCache<T>(T target, string methodName, params object[] args)
+        //{
+        //}
 
         /// <summary>
         /// The update cache.
@@ -910,69 +901,69 @@
                     methodName));
         }
 
-        /// <summary>
-        /// The log error.
-        /// </summary>
-        /// <param name="methodName">
-        /// The method name.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="currentUser">
-        /// The current user.
-        /// </param>
-        protected void LogError(string methodName, ServiceResponse result, User currentUser = null)
-        {
-            this.LogError(methodName, result, currentUser.With(x => x.FullName));
-        }
+        ///// <summary>
+        ///// The log error.
+        ///// </summary>
+        ///// <param name="methodName">
+        ///// The method name.
+        ///// </param>
+        ///// <param name="result">
+        ///// The result.
+        ///// </param>
+        ///// <param name="currentUser">
+        ///// The current user.
+        ///// </param>
+        //protected void LogError(string methodName, ServiceResponse result, User currentUser = null)
+        //{
+        //    this.LogError(methodName, result, currentUser.With(x => x.FullName));
+        //}
 
-        /// <summary>
-        /// The log error.
-        /// </summary>
-        /// <param name="methodName">
-        /// The method name.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="userName">
-        /// The user name.
-        /// </param>
-        protected void LogError(string methodName, ServiceResponse result, string userName = null)
-        {
-            if (result != null && result.error != null)
-            {
-                this.LogError(methodName, result.error, userName);
-            }
-        }
+        ///// <summary>
+        ///// The log error.
+        ///// </summary>
+        ///// <param name="methodName">
+        ///// The method name.
+        ///// </param>
+        ///// <param name="result">
+        ///// The result.
+        ///// </param>
+        ///// <param name="userName">
+        ///// The user name.
+        ///// </param>
+        //private void LogError(string methodName, ServiceResponse result, string userName = null)
+        //{
+        //    if (result != null && result.error != null)
+        //    {
+        //        this.LogError(methodName, result.error, userName);
+        //    }
+        //}
 
-        /// <summary>
-        /// The update result.
-        /// </summary>
-        /// <typeparam name="T">
-        /// The service response
-        /// </typeparam>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="validationResult">
-        /// The validation result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
-        protected T UpdateResult<T>(T result, ValidationResult validationResult) where T : ServiceResponse
-        {
-            var error = this.GenerateValidationError(validationResult);
-            if (error != null)
-            {
-                result.status = Errors.CODE_RESULTTYPE_ERROR;
-                result.error = error;
-            }
+        ///// <summary>
+        ///// The update result.
+        ///// </summary>
+        ///// <typeparam name="T">
+        ///// The service response
+        ///// </typeparam>
+        ///// <param name="result">
+        ///// The result.
+        ///// </param>
+        ///// <param name="validationResult">
+        ///// The validation result.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="ServiceResponse"/>.
+        ///// </returns>
+        //protected T UpdateResult<T>(T result, ValidationResult validationResult) where T : ServiceResponse
+        //{
+        //    var error = this.GenerateValidationError(validationResult);
+        //    if (error != null)
+        //    {
+        //        result.status = Errors.CODE_RESULTTYPE_ERROR;
+        //        result.error = error;
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         /// <summary>
         /// The generate error.
@@ -1058,7 +1049,7 @@
         /// <typeparam name="TModel">
         /// Mail Model 
         /// </typeparam>
-        protected void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        private void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
         {
             string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model), message = body;
             if (message != null)
