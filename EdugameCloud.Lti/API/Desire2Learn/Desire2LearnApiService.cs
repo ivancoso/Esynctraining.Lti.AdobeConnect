@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.API.Desire2Learn
         public const string WhoAmIUrlFormat = "/d2l/api/lp/{0}/users/whoami";
         public const string GetUserUrlFormat = "/d2l/api/lp/{0}/users/{1}";
         public const string EnrollmentsUrlFormat = "/d2l/api/lp/{0}/enrollments/orgUnits/{1}/users/";
+        public const string EnrollmentsClasslistUrlFormat = "/d2l/api/le/{0}/{1}/classlist/";
 
         private readonly string appId;
         private readonly string appSecret;

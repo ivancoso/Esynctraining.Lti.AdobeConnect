@@ -149,8 +149,22 @@ namespace EdugameCloud.Lti.Controllers
                 string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
                 var hostUrl = authority.Replace(scheme, string.Empty);
 
+                string username = null;
                 var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion));
-                var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.GetUserUrlFormat, (string)Settings.D2LApiVersion, user.Identifier));
+                if (string.IsNullOrEmpty(user.UniqueName))
+                {
+                    var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
+                        String.Format(Desire2LearnApiService.GetUserUrlFormat, (string) Settings.D2LApiVersion,
+                            user.Identifier));
+                    if (userInfo != null)
+                    {
+                        username = userInfo.UserName;
+                    }
+                }
+                else
+                {
+                    username = user.UniqueName;
+                }
                 string userId = Request.QueryString["x_a"];
                 string userKey = Request.QueryString["x_b"];
                 string token = null;
@@ -165,7 +179,7 @@ namespace EdugameCloud.Lti.Controllers
                     return this.View("Error");
                 }
 
-                return AuthCallbackSave(providerKey, token, user.Identifier, userInfo.UserName, "Error");
+                return AuthCallbackSave(providerKey, token, user.Identifier, username, "Error");
             }
             else
             {

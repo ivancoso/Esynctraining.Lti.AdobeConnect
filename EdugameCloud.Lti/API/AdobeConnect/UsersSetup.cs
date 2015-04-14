@@ -1156,16 +1156,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var adminRoles = new List<string> { "administrator", "super admin" };
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var currentUserRoles = param.roles.ToLower();
-            if (lmsUser == null || !adminRoles.Any(currentUserRoles.Contains) && lmsCompany.AdminUser != null)
-            {
-                if (lmsCompany.AdminUser == null)
+//            if (lmsUser == null || !adminRoles.Any(currentUserRoles.Contains) && lmsCompany.AdminUser != null)
+//            {
+                if (lmsCompany.AdminUser == null && lmsUser == null)
                 {
                     logger.WarnFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
                     return new List<LmsUserDTO>();
                 }
 
                 lmsUser = lmsCompany.AdminUser;
-            }
+//            }
 
             if (string.IsNullOrEmpty(lmsUser.Token))
             {
@@ -1193,16 +1193,50 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 result.AddRange(enrollments.Items);
             }
             while (enrollments.PagingInfo.HasMoreItems);
+            var classlistEnrollments = d2lService.GetApiObjects<List<ClasslistUser>>(
+                tokens[0], tokens[1], param.lms_domain,
+                String.Format(Desire2LearnApiService.EnrollmentsClasslistUrlFormat, (string) settings.D2LApiVersion, param.context_id));
+            if (classlistEnrollments != null && classlistEnrollments.All(x=> x.Identifier != lmsUserId))
+            {
+                var currentUserInfo = d2lService.GetApiObjects<WhoAmIUser>(tokens[0], tokens[1], param.lms_domain, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, (string)settings.D2LApiVersion));
+                if (currentUserInfo != null)
+                {
+                    classlistEnrollments.Add(new ClasslistUser
+                    {
+                        Identifier = currentUserInfo.Identifier,
+                        Username = currentUserInfo.UniqueName
+                    });
+                }
+            }
 
             return result.Where(x => x.User.Identifier == lmsUserId || !adminRoles.Contains(x.Role.Name.ToLower()))
                 .Select(x => new LmsUserDTO
                 {
                     lms_role = x.Role.Name, 
                     id = x.User.Identifier, 
-                    login_id = x.User.OrgDefinedId, 
+                    login_id = GetUserName(x.User.Identifier, classlistEnrollments), 
                     name = x.User.DisplayName, 
                     primary_email = x.User.EmailAddress
                 }).ToList();
+        }
+
+        private string GetUserName(string id, List<ClasslistUser> users)
+        {
+            if (users != null)
+            {
+                var enrollment = users.FirstOrDefault(e => e.Identifier == id);
+                if (enrollment != null)
+                {
+                    return enrollment.Username;
+                }
+            }
+            return null;
+//            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+//            string scheme = Request.UrlReferrer.GetLeftPart(UriPartial.Scheme).ToLowerInvariant();
+//            string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
+//            var hostUrl = authority.Replace(scheme, string.Empty);
+//            var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
+//                        String.Format(Desire2LearnApiService.GetUserUrlFormat, (string)settings.D2LApiVersion, id));
         }
 
         /// <summary>
