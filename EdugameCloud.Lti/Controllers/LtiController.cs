@@ -11,15 +11,15 @@ namespace EdugameCloud.Lti.Controllers
     using System.Web.Mvc;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using BbWsClient;
-
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
-    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Core.Constants;
+    using EdugameCloud.Lti.Core.OAuth;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;

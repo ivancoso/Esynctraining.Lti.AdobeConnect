@@ -6,7 +6,7 @@ using System.Linq;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
-using EdugameCloud.Lti.Business.Models;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;

@@ -11,7 +11,7 @@ using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.API.Common;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.API.Moodle;
-using EdugameCloud.Lti.Business.Models;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
@@ -662,21 +662,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (principal != null)
                 {
+                    // TODO: do not fetch it by one??
+                    // TODO: fetch *all* users for this Lms Company? - is it OK?
+                    // TODO: we can 1)insert\update all users into our DB, then 2) update their PrincipalId
+                    //
                     var lmsUser = this.LmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(
                         u.lti_id ?? u.id,
                         login,
                         email,
                         lmsCompany.Id);
+
                     if (lmsUser == null || !principal.PrincipalId.Equals(lmsUser.PrincipalId))
                     {
                         if (lmsUser == null)
                         {
-                            lmsUser = new LmsUser()
-                                          {
-                                              LmsCompany = lmsCompany,
-                                              UserId = u.lti_id ?? u.id,
-                                              Username = login
-                                          };
+                            lmsUser = new LmsUser
+                            {
+                                LmsCompany = lmsCompany,
+                                UserId = u.lti_id ?? u.id,
+                                Username = login,
+                            };
                         }
 
                         lmsUser.PrincipalId = principal.PrincipalId;
@@ -1013,33 +1018,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return principals;
         }
 
-        /// <summary>
-        /// The get canvas users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra Data.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force Update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         public List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())

@@ -5,10 +5,8 @@
     /// <summary>
     /// The proxy tool password model.
     /// </summary>
-    public class ProxyToolPasswordModel
+    public sealed class ProxyToolPasswordModel
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the black board title.
         /// </summary>
@@ -28,6 +26,6 @@
 
         public string LtiVersion { get; set; }
 
-        #endregion
     }
+
 }

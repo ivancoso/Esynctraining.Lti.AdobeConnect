@@ -2,8 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Net;
-
-    using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
 

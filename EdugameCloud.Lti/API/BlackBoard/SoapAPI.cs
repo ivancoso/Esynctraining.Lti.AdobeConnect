@@ -8,7 +8,7 @@ using BbWsClient.Announcements;
 using BbWsClient.CourseMembership;
 using BbWsClient.User;
 using Castle.Core.Logging;
-using EdugameCloud.Lti.Constants;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;

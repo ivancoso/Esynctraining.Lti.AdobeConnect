@@ -2,7 +2,7 @@
 using Castle.Core.Logging;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
-using EdugameCloud.Lti.Constants;
+using EdugameCloud.Lti.Core.Constants;
 using Esynctraining.Core.Providers;
 using RestSharp;
 
