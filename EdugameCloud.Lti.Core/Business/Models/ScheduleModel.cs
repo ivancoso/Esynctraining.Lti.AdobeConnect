@@ -1,14 +1,12 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System;
-
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-
-    using NHibernate;
-    using NHibernate.Criterion;
+using System.Collections.Generic;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Business;
+using Esynctraining.Core.Business.Models;
+using NHibernate;
+using NHibernate.Criterion;
 
     /// <summary>
     /// The schedule model.
@@ -85,7 +83,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool ExecuteIfPossible(Schedule schedule, Func<DateTime, string, string> scheduledAction, string scoId, out string output)
+        public bool ExecuteIfPossible(Schedule schedule, Func<IEnumerable<LmsCompany>, DateTime, string, string> scheduledAction, IEnumerable<LmsCompany> companies, string scoId, out string output)
         {
             output = null;
             bool result = false;
@@ -94,7 +92,7 @@
                     // time to run the scheduled task
                     if (scheduledAction != null)
                     {
-                        output = scheduledAction(schedule.NextRun, scoId);
+                        output = scheduledAction(companies, schedule.NextRun, scoId);
                         result = true;
                     }
             }

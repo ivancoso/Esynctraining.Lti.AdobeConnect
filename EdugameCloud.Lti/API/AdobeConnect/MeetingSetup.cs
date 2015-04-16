@@ -20,10 +20,33 @@ using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
+    public interface IMeetingSetup
+    {
+        void SetupFolders(LmsCompany credentials, AdobeConnectProvider provider);
+
+        object SaveMeeting(
+            LmsCompany lmsCompany,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            MeetingDTO meetingDTO,
+            object extraData = null);
+
+        List<string> DeleteMeeting(
+            LmsCompany credentials,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            string scoId,
+            out string error);
+
+        List<TemplateDTO> GetTemplates(AdobeConnectProvider provider, string templateFolder);
+
+        AdobeConnectProvider GetProvider(LmsCompany credentials, bool login = true);
+    }
+
     /// <summary>
     ///     The meeting setup.
     /// </summary>
-    public sealed class MeetingSetup
+    public sealed class MeetingSetup : IMeetingSetup
     {
         #region Properties
 

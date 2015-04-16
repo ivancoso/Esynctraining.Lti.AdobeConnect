@@ -221,18 +221,8 @@
     <Compile Include="API\BlackBoard\EGCEnabledBlackboardAPI.cs" />
     <Compile Include="API\BlackBoard\CastleLoggerAdapter.cs" />
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
-    <Compile Include="API\BrainHoney\Enrollment.cs" />
-    <Compile Include="API\BrainHoney\Course.cs" />
-    <Compile Include="API\BrainHoney\CourseSignal.cs" />
-    <Compile Include="API\BrainHoney\EnrollmentSignal.cs" />
-    <Compile Include="API\BrainHoney\DlapAPI.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="API\BrainHoney\DlapExtensions.cs" />
-    <Compile Include="API\BrainHoney\ProcessingSignalType.cs" />
-    <Compile Include="API\BrainHoney\ParsedSignalGroup.cs" />
-    <Compile Include="API\BrainHoney\RightsFlags.cs" />
-    <Compile Include="API\BrainHoney\Session.cs" />
+    <Compile Include="API\BrainHoney\IBrainHoneyApi.cs" />
+    <Compile Include="API\BrainHoney\IBrainHoneyScheduling.cs" />
     <Compile Include="API\Canvas\CanvasAPI.cs" />
     <Compile Include="API\Canvas\CanvasQuizParser.cs" />
     <Compile Include="API\Canvas\EGCEnabledCanvasAPI.cs" />
@@ -253,7 +243,6 @@
     <Compile Include="DTO\CanvasFileDTO.cs" />
     <Compile Include="DTO\BBConsumerProfileDTO.cs" />
     <Compile Include="DTO\BBQuestionDTO.cs" />
-    <Compile Include="API\BrainHoney\Signal.cs" />
     <Compile Include="DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="DTO\MoodleTokenDTO.cs" />
@@ -296,6 +285,7 @@
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

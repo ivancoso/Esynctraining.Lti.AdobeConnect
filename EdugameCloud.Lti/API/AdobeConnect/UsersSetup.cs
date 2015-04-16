@@ -26,10 +26,29 @@ using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
+    public interface IUsersSetup
+    {
+        List<LmsUserDTO> UpdateUser(
+            LmsCompany lmsCompany,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            LmsUserDTO user,
+            string scoId,
+            out string error,
+            bool skipReturningUsers = false);
+
+        void SetLMSUserDefaultACPermissions(
+            AdobeConnectProvider provider,
+            string meetingScoId,
+            LmsUserDTO u,
+            string principalId,
+            bool ignoreAC = false);
+    }
+
     /// <summary>
     /// The users setup.
     /// </summary>
-    public class UsersSetup
+    public class UsersSetup : IUsersSetup
     {
         #region Fields
 
@@ -38,7 +57,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </summary>
         private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
 
-        private readonly DlapAPI dlapApi;
+        private readonly IBrainHoneyApi dlapApi;
         private readonly SoapAPI soapApi;
         private readonly MoodleAPI moodleApi;
         private readonly LTI2Api lti2Api;
@@ -49,7 +68,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Constructors and Destructors
 
-        public UsersSetup(DlapAPI dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, 
+        public UsersSetup(IBrainHoneyApi dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, 
             ApplicationSettingsProvider settings, ILogger logger)
         {
             this.dlapApi = dlapApi;
@@ -1026,7 +1045,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     error = null;
                     return this.GetCanvasUsers(credentials, lmsUserId, courseId);
                 case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData is Session ? extraData : null);
+                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData);
                 case LmsProviderNames.Blackboard:
                     return this.GetBlackBoardUsers(credentials, meeting, courseId, out error, forceUpdate);
                 case LmsProviderNames.Moodle:
@@ -1121,10 +1140,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
-        private List<LmsUserDTO> GetBrainHoneyUsers(LmsCompany credentials, int brainHoneyCourseId, out string error, object extraData = null)
+        private List<LmsUserDTO> GetBrainHoneyUsers(LmsCompany credentials, int brainHoneyCourseId, out string error, object extraData)
         {
-            Session session = extraData == null ? null : (Session)extraData;
-            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, session);
+            //Session session = extraData == null ? null : (Session)extraData;
+            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(credentials, brainHoneyCourseId, out error, extraData);
             return GroupUsers(users);
         }
 

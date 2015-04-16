@@ -7,7 +7,6 @@ namespace EdugameCloud.Lti.Domain.Entities
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
-    using Iesi.Collections.Generic;
 
     /// <summary>
     /// The company LMS.
@@ -235,6 +234,9 @@ namespace EdugameCloud.Lti.Domain.Entities
                 return setting != null && bool.TryParse(setting.Value, out denyACUserCreation) && denyACUserCreation;
             }
         }
+
         #endregion
+
     }
+
 }

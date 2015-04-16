@@ -1,0 +1,32 @@
+﻿namespace EdugameCloud.Lti.BrainHoney
+{
+    /// <summary>
+    ///     The brain honey course.
+    /// </summary>
+    internal sealed class Course
+    {
+        #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the course id.
+        /// </summary>
+        public int CourseId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the course title.
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the course start date.
+        /// </summary>
+        public string StartDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the course end date.
+        /// </summary>
+        public string EndDate { get; set; }
+
+        #endregion
+    }
+}
