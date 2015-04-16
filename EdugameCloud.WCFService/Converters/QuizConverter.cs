@@ -7,21 +7,18 @@
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.EntityParsing;
     using EdugameCloud.Lti.Extensions;
-
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using Newtonsoft.Json;
-
     using RestSharp;
 
     /// <summary>

@@ -9,7 +9,6 @@
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
 
     using Esynctraining.Core.Utils;
