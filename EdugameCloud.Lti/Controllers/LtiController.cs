@@ -1261,9 +1261,9 @@ namespace EdugameCloud.Lti.Controllers
             LmsUser lmsUser = null;
             var session = this.GetSession(providerKey);
             var company = session.With(x => x.LmsCompany);
+            var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
             if (!string.IsNullOrEmpty(token))
             {
-                var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
                 var userName = username ?? this.GetUserNameOrEmail(param);
                 lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
@@ -1278,10 +1278,50 @@ namespace EdugameCloud.Lti.Controllers
 
             if (company != null)
             {
-                if (company.AdminUser == null && this.IsAdminRole(providerKey))
+                bool currentUserIsAdmin = false;
+                if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
-                    company.AdminUser = lmsUser;
-                    lmsCompanyModel.RegisterSave(company);
+                    if (providerKey.ToLower() == LmsProviderNames.Desire2Learn)
+                    {
+                        if (!string.IsNullOrEmpty(param.ext_d2l_role))
+                        {
+                            currentUserIsAdmin = param.ext_d2l_role.ToLower().Contains("administrator");
+                        }
+                        else
+                        {
+                            //we need somehow to distinct teacher and admin user here
+                            //todo: review this approach, extract to service
+                            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+                            //get enrollments - this information contains user roles
+                            var enrollmentsList = new List<OrgUnitUser>();
+                            var tokens = token.Split(' ');
+                            PagedResultSet<OrgUnitUser> enrollments = null;
+                            do
+                            {
+                                enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1],
+                                    param.lms_domain,
+                                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat,
+                                        (string) Settings.D2LApiVersion, param.context_id) +
+                                    (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
+                                if (enrollments != null || enrollments.Items == null)
+                                {
+                                    enrollmentsList.AddRange(enrollments.Items);
+                                }
+                            } while (enrollments != null && enrollments.PagingInfo.HasMoreItems);
+                            currentUserIsAdmin = enrollments != null && enrollments.Items != null
+                                                 && enrollments.Items.Any(x => x.Role.Name.ToLower().Contains("admin"));
+                        }
+                    }
+                    else
+                    {
+                        currentUserIsAdmin = IsAdminRole(providerKey);
+                    }
+
+                    if (currentUserIsAdmin)
+                    {
+                        company.AdminUser = lmsUser;
+                        lmsCompanyModel.RegisterSave(company);
+                    }
                 }
 
                 return this.RedirectToExtJs(company, lmsUser, providerKey);
@@ -1335,7 +1375,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 return this.IsDebug;
             }
-
+            
             return param.roles.Contains("Administrator");
         }
 

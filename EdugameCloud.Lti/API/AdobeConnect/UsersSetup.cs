@@ -482,7 +482,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 u.ac_role = "Remove";
             }
 
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("administrator") || role.Contains("super admin"))
+            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("admin"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";

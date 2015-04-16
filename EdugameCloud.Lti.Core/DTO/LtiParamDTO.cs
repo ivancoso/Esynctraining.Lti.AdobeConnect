@@ -193,10 +193,12 @@
             get
             {
                 return string.IsNullOrWhiteSpace(this.custom_canvas_user_login_id)
-                           ? (string.IsNullOrWhiteSpace(this.ext_user_username)
-                                  ? this.lis_person_sourcedid
-                                  : this.ext_user_username)
-                           : this.custom_canvas_user_login_id;
+                            ? (string.IsNullOrWhiteSpace(ext_d2l_username) 
+                                ? (string.IsNullOrWhiteSpace(this.ext_user_username)
+                                    ? this.lis_person_sourcedid
+                                    : this.ext_user_username)
+                                : ext_d2l_username)
+                            : this.custom_canvas_user_login_id;
             }
         }
 
@@ -249,6 +251,11 @@
         ///     Gets or sets the user id.
         /// </summary>
         public string user_id { get; set; }
+
+        // D2L properties
+        public string ext_d2l_username { get; set; }
+        public string ext_d2l_orgdefinedid { get; set; }
+        public string ext_d2l_role { get; set; }
 
         #endregion
 
