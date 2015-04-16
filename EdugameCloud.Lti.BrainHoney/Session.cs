@@ -6,12 +6,11 @@
     using System.Text;
     using System.Xml;
     using System.Xml.Linq;
-    using EdugameCloud.Lti.API.BrainHoney;
 
     /// <summary>
     /// The session.
     /// </summary>
-    internal class Session //: IBrainHoneySession
+    internal sealed class Session
     {
         #region Fields
 

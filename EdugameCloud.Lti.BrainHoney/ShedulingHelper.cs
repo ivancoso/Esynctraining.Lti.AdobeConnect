@@ -12,16 +12,19 @@ using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Lti.BrainHoney
 {
-    public class ShedulingHelper : IBrainHoneyScheduling
+    public sealed class ShedulingHelper : IBrainHoneyScheduling
     {
-        private readonly DlapAPI dlapApi;
-        private readonly IMeetingSetup meetingSetup;
-        private readonly IUsersSetup usersSetup;
-        private readonly LmsCompanyModel lmsCompanyModel;
+        private readonly DlapAPI _dlapApi;
+        private readonly IMeetingSetup _meetingSetup;
+        private readonly IUsersSetup _usersSetup;
+        private readonly LmsCompanyModel _lmsCompanyModel;
 
-        public ShedulingHelper(DlapAPI dlapApi)
+        public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel)
         {
-            this.dlapApi = dlapApi;
+            _dlapApi = dlapApi;
+            _meetingSetup = meetingSetup;
+            _usersSetup = usersSetup;
+            _lmsCompanyModel = lmsCompanyModel;
         }
 
 
@@ -114,11 +117,8 @@ namespace EdugameCloud.Lti.BrainHoney
         public string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, string scoId)
         {
             var errors = new List<string>();
-            DlapAPI api = this.dlapApi;
+            DlapAPI api = _dlapApi;
             
-            //IEnumerable<LmsCompany> brainHoneyCompanies =
-            //    this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-
             foreach (LmsCompany brainHoneyCompany in brainHoneyCompanies)
             {
                 string error;
@@ -145,9 +145,9 @@ namespace EdugameCloud.Lti.BrainHoney
                         continue;
                     }
 
-                    AdobeConnectProvider adobeConnectProvider = this.meetingSetup.GetProvider(brainHoneyCompany);
-                    this.meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
-                    List<TemplateDTO> templates = this.meetingSetup.GetTemplates(
+                    AdobeConnectProvider adobeConnectProvider = this._meetingSetup.GetProvider(brainHoneyCompany);
+                    this._meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
+                    List<TemplateDTO> templates = this._meetingSetup.GetTemplates(
                         adobeConnectProvider,
                         brainHoneyCompany.ACTemplateScoId);
                     if (!templates.Any())
@@ -291,7 +291,7 @@ namespace EdugameCloud.Lti.BrainHoney
                 }
 
                 DateTime startDate = DateTime.Parse(course.StartDate);
-                meetingSetup.SaveMeeting(
+                _meetingSetup.SaveMeeting(
                     brainHoneyCompany,
                     adobeConnectProvider,
                     new LtiParamDTO
@@ -343,7 +343,7 @@ namespace EdugameCloud.Lti.BrainHoney
             string scoId)
         {
             string error;
-            List<string> result = this.meetingSetup.DeleteMeeting(
+            List<string> result = this._meetingSetup.DeleteMeeting(
                 brainHoneyCompany,
                 adobeConnectProvider,
                 new LtiParamDTO { context_id = signal.EntityId.ToString(CultureInfo.InvariantCulture) },
@@ -398,8 +398,8 @@ namespace EdugameCloud.Lti.BrainHoney
                                 id = enrollment.UserId,
                                 is_editable = true,
                             };
-                            this.usersSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
-                            this.usersSetup.UpdateUser(
+                            this._usersSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
+                            this._usersSetup.UpdateUser(
                                 brainHoneyCompany,
                                 provider,
                                 new LtiParamDTO
@@ -428,7 +428,7 @@ namespace EdugameCloud.Lti.BrainHoney
         private void UpdateLastSignalId(LmsCompany brainHoneyCompany, long signalId)
         {
             brainHoneyCompany.LastSignalId = signalId;
-            this.lmsCompanyModel.RegisterSave(brainHoneyCompany);
+            this._lmsCompanyModel.RegisterSave(brainHoneyCompany);
         }
 
         /// <summary>
