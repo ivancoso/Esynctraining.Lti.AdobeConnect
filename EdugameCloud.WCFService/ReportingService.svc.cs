@@ -10,9 +10,6 @@
 
     using Esynctraining.Core.Utils;
 
-    /// <summary>
-    ///     The account service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

@@ -4,27 +4,20 @@
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using FluentValidation.Results;
-
     using Resources;
 
-    /// <summary>
-    ///     The account service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

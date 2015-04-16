@@ -6,22 +6,19 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Converters;
-
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
-
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
 
     /// <summary>
@@ -211,7 +208,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public QuizesAndSubModuleItemsDTO ConvertQuizzes(int userId, int lmsUserParametersId, int[] quizIds)
         {
-            quizIds = quizIds ?? new int[] { };
+            quizIds = quizIds ?? new int[0];
             return this.Convert(userId, lmsUserParametersId, quizIds, false) as QuizesAndSubModuleItemsDTO;
         }
 

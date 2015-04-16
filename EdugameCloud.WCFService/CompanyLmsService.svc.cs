@@ -10,7 +10,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -47,11 +47,11 @@ namespace EdugameCloud.WCFService
         /// <summary>
         ///     Gets the DLAP API.
         /// </summary>
-        private DlapAPI DlapAPI
+        private IBrainHoneyApi DlapAPI
         {
             get
             {
-                return IoC.Resolve<DlapAPI>();
+                return IoC.Resolve<IBrainHoneyApi>();
             }
         }
 
@@ -295,8 +295,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.DlapAPI.LoginAndCreateASession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
-            return session != null;
+            return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
         }
 
         /// <summary>

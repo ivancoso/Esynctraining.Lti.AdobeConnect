@@ -21,9 +21,6 @@ namespace EdugameCloud.WCFService
 
     using FluentValidation.Results;
 
-    /// <summary>
-    /// The company license service.
-    /// </summary>
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession,
         IncludeExceptionDetailInFaults = true)]
@@ -241,16 +238,16 @@ namespace EdugameCloud.WCFService
                        };
         }
 
-       /// <summary>
-       /// The get countries.
-       /// </summary>
-       /// <returns>
-       /// The <see cref="CountryDTO"/>.
-       /// </returns>
-       public CountryDTO[] GetCountries()
-       {
-           return this.CountryModel.GetAll().Select(x => new CountryDTO(x)).ToArray();
-       }
+        /// <summary>
+        /// The get countries.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="CountryDTO"/>.
+        /// </returns>
+        public CountryDTO[] GetCountries()
+        {
+            return this.CountryModel.GetAll().Select(x => new CountryDTO(x)).ToArray();
+        }
 
         /// <summary>
         /// The get location.
@@ -259,9 +256,9 @@ namespace EdugameCloud.WCFService
         /// The geo DTO.
         /// </param>
         /// <returns>
-       /// The <see cref="GeoResultDTO"/>.
+        /// The <see cref="GeoResultDTO"/>.
         /// </returns>
-       public GeoResultDTO GetLocation(GeoDTO geoDTO)
+        public GeoResultDTO GetLocation(GeoDTO geoDTO)
         {
             string errorString;
             var result = this.GeoModel.GetLocation(geoDTO, out errorString);
@@ -272,7 +269,7 @@ namespace EdugameCloud.WCFService
 
             if (!string.IsNullOrWhiteSpace(geoDTO.country))
             {
-                result = this.GeoModel.GetLocation(new GeoDTO { country = geoDTO.country }, out errorString);    
+                result = this.GeoModel.GetLocation(new GeoDTO { country = geoDTO.country }, out errorString);
             }
 
             if (result == null)
@@ -285,41 +282,41 @@ namespace EdugameCloud.WCFService
             return result;
         }
 
-       // /// <summary>
-       // /// The get twitter profiles.
-       // /// </summary>
-       // /// <param name="name">
-       // /// The name.
-       // /// </param>
-       // /// <returns>
-       ///// The <see cref="TwitterProfileDTO"/>.
-       // /// </returns>
-       //public TwitterProfileDTO[] GetTwitterProfiles(string name)
-       //{
-       //    return this.TwitterModel.SearchForUsers(name).ToArray();
-       //}
+        // /// <summary>
+        // /// The get twitter profiles.
+        // /// </summary>
+        // /// <param name="name">
+        // /// The name.
+        // /// </param>
+        // /// <returns>
+        ///// The <see cref="TwitterProfileDTO"/>.
+        // /// </returns>
+        //public TwitterProfileDTO[] GetTwitterProfiles(string name)
+        //{
+        //    return this.TwitterModel.SearchForUsers(name).ToArray();
+        //}
 
-       // /// <summary>
-       // /// The get google social profiles.
-       // /// </summary>
-       // /// <param name="fullName">
-       // /// The full name.
-       // /// </param>
-       // /// <returns>
-       ///// The <see cref="GoogleSearchDTO"/>.
-       // /// </returns>
-       //public GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName)
-       // {
-       //     var result = this.GoogleSearchAPIModel.Search(fullName);
-       //     if (result != null)
-       //     {
-       //         return result.ToArray();
-       //     }
+        // /// <summary>
+        // /// The get google social profiles.
+        // /// </summary>
+        // /// <param name="fullName">
+        // /// The full name.
+        // /// </param>
+        // /// <returns>
+        ///// The <see cref="GoogleSearchDTO"/>.
+        // /// </returns>
+        //public GoogleSearchDTO[] SearchSocialLinksUsingGoogleAPI(string fullName)
+        // {
+        //     var result = this.GoogleSearchAPIModel.Search(fullName);
+        //     if (result != null)
+        //     {
+        //         return result.ToArray();
+        //     }
 
-       //     var error = new Error(Errors.TOO_MANY_DEPOSITIONS, "GoogleReachedTheLimit", "Daily request limit reached");
-       //     this.LogError("Lookup.SearchSocialLinksUsingGoogleAPI", error);
-       //     throw new FaultException<Error>(error, error.errorMessage);
-       // }
+        //     var error = new Error(Errors.TOO_MANY_DEPOSITIONS, "GoogleReachedTheLimit", "Daily request limit reached");
+        //     this.LogError("Lookup.SearchSocialLinksUsingGoogleAPI", error);
+        //     throw new FaultException<Error>(error, error.errorMessage);
+        // }
 
         /// <summary>
         /// The get google social profiles.
@@ -328,7 +325,7 @@ namespace EdugameCloud.WCFService
         /// The VCF Profile.
         /// </param>
         /// <returns>
-       /// The <see cref="string"/>.
+        /// The <see cref="string"/>.
         /// </returns>
         public string ConvertFromVCF(string vcfProfile)
         {

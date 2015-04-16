@@ -497,6 +497,14 @@
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
+      <Project>{42f32f14-1e81-4620-9aa0-ec58bf381283}</Project>
+      <Name>EdugameCloud.Lti.BrainHoney</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
       <Name>EdugameCloud.Lti</Name>
@@ -521,7 +529,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/services</IISUrl>
+          <IISUrl>http://localhost/services/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

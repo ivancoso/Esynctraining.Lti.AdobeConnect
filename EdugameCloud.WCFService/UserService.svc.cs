@@ -11,26 +11,20 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.RTMP;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.DTO;
     using EdugameCloud.WCFService.ViewModels;
-
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
-
     using FluentValidation.Results;
-
     using Resources;
 
-    /// <summary>
-    ///     The account service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

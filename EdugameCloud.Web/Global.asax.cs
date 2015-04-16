@@ -29,6 +29,7 @@ namespace EdugameCloud.Web
 
     using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
     using Castle.Core.Logging;
+    using System.Security.Principal;
 
     /// <summary>
     /// The MVC application.
@@ -88,7 +89,13 @@ namespace EdugameCloud.Web
         /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").Pick()
+                .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
+
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
+
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
@@ -159,7 +166,7 @@ namespace EdugameCloud.Web
                     if (user != null && user.SessionTokenExpirationDate.HasValue
                         && user.SessionTokenExpirationDate > DateTime.Now)
                     {
-                        e.User = new System.Security.Principal.GenericPrincipal(new System.Security.Principal.GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                        e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
                         if (FormsAuthentication.CookiesSupported)
                         {
                             FormsAuthentication.SetAuthCookie(user.Email, false);
@@ -197,10 +204,10 @@ namespace EdugameCloud.Web
                 if (ticket.Expiration > DateTime.Now)
                 {
                     var userModel = IoC.Resolve<UserModel>();
-                    var user = userModel.GetOneByEmail(ticket.Name).Value;
+                    var user = userModel.GetByEmailWithRole(ticket.Name);
                     if (user != null)
                     {
-                        e.User = new System.Security.Principal.GenericPrincipal(new System.Security.Principal.GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                        e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
                     }
                     else
                     {

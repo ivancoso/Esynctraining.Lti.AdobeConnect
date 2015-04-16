@@ -27,9 +27,6 @@ namespace EdugameCloud.WCFService
     using File = EdugameCloud.Core.Domain.Entities.File;
     using WebException = WcfRestContrib.ServiceModel.Web.Exceptions.WebException;
 
-    /// <summary>
-    ///     The account service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerCall,
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

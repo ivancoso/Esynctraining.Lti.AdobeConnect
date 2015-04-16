@@ -4,22 +4,17 @@ namespace EdugameCloud.ASMXService
     using System;
     using System.Linq;
     using System.Web.Services;
-
     using Castle.Core.Logging;
     using Castle.MicroKernel;
-
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-
     using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
-
     using FluentValidation;
     using FluentValidation.Results;
-
     using Resources;
 
     /// <summary>

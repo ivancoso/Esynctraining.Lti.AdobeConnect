@@ -24,9 +24,6 @@ namespace EdugameCloud.WCFService
 
     using Resources;
 
-    /// <summary>
-    ///     The account service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]

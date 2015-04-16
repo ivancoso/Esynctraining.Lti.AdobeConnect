@@ -14,7 +14,8 @@
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.BrainHoney;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Persistence;
     using EdugameCloud.Persistence.Extensions;
     using EdugameCloud.WCFService.Converters;
@@ -139,6 +140,10 @@
 
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+
+
+            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
+            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi>().ImplementedBy<DlapAPI>());
         }
 
         #endregion

@@ -22,9 +22,6 @@
 
     using Resources;
 
-    /// <summary>
-    ///     The SN Group Discussion Message service.
-    /// </summary>
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, IncludeExceptionDetailInFaults = true)]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class SNMemberService : BaseService, ISNMemberService

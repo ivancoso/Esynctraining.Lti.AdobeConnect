@@ -5,17 +5,15 @@ namespace EdugameCloud.WCFService
     using System;
     using System.Collections.Generic;
     using System.Data.SqlTypes;
-    using System.Diagnostics;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
-    using Castle.Core.Logging;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Core.RTMP;
-    using EdugameCloud.Lti.Business.Models;
+    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -29,9 +27,6 @@ namespace EdugameCloud.WCFService
     using FluentValidation.Results;
     using Resources;
 
-    /// <summary>
-    /// The company license service.
-    /// </summary>
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.PerSession, 
         IncludeExceptionDetailInFaults = true)]
@@ -203,12 +198,6 @@ namespace EdugameCloud.WCFService
             this.SendLicenseUpgradeEmail(company);
         }
 
-        /// <summary>
-        /// The get all.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="CompanyDTO"/>.
-        /// </returns>
         public CompanyFlatDTO[] GetAll()
         {
             return this.CompanyModel.GetAllFlat().ToArray();
