@@ -121,7 +121,10 @@
 
             foreach (var answer in question.answers)
             {
-                answer.text = ExtractFilesFromText(answer.html ?? answer.text, ref index, question.files);
+                answer.text = ExtractFilesFromText(
+                    string.IsNullOrWhiteSpace(answer.html) ? answer.text : answer.html,
+                    ref index,
+                    question.files);
             }
         }
 
