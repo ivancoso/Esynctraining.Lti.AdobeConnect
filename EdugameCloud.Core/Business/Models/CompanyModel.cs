@@ -41,7 +41,11 @@
             DateTime now = DateTime.Now;
             return companies.Select(x =>
             {
-                CompanyLicense license = x.CurrentLicense ?? x.FutureActiveLicense;
+                CompanyLicense license =
+                    x.Licenses.ToList().Where(cl => cl.DateStart <= DateTime.Now)
+                    .OrderByDescending(cl => (int)cl.LicenseStatus)
+                    .ThenByDescending(cl => cl.DateCreated)
+                    .FirstOrDefault();
 
                 bool isTrial = (license != null) && (license.LicenseStatus == CompanyLicenseStatus.Trial);
                 
@@ -73,6 +77,21 @@
                 .TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindOne(queryOver).Value;
+        }
+
+        public IEnumerable<Company> GetAllWithRelated()
+        {
+            var queryOver = new DefaultQueryOver<Company, int>().GetQueryOver()
+                .Fetch(x => x.Address).Eager
+                .Fetch(x => x.Address.State).Eager
+                .Fetch(x => x.Address.Country).Eager
+                .Fetch(x => x.PrimaryContact).Eager
+                .Fetch(x => x.PrimaryContact.UserRole).Eager
+                .Fetch(x => x.Licenses).Eager
+                .Fetch(x => x.Theme).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            return this.Repository.FindAll(queryOver);
         }
 
         /// <summary>
