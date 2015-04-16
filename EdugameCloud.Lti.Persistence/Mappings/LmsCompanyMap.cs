@@ -1,17 +1,12 @@
-﻿using System;
-using System.Linq.Expressions;
-using NHibernate.Mapping;
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The company LMS map.
     /// </summary>
-    public class LmsCompanyMap : BaseClassMap<LmsCompany>
+    public sealed class LmsCompanyMap : BaseClassMap<LmsCompany>
     {
         #region Constructors and Destructors
 

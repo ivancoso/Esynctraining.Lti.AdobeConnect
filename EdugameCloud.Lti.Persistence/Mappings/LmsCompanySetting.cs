@@ -1,9 +1,9 @@
-﻿using EdugameCloud.Lti.Domain.Entities;
-using Esynctraining.Persistence.Mappings;
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    public class LmsCompanySettingMap : BaseClassMap<LmsCompanySetting>
+    public sealed class LmsCompanySettingMap : BaseClassMap<LmsCompanySetting>
     {
         public LmsCompanySettingMap()
         {

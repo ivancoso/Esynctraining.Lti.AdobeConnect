@@ -1,13 +1,12 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The LMS question type map.
     /// </summary>
-    public class LmsQuestionTypeMap : BaseClassMap<LmsQuestionType>
+    public sealed class LmsQuestionTypeMap : BaseClassMap<LmsQuestionType>
     {
         #region Constructors and Destructors
 

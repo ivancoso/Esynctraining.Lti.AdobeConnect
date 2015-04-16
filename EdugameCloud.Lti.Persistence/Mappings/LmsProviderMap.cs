@@ -1,13 +1,12 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The LMS Provider item mapping
     /// </summary>
-    public class LmsProviderMap : BaseClassMap<LmsProvider>
+    public sealed class LmsProviderMap : BaseClassMap<LmsProvider>
     {
         #region Constructors and Destructors
 

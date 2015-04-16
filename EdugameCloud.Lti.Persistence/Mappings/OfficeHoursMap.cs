@@ -1,13 +1,12 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The office hours map.
     /// </summary>
-    public class OfficeHoursMap : BaseClassMap<OfficeHours>
+    public sealed class OfficeHoursMap : BaseClassMap<OfficeHours>
     {
         #region Constructors and Destructors
 

@@ -13,7 +13,7 @@
     /// <summary>
     /// The fluent configuration.
     /// </summary>
-    public class FluentConfiguration : Esynctraining.Persistence.FluentConfiguration
+    public sealed class FluentConfiguration : Esynctraining.Persistence.FluentConfiguration
     {
         #region Public Methods and Operators
 

@@ -1,13 +1,12 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The schedule map.
     /// </summary>
-    public class ScheduleMap : BaseClassMap<Schedule>
+    public sealed class ScheduleMap : BaseClassMap<Schedule>
     {
         #region Constructors and Destructors
 

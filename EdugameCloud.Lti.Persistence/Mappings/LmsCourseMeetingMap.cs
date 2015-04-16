@@ -1,13 +1,12 @@
-﻿namespace EdugameCloud.Lti.Persistence.Mappings
+﻿using Esynctraining.Persistence.Mappings;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Persistence.Mappings;
-
     /// <summary>
     /// The canvas AC meeting map
     /// </summary>
-    public class LmsCourseMeetingMap : BaseClassMap<LmsCourseMeeting>
+    public sealed class LmsCourseMeetingMap : BaseClassMap<LmsCourseMeeting>
     {
         #region Constructors and Destructors
 
