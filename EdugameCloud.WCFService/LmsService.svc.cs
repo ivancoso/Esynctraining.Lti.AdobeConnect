@@ -1,6 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
@@ -155,20 +156,14 @@ namespace EdugameCloud.WCFService
                 p =>
                     {
                         var pdto = new LmsProviderDTO(p)
-                                       {
-                                           configUrl =
-                                               string.IsNullOrWhiteSpace(p.ConfigurationUrl)
-                                                   ? string.Format(
-                                                       "{0}content/lti-config/{1}.xml",
-                                                       (string)this.Settings.PortalUrl,
-                                                       p.ShortName)
-                                                   : p.ConfigurationUrl,
-                                           instructionsUrl =
-                                               string.Format(
-                                                   "{0}content/lti-instructions/{1}.pdf",
-                                                   (string)this.Settings.PortalUrl,
-                                                   p.ShortName)
-                                       };
+                        {
+                            configUrl =
+                            string.IsNullOrWhiteSpace(p.ConfigurationUrl)
+                            ? string.Format("{0}content/lti-config/{1}.xml", (string)this.Settings.PortalUrl, p.ShortName)
+                            : p.ConfigurationUrl,
+
+                            instructionsUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, p.ShortName),
+                        };
                         pdto.nameWithoutSpaces = pdto.lmsProviderName.Replace(" ", string.Empty);
                         return pdto;
                     }).ToArray();
@@ -249,7 +244,7 @@ namespace EdugameCloud.WCFService
             int lmsUserParametersId,
             int[] quizIds)
         {
-            quizIds = quizIds ?? new int[] { };
+            quizIds = quizIds ?? new int[0];
             return this.Convert(userId, lmsUserParametersId, quizIds, true) as SurveysAndSubModuleItemsDTO;
         }
 
@@ -361,6 +356,13 @@ namespace EdugameCloud.WCFService
             if (lmsUserParameters != null)
             {
                 var user = UserModel.GetOneById(userId).Value;
+                if (user == null)
+                {
+                    var err = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No user found");
+                    this.LogError("LMS.Convert", err);
+                    throw new FaultException<Error>(err, err.errorMessage);
+                }
+
                 var companyLms = lmsUserParameters.CompanyLms;
                 
                 string error;
@@ -406,5 +408,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }

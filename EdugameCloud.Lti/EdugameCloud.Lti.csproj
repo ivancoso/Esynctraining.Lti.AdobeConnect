@@ -223,9 +223,8 @@
     <Compile Include="API\BlackBoard\SoapAPI.cs" />
     <Compile Include="API\BrainHoney\IBrainHoneyApi.cs" />
     <Compile Include="API\BrainHoney\IBrainHoneyScheduling.cs" />
-    <Compile Include="API\Canvas\CanvasAPI.cs" />
-    <Compile Include="API\Canvas\CanvasQuizParser.cs" />
-    <Compile Include="API\Canvas\EGCEnabledCanvasAPI.cs" />
+    <Compile Include="API\Canvas\ICanvasAPI.cs" />
+    <Compile Include="API\Canvas\IEGCEnabledCanvasAPI.cs" />
     <Compile Include="API\Common\LTI2Api.cs" />
     <Compile Include="API\IEGCEnabledLmsAPI.cs" />
     <Compile Include="API\ILmsAPI.cs" />

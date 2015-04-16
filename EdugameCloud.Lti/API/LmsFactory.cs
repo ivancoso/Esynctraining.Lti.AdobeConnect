@@ -15,7 +15,7 @@
         /// <summary>
         /// The Canvas API.
         /// </summary>
-        private readonly EGCEnabledCanvasAPI canvasApi;
+        private readonly IEGCEnabledCanvasAPI canvasApi;
 
         /// <summary>
         /// The Moodle API.
@@ -40,7 +40,7 @@
         /// <param name="moodleApi">
         /// The Moodle API.
         /// </param>
-        public LmsFactory(EGCEnabledCanvasAPI canvasApi, EGCEnabledMoodleAPI moodleApi, EGCEnabledBlackboardAPI blackboardApi)
+        public LmsFactory(IEGCEnabledCanvasAPI canvasApi, EGCEnabledMoodleAPI moodleApi, EGCEnabledBlackboardAPI blackboardApi)
         {
             this.canvasApi = canvasApi;
             this.moodleApi = moodleApi;

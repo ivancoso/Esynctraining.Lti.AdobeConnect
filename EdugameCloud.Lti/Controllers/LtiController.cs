@@ -53,6 +53,7 @@ namespace EdugameCloud.Lti.Controllers
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
+        private readonly ICanvasAPI canvasApi;
 
         #endregion
 
@@ -65,6 +66,7 @@ namespace EdugameCloud.Lti.Controllers
             MeetingSetup meetingSetup, 
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
+            ICanvasAPI canvasApi,
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
@@ -73,6 +75,7 @@ namespace EdugameCloud.Lti.Controllers
             this.meetingSetup = meetingSetup;
             this.Settings = settings;
             this.usersSetup = usersSetup;
+            this.canvasApi = canvasApi;
             this.logger = logger;
         }
 
@@ -831,7 +834,7 @@ namespace EdugameCloud.Lti.Controllers
                 switch (lmsProvider.ToLower())
                 {
                     case LmsProviderNames.Canvas:
-                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasAPI.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || canvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         {
                             this.StartOAuth2Authentication(provider, key, param);
                             return null;

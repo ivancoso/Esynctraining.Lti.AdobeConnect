@@ -58,6 +58,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
 
         private readonly IBrainHoneyApi dlapApi;
+        private readonly IEGCEnabledCanvasAPI canvasApi;
         private readonly SoapAPI soapApi;
         private readonly MoodleAPI moodleApi;
         private readonly LTI2Api lti2Api;
@@ -68,13 +69,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Constructors and Destructors
 
-        public UsersSetup(IBrainHoneyApi dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, 
+        public UsersSetup(IBrainHoneyApi dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, IEGCEnabledCanvasAPI canvasApi,
             ApplicationSettingsProvider settings, ILogger logger)
         {
             this.dlapApi = dlapApi;
             this.soapApi = soapApi;
             this.moodleApi = moodleApi;
             this.lti2Api = lti2Api;
+            this.canvasApi = canvasApi;
             this.settings = settings;
             this.logger = logger;
         }
@@ -1082,7 +1084,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     u => u.Token,
                     string.Empty);
 
-            List<LmsUserDTO> users = EGCEnabledCanvasAPI.GetUsersForCourse(
+            List<LmsUserDTO> users = canvasApi.GetUsersForCourse(
                 credentials.LmsDomain,
                 token,
                 canvasCourseId);
@@ -1115,7 +1117,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         break;
                     }
-                    CanvasAPI.AddMoreDetailsForUser(credentials.LmsDomain, adminToken, user);
+                    canvasApi.AddMoreDetailsForUser(credentials.LmsDomain, adminToken, user);
                 }
             }
 

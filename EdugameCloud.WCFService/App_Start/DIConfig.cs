@@ -14,6 +14,7 @@
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.BrainHoney;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Persistence;
@@ -124,26 +125,27 @@
         /// </param>
         private static void RegisterLtiComponents(IWindsorContainer container)
         {
-            Type modelsType = typeof(LmsCompanyModel);
-            Assembly ltiAssmebly = modelsType.Assembly;
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").Pick()
+                .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
 
-            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
-            container.Register(
-                Classes.FromAssembly(ltiAssmebly)
-                    .Pick()
-                    .If(Component.IsInNamespace(modelsType.Namespace))
-                    .WithService.Self()
-                    .Configure(c => c.LifestyleTransient()));
-            container.Register(
-                Classes.FromAssembly(ltiAssmebly).BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
+            // TODO: every LMS
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BrainHoney").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Canvas").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
 
-            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
-
+            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
+            
+            container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>().LifestyleTransient());
 
             container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
-            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi>().ImplementedBy<DlapAPI>());
+            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi>().ImplementedBy<DlapAPI>().Named("IBrainHoneyApi"));
+
+            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.ICanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.CanvasAPI>().Named("ICanvasAPI"));
+            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI>().Named("IEGCEnabledCanvasAPI"));
+
+            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
+            container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
         }
 
         #endregion

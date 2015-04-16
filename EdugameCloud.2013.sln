@@ -39,6 +39,10 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EdugameCloud.Lti.DB", "Edug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Core", "EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj", "{FE423C91-0DE1-45DF-8D88-29777F8F8D75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.BrainHoney", "EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj", "{42F32F14-1E81-4620-9AA0-EC58BF381283}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Canvas", "EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj", "{1B19293E-B5CA-463A-93A8-EF09CC255275}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,6 +105,14 @@ Global
 		{FE423C91-0DE1-45DF-8D88-29777F8F8D75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE423C91-0DE1-45DF-8D88-29777F8F8D75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE423C91-0DE1-45DF-8D88-29777F8F8D75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F32F14-1E81-4620-9AA0-EC58BF381283}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F32F14-1E81-4620-9AA0-EC58BF381283}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F32F14-1E81-4620-9AA0-EC58BF381283}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F32F14-1E81-4620-9AA0-EC58BF381283}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B19293E-B5CA-463A-93A8-EF09CC255275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B19293E-B5CA-463A-93A8-EF09CC255275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B19293E-B5CA-463A-93A8-EF09CC255275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B19293E-B5CA-463A-93A8-EF09CC255275}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

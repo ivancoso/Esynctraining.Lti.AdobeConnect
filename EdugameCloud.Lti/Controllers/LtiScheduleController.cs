@@ -90,7 +90,8 @@
             LmsUserSessionModel lmsSessionModel,
             ScheduleModel scheduleModel, 
             ApplicationSettingsProvider settings, 
-            UsersSetup usersSetup)
+            UsersSetup usersSetup,
+            IBrainHoneyScheduling bhScheduling)
         {
             this.dlapApi = dlapApi;
             this.meetingSetup = meetingSetup;
@@ -99,6 +100,7 @@
             this.scheduleModel = scheduleModel;
             this.Settings = settings;
             this.usersSetup = usersSetup;
+            _bhScheduling = bhScheduling;
         }
 
         #endregion

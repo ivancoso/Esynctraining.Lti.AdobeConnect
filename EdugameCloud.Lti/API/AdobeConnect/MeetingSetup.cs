@@ -124,6 +124,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private ICanvasAPI CanvasApi
+        {
+            get
+            {
+                return IoC.Resolve<ICanvasAPI>();
+            }
+        }
+        
+
         #endregion
 
         #region Public Methods and Operators
@@ -1352,7 +1361,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     var token = lmsUser.Return(
                             u => u.Token,
                             lmsCompany.AdminUser.Return(a => a.Token, string.Empty));
-                    CanvasAPI.CreateAnnouncement(
+                    CanvasApi.CreateAnnouncement(
                         lmsCompany.LmsDomain,
                         token,
                         param.course_id,
