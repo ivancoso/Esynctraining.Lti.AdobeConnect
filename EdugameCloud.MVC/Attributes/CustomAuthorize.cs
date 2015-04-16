@@ -83,7 +83,7 @@ namespace EdugameCloud.MVC.Attributes
             }
 
             var model = IoC.Resolve<AuthenticationModel>();
-            var user = (User)model.GetCurrentUser(x => IoC.Resolve<UserModel>().GetOneByEmail(x).Value);
+            var user = (User)model.GetCurrentUser(x => IoC.Resolve<UserModel>().GetByEmailWithRole(x));
             if (user == null)
             {
                 return false;

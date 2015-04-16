@@ -34,7 +34,7 @@
         /// <summary>
         /// The email validator.
         /// </summary>
-        private readonly Regex emailValidator =
+        private static readonly Regex emailValidator =
             new Regex(
                 @"^[a-z0-9_\+-]+(\.[a-z0-9_\+-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*\.([a-z]{2,4})$", 
                 RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -103,19 +103,13 @@
 
         #region Public Methods and Operators
 
-        /// <summary>
-        ///     Administrator emails
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="IEnumerable{String}" />.
-        /// </returns>
-        public IEnumerable<string> GetAdministratorEmails()
-        {
-            const int AdminRole = (int)UserRoleEnum.Admin;
-            QueryOver<User, User> queryOver =
-                new QueryOverUser().GetQueryOver().And(x => x.UserRole.Id == AdminRole).Select(x => x.Email);
-            return this.Repository.FindAll<string>(queryOver);
-        }
+        //public IEnumerable<string> GetAdministratorEmails()
+        //{
+        //    const int AdminRole = (int)UserRoleEnum.Admin;
+        //    QueryOver<User, User> queryOver =
+        //        new QueryOverUser().GetQueryOver().And(x => x.UserRole.Id == AdminRole).Select(x => x.Email);
+        //    return this.Repository.FindAll<string>(queryOver);
+        //}
 
         /// <summary>
         ///     The get all for company.
@@ -167,24 +161,15 @@
             return this.Repository.FindAll(queryOver);
         }
 
-        /// <summary>
-        /// Get all dependant users including current.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{User}"/>.
-        /// </returns>
-        public IEnumerable<int> GetAllDependantUserIdsIncludingCurrent(User user)
-        {
-            List<int> result =
-                this.Repository.StoreProcedureForMany<int>(
-                    "GetChildUserIds", 
-                    new StoreProcedureParam<int>("UserId", user.Id)).ToList();
-            result.Add(user.Id);
-            return result;
-        }
+        //public IEnumerable<int> GetAllDependantUserIdsIncludingCurrent(User user)
+        //{
+        //    List<int> result =
+        //        this.Repository.StoreProcedureForMany<int>(
+        //            "GetChildUserIds", 
+        //            new StoreProcedureParam<int>("UserId", user.Id)).ToList();
+        //    result.Add(user.Id);
+        //    return result;
+        //}
 
         /// <summary>
         /// The get all for company.
@@ -211,84 +196,42 @@
 
             return users.Select(x => new UserWithLoginHistoryDTO(x, logindatesForUsers.FirstOrDefault(hl => hl.userId == x.Id).Return(hl => hl.loginDate, (DateTime?)null)));
         }
+        
+        //public IEnumerable<User> GetAllForUsersPaged(
+        //    IEnumerable<int> userIds, 
+        //    int pageIndex, 
+        //    int pageSize, 
+        //    out int totalCount)
+        //{
+        //    QueryOver<User, User> queryOver =
+        //        new DefaultQueryOver<User, int>().GetQueryOver()
+        //            .WhereRestrictionOn(x => x.Id)
+        //            .IsInG(userIds)
+        //            .OrderBy(x => x.FirstName)
+        //            .Asc;
+        //    QueryOver<User, User> rowCountQuery = queryOver.ToRowCountQuery();
+        //    totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
+        //    QueryOver<User> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+        //    return this.Repository.FindAll(pagedQuery);
+        //}
+        
+        //public virtual IEnumerable<User> GetAllPaged(int pageIndex, int pageSize, out int totalCount)
+        //{
+        //    QueryOver<User, User> queryOver =
+        //        new DefaultQueryOver<User, int>().GetQueryOver().OrderBy(x => x.FirstName).Asc;
+        //    QueryOver<User, User> rowCountQuery = queryOver.ToRowCountQuery();
+        //    totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
+        //    QueryOver<User> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+        //    return this.Repository.FindAll(pagedQuery);
+        //}
 
-        /// <summary>
-        /// The get all for users paged.
-        /// </summary>
-        /// <param name="userIds">
-        /// The user's ids.
-        /// </param>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <param name="totalCount">
-        /// The total count.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{User}"/>.
-        /// </returns>
-        public IEnumerable<User> GetAllForUsersPaged(
-            IEnumerable<int> userIds, 
-            int pageIndex, 
-            int pageSize, 
-            out int totalCount)
-        {
-            QueryOver<User, User> queryOver =
-                new DefaultQueryOver<User, int>().GetQueryOver()
-                    .WhereRestrictionOn(x => x.Id)
-                    .IsInG(userIds)
-                    .OrderBy(x => x.FirstName)
-                    .Asc;
-            QueryOver<User, User> rowCountQuery = queryOver.ToRowCountQuery();
-            totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
-            QueryOver<User> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
-            return this.Repository.FindAll(pagedQuery);
-        }
-
-        /// <summary>
-        /// The get all paged.
-        /// </summary>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <param name="totalCount">
-        /// The total count.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{User}"/>.
-        /// </returns>
-        public virtual IEnumerable<User> GetAllPaged(int pageIndex, int pageSize, out int totalCount)
-        {
-            QueryOver<User, User> queryOver =
-                new DefaultQueryOver<User, int>().GetQueryOver().OrderBy(x => x.FirstName).Asc;
-            QueryOver<User, User> rowCountQuery = queryOver.ToRowCountQuery();
-            totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
-            QueryOver<User> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
-            return this.Repository.FindAll(pagedQuery);
-        }
-
-        /// <summary>
-        /// Get all Friends that can approve this pin
-        /// </summary>
-        /// <param name="pinId">
-        /// The pin id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{Int32}"/>.
-        /// </returns>
-        public IEnumerable<int> GetAllUsersThatCanApproveThisPin(int pinId)
-        {
-            return
-                this.Repository.StoreProcedureForMany<int>(
-                    "GetAllUsersThatCanApproveThisPin", 
-                    new StoreProcedureParam<int>("PinId", pinId)).ToList();
-        }
+        //public IEnumerable<int> GetAllUsersThatCanApproveThisPin(int pinId)
+        //{
+        //    return
+        //        this.Repository.StoreProcedureForMany<int>(
+        //            "GetAllUsersThatCanApproveThisPin", 
+        //            new StoreProcedureParam<int>("PinId", pinId)).ToList();
+        //}
 
         /// <summary>
         /// The get count for company.
@@ -323,28 +266,26 @@
             return this.Repository.FindOne(queryOver);
         }
 
-        /// <summary>
-        /// The get one by email.
-        /// </summary>
-        /// <param name="emailOrUserName">
-        /// The email Or User Name.
-        /// </param>
-        /// <param name="passwordHash">
-        /// Password hash
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{User}"/>.
-        /// </returns>
-        public virtual IFutureValue<User> GetOneByUserNameOrEmailAndPassword(
-            string emailOrUserName, 
-            byte[] passwordHash)
+        public virtual User GetByEmailWithRole(string email)
         {
-            string passwordHashString = BitConverter.ToString(passwordHash);
-            return
-                this.Repository.Session.Query<User>()
-                    .Where(x => (x.Email.ToLower() == emailOrUserName.ToLower()) && x.Password == passwordHashString)
-                    .ToFutureValue();
+            string emailToLower = email.ToLower();
+            QueryOver<User, User> queryOver =
+                new QueryOverUser().GetQueryOver()
+                .Fetch(x => x.UserRole).Eager
+                .WhereRestrictionOn(x => x.Email).IsInsensitiveLike(emailToLower);
+            return this.Repository.FindOne(queryOver).Value;
         }
+
+        //public virtual IFutureValue<User> GetOneByUserNameOrEmailAndPassword(
+        //    string emailOrUserName, 
+        //    byte[] passwordHash)
+        //{
+        //    string passwordHashString = BitConverter.ToString(passwordHash);
+        //    return
+        //        this.Repository.Session.Query<User>()
+        //            .Where(x => (x.Email.ToLower() == emailOrUserName.ToLower()) && x.Password == passwordHashString)
+        //            .ToFutureValue();
+        //}
 
         /// <summary>
         /// The register delete.
@@ -463,7 +404,7 @@
                         string emailValue = emailCell.With(x => x.Value.ToString());
                         IXLCell passwordCell = emailCell.With(x => x.CellRight());
                         string passwordCellValue = passwordCell.With(x => x.Value.ToString());
-                        if (!string.IsNullOrWhiteSpace(emailValue) && this.emailValidator.Match(emailValue).Success)
+                        if (!string.IsNullOrWhiteSpace(emailValue) && emailValidator.Match(emailValue).Success)
                         {
                             if (this.GetOneByEmail(emailValue).Value != null)
                             {
@@ -615,7 +556,9 @@
         /// </returns>
         public IFutureValue<User> GetOneByToken(string sessionToken)
         {
-            var queryOver = new QueryOverUser().GetQueryOver().WhereRestrictionOn(x => x.SessionToken).IsNotNull.AndRestrictionOn(x => x.SessionToken).IsLike(sessionToken).Take(1);
+            var queryOver = new QueryOverUser().GetQueryOver()
+                .Fetch(x => x.UserRole).Eager
+                .WhereRestrictionOn(x => x.SessionToken).IsLike(sessionToken).Take(1);
             return this.Repository.FindOne(queryOver);
         }
 
