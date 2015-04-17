@@ -17,7 +17,7 @@
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.BlackBoard;
     using EdugameCloud.Lti.BrainHoney;
-    using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Desire2Learn;
     using EdugameCloud.Lti.Moodle;
     using EdugameCloud.Persistence;
     using EdugameCloud.Persistence.Extensions;

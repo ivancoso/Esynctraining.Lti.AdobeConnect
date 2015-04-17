@@ -1184,7 +1184,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //get course users list
             var classlistEnrollments = d2lService.GetApiObjects<List<ClasslistUser>>(
                 tokens[0], tokens[1], param.lms_domain,
-                String.Format(Desire2LearnApiService.EnrollmentsClasslistUrlFormat, (string)settings.D2LApiVersion, param.context_id));
+                String.Format(d2lService.EnrollmentsClasslistUrlFormat, (string)settings.D2LApiVersion, param.context_id));
 
             //get enrollments - this information contains user roles
             var enrollmentsList = new List<OrgUnitUser>();
@@ -1192,7 +1192,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             do
             {
                 enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1], param.lms_domain,
-                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat, (string)settings.D2LApiVersion, param.context_id) +
+                    String.Format(d2lService.EnrollmentsUrlFormat, (string)settings.D2LApiVersion, param.context_id) +
                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
                 if (enrollments == null || enrollments.Items == null)
                 {
@@ -1213,7 +1213,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (classlistEnrollments.All(x => x.Identifier != lmsUserId))
                 {
                     var currentUserInfo = d2lService.GetApiObjects<WhoAmIUser>(tokens[0], tokens[1], param.lms_domain,
-                        String.Format(Desire2LearnApiService.WhoAmIUrlFormat, (string)settings.D2LApiVersion));
+                        String.Format(d2lService.WhoAmIUrlFormat, (string)settings.D2LApiVersion));
                     if (currentUserInfo != null)
                     {
                         classlistEnrollments.Add(new ClasslistUser

@@ -513,6 +513,10 @@
       <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
+      <Project>{c55551ab-4dd5-4bfd-9e75-253456213285}</Project>
+      <Name>EdugameCloud.Lti.Desire2Learn</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
       <Project>{0e20b71c-4291-42f8-9f83-e1a51ee5494c}</Project>
       <Name>EdugameCloud.Lti.Moodle</Name>

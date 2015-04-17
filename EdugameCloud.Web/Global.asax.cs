@@ -1,40 +1,35 @@
-﻿using EdugameCloud.Lti.API.Desire2Learn;
+﻿using System;
+using System.IO;
+using System.Security.Principal;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Optimization;
+using System.Web.Routing;
+using System.Web.Security;
+using Castle.Core.Logging;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.API;
+using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.BlackBoard;
 using EdugameCloud.Lti.BrainHoney;
 using EdugameCloud.Lti.Canvas;
+using EdugameCloud.Lti.Desire2Learn;
+using EdugameCloud.Lti.Moodle;
+using EdugameCloud.MVC.ModelBinders;
+using EdugameCloud.MVC.Providers;
+using EdugameCloud.Persistence;
+using EdugameCloud.Web.Providers;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
+using FluentValidation.Mvc;
+using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
 
 namespace EdugameCloud.Web
 {
-    using System;
-    using System.IO;
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Optimization;
-    using System.Web.Routing;
-    using System.Web.Security;
-
-    using Castle.MicroKernel.Registration;
-    using Castle.Windsor;
-
-    using Esynctraining.Core.Extensions;
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Core.Extensions;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.MVC.ModelBinders;
-    using EdugameCloud.MVC.Providers;
-    using EdugameCloud.Persistence;
-    using EdugameCloud.Web.Providers;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-
-    using FluentValidation.Mvc;
-
-    using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
-    using Castle.Core.Logging;
-    using System.Security.Principal;
-    using EdugameCloud.Lti.Moodle;
-    using EdugameCloud.Lti.BlackBoard;
-
     /// <summary>
     /// The MVC application.
     /// </summary>

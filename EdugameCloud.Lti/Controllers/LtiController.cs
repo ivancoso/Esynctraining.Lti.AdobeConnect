@@ -153,11 +153,11 @@ namespace EdugameCloud.Lti.Controllers
                 var hostUrl = authority.Replace(scheme, string.Empty);
 
                 string username = null;
-                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(Desire2LearnApiService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion));
+                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion));
                 if (string.IsNullOrEmpty(user.UniqueName))
                 {
                     var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
-                        String.Format(Desire2LearnApiService.GetUserUrlFormat, (string) Settings.D2LApiVersion,
+                        String.Format(d2lService.GetUserUrlFormat, (string)Settings.D2LApiVersion,
                             user.Identifier));
                     if (userInfo != null)
                     {
@@ -1285,7 +1285,7 @@ namespace EdugameCloud.Lti.Controllers
                             {
                                 enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1],
                                     param.lms_domain,
-                                    String.Format(Desire2LearnApiService.EnrollmentsUrlFormat,
+                                    String.Format(d2lService.EnrollmentsUrlFormat,
                                         (string) Settings.D2LApiVersion, param.context_id) +
                                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
                                 if (enrollments != null || enrollments.Items == null)
