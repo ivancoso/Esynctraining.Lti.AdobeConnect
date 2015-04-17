@@ -1084,40 +1084,51 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     u => u.Token,
                     string.Empty);
 
+            // probably it makes sence to call this method with company admin's token - for getting emails within one call
             List<LmsUserDTO> users = canvasApi.GetUsersForCourse(
                 credentials.LmsDomain,
                 token,
                 canvasCourseId);
 
-            var adminCourseUsers =
-                users.Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
-                    .Select(u => u.id)
-                    .Distinct();
-            var adminCourseTokens =
-                adminCourseUsers.Select(u => this.LmsUserModel.GetOneByUserIdAndCompanyLms(u, credentials.Id).Value)
-                    .Where(v => v != null)
-                    .Select(v => v.Token)
-                    .Where(t => t != null)
-                    .ToList();
-            if (!adminCourseTokens.Contains(token))
+            // emails are now included in the above api call
+            // leaving code below for old-style support for getting user email (for example for students)
+            if (users.Any(x => string.IsNullOrEmpty(x.primary_email)))
             {
-                adminCourseTokens.Add(token);
-            }
-            if (credentials.AdminUser != null && credentials.AdminUser.Token != null
-                && !adminCourseTokens.Contains(credentials.AdminUser.Token))
-            {
-                adminCourseTokens.Add(credentials.AdminUser.Token);
-            }
-
-            foreach (var user in users)
-            {
-                foreach (var adminToken in adminCourseTokens)
+                var adminCourseUsers =
+                    users.Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
+                        .Select(u => u.id)
+                        .Distinct();
+                var adminCourseTokens =
+                    adminCourseUsers.Select(u => this.LmsUserModel.GetOneByUserIdAndCompanyLms(u, credentials.Id).Value)
+                        .Where(v => v != null)
+                        .Select(v => v.Token)
+                        .Where(t => t != null)
+                        .ToList();
+                if (!adminCourseTokens.Contains(token))
                 {
-                    if (!string.IsNullOrEmpty(user.primary_email))
+                    adminCourseTokens.Add(token);
+                }
+                if (credentials.AdminUser != null && credentials.AdminUser.Token != null
+                    && !adminCourseTokens.Contains(credentials.AdminUser.Token))
+                {
+                    adminCourseTokens.Add(credentials.AdminUser.Token);
+                }
+
+                foreach (var user in users)
+                {
+                    if (string.IsNullOrEmpty(user.primary_email))
                     {
-                        break;
+                        // todo: investigate cases(except when role=student) when API does not return emails and probably remove this code
+                        logger.InfoFormat("[Canvas GetUsers] Api did not return email for user with id={}", user.id);
+                        foreach (var adminToken in adminCourseTokens)
+                        {
+                            if (!string.IsNullOrEmpty(user.primary_email))
+                            {
+                                break;
+                            }
+                            canvasApi.AddMoreDetailsForUser(credentials.LmsDomain, adminToken, user);
+                        }
                     }
-                    canvasApi.AddMoreDetailsForUser(credentials.LmsDomain, adminToken, user);
                 }
             }
 

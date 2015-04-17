@@ -74,6 +74,8 @@
         [DataMember]
         public string lti_id { get; set; }
 
+        public string email { get; set; }
+
         #endregion
 
         #region Methods

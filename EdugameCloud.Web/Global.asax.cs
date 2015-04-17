@@ -1,4 +1,6 @@
 ﻿using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.BrainHoney;
+using EdugameCloud.Lti.Canvas;
 
 namespace EdugameCloud.Web
 {
@@ -105,8 +107,8 @@ namespace EdugameCloud.Web
             container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
             container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi>().ImplementedBy<DlapAPI>().Named("IBrainHoneyApi"));
 
-            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.ICanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.CanvasAPI>().Named("ICanvasAPI"));
-            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI>().Named("IEGCEnabledCanvasAPI"));
+            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.ICanvasAPI>().ImplementedBy<CanvasAPI>().Named("ICanvasAPI"));
+            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI>().ImplementedBy<EGCEnabledCanvasAPI>().Named("IEGCEnabledCanvasAPI"));
             
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }

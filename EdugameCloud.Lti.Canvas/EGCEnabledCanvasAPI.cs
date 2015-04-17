@@ -115,7 +115,9 @@
             foreach (string role in CanvasAPI.CanvasRoles)
             {
                 var link = string.Format(
-                    "/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}",
+                    // we can use many include parameters here: &include[]=email&include[]=enrollments.
+                    // todo: investigate whether we can retrieve role information from enrollments param, it contains many fields. Then we'd not make api call for each role
+                    "/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
                     courseid,
                     role,
                     100);
@@ -166,6 +168,7 @@
                         u =>
                             {
                                 u.lms_role = role;
+                                u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
                             });
 
                     ret.AddRange(us);
