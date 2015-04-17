@@ -1142,32 +1142,6 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         /// <summary>
-        /// The get user AC connection mode.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
-        private Tuple<int, string> GetUser(LmsCompany lmsCompany, LtiParamDTO param)
-        {
-            int connectionMode = 0;
-            string primaryColor = null;
-            var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-            if (lmsUser != null)
-            {
-                connectionMode = (int)lmsUser.AcConnectionMode;
-                primaryColor = lmsUser.PrimaryColor;
-            }
-
-            return new Tuple<int, string>(connectionMode, primaryColor);
-        }
-
-        /// <summary>
         /// The get LMS user settings for join.
         /// </summary>
         /// <param name="lmsProviderName">
@@ -1187,13 +1161,21 @@ namespace EdugameCloud.Lti.Controllers
         /// </returns>
         private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, LmsCompany lmsCompany, LtiParamDTO param, LmsUserSession session)
         {
-            var lmsUser = this.GetUser(lmsCompany, param);
+            int connectionMode = 0;
+            string primaryColor = null;
+            LmsUser lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            if (lmsUser != null)
+            {
+                connectionMode = (int)lmsUser.AcConnectionMode;
+                primaryColor = lmsUser.PrimaryColor;
+            }
+
             return new LmsUserSettingsDTO
             {
-                acConnectionMode = lmsUser.Item1,
-                primaryColor = lmsUser.Item2,
+                acConnectionMode = connectionMode,
+                primaryColor = primaryColor,
                 lmsProviderName = lmsProviderName,
-                password = session.With(x => x.LtiSession).With(x => x.RestoredACPassword),
+                password = session.LtiSession.RestoredACPassword,
             };
         }
 
