@@ -15,8 +15,10 @@
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Desire2Learn;
+    using EdugameCloud.Lti.BlackBoard;
     using EdugameCloud.Lti.BrainHoney;
     using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Moodle;
     using EdugameCloud.Persistence;
     using EdugameCloud.Persistence.Extensions;
     using EdugameCloud.WCFService.Converters;
@@ -132,6 +134,8 @@
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BrainHoney").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Canvas").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
 
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
@@ -143,6 +147,12 @@
 
             container.Register(Component.For<EdugameCloud.Lti.API.Canvas.ICanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.CanvasAPI>().Named("ICanvasAPI"));
             container.Register(Component.For<EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI>().Named("IEGCEnabledCanvasAPI"));
+
+            container.Register(Component.For<EdugameCloud.Lti.API.Moodle.IMoodleApi>().ImplementedBy<MoodleApi>().Named("IMoodleAPI"));
+            container.Register(Component.For<EdugameCloud.Lti.API.Moodle.IEGCEnabledMoodleApi>().ImplementedBy<EGCEnabledMoodleApi>().Named("IEGCEnabledMoodleAPI"));
+
+            container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
+            container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
 
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());

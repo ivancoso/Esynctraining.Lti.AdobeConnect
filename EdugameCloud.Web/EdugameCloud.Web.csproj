@@ -775,6 +775,10 @@
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
+      <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
+      <Name>EdugameCloud.Lti.BlackBoard</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
       <Project>{42F32F14-1E81-4620-9AA0-EC58BF381283}</Project>
       <Name>EdugameCloud.Lti.BrainHoney</Name>
@@ -786,6 +790,10 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
+      <Project>{0e20b71c-4291-42f8-9f83-e1a51ee5494c}</Project>
+      <Name>EdugameCloud.Lti.Moodle</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
       <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>

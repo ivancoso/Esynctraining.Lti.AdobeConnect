@@ -1089,7 +1089,7 @@ namespace EdugameCloud.Lti.Controllers
         private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
         {
             var pass = (string)this.Settings.InitialBBPassword;
-            var soapApi = IoC.Resolve<SoapAPI>();
+            var soapApi = IoC.Resolve<IBlackBoardApi>();
             return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
         }
 

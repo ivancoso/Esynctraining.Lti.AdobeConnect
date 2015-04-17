@@ -14,11 +14,11 @@ namespace EdugameCloud.WCFService.Converters
 
     public class BlackboardResultConverter : QuizResultConverter
     {
-        private EGCEnabledBlackboardAPI BlackboardApi
+        private IEGCEnabledBlackBoardApi BlackboardApi
         {
             get
             {
-                return IoC.Resolve<EGCEnabledBlackboardAPI>();
+                return IoC.Resolve<IEGCEnabledBlackBoardApi>();
             }
         }
 

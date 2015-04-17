@@ -20,12 +20,12 @@
         /// <summary>
         /// The Moodle API.
         /// </summary>
-        private readonly EGCEnabledMoodleAPI moodleApi;
+        private readonly IEGCEnabledMoodleApi moodleApi;
 
         /// <summary>
         /// The blackboard api.
         /// </summary>
-        private readonly EGCEnabledBlackboardAPI blackboardApi;
+        private readonly IEGCEnabledBlackBoardApi blackboardApi;
 
         #endregion
 
@@ -40,7 +40,7 @@
         /// <param name="moodleApi">
         /// The Moodle API.
         /// </param>
-        public LmsFactory(IEGCEnabledCanvasAPI canvasApi, EGCEnabledMoodleAPI moodleApi, EGCEnabledBlackboardAPI blackboardApi)
+        public LmsFactory(IEGCEnabledCanvasAPI canvasApi, IEGCEnabledMoodleApi moodleApi, IEGCEnabledBlackBoardApi blackboardApi)
         {
             this.canvasApi = canvasApi;
             this.moodleApi = moodleApi;

@@ -18,11 +18,11 @@ namespace EdugameCloud.WCFService.Converters
 
     public class MoodleResultConverter : QuizResultConverter
     {
-        private EGCEnabledMoodleAPI MoodleApi
+        private IEGCEnabledMoodleApi MoodleApi
         {
             get
             {
-                return IoC.Resolve<EGCEnabledMoodleAPI>();
+                return IoC.Resolve<IEGCEnabledMoodleApi>();
             }
         }
 

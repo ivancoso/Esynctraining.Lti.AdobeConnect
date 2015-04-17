@@ -116,11 +116,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private SoapAPI BlackboardApi
+        private IBlackBoardApi BlackboardApi
         {
             get
             {
-                return IoC.Resolve<SoapAPI>();
+                return IoC.Resolve<IBlackBoardApi>();
             }
         }
 

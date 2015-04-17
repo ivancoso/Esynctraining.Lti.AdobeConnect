@@ -14,8 +14,8 @@
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.EntityParsing;
     using EdugameCloud.Lti.Extensions;
+    using EdugameCloud.Lti.Moodle;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using Newtonsoft.Json;

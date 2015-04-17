@@ -217,10 +217,8 @@
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
-    <Compile Include="API\BlackBoard\BlackboardQuizParser.cs" />
-    <Compile Include="API\BlackBoard\EGCEnabledBlackboardAPI.cs" />
-    <Compile Include="API\BlackBoard\CastleLoggerAdapter.cs" />
-    <Compile Include="API\BlackBoard\SoapAPI.cs" />
+    <Compile Include="API\BlackBoard\IBlackBoardApi.cs" />
+    <Compile Include="API\BlackBoard\IEGCEnabledBlackBoardApi.cs" />
     <Compile Include="API\BrainHoney\IBrainHoneyApi.cs" />
     <Compile Include="API\BrainHoney\IBrainHoneyScheduling.cs" />
     <Compile Include="API\Canvas\ICanvasAPI.cs" />
@@ -229,10 +227,8 @@
     <Compile Include="API\IEGCEnabledLmsAPI.cs" />
     <Compile Include="API\ILmsAPI.cs" />
     <Compile Include="API\LmsFactory.cs" />
-    <Compile Include="API\Moodle\EGCEnabledMoodleAPI.cs" />
-    <Compile Include="API\Moodle\MoodleAPI.cs" />
-    <Compile Include="API\Moodle\MoodleLmsUserParser.cs" />
-    <Compile Include="API\Moodle\MoodleSession.cs" />
+    <Compile Include="API\Moodle\IEGCEnabledMoodleApi.cs" />
+    <Compile Include="API\Moodle\IMoodleApi.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
@@ -248,9 +244,6 @@
     <Compile Include="DTO\CanvasQuizSubmissionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionResultDTO.cs" />
-    <Compile Include="API\Moodle\MoodleExpressionParser.cs" />
-    <Compile Include="API\Moodle\MoodleQuizInfoParser.cs" />
-    <Compile Include="API\Moodle\MoodleQuizParser.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="Models\ProxyToolPasswordModel.cs" />
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />

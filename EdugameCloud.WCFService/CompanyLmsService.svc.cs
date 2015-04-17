@@ -58,22 +58,22 @@ namespace EdugameCloud.WCFService
         /// <summary>
         ///     Gets the Moodle API.
         /// </summary>
-        private MoodleAPI MoodleAPI
+        private IMoodleApi MoodleAPI
         {
             get
             {
-                return IoC.Resolve<MoodleAPI>();
+                return IoC.Resolve<IMoodleApi>();
             }
         }
 
         /// <summary>
         ///     Gets the SOAP API.
         /// </summary>
-        private SoapAPI SoapAPI
+        private IBlackBoardApi SoapAPI
         {
             get
             {
-                return IoC.Resolve<SoapAPI>();
+                return IoC.Resolve<IBlackBoardApi>();
             }
         }
 
@@ -258,8 +258,7 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
-            var session = this.MoodleAPI.LoginAndCreateAClient(out info, test.domain.IsSSL(), test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
-            return session != null;
+            return this.MoodleAPI.LoginAndCheckSession(out info, test.domain.IsSSL(), test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
         }
 
         /// <summary>
@@ -313,11 +312,13 @@ namespace EdugameCloud.WCFService
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
             var session = test.enableProxyToolMode
+
                               ? this.SoapAPI.LoginToolAndCreateAClient(
                                   out info,
                                   test.domain.IsSSL(),
                                   test.domain,
                                   test.password)
+
                               : this.SoapAPI.LoginUserAndCreateAClient(
                                   out info,
                                   test.domain.IsSSL(),

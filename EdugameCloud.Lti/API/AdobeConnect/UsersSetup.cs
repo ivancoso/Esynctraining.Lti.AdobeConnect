@@ -59,8 +59,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private readonly IBrainHoneyApi dlapApi;
         private readonly IEGCEnabledCanvasAPI canvasApi;
-        private readonly SoapAPI soapApi;
-        private readonly MoodleAPI moodleApi;
+        private readonly IBlackBoardApi soapApi;
+        private readonly IMoodleApi moodleApi;
         private readonly LTI2Api lti2Api;
         private readonly dynamic settings;
         private readonly ILogger logger;
@@ -69,7 +69,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         #region Constructors and Destructors
 
-        public UsersSetup(IBrainHoneyApi dlapApi, SoapAPI soapApi, MoodleAPI moodleApi, LTI2Api lti2Api, IEGCEnabledCanvasAPI canvasApi,
+        public UsersSetup(IBrainHoneyApi dlapApi, IBlackBoardApi soapApi, IMoodleApi moodleApi, LTI2Api lti2Api, IEGCEnabledCanvasAPI canvasApi,
             ApplicationSettingsProvider settings, ILogger logger)
         {
             this.dlapApi = dlapApi;
