@@ -46,7 +46,7 @@
         {
             var queryOver = new DefaultQueryOver<LmsUser, int>()
                 .GetQueryOver()
-                .Where(u => u.UserId == userId && u.LmsCompany.Id == companyLmsId);
+                .Where(u => u.LmsCompany.Id == companyLmsId && u.UserId == userId);
             return this.Repository.FindOne(queryOver);
         }
 
