@@ -3,7 +3,7 @@
     using System.Web.Mvc;
     using System.Web.Routing;
 
-    using EdugameCloud.Lti.Routes;
+    using EdugameCloud.Lti.Core.Routes;
 
     /// <summary>
     /// The route config.

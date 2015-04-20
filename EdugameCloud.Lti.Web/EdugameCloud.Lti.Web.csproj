@@ -15,7 +15,7 @@
     <AssemblyName>EdugameCloud.Lti.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort>443</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
@@ -249,6 +249,7 @@
     <Content Include="Views\Lti\ProxyToolPassword.cshtml" />
     <Content Include="Views\Lti\ProxyToolRegistrationSucceeded.cshtml" />
     <Content Include="Views\Lti\LoginToAC.cshtml" />
+    <Content Include="Views\Lti\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extjs\" />
@@ -260,6 +261,30 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
+      <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
+      <Name>EdugameCloud.Lti.BlackBoard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
+      <Project>{42f32f14-1e81-4620-9aa0-ec58bf381283}</Project>
+      <Name>EdugameCloud.Lti.BrainHoney</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
+      <Project>{1b19293e-b5ca-463a-93a8-ef09cc255275}</Project>
+      <Name>EdugameCloud.Lti.Canvas</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
+      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
+      <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
+      <Project>{c55551ab-4dd5-4bfd-9e75-253456213285}</Project>
+      <Name>EdugameCloud.Lti.Desire2Learn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
+      <Project>{0e20b71c-4291-42f8-9f83-e1a51ee5494c}</Project>
+      <Name>EdugameCloud.Lti.Moodle</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.Persistence\EdugameCloud.Lti.Persistence.csproj">
       <Project>{b431087d-825b-4085-9747-f374c60fd4c4}</Project>
       <Name>EdugameCloud.Lti.Persistence</Name>
@@ -287,7 +312,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/</IISUrl>
+          <IISUrl>http://localhost:35153/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
