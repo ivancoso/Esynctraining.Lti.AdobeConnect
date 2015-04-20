@@ -1058,7 +1058,7 @@
             instance.TimeZone = this.TimeZoneModel.GetOneById(user.timeZoneId).Value;
             instance.UserRole = this.UserRoleModel.GetOneById(user.userRoleId).Value;
             instance.CreatedBy = user.createdBy.HasValue ? this.UserModel.GetOneById(user.createdBy.Value).Value : null;
-            instance.ModifiedBy = user.modifiedBy.HasValue ? this.UserModel.GetOneById(user.modifiedBy.Value).Value: null;
+            instance.ModifiedBy = user.modifiedBy.HasValue ? this.UserModel.GetOneById(user.modifiedBy.Value).Value : null;
             instance.Logo = user.logoId.HasValue ? this.FileModel.GetOneById(user.logoId.Value).Value : null;
             return instance;
         }

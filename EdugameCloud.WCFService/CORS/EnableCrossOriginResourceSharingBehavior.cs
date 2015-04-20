@@ -29,8 +29,6 @@
 
         #region Public Methods and Operators
 
-
-
         /// <summary>
         /// The add binding parameters.
         /// </summary>

@@ -266,7 +266,7 @@ namespace EdugameCloud.WCFService
         private EmailHistory ConvertDto(EmailHistoryDTO history, EmailHistory instance)
         {
             instance = instance ?? new EmailHistory();
-            instance.Body = history.body;; //.With(x => x.InnerXml);
+            instance.Body = history.body; //.With(x => x.InnerXml);
             instance.Date = history.date.ConvertFromUnixTimeStamp();
             instance.Message = history.message;
             instance.SentBcc = history.sentBcc;
