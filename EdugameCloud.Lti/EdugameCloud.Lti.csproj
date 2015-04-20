@@ -208,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
+    <Compile Include="API\AdobeConnect\MeetingSetup.Announcement.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
     <Compile Include="API\BlackBoard\IBlackBoardApi.cs" />

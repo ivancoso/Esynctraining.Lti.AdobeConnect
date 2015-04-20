@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
@@ -48,6 +49,9 @@ namespace EdugameCloud.Web
         /// </summary>
         protected void Application_Start()
         {
+            var webformVE = ViewEngines.Engines.OfType<WebFormViewEngine>().FirstOrDefault();
+            ViewEngines.Engines.Remove(webformVE);
+
             var container = new WindsorContainer();
             IoC.Initialize(container);
             container.RegisterComponents(web: true);

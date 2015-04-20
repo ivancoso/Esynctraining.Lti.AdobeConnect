@@ -339,7 +339,7 @@
                     DateModified = DateTime.Now,
                     IsActive = true,
                     ModifiedBy = user,
-                    SubModule = this.SubModuleModel.GetOneById(isSurvey ? (int)SubModuleItemType.Survey :(int)SubModuleItemType.Quiz).Value,
+                    SubModule = this.SubModuleModel.GetOneById(isSurvey ? (int)SubModuleItemType.Survey : (int)SubModuleItemType.Quiz).Value,
                 };
             if (subModuleCategory.IsTransient())
             {

@@ -673,12 +673,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             object extraData = null)
         {
             string error;
-            List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, lmsUserId, courseId, out error, extraData);
+            List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, lmsUserId, courseId, out error, extraData as LtiParamDTO);
 
             foreach (LmsUserDTO u in users)
             {
                 string email = u.GetEmail();
                 string login = u.GetLogin();
+
+                //
+                // TODO: do we need this FORCE?
+                // YES: !principal.PrincipalId.Equals(lmsUser.PrincipalId) - we use it to refresh PrincipalId
+                //
                 var principal = this.GetOrCreatePrincipal(provider, login, email, u.GetFirstName(), u.GetLastName(), lmsCompany);
 
                 if (principal != null)
@@ -1039,7 +1044,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return principals;
         }
 
-        public List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public List<LmsUserDTO> GetLMSUsers(LmsCompany credentials, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, LtiParamDTO extraData = null, bool forceUpdate = false)
         {
             switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
             {

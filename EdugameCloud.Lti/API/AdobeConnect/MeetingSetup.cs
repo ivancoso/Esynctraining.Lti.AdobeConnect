@@ -4,8 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Castle.Core.Logging;
-using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -46,7 +44,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     /// <summary>
     ///     The meeting setup.
     /// </summary>
-    public sealed class MeetingSetup : IMeetingSetup
+    public sealed partial class MeetingSetup : IMeetingSetup
     {
         #region Properties
 
@@ -115,23 +113,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return IoC.Resolve<UsersSetup>();
             }
         }
-
-        private IBlackBoardApi BlackboardApi
-        {
-            get
-            {
-                return IoC.Resolve<IBlackBoardApi>();
-            }
-        }
-
-        private ICanvasAPI CanvasApi
-        {
-            get
-            {
-                return IoC.Resolve<ICanvasAPI>();
-            }
-        }
-        
 
         #endregion
 
@@ -391,19 +372,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
                 }
 
-                string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
+                // NOTE: not in use on client-site
+                //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
 
                 recordings.Add(new RecordingDTO
                         {
                             id = v.ScoId, 
                             name = v.Name, 
-                            description = v.Description, 
+                            //description = v.Description, 
                             begin_date = v.BeginDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
-                            end_date = v.EndDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
+                            //end_date = v.EndDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
                             duration = v.Duration, 
                             url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray()),
                             is_public = isPublic,
-                            password = passcode
+                            //password = passcode,
                         });
             }
 
@@ -1328,61 +1310,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             return enrollments.Any(e => e.PrincipalId != null && e.PrincipalId.Equals(lmsUser.PrincipalId));
         }
-
-        private void CreateAnnouncement(
-            LmsCompany lmsCompany, 
-            LtiParamDTO param, 
-            string name, 
-            string startDate, 
-            string startTime, 
-            string duration)
-        {
-            if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
-            {
-                return;
-            }
-
-            var announcementTitle = string.Format(
-                "A new Adobe Connect room was created for course {0}",
-                param.context_title);
-            const string AnnouncementMessagePattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
-            var announcementMessage = string.Format(
-                AnnouncementMessagePattern,
-                name,
-                startDate,
-                startTime,
-                duration,
-                param.referer ?? string.Empty);
-
-            switch (lmsCompany.LmsProvider.ShortName.ToLowerInvariant())
-            {
-                case LmsProviderNames.Canvas:
-                    var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                    var token = lmsUser.Return(
-                            u => u.Token,
-                            lmsCompany.AdminUser.Return(a => a.Token, string.Empty));
-                    CanvasApi.CreateAnnouncement(
-                        lmsCompany.LmsDomain,
-                        token,
-                        param.course_id,
-                        announcementTitle,
-                        announcementMessage);
-                    break;
-                case LmsProviderNames.Blackboard:
-                    BlackboardApi.CreateAnnouncement(param.course_id, lmsCompany, announcementTitle, announcementMessage);
-                    break;
-                case LmsProviderNames.BrainHoney:
-                    // string error;
-//                    this.dlapApi.CreateAnnouncement(
-//                        credentials,
-//                        param.course_id,
-//                        announcementTitle,
-//                        announcementMessage, 
-//                        out error);
-                    break;
-            }
-        }
-
+        
         /// <summary>
         /// The get attendance Report.
         /// </summary>
@@ -1535,7 +1463,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             }).ToList();
                 sessions.AddRange(
                     sessionList.Select(
-                        s => new MeetingSession {AssetId = s.assetId.ToString(CultureInfo.CurrentCulture)}));
+                        s => new MeetingSession { AssetId = s.assetId.ToString(CultureInfo.CurrentCulture) }));
 
                 foreach (var sco in sessions)
                 {
@@ -2094,5 +2022,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         #endregion
+
     }
+
 }

@@ -759,6 +759,7 @@
     <Content Include="Views\Home\LogIn.cshtml" />
     <Content Include="Views\Social\LoggedIn.cshtml" />
     <Content Include="Views\Home\Unsubscribed.cshtml" />
+    <Content Include="Views\Lti\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extjs\" />

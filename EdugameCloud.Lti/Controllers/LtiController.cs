@@ -351,6 +351,34 @@ namespace EdugameCloud.Lti.Controllers
             return new FilePathResult(path, "text/html");
         }
 
+        public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode)
+        {
+            string meetingsJson = TempData["meetings"] as string;
+            string password = TempData["RestoredACPassword"] as string;
+
+            if (string.IsNullOrWhiteSpace(meetingsJson))
+            {
+                LmsUserSession session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+                var param = session.LtiSession.LtiParam;
+                var meetings = this.meetingSetup.GetMeetings(
+                    credentials,
+                    this.GetAdobeConnectProvider(credentials),
+                    param);
+
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    password = session.LtiSession.RestoredACPassword;
+                }
+
+                meetingsJson = JsonConvert.SerializeObject(meetings);
+            }
+
+            ViewBag.MeetingsJson = meetingsJson;
+            ViewBag.RestoredACPassword = password;
+            return View("Index");
+        }
+
         /// <summary>
         /// The get meetings.
         /// </summary>
@@ -440,10 +468,9 @@ namespace EdugameCloud.Lti.Controllers
         public virtual JsonResult GetTemplates(string lmsProviderName)
         {
             var session = this.GetSession(lmsProviderName);
-            var credentials = session.LmsCompany;
             List<TemplateDTO> templates = this.meetingSetup.GetTemplates(
-                this.GetAdobeConnectProvider(credentials), 
-                credentials.ACTemplateScoId);
+                this.GetAdobeConnectProvider(session.LmsCompany),
+                session.LmsCompany.ACTemplateScoId);
 
             return this.Json(templates);
         }
@@ -822,7 +849,7 @@ namespace EdugameCloud.Lti.Controllers
             param.ext_user_username = login;
             var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
             
-            var session = this.SaveSession(lmsCompany, param, lmsUser);
+            LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
             var key = session.Id.ToString();
             
             this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
@@ -902,7 +929,7 @@ namespace EdugameCloud.Lti.Controllers
                     this.lmsUserModel.RegisterSave(lmsUser);
                 }
 
-                return this.RedirectToExtJs(lmsCompany, lmsUser, key);
+                return this.RedirectToExtJs(session, key);
             }
 
             this.ViewBag.Error = "Invalid LTI request";
@@ -979,7 +1006,7 @@ namespace EdugameCloud.Lti.Controllers
                 param, 
                 user,
                 scoId,
-                out error);
+                out error).Where(x => x.id == user.id).ToList();
 
             if (string.IsNullOrEmpty(error))
             {
@@ -1244,7 +1271,7 @@ namespace EdugameCloud.Lti.Controllers
         private ActionResult AuthCallbackSave(string providerKey, string token, string userId, string username, string viewName)
         {
             LmsUser lmsUser = null;
-            var session = this.GetSession(providerKey);
+            LmsUserSession session = this.GetSession(providerKey);
             var company = session.With(x => x.LmsCompany);
             var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
             if (!string.IsNullOrEmpty(token))
@@ -1309,7 +1336,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
 
-                return this.RedirectToExtJs(company, lmsUser, providerKey);
+                return this.RedirectToExtJs(session, providerKey);
             }
 
             this.ViewBag.Error = string.Format("Credentials not found");
@@ -1331,15 +1358,29 @@ namespace EdugameCloud.Lti.Controllers
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        private ActionResult RedirectToExtJs(LmsCompany credentials, LmsUser user, string providerName)
+        private ActionResult RedirectToExtJs(LmsUserSession session, string providerName)
         {
-            var primaryColor = user.With(x => x.PrimaryColor);
-            this.ViewBag.RedirectUrl = string.Format(
-                (this.Settings.LtiPath ?? string.Empty) +
-                "/extjs/index.html?primaryColor={0}&lmsProviderName={1}",
-                !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
-                providerName);
-            return this.View("Redirect");
+            var credentials = session.LmsCompany;
+            var primaryColor = session.LmsUser.PrimaryColor;
+            primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty);
+
+            var param = session.LtiSession.LtiParam;
+            var meetings = this.meetingSetup.GetMeetings(
+                credentials,
+                this.GetAdobeConnectProvider(credentials),
+                param);
+
+            TempData["meetings"] = JsonConvert.SerializeObject(meetings);
+            TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
+
+            return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)session.LmsUser.AcConnectionMode });
+
+            //this.ViewBag.RedirectUrl = string.Format(
+            //    (this.Settings.LtiPath ?? string.Empty) +
+            //    "/extjs/index.html?primaryColor={0}&lmsProviderName={1}",
+            //    !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
+            //    providerName);
+            //return this.View("Redirect");
         }
 
         /// <summary>
