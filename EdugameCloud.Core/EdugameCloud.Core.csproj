@@ -110,7 +110,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Thought.vCards">
-      <HintPath>..\packages\Thought.vCards\Thought.vCards.dll</HintPath>
+      <HintPath>..\ExternalLibraries\Thought.vCards\Thought.vCards.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="WcfRestContrib">
       <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
