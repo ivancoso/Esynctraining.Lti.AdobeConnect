@@ -7,7 +7,7 @@
 
     using Persistence;
 
-    public class ReferenceNameConvention : IReferenceConvention
+    internal sealed class ReferenceNameConvention : IReferenceConvention
 	{
 		public void Apply(IManyToOneInstance instance)
 		{

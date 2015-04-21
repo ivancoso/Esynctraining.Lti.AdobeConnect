@@ -9,7 +9,7 @@
 
     using Persistence;
 
-    public class ManyToManyNameConvention : IHasManyToManyConvention
+    internal sealed class ManyToManyNameConvention : IHasManyToManyConvention
 	{
 		public void Apply(IManyToManyCollectionInstance instance)
 		{

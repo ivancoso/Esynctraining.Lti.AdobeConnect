@@ -9,7 +9,7 @@
 
     using Persistence;
 
-    public class TableNameConvention : IClassConvention, IClassConventionAcceptance
+    internal sealed class TableNameConvention : IClassConvention, IClassConventionAcceptance
 	{
 		public void Accept(IAcceptanceCriteria<IClassInspector> criteria)
 		{

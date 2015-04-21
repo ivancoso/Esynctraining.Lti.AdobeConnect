@@ -13,7 +13,7 @@
     /// <summary>
     /// The property name convention.
     /// </summary>
-    public class PropertyNameConvention : IPropertyConvention
+    internal sealed class PropertyNameConvention : IPropertyConvention
     {
         #region Fields
 

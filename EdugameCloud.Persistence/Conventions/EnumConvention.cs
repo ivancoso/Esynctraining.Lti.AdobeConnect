@@ -8,7 +8,7 @@
     /// <summary>
     /// The convention.
     /// </summary>
-    public class EnumConvention : IUserTypeConvention
+    internal sealed class EnumConvention : IUserTypeConvention
     {
         #region Public Methods and Operators
 

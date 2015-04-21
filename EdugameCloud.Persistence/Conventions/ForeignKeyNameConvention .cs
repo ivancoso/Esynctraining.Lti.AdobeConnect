@@ -14,7 +14,7 @@
     /// <summary>
     /// The foreign key name convention.
     /// </summary>
-    public class ForeignKeyNameConvention : ForeignKeyConvention
+    internal sealed class ForeignKeyNameConvention : ForeignKeyConvention
     {
         #region Fields
 

@@ -8,7 +8,7 @@
     /// <summary>
     /// The primary key name convention.
     /// </summary>
-    public class PrimaryKeyNameConvention : IIdConvention
+    internal sealed class PrimaryKeyNameConvention : IIdConvention
     {
         #region Public Methods and Operators
 

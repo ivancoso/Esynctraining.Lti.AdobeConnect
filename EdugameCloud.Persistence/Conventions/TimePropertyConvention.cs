@@ -8,7 +8,7 @@
     /// <summary>
     /// The time property convention.
     /// </summary>
-    public class TimePropertyConvention : IPropertyConvention
+    internal sealed class TimePropertyConvention : IPropertyConvention
     {
         #region Public Methods and Operators
 

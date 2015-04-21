@@ -9,7 +9,7 @@
 
     using Persistence;
 
-    public class ForeignKeyConstraintHasManyNameConvention : IHasManyConvention
+    internal sealed class ForeignKeyConstraintHasManyNameConvention : IHasManyConvention
 	{
 		public void Apply(IOneToManyCollectionInstance instance)
 		{

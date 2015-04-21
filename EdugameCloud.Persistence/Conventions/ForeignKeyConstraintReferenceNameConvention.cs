@@ -7,7 +7,7 @@
 
     using Persistence;
 
-    public class ForeignKeyConstraintReferenceNameConvention : IReferenceConvention
+    internal sealed class ForeignKeyConstraintReferenceNameConvention : IReferenceConvention
 	{
 		public void Apply(IManyToOneInstance instance)
 		{
