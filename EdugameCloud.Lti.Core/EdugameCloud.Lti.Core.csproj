@@ -182,6 +182,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\Models\AcCachePrincipalModel.cs" />
     <Compile Include="Business\Models\LmsCompanyModel.cs" />
     <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Business\Models\OfficeHoursModel.cs" />
     <Compile Include="Business\Models\ScheduleModel.cs" />
     <Compile Include="Constants\HttpScheme.cs" />
+    <Compile Include="Domain\Entities\AcCachePrincipal.cs" />
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
     <Compile Include="Domain\Entities\LmsCompany.cs" />
     <Compile Include="Domain\Entities\LmsCompanySetting.cs" />

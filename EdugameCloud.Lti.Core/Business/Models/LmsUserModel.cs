@@ -2,7 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
@@ -91,6 +93,28 @@
             return result;
         }
 
+        public IEnumerable<LmsUser> GetByCompanyLms(int companyLmsId, List<LmsUserDTO> usersToFind)
+        {
+            var lmsUserSelectParam = new StringBuilder(50 * usersToFind.Count);
+            lmsUserSelectParam.Append("<users>");
+            foreach (LmsUserDTO u in usersToFind)
+            {
+
+                lmsUserSelectParam.AppendFormat("<user id=\"{0}\" email=\"{1}\" login=\"{2}\" />",
+                    ((string.IsNullOrEmpty(u.lti_id) ? u.id : u.lti_id) ?? string.Empty).Trim(),
+                    u.GetEmail(),
+                    u.GetLogin());
+            }
+            lmsUserSelectParam.Append("</users>");
+
+            var query = this.Repository.Session.GetNamedQuery("getUsersByLmsCompanyId");
+            query.SetParameter("lmsCompanyId", companyLmsId);
+            query.SetParameter("userFilter", lmsUserSelectParam.ToString(), NHibernateUtil.StringClob);
+            return query.List<LmsUser>();
+        }
+
         #endregion
+
     }
+
 }
