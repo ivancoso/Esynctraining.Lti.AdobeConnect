@@ -230,8 +230,28 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool denyACUserCreation = false;
-                var setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "DenyACUserCreation", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "DenyACUserCreation", true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out denyACUserCreation) && denyACUserCreation;
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    Settings = new List<LmsCompanySetting>();
+
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "DenyACUserCreation", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "DenyACUserCreation",
+                        Value = value.ToString(),
+                    });
+                }
+                else
+                {
+                    setting.Value = value.ToString();
+                }
             }
         }
 

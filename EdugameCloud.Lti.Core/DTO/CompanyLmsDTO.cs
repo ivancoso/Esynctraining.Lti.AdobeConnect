@@ -10,7 +10,7 @@
     /// The company LMS DTO.
     /// </summary>
     [DataContract]
-    public class CompanyLmsDTO
+    public sealed class CompanyLmsDTO
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsDTO"/> class.
@@ -62,6 +62,10 @@
                     : null;
                 this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
                 this.proxyToolPassword = instance.ProxyToolSharedPassword;
+
+                this.allowUserCreation = !instance.DenyACUserCreation;
+                this.showAuthToken = !instance.LoginUsingCookie.GetValueOrDefault();
+                this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
             }
         }
 
@@ -256,5 +260,16 @@
         /// </summary>
         [DataMember]
         public string setupUrl { get; set; }
+
+        [DataMember]
+        public bool allowUserCreation { get; set; }
+
+        [DataMember]
+        public bool showAuthToken { get; set; }
+
+        [DataMember]
+        public bool acUsesEmailAsLogin { get; set; }
+
     }
+
 }

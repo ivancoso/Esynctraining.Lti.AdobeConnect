@@ -130,7 +130,7 @@ namespace EdugameCloud.WCFService
             {
                 bool isTransient = resultDto.id == 0;
                 LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
-                entity = this.ConvertDto(resultDto, entity);
+                entity = ConvertDto(resultDto, entity);
                 if (isTransient)
                 {
                     entity.ConsumerKey = Guid.NewGuid().ToString();
@@ -427,10 +427,16 @@ namespace EdugameCloud.WCFService
                 instance.LmsDomain = dto.lmsDomain.RemoveHttpProtocolAndTrailingSlash();
                 instance.UseSSL = dto.lmsDomain.IsSSL();
             }
-            
+
+            instance.DenyACUserCreation = !dto.allowUserCreation;
+            instance.LoginUsingCookie = !dto.showAuthToken;
+            instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
+
             return instance;
         }
 
         #endregion
+
     }
+
 }
