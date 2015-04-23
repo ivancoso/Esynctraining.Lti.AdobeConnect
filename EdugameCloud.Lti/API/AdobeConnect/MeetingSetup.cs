@@ -149,7 +149,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return new { error = "Meeting deleting is disabled for this company lms." };
             }
 
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
             if (meeting == null)
             {
                 return new { error = "Meeting not found" };
@@ -327,7 +327,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
-                provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
+                LoginResult result = provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
+                if (!result.Success)
+                {
+                    IoC.Resolve<ILogger>().Error("MeetingSetup.GetProvider. Login failed. Status.Code: " + result.Status.Code.ToString());
+                }
             }
 
             return provider;
@@ -353,7 +357,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public List<RecordingDTO> GetRecordings(LmsCompany credentials, AdobeConnectProvider provider, int courseId, string scoId)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId);
 
             if (meeting == null)
             {
@@ -483,7 +487,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Justification = "Reviewed. Suppression is OK here.")]
         public List<ACSessionDTO> GetSessionsReport(LmsCompany credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
 
             if (meeting == null)
             {
@@ -521,7 +525,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Justification = "Reviewed. Suppression is OK here.")]
         public List<ACSessionParticipantDTO> GetAttendanceReport(LmsCompany credentials, AdobeConnectProvider provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
 
             if (meeting == null)
             {
@@ -559,7 +563,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
+                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId);
 
             if (currentMeeting == null)
             {
@@ -688,7 +692,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             AdobeConnectProvider provider = adobeConnectProvider ?? this.GetProvider(lmsCompany);
 
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId);
 
             if (currentMeeting == null)
             {
@@ -817,7 +821,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string recordingId,
             string scoId)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId);
 
             if (meeting == null)
             {
@@ -1039,7 +1043,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             error = null;
             var model = this.LmsCourseMeetingModel;
-            LmsCourseMeeting meeting = model.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId).Value;
+            LmsCourseMeeting meeting = model.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
 
             if (meeting == null)
             {
@@ -1761,7 +1765,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         private LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId).Value;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
             if (meeting == null && type == (int)LmsMeetingType.OfficeHours)
             {
                 meeting =

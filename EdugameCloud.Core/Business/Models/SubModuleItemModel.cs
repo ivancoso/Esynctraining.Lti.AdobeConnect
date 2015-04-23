@@ -296,20 +296,21 @@
             SubModuleCategory category = null;
             QueryOver<SubModuleItem, SubModuleItem> queryOver =
                 new DefaultQueryOver<SubModuleItem, int>().GetQueryOver()
-                                                          .Where(x => x.CreatedBy != null && x.CreatedBy.Id == userId)
-                                                          .JoinAlias(x => x.SubModuleCategory, () => category)
-                                                          .OrderBy(x => x.DateModified)
-                                                          .Desc.SelectList(
-                                                              list =>
-                                                              list.Select(x => x.DateModified)
-                                                                  .WithAlias(() => dto.dateModified)
-                                                                  .Select(() => category.Id)
-                                                                  .WithAlias(() => dto.subModuleCategoryId)
-                                                                  .Select(x => x.Id)
-                                                                  .WithAlias(() => dto.subModuleItemId)
-                                                                  .Select(() => category.SubModule.Id)
-                                                                  .WithAlias(() => dto.type))
-                                                          .TransformUsing(Transformers.AliasToBean<RecentReportFromStoredProcedureDTO>());
+                .Where(x => x.CreatedBy.Id == userId)
+                .JoinAlias(x => x.SubModuleCategory, () => category)
+                .OrderBy(x => x.DateModified)
+                .Desc.SelectList(
+                    list =>
+                    list.Select(x => x.DateModified)
+                        .WithAlias(() => dto.dateModified)
+                        .Select(() => category.Id)
+                        .WithAlias(() => dto.subModuleCategoryId)
+                        .Select(x => x.Id)
+                        .WithAlias(() => dto.subModuleItemId)
+                        .Select(() => category.SubModule.Id)
+                        .WithAlias(() => dto.type))
+                .TransformUsing(Transformers.AliasToBean<RecentReportFromStoredProcedureDTO>());
+
             QueryOver<SubModuleItem, SubModuleItem> rowCountQuery = queryOver.ToRowCountQuery();
             totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
             QueryOver<SubModuleItem> pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
@@ -318,6 +319,7 @@
                     .ToList()
                     .Select(x => new RecentReportDTO(x))
                     .ToList();
+
             List<int> reportsIds = reports.Select(x => x.subModuleItemId).ToList();
             Dictionary<int, RecentReportDTO> crosswords = this.appletItemModel.GetCrosswords(reportsIds);
             Dictionary<int, RecentReportDTO> quizes = this.quizModel.GetQuizes(reportsIds);

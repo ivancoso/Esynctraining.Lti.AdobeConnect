@@ -35,7 +35,7 @@
         /// <summary>
         ///     Gets the user login history model.
         /// </summary>
-        protected UserLoginHistoryModel UserLoginHistoryModel
+        private UserLoginHistoryModel UserLoginHistoryModel
         {
             get
             {
@@ -653,12 +653,12 @@
 
             var result = new UserWithSplashScreenDTO(user);
             var userHistory = new UserLoginHistory
-                                  {
-                                      Application = dto.application,
-                                      FromIP = dto.fromIP,
-                                      User = user,
-                                      DateCreated = DateTime.Now
-                                  };
+            {
+                Application = dto.application,
+                FromIP = dto.fromIP,
+                User = user,
+                DateCreated = DateTime.Now,
+            };
 
             this.UserLoginHistoryModel.RegisterSave(userHistory);
 
@@ -666,10 +666,10 @@
             if (dto.sendSplashScreen)
             {
                 result.splashScreen = new SplashScreenDTO
-                                          {
-                                              recentReports = this.GetBaseRecentSplashScreenReports(user.Id, 1, 10).objects.ToArray(),
-                                              reports = this.GetBaseSplashScreenReports(user.Id, 1, 5).objects.ToArray()
-                                          };
+                {
+                    recentReports = this.GetBaseRecentSplashScreenReports(user.Id, 1, 10).objects.ToArray(),
+                    reports = this.GetBaseSplashScreenReports(user.Id, 1, 5).objects.ToArray(),
+                };
             }
 
             result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c)).ToArray();

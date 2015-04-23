@@ -547,7 +547,7 @@ namespace EdugameCloud.WCFService
                             {
                                 User = user,
                                 ActivationCode = Guid.NewGuid().ToString(),
-                                DateExpires = DateTime.Now.AddDays(7)
+                                DateExpires = DateTime.Now.AddDays(7),
                             };
                             model.RegisterSave(userActivation);
                         }
@@ -580,7 +580,7 @@ namespace EdugameCloud.WCFService
                             {
                                 User = user,
                                 ActivationCode = Guid.NewGuid().ToString(),
-                                DateExpires = DateTime.Now.AddDays(7)
+                                DateExpires = DateTime.Now.AddDays(7),
                             };
                             model.RegisterSave(userActivation);
                         }

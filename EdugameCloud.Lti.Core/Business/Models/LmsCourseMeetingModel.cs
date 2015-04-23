@@ -43,18 +43,17 @@
         /// <returns>
         /// The canvas AC meeting
         /// </returns>
-        public IFutureValue<LmsCourseMeeting> GetOneByCourseAndScoId(int companyLmsId, int courseId, string scoId)
+        public LmsCourseMeeting GetOneByCourseAndScoId(int companyLmsId, int courseId, string scoId)
         {
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                .Where(() => x.LmsCompany != null && x.LmsCompany.Id == companyLmsId && x.CourseId == courseId &&
-                    (((x.ScoId != null) && (x.ScoId == scoId)) || 
-                     (x.OfficeHours != null && oh.ScoId == scoId)))
+                .Where(() => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId &&
+                    ((x.ScoId == scoId) || (x.OfficeHours != null && oh.ScoId == scoId)))
                 .Take(1);
-            return this.Repository.FindOne(defaultQuery);
+            return this.Repository.FindOne(defaultQuery).Value;
         }
 
         /// <summary>
@@ -81,8 +80,8 @@
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.InnerJoin)
                 .JoinAlias(() => oh.LmsUser, () => u, JoinType.InnerJoin)
-                .Where(() => x.LmsCompany != null && x.LmsCompany.Id == companyLmsId && x.LmsMeetingType == type &&
-                     (x.OfficeHours != null && u.UserId == userId))
+                .Where(() => x.LmsCompany.Id == companyLmsId && x.LmsMeetingType == type &&
+                    (x.OfficeHours != null && u.UserId == userId))
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
@@ -105,7 +104,7 @@
         public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, int type)
         {
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && (x.LmsMeetingType == type)).Take(1);
+                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == type).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 
@@ -127,26 +126,7 @@
                 .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId);
             return this.Repository.FindAll(defaultQuery);
         }
-
-        /// <summary>
-        /// The get one by meeting id.
-        /// </summary>
-        /// <param name="companyLmsId">
-        /// The company LMS id.
-        /// </param>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{LmsCourseMeeting}"/>.
-        /// </returns>
-        public IFutureValue<LmsCourseMeeting> GetOneByMeetingId(int companyLmsId, string meetingId)
-        {
-            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompany != null && x.LmsCompany.Id == companyLmsId && x.ScoId == meetingId).Take(1);
-            return this.Repository.FindOne(defaultQuery);
-        }
-
+        
         /// <summary>
         /// The get all by meeting id.
         /// </summary>
@@ -187,5 +167,7 @@
                 .Where(() => x.OfficeHours != null && oh.Id == officeHoursId);
             return this.Repository.FindAll(defaultQuery);
         }
+
     }
+
 }

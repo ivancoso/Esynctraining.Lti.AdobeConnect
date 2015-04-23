@@ -62,8 +62,8 @@
             get
             {
                 return !string.IsNullOrWhiteSpace(this.SessionData)
-                           ? JsonConvert.DeserializeObject<LtiSessionDTO>(this.SessionData)
-                           : null;
+                    ? JsonConvert.DeserializeObject<LtiSessionDTO>(this.SessionData)
+                    : null;
             }
         }
 
