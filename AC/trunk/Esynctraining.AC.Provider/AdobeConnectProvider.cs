@@ -5,9 +5,9 @@
     using System.Configuration;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Text;
     using System.Web;
     using System.Xml;
-
     using Esynctraining.AC.Provider.Constants;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
@@ -1538,6 +1538,11 @@
             }
         }
 
+        public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
+        {
+            return this.UpdatePermissionsInternal(values);
+        }
+
         #endregion
 
         #region internal routines
@@ -1609,6 +1614,25 @@
             StatusInfo status;
 
             this.requestProcessor.Process(Commands.Permissions.Update, string.Format(CommandParams.Permissions.Update, aclId, principalId, permissionId.ToXmlString()), out status);
+
+            return status;
+        }
+
+        private StatusInfo UpdatePermissionsInternal(IEnumerable<PermissionUpdateTrio> values)
+        {
+            // act: "permissions-update"
+            StatusInfo status;
+
+            var trios = new List<string>(values.Count());
+            var paramBuilder = new StringBuilder();
+            foreach (PermissionUpdateTrio trio in values)
+            {
+                paramBuilder.Length = 0;
+                paramBuilder.AppendFormat(CommandParams.Permissions.Update, trio.ScoId, trio.PrincipalId, trio.Permission.ToXmlString());
+                trios.Add(paramBuilder.ToString());
+            }
+
+            this.requestProcessor.Process(Commands.Permissions.Update, string.Join("&", trios), out status);
 
             return status;
         }
