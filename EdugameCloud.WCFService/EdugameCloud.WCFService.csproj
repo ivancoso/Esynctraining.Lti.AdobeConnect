@@ -73,8 +73,9 @@
     <Reference Include="DotAmf.Wcf">
       <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.13\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.15\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -440,9 +441,6 @@
     <Compile Include="ViewModels\ForgetPasswordViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Mail\Attachments\svn.ignore" />
     <Content Include="Uploader.svc" />
     <Content Include="Web.constrings">
@@ -488,9 +486,6 @@
       <LastGenOutput>ErrorsTexts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
