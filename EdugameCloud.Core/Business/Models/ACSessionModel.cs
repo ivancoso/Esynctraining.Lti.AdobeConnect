@@ -108,20 +108,21 @@
             SubModuleItem smi = null;
             SubModuleCategory smc = null;
             var queryOver = new DefaultQueryOver<ACSession, int>().GetQueryOver()
-                                                          .Where(x => x.User.Id == userId)
-                                                          .OrderBy(x => x.DateCreated).Desc
-                                                          .JoinAlias(x => x.SubModuleItem, () => smi)
-                                                          .JoinAlias(() => smi.SubModuleCategory, () => smc)
-                                                          .SelectList(list =>
-                                                              list.Select(x => x.DateCreated)
-                                                                  .WithAlias(() => dto.dateCreated)
-                                                                  .Select(x => x.Id)
-                                                                  .WithAlias(() => dto.acSessionId)
-                                                                  .Select(x => smi.Id)
-                                                                  .WithAlias(() => dto.subModuleItemId)
-                                                                  .Select(x => smc.SubModule.Id)
-                                                                  .WithAlias(() => dto.type))
-                                                          .TransformUsing(Transformers.AliasToBean<ReportFromStoredProcedureDTO>());
+                .Where(x => x.User.Id == userId).And(x => x.Status == ACSessionStatusEnum.Played)
+                .OrderBy(x => x.DateCreated).Desc
+                .JoinAlias(x => x.SubModuleItem, () => smi)
+                .JoinAlias(() => smi.SubModuleCategory, () => smc)
+                .SelectList(list =>
+                    list.Select(x => x.DateCreated)
+                        .WithAlias(() => dto.dateCreated)
+                        .Select(x => x.Id)
+                        .WithAlias(() => dto.acSessionId)
+                        .Select(x => smi.Id)
+                        .WithAlias(() => dto.subModuleItemId)
+                        .Select(x => smc.SubModule.Id)
+                        .WithAlias(() => dto.type))
+                .TransformUsing(Transformers.AliasToBean<ReportFromStoredProcedureDTO>());
+
             var rowCountQuery = queryOver.ToRowCountQuery();
             totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
             var pagedQuery = queryOver.Take(pageSize).Skip((pageIndex - 1) * pageSize);
@@ -131,6 +132,7 @@
                     .Select(x => new ReportDTO(x))
                     .ToList();
             List<int> reportsIds = reports.Select(x => x.subModuleItemId).ToList();
+
             Dictionary<int, RecentReportDTO> crosswords = this.appletItemModel.GetCrosswords(reportsIds);
             Dictionary<int, RecentReportDTO> quizes = this.quizModel.GetQuizes(reportsIds);
             Dictionary<int, RecentReportDTO> surveys = this.surveyModel.GetSurveys(reportsIds);
