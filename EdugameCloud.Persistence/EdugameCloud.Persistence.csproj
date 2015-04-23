@@ -126,7 +126,6 @@
     <Compile Include="Conventions\ReferenceConvention .cs" />
     <Compile Include="Conventions\TableNameConvention .cs" />
     <Compile Include="Conventions\TimePropertyConvention.cs" />
-    <Compile Include="Extensions\FluentExtensions.cs" />
     <Compile Include="Extensions\LifeStyleExtensions.cs" />
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="ISessionSource.cs" />
@@ -195,7 +194,6 @@
     <Compile Include="Mappings\UserMap.cs" />
     <Compile Include="NameSpaceTypeSource.cs" />
     <Compile Include="NHibernateConfigurationActivator.cs" />
-    <Compile Include="NHibernateSessionActivator.cs" />
     <Compile Include="NHibernateSessionFactoryActivator.cs" />
     <Compile Include="NHibernateSessionSource.cs" />
     <Compile Include="NHibernateSessionWebSource.cs" />
@@ -251,6 +249,11 @@
       <Project>{b431087d-825b-4085-9747-f374c60fd4c4}</Project>
       <Name>EdugameCloud.Lti.Persistence</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Hbm\LmsUser.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

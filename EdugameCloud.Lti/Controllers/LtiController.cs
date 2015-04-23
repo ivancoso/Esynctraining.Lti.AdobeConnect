@@ -233,11 +233,11 @@ namespace EdugameCloud.Lti.Controllers
             var lmsProviderName = settings.lmsProviderName;
             var session = this.GetSession(lmsProviderName);
             var companyLms = session.LmsCompany;
-            var param = session.LtiSession.With(x => x.LtiParam);
+            var param = session.LtiSession.LtiParam;
             var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
             if (lmsUser == null)
             {
-                lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = companyLms, UserId = param.lms_user_id, Username = this.GetUserNameOrEmail(param) };
+                lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = companyLms, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
             }
 
             lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
@@ -245,7 +245,7 @@ namespace EdugameCloud.Lti.Controllers
 
             if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
             {
-                this.SetACPassword(lmsProviderName, param, settings.password);
+                this.SetACPassword(session, param, settings.password);
             }
             else
             {
@@ -445,7 +445,7 @@ namespace EdugameCloud.Lti.Controllers
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
-            var param = session.LtiSession.With(x => x.LtiParam);
+            var param = session.LtiSession.LtiParam;
             List<RecordingDTO> recordings = this.meetingSetup.GetRecordings(
                 credentials,
                 this.GetAdobeConnectProvider(credentials), 
@@ -534,11 +534,10 @@ namespace EdugameCloud.Lti.Controllers
         {
             var session = this.GetSession(lmsProviderName);
             var credentials = session.LmsCompany;
-            var param = session.LtiSession.With(x => x.LtiParam);
             var report = this.meetingSetup.GetAttendanceReport(
                 credentials,
                 this.GetAdobeConnectProvider(credentials),
-                param, 
+                session.LtiSession.LtiParam, 
                 scoId,
                 startIndex, 
                 limit);
@@ -766,14 +765,14 @@ namespace EdugameCloud.Lti.Controllers
             return this.View(
                 "ProxyToolPassword",
                 new ProxyToolPasswordModel
-                    {
-                        LmsDomain = lmsDomain,
-                        BlackBoardTitle =
-                            string.IsNullOrWhiteSpace(blackBoardProfile.Name)
-                                ? lmsDomain
-                                : blackBoardProfile.Name,
-                        LtiVersion = string.IsNullOrWhiteSpace(blackBoardProfile.LtiVersion) ? "2.0-July08" : blackBoardProfile.LtiVersion
-                    });
+                {
+                    LmsDomain = lmsDomain,
+                    BlackBoardTitle =
+                    string.IsNullOrWhiteSpace(blackBoardProfile.Name)
+                    ? lmsDomain
+                    : blackBoardProfile.Name,
+                    LtiVersion = string.IsNullOrWhiteSpace(blackBoardProfile.LtiVersion) ? "2.0-July08" : blackBoardProfile.LtiVersion,
+                });
         }
 
         /// <summary>
@@ -842,7 +841,7 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
-            this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
+            // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
             
             string email, login;
             this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
@@ -914,7 +913,7 @@ namespace EdugameCloud.Lti.Controllers
                             {
                                 LmsCompany = lmsCompany,
                                 UserId = param.lms_user_id,
-                                Username = this.GetUserNameOrEmail(param),
+                                Username = GetUserNameOrEmail(param),
                                 PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
                             };
                             this.lmsUserModel.RegisterSave(lmsUser);
@@ -929,7 +928,7 @@ namespace EdugameCloud.Lti.Controllers
                     this.lmsUserModel.RegisterSave(lmsUser);
                 }
 
-                return this.RedirectToExtJs(session, key);
+                return this.RedirectToExtJs(session, lmsUser, key);
             }
 
             this.ViewBag.Error = "Invalid LTI request";
@@ -1006,28 +1005,17 @@ namespace EdugameCloud.Lti.Controllers
                 param, 
                 user,
                 scoId,
-                out error).Where(x => x.id == user.id).ToList();
+                out error);
 
             if (string.IsNullOrEmpty(error))
             {
+                users = users.Where(x => x.id == user.id).ToList();
                 return this.Json(users);
             }
 
             return this.Json(new {error});
         }
 
-        /// <summary>
-        /// The update user.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
         [HttpPost]
         public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, string scoId)
         {
@@ -1046,7 +1034,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 return this.Json(updatedUsers);
             }
-            return Json(new {error});
+            return Json(new { error });
         }
 
         /// <summary>
@@ -1147,8 +1135,9 @@ namespace EdugameCloud.Lti.Controllers
                 res.Services = servicesList;
             }
                 // ReSharper disable once EmptyGeneralCatchClause
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Error("ParseBlackBoardSharedInfo", ex);
             }
 
             return res;
@@ -1163,7 +1152,7 @@ namespace EdugameCloud.Lti.Controllers
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetUserNameOrEmail(LtiParamDTO param)
+        private static string GetUserNameOrEmail(LtiParamDTO param)
         {
             return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
         }
@@ -1276,7 +1265,7 @@ namespace EdugameCloud.Lti.Controllers
             var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
             if (!string.IsNullOrEmpty(token))
             {
-                var userName = username ?? this.GetUserNameOrEmail(param);
+                var userName = username ?? GetUserNameOrEmail(param);
                 lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
@@ -1336,7 +1325,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
 
-                return this.RedirectToExtJs(session, providerKey);
+                return this.RedirectToExtJs(session, lmsUser, providerKey);
             }
 
             this.ViewBag.Error = string.Format("Credentials not found");
@@ -1358,10 +1347,10 @@ namespace EdugameCloud.Lti.Controllers
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        private ActionResult RedirectToExtJs(LmsUserSession session, string providerName)
+        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName)
         {
             var credentials = session.LmsCompany;
-            var primaryColor = session.LmsUser.PrimaryColor;
+            var primaryColor = lmsUser.PrimaryColor;
             primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty);
 
             var param = session.LtiSession.LtiParam;
@@ -1373,14 +1362,7 @@ namespace EdugameCloud.Lti.Controllers
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
 
-            return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)session.LmsUser.AcConnectionMode });
-
-            //this.ViewBag.RedirectUrl = string.Format(
-            //    (this.Settings.LtiPath ?? string.Empty) +
-            //    "/extjs/index.html?primaryColor={0}&lmsProviderName={1}",
-            //    !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty),
-            //    providerName);
-            //return this.View("Redirect");
+            return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });
         }
 
         /// <summary>
@@ -1431,30 +1413,6 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             return session;
-        }
-
-        /// <summary>
-        /// Gets the parameter.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        private void RemoveACPassword(LtiParamDTO param, LmsUserSession session)
-        {
-            if (!string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword)))
-            {
-                var sessionData = new LtiSessionDTO
-                {
-                    LtiParam = param,
-                    ACPasswordData = null,
-                    SharedKey = null
-                };
-                session.SessionData = JsonConvert.SerializeObject(sessionData);
-                this.userSessionModel.RegisterSave(session);
-            }
         }
 
         /// <summary>
@@ -1603,7 +1561,7 @@ namespace EdugameCloud.Lti.Controllers
         /// </param>
         private void SaveSessionUser(LmsUserSession session, LmsUser lmsUser)
         {
-            if (session != null && lmsUser != null)
+            if (session != null)
             {
                 session.LmsUser = lmsUser;
                 this.userSessionModel.RegisterSave(session);
@@ -1622,17 +1580,31 @@ namespace EdugameCloud.Lti.Controllers
         /// <param name="adobeConnectPassword">
         /// Adobe Connect password
         /// </param>
-        private void SetACPassword(string key, LtiParamDTO param, string adobeConnectPassword)
+        private void SetACPassword(LmsUserSession session, LtiParamDTO param, string adobeConnectPassword)
         {
             if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
             {
-                var session = this.GetSession(key);
                 var sharedKey = AESGCM.NewKey();
                 var sessionData = new LtiSessionDTO
                 {
                     LtiParam = param,
                     ACPasswordData = AESGCM.SimpleEncrypt(adobeConnectPassword, sharedKey),
                     SharedKey = Convert.ToBase64String(sharedKey),
+                };
+                session.SessionData = JsonConvert.SerializeObject(sessionData);
+                this.userSessionModel.RegisterSave(session);
+            }
+        }
+
+        private void RemoveACPassword(LtiParamDTO param, LmsUserSession session)
+        {
+            if (!string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword)))
+            {
+                var sessionData = new LtiSessionDTO
+                {
+                    LtiParam = param,
+                    ACPasswordData = null,
+                    SharedKey = null,
                 };
                 session.SessionData = JsonConvert.SerializeObject(sessionData);
                 this.userSessionModel.RegisterSave(session);

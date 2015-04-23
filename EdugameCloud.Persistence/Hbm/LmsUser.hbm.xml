@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2">
+  <sql-query name="getUsersByLmsCompanyId">
+    <query-param name="lmsCompanyId" type="System.Int32"/>
+    <query-param name="userFilter" type="System.String"/>
+    <return class="EdugameCloud.Lti.Domain.Entities.LmsUser, EdugameCloud.Lti.Core" >
+      <return-property column="lmsUserId" name="Id" />
+      <return-property column="companyLmsId" name="LmsCompany" />      
+      <return-property column="userId" name="UserId" />
+      
+      <return-property column="username" name="Username" />
+      <return-property column="password" name="Password" />
+      <return-property column="token" name="Token" />
+      <return-property column="acConnectionMode" name="AcConnectionMode" />
+      <return-property column="primaryColor" name="PrimaryColor" />
+      <return-property column="principalId" name="PrincipalId" />
+    </return>
+    exec getUsersByLmsCompanyId @lmsCompanyId=:lmsCompanyId, @userFilter=:userFilter
+  </sql-query>
+</hibernate-mapping>
