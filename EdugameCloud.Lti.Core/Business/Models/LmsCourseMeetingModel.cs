@@ -51,8 +51,10 @@
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 .Where(() => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId &&
-                    ((x.ScoId == scoId) || (x.OfficeHours != null && oh.ScoId == scoId)))
+                    (((x.ScoId != null) && (x.ScoId == scoId)) ||
+                     (x.OfficeHours != null && oh.ScoId == scoId)))
                 .Take(1);
+
             return this.Repository.FindOne(defaultQuery).Value;
         }
 

@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE getUsersByLmsCompanyId
+﻿CREATE PROCEDURE getUsersByLmsCompanyId
 (
 	@lmsCompanyId	INT,
 	@userFilter		XML
