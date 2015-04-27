@@ -347,7 +347,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     else if (denyACUserCreation)
                     {
                         error = "At least one user does not exist in AC database. You must create AC accounts manually";
-                        return null;
+                        continue;
                     }
                 }
 
@@ -762,13 +762,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-
-            foreach (var chunk in Chunk(meetingPermissions, 100))
+            foreach (var chunk in Chunk(meetingPermissions, 50))
             {
                 var status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
                 {
-                    throw new InvalidOperationException("UpdateScoPermissionForPrincipal");
+                    throw new InvalidOperationException("UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
                 }
             }
         }

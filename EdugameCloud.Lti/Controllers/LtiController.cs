@@ -1030,11 +1030,12 @@ namespace EdugameCloud.Lti.Controllers
                 scoId,
                 false,
                 out error);
-            if (updatedUsers != null && error == null)
+
+            return Json(new 
             {
-                return this.Json(updatedUsers);
-            }
-            return Json(new { error });
+                error = error ?? string.Empty,
+                users = updatedUsers ?? new List<LmsUserDTO>(0), 
+            });
         }
 
         /// <summary>
