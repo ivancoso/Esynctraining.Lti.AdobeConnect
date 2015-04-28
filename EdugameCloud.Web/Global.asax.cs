@@ -11,6 +11,7 @@ using Castle.Core.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.AdobeConnect.Caching;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.Desire2Learn;
@@ -102,6 +103,7 @@ namespace EdugameCloud.Web
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
 
+            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             
@@ -118,7 +120,9 @@ namespace EdugameCloud.Web
 
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
-            
+
+            container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
+
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }
 

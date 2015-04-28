@@ -1054,7 +1054,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<PermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
             provider.DeleteSco(meeting.GetMeetingScoId());
             model.RegisterDelete(meeting, true);
-            
+
             return enrollments.Select(x => x.Login).ToList();
         }
 

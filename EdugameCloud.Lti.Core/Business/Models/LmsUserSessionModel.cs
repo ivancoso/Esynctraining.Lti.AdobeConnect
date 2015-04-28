@@ -51,7 +51,7 @@
         {
             var queryOver =
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
-                    .Where(c => c.LmsUser != null && c.LmsUser.Id == userId && c.LmsCompany.Id == companyId && c.LmsCourseId == courseId);
+                    .Where(c => c.LmsUser.Id == userId && c.LmsCompany.Id == companyId && c.LmsCourseId == courseId);
             return this.Repository.FindOne(queryOver);
         }
 

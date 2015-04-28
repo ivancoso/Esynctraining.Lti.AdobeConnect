@@ -82,7 +82,7 @@
         public LmsUser GetOneByUserIdOrUserNameOrEmailAndCompanyLms(string userId, string userLogin, string userEmail, int companyLmsId)
         {
             var queryOver = new DefaultQueryOver<LmsUser, int>().GetQueryOver()
-                .Where(u => (u.UserId == userId || u.Username == userLogin || u.Username == userEmail) && u.LmsCompany.Id == companyLmsId);
+                .Where(u => (u.LmsCompany.Id == companyLmsId) && (u.UserId == userId || u.Username == userLogin || u.Username == userEmail));
             var result = this.Repository.FindOne(queryOver).Value;
             if (result != null && !string.IsNullOrWhiteSpace(userId) && !userId.Equals(result.UserId))
             {

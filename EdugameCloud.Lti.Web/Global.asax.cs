@@ -64,6 +64,7 @@ namespace EdugameCloud.Lti.Web
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
 
+            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
 

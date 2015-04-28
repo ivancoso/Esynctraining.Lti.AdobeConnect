@@ -52,8 +52,8 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.15, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.15\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.16\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">

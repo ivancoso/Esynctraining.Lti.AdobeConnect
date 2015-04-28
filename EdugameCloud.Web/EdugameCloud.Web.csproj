@@ -785,6 +785,10 @@
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti.AdobeConnect\EdugameCloud.Lti.AdobeConnect.csproj">
+      <Project>{b3b413fe-25f6-465b-ac0e-8f8fa020482b}</Project>
+      <Name>EdugameCloud.Lti.AdobeConnect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
       <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
       <Name>EdugameCloud.Lti.BlackBoard</Name>

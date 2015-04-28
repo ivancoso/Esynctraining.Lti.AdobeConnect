@@ -78,8 +78,8 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.15, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.15\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.16, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.16\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core">
@@ -209,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
+    <Compile Include="API\AdobeConnect\IPrincipalCache.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.Announcement.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />

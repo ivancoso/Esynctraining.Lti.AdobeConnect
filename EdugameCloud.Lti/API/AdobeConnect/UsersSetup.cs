@@ -320,25 +320,27 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
+            IEnumerable<LmsUser> lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
             var denyACUserCreation = lmsCompany.DenyACUserCreation;
 
-            foreach (var lmsUser in users)
+            var meetingPermissions = new List<PermissionUpdateTrio>();
+            var hostPrincipals = new List<string>();
+
+            foreach (LmsUserDTO lmsUser in users)
             {
-                string login = lmsUser.GetLogin(), email = lmsUser.GetEmail();
-                var user = this.LmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(
-                    lmsUser.lti_id ?? lmsUser.id,
-                    login,
-                    email,
-                    lmsCompany.Id) ?? new LmsUser
+                // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
+                string id = lmsUser.lti_id ?? lmsUser.id;
+                LmsUser user = lmsUsers.FirstOrDefault(x => x.UserId == id)
+                    ?? new LmsUser
                     {
                         LmsCompany = lmsCompany,
-                        Username = login,
-                        UserId = lmsUser.lti_id ?? lmsUser.id
+                        Username = lmsUser.GetLogin(),
+                        UserId = id,
                     };
 
                 if (string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    var principal = this.GetOrCreatePrincipal(provider, login, email, lmsUser.GetFirstName(), lmsUser.GetLastName(), lmsCompany);
+                    var principal = this.GetOrCreatePrincipal(provider, lmsUser.GetLogin(), lmsUser.GetEmail(), lmsUser.GetFirstName(), lmsUser.GetLastName(), lmsCompany);
                     if (principal != null)
                     {
                         user.PrincipalId = principal.PrincipalId;
@@ -357,22 +359,33 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     lmsUser.ac_id = user.PrincipalId;
                     lmsUser.ac_role = enrollment.PermissionId == PermissionId.host
-                                          ? "Host"
-                                          : (enrollment.PermissionId == PermissionId.mini_host
-                                                 ? "Presenter"
-                                                 : "Participant");
+                        ? "Host"
+                        : (enrollment.PermissionId == PermissionId.mini_host ? "Presenter" : "Participant");
                     principalIds.Remove(user.PrincipalId);
                 }
                 else if (!string.IsNullOrEmpty(user.PrincipalId))
                 {
-                    this.SetLMSUserDefaultACPermissions(provider, meetingSco, lmsUser, user.PrincipalId);
+                    this.SetLMSUserDefaultACPermissions2(provider, meetingSco, lmsUser, user.PrincipalId, meetingPermissions, hostPrincipals);
                 }
             }
 
-            foreach (var principalId in principalIds)
+            foreach (var chunk in Chunk(meetingPermissions, 50))
             {
-                provider.UpdateScoPermissionForPrincipal(meetingSco, principalId, MeetingPermissionId.remove);
+                var status = provider.UpdateScoPermissionForPrincipal(chunk);
+                if (status.Code != StatusCodes.ok)
+                {
+                    throw new InvalidOperationException("SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
+                }
             }
+
+            provider.UpdateScoPermissionForPrincipal(principalIds.Select(principalId => new PermissionUpdateTrio
+            {
+                ScoId = meetingSco,
+                PrincipalId = principalId,
+                PermissionId = MeetingPermissionId.remove,
+            }));
+
+            AddUsersToMeetingHostsGroup(provider, hostPrincipals);
 
             return users;
         }
@@ -510,7 +523,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
             }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("teaching assistant") 
+            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author") || role.Contains("teaching assistant")
                 || role.Contains("course builder") || role.Contains("evaluator") || role == "advisor")
             {
                 u.ac_role = "Presenter";
@@ -538,7 +551,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string meetingScoId,
             LmsUserDTO u,
             string principalId,
-            List<PermissionUpdateTrio> meetingPermission)
+            List<PermissionUpdateTrio> meetingPermission,
+            List<string> hostPrincipals)
         {
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
@@ -570,7 +584,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (permission == MeetingPermissionId.host)
                 {
-                    this.AddUserToMeetingHostsGroup(provider, principalId);
+                    //this.AddUserToMeetingHostsGroup(provider, principalId);
+                    hostPrincipals.Add(principalId);
                 }
             }
         }
@@ -609,8 +624,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public List<PermissionInfo> GetMeetingAttendees(
             AdobeConnectProvider provider,
-            string meetingSco,
-            HashSet<string> nonEditable = null)
+            string meetingSco)
         {
             var alreadyAdded = new HashSet<string>();
             var allMeetingEnrollments = provider.GetAllMeetingEnrollments(meetingSco);
@@ -621,7 +635,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             return ProcessACMeetingAttendees(
-                nonEditable ?? new HashSet<string>(),
+                new HashSet<string>(),
                 provider,
                 allValues,
                 alreadyAdded);
@@ -683,6 +697,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return group;
         }
 
+        public bool AddUsersToMeetingHostsGroup(AdobeConnectProvider provider, IEnumerable<string> principalIds)
+        {
+            var group = provider.AddToGroupByType(principalIds, "live-admins");
+
+            return group;
+        }
+
         /// <summary>
         /// The set default users.
         /// </summary>
@@ -720,10 +741,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<LmsUserDTO> users = this.GetLMSUsers(lmsCompany, meeting, lmsUserId, courseId, out error, extraData as LtiParamDTO);
 
             IEnumerable<Principal> principalCache = GetAllPrincipals(lmsCompany, provider, users);
-
             IEnumerable<LmsUser> lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
 
+            ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true);
+        }
+
+        private void ProcessUsersInAC(LmsCompany lmsCompany, AdobeConnectProvider provider, 
+            string meetingScoId, List<LmsUserDTO> users, 
+            IEnumerable<Principal> principalCache, 
+            IEnumerable<LmsUser> lmsUsers,
+            bool reRunOnError)
+        {
             var meetingPermissions = new List<PermissionUpdateTrio>();
+            var hostPrincipals = new List<string>();
             foreach (LmsUserDTO u in users)
             {
                 string email = u.GetEmail();
@@ -758,16 +788,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
 
                     // TODO: see http://help.adobe.com/en_US/connect/9.0/webservices/WS5b3ccc516d4fbf351e63e3d11a171ddf77-7fcb_SP1.html
-                    this.SetLMSUserDefaultACPermissions2(provider, meetingScoId, u, principal.PrincipalId, meetingPermissions);
+                    this.SetLMSUserDefaultACPermissions2(provider, meetingScoId, u, principal.PrincipalId, meetingPermissions, hostPrincipals);
                 }
             }
+
+            // TRICK: do not move down to chunk part!
+            AddUsersToMeetingHostsGroup(provider, hostPrincipals);
 
             foreach (var chunk in Chunk(meetingPermissions, 50))
             {
                 var status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
                 {
-                    throw new InvalidOperationException("UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
+                    if (reRunOnError)
+                    {
+                        IoC.Resolve<ILogger>().Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
+
+                        IoC.Resolve<IPrincipalCache>().RecreatePrincipalCache(IoC.Resolve<LmsCompanyModel>().GetAll());
+                        IEnumerable<Principal> refreshedPrincipalCache = GetAllPrincipals(lmsCompany, provider, users);
+                        ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, refreshedPrincipalCache, lmsUsers, false);
+                        return;
+                    }
+                    else
+                    {
+                        IoC.Resolve<ILogger>().Error("UpdateScoPermissionForPrincipal - 2nd try. Status.Code=" + status.Code.ToString());
+                        throw new InvalidOperationException("UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
+                    }
                 }
             }
         }

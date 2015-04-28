@@ -12,6 +12,7 @@
     using Castle.Windsor;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
+    using EdugameCloud.Lti.AdobeConnect.Caching;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Desire2Learn;
@@ -137,6 +138,7 @@
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
 
+            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
             
@@ -153,6 +155,8 @@
 
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
+
+            container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
 
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());

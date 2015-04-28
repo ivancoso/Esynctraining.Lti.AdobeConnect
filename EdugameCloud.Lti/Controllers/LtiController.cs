@@ -1537,12 +1537,9 @@ namespace EdugameCloud.Lti.Controllers
         /// <returns>
         /// The <see cref="LmsUserSession"/>.
         /// </returns>
-        private LmsUserSession SaveSession(LmsCompany company, LtiParamDTO param, LmsUser lmsUser = null, string key = null)
+        private LmsUserSession SaveSession(LmsCompany company, LtiParamDTO param, LmsUser lmsUser)
         {
-            Guid uid;
-            var session = !string.IsNullOrWhiteSpace(key) && Guid.TryParse(key, out uid)
-                              ? this.userSessionModel.GetOneById(uid).Value
-                              : (lmsUser == null ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value);
+            var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value;
             session = session ?? new LmsUserSession { LmsCompany = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
             var sessionData = new LtiSessionDTO { LtiParam = param };
             session.SessionData = JsonConvert.SerializeObject(sessionData);
