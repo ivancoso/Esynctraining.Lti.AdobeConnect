@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EdugameCloud.Lti.AdobeConnectCache.Properties {
+namespace EdugameCloud.Lti.AdobeConnect.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.AdobeConnectCache.Properties {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
         [global::System.Configuration.DefaultSettingValueAttribute("Data Source=64.27.12.56;Initial Catalog=EduGameCloud.Dev;User ID=edugame;Password" +
-            "=")]
+            "=$Pr!DHEgsEGC")]
         public string EduGameCloud_DevConnectionString {
             get {
                 return ((string)(this["EduGameCloud_DevConnectionString"]));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using EdugameCloud.Lti.AdobeConnect.Caching;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Utils;
 
@@ -32,30 +33,9 @@ namespace EdugameCloud.Lti.AdobeConnectCache
                     logger.WriteLine("=====AdobeConnectCache Engine Starts=====");
 
                     List<LmsCompany> domains = DatabaseAccessor.GetAllLicences();
-
                     WriteAcDomainInfo(domains, logger);
 
-                    Stopwatch sw = Stopwatch.StartNew();
-
-                    var processor = new AdobeConnectPrincipalCacher(logger);
-
-                    foreach (LmsCompany license in domains)
-                    {
-                        try
-                        {
-                            var tmp = new Uri(license.AcServer);
-                        }
-                        catch (Exception ex)
-                        {
-                            continue;
-                        }
-
-                        processor.Process(license);
-                    }
-
-                    sw.Stop();
-                    logger.WriteLine("=======");
-                    logger.WriteLine("Total Elapsed. " + sw.Elapsed.ToString());
+                    ReBuildCache(logger, domains);
                 }
                 catch (Exception ex)
                 {
@@ -67,12 +47,17 @@ namespace EdugameCloud.Lti.AdobeConnectCache
                 finally
                 {
                     logger.WriteLine("=====AdobeConnectCache Engine stops=====");
-                    // TODO: remove for PROD
-                    Console.ReadLine();
+                    // TODO: enable for debug
+                    //Console.ReadLine();
                 }
             }
 
             return 0;
+        }
+
+        private static void ReBuildCache(ILog logger, List<LmsCompany> domains)
+        {
+            new PrincipalCache().RecreatePrincipalCache(logger, domains);
         }
 
         private static void WriteAcDomainInfo(List<LmsCompany> domains, ILog logger)

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EdugameCloud.Lti.AdobeConnectCache
+namespace EdugameCloud.Lti.AdobeConnect.Caching
 {
-    internal interface ILog
+    public interface ILog
     {
         void WriteLine(string value);
 

@@ -1,22 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Utils;
 
-namespace EdugameCloud.Lti.AdobeConnectCache
+namespace EdugameCloud.Lti.AdobeConnect.Caching
 {
-    internal sealed class AdobeConnectPrincipalCacher
+    public sealed class PrincipalCacher
     {
         private readonly ILog _log;
 
-        public AdobeConnectPrincipalCacher(ILog log)
+        public PrincipalCacher(ILog log)
         {
             _log = log;
         }
@@ -40,7 +42,7 @@ namespace EdugameCloud.Lti.AdobeConnectCache
 
         private void ProcessAc(LmsCompany lmsCompany)
         {
-            AdobeConnectProvider provider = IoC.Resolve<MeetingSetup>().GetProvider(lmsCompany);
+            AdobeConnectProvider provider = IoC.Resolve<IMeetingSetup>().GetProvider(lmsCompany);
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -110,9 +112,5 @@ namespace EdugameCloud.Lti.AdobeConnectCache
             table.Rows.Add(dest);
         }
 
-
-
-
     }
-
 }
