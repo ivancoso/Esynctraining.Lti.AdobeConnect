@@ -879,6 +879,17 @@
             return false;
         }
 
+        public bool AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        {
+            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
+            if (group != null)
+            {
+                return ResponseIsOk(this.AddToGroup(principalIds, group.PrincipalId));
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Gets Group by name.
         /// </summary>
@@ -920,6 +931,23 @@
 
             this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "true"), out status);
             
+            return status;
+        }
+
+        public StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId)
+        {
+            StatusInfo status;
+
+            var trios = new List<string>(principalIds.Count());
+            var paramBuilder = new StringBuilder();
+            foreach (string principalId in principalIds)
+            {
+                paramBuilder.Length = 0;
+                paramBuilder.AppendFormat(CommandParams.GroupMembership, groupId, principalId, "true");
+                trios.Add(paramBuilder.ToString());
+            }
+
+            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Join("&", trios), out status);
             return status;
         }
 
