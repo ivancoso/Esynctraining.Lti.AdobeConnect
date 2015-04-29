@@ -11,8 +11,6 @@ namespace EdugameCloud.Lti.Desire2Learn
 {
     public class Desire2LearnApiService : IDesire2LearnApiService
     {
-        private readonly string appId;
-        private readonly string appSecret;
         private readonly ID2LAppContext appContext;
         private readonly ILogger logger;
 
@@ -25,8 +23,8 @@ namespace EdugameCloud.Lti.Desire2Learn
 
         public Desire2LearnApiService(ApplicationSettingsProvider settings, ILogger logger)
         {
-            appId = ((dynamic)settings).D2LApiKey;
-            appSecret = ((dynamic)settings).D2LApiSecret;
+            string appId = ((dynamic)settings).D2LApiKey;
+            string appSecret = ((dynamic)settings).D2LApiSecret;
             appContext = new D2LAppContextFactory().Create(appId, appSecret);
             this.logger = logger;
         }
