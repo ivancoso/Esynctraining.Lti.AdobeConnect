@@ -151,6 +151,10 @@
     <Content Include="FileStorage\Export\ReadMe.txt" />
     <Content Include="FileStorage\Import\ReadMe.txt" />
     <Content Include="FileStorage\Uploads\Placeholder.txt" />
+    <Content Include="images\adobeconnect_icon3.png" />
+    <Content Include="images\footer.png" />
+    <Content Include="images\logoBig.png" />
+    <None Include="images\readme.txt" />
     <Content Include="LmsService.svc" />
     <Content Include="Mail\Templates\ActivationLink.html" />
     <Content Include="Mail\Templates\ErrorMail.html" />
