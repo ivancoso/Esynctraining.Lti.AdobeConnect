@@ -933,11 +933,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 PrincipalResult pu = provider.PrincipalUpdate(setup);
 
-                // TODO: review and add
-                //if (!pu.Success)
-                //{
-                //    throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
-                //}
+                if (!pu.Success)
+                {
+                    if (pu.Status.UnderlyingExceptionInfo != null)
+                        throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
+                    else if (!string.IsNullOrEmpty(pu.Status.InvalidField))
+                        throw new InvalidOperationException("AC.PrincipalUpdate error. Invalid Field: " + pu.Status.InvalidField);
+                    throw new InvalidOperationException("AC.PrincipalUpdate error. Status.Code: " + pu.Status.Code);
+                }
 
                 if (pu.Principal != null)
                 {

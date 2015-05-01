@@ -226,6 +226,8 @@
     <Compile Include="API\Moodle\IEGCEnabledMoodleApi.cs" />
     <Compile Include="API\Moodle\IMoodleApi.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
+    <Compile Include="Controllers\LtiController.Reports.cs" />
+    <Compile Include="Controllers\LtiController.Recordings.cs" />
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
     <Compile Include="DTO\BBAssessmentDTO.cs" />
@@ -245,7 +247,7 @@
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />
     <Compile Include="OAuth\Canvas\CanvasClient.cs" />
     <Compile Include="OAuth\Canvas\CanvasUser.cs" />
-    <Compile Include="API\Desire2Learn\Desire2LearnApiService.cs" />
+    <Compile Include="API\Desire2Learn\IDesire2LearnApiService.cs" />
     <Compile Include="OAuth\Desire2Learn\ClasslistUser.cs" />
     <Compile Include="OAuth\Desire2Learn\OrgUnitUser.cs" />
     <Compile Include="OAuth\Desire2Learn\PagedResultSet.cs" />
@@ -258,7 +260,9 @@
     <Compile Include="OAuth\Desire2Learn\WhoAmIUser.cs" />
     <Compile Include="OAuth\LtiOpenAuthSecurityManager.cs" />
     <Compile Include="OAuth\OAuthWebSecurityWrapper.cs" />
+    <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WarningMessageException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

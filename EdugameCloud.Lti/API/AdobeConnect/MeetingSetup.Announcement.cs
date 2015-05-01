@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
-using Castle.Core.Logging;
-using EdugameCloud.Lti.API.BlackBoard;
+﻿using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using EdugameCloud.Lti.Extensions;
-using Esynctraining.AC.Provider;
-using Esynctraining.AC.Provider.DataObjects;
-using Esynctraining.AC.Provider.DataObjects.Results;
-using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
