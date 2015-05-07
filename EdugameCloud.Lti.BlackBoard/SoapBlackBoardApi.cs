@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,10 +11,12 @@ using BbWsClient.User;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Business.Queries;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -48,9 +51,14 @@ namespace EdugameCloud.Lti.BlackBoard
                 {
                     "Context.WS:loginTool",
                     "Context.WS:login",
+                    "Context.WS:emulateUser",
                     "CourseMembership.WS:getCourseMembership",
                     "CourseMembership.WS:getCourseRoles",
                     "User.WS:getUser",
+                    "Announcement.WS:createCourseAnnouncements",
+                    "Content.WS:getTOCsByCourseId",
+                    "Content.WS:getFilteredContent",
+                    "Content.WS:loadFilteredContent"
                 };
 
         /// <summary>
@@ -680,31 +688,68 @@ namespace EdugameCloud.Lti.BlackBoard
             return false;
         }
 
-        public string[] CreateAnnouncement(int courseId, LmsCompany lmsCompany, string announcementTitle, string announcementMessage)
+        public string[] CreateAnnouncement(int courseId, string userUuid, LmsCompany lmsCompany, string announcementTitle, string announcementMessage)
         {
             string error;
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
             var client = BeginBatch(out error, lmsCompany);
-            var announcementVO = new AnnouncementVO
+
+            CourseMembershipWrapper membershipWS = client.getCourseMembershipWrapper();
+            var membershipFilter = new MembershipFilter
             {
-                body = announcementMessage,
-                courseId = courseIdFixed,
-                permanent = true,
-                permanentSpecified = true,
-                position = 1,
-                positionSpecified = true,
-                pushNotify = true,
-                pushNotifySpecified = true,
-                showOnCourses = true,
-                showOnCoursesSpecified = true,
-                title = announcementTitle
+                filterType = 2,
+                filterTypeSpecified = true,
+                courseIds = new[] { courseIdFixed },
             };
+            var enrollments = membershipWS.loadCourseMembership(courseIdFixed, membershipFilter);
 
-            var annWS = client.getAnnouncementWrapper();
-            var results = annWS.saveCourseAnnouncements(courseId.ToString(), new[] { announcementVO });
+            var userWS = client.getUserWrapper();
+            var courseUsersFilter = new UserFilter
+                                {
+                                    filterTypeSpecified = true,
+                                    filterType = 2,
+                                    id = enrollments.Select(x => x.userId).ToArray(),
+                                };
+            var courseUsers = userWS.getUser(courseUsersFilter);
+            var uuidString = "USER.UUID=" + userUuid;
+            var user = courseUsers.FirstOrDefault(cu => cu != null && cu.expansionData != null
+                                                        &&
+                                                        cu.expansionData.Any(
+                                                            ed =>
+                                                                String.Compare(uuidString, ed,
+                                                                    StringComparison.OrdinalIgnoreCase) == 0));
+            if (user == null)
+            {
+                var adminRoles = new[] {"SYSTEM_ADMIN", "COURSE_CREATOR"};
+                user = courseUsers.FirstOrDefault(x => x.systemRoles.Any(role => adminRoles.Contains(role)));
+            }
 
-            return results;
+            if (user != null)
+            {
+                var announcementVO = new AnnouncementVO
+                {
+                    body = announcementMessage,
+                    creatorUserId = user.id,
+                    courseId = courseIdFixed,
+                    permanent = true,
+                    permanentSpecified = true,
+                    position = 1,
+                    positionSpecified = true,
+                    pushNotify = true,
+                    pushNotifySpecified = true,
+                    showOnCourses = true,
+                    showOnCoursesSpecified = true,
+                    title = announcementTitle
+                };
+
+                var annWS = client.getAnnouncementWrapper();
+                var results = annWS.saveCourseAnnouncements(courseId.ToString(), new[] {announcementVO});
+
+                return results;
+            }
+
+            return null;
         }
 
         #endregion

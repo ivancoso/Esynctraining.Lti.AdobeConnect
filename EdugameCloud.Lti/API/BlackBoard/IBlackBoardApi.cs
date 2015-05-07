@@ -28,8 +28,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
 
         bool TryRegisterEGCTool(string lmsDomain, string registrationPassword, string initialPassword, out string error);
 
-        string[] CreateAnnouncement(int courseId, LmsCompany lmsCompany, string announcementTitle, string announcementMessage);
-
+        string[] CreateAnnouncement(int courseId, string userUuid, LmsCompany lmsCompany, string announcementTitle, string announcementMessage);
     }
 
 }

@@ -70,7 +70,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         announcementMessage);
                     break;
                 case LmsProviderNames.Blackboard:
-                    BlackboardApi.CreateAnnouncement(param.course_id, lmsCompany, announcementTitle, announcementMessage);
+                    BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
                     break;
                 case LmsProviderNames.BrainHoney:
                     // string error;

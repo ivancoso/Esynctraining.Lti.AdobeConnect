@@ -1,4 +1,5 @@
 ﻿@using EdugameCloud.Lti.API.BlackBoard
+@using EdugameCloud.Lti.BlackBoard
 @model EdugameCloud.Lti.Models.ProxyToolPasswordModel
 @{
     Layout = null;
@@ -50,7 +51,7 @@
                         <h2> @Model.BlackBoardTitle Proxy Tool Registration Succeeded</h2>
                         <h3> Please go to <a href="@(Model.LmsDomain + "/webapps/ws/wsadmin/wsclientprograms")">System Admin -> Building Blocks -> Proxy Tools</a> 
                             <br/> and make it available.</h3>
-                        <h3>Then set custom password for <strong>@(SoapAPI.VendorEgc+" "+SoapAPI.ProgramLti)</strong> Proxy Tool and save it to EGC Admin</h3>
+                        <h3>Then set custom password for <strong>@(SoapBlackBoardApi.VendorEgc + " " + SoapBlackBoardApi.ProgramLti)</strong> Proxy Tool and save it to EGC Admin</h3>
                     </div>
                     <div class="div-table-row">
                         <h3>
