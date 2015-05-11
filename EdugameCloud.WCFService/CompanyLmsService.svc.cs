@@ -431,6 +431,7 @@ namespace EdugameCloud.WCFService
             instance.DenyACUserCreation = !dto.allowUserCreation;
             instance.LoginUsingCookie = !dto.showAuthToken;
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
+            instance.ShowAnnouncements = dto.enableAnnouncements;
 
             return instance;
         }

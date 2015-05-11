@@ -66,6 +66,7 @@
                 this.allowUserCreation = !instance.DenyACUserCreation;
                 this.showAuthToken = !instance.LoginUsingCookie.GetValueOrDefault();
                 this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
+                this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
             }
         }
 
@@ -269,6 +270,12 @@
 
         [DataMember]
         public bool acUsesEmailAsLogin { get; set; }
+
+        /// <summary>
+        /// If true, enables announcement creation in LMS when new course meetings is being created
+        /// </summary>
+        [DataMember]
+        public bool enableAnnouncements { get; set; }
 
     }
 
