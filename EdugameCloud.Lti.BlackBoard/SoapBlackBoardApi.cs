@@ -738,13 +738,11 @@ namespace EdugameCloud.Lti.BlackBoard
                     positionSpecified = true,
                     pushNotify = true,
                     pushNotifySpecified = true,
-                    showOnCourses = true,
-                    showOnCoursesSpecified = true,
                     title = announcementTitle
                 };
 
                 var annWS = client.getAnnouncementWrapper();
-                var results = annWS.saveCourseAnnouncements(courseId.ToString(), new[] {announcementVO});
+                var results = annWS.saveCourseAnnouncements(courseIdFixed, new[] { announcementVO });
 
                 return results;
             }
