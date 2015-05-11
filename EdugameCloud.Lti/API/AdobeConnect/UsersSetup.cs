@@ -518,7 +518,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 u.ac_role = "Remove";
             }
 
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("admin"))
+            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("admin") || role.Contains("lecture in charge"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
@@ -563,7 +563,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 u.ac_role = "Remove";
             }
 
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("admin"))
+            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner") || role.Contains("admin") || role.Contains("lecture in charge"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
@@ -604,7 +604,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return param.roles != null && (param.roles.Contains("Instructor")
                 || param.roles.Contains("Administrator")
                 || param.roles.Contains("Course Director")
-                || param.roles.Contains("CourseDirector"));
+                || param.roles.Contains("CourseDirector")
+                || param.roles.Contains("Lecture In Charge"));
         }
 
         /// <summary>
