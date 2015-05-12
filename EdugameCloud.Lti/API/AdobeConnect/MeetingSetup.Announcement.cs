@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Domain.Entities;
@@ -41,10 +42,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsMeetingType meetingType,
             LmsCompany lmsCompany, 
             LtiParamDTO param, 
-            string name, 
-            string startDate, 
-            string startTime, 
-            string duration)
+            MeetingDTO meetingDto)
         {
             if (!lmsCompany.ShowAnnouncements.GetValueOrDefault() || string.IsNullOrEmpty(param.context_title))
             {
@@ -55,14 +53,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 "A new {0} room was created for course {1}",
                 meetingNames[meetingType],
                 param.context_title);
-            const string AnnouncementMessagePattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
-            var announcementMessage = string.Format(
-                AnnouncementMessagePattern,
-                name,
-                startDate,
-                startTime,
-                duration,
-                param.referer ?? string.Empty);
+            string announcementMessage = GetAnnouncementMessage(meetingType, meetingDto, param.referer);
 
             switch (lmsCompany.LmsProvider.ShortName.ToLowerInvariant())
             {
@@ -93,5 +84,31 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private string GetAnnouncementMessage(LmsMeetingType meetingType, MeetingDTO meetingDto, string referrer)
+        {
+            switch (meetingType)
+            {
+                case LmsMeetingType.Meeting:
+                    string pattern = "Meeting \"{0}\" will start {1} at {2}. Its duration will be {3}. You can join it in your <a href='{4}'>Adobe Connect Conference section</a>.";
+                    return string.Format(
+                        pattern,
+                        meetingDto.name,
+                        meetingDto.start_date,
+                        meetingDto.start_time,
+                        meetingDto.duration,
+                        referrer ?? string.Empty);
+                case LmsMeetingType.OfficeHours:
+                    string message = String.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
+                    if (!String.IsNullOrEmpty(meetingDto.office_hours))
+                    {
+                        message = String.Format("Meeting time: {0}. ", meetingDto.office_hours) + message;
+                    }
+                    return message;
+                case LmsMeetingType.StudyGroup:
+                    return String.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
+            }
+
+            return String.Empty;
+        }
     }
 }

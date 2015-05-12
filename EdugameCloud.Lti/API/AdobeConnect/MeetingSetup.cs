@@ -937,7 +937,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     meeting.ScoId = result.ScoInfo.ScoId;
                 }
-                
+
+                CreateAnnouncement(
+                        (LmsMeetingType)meeting.LmsMeetingType,
+                        lmsCompany,
+                        param,
+                        meetingDTO);
+
                 if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
                 {
                     this.UsersSetup.SetDefaultUsers(
@@ -948,15 +954,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         meeting.CourseId,
                         result.ScoInfo.ScoId,
                         extraData ?? param);
-
-                    this.CreateAnnouncement(
-                        (LmsMeetingType)meeting.LmsMeetingType,
-                        lmsCompany,
-                        param,
-                        meetingDTO.name,
-                        meetingDTO.start_date,
-                        meetingDTO.start_time,
-                        meetingDTO.duration);
                 }
                 else
                 {
