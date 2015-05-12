@@ -833,7 +833,7 @@
             return param.roles != null
                    && (param.roles.Contains("Instructor") || param.roles.Contains("Administrator")
                        || param.roles.Contains("Course Director") || param.roles.Contains("CourseDirector")
-                       || param.roles.Contains("Lecture In Charge"));
+                       || param.roles.Contains("Lecture"));
         }
 
         /// <summary>
@@ -1060,7 +1060,7 @@
             }
 
             if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
-                || role.Contains("admin") || role.Contains("lecture in charge"))
+                || role.Contains("admin") || role.Contains("lecture"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";
@@ -1127,7 +1127,7 @@
             }
 
             if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
-                || role.Contains("admin") || role.Contains("lecture in charge"))
+                || role.Contains("admin") || role.Contains("lecture"))
             {
                 permission = MeetingPermissionId.host;
                 u.ac_role = "Host";

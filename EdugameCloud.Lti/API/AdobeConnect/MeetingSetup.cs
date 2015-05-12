@@ -950,6 +950,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         extraData ?? param);
 
                     this.CreateAnnouncement(
+                        (LmsMeetingType)meeting.LmsMeetingType,
                         lmsCompany,
                         param,
                         meetingDTO.name,
