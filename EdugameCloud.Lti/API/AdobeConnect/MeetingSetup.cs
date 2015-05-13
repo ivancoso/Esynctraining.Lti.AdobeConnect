@@ -982,6 +982,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 meeting.OfficeHours = officeHours;
                 meeting.ScoId = null;
+                if (!isNewMeeting && meeting.Id == 0) // we attach existed office hours meeting for another course
+                {
+                    CreateAnnouncement(
+                        (LmsMeetingType) meeting.LmsMeetingType,
+                        lmsCompany,
+                        param,
+                        meetingDTO);
+                }
             }
             else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
             {
