@@ -657,7 +657,7 @@
 
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers)
+            if (lmsCompany.UseSynchronizedUsers && meeting.Users != null)
             {
                 lmsUsers = meeting.Users;
                 //when users where not synchronized yet
@@ -823,7 +823,7 @@
 
                 bool uncommitedChangesInLms = false;
                 ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser.Value, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
-                    nonEditable, ref hosts, ref presenters, ref participants);
+                    nonEditable, ref hosts, ref participants, ref presenters);
 
                 if (uncommitedChangesInLms)
                 {
@@ -965,7 +965,7 @@
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers)
+            if (lmsCompany.UseSynchronizedUsers && meeting.Users != null)
             {
                 lmsUsers = meeting.Users;
                 //when users where not synchronized yet
@@ -1107,7 +1107,7 @@
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers)
+            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.Users != null)
             {
                 lmsUsers = meeting.Users;
                 //when users where not synchronized yet
