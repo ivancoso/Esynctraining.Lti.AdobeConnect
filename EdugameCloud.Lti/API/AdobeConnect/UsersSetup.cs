@@ -317,7 +317,7 @@
                     return userDtos.ToList();
                 }
             }
-            var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+            var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var serviceResult = service.GetUsers(lmsCompany, meeting, lmsUser ?? new LmsUser{UserId = lmsUserId}, courseId, extraData, forceUpdate);
             if (serviceResult.isSuccess)
@@ -540,7 +540,7 @@
                     null);
                 var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
-                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
                 LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
                     currentUser,
                     meeting,
@@ -797,7 +797,7 @@
 
             var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
-            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
+            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
             //todo: not param for BrainHoney
             var lmsUser = service.GetUser(lmsCompany, currentUser, meeting, lmsUserId, param.course_id, out error, param, forceUpdate);
 

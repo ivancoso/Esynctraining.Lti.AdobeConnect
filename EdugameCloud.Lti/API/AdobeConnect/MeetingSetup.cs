@@ -650,7 +650,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     string error;
 
-                    var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                    var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
                     var currentUser = lmsUserService.GetUser(lmsCompany, lmsUser, currentMeeting,
                         param.lms_user_id,
                         param.course_id,

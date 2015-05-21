@@ -118,7 +118,6 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
-        public virtual int LmsProviderId { get; set; }
         public virtual LmsProvider LmsProvider { get; set; }
 
         /// <summary>

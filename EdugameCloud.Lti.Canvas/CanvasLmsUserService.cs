@@ -147,7 +147,7 @@ namespace EdugameCloud.Lti.Canvas
                     {
                         // todo: investigate cases(except when role=student) when API does not return emails and probably remove this code
                         this.logger.InfoFormat(
-                            "[Canvas GetUsers] Api did not return email for user with id={}",
+                            "[Canvas GetUsers] Api did not return email for user with id={0}",
                             user.id);
                         foreach (string adminToken in adminCourseTokens)
                         {
