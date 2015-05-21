@@ -124,6 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlackboardQuizParser.cs" />
+    <Compile Include="BlackboardLmsUserService.cs" />
     <Compile Include="CastleLoggerAdapter.cs" />
     <Compile Include="EGCEnabledBlackboardApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

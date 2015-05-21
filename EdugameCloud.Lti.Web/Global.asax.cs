@@ -6,10 +6,12 @@ using Castle.Windsor;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.BlackBoard;
 using EdugameCloud.Lti.BrainHoney;
 using EdugameCloud.Lti.Canvas;
 using EdugameCloud.Lti.Desire2Learn;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Moodle;
 using EdugameCloud.Lti.Web.Providers;
 using Esynctraining.Core.Providers;
@@ -81,6 +83,13 @@ namespace EdugameCloud.Lti.Web
 
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
+
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BlackboardLmsUserService>().Named(LmsProviderEnum.Blackboard.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BrainHoneyLmsUserService>().Named(LmsProviderEnum.BrainHoney.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<CanvasLmsUserService>().Named(LmsProviderEnum.Canvas.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserService>().Named(LmsProviderEnum.Desire2Learn.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<MoodleLmsUserService>().Named(LmsProviderEnum.Moodle.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }

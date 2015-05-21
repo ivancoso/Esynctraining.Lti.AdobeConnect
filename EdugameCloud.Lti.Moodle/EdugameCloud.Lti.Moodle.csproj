@@ -112,6 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MoodleLmsUserService.cs" />
     <Compile Include="EGCEnabledMoodleApi.cs" />
     <Compile Include="MoodleApi.cs" />
     <Compile Include="MoodleExpressionParser.cs" />

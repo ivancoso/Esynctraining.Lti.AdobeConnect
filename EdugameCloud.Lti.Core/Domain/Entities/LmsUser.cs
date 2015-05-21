@@ -1,9 +1,8 @@
-﻿namespace EdugameCloud.Lti.Domain.Entities
-{
-    using System.Collections.Generic;
-    using Esynctraining.Core.Domain.Entities;
-    using Iesi.Collections.Generic;
+﻿using System.Collections.Generic;
+using Esynctraining.Core.Domain.Entities;
 
+namespace EdugameCloud.Lti.Domain.Entities
+{
     /// <summary>
     /// The LMS user.
     /// </summary>
@@ -51,10 +50,25 @@
         /// </summary>
         public virtual string PrincipalId { get; set; }
 
+        public virtual string Name { get; set; }
+
+        public virtual string Email { get; set; }
+
+        // Blackboard returns guid identifier instead of actual user id in lti parameter
+        // The idea is to store actual ids in UserId field and other identifiers in UserIdExtended
+        // It would improve at least users search in API
+        // Currently it's not implemented and not used, guid is stored in UserId parameter
+        public virtual string UserIdExtended { get; set; }
+
+        //todo: move to lmsusermeeting
+        public virtual string LmsRole { get; set; }
+
         /// <summary>
         /// Gets or sets the LMS user parameters.
         /// </summary>
         public virtual IList<LmsUserParameters> LmsUserParameters { get; protected set; }
+
+        public virtual IList<LmsCourseMeeting> Meetings { get; protected set; }
 
         #endregion
     }

@@ -17,6 +17,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
         {
             this.Table("CompanyLms");
             this.Id(x => x.Id).Column("companyLmsId");
+            this.Map(x => x.LmsProviderId).Column("lmsProviderId");
             this.Map(x => x.AcPassword).Not.Nullable();
             this.Map(x => x.AcServer).Not.Nullable();
             this.Map(x => x.AcUsername).Not.Nullable();
@@ -53,7 +54,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.ModifiedBy).Nullable().Column("modifiedBy");
             this.Map(x => x.CompanyId).Not.Nullable().Column("companyId");
 
-            this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
+            this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId").ForeignKey();
             this.References(x => x.AdminUser).Column("adminUserId").Not.LazyLoad().Nullable();
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.LmsCourseMeetings).KeyColumn("companyLmsId").Cascade.Delete().Inverse();

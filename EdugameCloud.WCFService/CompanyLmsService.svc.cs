@@ -432,7 +432,7 @@ namespace EdugameCloud.WCFService
             instance.LoginUsingCookie = !dto.showAuthToken;
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
-
+            LmsCompanyModel.UpdateCompanySetting(instance, "UseSynchronizedUsers", dto.useSynchronizedUsers.ToString());
             return instance;
         }
 

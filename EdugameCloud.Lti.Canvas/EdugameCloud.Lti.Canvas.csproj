@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CanvasAPI.cs" />
+    <Compile Include="CanvasLmsUserService.cs" />
     <Compile Include="CanvasQuizParser.cs" />
     <Compile Include="EGCEnabledCanvasAPI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -117,6 +117,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrainHoneyLmsUserService.cs" />
     <Compile Include="DlapAPI.ConstClasses.cs" />
     <Compile Include="DlapAPI.Signals.cs" />
     <Compile Include="ShedulingHelper.cs" />

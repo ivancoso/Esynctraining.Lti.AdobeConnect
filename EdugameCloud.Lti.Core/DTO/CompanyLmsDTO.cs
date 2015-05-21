@@ -67,6 +67,7 @@
                 this.showAuthToken = !instance.LoginUsingCookie.GetValueOrDefault();
                 this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
                 this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
+                this.useSynchronizedUsers = instance.UseSynchronizedUsers;
             }
         }
 
@@ -276,6 +277,9 @@
         /// </summary>
         [DataMember]
         public bool enableAnnouncements { get; set; }
+
+        [DataMember]
+        public bool useSynchronizedUsers { get; set; }
 
     }
 

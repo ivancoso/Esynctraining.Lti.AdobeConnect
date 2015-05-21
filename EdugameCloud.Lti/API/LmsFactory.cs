@@ -1,12 +1,13 @@
-﻿namespace EdugameCloud.Lti.API
-{
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Domain.Entities;
+﻿using Esynctraining.Core.Utils;
+using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.API.Moodle;
+using EdugameCloud.Lti.Domain.Entities;
 
+namespace EdugameCloud.Lti.API
+{
     /// <summary>
-    ///     The LMS factory.
+    /// The LMS factory.
     /// </summary>
     public class LmsFactory
     {
@@ -73,6 +74,11 @@
             }
 
             return null;
+        }
+
+        public LmsUserServiceBase GetUserService(LmsProviderEnum lmsProvider)
+        {
+            return IoC.Container.Resolve<LmsUserServiceBase>(lmsProvider.ToString());
         }
 
         #endregion

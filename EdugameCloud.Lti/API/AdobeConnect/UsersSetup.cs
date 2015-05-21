@@ -38,59 +38,14 @@
     {
         #region Public Methods and Operators
 
-        /// <summary>
-        /// The set lms user default ac permissions.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting sco id.
-        /// </param>
-        /// <param name="u">
-        /// The u.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <param name="ignoreAC">
-        /// The ignore ac.
-        /// </param>
         void SetLMSUserDefaultACPermissions(
             AdobeConnectProvider provider, 
             string meetingScoId, 
-            LmsUserDTO u, 
+            LmsUserDTO user, 
             string principalId, 
             bool ignoreAC = false);
 
-        /// <summary>
-        /// The update user.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The param.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="scoId">
-        /// The sco id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="skipReturningUsers">
-        /// The skip returning users.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        List<LmsUserDTO> UpdateUser(
+        LmsUserDTO UpdateUser(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
@@ -153,6 +108,8 @@
         /// </summary>
         private readonly IBlackBoardApi soapApi;
 
+        private readonly LmsFactory lmsFactory;
+
         #endregion
 
         #region Constructors and Destructors
@@ -187,7 +144,8 @@
             IMoodleApi moodleApi, 
             LTI2Api lti2Api, 
             IEGCEnabledCanvasAPI canvasApi, 
-            ApplicationSettingsProvider settings, 
+            ApplicationSettingsProvider settings,
+            LmsFactory lmsFactory,
             ILogger logger)
         {
             this.dlapApi = dlapApi;
@@ -196,6 +154,7 @@
             this.lti2Api = lti2Api;
             this.canvasApi = canvasApi;
             this.settings = settings;
+            this.lmsFactory = lmsFactory;
             this.logger = logger;
         }
 
@@ -271,7 +230,7 @@
         /// The get AC password.
         /// </summary>
         /// <param name="lmsCompany">
-        /// The credentials.
+        /// The lmsCompany.
         /// </param>
         /// <param name="userSettings">
         /// The user settings.
@@ -306,8 +265,8 @@
         /// <summary>
         /// The get lms users.
         /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
+        /// <param name="lmsCompany">
+        /// The lmsCompany.
         /// </param>
         /// <param name="meeting">
         /// The meeting.
@@ -331,33 +290,43 @@
         /// The <see cref="List"/>.
         /// </returns>
         public List<LmsUserDTO> GetLMSUsers(
-            LmsCompany credentials, 
+            LmsCompany lmsCompany, 
             LmsCourseMeeting meeting, 
             string lmsUserId, 
             int courseId, 
             out string error, 
-            LtiParamDTO extraData = null, 
+            object extraData = null, 
             bool forceUpdate = false)
         {
-            switch (credentials.LmsProvider.ShortName.ToLowerInvariant())
+            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.Users != null)
             {
-                case LmsProviderNames.Canvas:
-                    error = null;
-                    return this.GetCanvasUsers(credentials, lmsUserId, courseId);
-                case LmsProviderNames.BrainHoney:
-                    return this.GetBrainHoneyUsers(credentials, courseId, out error, extraData);
-                case LmsProviderNames.Blackboard:
-                    return this.GetBlackBoardUsers(credentials, meeting, courseId, out error, forceUpdate);
-                case LmsProviderNames.Moodle:
-                    return this.GetMoodleUsers(credentials, courseId, out error);
-                case LmsProviderNames.Sakai:
-                    return this.GetSakaiUsers(credentials, extraData as LtiParamDTO, out error);
-                case LmsProviderNames.Desire2Learn:
-                    return this.GetDesire2LearnUsers(credentials, extraData as LtiParamDTO, lmsUserId, out error);
-            }
+                var userDtos = meeting.Users.Select(x=>new LmsUserDTO
+                {
+                    ac_id = x.PrincipalId,
+                    id = x.UserId,
+                    lti_id = x.UserId,
+                    login_id = x.Username,
+                    name = x.Name,
+                    primary_email = x.Email,
+                    lms_role = x.LmsRole
+                });
 
-            error = null;
-            return new List<LmsUserDTO>();
+                if (userDtos.Any())
+                {
+                    error = null;
+                    return userDtos.ToList();
+                }
+            }
+            var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
+            var serviceResult = service.GetUsers(lmsCompany, meeting, lmsUser ?? new LmsUser{UserId = lmsUserId}, courseId, extraData, forceUpdate);
+            if (serviceResult.isSuccess)
+            {
+                error = null;
+                return serviceResult.data;
+            }
+            var users = service.GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate, extraData);
+            return error == null ? users : new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -569,19 +538,18 @@
                     lmsCompany.Id, 
                     param.course_id, 
                     null);
-                List<LmsUserDTO> users = this.GetLMSUsers(
-                    lmsCompany, 
-                    meeting, 
-                    param.lms_user_id, 
-                    param.course_id, 
-                    out error, 
-                    param, 
+                var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+
+                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
+                    currentUser,
+                    meeting,
+                    param.lms_user_id,
+                    param.course_id,
+                    out error,
+                    param,
                     true);
-                LmsUserDTO user =
-                    users.FirstOrDefault(
-                        u =>
-                        u.lti_id != null
-                        && u.lti_id.Equals(param.lms_user_id, StringComparison.InvariantCultureIgnoreCase));
+
                 if (user != null)
                 {
                     login = user.login_id;
@@ -651,51 +619,26 @@
             return principal;
         }
 
-        /// <summary>
-        /// The get users.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force Update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", 
-            Justification = "Reviewed. Suppression is OK here.")]
         public List<LmsUserDTO> GetUsers(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             string scoId, 
-            out string error, 
+            out string error,
             bool forceUpdate = false)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
                 lmsCompany.Id, 
                 param.course_id, 
                 scoId);
+
             List<LmsUserDTO> users = this.GetLMSUsers(
-                lmsCompany, 
-                meeting, 
-                param.lms_user_id, 
-                param.course_id, 
-                out error, 
-                param, 
+                lmsCompany,
+                meeting,
+                param.lms_user_id,
+                param.course_id,
+                out error,
+                param,
                 forceUpdate);
             if (meeting == null)
             {
@@ -713,8 +656,20 @@
                 nonEditable);
 
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
-            IEnumerable<LmsUser> lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
-
+            IEnumerable<LmsUser> lmsUsers = null;
+            if (lmsCompany.UseSynchronizedUsers)
+            {
+                lmsUsers = meeting.Users;
+                //when users where not synchronized yet
+                if (!lmsUsers.Any())
+                {
+                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                }
+            }
+            else
+            {
+                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+            }
             // Debug.Assert(userIds.Length == lmsUsers.Count(), "Should return single user by userId+lmsCompany.Id");
 
             // NOTE: sometimes we have no users here - for example due any security issue in LMS service (BlackBoard)
@@ -788,8 +743,16 @@
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
             {
-                users.Add(
-                    new LmsUserDTO { ac_id = permissionInfo.PrincipalId, name = permissionInfo.Name, ac_role = "Host", });
+                if (users.All(x => x.ac_id != permissionInfo.PrincipalId))
+                {
+                    users.Add(
+                        new LmsUserDTO
+                        {
+                            ac_id = permissionInfo.PrincipalId,
+                            name = permissionInfo.Name,
+                            ac_role = "Host"
+                        });
+                }
             }
 
             // ReSharper disable once LoopCanBeConvertedToQuery
@@ -819,6 +782,114 @@
             return users;
         }
 
+        public LmsUserDTO GetOrCreateUserWithAcRole(
+            LmsCompany lmsCompany,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            string scoId,
+            out string error,
+            bool forceUpdate = false, string lmsUserId = null)
+        {
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+                lmsCompany.Id,
+                param.course_id,
+                scoId);
+
+            var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+
+            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
+            //todo: not param for BrainHoney
+            var lmsUser = service.GetUser(lmsCompany, currentUser, meeting, lmsUserId, param.course_id, out error, param, forceUpdate);
+
+            if (meeting == null)
+            {
+                return lmsUser;
+            }
+
+            if (lmsUser != null)
+            {
+                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.id, lmsCompany.Id);
+                List<PermissionInfo> hosts, participants, presenters;
+                var nonEditable = new HashSet<string>();
+                GetMeetingAttendees(
+                    provider,
+                    meeting.GetMeetingScoId(),
+                    out hosts,
+                    out presenters,
+                    out participants,
+                    nonEditable);
+                IEnumerable<Principal> principalCache = GetAllPrincipals(lmsCompany, provider, 
+                    new List<LmsUserDTO>{lmsUser});
+
+                bool uncommitedChangesInLms = false;
+                ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser.Value, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
+                    nonEditable, ref hosts, ref presenters, ref participants);
+
+                if (uncommitedChangesInLms)
+                {
+                    LmsUserModel.Flush();
+                }
+
+                return lmsUser;
+            }
+            return null;
+        }
+
+        private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, LmsCompany lmsCompany,
+            IEnumerable<Principal> principalCache, AdobeConnectProvider provider, ref bool uncommitedChangesInLms,
+            HashSet<string> nonEditable, ref List<PermissionInfo> hosts, ref List<PermissionInfo> participants, ref List<PermissionInfo> presenters)
+        {
+            string login = user.GetLogin();
+            lmsDbUser = lmsDbUser ?? new LmsUser
+                              {
+                                  LmsCompany = lmsCompany,
+                                  Username = login,
+                                  UserId = user.lti_id ?? user.id,
+                              };
+
+            if (string.IsNullOrEmpty(lmsDbUser.PrincipalId))
+            {
+                Principal principal = this.GetOrCreatePrincipal2(
+                    provider,
+                    login,
+                    user.GetEmail(),
+                    user.GetFirstName(),
+                    user.GetLastName(),
+                    lmsCompany,
+                    principalCache);
+
+                if (principal != null)
+                {
+                    lmsDbUser.PrincipalId = principal.PrincipalId;
+                    this.LmsUserModel.RegisterSave(lmsDbUser, flush: false);
+                    uncommitedChangesInLms = true;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            user.ac_id = lmsDbUser.PrincipalId;
+            user.is_editable = !nonEditable.Contains(user.ac_id);
+
+            if (hosts.Any(v => v.PrincipalId == user.ac_id))
+            {
+                user.ac_role = "Host";
+                hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
+            }
+            else if (presenters.Any(v => v.PrincipalId == user.ac_id))
+            {
+                user.ac_role = "Presenter";
+                presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+            }
+            else if (participants.Any(v => v.PrincipalId == user.ac_id))
+            {
+                user.ac_role = "Participant";
+                participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
+            }
+        }
+
         /// <summary>
         /// The is teacher.
         /// </summary>
@@ -840,7 +911,7 @@
         /// The update user.
         /// </summary>
         /// <param name="lmsCompany">
-        /// The credentials.
+        /// The lmsCompany.
         /// </param>
         /// <param name="provider">
         /// The provider.
@@ -892,8 +963,22 @@
             List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
+            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+            IEnumerable<LmsUser> lmsUsers = null;
+            if (lmsCompany.UseSynchronizedUsers)
+            {
+                lmsUsers = meeting.Users;
+                //when users where not synchronized yet
+                if (!lmsUsers.Any())
+                {
+                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                }
+            }
+            else
+            {
+                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+            }
 
-            IEnumerable<LmsUser> lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
             bool denyACUserCreation = lmsCompany.DenyACUserCreation;
 
             var meetingPermissions = new List<PermissionUpdateTrio>();
@@ -981,7 +1066,7 @@
         /// The set default users.
         /// </summary>
         /// <param name="lmsCompany">
-        /// The credentials.
+        /// The lmsCompany.
         /// </param>
         /// <param name="meeting">
         /// The meeting.
@@ -1017,10 +1102,24 @@
                 lmsUserId, 
                 courseId, 
                 out error, 
-                extraData as LtiParamDTO);
+                extraData);
 
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
-            IEnumerable<LmsUser> lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
+            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+            IEnumerable<LmsUser> lmsUsers = null;
+            if (lmsCompany.UseSynchronizedUsers)
+            {
+                lmsUsers = meeting.Users;
+                //when users where not synchronized yet
+                if (!lmsUsers.Any())
+                {
+                    lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
+                }
+            }
+            else
+            {
+                lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
+            }
 
             this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true);
         }
@@ -1160,34 +1259,7 @@
             }
         }
 
-        /// <summary>
-        /// The update user.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="skipReturningUsers">
-        /// The skip Returning Users.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        public List<LmsUserDTO> UpdateUser(
+        public LmsUserDTO UpdateUser(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
@@ -1203,7 +1275,8 @@
                 scoId);
             if (meeting == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
+                return skipReturningUsers ? null 
+                    : this.GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
             if (user.ac_id == null)
@@ -1229,7 +1302,8 @@
 
             if (user.ac_id == null)
             {
-                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
+                return skipReturningUsers ? null 
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
             if (user.ac_role == null)
@@ -1238,7 +1312,8 @@
                     meeting.GetMeetingScoId(), 
                     user.ac_id, 
                     MeetingPermissionId.remove);
-                return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
+                return skipReturningUsers ? null 
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
             var permission = MeetingPermissionId.view;
@@ -1257,7 +1332,8 @@
                 this.AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
 
-            return skipReturningUsers ? null : this.GetUsers(lmsCompany, provider, param, scoId, out error);
+            return skipReturningUsers ? null 
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
         }
 
         #endregion
@@ -1457,31 +1533,6 @@
         }
 
         /// <summary>
-        /// The get locker.
-        /// </summary>
-        /// <param name="lockerKey">
-        /// The locker key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="object"/>.
-        /// </returns>
-        private static object GetLocker(string lockerKey)
-        {
-            if (!locker.ContainsKey(lockerKey))
-            {
-                lock (locker)
-                {
-                    if (!locker.ContainsKey(lockerKey))
-                    {
-                        locker.Add(lockerKey, new object());
-                    }
-                }
-            }
-
-            return locker[lockerKey];
-        }
-
-        /// <summary>
         /// The get meeting attendees.
         /// </summary>
         /// <param name="provider">
@@ -1544,57 +1595,6 @@
             hosts = ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
             presenters = ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
             participants = ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
-        }
-
-        /// <summary>
-        /// The group users.
-        /// </summary>
-        /// <param name="users">
-        /// The users.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private static List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
-        {
-            if (users != null && users.Any())
-            {
-                var order = new List<string>
-                                {
-                                    "owner", 
-                                    "author", 
-                                    "course builder", 
-                                    "teacher", 
-                                    "instructor", 
-                                    "teaching assistant", 
-                                    "ta", 
-                                    "designer", 
-                                    "student", 
-                                    "learner", 
-                                    "reader", 
-                                    "guest"
-                                };
-                users = users.GroupBy(u => u.id).Select(
-                    ug =>
-                        {
-                            foreach (string orderRole in order)
-                            {
-                                string role = orderRole;
-                                LmsUserDTO userDTO =
-                                    ug.FirstOrDefault(u => u.lms_role.Equals(role, StringComparison.OrdinalIgnoreCase));
-                                if (userDTO != null)
-                                {
-                                    return userDTO;
-                                }
-                            }
-
-                            return ug.First();
-                        }).ToList();
-
-                return users;
-            }
-
-            return new List<LmsUserDTO>();
         }
 
         /// <summary>
@@ -1750,347 +1750,6 @@
         }
 
         /// <summary>
-        /// The get black board users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="blackBoardCourseId">
-        /// The black board course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetBlackBoardUsers(
-            LmsCompany credentials, 
-            LmsCourseMeeting meeting, 
-            int blackBoardCourseId, 
-            out string error, 
-            bool forceUpdate = false)
-        {
-            TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
-            string key = credentials.LmsDomain + ".course." + blackBoardCourseId;
-            error = null;
-            List<LmsUserDTO> cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-            if (cachedUsers == null)
-            {
-                object lockMe = GetLocker(key);
-                lock (lockMe)
-                {
-                    if (meeting != null)
-                    {
-                        this.LmsCourseMeetingModel.Refresh(ref meeting);
-                    }
-
-                    cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-                    if (cachedUsers == null)
-                    {
-                        WebserviceWrapper client = null;
-                        List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
-                            credentials, 
-                            blackBoardCourseId, 
-                            out error, 
-                            ref client);
-
-                        if ((users.Count == 0)
-                            && error.Return(
-                                x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, 
-                                false))
-                        {
-                            IoC.Resolve<ILogger>().Warn("GetBlackBoardUsers.AccessDenied. " + error);
-
-                            // NOTE: set to null to re-create session.
-                            client = null;
-                            users = this.soapApi.GetUsersForCourse(
-                                credentials, 
-                                blackBoardCourseId, 
-                                out error, 
-                                ref client);
-                        }
-
-                        // TODO: try to call logout
-                        // client.logout();
-                        if (string.IsNullOrWhiteSpace(error) && (meeting != null))
-                        {
-                            meeting.AddedToCache = DateTime.Now;
-                            meeting.CachedUsers = JsonConvert.SerializeObject(users);
-                            this.LmsCourseMeetingModel.RegisterSave(meeting, true);
-                        }
-                        else if ((users.Count == 0)
-                                 && error.Return(
-                                     x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, 
-                                     false))
-                        {
-                            users = CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
-                        }
-
-                        cachedUsers = users;
-                    }
-                }
-            }
-
-            return GroupUsers(cachedUsers);
-        }
-
-        /// <summary>
-        /// The get brain honey users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="brainHoneyCourseId">
-        /// The brain honey course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra Data.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetBrainHoneyUsers(
-            LmsCompany credentials, 
-            int brainHoneyCourseId, 
-            out string error, 
-            object extraData)
-        {
-            // Session session = extraData == null ? null : (Session)extraData;
-            List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(
-                credentials, 
-                brainHoneyCourseId, 
-                out error, 
-                extraData);
-            return GroupUsers(users);
-        }
-
-        /// <summary>
-        /// The get canvas users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="canvasUserId">
-        /// The canvas User Id.
-        /// </param>
-        /// <param name="canvasCourseId">
-        /// The canvas course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetCanvasUsers(LmsCompany credentials, string canvasUserId, int canvasCourseId)
-        {
-            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(canvasUserId, credentials.Id).Value;
-            string token = lmsUser.Return(u => u.Token, string.Empty);
-
-            // probably it makes sence to call this method with company admin's token - for getting emails within one call
-            List<LmsUserDTO> users = this.canvasApi.GetUsersForCourse(credentials.LmsDomain, token, canvasCourseId);
-
-            // emails are now included in the above api call
-            // leaving code below for old-style support for getting user email (for example for students)
-            if (users.Any(x => string.IsNullOrEmpty(x.primary_email)))
-            {
-                IEnumerable<string> adminCourseUsers =
-                    users.Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
-                        .Select(u => u.id)
-                        .Distinct();
-                List<string> adminCourseTokens =
-                    adminCourseUsers.Select(u => this.LmsUserModel.GetOneByUserIdAndCompanyLms(u, credentials.Id).Value)
-                        .Where(v => v != null)
-                        .Select(v => v.Token)
-                        .Where(t => t != null)
-                        .ToList();
-                if (!adminCourseTokens.Contains(token))
-                {
-                    adminCourseTokens.Add(token);
-                }
-
-                if (credentials.AdminUser != null && credentials.AdminUser.Token != null
-                    && !adminCourseTokens.Contains(credentials.AdminUser.Token))
-                {
-                    adminCourseTokens.Add(credentials.AdminUser.Token);
-                }
-
-                foreach (LmsUserDTO user in users)
-                {
-                    if (string.IsNullOrEmpty(user.primary_email))
-                    {
-                        // todo: investigate cases(except when role=student) when API does not return emails and probably remove this code
-                        this.logger.InfoFormat(
-                            "[Canvas GetUsers] Api did not return email for user with id={}", 
-                            user.id);
-                        foreach (string adminToken in adminCourseTokens)
-                        {
-                            if (!string.IsNullOrEmpty(user.primary_email))
-                            {
-                                break;
-                            }
-
-                            this.canvasApi.AddMoreDetailsForUser(credentials.LmsDomain, adminToken, user);
-                        }
-                    }
-                }
-            }
-
-            return GroupUsers(users);
-        }
-
-        /// <summary>
-        /// The get desire 2 learn users.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="param">
-        /// The param.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The lms user id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetDesire2LearnUsers(
-            LmsCompany lmsCompany, 
-            LtiParamDTO param, 
-            string lmsUserId, 
-            out string error)
-        {
-            error = null; // todo: set when something is wrong
-            LmsUser lmsUser = lmsCompany.AdminUser;
-            if (lmsUser == null)
-            {
-                this.logger.WarnFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
-                lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    return new List<LmsUserDTO>();
-                }
-            }
-
-            if (string.IsNullOrEmpty(lmsUser.Token))
-            {
-                this.logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}", lmsUser.Id);
-                return new List<LmsUserDTO>();
-            }
-
-            string[] tokens = lmsUser.Token.Split(' ');
-            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-
-            // get course users list
-            var classlistEnrollments = d2lService.GetApiObjects<List<ClasslistUser>>(
-                tokens[0], 
-                tokens[1], 
-                param.lms_domain, 
-                string.Format(
-                    d2lService.EnrollmentsClasslistUrlFormat, 
-                    (string)this.settings.D2LApiVersion, 
-                    param.context_id));
-
-            // get enrollments - this information contains user roles
-            var enrollmentsList = new List<OrgUnitUser>();
-            PagedResultSet<OrgUnitUser> enrollments = null;
-            do
-            {
-                enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(
-                    tokens[0], 
-                    tokens[1], 
-                    param.lms_domain, 
-                    string.Format(
-                        d2lService.EnrollmentsUrlFormat, 
-                        (string)this.settings.D2LApiVersion, 
-                        param.context_id)
-                    + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
-                if (enrollments == null || enrollments.Items == null)
-                {
-                    error = "Incorrect API call or returned data. Please contact site administrator";
-                    this.logger.Error("[D2L Enrollments]: Object returned from API has null value");
-                    return new List<LmsUserDTO>();
-                }
-
-                enrollmentsList.AddRange(enrollments.Items);
-            }
-            while (enrollments.PagingInfo.HasMoreItems);
-
-            // mapping to LmsUserDTO
-            var result = new List<LmsUserDTO>();
-            if (classlistEnrollments != null)
-            {
-                // current user is admin and not enrolled to this course -> add him to user list
-                if (classlistEnrollments.All(x => x.Identifier != lmsUserId))
-                {
-                    var currentUserInfo = d2lService.GetApiObjects<WhoAmIUser>(
-                        tokens[0], 
-                        tokens[1], 
-                        param.lms_domain, 
-                        string.Format(d2lService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion));
-                    if (currentUserInfo != null)
-                    {
-                        classlistEnrollments.Add(
-                            new ClasslistUser
-                                {
-                                    Identifier = currentUserInfo.Identifier, 
-                                    Username = currentUserInfo.UniqueName, 
-                                    DisplayName = currentUserInfo.FirstName + " " + currentUserInfo.LastName
-                                });
-                    }
-                }
-
-                foreach (ClasslistUser enrollment in classlistEnrollments)
-                {
-                    OrgUnitUser userInfo =
-                        enrollmentsList.FirstOrDefault(e => e.User.Identifier == enrollment.Identifier);
-                    var user = new LmsUserDTO
-                                   {
-                                       id = enrollment.Identifier, 
-                                       login_id = enrollment.Username, 
-                                       name = enrollment.DisplayName, 
-                                       primary_email = enrollment.Email, 
-                                       lms_role = userInfo != null ? userInfo.Role.Name : "Unknown"
-                                   };
-                    result.Add(user);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// The get brain honey users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="moodleCourseId">
-        /// The Moodle course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetMoodleUsers(LmsCompany credentials, int moodleCourseId, out string error)
-        {
-            List<LmsUserDTO> users = this.moodleApi.GetUsersForCourse(credentials, moodleCourseId, out error);
-            return GroupUsers(users);
-        }
-
-        /// <summary>
         /// The get principal by login or email.
         /// </summary>
         /// <param name="principalCache">
@@ -2135,37 +1794,6 @@
             }
 
             return principal;
-        }
-
-        /// <summary>
-        /// The get brain honey users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private List<LmsUserDTO> GetSakaiUsers(LmsCompany credentials, LtiParamDTO param, out string error)
-        {
-            if (param != null)
-            {
-                List<LmsUserDTO> users = this.lti2Api.GetUsersForCourse(
-                    credentials, 
-                    param.ext_ims_lis_memberships_url ?? param.ext_ims_lti_tool_setting_url, 
-                    param.ext_ims_lis_memberships_id, 
-                    out error);
-                return GroupUsers(users);
-            }
-
-            error = "extra data is not set";
-            return new List<LmsUserDTO>();
         }
 
         /// <summary>

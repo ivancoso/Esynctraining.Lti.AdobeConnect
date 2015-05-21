@@ -91,25 +91,36 @@
             return ret;
         }
 
-        /// <summary>
-        /// The get users for course.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        public List<LmsUserDTO> GetUsersForCourse(string api, string usertoken, int courseid)
+        public LmsUserDTO GetCourseUser(string userId, string domain, string usertoken, int courseid)
+        {
+            var client = CreateRestClient(domain);
+
+            var link = string.Format(
+                // we can use many include parameters here: &include[]=email&include[]=enrollments.
+                // todo: investigate whether we can retrieve role information from enrollments param, it contains many fields. Then we'd not make api call for each role
+                    "/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
+                    courseid,
+                    userId);
+
+            RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
+
+            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
+
+            var result = response.Data;
+            if (result != null)
+            {
+                result.primary_email = result.email;
+//                result.lms_role = 
+            }
+
+            return result;
+
+        }
+
+        public List<LmsUserDTO> GetUsersForCourse(string domain, string usertoken, int courseid)
         {
             var ret = new List<LmsUserDTO>();
-            var client = CreateRestClient(api);
+            var client = CreateRestClient(domain);
 
             // ReSharper disable once RedundantNameQualifier
             foreach (string role in CanvasAPI.CanvasRoles)
@@ -120,11 +131,11 @@
                     "/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
                     courseid,
                     role,
-                    100);
+                    1000);
 
                 while (!string.IsNullOrEmpty(link))
                 {
-                    RestRequest request = CreateRequest(api, link, Method.GET, usertoken);
+                    RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
 
                     IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
 

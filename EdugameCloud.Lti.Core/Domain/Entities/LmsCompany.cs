@@ -118,9 +118,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
-        /// <summary>
-        /// Gets or sets the LMS provider.
-        /// </summary>
+        public virtual int LmsProviderId { get; set; }
         public virtual LmsProvider LmsProvider { get; set; }
 
         /// <summary>
@@ -252,6 +250,16 @@ namespace EdugameCloud.Lti.Domain.Entities
                 {
                     setting.Value = value.ToString();
                 }
+            }
+        }
+
+        public virtual bool UseSynchronizedUsers
+        {
+            get
+            {
+                bool useSynchronizedUsers = false;
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "UseSynchronizedUsers", true) == 0);
+                return setting != null && bool.TryParse(setting.Value, out useSynchronizedUsers) && useSynchronizedUsers;
             }
         }
 

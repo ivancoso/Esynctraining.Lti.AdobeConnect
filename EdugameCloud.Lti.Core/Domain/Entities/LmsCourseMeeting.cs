@@ -58,6 +58,8 @@
         /// </summary>
         public virtual LmsUser Owner { get; set; }
 
+        public virtual IList<LmsUser> Users { get; protected set; }
+
         #endregion
 
         #region Public Methods and Operators

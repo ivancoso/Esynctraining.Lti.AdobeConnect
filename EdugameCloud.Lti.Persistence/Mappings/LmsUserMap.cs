@@ -22,10 +22,16 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.PrimaryColor).Nullable();
             this.Map(x => x.AcConnectionMode).Default("0");
             this.Map(x => x.PrincipalId).Nullable();
+            this.Map(x => x.Name).Nullable().Length(100);
+            this.Map(x => x.Email).Nullable().Length(100);
+            this.Map(x => x.UserIdExtended).Nullable().Length(50);
+            this.Map(x => x.LmsRole).Nullable().Length(50);
 
             this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
 
             this.HasMany(x => x.LmsUserParameters).KeyColumn("lmsUserId").Cascade.Delete().Inverse();
+
+            HasManyToMany(x => x.Meetings).Cascade.All().Inverse().Table("LmsUserMeeting");
         }
 
         #endregion

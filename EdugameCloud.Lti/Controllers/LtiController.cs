@@ -801,7 +801,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 string error;
-                List<LmsUserDTO> users = this.usersSetup.UpdateUser(
+                var updatedUser = this.usersSetup.UpdateUser(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     session.LtiSession.LtiParam,
@@ -810,7 +810,7 @@ namespace EdugameCloud.Lti.Controllers
                     out error);
 
                 if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(users.Where(x => x.id == user.id).ToList()));
+                    return Json(OperationResult.Success(new[] { updatedUser }));
 
                 return Json(OperationResult.Error(error));
             }

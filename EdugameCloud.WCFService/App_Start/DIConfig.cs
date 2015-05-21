@@ -1,4 +1,8 @@
-﻿namespace EdugameCloud.WCFService
+﻿using EdugameCloud.Lti.API.Sakai;
+using EdugameCloud.Lti.Canvas;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.WCFService
 {
     using System;
     using System.Configuration;
@@ -158,6 +162,13 @@
 
             container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
 
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BlackboardLmsUserService>().Named(LmsProviderEnum.Blackboard.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BrainHoneyLmsUserService>().Named(LmsProviderEnum.BrainHoney.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<CanvasLmsUserService>().Named(LmsProviderEnum.Canvas.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserService>().Named(LmsProviderEnum.Desire2Learn.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<MoodleLmsUserService>().Named(LmsProviderEnum.Moodle.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
+            
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
         }

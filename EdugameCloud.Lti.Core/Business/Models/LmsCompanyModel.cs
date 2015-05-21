@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Core.Business.Models
+﻿using System.Linq;
+
+namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System.Collections.Generic;
     using EdugameCloud.Lti.Domain.Entities;
@@ -122,6 +124,26 @@
             return this.Repository.FindAll(defaultQuery);
         }
 
+        public void UpdateCompanySetting(LmsCompany lmsCompany, string settingName, string settingValue)
+        {
+            if ((lmsCompany.Id == default(int)) && (lmsCompany.Settings == null))
+                lmsCompany.Settings = new List<LmsCompanySetting>();
+
+            LmsCompanySetting setting = lmsCompany.Settings.SingleOrDefault(x => string.Compare(x.Name, settingName, true) == 0);
+            if (setting == null)
+            {
+                lmsCompany.Settings.Add(new LmsCompanySetting
+                {
+                    LmsCompany = lmsCompany,
+                    Name = settingName,
+                    Value = settingValue,
+                });
+            }
+            else
+            {
+                setting.Value = settingValue;
+            }
+        }
 
         #endregion
     }

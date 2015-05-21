@@ -3,7 +3,7 @@
 namespace EdugameCloud.Lti
 {
     //[DataContract]
-    public class OperationResult
+    public class OperationResult<T>
     {
         //[DataMember(Name = "isSuccess")]
         public bool isSuccess { get; set; }
@@ -12,14 +12,47 @@ namespace EdugameCloud.Lti
         public string message { get; set; }
 
         //[DataMember(Name = "data")]
-        public object data { get; set; }
+        public T data { get; set; }
 
 
-        public static OperationResult Error(string errorMessage)
+        public static OperationResult<T> Error(string errorMessage)
         {
-            return new OperationResult 
+            return new OperationResult<T>
             {
                 isSuccess = false, 
+                message = errorMessage,
+            };
+        }
+
+        public static OperationResult<T> Success()
+        {
+            return new OperationResult<T> 
+            {
+                isSuccess = true,
+                message = string.Empty,
+            };
+        }
+
+        public static OperationResult<T> Success(T data)
+        {
+            return new OperationResult<T>
+            {
+                isSuccess = true,
+                message = string.Empty,
+                data = data,
+            };
+        }
+
+    }
+
+    //[DataContract]
+    public class OperationResult : OperationResult<object>
+    {
+        public static OperationResult Error(string errorMessage)
+        {
+            return new OperationResult
+            {
+                isSuccess = false,
                 message = errorMessage,
             };
         }
@@ -42,7 +75,6 @@ namespace EdugameCloud.Lti
                 data = data,
             };
         }
-
     }
 
 }

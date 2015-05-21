@@ -114,6 +114,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private LmsFactory LmsFactory
+        {
+            get
+            {
+                return IoC.Resolve<LmsFactory>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -641,14 +649,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (lmsCompany.LmsProvider.Id == (int)LmsProviderEnum.Blackboard)
                 {
                     string error;
-                    var users = this.UsersSetup.GetLMSUsers(
-                        lmsCompany,
-                        currentMeeting,
+
+                    var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                    var currentUser = lmsUserService.GetUser(lmsCompany, lmsUser, currentMeeting,
                         param.lms_user_id,
                         param.course_id,
                         out error,
                         param);
-                    var currentUser = users.FirstOrDefault(u => u.lti_id == param.lms_user_id);
+
                     if (currentUser != null)
                     {
                         wstoken = currentUser.id;
