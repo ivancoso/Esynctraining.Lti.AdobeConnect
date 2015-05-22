@@ -222,6 +222,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual IList<LmsCompanySetting> Settings { get; set; }
 
+        public virtual IList<LmsCompanyRoleMapping> RoleMappings { get; set; }
+
         public virtual bool DenyACUserCreation
         {
             get
@@ -263,6 +265,11 @@ namespace EdugameCloud.Lti.Domain.Entities
         }
 
         #endregion
+
+        public LmsCompany()
+        {
+            RoleMappings = new List<LmsCompanyRoleMapping>();
+        }
 
     }
 

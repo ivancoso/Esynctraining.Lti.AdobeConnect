@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
@@ -17,6 +18,7 @@
         /// </summary>
         public CompanyLmsDTO()
         {
+            roleMapping = new LmsCompanyRoleMappingDTO[0];
         }
 
         /// <summary>
@@ -68,6 +70,7 @@
                 this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
                 this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
                 this.useSynchronizedUsers = instance.UseSynchronizedUsers;
+                this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole)).ToArray();
             }
         }
 
@@ -281,6 +284,8 @@
         [DataMember]
         public bool useSynchronizedUsers { get; set; }
 
+        [DataMember]
+        public LmsCompanyRoleMappingDTO[] roleMapping { get; set; }
     }
 
 }

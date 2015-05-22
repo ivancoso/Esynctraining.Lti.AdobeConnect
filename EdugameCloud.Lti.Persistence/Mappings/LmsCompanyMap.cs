@@ -58,6 +58,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.LmsCourseMeetings).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.Settings).KeyColumn("lmsCompanyId").Cascade.All().Inverse();
+            this.HasMany(x => x.RoleMappings).KeyColumn("lmsCompanyId").Cascade.AllDeleteOrphan().Inverse();            
         }
 
         #endregion

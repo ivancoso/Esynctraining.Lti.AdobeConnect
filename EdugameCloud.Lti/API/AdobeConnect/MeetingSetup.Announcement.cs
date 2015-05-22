@@ -11,7 +11,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public sealed partial class MeetingSetup
     {
-        private readonly Dictionary<LmsMeetingType, string> meetingNames = new Dictionary<LmsMeetingType, string>
+        private static readonly Dictionary<LmsMeetingType, string> meetingNames = new Dictionary<LmsMeetingType, string>
         {
             {LmsMeetingType.Meeting, "Adobe Connect"}, 
             {LmsMeetingType.OfficeHours, "Office Hours"}, 

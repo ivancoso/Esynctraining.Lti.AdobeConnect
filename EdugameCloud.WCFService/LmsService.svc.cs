@@ -109,6 +109,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsCompanyRoleMappingModel>();
+            }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -163,7 +171,9 @@ namespace EdugameCloud.WCFService
                             : p.ConfigurationUrl,
 
                             instructionsUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, p.ShortName),
+                            defaultRoleMapping = LmsCompanyRoleMappingModel.GetDefaultMapping(p.Id).ToArray(),
                         };
+
                         pdto.nameWithoutSpaces = pdto.lmsProviderName.Replace(" ", string.Empty);
                         return pdto;
                     }).ToArray();

@@ -105,6 +105,7 @@
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="Mappings\AcCachePrincipalMap.cs" />
     <Compile Include="Mappings\LmsCompanyMap.cs" />
+    <Compile Include="Mappings\LmsCompanyRoleMappingMap.cs" />
     <Compile Include="Mappings\LmsCompanySetting.cs" />
     <Compile Include="Mappings\LmsCourseMeetingMap.cs" />
     <Compile Include="Mappings\LmsProviderMap.cs" />

@@ -32,20 +32,20 @@ namespace EdugameCloud.Lti.API
             if (users != null && users.Any())
             {
                 var order = new List<string>
-                                {
-                                    "owner", 
-                                    "author", 
-                                    "course builder", 
-                                    "teacher", 
-                                    "instructor", 
-                                    "teaching assistant", 
-                                    "ta", 
-                                    "designer", 
-                                    "student", 
-                                    "learner", 
-                                    "reader", 
-                                    "guest"
-                                };
+                {
+                    "owner", 
+                    "author", 
+                    "course builder", 
+                    "teacher", 
+                    "instructor", 
+                    "teaching assistant", 
+                    "ta", 
+                    "designer", 
+                    "student", 
+                    "learner", 
+                    "reader", 
+                    "guest",
+                };
                 users = users.GroupBy(u => u.id).Select(
                     ug =>
                     {
@@ -53,7 +53,7 @@ namespace EdugameCloud.Lti.API
                         {
                             string role = orderRole;
                             LmsUserDTO userDTO =
-                                ug.FirstOrDefault(u => u.lms_role.Equals(role, StringComparison.OrdinalIgnoreCase));
+                                ug.FirstOrDefault(u => role.Equals(u.lms_role, StringComparison.OrdinalIgnoreCase));
                             if (userDTO != null)
                             {
                                 return userDTO;

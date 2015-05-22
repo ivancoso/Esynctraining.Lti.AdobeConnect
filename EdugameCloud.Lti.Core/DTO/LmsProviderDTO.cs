@@ -65,6 +65,11 @@
         [DataMember]
         public string instructionsUrl { get; set; }
 
+        [DataMember]
+        public LmsCompanyRoleMappingDTO[] defaultRoleMapping { get; set; }
+
         #endregion
+
     }
+
 }

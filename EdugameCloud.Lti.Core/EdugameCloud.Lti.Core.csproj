@@ -183,6 +183,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\Models\AcCachePrincipalModel.cs" />
+    <Compile Include="Business\Models\LmsCompanyRoleMappingModel.cs" />
     <Compile Include="Business\Models\LmsCompanyModel.cs" />
     <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
@@ -195,7 +196,9 @@
     <Compile Include="Constants\HttpScheme.cs" />
     <Compile Include="Domain\Entities\AcCachePrincipal.cs" />
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
+    <Compile Include="Domain\Entities\AcRole.cs" />
     <Compile Include="Domain\Entities\LmsCompany.cs" />
+    <Compile Include="Domain\Entities\LmsCompanyRoleMapping.cs" />
     <Compile Include="Domain\Entities\LmsCompanySetting.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
     <Compile Include="Domain\Entities\LmsMeetingType.cs" />
@@ -225,6 +228,7 @@
     <Compile Include="DTO\LmsQuestionFileDTO.cs" />
     <Compile Include="DTO\LmsQuizDTO.cs" />
     <Compile Include="DTO\LmsQuizInfoDTO.cs" />
+    <Compile Include="DTO\LmsCompanyRoleMappingDTO.cs" />
     <Compile Include="DTO\LmsSettingsDTO.cs" />
     <Compile Include="DTO\LmsUserDTO.cs" />
     <Compile Include="DTO\LmsUserParametersDTO.cs" />

@@ -461,6 +461,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Applications\SocialNotifier\app.config" />
+    <Content Include="lms.companyRoleMapping.cfg.json" />
     <None Include="Properties\PublishProfiles\EdugameCloud.pubxml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

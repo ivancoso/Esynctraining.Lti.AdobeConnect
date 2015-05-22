@@ -2,6 +2,8 @@
 namespace EdugameCloud.WCFService
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using Castle.Core.Logging;
@@ -208,6 +210,10 @@ namespace EdugameCloud.WCFService
             return new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// The update adobe connect folder.
         /// </summary>
@@ -369,10 +375,6 @@ namespace EdugameCloud.WCFService
             return result.Success;
         }
 
-        #endregion
-
-        #region Methods
-
         /// <summary>
         /// The convert DTO.
         /// </summary>
@@ -433,6 +435,37 @@ namespace EdugameCloud.WCFService
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
             LmsCompanyModel.UpdateCompanySetting(instance, "UseSynchronizedUsers", dto.useSynchronizedUsers.ToString());
+            var oldMapsToDelete = new List<LmsCompanyRoleMapping>();
+            foreach (LmsCompanyRoleMapping old in instance.RoleMappings)
+            {
+                var newSetRole = dto.roleMapping.FirstOrDefault(x => x.lmsRoleName == old.LmsRoleName);
+                if (newSetRole == null)
+                {
+                    oldMapsToDelete.Add(old);
+                }
+                else
+                {
+                    old.AcRole = newSetRole.acRole;
+                }
+            }
+            if (oldMapsToDelete.Count > 0)
+                foreach (var item in oldMapsToDelete)
+                    instance.RoleMappings.Remove(item);
+
+            foreach (LmsCompanyRoleMappingDTO newRole in dto.roleMapping)
+            {
+                if (!instance.RoleMappings.Any(map => map.LmsRoleName == newRole.lmsRoleName))
+                {
+                    var map = new LmsCompanyRoleMapping
+                    {
+                        LmsCompany = instance,
+                        LmsRoleName = newRole.lmsRoleName,
+                        AcRole = newRole.acRole,
+                    };
+                    instance.RoleMappings.Add(map);
+                }
+            }
+
             return instance;
         }
 
