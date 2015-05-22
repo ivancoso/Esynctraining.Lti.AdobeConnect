@@ -1,12 +1,10 @@
 ﻿namespace EdugameCloud.MVC.ViewModels
 {
+    using System;
     using System.Threading;
     using System.Web.Mvc;
-
     using EdugameCloud.MVC.Attributes;
-
     using Esynctraining.Core.Extensions;
-
     using BaseController = EdugameCloud.MVC.Controllers.BaseController;
 
     /// <summary>
@@ -111,7 +109,15 @@
         {
             get
             {
-                return this.Settings == null ? string.Empty : this.Settings.BasePath;
+                if (this.Settings == null)
+                    return string.Empty;
+
+                var uriBuilder = new UriBuilder(this.Settings.BasePath)
+                {
+                    Scheme = controller.Request.Url.Scheme,
+                    Port = -1, // TRICK: don't add port to url
+                };
+                return uriBuilder.ToString();
             }
         }
 
