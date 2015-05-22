@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using NHibernate.SqlCommand;
 
 namespace EdugameCloud.Lti.Core.Business.Models
 {
@@ -143,6 +144,20 @@ namespace EdugameCloud.Lti.Core.Business.Models
             {
                 setting.Value = settingValue;
             }
+        }
+
+        public List<LmsCompany> GetAllWithLmsCourseMeeting()
+        {
+            LmsCourseMeeting m = null;
+            LmsCompany lc = null;
+            LmsCompanySetting lcs = null;
+            LmsUser u = null;
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>()
+                .GetQueryOver(() => lc)
+                .JoinAlias(() => lc.Settings, () => lcs, JoinType.InnerJoin).Where(() => lcs.Name == "UseSynchronizedUsers" && lcs.Value == "True")
+                .JoinAlias(() => lc.AdminUser, () => u, JoinType.InnerJoin);
+
+            return this.Repository.FindAll(defaultQuery).ToList();
         }
 
         #endregion

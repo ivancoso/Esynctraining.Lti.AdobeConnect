@@ -23,6 +23,12 @@ namespace EdugameCloud.Lti.API
             return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
                 .FirstOrDefault(u => u.id == lmsUserId);
         }
+
+        public virtual bool CanRetrieveUsersFromApiForCompany(LmsCompany company)
+        {
+            return company.AdminUser != null;
+        }
+
         public abstract OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting, LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false);
 
         public abstract List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, string userId, int courseId, out string error, bool forceUpdate = false, object param = null);

@@ -38,6 +38,11 @@ namespace EdugameCloud.Lti.BlackBoard
                 .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
         }
 
+        public override bool CanRetrieveUsersFromApiForCompany(LmsCompany lmsCompany)
+        {
+            return lmsCompany.AdminUser != null || (lmsCompany.EnableProxyToolMode.GetValueOrDefault() && lmsCompany.ProxyToolSharedPassword != null);
+        }
+
         public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {

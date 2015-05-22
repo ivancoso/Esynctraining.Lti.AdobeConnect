@@ -104,13 +104,17 @@
 
             RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
 
-            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
+            IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
 
             var result = response.Data;
             if (result != null)
             {
                 result.primary_email = result.email;
-//                result.lms_role = 
+                var enrollment = result.enrollments.FirstOrDefault(x => x.course_id == courseid);
+                if (enrollment != null)
+                {
+                    result.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
+                }
             }
 
             return result;
