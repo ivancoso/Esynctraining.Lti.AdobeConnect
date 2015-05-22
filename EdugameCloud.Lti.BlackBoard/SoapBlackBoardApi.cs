@@ -368,12 +368,6 @@ namespace EdugameCloud.Lti.BlackBoard
                     return null;
                 }
 
-                client.initialize_v1();
-                if (HadError(client, out error))
-                {
-                    return null;
-                }
-
                 if (client.loginTool(password))
                 {
                     return client;
