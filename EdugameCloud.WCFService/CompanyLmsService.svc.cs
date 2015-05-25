@@ -435,6 +435,14 @@ namespace EdugameCloud.WCFService
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
             LmsCompanyModel.UpdateCompanySetting(instance, "UseSynchronizedUsers", dto.useSynchronizedUsers.ToString());
+
+            ProcessRoleMapping(dto, instance);
+
+            return instance;
+        }
+
+        private static void ProcessRoleMapping(CompanyLmsDTO dto, LmsCompany instance)
+        {
             var oldMapsToDelete = new List<LmsCompanyRoleMapping>();
             foreach (LmsCompanyRoleMapping old in instance.RoleMappings)
             {
@@ -461,12 +469,11 @@ namespace EdugameCloud.WCFService
                         LmsCompany = instance,
                         LmsRoleName = newRole.lmsRoleName,
                         AcRole = newRole.acRole,
+                        IsDefaultLmsRole = newRole.isDefaultLmsRole,
                     };
                     instance.RoleMappings.Add(map);
                 }
             }
-
-            return instance;
         }
 
         #endregion

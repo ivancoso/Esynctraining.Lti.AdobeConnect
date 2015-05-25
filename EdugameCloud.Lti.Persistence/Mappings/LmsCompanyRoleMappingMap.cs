@@ -10,6 +10,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.References(x => x.LmsCompany).Column("lmsCompanyId").Not.Nullable();
             this.Map(x => x.LmsRoleName).Not.Nullable();
             this.Map(x => x.AcRole).Not.Nullable();
+            this.Map(x => x.IsDefaultLmsRole).Not.Nullable();
         }
     }
 }

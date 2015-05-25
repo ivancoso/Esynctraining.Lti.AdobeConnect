@@ -883,6 +883,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingDTO meetingDTO,
             object extraData = null)
         {
+            if (lmsCompany == null)
+                throw new ArgumentNullException("lmsCompany");
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+            if (param == null)
+                throw new ArgumentNullException("param");
+            if (meetingDTO == null)
+                throw new ArgumentNullException("meetingDTO");
+
             FixMeetingDTOFields(meetingDTO, param);
             
             int type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;

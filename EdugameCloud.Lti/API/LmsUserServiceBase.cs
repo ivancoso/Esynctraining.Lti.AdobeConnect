@@ -33,6 +33,8 @@ namespace EdugameCloud.Lti.API
 
         public abstract List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, string userId, int courseId, out string error, bool forceUpdate = false, object param = null);
 
+
+        // TODO: ROLEMAPPING
         protected List<LmsUserDTO> GroupUsers(List<LmsUserDTO> users)
         {
             if (users != null && users.Any())

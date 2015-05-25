@@ -42,8 +42,7 @@
             AdobeConnectProvider provider, 
             string meetingScoId, 
             LmsUserDTO user, 
-            string principalId, 
-            bool ignoreAC = false);
+            string principalId);
 
         LmsUserDTO UpdateUser(
             LmsCompany lmsCompany, 
@@ -714,9 +713,11 @@
         public bool IsTeacher(LtiParamDTO param)
         {
             return param.roles != null
-                   && (param.roles.Contains("Instructor") || param.roles.Contains("Administrator")
-                       || param.roles.Contains("Course Director") || param.roles.Contains("CourseDirector")
-                       || param.roles.Contains("Lecture"));
+                   && (param.roles.Contains("Instructor") 
+                   || param.roles.Contains("Administrator")
+                   || param.roles.Contains("Course Director")
+                   || param.roles.Contains("CourseDirector")
+                   || param.roles.Contains("Lecture"));
         }
 
         /// <summary>
@@ -965,12 +966,12 @@
         /// <param name="ignoreAC">
         /// The ignore AC
         /// </param>
+        // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions(
             AdobeConnectProvider provider, 
             string meetingScoId, 
             LmsUserDTO u, 
-            string principalId, 
-            bool ignoreAC = false)
+            string principalId)
         {
             var permission = MeetingPermissionId.view;
             u.ac_role = "Participant";
@@ -993,11 +994,6 @@
             {
                 u.ac_role = "Presenter";
                 permission = MeetingPermissionId.mini_host;
-            }
-
-            if (ignoreAC)
-            {
-                return;
             }
 
             if (!string.IsNullOrWhiteSpace(principalId) && !string.IsNullOrWhiteSpace(meetingScoId))
@@ -1031,6 +1027,7 @@
         /// <param name="hostPrincipals">
         /// The host principals.
         /// </param>
+        // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions2(
             AdobeConnectProvider provider, 
             string meetingScoId, 

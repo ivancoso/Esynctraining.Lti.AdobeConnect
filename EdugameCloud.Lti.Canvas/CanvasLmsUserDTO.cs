@@ -6,7 +6,7 @@ namespace EdugameCloud.Lti.Canvas
     /// <summary>
     /// todo: temporary class, will be updated
     /// </summary>
-    public class CanvasLmsUserDTO : LmsUserDTO
+    internal sealed class CanvasLmsUserDTO : LmsUserDTO
     {
         public List<CanvasEnrollment> enrollments { get; set; } 
     }

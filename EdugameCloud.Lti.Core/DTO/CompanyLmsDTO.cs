@@ -70,7 +70,7 @@
                 this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
                 this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
                 this.useSynchronizedUsers = instance.UseSynchronizedUsers;
-                this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole)).ToArray();
+                this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
             }
         }
 

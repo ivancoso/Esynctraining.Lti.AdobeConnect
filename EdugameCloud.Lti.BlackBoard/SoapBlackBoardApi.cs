@@ -534,11 +534,14 @@ namespace EdugameCloud.Lti.BlackBoard
             var role =
                 availableRoles.FirstOrDefault(x => x.roleIdentifier.Equals(roleId, StringComparison.OrdinalIgnoreCase))
                 .Return(x => x.courseRoleDescription, string.Empty)
-                .ToLowerInvariant()
+                // NOTE: we need to have original role name .ToLowerInvariant()
                 .Trim(':')
                 .Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-                .IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
-            return Inflector.Capitalize(role);
+                .LastOrDefault();
+                //.IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
+            //return Inflector.Capitalize(role);
+
+            return role;
         }
 
         /// <summary>

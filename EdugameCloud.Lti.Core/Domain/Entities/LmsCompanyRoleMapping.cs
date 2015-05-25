@@ -10,6 +10,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual int AcRole { get; set; }
 
+        public virtual bool IsDefaultLmsRole { get; set; }
+
     }
 
 }
