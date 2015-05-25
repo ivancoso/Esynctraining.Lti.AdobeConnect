@@ -208,7 +208,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
+    <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />
     <Compile Include="API\AdobeConnect\IPrincipalCache.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.Announcement.cs" />

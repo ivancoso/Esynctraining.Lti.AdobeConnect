@@ -56,6 +56,7 @@ namespace EdugameCloud.Lti.Controllers
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
         private readonly ICanvasAPI canvasApi;
+        private IAdobeConnectUserService acUserService;
 
         #endregion
 
@@ -69,6 +70,7 @@ namespace EdugameCloud.Lti.Controllers
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
             ICanvasAPI canvasApi,
+            IAdobeConnectUserService acUserService,
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
@@ -79,6 +81,7 @@ namespace EdugameCloud.Lti.Controllers
             this.usersSetup = usersSetup;
             this.canvasApi = canvasApi;
             this.logger = logger;
+            this.acUserService = acUserService;
         }
 
         #endregion
@@ -534,7 +537,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 OperationResult result = this.meetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
 
-                return Json(result);
+                return Json(result.isSuccess ? true : (object)result);
             }
             catch (Exception ex)
             {
@@ -671,7 +674,7 @@ namespace EdugameCloud.Lti.Controllers
                             return null;
                         }
 
-                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
                             adobeConnectProvider,
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,
@@ -693,7 +696,7 @@ namespace EdugameCloud.Lti.Controllers
                             return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
                         }
 
-                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
                             adobeConnectProvider,
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,
@@ -705,7 +708,7 @@ namespace EdugameCloud.Lti.Controllers
                     case LmsProviderNames.Blackboard:
                     case LmsProviderNames.Moodle:
                     case LmsProviderNames.Sakai:
-                        acPrincipal = this.usersSetup.GetOrCreatePrincipal(
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
                             adobeConnectProvider,
                             param.lms_user_login,
                             param.lis_person_contact_email_primary,

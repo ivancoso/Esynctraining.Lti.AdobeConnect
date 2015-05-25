@@ -1,10 +1,10 @@
-﻿using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
+﻿using Castle.Facilities.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using EdugameCloud.Lti.AdobeConnect.Caching;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.API.Common;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.BlackBoard;
@@ -13,63 +13,30 @@ using EdugameCloud.Lti.Canvas;
 using EdugameCloud.Lti.Desire2Learn;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Moodle;
-using EdugameCloud.Lti.Web.Providers;
+using EdugameCloud.Persistence;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
-namespace EdugameCloud.Lti.Web
+namespace EdugameCloud.Lti.LmsUserUpdater
 {
-    /// <summary>
-    /// The MVC application.
-    /// </summary>
-    public class MvcApplication : HttpApplication
+    internal static class IoCStart
     {
-        /// <summary>
-        /// The application_ end.
-        /// </summary>
-        protected void Application_End()
-        {
-            IoC.Container.Dispose();
-        }
-
-        /// <summary>
-        /// The application_ start.
-        /// </summary>
-        protected void Application_Start()
+        public static void Init()
         {
             var container = new WindsorContainer();
             IoC.Initialize(container);
-            DiConfig.RegisterComponents(container);
+            container.RegisterComponents(console: true);
             RegisterLtiComponents(container);
-            SetControllerFactory(container);
-            AreaRegistration.RegisterAllAreas();
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
+
+            container.Register(Component.For<ILog>().ImplementedBy<ConsoleLog>());
         }
 
-        /// <summary>
-        /// The register LTI components.
-        /// </summary>
-        /// <param name="container">
-        /// The container.
-        /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").Pick()
                 .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
-
-            // TODO: every LMS
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BrainHoney").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Canvas").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-
-            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
-            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>());
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-
             container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>().LifestyleTransient());
 
             container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
@@ -83,7 +50,11 @@ namespace EdugameCloud.Lti.Web
 
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
             container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
+            container.Register(Component.For<LTI2Api>().ImplementedBy<LTI2Api>().Named("SakaiAPI"));
 
+            container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
+
+            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BlackboardLmsUserService>().Named(LmsProviderEnum.Blackboard.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BrainHoneyLmsUserService>().Named(LmsProviderEnum.BrainHoney.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<CanvasLmsUserService>().Named(LmsProviderEnum.Canvas.ToString()));
@@ -91,20 +62,8 @@ namespace EdugameCloud.Lti.Web
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<MoodleLmsUserService>().Named(LmsProviderEnum.Moodle.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
             container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
-
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }
 
-        /// <summary>
-        /// The set controller factory.
-        /// </summary>
-        /// <param name="container">
-        /// The container.
-        /// </param>
-        private static void SetControllerFactory(IWindsorContainer container)
-        {
-            var controllerFactory = new WindsorControllerFactory(container);
-            ControllerBuilder.Current.SetControllerFactory(controllerFactory);
-        }
     }
+
 }

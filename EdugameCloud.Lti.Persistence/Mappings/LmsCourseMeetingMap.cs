@@ -26,7 +26,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
             this.References(x => x.OfficeHours).Nullable();
             this.References(x => x.Owner).Column("ownerId").Nullable();
-            HasManyToMany(x => x.Users).LazyLoad().Cascade.All().Table("LmsUserMeeting");
+            HasMany(x => x.MeetingRoles).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
         }
 
         #endregion

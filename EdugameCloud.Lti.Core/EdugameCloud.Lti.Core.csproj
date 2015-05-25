@@ -207,6 +207,7 @@
     <Compile Include="Domain\Entities\LmsProviderNames.cs" />
     <Compile Include="Domain\Entities\LmsQuestionType.cs" />
     <Compile Include="Domain\Entities\LmsUser.cs" />
+    <Compile Include="Domain\Entities\LmsUserMeetingRole.cs" />
     <Compile Include="Domain\Entities\LmsUserParameters.cs" />
     <Compile Include="Domain\Entities\LmsUserSession.cs" />
     <Compile Include="Domain\Entities\MoodleDataset.cs" />

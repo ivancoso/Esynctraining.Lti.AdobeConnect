@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EdugameCloud.Lti.Core.Domain.Entities;
 using Esynctraining.Core.Domain.Entities;
 
 namespace EdugameCloud.Lti.Domain.Entities
@@ -60,15 +61,12 @@ namespace EdugameCloud.Lti.Domain.Entities
         // Currently it's not implemented and not used, guid is stored in UserId parameter
         public virtual string UserIdExtended { get; set; }
 
-        //todo: move to lmsusermeeting
-        public virtual string LmsRole { get; set; }
-
         /// <summary>
         /// Gets or sets the LMS user parameters.
         /// </summary>
         public virtual IList<LmsUserParameters> LmsUserParameters { get; protected set; }
 
-        public virtual IList<LmsCourseMeeting> Meetings { get; protected set; }
+        public virtual IList<LmsUserMeetingRole> MeetingRoles { get; protected set; }
 
         #endregion
     }

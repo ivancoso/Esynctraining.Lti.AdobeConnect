@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Domain.Entities
+﻿using EdugameCloud.Lti.Core.Domain.Entities;
+
+namespace EdugameCloud.Lti.Domain.Entities
 {
     using System;
     using System.Collections.Generic;
@@ -58,7 +60,7 @@
         /// </summary>
         public virtual LmsUser Owner { get; set; }
 
-        public virtual IList<LmsUser> Users { get; protected set; }
+        public virtual IList<LmsUserMeetingRole> MeetingRoles { get; protected set; }
 
         #endregion
 

@@ -62,53 +62,16 @@
     /// </summary>
     public class UsersSetup : IUsersSetup
     {
-        #region Static Fields
-
-        /// <summary>
-        ///     The locker.
-        /// </summary>
-        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
-
-        #endregion
-
         #region Fields
-
-        /// <summary>
-        /// The canvas api.
-        /// </summary>
-        private readonly IEGCEnabledCanvasAPI canvasApi;
-
-        /// <summary>
-        /// The dlap api.
-        /// </summary>
-        private readonly IBrainHoneyApi dlapApi;
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
-        private readonly ILogger logger;
-
-        /// <summary>
-        /// The lti 2 api.
-        /// </summary>
-        private readonly LTI2Api lti2Api;
-
-        /// <summary>
-        /// The moodle api.
-        /// </summary>
-        private readonly IMoodleApi moodleApi;
 
         /// <summary>
         /// The settings.
         /// </summary>
         private readonly dynamic settings;
 
-        /// <summary>
-        /// The soap api.
-        /// </summary>
-        private readonly IBlackBoardApi soapApi;
-
         private readonly LmsFactory lmsFactory;
+
+        private IAdobeConnectUserService acUserService;
 
         #endregion
 
@@ -139,23 +102,13 @@
         /// The logger.
         /// </param>
         public UsersSetup(
-            IBrainHoneyApi dlapApi, 
-            IBlackBoardApi soapApi, 
-            IMoodleApi moodleApi, 
-            LTI2Api lti2Api, 
-            IEGCEnabledCanvasAPI canvasApi, 
             ApplicationSettingsProvider settings,
             LmsFactory lmsFactory,
-            ILogger logger)
+            IAdobeConnectUserService acUserService)
         {
-            this.dlapApi = dlapApi;
-            this.soapApi = soapApi;
-            this.moodleApi = moodleApi;
-            this.lti2Api = lti2Api;
-            this.canvasApi = canvasApi;
             this.settings = settings;
             this.lmsFactory = lmsFactory;
-            this.logger = logger;
+            this.acUserService = acUserService;
         }
 
         #endregion
@@ -298,16 +251,16 @@
             object extraData = null, 
             bool forceUpdate = false)
         {
-            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.Users != null)
+            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null)
             {
-                var userDtos = meeting.Users.Select(x=>new LmsUserDTO
+                var userDtos = meeting.MeetingRoles.Select(x=>new LmsUserDTO
                 {
-                    ac_id = x.PrincipalId,
-                    id = x.UserId,
-                    lti_id = x.UserId,
-                    login_id = x.Username,
-                    name = x.Name,
-                    primary_email = x.Email,
+                    ac_id = x.User.PrincipalId,
+                    id = x.User.UserId,
+                    lti_id = x.User.UserId,
+                    login_id = x.User.Username,
+                    name = x.User.Name,
+                    primary_email = x.User.Email,
                     lms_role = x.LmsRole
                 });
 
@@ -382,56 +335,6 @@
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// </exception>
-        public Principal GetOrCreatePrincipal(
-            AdobeConnectProvider provider, 
-            string login, 
-            string email, 
-            string firstName, 
-            string lastName, 
-            LmsCompany lmsCompany)
-        {
-            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
-            bool denyUserCreation = lmsCompany.DenyACUserCreation;
-            Principal principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
-
-            if (principal == null && !denyUserCreation)
-            {
-                var setup = new PrincipalSetup
-                                {
-                                    Email = string.IsNullOrWhiteSpace(email) ? null : email, 
-                                    FirstName = firstName, 
-                                    LastName = lastName, 
-                                    Name = login, 
-                                    Login = login, 
-                                    Type = PrincipalTypes.user, 
-                                };
-
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
-
-                if (!pu.Success)
-                {
-                    string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", firstName, lastName, login, email);
-                    if (pu.Status.UnderlyingExceptionInfo != null)
-                    {
-                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Additional Data: {0}", additionalData), pu.Status.UnderlyingExceptionInfo);
-                    }
-
-                    if (!string.IsNullOrEmpty(pu.Status.InvalidField))
-                    {
-                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Invalid Field: {0}. Additional Data: {1}", pu.Status.InvalidField, additionalData));
-                    }
-
-                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Status.Code: {0}. Additional Data: {1}", pu.Status.Code, additionalData));
-                }
-
-                if (pu.Principal != null)
-                {
-                    principal = pu.Principal;
-                }
-            }
-
-            return principal;
-        }
 
         /// <summary>
         /// The get or create principal 2.
@@ -460,56 +363,7 @@
         /// <returns>
         /// The <see cref="Principal"/>.
         /// </returns>
-        public Principal GetOrCreatePrincipal2(
-            AdobeConnectProvider provider, 
-            string login, 
-            string email, 
-            string firstName, 
-            string lastName, 
-            LmsCompany lmsCompany, 
-            IEnumerable<Principal> principalCache)
-        {
-            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
-            bool denyUserCreation = lmsCompany.DenyACUserCreation;
 
-            Principal principal = null;
-            if (principalCache != null)
-            {
-                principal = GetPrincipalByLoginOrEmail(principalCache, login, email, searchByEmailFirst);
-            }
-
-            if (principal == null)
-            {
-                principal = GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
-            }
-
-            if (!denyUserCreation && (principal == null))
-            {
-                var setup = new PrincipalSetup
-                                {
-                                    Email = string.IsNullOrWhiteSpace(email) ? null : email, 
-                                    FirstName = firstName, 
-                                    LastName = lastName, 
-                                    Name = login, 
-                                    Login = login, 
-                                    Type = PrincipalTypes.user, 
-                                };
-
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
-
-                // TODO: review and add
-                // if (!pu.Success)
-                // {
-                // throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
-                // }
-                if (pu.Principal != null)
-                {
-                    principal = pu.Principal;
-                }
-            }
-
-            return principal;
-        }
 
         /// <summary>
         /// The get param login and email.
@@ -575,49 +429,7 @@
         /// <returns>
         /// The <see cref="Principal"/>.
         /// </returns>
-        public Principal GetPrincipalByLoginOrEmail(
-            AdobeConnectProvider provider, 
-            string login, 
-            string email, 
-            bool searchByEmailFirst)
-        {
-            Principal principal = null;
 
-            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
-            {
-                PrincipalCollectionResult resultByEmail = provider.GetAllByEmail(email);
-                if (!resultByEmail.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            if (principal == null && !string.IsNullOrWhiteSpace(login))
-            {
-                PrincipalCollectionResult resultByLogin = provider.GetAllByLogin(login);
-                if (!resultByLogin.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByLogin.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            if (!searchByEmailFirst && principal == null && !string.IsNullOrWhiteSpace(email))
-            {
-                PrincipalCollectionResult resultByEmail = provider.GetAllByEmail(email);
-                if (!resultByEmail.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            return principal;
-        }
 
         public List<LmsUserDTO> GetUsers(
             LmsCompany lmsCompany, 
@@ -657,9 +469,9 @@
 
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers && meeting.Users != null)
+            if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
-                lmsUsers = meeting.Users;
+                lmsUsers = meeting.MeetingRoles.Select(x => x.User);
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
@@ -692,7 +504,7 @@
 
                     if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
-                        Principal principal = this.GetOrCreatePrincipal2(
+                        Principal principal = acUserService.GetOrCreatePrincipal2(
                             provider, 
                             login, 
                             user.GetEmail(), 
@@ -849,7 +661,7 @@
 
             if (string.IsNullOrEmpty(lmsDbUser.PrincipalId))
             {
-                Principal principal = this.GetOrCreatePrincipal2(
+                Principal principal = acUserService.GetOrCreatePrincipal2(
                     provider,
                     login,
                     user.GetEmail(),
@@ -932,6 +744,102 @@
         /// The <see cref="List{LmsUserDTO}"/>.
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
+            LmsCompany lmsCompany,
+            AdobeConnectProvider provider,
+            LmsCourseMeeting meeting,
+            IEnumerable<LmsUserDTO> users,
+            IEnumerable<LmsUser> lmsDbUsers,
+            ref string error)
+        {
+            string meetingSco = meeting.GetMeetingScoId();
+
+            bool denyACUserCreation = lmsCompany.DenyACUserCreation;
+
+            var meetingPermissions = new List<PermissionUpdateTrio>();
+            var hostPrincipals = new List<string>();
+
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
+            var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
+
+            foreach (LmsUserDTO lmsUserDto in users)
+            {
+                // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
+                string id = lmsUserDto.lti_id ?? lmsUserDto.id;
+                LmsUser dbUser = lmsDbUsers.FirstOrDefault(x => x.UserId == id)
+                               ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUserDto.GetLogin(), UserId = id, };
+
+                if (string.IsNullOrEmpty(dbUser.PrincipalId))
+                {
+                    Principal principal = acUserService.GetOrCreatePrincipal(
+                        provider,
+                        lmsUserDto.GetLogin(),
+                        lmsUserDto.GetEmail(),
+                        lmsUserDto.GetFirstName(),
+                        lmsUserDto.GetLastName(),
+                        lmsCompany);
+                    if (principal != null)
+                    {
+                        dbUser.PrincipalId = principal.PrincipalId;
+                        this.LmsUserModel.RegisterSave(dbUser);
+                    }
+                    else if (denyACUserCreation)
+                    {
+                        error = "At least one user does not exist in AC database. You must create AC accounts manually";
+                        continue;
+                    }
+                }
+
+                PermissionInfo enrollment = enrollments.FirstOrDefault(e => e.PrincipalId.Equals(dbUser.PrincipalId));
+
+                if (enrollment != null)
+                {
+                    lmsUserDto.ac_id = dbUser.PrincipalId;
+                    lmsUserDto.ac_role = enrollment.PermissionId == PermissionId.host
+                                          ? "Host"
+                                          : (enrollment.PermissionId == PermissionId.mini_host
+                                                 ? "Presenter"
+                                                 : "Participant");
+                    principalIds.Remove(dbUser.PrincipalId);
+                }
+                else if (!string.IsNullOrEmpty(dbUser.PrincipalId))
+                {
+                    this.SetLMSUserDefaultACPermissions2(
+                        provider,
+                        meetingSco,
+                        lmsUserDto,
+                        dbUser.PrincipalId,
+                        meetingPermissions,
+                        hostPrincipals);
+                }
+            }
+
+            foreach (var chunk in Chunk(meetingPermissions, 50))
+            {
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
+                if (status.Code != StatusCodes.ok)
+                {
+                    throw new InvalidOperationException(
+                        "SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code="
+                        + status.Code.ToString());
+                }
+            }
+
+            provider.UpdateScoPermissionForPrincipal(
+                principalIds.Select(
+                    principalId =>
+                    new PermissionUpdateTrio
+                    {
+                        ScoId = meetingSco,
+                        PrincipalId = principalId,
+                        PermissionId = MeetingPermissionId.remove,
+                    }));
+
+            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
+
+            return users.ToList();
+        }
+        
+        public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
@@ -958,108 +866,23 @@
                 return users;
             }
 
-            string meetingSco = meeting.GetMeetingScoId();
-
-            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
-
-            var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
-            IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers && meeting.Users != null)
+            IEnumerable<LmsUser> lmsDbUsers = null;
+            if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
-                lmsUsers = meeting.Users;
+                lmsDbUsers = meeting.MeetingRoles.Select(x => x.User);
                 //when users where not synchronized yet
-                if (!lmsUsers.Any())
+                if (!lmsDbUsers.Any())
                 {
-                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                    lmsDbUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
                 }
             }
             else
             {
-                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                lmsDbUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
             }
 
-            bool denyACUserCreation = lmsCompany.DenyACUserCreation;
-
-            var meetingPermissions = new List<PermissionUpdateTrio>();
-            var hostPrincipals = new List<string>();
-
-            foreach (LmsUserDTO lmsUser in users)
-            {
-                // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
-                string id = lmsUser.lti_id ?? lmsUser.id;
-                LmsUser user = lmsUsers.FirstOrDefault(x => x.UserId == id)
-                               ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUser.GetLogin(), UserId = id, };
-
-                if (string.IsNullOrEmpty(user.PrincipalId))
-                {
-                    Principal principal = this.GetOrCreatePrincipal(
-                        provider, 
-                        lmsUser.GetLogin(), 
-                        lmsUser.GetEmail(), 
-                        lmsUser.GetFirstName(), 
-                        lmsUser.GetLastName(), 
-                        lmsCompany);
-                    if (principal != null)
-                    {
-                        user.PrincipalId = principal.PrincipalId;
-                        this.LmsUserModel.RegisterSave(user);
-                    }
-                    else if (denyACUserCreation)
-                    {
-                        error = "At least one user does not exist in AC database. You must create AC accounts manually";
-                        continue;
-                    }
-                }
-
-                PermissionInfo enrollment = enrollments.FirstOrDefault(e => e.PrincipalId.Equals(user.PrincipalId));
-
-                if (enrollment != null)
-                {
-                    lmsUser.ac_id = user.PrincipalId;
-                    lmsUser.ac_role = enrollment.PermissionId == PermissionId.host
-                                          ? "Host"
-                                          : (enrollment.PermissionId == PermissionId.mini_host
-                                                 ? "Presenter"
-                                                 : "Participant");
-                    principalIds.Remove(user.PrincipalId);
-                }
-                else if (!string.IsNullOrEmpty(user.PrincipalId))
-                {
-                    this.SetLMSUserDefaultACPermissions2(
-                        provider, 
-                        meetingSco, 
-                        lmsUser, 
-                        user.PrincipalId, 
-                        meetingPermissions, 
-                        hostPrincipals);
-                }
-            }
-
-            foreach (var chunk in Chunk(meetingPermissions, 50))
-            {
-                StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
-                if (status.Code != StatusCodes.ok)
-                {
-                    throw new InvalidOperationException(
-                        "SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code="
-                        + status.Code.ToString());
-                }
-            }
-
-            provider.UpdateScoPermissionForPrincipal(
-                principalIds.Select(
-                    principalId =>
-                    new PermissionUpdateTrio
-                        {
-                            ScoId = meetingSco, 
-                            PrincipalId = principalId, 
-                            PermissionId = MeetingPermissionId.remove, 
-                        }));
-
-            this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
-
-            return users;
+            return SetDefaultRolesForNonParticipants(lmsCompany, provider, meeting, users, lmsDbUsers, ref error);
         }
 
         /// <summary>
@@ -1107,9 +930,9 @@
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
-            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.Users != null)
+            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null)
             {
-                lmsUsers = meeting.Users;
+                lmsUsers = meeting.MeetingRoles.Select(x => x.User);
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
@@ -1281,7 +1104,7 @@
 
             if (user.ac_id == null)
             {
-                Principal principal = this.GetOrCreatePrincipal(
+                Principal principal = acUserService.GetOrCreatePrincipal(
                     provider, 
                     user.GetLogin(), 
                     user.GetEmail(), 
@@ -1749,79 +1572,6 @@
             return null;
         }
 
-        /// <summary>
-        /// The get principal by login or email.
-        /// </summary>
-        /// <param name="principalCache">
-        /// The principal cache.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="searchByEmailFirst">
-        /// The search by email first.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
-        private Principal GetPrincipalByLoginOrEmail(
-            IEnumerable<Principal> principalCache, 
-            string login, 
-            string email, 
-            bool searchByEmailFirst)
-        {
-            Principal principal = null;
-
-            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if ((principal == null) && !string.IsNullOrWhiteSpace(login))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (!searchByEmailFirst && (principal == null) && !string.IsNullOrWhiteSpace(email))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            }
-
-            return principal;
-        }
-
-        /// <summary>
-        /// The process users in ac.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting sco id.
-        /// </param>
-        /// <param name="users">
-        /// The users.
-        /// </param>
-        /// <param name="principalCache">
-        /// The principal cache.
-        /// </param>
-        /// <param name="lmsUsers">
-        /// The lms users.
-        /// </param>
-        /// <param name="reRunOnError">
-        /// The re run on error.
-        /// </param>
-        /// <exception cref="InvalidOperationException">
-        /// </exception>
         private void ProcessUsersInAC(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 
@@ -1840,7 +1590,7 @@
 
                 // TODO: do we need this FORCE?
                 // YES: !principal.PrincipalId.Equals(lmsUser.PrincipalId) - we use it to refresh PrincipalId
-                Principal principal = this.GetOrCreatePrincipal2(
+                Principal principal = acUserService.GetOrCreatePrincipal2(
                     provider, 
                     login, 
                     email, 

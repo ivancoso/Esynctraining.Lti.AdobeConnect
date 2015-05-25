@@ -122,6 +122,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private IAdobeConnectUserService AcUserService
+        {
+            get { return IoC.Resolve<IAdobeConnectUserService>(); }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -716,7 +721,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
-            Principal registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, login, email, lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
+            Principal registeredUser = AcUserService.GetPrincipalByLoginOrEmail(provider, login, email, lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (registeredUser != null)
             {
@@ -907,7 +912,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 
-            var registeredUser = this.UsersSetup.GetPrincipalByLoginOrEmail(
+            var registeredUser = AcUserService.GetPrincipalByLoginOrEmail(
                 provider,
                 param.lms_user_login,
                 param.lis_person_contact_email_primary,
@@ -965,7 +970,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 else
                 {
-                    var user = this.UsersSetup.GetPrincipalByLoginOrEmail(provider, 
+                    var user = AcUserService.GetPrincipalByLoginOrEmail(provider, 
                         param.lms_user_login, 
                         param.lis_person_contact_email_primary, 
                         lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());

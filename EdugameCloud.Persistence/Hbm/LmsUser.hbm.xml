@@ -17,7 +17,6 @@
       <return-property column="name" name="Name" />
       <return-property column="email" name="Email" />
       <return-property column="userIdExtended" name="UserIdExtended" />
-      <return-property column="lmsRole" name="LmsRole" />
     </return>
     exec getUsersByLmsCompanyId @lmsCompanyId=:lmsCompanyId, @userFilter=:userFilter
   </sql-query>

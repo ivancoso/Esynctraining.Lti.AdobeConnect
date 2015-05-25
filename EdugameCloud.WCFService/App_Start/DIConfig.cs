@@ -171,6 +171,7 @@ namespace EdugameCloud.WCFService
             
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
+            container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
         }
 
         #endregion

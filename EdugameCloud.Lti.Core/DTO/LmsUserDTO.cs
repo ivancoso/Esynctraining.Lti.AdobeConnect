@@ -88,12 +88,7 @@
         /// </returns>
         public string GetLogin()
         {
-            if (this.login_id != null)
-            {
-                return this.login_id;
-            }
-
-            return this.name;
+            return this.login_id ?? this.name;
         }
 
         /// <summary>
