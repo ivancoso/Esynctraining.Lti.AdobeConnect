@@ -180,6 +180,7 @@
     <Build Include="dbo\Tables\AcCachePrincipal.sql" />
     <Build Include="dbo\Stored Procedures\getUsersByLmsCompanyId.sql" />
     <Build Include="dbo\Tables\LmsCompanyRoleMapping.sql" />
+    <Build Include="dbo\Tables\LmsUserMeetingRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />

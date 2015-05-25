@@ -79,6 +79,7 @@
     <Build Include="dbo\Tables\LmsMeetingType.sql" />
     <Build Include="dbo\Tables\OfficeHours.sql" />
     <Build Include="dbo\Tables\LmsCompanySetting.sql" />
+    <Build Include="dbo\Tables\LmsUserMeetingRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
