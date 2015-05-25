@@ -537,7 +537,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 OperationResult result = this.meetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
 
-                return Json(result.isSuccess ? true : (object)result);
+                return Json(result);
             }
             catch (Exception ex)
             {
