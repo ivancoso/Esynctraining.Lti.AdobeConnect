@@ -443,6 +443,9 @@ namespace EdugameCloud.WCFService
 
         private static void ProcessRoleMapping(CompanyLmsDTO dto, LmsCompany instance)
         {
+            if (dto.roleMapping == null)
+                dto.roleMapping = new LmsCompanyRoleMappingDTO[0];
+
             var oldMapsToDelete = new List<LmsCompanyRoleMapping>();
             foreach (LmsCompanyRoleMapping old in instance.RoleMappings)
             {
