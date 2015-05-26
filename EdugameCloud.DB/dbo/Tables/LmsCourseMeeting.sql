@@ -8,8 +8,7 @@
     [addedToCache]       DATETIME       NULL,
     [officeHoursId]      INT            NULL,
     [ownerId]            INT            NULL,
-    CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC),
-    CONSTRAINT [FK_LmsCourseMeeting_LmsCourseMeeting] FOREIGN KEY ([lmsCourseMeetingId]) REFERENCES [dbo].[LmsCourseMeeting] ([lmsCourseMeetingId])
+    CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
 );
 
 
