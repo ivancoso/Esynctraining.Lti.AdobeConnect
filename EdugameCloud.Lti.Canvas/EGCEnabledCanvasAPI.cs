@@ -110,10 +110,13 @@
             if (result != null)
             {
                 result.primary_email = result.email;
-                var enrollment = result.enrollments.FirstOrDefault(x => x.course_id == courseid);
-                if (enrollment != null)
+                if (result.enrollments != null)
                 {
-                    result.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
+                    var enrollment = result.enrollments.FirstOrDefault(x => x.course_id == courseid);
+                    if (enrollment != null)
+                    {
+                        result.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
+                    }
                 }
             }
 
