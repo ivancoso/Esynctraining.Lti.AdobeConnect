@@ -211,6 +211,7 @@
     <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
+    <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />
     <Compile Include="API\AdobeConnect\IPrincipalCache.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.Announcement.cs" />
@@ -229,6 +230,7 @@
     <Compile Include="API\Moodle\IEGCEnabledMoodleApi.cs" />
     <Compile Include="API\Moodle\IMoodleApi.cs" />
     <Compile Include="API\Sakai\SakaiLmsUserService.cs" />
+    <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Controllers\LtiController.Reports.cs" />
     <Compile Include="Controllers\LtiController.Recordings.cs" />

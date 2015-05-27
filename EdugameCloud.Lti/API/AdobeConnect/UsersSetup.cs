@@ -72,42 +72,22 @@
 
         private IAdobeConnectUserService acUserService;
 
+        private ILogger logger;
+
         #endregion
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UsersSetup"/> class.
-        /// </summary>
-        /// <param name="dlapApi">
-        /// The dlap api.
-        /// </param>
-        /// <param name="soapApi">
-        /// The soap api.
-        /// </param>
-        /// <param name="moodleApi">
-        /// The moodle api.
-        /// </param>
-        /// <param name="lti2Api">
-        /// The lti 2 api.
-        /// </param>
-        /// <param name="canvasApi">
-        /// The canvas api.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <param name="logger">
-        /// The logger.
-        /// </param>
         public UsersSetup(
             ApplicationSettingsProvider settings,
             LmsFactory lmsFactory,
-            IAdobeConnectUserService acUserService)
+            IAdobeConnectUserService acUserService,
+            ILogger logger)
         {
             this.settings = settings;
             this.lmsFactory = lmsFactory;
             this.acUserService = acUserService;
+            this.logger = logger;
         }
 
         #endregion
@@ -277,6 +257,8 @@
                 error = null;
                 return serviceResult.data;
             }
+            logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
+                "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
             var users = service.GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate, extraData);
             return error == null ? users : new List<LmsUserDTO>();
         }
@@ -771,19 +753,9 @@
 
                 if (string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
-                    Principal principal = acUserService.GetOrCreatePrincipal(
-                        provider,
-                        lmsUserDto.GetLogin(),
-                        lmsUserDto.GetEmail(),
-                        lmsUserDto.GetFirstName(),
-                        lmsUserDto.GetLastName(),
-                        lmsCompany);
-                    if (principal != null)
-                    {
-                        dbUser.PrincipalId = principal.PrincipalId;
-                        this.LmsUserModel.RegisterSave(dbUser);
-                    }
-                    else if (denyACUserCreation)
+                    var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany);
+
+                    if (principal == null && denyACUserCreation)
                     {
                         error = "At least one user does not exist in AC database. You must create AC accounts manually";
                         continue;
@@ -804,6 +776,17 @@
                 }
                 else if (!string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
+                    var principalInfo = provider.GetOneByPrincipalId(dbUser.PrincipalId);
+                    if (!principalInfo.Success)
+                    {
+                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany);
+
+                        if (principal == null && denyACUserCreation)
+                        {
+                            error = "At least one user does not exist in AC database. You must create AC accounts manually";
+                            continue;
+                        }
+                    }
                     this.SetLMSUserDefaultACPermissions2(
                         provider,
                         meetingSco,
@@ -839,7 +822,26 @@
 
             return users.ToList();
         }
-        
+
+        private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(AdobeConnectProvider provider,
+            LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany)
+        {
+            Principal principal = acUserService.GetOrCreatePrincipal(
+                        provider,
+                        lmsUserDto.GetLogin(),
+                        lmsUserDto.GetEmail(),
+                        lmsUserDto.GetFirstName(),
+                        lmsUserDto.GetLastName(),
+                        lmsCompany);
+            if (principal != null)
+            {
+                dbUser.PrincipalId = principal.PrincipalId;
+                this.LmsUserModel.RegisterSave(dbUser);
+            }
+
+            return principal;
+        }
+
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
             LmsCompany lmsCompany, 
             AdobeConnectProvider provider, 

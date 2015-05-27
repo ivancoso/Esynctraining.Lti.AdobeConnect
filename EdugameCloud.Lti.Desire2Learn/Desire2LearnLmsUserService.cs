@@ -56,16 +56,16 @@ namespace EdugameCloud.Lti.Desire2Learn
             }
 
             string[] tokens = lmsUser.Token.Split(' ');
-            var paramDto = param as LtiParamDTO;
+
             // get course users list
             var classlistEnrollments = d2lApiService.GetApiObjects<List<ClasslistUser>>(
                 tokens[0],
                 tokens[1],
-                paramDto.lms_domain,
+                lmsCompany.LmsDomain,
                 string.Format(
                     d2lApiService.EnrollmentsClasslistUrlFormat,
                     (string)this.settings.D2LApiVersion,
-                    paramDto.context_id));
+                    courseId));
 
             // get enrollments - this information contains user roles
             var enrollmentsList = new List<OrgUnitUser>();
@@ -75,11 +75,11 @@ namespace EdugameCloud.Lti.Desire2Learn
                 enrollments = d2lApiService.GetApiObjects<PagedResultSet<OrgUnitUser>>(
                     tokens[0],
                     tokens[1],
-                    paramDto.lms_domain,
+                    lmsCompany.LmsDomain,
                     string.Format(
                         d2lApiService.EnrollmentsUrlFormat,
                         (string)this.settings.D2LApiVersion,
-                        paramDto.context_id)
+                        courseId)
                     + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
                 if (enrollments == null || enrollments.Items == null)
                 {
@@ -102,7 +102,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                     var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
                         tokens[0],
                         tokens[1],
-                        paramDto.lms_domain,
+                        lmsCompany.LmsDomain,
                         string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion));
                     if (currentUserInfo != null)
                     {

@@ -59,9 +59,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 case LmsProviderNames.Canvas:
                     var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                    var token = lmsUser.Return(
-                            u => u.Token,
-                            lmsCompany.AdminUser.Return(a => a.Token, string.Empty));
+                    var token = UsersSetup.IsTeacher(param) && !String.IsNullOrEmpty(lmsUser.Token)
+                        ? lmsUser.Token
+                        : lmsCompany.AdminUser.Return(a => a.Token, string.Empty);
+                        
                     CanvasApi.CreateAnnouncement(
                         lmsCompany.LmsDomain,
                         token,

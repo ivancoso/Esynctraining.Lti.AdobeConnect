@@ -35,7 +35,6 @@ namespace EdugameCloud.Lti.BrainHoney
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
             string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
-            Session session = param == null ? null : (Session)param;
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(
                 lmsCompany,
                 courseId,

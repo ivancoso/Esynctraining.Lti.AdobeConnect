@@ -1,4 +1,5 @@
 ﻿using Castle.Core.Logging;
+using EdugameCloud.Lti.API;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -56,7 +57,9 @@ namespace EdugameCloud.Lti.Controllers
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
         private readonly ICanvasAPI canvasApi;
-        private IAdobeConnectUserService acUserService;
+        private readonly IAdobeConnectUserService acUserService;
+        private readonly LmsFactory lmsFactory;
+        private readonly ISynchronizationUserService syncUsersService;
 
         #endregion
 
@@ -71,6 +74,8 @@ namespace EdugameCloud.Lti.Controllers
             UsersSetup usersSetup,
             ICanvasAPI canvasApi,
             IAdobeConnectUserService acUserService,
+            LmsFactory lmsFactory,
+            ISynchronizationUserService syncUsersService,
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
@@ -82,6 +87,8 @@ namespace EdugameCloud.Lti.Controllers
             this.canvasApi = canvasApi;
             this.logger = logger;
             this.acUserService = acUserService;
+            this.lmsFactory = lmsFactory;
+            this.syncUsersService = syncUsersService;
         }
 
         #endregion
@@ -438,12 +445,21 @@ namespace EdugameCloud.Lti.Controllers
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                var lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 string error;
+                var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
+                if (forceUpdate && lmsCompany.UseSynchronizedUsers
+                    && service != null
+                    && service.CanRetrieveUsersFromApiForCompany(lmsCompany)
+                    && lmsCompany.LmsCourseMeetings != null
+                    && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
+                {
+                    syncUsersService.SynchronizeUsers(lmsCompany, new[] { scoId });
+                }
                 List<LmsUserDTO> users = this.usersSetup.GetUsers(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    lmsCompany,
+                    this.GetAdobeConnectProvider(lmsCompany),
                     param,
                     scoId,
                     out error,
