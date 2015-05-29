@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
             }
         }
 
-        public static AcRole GetRoleName(PermissionId permissionId)
+        public static string GetRoleName(PermissionId permissionId)
         {
             return permissionId == PermissionId.host
                 ? Host.Name
