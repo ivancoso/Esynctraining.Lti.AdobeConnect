@@ -5,30 +5,27 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Web.Security;
-
     using BbWsClient;
-
     using Castle.Core.Logging;
-
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Common;
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.API.Moodle;
+    using EdugameCloud.Lti.Core.Business;
     using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Core.Domain.Entities;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
-
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
     using Newtonsoft.Json;
 
     /// <summary>
@@ -39,13 +36,14 @@
         #region Public Methods and Operators
 
         void SetLMSUserDefaultACPermissions(
-            AdobeConnectProvider provider, 
+            AdobeConnectProvider provider,
+            LmsCompany lmsCompany,
             string meetingScoId, 
             LmsUserDTO user, 
             string principalId);
 
         LmsUserDTO UpdateUser(
-            LmsCompany lmsCompany, 
+            LmsCompany lmsCompany,
             AdobeConnectProvider provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
@@ -512,17 +510,17 @@
 
                     if (hosts.Any(v => v.PrincipalId == user.ac_id))
                     {
-                        user.ac_role = "Host";
+                        user.ac_role = AcRole.Host.Name;
                         hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
                     else if (presenters.Any(v => v.PrincipalId == user.ac_id))
                     {
-                        user.ac_role = "Presenter";
+                        user.ac_role = AcRole.Presenter.Name;
                         presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
                     else if (participants.Any(v => v.PrincipalId == user.ac_id))
                     {
-                        user.ac_role = "Participant";
+                        user.ac_role = AcRole.Participant.Name;
                         participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
                 }
@@ -543,7 +541,7 @@
                         {
                             ac_id = permissionInfo.PrincipalId,
                             name = permissionInfo.Name,
-                            ac_role = "Host"
+                            ac_role = AcRole.Host.Name,
                         });
                 }
             }
@@ -556,7 +554,7 @@
                         {
                             ac_id = permissionInfo.PrincipalId, 
                             name = permissionInfo.Name, 
-                            ac_role = "Presenter", 
+                            ac_role = AcRole.Presenter.Name, 
                         });
             }
 
@@ -568,7 +566,7 @@
                         {
                             ac_id = permissionInfo.PrincipalId, 
                             name = permissionInfo.Name, 
-                            ac_role = "Participant", 
+                            ac_role = AcRole.Participant.Name, 
                         });
             }
 
@@ -668,17 +666,17 @@
 
             if (hosts.Any(v => v.PrincipalId == user.ac_id))
             {
-                user.ac_role = "Host";
+                user.ac_role = AcRole.Host.Name;
                 hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
             else if (presenters.Any(v => v.PrincipalId == user.ac_id))
             {
-                user.ac_role = "Presenter";
+                user.ac_role = AcRole.Presenter.Name;
                 presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
             else if (participants.Any(v => v.PrincipalId == user.ac_id))
             {
-                user.ac_role = "Participant";
+                user.ac_role = AcRole.Participant.Name;
                 participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
         }
@@ -767,11 +765,7 @@
                 if (enrollment != null)
                 {
                     lmsUserDto.ac_id = dbUser.PrincipalId;
-                    lmsUserDto.ac_role = enrollment.PermissionId == PermissionId.host
-                                          ? "Host"
-                                          : (enrollment.PermissionId == PermissionId.mini_host
-                                                 ? "Presenter"
-                                                 : "Participant");
+                    lmsUserDto.ac_role = AcRole.GetRoleName(enrollment.PermissionId);
                     principalIds.Remove(dbUser.PrincipalId);
                 }
                 else if (!string.IsNullOrEmpty(dbUser.PrincipalId))
@@ -788,7 +782,7 @@
                         }
                     }
                     this.SetLMSUserDefaultACPermissions2(
-                        provider,
+                        lmsCompany,
                         meetingSco,
                         lmsUserDto,
                         dbUser.PrincipalId,
@@ -970,33 +964,13 @@
         /// </param>
         // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions(
-            AdobeConnectProvider provider, 
+            AdobeConnectProvider provider,
+            LmsCompany lmsCompany, 
             string meetingScoId, 
             LmsUserDTO u, 
             string principalId)
         {
-            var permission = MeetingPermissionId.view;
-            u.ac_role = "Participant";
-            string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-            if (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
-            {
-                permission = MeetingPermissionId.remove;
-                u.ac_role = "Remove";
-            }
-
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
-                || role.Contains("admin") || role.Contains("lecture"))
-            {
-                permission = MeetingPermissionId.host;
-                u.ac_role = "Host";
-            }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author")
-                     || role.Contains("teaching assistant") || role.Contains("course builder")
-                     || role.Contains("evaluator") || role == "advisor")
-            {
-                u.ac_role = "Presenter";
-                permission = MeetingPermissionId.mini_host;
-            }
+            var permission = new RoleMappingService().SetAcRole(lmsCompany, u);
 
             if (!string.IsNullOrWhiteSpace(principalId) && !string.IsNullOrWhiteSpace(meetingScoId))
             {
@@ -1011,9 +985,6 @@
         /// <summary>
         /// The set lms user default ac permissions 2.
         /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
         /// <param name="meetingScoId">
         /// The meeting sco id.
         /// </param>
@@ -1031,35 +1002,14 @@
         /// </param>
         // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions2(
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
             string meetingScoId, 
             LmsUserDTO u, 
             string principalId, 
             List<PermissionUpdateTrio> meetingPermission, 
             List<string> hostPrincipals)
         {
-            var permission = MeetingPermissionId.view;
-            u.ac_role = "Participant";
-            string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
-            if (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
-            {
-                permission = MeetingPermissionId.remove;
-                u.ac_role = "Remove";
-            }
-
-            if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
-                || role.Contains("admin") || role.Contains("lecture"))
-            {
-                permission = MeetingPermissionId.host;
-                u.ac_role = "Host";
-            }
-            else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author")
-                     || role.Contains("teaching assistant") || role.Contains("course builder")
-                     || role.Contains("evaluator") || role == "advisor")
-            {
-                u.ac_role = "Presenter";
-                permission = MeetingPermissionId.mini_host;
-            }
+            var permission = new RoleMappingService().SetAcRole(lmsCompany, u);
 
             if (!string.IsNullOrWhiteSpace(principalId) && !string.IsNullOrWhiteSpace(meetingScoId))
             {
@@ -1070,7 +1020,7 @@
                         {
                             ScoId = meetingScoId, 
                             PrincipalId = principalId, 
-                            PermissionId = permission
+                            PermissionId = permission,
                         });
 
                 if (permission == MeetingPermissionId.host)
@@ -1139,11 +1089,11 @@
             }
 
             var permission = MeetingPermissionId.view;
-            if (user.ac_role.Equals("presenter", StringComparison.InvariantCultureIgnoreCase))
+            if (user.ac_role.Equals(AcRole.Presenter.Name, StringComparison.OrdinalIgnoreCase))
             {
                 permission = MeetingPermissionId.mini_host;
             }
-            else if (user.ac_role.Equals("host", StringComparison.InvariantCultureIgnoreCase))
+            else if (user.ac_role.Equals(AcRole.Host.Name, StringComparison.OrdinalIgnoreCase))
             {
                 permission = MeetingPermissionId.host;
             }
@@ -1617,7 +1567,7 @@
 
                     // TODO: see http://help.adobe.com/en_US/connect/9.0/webservices/WS5b3ccc516d4fbf351e63e3d11a171ddf77-7fcb_SP1.html
                     this.SetLMSUserDefaultACPermissions2(
-                        provider, 
+                        lmsCompany,
                         meetingScoId, 
                         u, 
                         principal.PrincipalId, 

@@ -398,7 +398,7 @@ namespace EdugameCloud.Lti.BrainHoney
                                 id = enrollment.UserId,
                                 is_editable = true,
                             };
-                            this._usersSetup.SetLMSUserDefaultACPermissions(provider, null, lmsUser, null);
+                            this._usersSetup.SetLMSUserDefaultACPermissions(provider, brainHoneyCompany, null, lmsUser, null);
                             this._usersSetup.UpdateUser(
                                 brainHoneyCompany,
                                 provider,

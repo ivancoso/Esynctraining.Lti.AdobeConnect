@@ -88,11 +88,31 @@
                 var topRole = (from r in roles let x = int.Parse(r.GetNodeValue("roleid")) orderby x ascending select r).FirstOrDefault();
                 if (topRole != null)
                 {
-                    return Inflector.Humanize(topRole.GetNodeValue("shortname").Replace("editingteacher", "editing teacher"));
+                    string name = topRole.GetNodeValue("name");
+                    if (!string.IsNullOrWhiteSpace(name))
+                        return name;
+
+                    name = topRole.GetNodeValue("shortname");
+
+                    // NOTE: Default names for default roles
+                    if (name == "coursecreator")
+                        return "Course creator";
+                    else if (name == "editingteacher")
+                        return "Teacher";
+                    else if (name == "teacher")
+                        return "Non-editing teacher";
+                    else if (name == "user")
+                        return "Authenticated user";
+                    else if (name == "frontpage")
+                        return "Authenticated user on frontpage";
+
+                    return Inflector.Humanize(name);
                 }
             }
 
             return null;
         }
+
     }
+
 }
