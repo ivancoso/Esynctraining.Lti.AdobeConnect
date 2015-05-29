@@ -101,13 +101,13 @@
                     }
 
                     var file = new UploadedFileDTO
-                                   {
-                                       fileId = fileIdVal,
-                                       fileName = fileName,
-                                       contentType = httpMultipartBoundary.ContentType,
-                                       content = httpMultipartBoundary.Value.ReadFully(),
-                                       dateCreated = DateTime.Now
-                                   };
+                    {
+                        fileId = fileIdVal,
+                        fileName = fileName,
+                        contentType = httpMultipartBoundary.ContentType,
+                        content = httpMultipartBoundary.Value.ReadFully(),
+                        dateCreated = DateTime.Now,
+                    };
 
                     this.FileModel.SaveWeborbFile(file);
                     createdFiles.Add(fileIdVal);
