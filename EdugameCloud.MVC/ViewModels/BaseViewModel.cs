@@ -112,9 +112,15 @@
                 if (this.Settings == null)
                     return string.Empty;
 
+                var protoHeader = controller.Request.Headers["X-Forwarded-Proto"];
+                bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
+
+                string schema = controller.Request.Url.Scheme;
+                if (isHttps)
+                    schema = "https";
                 var uriBuilder = new UriBuilder(this.Settings.BasePath)
                 {
-                    Scheme = controller.Request.Url.Scheme,
+                    Scheme = schema,
                     Port = -1, // TRICK: don't add port to url
                 };
                 return uriBuilder.ToString();
