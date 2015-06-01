@@ -20,16 +20,18 @@ namespace EdugameCloud.Lti.API
         private readonly UsersSetup usersSetup;
         private readonly LmsUserModel lmsUserModel;
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
+        private readonly IAdobeConnectUserService acUserService;
         private readonly ILogger logger;
 
         public SynchronizationUserService(LmsFactory lmsFactory, IMeetingSetup meetingSetup, UsersSetup usersSetup,
-            LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger)
+            LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
         {
             this.lmsFactory = lmsFactory;
             this.meetingSetup = meetingSetup;
             this.usersSetup = usersSetup;
             this.lmsUserModel = lmsUserModel;
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
+            this.acUserService = acUserService;
             this.logger = logger;
         }
 
@@ -65,8 +67,9 @@ namespace EdugameCloud.Lti.API
                             logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
                             var existedDbUsers =
                                 lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(),
-                                    lmsCompany.Id);
-                            var newUsers = UpdateDbUsers(opResult.data, lmsCompany, existedDbUsers);
+                                    lmsCompany.Id).GroupBy(x => x.UserId).Select(x=> x.OrderBy(u=> u.Id).First());
+
+                            var newUsers = UpdateDbUsers(opResult.data, lmsCompany, existedDbUsers, acProvider);
                                 
                             // merge results;
                             foreach (var meeting in courseGroup)
@@ -97,8 +100,7 @@ namespace EdugameCloud.Lti.API
                                     User = x,
                                     LmsRole = opResult.data.First(dto => dto.id == x.UserId).lms_role
                                 }));
-                                lmsCourseMeetingModel.RegisterSave(meeting);
-                                lmsCourseMeetingModel.Flush();
+                                lmsCourseMeetingModel.RegisterSave(meeting, true);
                                 // todo: optimize condition, probably refresh roles not for all users
                                 if (userRolesToDelete.Any() || usersToAddToMeeting.Any())
                                 {
@@ -119,7 +121,8 @@ namespace EdugameCloud.Lti.API
             }
         }
 
-        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany, IEnumerable<LmsUser> existedDbUsers)
+        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany, 
+            IEnumerable<LmsUser> existedDbUsers, AdobeConnectProvider provider)
         {
             var newUsers = new List<LmsUser>();
             foreach (var lmsUserDto in lmsUserDtos)
@@ -131,12 +134,23 @@ namespace EdugameCloud.Lti.API
                 if (dbUser == null)
                 {
                     string login = lmsUserDto.GetLogin();
-
+                    Principal principal = null;
+                    try
+                    {
+                        principal = acUserService.GetOrCreatePrincipal(provider, login, lmsUserDto.primary_email,
+                            lmsUserDto.GetFirstName(),
+                            lmsUserDto.GetLastName(), lmsCompany);
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        logger.Error(e.ToString());
+                    }
                     dbUser = new LmsUser
                     {
                         LmsCompany = lmsCompany,
                         Username = login,
-                        UserId = lmsUserDto.lti_id ?? lmsUserDto.id
+                        UserId = lmsUserDto.lti_id ?? lmsUserDto.id,
+                        PrincipalId = principal != null ? principal.PrincipalId : null
                     };
                     newUsers.Add(dbUser);
                     logger.InfoFormat(
@@ -156,15 +170,17 @@ namespace EdugameCloud.Lti.API
         private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting, AdobeConnectProvider acProvider)
         {
             string error = null;
-            var dbUsers =
-                meeting.MeetingRoles.Select(x => x.User);
+            var meetingRoles = usersSetup.GetUserMeetingRoles(meeting);
+
+            var dbUsers = meetingRoles
+                    .Select(x => x.User);
             try
             {
                 usersSetup.SetDefaultRolesForNonParticipants(
                     lmsCompany,
                     acProvider,
                     meeting,
-                    meeting.MeetingRoles.Select(x => new LmsUserDTO
+                    meetingRoles.Select(x => new LmsUserDTO
                     {
                         ac_id = x.User.PrincipalId,
                         id = x.User.UserId,

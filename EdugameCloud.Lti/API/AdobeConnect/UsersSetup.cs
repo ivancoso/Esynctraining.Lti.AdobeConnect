@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.API.AdobeConnect
+﻿using EdugameCloud.Lti.Core.Domain.Entities;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
@@ -230,7 +232,8 @@
         {
             if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null)
             {
-                var userDtos = meeting.MeetingRoles.Select(x=>new LmsUserDTO
+                var dbUserMeetingRoles = GetUserMeetingRoles(meeting);
+                var userDtos = dbUserMeetingRoles.Select(x => new LmsUserDTO
                 {
                     ac_id = x.User.PrincipalId,
                     id = x.User.UserId,
@@ -259,6 +262,12 @@
                 "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
             var users = service.GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate, extraData);
             return error == null ? users : new List<LmsUserDTO>();
+        }
+
+        public IEnumerable<LmsUserMeetingRole> GetUserMeetingRoles(LmsCourseMeeting meeting)
+        {
+            return meeting.MeetingRoles
+                    .GroupBy(x => x.User.UserId).Select(x => x.OrderBy(u => u.User.Id).First());
         }
 
         /// <summary>
@@ -450,7 +459,7 @@
             IEnumerable<LmsUser> lmsUsers = null;
             if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
-                lmsUsers = meeting.MeetingRoles.Select(x => x.User);
+                lmsUsers = GetUserMeetingRoles(meeting).Select(x => x.User);
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
@@ -867,7 +876,7 @@
             IEnumerable<LmsUser> lmsDbUsers = null;
             if (lmsCompany.UseSynchronizedUsers && meeting.MeetingRoles != null)
             {
-                lmsDbUsers = meeting.MeetingRoles.Select(x => x.User);
+                lmsDbUsers = GetUserMeetingRoles(meeting).Select(x => x.User);
                 //when users where not synchronized yet
                 if (!lmsDbUsers.Any())
                 {
@@ -925,11 +934,11 @@
                 extraData);
 
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
-            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
+//            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
             if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null)
             {
-                lmsUsers = meeting.MeetingRoles.Select(x => x.User);
+                lmsUsers = GetUserMeetingRoles(meeting).Select(x => x.User);
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
