@@ -75,7 +75,6 @@ namespace EdugameCloud.Lti.API
                             // merge results;
                             foreach (var meeting in courseGroup)
                             {
-                                var info = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                                 var userRolesToDelete =
                                     meeting.MeetingRoles
                                         .Where(x => existedDbUsers.All(u => u.Id != x.User.Id)).ToList();
