@@ -1,21 +1,29 @@
-﻿namespace EdugameCloud.Lti.Canvas
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using Antlr.Runtime;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using RestSharp;
+﻿using Castle.Core.Logging;
+using EdugameCloud.Lti.API;
+using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Newtonsoft.Json;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
+namespace EdugameCloud.Lti.Canvas
+{
     /// <summary>
     /// The Canvas API for EGC.
     /// </summary>
     // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
+        private ILogger logger;
+        public EGCEnabledCanvasAPI(ILogger logger)
+        {
+            this.logger = logger;
+        }
+
         ///// <summary>
         ///// The get quiz by id.
         ///// </summary>
@@ -95,12 +103,8 @@
         {
             var client = CreateRestClient(domain);
 
-            var link = string.Format(
-                // we can use many include parameters here: &include[]=email&include[]=enrollments.
-                // todo: investigate whether we can retrieve role information from enrollments param, it contains many fields. Then we'd not make api call for each role
-                    "/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
-                    courseid,
-                    userId);
+            var link = string.Format("/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
+                    courseid, userId);
 
             RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
 
@@ -110,90 +114,101 @@
             if (result != null)
             {
                 result.primary_email = result.email;
-                if (result.enrollments != null)
-                {
-                    var enrollment = result.enrollments.FirstOrDefault(x => x.course_id == courseid);
-                    if (enrollment != null)
-                    {
-                        result.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
-                    }
-                }
+                SetRole(result, courseid);
             }
 
             return result;
-
         }
 
         public List<LmsUserDTO> GetUsersForCourse(string domain, string usertoken, int courseid)
         {
-            var ret = new List<LmsUserDTO>();
+            var result = new List<LmsUserDTO>();
             var client = CreateRestClient(domain);
 
-            // ReSharper disable once RedundantNameQualifier
-            foreach (string role in CanvasAPI.CanvasRoles)
+            var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
+                courseid, 100); // default is 10 records per page, max - 100
+
+            while (!string.IsNullOrEmpty(link))
             {
-                var link = string.Format(
-                    // we can use many include parameters here: &include[]=email&include[]=enrollments.
-                    // todo: investigate whether we can retrieve role information from enrollments param, it contains many fields. Then we'd not make api call for each role
-                    "/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
-                    courseid,
-                    role,
-                    1000);
+                RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
 
-                while (!string.IsNullOrEmpty(link))
+                IRestResponse<List<CanvasLmsUserDTO>> response = client.Execute<List<CanvasLmsUserDTO>>(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
-
-                    IRestResponse<List<LmsUserDTO>> response = client.Execute<List<LmsUserDTO>>(request);
-
-                    link = string.Empty;
-                    foreach (var h in response.Headers)
+                    var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                    if (errorData != null && errorData.errors != null && errorData.errors.Any())
                     {
-                        if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
+                        logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}", response.StatusCode, response.StatusDescription, link);
+                        foreach (var error in errorData.errors)
                         {
-                            link = h.Value.ToString();
-                            var index = link.IndexOf("rel=\"next\"");
+                            logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
+                        }
+                    }
+                    return result;
+                }
+                link = string.Empty;
+                foreach (var h in response.Headers)
+                {
+                    if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        link = h.Value.ToString();
+                        var index = link.IndexOf("rel=\"next\"");
+                        if (index > -1)
+                        {
+                            link = link.Substring(0, index - 2);
+                            index = link.LastIndexOf(">");
                             if (index > -1)
                             {
-                                link = link.Substring(0, index - 2);
-                                index = link.LastIndexOf(">");
+                                link = link.Substring(0, index);
+                                index = link.LastIndexOf("<");
                                 if (index > -1)
                                 {
-                                    link = link.Substring(0, index);
-                                    index = link.LastIndexOf("<");
+                                    link = link.Substring(index + 1);
+                                    index = link.IndexOf("/api/v1/");
                                     if (index > -1)
                                     {
-                                        link = link.Substring(index + 1);
-                                        index = link.IndexOf("/api/v1/");
-                                        if (index > -1)
-                                        {
-                                            link = link.Substring(index);
-                                        }
-                                        break;
+                                        link = link.Substring(index);
                                     }
+                                    break;
                                 }
                             }
                         }
-                        link = string.Empty;
                     }
-
-                    List<LmsUserDTO> us = response.Data;
-                    if (us == null)
-                    {
-                        continue;
-                    }
-                    us.ForEach(
-                        u =>
-                            {
-                                u.lms_role = role;
-                                u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
-                            });
-
-                    ret.AddRange(us);
+                    link = string.Empty;
                 }
+
+                List<CanvasLmsUserDTO> us = response.Data;
+                if (us == null)
+                {
+                    continue;
+                }
+                us.ForEach(
+                    u =>
+                        {
+                            SetRole(u, courseid);
+                            u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
+                        });
+
+                result.AddRange(us);
             }
 
-            return ret;
+            return result;
+        }
+
+        private void SetRole(CanvasLmsUserDTO userDto, int courseid)
+        {
+            if (userDto.enrollments != null)
+            {
+                var enrollment = userDto.enrollments.FirstOrDefault(x => x.course_id == courseid);
+                if (enrollment != null)
+                {
+                    userDto.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
+                    return;
+                }
+            }
+            logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
+                        courseid, userDto.id);
         }
 
         /// <summary>

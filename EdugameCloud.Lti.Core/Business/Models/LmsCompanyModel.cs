@@ -146,7 +146,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
             }
         }
 
-        public List<LmsCompany> GetAllWithLmsCourseMeeting()
+        public List<LmsCompany> GetEnabledForSynchronization()
         {
             LmsCourseMeeting m = null;
             LmsCompany lc = null;

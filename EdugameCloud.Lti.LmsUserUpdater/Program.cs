@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     var lmsCompanyModel = IoC.Resolve<LmsCompanyModel>();
                     var syncService = IoC.Resolve<ISynchronizationUserService>();
 
-                    var companies = lmsCompanyModel.GetAllWithLmsCourseMeeting();
+                    var companies = lmsCompanyModel.GetEnabledForSynchronization();
                     var groupedByCompany = companies.GroupBy(x => x.LmsProvider.Id);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible

@@ -59,7 +59,8 @@ namespace EdugameCloud.Lti.API
                         if (!opResult.data.Any())
                         {
                             //todo: take all users (meeting.Users) and make foreach trying to retrieve
-                            logger.Warn("Couldn't retrieve users from API");
+                            logger.WarnFormat("Couldn't retrieve users from API for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}",
+                                lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProvider.Id, courseGroup.Key);
                         }
                         else
                         {
