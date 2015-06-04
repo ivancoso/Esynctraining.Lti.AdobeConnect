@@ -812,6 +812,22 @@
                 : new PrincipalCollectionResult(status);
         }
 
+        public PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm)
+        {
+            // act: "principal-list"
+            //http://dev.connectextensions.com/api/xml?action=principal-list&filter-like-login=@esynctraining&filter-like-name=sergey
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(
+                Commands.Principal.List,
+                string.Format(CommandParams.PrincipalByFieldLike, fieldName, HttpUtility.UrlEncode(searchTerm)),
+                out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
         /// <summary>
         /// Gets all principals if no Group Id specified.
         /// Otherwise gets only users of the specified Group.
@@ -1499,8 +1515,19 @@
             var result = this.requestProcessor.Process(Commands.Sco.FieldInfo, string.Format(CommandParams.Features.FieldInfo, aclId, fieldId.ToXmlString()), out status);
 
             return ResponseIsOk(result, status)
-                ? new FieldResult(status, FieldParser.Parse(result))
+                ? new FieldResult(status, FieldValueParser.Parse(result))
                 : new FieldResult(status);
+        }
+
+        public FieldCollectionResult GetAclFields(int aclId)
+        {
+            StatusInfo status;
+
+            var result = this.requestProcessor.Process(Commands.Sco.FieldInfo, string.Format(CommandParams.Features.FieldInfoAll, aclId.ToString()), out status);
+
+            return ResponseIsOk(result, status)
+                ? new FieldCollectionResult(status, FieldCollectionParser.Parse(result))
+                : new FieldCollectionResult(status);
         }
 
         /// <summary>

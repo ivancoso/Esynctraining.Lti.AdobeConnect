@@ -70,6 +70,9 @@
         /// </summary>
         public const string PrincipalByLogin = "filter-login={0}";
 
+        public const string PrincipalByFieldLike = "filter-like-{0}={1}";
+
+
         /// <summary>
         /// The principal update password.
         /// </summary>
@@ -172,6 +175,8 @@
             /// The field info.
             /// </summary>
             public const string FieldInfo = "acl-id={0}&filter-field-id={1}";
+
+            public const string FieldInfoAll = "acl-id={0}";
         }
 
         /// <summary>

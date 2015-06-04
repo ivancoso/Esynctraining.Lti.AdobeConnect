@@ -2,7 +2,7 @@
 {
     using System;
     using System.Xml;
-
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
 
     /// <summary>
@@ -11,23 +11,32 @@
     internal static class FieldParser
     {
         /// <summary>
-        /// The path.
-        /// </summary>
-        private const string Path = "//results//acl-fields//field//value";
-
-        /// <summary>
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <returns>EventInfo object.</returns>
-        public static String Parse(XmlNode xml)
+        /// <returns>Field.</returns>
+        public static Field Parse(XmlNode xml)
         {
-            if (xml == null || !xml.NodeListExists(Path))
+            if (xml == null || xml.Attributes == null)
             {
                 return null;
             }
 
-            return xml.SelectSingleNode(Path).SelectSingleNodeValue("text()");
+            try
+            {
+                return new Field
+                {
+                    FieldId = xml.SelectAttributeValue("field-id"),
+                    Value = xml.SelectSingleNodeValue("value/text()"),
+                };
+            }
+            catch (Exception ex)
+            {
+                TraceTool.TraceException(ex);
+            }
+
+            return null;
         }
+
     }
 }
