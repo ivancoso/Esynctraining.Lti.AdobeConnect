@@ -76,8 +76,7 @@ namespace EdugameCloud.Lti.API
                             foreach (var meeting in courseGroup)
                             {
                                 var userRolesToDelete =
-                                    meeting.MeetingRoles
-                                        .Where(x => existedDbUsers.All(u => u.Id != x.User.Id)).ToList();
+                                    meeting.MeetingRoles.Where(x => existedDbUsers.All(u => u.Id != x.User.Id)).ToList();
 
                                 var usersToAddToMeeting = new List<LmsUser>(newUsers);
                                 usersToAddToMeeting.AddRange(
@@ -98,7 +97,7 @@ namespace EdugameCloud.Lti.API
                                 {
                                     Meeting = meeting,
                                     User = x,
-                                    LmsRole = opResult.data.First(dto => dto.id == x.UserId).lms_role
+                                    LmsRole = opResult.data.First(dto => x.UserId == (dto.lti_id ?? dto.id)).lms_role
                                 }));
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
                                 // todo: optimize condition, probably refresh roles not for all users

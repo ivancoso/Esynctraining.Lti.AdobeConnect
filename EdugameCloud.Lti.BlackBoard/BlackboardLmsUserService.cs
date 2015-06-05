@@ -47,7 +47,7 @@ namespace EdugameCloud.Lti.BlackBoard
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate);
+            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser != null ? lmsUser.UserId : null, courseId, out error, forceUpdate);
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 

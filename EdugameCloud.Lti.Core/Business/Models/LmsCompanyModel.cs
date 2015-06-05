@@ -155,7 +155,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>()
                 .GetQueryOver(() => lc)
                 .JoinAlias(() => lc.Settings, () => lcs, JoinType.InnerJoin).Where(() => lcs.Name == "UseSynchronizedUsers" && lcs.Value == "True")
-                .JoinAlias(() => lc.AdminUser, () => u, JoinType.InnerJoin);
+                .JoinAlias(() => lc.AdminUser, () => u, JoinType.LeftOuterJoin);
 
             return this.Repository.FindAll(defaultQuery).ToList();
         }
