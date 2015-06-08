@@ -1797,7 +1797,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="LmsCourseMeeting"/>.
         /// </returns>
-        private LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
+        public LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
             if (meeting == null && type == (int)LmsMeetingType.OfficeHours)

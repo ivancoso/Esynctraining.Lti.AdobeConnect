@@ -45,6 +45,9 @@
 
             routes.MapLowercaseRoute("extjspage", "extjs/entry", new { controller = "Lti", action = "GetExtJsPage" });
 
+            routes.MapLowercaseRoute("addNewAcUser", "lti/acNewUser", new { controller = "AcUser", action = "AddNewUser" });
+            routes.MapLowercaseRoute("searchExistingAcUser", "lti/acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
+
             routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });            
         }
 

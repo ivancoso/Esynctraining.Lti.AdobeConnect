@@ -25,12 +25,15 @@
 	var EsyncLti = {};
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
 	EsyncLti.acPassword = @if (ViewBag.RestoredACPassword == null) { @Html.Raw("null"); } else { @Html.Raw("'" + ViewBag.RestoredACPassword + "'"); };
-		var Ext = Ext || {};
-		Ext.manifest = {
-			"js": [{ "path": "app.js" }],
-			"css": [{ "path": "resources/MeetingSetup-all.css" }]
-		};
-	</script>
+	EsyncLti.acUsesEmailAsLogin = @ViewBag.ACUsesEmailAsLogin.ToString().ToLower();
+	EsyncLti.usesSyncUsers = @ViewBag.UseSynchronizedUsers.ToString().ToLower();
+	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);
+	var Ext = Ext || {};
+	Ext.manifest = {
+		"js": [{ "path": "app.js" }],
+		"css": [{ "path": "resources/MeetingSetup-all.css" }]
+	};
+</script>
 	<script type="text/javascript" src="resources/date.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->

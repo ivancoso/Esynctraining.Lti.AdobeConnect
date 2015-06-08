@@ -432,6 +432,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 param.course_id, 
                 scoId);
 
+            // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
+            var guests = meeting.MeetingGuests.ToList();
+
             List<LmsUserDTO> users = this.GetLMSUsers(
                 lmsCompany,
                 meeting,
@@ -540,46 +543,77 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
+            ProcessGuests(users, meeting, hosts.Where(h => !h.HasChildren), AcRole.Host);
+            ProcessGuests(users, meeting, presenters.Where(h => !h.HasChildren), AcRole.Presenter);
+            ProcessGuests(users, meeting, participants.Where(h => !h.HasChildren), AcRole.Participant);
+            
+            //foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
+            //{
+            //    if (users.All(x => x.ac_id != permissionInfo.PrincipalId))
+            //    {
+            //        users.Add(
+            //            new LmsUserDTO
+            //            {
+            //                ac_id = permissionInfo.PrincipalId,
+            //                name = permissionInfo.Name,
+            //                ac_role = AcRole.Host.Name,
+            //            });
+            //    }
+            //}
+
+            //foreach (PermissionInfo permissionInfo in presenters.Where(h => !h.HasChildren))
+            //{
+            //    users.Add(
+            //        new LmsUserDTO
+            //            {
+            //                ac_id = permissionInfo.PrincipalId, 
+            //                name = permissionInfo.Name, 
+            //                ac_role = AcRole.Presenter.Name, 
+            //            });
+            //}
+
+            //foreach (PermissionInfo permissionInfo in participants.Where(h => !h.HasChildren))
+            //{
+            //    users.Add(
+            //        new LmsUserDTO
+            //            {
+            //                ac_id = permissionInfo.PrincipalId, 
+            //                name = permissionInfo.Name, 
+            //                ac_role = AcRole.Participant.Name, 
+            //            });
+            //}
+
+            return users;
+        }
+
+        private static void ProcessGuests(List<LmsUserDTO> users, LmsCourseMeeting meeting, IEnumerable<PermissionInfo> permissions, AcRole role)
+        {
+            foreach (PermissionInfo permissionInfo in permissions)
             {
-                if (users.All(x => x.ac_id != permissionInfo.PrincipalId))
+
+                LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.PrincipalId == permissionInfo.PrincipalId);
+                if (guest != null)
+                {
+                    users.Add(
+                        new LmsUserDTO
+                        {
+                            guest_id = guest.Id,
+                            ac_id = guest.PrincipalId,
+                            name = permissionInfo.Name,
+                            ac_role = role.Name,
+                        });
+                }
+                else
                 {
                     users.Add(
                         new LmsUserDTO
                         {
                             ac_id = permissionInfo.PrincipalId,
                             name = permissionInfo.Name,
-                            ac_role = AcRole.Host.Name,
+                            ac_role = role.Name,
                         });
                 }
             }
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (PermissionInfo permissionInfo in presenters.Where(h => !h.HasChildren))
-            {
-                users.Add(
-                    new LmsUserDTO
-                        {
-                            ac_id = permissionInfo.PrincipalId, 
-                            name = permissionInfo.Name, 
-                            ac_role = AcRole.Presenter.Name, 
-                        });
-            }
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (PermissionInfo permissionInfo in participants.Where(h => !h.HasChildren))
-            {
-                users.Add(
-                    new LmsUserDTO
-                        {
-                            ac_id = permissionInfo.PrincipalId, 
-                            name = permissionInfo.Name, 
-                            ac_role = AcRole.Participant.Name, 
-                        });
-            }
-
-            return users;
         }
 
         public LmsUserDTO GetOrCreateUserWithAcRole(
@@ -805,11 +839,41 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
                 {
-                    throw new InvalidOperationException(
-                        "SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code="
-                        + status.Code.ToString());
+                    string error = string.Format("SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.", 
+                        status.Code.ToString(), 
+                        status.SubCode
+                        );
+                    throw new InvalidOperationException(error);
                 }
             }
+
+            var result = users.ToList();
+
+            var guestsToDelete = new List<LmsCourseMeetingGuest>();
+            foreach (LmsCourseMeetingGuest guest in meeting.MeetingGuests)
+            {
+                principalIds.Remove(guest.PrincipalId);
+
+                PermissionInfo guestEnrollment = enrollments.FirstOrDefault(x => x.PrincipalId == guest.PrincipalId);
+                if (guestEnrollment == null)
+                {
+                    guestsToDelete.Add(guest);
+                }
+                else
+                {
+                    result.Add(new LmsUserDTO
+                    {
+                        guest_id = guest.Id,
+                        ac_id = guest.PrincipalId,
+                        name = guestEnrollment.Name,
+                        ac_role = AcRole.GetRoleName(guestEnrollment.PermissionId),
+                    });
+                }
+            }
+            foreach (LmsCourseMeetingGuest guestToDelete in guestsToDelete)
+                meeting.MeetingGuests.Remove(guestToDelete);
+            LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+
 
             provider.UpdateScoPermissionForPrincipal(
                 principalIds.Select(
@@ -823,7 +887,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
 
-            return users.ToList();
+            return result;
         }
 
         private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(AdobeConnectProvider provider,
@@ -971,7 +1035,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="ignoreAC">
         /// The ignore AC
         /// </param>
-        // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions(
             AdobeConnectProvider provider,
             LmsCompany lmsCompany, 
@@ -1009,7 +1072,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="hostPrincipals">
         /// The host principals.
         /// </param>
-        // TODO: ROLEMAPPING
         public void SetLMSUserDefaultACPermissions2(
             LmsCompany lmsCompany,
             string meetingScoId, 
@@ -1115,6 +1177,73 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return skipReturningUsers ? null 
                     : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
+        }
+
+        public LmsUserDTO UpdateGuest(
+            LmsCompany lmsCompany,
+            AdobeConnectProvider provider,
+            LtiParamDTO param,
+            LmsUserDTO user,
+            string scoId,
+            out string error)
+        {
+            error = null;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+                lmsCompany.Id,
+                param.course_id,
+                scoId);
+
+            if (meeting == null)
+            {
+                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ScoID: {2}.", lmsCompany.Id, param.course_id, scoId);
+                error = "Meeting not found";
+                return null;
+            }
+
+            if (user.ac_id == null)
+            {
+                error = "Guest user should have Adobe Connect account";
+                return null;
+            }
+
+            if (user.ac_role == null)
+            {
+                provider.UpdateScoPermissionForPrincipal(
+                    meeting.GetMeetingScoId(),
+                    user.ac_id,
+                    MeetingPermissionId.remove);
+                LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.Id == user.guest_id);
+                if (guest != null)
+                {
+                    meeting.MeetingGuests.Remove(guest);
+                    LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+                }
+
+                // TRICK: remove id to delete record on client-side
+                return new LmsUserDTO
+                {
+                    id = user.id,
+                };
+            }
+            else
+            {
+                var permission = AcRole.GetByName(user.ac_role).MeetingPermissionId;
+                provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+
+                if (permission == MeetingPermissionId.host)
+                {
+                    AddUserToMeetingHostsGroup(provider, user.ac_id);
+                }
+
+                return new LmsUserDTO
+                {
+                    id = user.id,
+                    guest_id = user.guest_id,
+                    ac_id = user.ac_id,
+                    name = user.name,
+                    ac_role = user.ac_role,
+                };
+            }
         }
 
         #endregion

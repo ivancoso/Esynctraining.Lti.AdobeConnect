@@ -62,6 +62,8 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual IList<LmsUserMeetingRole> MeetingRoles { get; protected set; }
 
+        public virtual IList<LmsCourseMeetingGuest> MeetingGuests { get; protected set; }
+
         #endregion
 
         #region Public Methods and Operators

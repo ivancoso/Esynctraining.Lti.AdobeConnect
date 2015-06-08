@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
@@ -39,6 +40,35 @@ namespace EdugameCloud.Web
     /// </summary>
     public class MvcApplication : HttpApplication
     {
+        //public MvcApplication()
+        //{
+        //    #region Request life cycle
+
+        //    this.BeginRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Begin Request");
+        //    this.AuthenticateRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Authenticate Request");
+        //    this.PostAuthenticateRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Authenticate Request");
+        //    this.AuthorizeRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Authorize Request");
+        //    this.PostAuthorizeRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Authorize Request");
+        //    this.ResolveRequestCache += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Resolve Request Cache");
+        //    this.PostResolveRequestCache += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Resolve Request Cache");
+        //    this.MapRequestHandler += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Map Request Handler");
+        //    this.PostMapRequestHandler += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Map Request Handler");
+        //    this.AcquireRequestState += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Acquire Request State");
+        //    this.PostAcquireRequestState += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Acquire Request State");
+        //    this.PreRequestHandlerExecute += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Pre Request Handler Execute");
+        //    // page events
+        //    this.PostRequestHandlerExecute += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Request Handler Execute");
+        //    this.ReleaseRequestState += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Release Request State");
+        //    this.PostReleaseRequestState += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Release Request State");
+        //    this.UpdateRequestCache += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Update Request Cache");
+        //    this.PostUpdateRequestCache += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Update Request Cache");
+        //    this.LogRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Log Request");
+        //    this.PostLogRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - Post Log Request");
+        //    this.EndRequest += (x, y) => IoC.Resolve<ILogger>().Info("Global.asax - End Request");
+            
+        //    #endregion
+        //}
+
         /// <summary>
         /// The application_ end.
         /// </summary>
@@ -133,6 +163,7 @@ namespace EdugameCloud.Web
             container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
             container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
+            container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }
@@ -191,69 +222,82 @@ namespace EdugameCloud.Web
         /// </param>
         public void FormsAuthentication_OnAuthenticate(Object sender, FormsAuthenticationEventArgs e)
         {
-            if (Request.QueryString.HasKey("egcSession"))
+            var sw = Stopwatch.StartNew();
+            try
             {
-                try
+                if (Request.QueryString.HasKey("egcSession"))
                 {
-                    var userModel = IoC.Resolve<UserModel>();
-                    var user = userModel.GetOneByToken(Request.QueryString["egcSession"]).Value;
-                    if (user != null && user.SessionTokenExpirationDate.HasValue
-                        && user.SessionTokenExpirationDate > DateTime.Now)
+                    try
                     {
-                        e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
-                        if (FormsAuthentication.CookiesSupported)
+                        var userModel = IoC.Resolve<UserModel>();
+                        var user = userModel.GetOneByToken(Request.QueryString["egcSession"]).Value;
+                        if (user != null && user.SessionTokenExpirationDate.HasValue
+                            && user.SessionTokenExpirationDate > DateTime.Now)
                         {
-                            FormsAuthentication.SetAuthCookie(user.Email, false);
-                            Request.Cookies[FormsAuthentication.FormsCookieName].Expires = user.SessionTokenExpirationDate.Value;
+                            e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                            if (FormsAuthentication.CookiesSupported)
+                            {
+                                FormsAuthentication.SetAuthCookie(user.Email, false);
+                                Request.Cookies[FormsAuthentication.FormsCookieName].Expires = user.SessionTokenExpirationDate.Value;
+                            }
+                        }
+                        else
+                        {
+                            if (FormsAuthentication.CookiesSupported)
+                            {
+                                Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                            }
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        if (FormsAuthentication.CookiesSupported)
+                        //somehting went wrong
+                        IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate", ex);
+                    }
+                }
+                else if (FormsAuthentication.CookiesSupported && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
+                {
+                    var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+                    FormsAuthenticationTicket ticket = null;
+                    try
+                    {
+                        ticket = FormsAuthentication.Decrypt(cookie.Value);
+                    }
+                    catch (Exception ex)
+                    {
+                        IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate:FormsAuthentication.Decrypt", ex);
+                    }
+
+                    if (ticket == null) return; // Not authorised
+                    if (ticket.Expiration > DateTime.Now)
+                    {
+                        var userModel = IoC.Resolve<UserModel>();
+                        var user = userModel.GetByEmailWithRole(ticket.Name);
+                        if (user != null)
+                        {
+                            e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
+                        }
+                        else
                         {
                             Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    //somehting went wrong
-                    IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate", ex);
-                }
-            }
-            else if (FormsAuthentication.CookiesSupported && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
-            {
-                var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-                FormsAuthenticationTicket ticket = null;
-                try
-                {
-                    ticket = FormsAuthentication.Decrypt(cookie.Value);
-                }
-                catch (Exception ex)
-                {
-                    IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate:FormsAuthentication.Decrypt", ex);
-                }
-
-                if (ticket == null) return; // Not authorised
-                if (ticket.Expiration > DateTime.Now)
-                {
-                    var userModel = IoC.Resolve<UserModel>();
-                    var user = userModel.GetByEmailWithRole(ticket.Name);
-                    if (user != null)
-                    {
-                        e.User = new GenericPrincipal(new GenericIdentity(user.Email, "Forms"), new[] { user.UserRole.UserRoleName });
-                    }
                     else
                     {
                         Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
-                    }    
-                }
-                else
-                {
-                    Request.Cookies[FormsAuthentication.FormsCookieName].Value = null;
+                    }
+
                 }
 
             }
+            finally
+            {
+                sw.Stop();
+                //var time = sw.Elapsed;
+                //IoC.Resolve<ILogger>().InfoFormat("FormsAuthentication_OnAuthenticate: time: {0}.", time.ToString());
+            }
         }
+
     }
+
 }

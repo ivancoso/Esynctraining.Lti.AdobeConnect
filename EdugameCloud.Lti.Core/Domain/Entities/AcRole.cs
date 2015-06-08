@@ -1,4 +1,5 @@
-﻿using Esynctraining.AC.Provider.Entities;
+﻿using System;
+using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.Domain.Entities
 {
@@ -23,17 +24,37 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
                 case 1: return Host;
                 case 2: return Presenter;
                 case 3: return Participant;
-                default: return null;
+                default:
+                    throw new InvalidOperationException(string.Format("Not supported Role: {0}", acRoleId));
             }
+        }
+
+        public static AcRole GetByName(string acMeetingRoleName)
+        {
+            if (acMeetingRoleName == Host.Name)
+                return Host;
+
+            if (acMeetingRoleName == Presenter.Name)
+                return Presenter;
+
+            if (acMeetingRoleName == Participant.Name)
+                return Participant;
+
+            throw new InvalidOperationException(string.Format("Not supported role name: {0}", acMeetingRoleName));
         }
 
         public static string GetRoleName(PermissionId permissionId)
         {
-            return permissionId == PermissionId.host
-                ? Host.Name
-                : (permissionId == PermissionId.mini_host
-                ? Presenter.Name
-                : Participant.Name);
+            if (permissionId == PermissionId.host)
+                return Host.Name;
+
+            if (permissionId == PermissionId.mini_host)
+                return Presenter.Name;
+
+            if (permissionId == PermissionId.view)
+                return Participant.Name;
+
+            throw new InvalidOperationException(string.Format("Not supported PermissionId: {0}", permissionId));
         }
 
     }

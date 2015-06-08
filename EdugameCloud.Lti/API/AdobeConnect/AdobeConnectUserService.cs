@@ -48,10 +48,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                     if (!string.IsNullOrEmpty(pu.Status.InvalidField))
                     {
-                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Invalid Field: {0}. Additional Data: {1}", pu.Status.InvalidField, additionalData));
+                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Invalid Field: {0}. Status.SubCode: {1}. Additional Data: {2}", pu.Status.InvalidField, pu.Status.SubCode, additionalData));
                     }
 
-                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Status.Code: {0}. Additional Data: {1}", pu.Status.Code, additionalData));
+                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Status.Code: {0}. Status.SubCode: {1}. Additional Data: {2}", pu.Status.Code, pu.Status.SubCode, additionalData));
                 }
 
                 if (pu.Principal != null)

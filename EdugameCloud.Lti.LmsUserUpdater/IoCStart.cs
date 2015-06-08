@@ -63,6 +63,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
             container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
             container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
+            container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
         }
 
     }

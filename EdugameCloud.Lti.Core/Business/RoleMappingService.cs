@@ -21,14 +21,13 @@ namespace EdugameCloud.Lti.Core.Business
                 u.ac_role = "Remove";
             }
 
-            // NOTE: temporary disabled!!
-            //LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings.FirstOrDefault(x => x.LmsRoleName.Equals(role, StringComparison.OrdinalIgnoreCase));
-            //if (mapping != null)
-            //{
-            //    AcRole acRole = AcRole.GetById(mapping.AcRole);
-            //    u.ac_role = acRole.Name;
-            //    return acRole.MeetingPermissionId;
-            //}
+            LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings.FirstOrDefault(x => x.LmsRoleName.Equals(role, StringComparison.OrdinalIgnoreCase));
+            if (mapping != null)
+            {
+                AcRole acRole = AcRole.GetById(mapping.AcRole);
+                u.ac_role = acRole.Name;
+                return acRole.MeetingPermissionId;
+            }
 
             if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
                 || role.Contains("admin") || role.Contains("lecture"))

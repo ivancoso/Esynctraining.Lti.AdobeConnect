@@ -10,6 +10,9 @@
     [DataContract]
     public class LmsUserDTO
     {
+        private string _name;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LmsUserDTO"/> class.
         /// </summary>
@@ -54,7 +57,20 @@
         /// Gets or sets the name.
         /// </summary>
         [DataMember]
-        public string name { get; set; }
+        public string name 
+        {
+            get 
+            {
+                return _name; 
+            } 
+            set 
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _name = null;
+                else
+                    _name = value.Trim();
+            } 
+        }
 
         /// <summary>
         /// Gets or sets the primary_email.
@@ -75,6 +91,10 @@
         public string lti_id { get; set; }
 
         public string email { get; set; }
+
+        // TODO:
+        [DataMember]
+        public int? guest_id { get; set; }
 
         #endregion
 
@@ -161,5 +181,7 @@
         }
 
         #endregion
+
     }
+
 }

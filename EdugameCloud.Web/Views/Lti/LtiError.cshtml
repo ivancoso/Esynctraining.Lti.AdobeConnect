@@ -1,0 +1,403 @@
+﻿@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html class="x-viewport">
+<head>
+	<meta charset="UTF-8">
+	<title>eSyncTraining</title>
+	<style type="text/css">
+		#loading {
+			position: absolute;
+			top: 40%;
+			left: 45%;
+			z-index: 2;
+		}
+
+			#loading SPAN {
+				width: 220px;
+				height: 20px;
+				display: block;
+			}
+	</style>
+	@*<script type="text/javascript" src="resources/date.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>*@
+	<link rel="stylesheet" type="text/css" href="https://dev.edugamecloud.com/extjs/resources/MeetingSetup-all.css?_dc=1433169578493">
+	@*<script type="text/javascript" src="https://dev.edugamecloud.com/extjs/app.js?_dc=1433169578493"></script>*@
+	<style type="text/css">
+		.x-btn-focus.x-btn-default-small {
+			background-color: #00cc99 !important;
+		}
+
+		.x-grid-row {
+			line-height: 24px;
+		}
+
+		.x-datepicker-today {
+			border-color: #00cc99;
+		}
+
+		.x-datepicker-selected {
+			border-color: #00cc99;
+		}
+
+			.x-datepicker-selected .x-datepicker-date {
+				background-color: rgba(0,204,153,0.3);
+			}
+
+		.x-menu-item-default.x-menu-item-active {
+			background-color: rgba(0,204,153,0.3);
+		}
+
+		.x-menu-item-active {
+			background-color: rgba(0,204,153,0.3);
+		}
+
+		.x-grid-item-over {
+			background-color: rgba(0,204,153,0.3);
+		}
+
+		.x-grid-item-selected {
+			background-color: rgba(0,204,153,0.5);
+		}
+
+		.x-grid-item-focused .x-grid-cell-inner:before {
+			border: 0px solid #00cc99;
+		}
+
+		.x-column-header-over {
+			background-color: rgba(0,204,153,0.3);
+		}
+
+		.x-column-header-focus {
+			background-color: rgba(0,204,153,0.5);
+		}
+
+		.x-column-header.x-column-header-focus .x-column-header-inner:before {
+			border: 0px solid #00cc99;
+		}
+
+		.x-panel-header-title-default-framed {
+			color: #00cc99;
+		}
+
+		.x-window-header-title-default {
+			color: #00cc99;
+		}
+
+		.x-btn-default-small {
+			background-color: #00cc99;
+		}
+
+		.x-btn-default-toolbar-small {
+			background-color: #00cc99 !important;
+		}
+
+		.x-btn {
+			background-color: #00cc99;
+		}
+
+			.x-btn.x-btn-disabled.x-btn-default-small {
+				background-color: #00cc99;
+			}
+
+		.x-btn {
+			border-color: #00cc99;
+		}
+
+		.x-btn-over {
+			background-color: rgba(0,204,153,0.7) !important;
+		}
+
+		.x-btn-over {
+			border-color: #00cc99 !important;
+		}
+
+		.x-tab-default {
+			background-color: #00cc99;
+		}
+
+		.x-tab-default {
+			border-color: #00cc99;
+		}
+
+		.x-tab-over.x-tab-default {
+			background-color: rgba(0,204,153,0.7);
+		}
+
+		.x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
+			border-color: #00cc99;
+		}
+
+		.x-datepicker-month .x-btn-inner {
+			color: #00cc99;
+			font-weight: bold;
+		}
+
+		.x-boundlist-item-over {
+			background-color: rgba(0,204,153,0.3);
+		}
+
+		.x-boundlist-selected {
+			background-color: rgba(0,204,153,0.5);
+		}
+
+		.x-btn.x-btn-menu-active.x-btn-default-small {
+			background-color: #00cc99;
+			border-color: #00cc99;
+		}
+
+		}
+
+		.x-grid-view {
+			overflow-y: auto !important;
+			overflow-x: hidden !important;
+		}
+
+		.x-grid-with-row-lines {
+			overflow-y: auto !important;
+			overflow-x: hidden !important;
+		}
+
+		.low-column .x-grid-cell-inner {
+			height: 30px;
+		}
+
+		.x-btn-inner-default-toolbar-small {
+			color: #FFFFFF;
+		}
+
+		.main-color-label {
+			color: #00cc99;
+		}
+
+			.main-color-label:hover {
+				text-decoration: underline;
+			}
+
+		.meeting-item {
+			border: 1px solid #CCCCCC;
+		}
+
+		.fieldset-background {
+			border: 1px solid #CCCCCC;
+		}
+	</style>
+</head>
+<body id="ext-element-1" class="x-body x-webkit x-chrome x-border-box x-container x-container-default x-box-layout-ct" scroll="yes" style="padding: 20px;">
+	<div id="app-main-1010-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="height: 782px; width: 710px;">
+		<div id="app-main-1010-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 710px;">
+			<div class="x-container  x-box-item x-container-default x-box-layout-ct" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; width: 700px; right: auto; left: 0px; margin: 0px; top: 0px;" id="container-1011">
+				<div id="container-1011-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 700px; height: 47px;">
+					<div id="container-1011-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 700px;">
+						<label class="x-component  x-box-item x-component-default" style="font-size: 1.8em; padding: 10px 0px 20px; margin: 0px; right: auto; left: 0px; top: 0px;" id="label-1012" for="">Adobe Connect</label>
+						<div class="x-component  x-box-item x-component-default" style="padding: 10px 0px 20px; margin: 0px; right: auto; left: 156px; width: 333px; top: 0px;" id="component-1013"></div>
+						<div class="x-container  x-box-item x-container-default x-box-layout-ct" style="padding: 10px 0px 20px; margin: 0px; right: auto; left: 489px; top: 0px;" id="container-1014">
+							<div id="container-1014-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 211px; height: 17px;">
+								<div id="container-1014-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 211px;">
+									@*<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; top: 0px;" id="label-1015" for="">Help:</label>
+									<label class="x-component x-box-item x-component-default" style="cursor: pointer; right: auto; left: 35px; top: 0px; margin: 0px;" id="label-1016" for="">User Guide</label>
+									<label class="x-component  x-box-item x-component-default" style="font-size: 1.4em; margin: 0px; right: auto; left: 105px; top: 0px;" id="label-1017" for="">|</label>
+									<label class="x-component  x-box-item x-component-default" style="cursor: pointer; right: auto; left: 116px; top: 0px; margin: 0px;" id="label-1018" for="">EduGame Cloud</label>*@
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			@*<div class="x-container  x-box-item x-container-default" style="margin: 0px; width: 700px; right: auto; left: 10px; top: 47px;" id="breadcrumbs-1019">
+				<div id="breadcrumbs-1019-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; table-layout: fixed;">
+					<div id="breadcrumbs-1019-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation"><label class="x-component  x-component-default" style="font-weight:bold;cursor:auto;" id="label-1176" for="">Meetings List</label></div>
+				</div>
+			</div>*@
+			<div class="x-panel  x-box-item x-panel-default" style="padding: 5px; width: 700px; height: 708px; right: auto; left: 0px; margin: 0px; top: 74px; background: rgb(238, 238, 238);" id="tab-holder-1020">
+				@*<div class="x-tab-bar x-docked x-tab-bar-default x-horizontal x-tab-bar-horizontal x-tab-bar-default-horizontal x-top x-tab-bar-top x-tab-bar-default-top x-docked-top x-tab-bar-docked-top x-tab-bar-default-docked-top x-noborder-trl" style="height: 29px; width: 690px; right: auto; left: 5px; top: 5px;" id="tabbar-1021" tabindex="0">
+					<div id="tabbar-1021-body" data-ref="body" role="presentation" class="x-tab-bar-body x-tab-bar-body-default  x-box-layout-ct" style="height: 29px; width: 690px;">
+						<div role="presentation" id="tabbar-1021-before-scroller" class="x-box-scroller x-box-scroller-left x-box-scroller-tab-bar x-box-scroller-tab-bar-default x-unselectable" style="display: none;"></div>
+						<div id="tabbar-1021-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner x-box-scroller-body-horizontal" style="width: 690px; height: 22px;">
+							<div id="tabbar-1021-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 690px;">
+								<a class="x-tab  x-unselectable x-tab-active x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1168" tabindex="-1" componentid="tab-1168" style="display: none;"><span id="tab-1168-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1168-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1168-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1168-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Meetings List</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1169" tabindex="-1" componentid="tab-1169" style="display: none;"><span id="tab-1169-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1169-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1169-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1169-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Meeting Information</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1170" tabindex="-1" componentid="tab-1170" style="display: none;"><span id="tab-1170-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1170-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1170-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1170-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Recordings</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1171" tabindex="-1" componentid="tab-1171" style="display: none;"><span id="tab-1171-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1171-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1171-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1171-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Reports</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1172" tabindex="-1" componentid="tab-1172" style="display: none;"><span id="tab-1172-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1172-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1172-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1172-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Office Hours Information</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1173" tabindex="-1" componentid="tab-1173" style="display: none;"><span id="tab-1173-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1173-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1173-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1173-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Study Group Information</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1174" tabindex="-1" componentid="tab-1174" style="display: none;"><span id="tab-1174-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1174-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default x-tab-text    x-tab-button-center "><span id="tab-1174-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1174-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">Participants</span></span></span></a>
+								<a class="x-tab  x-unselectable x-box-item x-tab-default x-top x-tab-top x-tab-default-top" hidefocus="on" unselectable="on" id="tab-1175" tabindex="-1" componentid="tab-1175" style="display: none;"><span id="tab-1175-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-tab-wrap x-tab-wrap-default "><span id="tab-1175-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-tab-button x-tab-button-default  x-tab-no-text   x-tab-button-center "><span id="tab-1175-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-tab-icon-el x-tab-icon-el-default  " style=""></span><span id="tab-1175-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-tab-inner x-tab-inner-default">&nbsp;</span></span></span></a>
+								<div class="x-component  x-box-item x-component-default" id="component-1231" style="right: auto; left: 0px; margin: 0px; width: 637px; top: 0px; height: 22px;"></div>
+								<label class="x-component  x-box-item x-component-default" style="cursor: pointer; padding: 5px 5px 0px 0px; right: auto; left: 637px; margin: 0px; top: 0px;" id="label-1232" for="">Settings</label>
+							</div>
+						</div>
+						<div role="presentation" id="tabbar-1021-after-scroller" class="x-box-scroller x-box-scroller-right x-box-scroller-tab-bar x-box-scroller-tab-bar-default x-unselectable" style="display: none;"></div>
+					</div>
+					<div id="tabbar-1021-strip" data-ref="strip" role="presentation" class="x-tab-bar-strip x-tab-bar-strip-default"></div>
+				</div>*@
+				<div id="tab-holder-1020-body" data-ref="body" class="x-panel-body x-panel-body-default x-layout-fit x-panel-body-default x-noborder-trbl" role="presentation" style="width: 690px; left: 0px; top: 29px; height: 669px;">
+					<div class="x-container  x-tabpanel-child x-container-default" id="meetings-list-1022" style="overflow: auto; margin: 0px; width: 690px; height: 669px;">
+						<div id="meetings-list-1022-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; height: 100%;">
+							<div id="meetings-list-1022-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
+								<fieldset class="x-fieldset  x-fieldset-with-title x-fieldset-with-legend x-fieldset-default" style="margin:10px 0px 10px 0px;" id="fieldset-1023">
+									<legend class="x-fieldset-header  x-fieldset-header-default" id="fieldset-1023-legend">
+										<div class="x-component  x-fieldset-header-text x-component-default" id="fieldset-1023-legendTitle">Course Meetings</div>
+									</legend>
+									<div id="fieldset-1023-body" data-ref="body" class="x-fieldset-body x-fieldset-body-default " role="presentation">
+										<div id="fieldset-1023-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; table-layout: fixed;">
+											<div id="fieldset-1023-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
+												<div class="x-container  x-container-default x-box-layout-ct" style="padding: 10px; width: 670px; background: rgb(238, 238, 238);" id="meeting-item-1177">
+													<div id="meeting-item-1177-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: 24px;">
+														<div id="meeting-item-1177-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
+															<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178" for="">Currently there are no meetings. Please add.</label>
+															<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1179" style="display: none;">
+																<div id="container-1179-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																	<div id="container-1179-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1180">
+																			<div id="container-1180-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																				<div id="container-1180-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																					<img class="x-img  x-box-item x-img-default" style="cursor: pointer; margin: 0px 0px 0px 5px; width: 16px; height: 16px; display: none;" id="image-1181" src="resources/alert-big.png">
+																					<label class="x-component  x-box-item x-component-default" style="margin:5px 0px 0px 5px;" id="label-1182" for=""></label>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1183">
+																			<div id="container-1183-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																				<div id="container-1183-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor:pointer;font-size:0.9em;margin:5px 0px 0px 5px;" id="label-1184" for="">Recordings</label>
+																					<label class="x-component  x-box-item x-component-default" style="margin:5px 0px 0px 5px;" id="label-1185" for="">|</label>
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor:pointer;font-size:0.9em;margin:5px 0px 0px 5px;" id="label-1186" for="">Reports</label>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" hidefocus="on" unselectable="on" id="button-1187" tabindex="0" componentid="button-1187" style="right: auto; left: 565px; margin: 0px; top: 0px;"><span id="button-1187-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1187-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1187-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1187-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Add Meeting</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small x-item-disabled x-btn-disabled" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="button-1188" target="_blank" tabindex="0" componentid="button-1188"><span id="button-1188-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1188-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1188-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1188-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Join</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="splitbutton-1189" tabindex="0" componentid="splitbutton-1189"><span id="splitbutton-1189-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small x-btn-split x-btn-split-right"><span id="splitbutton-1189-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small  x-btn-no-text x-btn-icon x-btn-icon-left x-btn-button-center "><span id="splitbutton-1189-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style="background-image:url(resources/settings_small.png);">&nbsp;</span><span id="splitbutton-1189-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">&nbsp;</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="button-1193" tabindex="0" componentid="button-1193"><span id="button-1193-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1193-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1193-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1193-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Leave</span></span></span></a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="x-fieldset  x-fieldset-with-title x-fieldset-with-legend x-fieldset-default" style="margin:10px 0px 10px 0px;" id="fieldset-1024">
+									<legend class="x-fieldset-header  x-fieldset-header-default" id="fieldset-1024-legend">
+										<div class="x-component  x-fieldset-header-text x-component-default" id="fieldset-1024-legendTitle">Office Hours</div>
+									</legend>
+									<div id="fieldset-1024-body" data-ref="body" class="x-fieldset-body x-fieldset-body-default " role="presentation">
+										<div id="fieldset-1024-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; table-layout: fixed;">
+											<div id="fieldset-1024-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
+												<div class="x-container  x-container-default x-box-layout-ct" style="padding: 10px; width: 670px; background: rgb(238, 238, 238);" id="meeting-item-1194">
+													<div id="meeting-item-1194-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: 24px;">
+														<div id="meeting-item-1194-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
+															<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1195" for="">Currently there are no meetings. Please add.</label>
+															<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1196" style="display: none;">
+																<div id="container-1196-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																	<div id="container-1196-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1197">
+																			<div id="container-1197-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																				<div id="container-1197-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																					<img class="x-img  x-box-item x-img-default" style="cursor: pointer; margin: 0px 0px 0px 5px; width: 16px; height: 16px; display: none;" id="image-1198" src="resources/alert-big.png">
+																					<label class="x-component  x-box-item x-component-default" style="margin:5px 0px 0px 5px;" id="label-1199" for=""></label>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1200">
+																			<div id="container-1200-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+																				<div id="container-1200-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor:pointer;font-size:0.9em;margin:5px 0px 0px 5px;" id="label-1201" for="">Recordings</label>
+																					<label class="x-component  x-box-item x-component-default" style="margin:5px 0px 0px 5px;" id="label-1202" for="">|</label>
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor:pointer;font-size:0.9em;margin:5px 0px 0px 5px;" id="label-1203" for="">Reports</label>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" hidefocus="on" unselectable="on" id="button-1204" tabindex="0" componentid="button-1204" style="right: auto; left: 565px; margin: 0px; top: 0px;"><span id="button-1204-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1204-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1204-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1204-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Add Meeting</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small x-item-disabled x-btn-disabled" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="button-1205" target="_blank" tabindex="0" componentid="button-1205"><span id="button-1205-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1205-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1205-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1205-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Join</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="splitbutton-1206" tabindex="0" componentid="splitbutton-1206"><span id="splitbutton-1206-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small x-btn-split x-btn-split-right"><span id="splitbutton-1206-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small  x-btn-no-text x-btn-icon x-btn-icon-left x-btn-button-center "><span id="splitbutton-1206-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style="background-image:url(resources/settings_small.png);">&nbsp;</span><span id="splitbutton-1206-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">&nbsp;</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="button-1210" tabindex="0" componentid="button-1210"><span id="button-1210-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1210-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1210-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1210-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Leave</span></span></span></a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="x-fieldset  x-fieldset-with-title x-fieldset-with-legend x-fieldset-default" style="margin:10px 0px 10px 0px;" id="fieldset-1025">
+									<legend class="x-fieldset-header  x-fieldset-header-default" id="fieldset-1025-legend">
+										<div class="x-component  x-fieldset-header-text x-component-default" id="fieldset-1025-legendTitle">Study Groups</div>
+									</legend>
+									<div id="fieldset-1025-body" data-ref="body" class="x-fieldset-body x-fieldset-body-default " role="presentation">
+										<div id="fieldset-1025-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; table-layout: fixed;">
+											<div id="fieldset-1025-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
+												<div class="x-container  x-container-default x-box-layout-ct" style="padding: 10px; width: 670px; background: rgb(238, 238, 238);" id="meeting-item-1211">
+													<div id="meeting-item-1211-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: 44px;">
+														<div id="meeting-item-1211-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
+															<label class="x-component  x-box-item x-component-default" style="margin: 5px 0px 0px; display: none;" id="label-1212" for="">Currently there are no meetings. Please add.</label>
+															<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1213" style="margin: 0px; right: auto; left: 0px; top: 0px; width: 540px;">
+																<div id="container-1213-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="height: 44px; width: 126px;">
+																	<div id="container-1213-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 126px;">
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1214" style="margin: 0px; right: auto; left: 0px; top: 0px;">
+																			<div id="container-1214-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 115px; height: 22px;">
+																				<div id="container-1214-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 115px;">
+																					<img class="x-img  x-box-item x-img-default" style="cursor: pointer; margin: 0px 0px 0px 5px; width: 16px; height: 16px; display: none;" id="image-1215" src="resources/alert-big.png">
+																					<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 5px; top: 3px;" id="label-1216" for="">Study Group vadim</label>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="x-container  x-box-item x-container-default x-box-layout-ct" id="container-1217" style="right: auto; left: 0px; top: 22px; margin: 0px;">
+																			<div id="container-1217-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 126px; height: 22px;">
+																				<div id="container-1217-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 126px;">
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor: pointer; font-size: 0.9em; margin: 0px; right: auto; left: 5px; top: 5px;" id="label-1218" for="">Recordings</label>
+																					<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 74px; top: 5px;" id="label-1219" for="">|</label>
+																					<label class="x-component  main-color-label x-box-item x-component-default" style="cursor: pointer; font-size: 0.9em; margin: 0px; right: auto; left: 82px; top: 5px;" id="label-1220" for="">Reports</label>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" hidefocus="on" unselectable="on" id="button-1221" tabindex="0" componentid="button-1221" style="display: none;"><span id="button-1221-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1221-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1221-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1221-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Add Meeting</span></span></span></a>
+															<a class="x-btn x-unselectable x-box-item x-btn-default-small" style="margin: 0px; right: auto; left: 550px; top: 10px;" hidefocus="on" unselectable="on" id="button-1222" tabindex="0" componentid="button-1222"><span id="button-1222-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1222-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1222-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1222-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Join</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px; right: auto; left: 601px; top: 10px;" hidefocus="on" unselectable="on" id="splitbutton-1223" tabindex="0" componentid="splitbutton-1223"><span id="splitbutton-1223-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small x-btn-split x-btn-split-right"><span id="splitbutton-1223-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small  x-btn-no-text x-btn-icon x-btn-icon-left x-btn-button-center "><span id="splitbutton-1223-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style="background-image:url(resources/settings_small.png);">&nbsp;</span><span id="splitbutton-1223-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">&nbsp;</span></span></span></a>
+															<a class="x-btn  x-unselectable x-box-item x-btn-default-small" style="margin: 0px 0px 0px 10px; display: none;" hidefocus="on" unselectable="on" id="button-1227" tabindex="0" componentid="button-1227"><span id="button-1227-btnWrap" data-ref="btnWrap" role="presentation" unselectable="on" style="" class="x-btn-wrap x-btn-wrap-default-small "><span id="button-1227-btnEl" data-ref="btnEl" role="presentation" unselectable="on" style="" class="x-btn-button x-btn-button-default-small x-btn-text    x-btn-button-center "><span id="button-1227-btnIconEl" data-ref="btnIconEl" role="presentation" unselectable="on" class="x-btn-icon-el x-btn-icon-el-default-small  " style=""></span><span id="button-1227-btnInnerEl" data-ref="btnInnerEl" unselectable="on" class="x-btn-inner x-btn-inner-default-small">Leave</span></span></span></a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="loading" style="visibility: hidden;">
+		<span id="loading-message">...loading...</span>
+	</div>
+
+	<div class="x-tip  x-layer x-tip-default x-border-box" id="ext-quicktips-tip" style="display: none;">
+		<div class="x-tip-header  x-header x-docked x-unselectable x-tip-header-default x-horizontal x-tip-header-horizontal x-tip-header-default-horizontal x-top x-tip-header-top x-tip-header-default-top x-box-layout-ct" id="ext-quicktips-tip_header">
+			<div id="ext-quicktips-tip_header-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner">
+				<div id="ext-quicktips-tip_header-targetEl" data-ref="targetEl" class="x-box-target" role="presentation">
+					<div class="x-title  x-tip-header-title x-tip-header-title-default x-box-item x-title-default x-title-rotate-none x-title-align-left" unselectable="on" id="title-1009">
+						<div id="title-1009-textEl" data-ref="textEl" class="x-title-text x-title-text-default x-title-item" unselectable="on">&nbsp;</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="ext-quicktips-tip-body" data-ref="body" class="x-tip-body x-tip-body-default x-tip-body-default" role="presentation">
+			<div id="ext-quicktips-tip-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation">
+				<div id="ext-quicktips-tip-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation"></div>
+			</div>
+		</div>
+		<div role="presentation" class="x-tip-anchor x-tip-anchor-top" id="ext-element-2"></div>
+	</div>
+</body>
+</html>

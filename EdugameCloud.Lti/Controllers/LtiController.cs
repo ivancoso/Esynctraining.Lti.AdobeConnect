@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
+    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Core.OAuth;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
@@ -337,15 +338,19 @@ namespace EdugameCloud.Lti.Controllers
         {
             string meetingsJson = TempData["meetings"] as string;
             string password = TempData["RestoredACPassword"] as string;
+            bool acUsesEmailAsLogin = TempData["ACUsesEmailAsLogin"] as bool? ?? false;
+            string policies = TempData["ACPasswordPolicies"] as string;
+            bool usesSyncUsers = TempData["UseSynchronizedUsers"] as bool? ?? false;
 
             if (string.IsNullOrWhiteSpace(meetingsJson))
             {
                 LmsUserSession session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
+                var acProvider = this.GetAdobeConnectProvider(credentials);
                 var meetings = this.meetingSetup.GetMeetings(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    acProvider,
                     param);
 
                 if (string.IsNullOrWhiteSpace(password))
@@ -354,10 +359,16 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 meetingsJson = JsonConvert.SerializeObject(meetings);
+                acUsesEmailAsLogin = credentials.ACUsesEmailAsLogin ?? false;
+                policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
+                usesSyncUsers = credentials.UseSynchronizedUsers;
             }
 
             ViewBag.MeetingsJson = meetingsJson;
             ViewBag.RestoredACPassword = password;
+            ViewBag.ACUsesEmailAsLogin = acUsesEmailAsLogin;
+            ViewBag.ACPasswordPolicies = policies;
+            ViewBag.UseSynchronizedUsers = usesSyncUsers;
             return View("Index");
         }
 
@@ -636,130 +647,139 @@ namespace EdugameCloud.Lti.Controllers
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
         {
-            var sw = Stopwatch.StartNew();
+            try
+            {
+                //var sw = Stopwatch.StartNew();
 
-            string lmsProvider = param.GetLtiProviderName(provider);
-            if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !string.IsNullOrEmpty(param.user_id))
-            {
-                logger.InfoFormat("[D2L login attempt]. Original user_id: {0}", param.user_id);
-                var parsedIdArray = param.user_id.Split('_');
-                if (parsedIdArray.Length == 2)
+                string lmsProvider = param.GetLtiProviderName(provider);
+                if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !string.IsNullOrEmpty(param.user_id))
                 {
-                    param.user_id = parsedIdArray[1];
+                    logger.InfoFormat("[D2L login attempt]. Original user_id: {0}", param.user_id);
+                    var parsedIdArray = param.user_id.Split('_');
+                    if (parsedIdArray.Length == 2)
+                    {
+                        param.user_id = parsedIdArray[1];
+                    }
                 }
-            }
-            LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
-            if (lmsCompany != null)
-            {
-                if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) 
-                    && !string.Equals(lmsCompany.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
+                if (lmsCompany != null)
                 {
-                    this.ViewBag.Error = "This LTI integration is already set for different domain";
+                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain)
+                        && !string.Equals(lmsCompany.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        this.ViewBag.Error = "This LTI integration is already set for different domain";
+                        return this.View("Error");
+                    }
+                }
+                else
+                {
+                    this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up.");
                     return this.View("Error");
                 }
-            }
-            else 
-            {
-                this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up.");
+
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+                // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
+
+                string email, login;
+                this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
+                param.ext_user_username = login;
+                var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
+
+                LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
+                var key = session.Id.ToString();
+
+                this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
+
+                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
+                {
+                    Principal acPrincipal = null;
+
+                    switch (lmsProvider.ToLower())
+                    {
+                        case LmsProviderNames.Canvas:
+                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || canvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                            {
+                                this.StartOAuth2Authentication(provider, key, param);
+                                return null;
+                            }
+
+                            acPrincipal = acUserService.GetOrCreatePrincipal(
+                                adobeConnectProvider,
+                                param.lms_user_login,
+                                param.lis_person_contact_email_primary,
+                                param.lis_person_name_given,
+                                param.lis_person_name_family,
+                                lmsCompany);
+                            break;
+                        case LmsProviderNames.Desire2Learn:
+                            //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
+                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
+                            {
+                                var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+                                string returnUrl = this.Url.AbsoluteAction(
+                                    "callback",
+                                    "Lti",
+                                    new { __provider__ = provider },
+                                    Request.Url.Scheme);
+                                Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
+                                return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
+                            }
+
+                            acPrincipal = acUserService.GetOrCreatePrincipal(
+                                adobeConnectProvider,
+                                param.lms_user_login,
+                                param.lis_person_contact_email_primary,
+                                param.lis_person_name_given,
+                                param.lis_person_name_family,
+                                lmsCompany);
+                            break;
+                        case LmsProviderNames.BrainHoney:
+                        case LmsProviderNames.Blackboard:
+                        case LmsProviderNames.Moodle:
+                        case LmsProviderNames.Sakai:
+                            acPrincipal = acUserService.GetOrCreatePrincipal(
+                                adobeConnectProvider,
+                                param.lms_user_login,
+                                param.lis_person_contact_email_primary,
+                                param.lis_person_name_given,
+                                param.lis_person_name_family,
+                                lmsCompany);
+                            if (lmsUser == null)
+                            {
+                                lmsUser = new LmsUser
+                                {
+                                    LmsCompany = lmsCompany,
+                                    UserId = param.lms_user_id,
+                                    Username = GetUserNameOrEmail(param),
+                                    PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
+                                };
+                                this.lmsUserModel.RegisterSave(lmsUser);
+                            }
+
+                            break;
+                    }
+
+                    if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
+                    {
+                        lmsUser.PrincipalId = acPrincipal.PrincipalId;
+                        this.lmsUserModel.RegisterSave(lmsUser);
+                    }
+
+                    //sw.Stop();
+                    //var time = sw.Elapsed;
+
+                    return this.RedirectToExtJs(session, lmsUser, key);
+                }
+
+                this.ViewBag.Error = "Invalid LTI request";
                 return this.View("Error");
             }
-
-            var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
-            // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
-            
-            string email, login;
-            this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
-            param.ext_user_username = login;
-            var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
-            
-            LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
-            var key = session.Id.ToString();
-            
-            this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
-            
-            if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
+            catch (Exception ex)
             {
-                Principal acPrincipal = null;
-
-                switch (lmsProvider.ToLower())
-                {
-                    case LmsProviderNames.Canvas:
-                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || canvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
-                        {
-                            this.StartOAuth2Authentication(provider, key, param);
-                            return null;
-                        }
-
-                        acPrincipal = acUserService.GetOrCreatePrincipal(
-                            adobeConnectProvider,
-                            param.lms_user_login,
-                            param.lis_person_contact_email_primary,
-                            param.lis_person_name_given,
-                            param.lis_person_name_family,
-                            lmsCompany);
-                        break;
-                    case LmsProviderNames.Desire2Learn:
-                        //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
-                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
-                        {
-                            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-                            string returnUrl = this.Url.AbsoluteAction(
-                                "callback",
-                                "Lti",
-                                new {__provider__ = provider},
-                                Request.Url.Scheme);
-                            Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
-                            return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
-                        }
-
-                        acPrincipal = acUserService.GetOrCreatePrincipal(
-                            adobeConnectProvider,
-                            param.lms_user_login,
-                            param.lis_person_contact_email_primary,
-                            param.lis_person_name_given,
-                            param.lis_person_name_family,
-                            lmsCompany);
-                        break;
-                    case LmsProviderNames.BrainHoney:
-                    case LmsProviderNames.Blackboard:
-                    case LmsProviderNames.Moodle:
-                    case LmsProviderNames.Sakai:
-                        acPrincipal = acUserService.GetOrCreatePrincipal(
-                            adobeConnectProvider,
-                            param.lms_user_login,
-                            param.lis_person_contact_email_primary,
-                            param.lis_person_name_given,
-                            param.lis_person_name_family,
-                            lmsCompany);
-                        if (lmsUser == null)
-                        {
-                            lmsUser = new LmsUser
-                            {
-                                LmsCompany = lmsCompany,
-                                UserId = param.lms_user_id,
-                                Username = GetUserNameOrEmail(param),
-                                PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
-                            };
-                            this.lmsUserModel.RegisterSave(lmsUser);
-                        }
-
-                        break;
-                }
-
-                if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
-                {
-                    lmsUser.PrincipalId = acPrincipal.PrincipalId;
-                    this.lmsUserModel.RegisterSave(lmsUser);
-                }
-
-                sw.Stop();
-                var time = sw.Elapsed;
-
-                return this.RedirectToExtJs(session, lmsUser, key);
+                logger.Error("LoginWithProvider", ex);
+                this.ViewBag.Error = "Invalid LTI request";
+                return this.View("~/Views/Lti/LtiError.cshtml");
             }
-
-            this.ViewBag.Error = "Invalid LTI request";
-            return this.View("Error");
         }
 
         /// <summary>
@@ -819,14 +839,29 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
+
                 string error;
-                var updatedUser = this.usersSetup.UpdateUser(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
-                    session.LtiSession.LtiParam,
-                    user,
-                    scoId,
-                    out error);
+                LmsUserDTO updatedUser = null;
+                if (user.guest_id.HasValue)
+                {
+                    updatedUser = this.usersSetup.UpdateGuest(
+                        credentials,
+                        this.GetAdobeConnectProvider(credentials),
+                        session.LtiSession.LtiParam,
+                        user,
+                        scoId,
+                        out error);
+                }
+                else
+                {
+                    updatedUser = this.usersSetup.UpdateUser(
+                        credentials,
+                        this.GetAdobeConnectProvider(credentials),
+                        session.LtiSession.LtiParam,
+                        user,
+                        scoId,
+                        out error);
+                }
 
                 if (string.IsNullOrEmpty(error))
                     return Json(OperationResult.Success(new[] { updatedUser }));
@@ -1158,13 +1193,17 @@ namespace EdugameCloud.Lti.Controllers
             primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty);
 
             var param = session.LtiSession.LtiParam;
+            var acProvider = this.GetAdobeConnectProvider(credentials);
             var meetings = this.meetingSetup.GetMeetings(
                 credentials,
-                this.GetAdobeConnectProvider(credentials),
+                acProvider,
                 param);
 
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
+            TempData["ACUsesEmailAsLogin"] = credentials.ACUsesEmailAsLogin;
+            TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
+            TempData["UseSynchronizedUsers"] = credentials.UseSynchronizedUsers;
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });
         }

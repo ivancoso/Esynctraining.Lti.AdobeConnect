@@ -205,6 +205,7 @@
     <Compile Include="Domain\Entities\LmsCompany.cs" />
     <Compile Include="Domain\Entities\LmsCompanyRoleMapping.cs" />
     <Compile Include="Domain\Entities\LmsCompanySetting.cs" />
+    <Compile Include="Domain\Entities\LmsCourseMeetingGuest.cs" />
     <Compile Include="Domain\Entities\LmsCourseMeeting.cs" />
     <Compile Include="Domain\Entities\LmsMeetingType.cs" />
     <Compile Include="Domain\Entities\LmsProvider.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Domain\Entities\Schedule.cs" />
     <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
     <Compile Include="Domain\Entities\ScheduleType.cs" />
+    <Compile Include="DTO\ACPasswordPoliciesDTO.cs" />
     <Compile Include="DTO\ACSessionDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantDTO.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
@@ -242,6 +244,8 @@
     <Compile Include="DTO\LtiSessionDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
+    <Compile Include="DTO\PrincipalDto.cs" />
+    <Compile Include="DTO\PrincipalInputDto.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\VariableDTO.cs" />

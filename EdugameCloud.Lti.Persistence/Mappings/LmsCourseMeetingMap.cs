@@ -27,6 +27,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.References(x => x.OfficeHours).Nullable();
             this.References(x => x.Owner).Column("ownerId").Nullable();
             HasMany(x => x.MeetingRoles).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
+            HasMany(x => x.MeetingGuests).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
         }
 
         #endregion
