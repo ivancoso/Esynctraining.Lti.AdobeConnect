@@ -839,11 +839,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
                 {
-                    string error = string.Format("SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.", 
+                    string errorMsg = string.Format("SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.", 
                         status.Code.ToString(), 
                         status.SubCode
                         );
-                    throw new InvalidOperationException(error);
+                    throw new InvalidOperationException(errorMsg);
                 }
             }
 
