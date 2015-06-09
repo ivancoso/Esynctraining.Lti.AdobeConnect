@@ -1063,6 +1063,23 @@
         }
 
         /// <summary>
+        /// TRICK: uses "sort-date-created=desc".
+        /// </summary>        
+        public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)
+        {
+            // act: "report-bulk-consolidated-transactions"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions,
+                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.PrincipalId, principalId)
+                .AppendPagingIfNeeded(startIndex, limit), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
+                : new TransactionCollectionResult(status);
+        }
+
+        /// <summary>
         /// The get contents by SCO id.
         /// </summary>
         /// <param name="startIndex">

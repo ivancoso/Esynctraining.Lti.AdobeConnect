@@ -122,6 +122,8 @@
             /// The meeting SCO id.
             /// </summary>
             public const string MeetingScoId = "filter-type=meeting&filter-sco-id={0}";
+
+            public const string PrincipalId = "filter-type=meeting&filter-principal-id={0}&sort-date-created=desc";
         }
 
         /// <summary>
