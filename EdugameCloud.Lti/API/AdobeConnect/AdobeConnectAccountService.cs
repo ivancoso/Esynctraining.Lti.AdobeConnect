@@ -48,12 +48,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
 
                 //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresDigit = fields.Values.First(x => x.FieldId == "password-requires-digit").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresCapitalLetter = fields.Values.First(x => x.FieldId == "password-requires-capital-letter").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                string passwordRequiresSpecialChars = fields.Values.First(x => x.FieldId == "password-requires-special-chars").Value;
+                bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
+                bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
+                string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
 
-                int passwordMinLength = int.Parse(fields.Values.First(x => x.FieldId == "password-min-length").Value);
-                int passwordMaxLength = int.Parse(fields.Values.First(x => x.FieldId == "password-max-length").Value);
+                int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
+                int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
 
                 return new ACPasswordPoliciesDTO 
                 {
@@ -68,6 +68,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             _logger.Error("GetPasswordPolicies. Account is NULL");
             return null;
         }
+
+
+        private static string GetField(FieldCollectionResult value, string fieldName)
+        {
+            Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
+            if (field == null)
+            {
+                return null;
+            }
+
+            return field.Value;
+        }
+
     }
 
 }

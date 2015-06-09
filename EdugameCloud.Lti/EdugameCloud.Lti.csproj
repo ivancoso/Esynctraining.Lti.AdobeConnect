@@ -78,8 +78,8 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.16, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.16\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.17, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.17\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core">
@@ -208,8 +208,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\AdobeConnect\AdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
+    <Compile Include="API\AdobeConnect\IAdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />
@@ -232,6 +234,8 @@
     <Compile Include="API\Sakai\SakaiLmsUserService.cs" />
     <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
+    <Compile Include="Controllers\AcUserController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LtiController.Reports.cs" />
     <Compile Include="Controllers\LtiController.Recordings.cs" />
     <Compile Include="Controllers\LtiController.cs" />

@@ -777,7 +777,7 @@ namespace EdugameCloud.Lti.Controllers
             catch (Exception ex)
             {
                 logger.Error("LoginWithProvider", ex);
-                this.ViewBag.Error = "Invalid LTI request";
+                this.ViewBag.DebugError = IsDebug? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }

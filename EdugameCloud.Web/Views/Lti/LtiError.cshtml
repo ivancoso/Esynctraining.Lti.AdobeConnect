@@ -1,5 +1,10 @@
 ﻿@{
 	Layout = null;
+	string errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
+		? "An exception is occured. Try again later or contact your administrator."
+		: "Error occured. " + ViewBag.DebugError;
+
+	string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
 }
 <!DOCTYPE html>
 <html class="x-viewport">
@@ -62,9 +67,9 @@
 										<div id="fieldset-1023-outerCt" data-ref="outerCt" class="x-autocontainer-outerCt" role="presentation" style="width: 100%; table-layout: fixed;">
 											<div id="fieldset-1023-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
 												<div class="x-container  x-container-default x-box-layout-ct" style="padding: 10px; width: 670px; background: rgb(238, 238, 238);" id="meeting-item-1177">
-													<div id="meeting-item-1177-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: 24px;">
+													<div id="meeting-item-1177-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: @height;">
 														<div id="meeting-item-1177-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
-															<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178" for="">An exception is occured. Try again later or contact your administrator.</label>
+															<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178" for="">@Html.Raw(errorMessage)</label>
 														</div>
 													</div>
 												</div>
