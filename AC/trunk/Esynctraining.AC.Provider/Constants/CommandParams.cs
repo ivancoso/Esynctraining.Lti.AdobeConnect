@@ -5,15 +5,32 @@
     /// </summary>
     internal static class CommandParams
     {
+
         /// <summary>
         /// The login
         /// </summary>
         public const string LoginParams = "login={0}&password={1}";
 
         /// <summary>
+        /// The job id
+        /// </summary>
+        public const string JobId = "job-id={0}";
+
+        /// <summary>
+        /// The folder id
+        /// </summary>
+        public const string FolderId = "folder-id={0}";
+
+
+        /// <summary>
         /// The SCO id.
         /// </summary>
         public const string ScoId = "sco-id={0}";
+
+        /// <summary>
+        /// Source sco id.
+        /// </summary>
+        public const string SourceScoId = "source-sco-id={0}";
 
         /// <summary>
         /// The SCO upload id.
@@ -87,6 +104,11 @@
         /// The meeting archives.
         /// </summary>
         public const string MeetingArchives = "sco-id={0}&filter-icon=archive";
+
+        /// <summary>
+        /// All archives including mp4.
+        /// </summary>
+        public const string MeetingArchivesWithMP4 = "sco-id={0}&filter-icon=archive&filter-icon=mp4-archive";
 
         /// <summary>
         /// The sco name.

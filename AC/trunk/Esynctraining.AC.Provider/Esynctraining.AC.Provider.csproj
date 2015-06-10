@@ -43,16 +43,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
     <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
     <Compile Include="Constants\Commands.cs" />
     <Compile Include="Constants\CommandParams.cs" />
     <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\CancelRecordingJobResult.cs" />
+    <Compile Include="DataObjects\Results\CommonInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumTakerCollectionResult.cs" />
     <Compile Include="DataObjects\Results\FieldCollectionResult.cs" />
     <Compile Include="DataObjects\Results\FieldResult.cs" />
+    <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
     <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingJobCollectionParser.cs" />
+    <Compile Include="DataObjects\Results\RecordingJobCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingJobResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfilesCollectionResult.cs" />
     <Compile Include="DataObjects\Results\MeetingSessionCollectionResult.cs" />
     <Compile Include="DataObjects\Results\QuizResponseCollectionResult.cs" />
@@ -73,14 +81,18 @@
     <Compile Include="DataObjects\UploadScoInfo.cs" />
     <Compile Include="DataObjects\UserCredentials.cs" />
     <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\CommonInfo.cs" />
     <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\CurriculumTaker.cs" />
+    <Compile Include="Entities\GeneratedRecordingJob.cs" />
     <Compile Include="Entities\Field.cs" />
     <Compile Include="Entities\LearningPathItem.cs" />
     <Compile Include="Entities\FolderUpdateItem.cs" />
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\PermissionUpdateTrio.cs" />
+    <Compile Include="Entities\Recording.cs" />
+    <Compile Include="Entities\RecordingJob.cs" />
     <Compile Include="Entities\TelephonyProfile.cs" />
     <Compile Include="Entities\MeetingSession.cs" />
     <Compile Include="Entities\QuizResponse.cs" />
@@ -105,10 +117,13 @@
     <Compile Include="Entities\StatusInfo.cs" />
     <Compile Include="Entities\TransactionInfo.cs" />
     <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="EntityParsing\CommonInfoParser.cs" />
     <Compile Include="EntityParsing\ContactParser.cs" />
     <Compile Include="EntityParsing\CurriculumTakerCollectionParser.cs" />
     <Compile Include="EntityParsing\CurriculumTakerParser.cs" />
     <Compile Include="EntityParsing\FieldParser.cs" />
+    <Compile Include="EntityParsing\GeneratedRecordingJobCollectionParser.cs" />
+    <Compile Include="EntityParsing\GeneratedRecordingJobParser.cs" />
     <Compile Include="EntityParsing\FieldValueParser.cs" />
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
@@ -117,6 +132,9 @@
     <Compile Include="EntityParsing\PrincipalPreferencesParser.cs" />
     <Compile Include="EntityParsing\CurriculumContentCollectionParser.cs" />
     <Compile Include="EntityParsing\CurriculumContentParser.cs" />
+    <Compile Include="EntityParsing\RecordingCollectionParser.cs" />
+    <Compile Include="EntityParsing\RecordingJobParser.cs" />
+    <Compile Include="EntityParsing\RecordingParser.cs" />
     <Compile Include="EntityParsing\TelephonyProfileParser.cs" />
     <Compile Include="EntityParsing\TelephonyProfilesCollectionParser.cs" />
     <Compile Include="EntityParsing\ScoSearchByFieldParser.cs" />
@@ -170,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -20,7 +20,7 @@
     /// The adobe connect provider.
     /// </summary>
     [AspNetHostingPermission(System.Security.Permissions.SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
-    public class AdobeConnectProvider
+    public partial class AdobeConnectProvider
     {
         #region Private Constants
 
@@ -1269,6 +1269,21 @@
             }
 
             return result;
+        }
+
+        public CommonInfoResult GetCommonInfo()
+        {
+            //act: "common-info"
+            const string commonInfoPath = "//results/common";
+           
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.CommonInfo, string.Empty, out status);
+
+            return ResponseIsOk(doc, status)
+               ? new CommonInfoResult(status, CommonInfoParser.Parse(doc.SelectSingleNode(commonInfoPath)))
+               : new CommonInfoResult(status);
+
         }
 
         #endregion
