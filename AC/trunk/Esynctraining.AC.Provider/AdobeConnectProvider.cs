@@ -828,6 +828,34 @@
                 : new PrincipalCollectionResult(status);
         }
 
+        public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
+        {
+            if (principalIdsToFind == null)
+                throw new ArgumentNullException("principalIdsToFind");
+
+            // act: "principal-list"
+            // /api/xml?action=principal-list&filter-principal-id=AAA&filter-principal-id=BBB&filter-principal-id=CCC
+            StatusInfo status;
+
+            var parameters = new List<string>(principalIdsToFind.Count());
+            var paramBuilder = new StringBuilder();
+            foreach (string principalId in principalIdsToFind)
+            {
+                paramBuilder.Length = 0;
+                paramBuilder.AppendFormat(CommandParams.PrincipalByPrincipalId, principalId);
+                parameters.Add(paramBuilder.ToString());
+            }
+
+            var principals = this.requestProcessor.Process(
+                Commands.Principal.List,
+                string.Join("&", parameters),
+                out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
         /// <summary>
         /// Gets all principals if no Group Id specified.
         /// Otherwise gets only users of the specified Group.

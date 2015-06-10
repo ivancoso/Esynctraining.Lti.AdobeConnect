@@ -89,6 +89,8 @@
 
         public const string PrincipalByFieldLike = "filter-like-{0}={1}";
 
+        public const string PrincipalByPrincipalId = "filter-principal-id={0}";
+
 
         /// <summary>
         /// The principal update password.
