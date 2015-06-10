@@ -7,20 +7,27 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Text;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Converters;
+    using Esynctraining.AC.Provider;
+    using Esynctraining.AC.Provider.DataObjects.Results;
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Utils;
+    using Resources;
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
+    using EdugameCloud.Lti.API.AdobeConnect;
 
     /// <summary>
     /// The LMS service.
@@ -109,6 +116,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        private LmsCompanyModel LmsCompanyModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsCompanyModel>();
+            }
+        }
+
         private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel
         {
             get
@@ -117,6 +132,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        private IAdobeConnectAccountService AdobeConnectAccountService
+        {
+            get
+            {
+                return IoC.Resolve<IAdobeConnectAccountService>();
+            }
+        }
+        
         #endregion
 
         #region Public Methods and Operators
@@ -256,6 +279,53 @@ namespace EdugameCloud.WCFService
         {
             quizIds = quizIds ?? new int[0];
             return this.Convert(userId, lmsUserParametersId, quizIds, true) as SurveysAndSubModuleItemsDTO;
+        }
+
+        public PrincipalReportDto[] GetMeetingHostReport(int lmsCompanyId)
+        {
+            LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
+
+            AdobeConnectProvider provider = MeetingSetup.GetProvider(licence, login: true);
+
+            return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
+        }
+
+        public OperationResultDto DeletePrincipals(int lmsCompanyId, string[] principalIds)
+        {
+            try
+            {
+                if (principalIds == null)
+                    throw new ArgumentNullException("principalIds");
+
+                LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
+
+                AdobeConnectProvider provider = MeetingSetup.GetProvider(licence, login: true);
+
+                bool allOK = true;
+                var failedPrincipals = new List<string>();
+                foreach (string principalId in principalIds)
+                {
+                    PrincipalResult deleteResult = provider.PrincipalDelete(new PrincipalDelete { PrincipalId = principalId });
+                    if (deleteResult.Status.Code != StatusCodes.ok)
+                    {
+                        Logger.ErrorFormat("AC.PrincipalDelete error. {0} PrincipalId: {1}.", 
+                            deleteResult.Status.GetErrorInfo(),
+                            principalId);
+                        allOK = false;
+                        failedPrincipals.Add(principalId);
+                    }
+                }
+
+                if (allOK)
+                    return OperationResultDto.Success();
+                else
+                    return OperationResultDto.Error(string.Format("Failed to delete {0} principal(s) from Adobe Connect", failedPrincipals.Count.ToString()));
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("LmsService.DeletePrincipals", ex);
+                return OperationResultDto.Error(ErrorsTexts.UnexpectedError);
+            }
         }
 
         #endregion

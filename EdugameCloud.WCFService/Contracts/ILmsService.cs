@@ -1,14 +1,13 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System.Diagnostics.CodeAnalysis;
-    using System.ServiceModel;
-    using System.ServiceModel.Web;
-
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-
-    using Esynctraining.Core.Domain.Entities;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     /// The LMS Service interface.
@@ -122,5 +121,19 @@
         [WebInvoke(UriTemplate = "ConvertSurveys", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
         SurveysAndSubModuleItemsDTO ConvertSurveys(int userId, int lmsUserParametersId, int[] quizIds);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "GetMeetingHostReport", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        PrincipalReportDto[] GetMeetingHostReport(int lmsCompanyId);
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebInvoke(UriTemplate = "DeletePrincipals", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        OperationResultDto DeletePrincipals(int lmsCompanyId, string[] principalIds);
+
     }
+
 }

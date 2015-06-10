@@ -69,6 +69,42 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return null;
         }
 
+        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(AdobeConnectProvider provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+
+            var group = provider.GetGroupsByType("live-admins");
+            if (group.Item1.Code != StatusCodes.ok)
+                throw new InvalidOperationException("AC.GetGroupsByType error");
+
+            PrincipalCollectionResult usersResult = provider.GetGroupUsers(group.Item2.First().PrincipalId);
+            if (usersResult.Status.Code != StatusCodes.ok)
+                throw new InvalidOperationException("AC.GetGroupUsers error");
+
+            var result = new List<PrincipalReportDto>();
+            foreach (Principal user in usersResult.Values)
+            {
+                var item = new PrincipalReportDto 
+                {
+                    Principal = PrincipalDto.Build(user),
+                };
+
+                TransactionCollectionResult trxResult = provider.ReportMeetingTransactionsForPrincipal(user.PrincipalId, startIndex: 0, limit: 1);
+
+                if (trxResult.Status.Code != StatusCodes.ok)
+                    throw new InvalidOperationException("AC.ReportMeetingTransactionsForPrincipal error");
+
+                TransactionInfo trx = trxResult.Values.FirstOrDefault();
+
+                if (trx != null)
+                    item.LastTransaction = TransactionInfoDto.Build(trx);
+
+                result.Add(item);
+            }
+
+            return result.AsReadOnly();
+        }
 
         private static string GetField(FieldCollectionResult value, string fieldName)
         {

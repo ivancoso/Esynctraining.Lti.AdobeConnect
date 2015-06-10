@@ -41,17 +41,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (!pu.Success)
                 {
                     string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", firstName, lastName, login, email);
-                    if (pu.Status.UnderlyingExceptionInfo != null)
-                    {
-                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Additional Data: {0}", additionalData), pu.Status.UnderlyingExceptionInfo);
-                    }
-
-                    if (!string.IsNullOrEmpty(pu.Status.InvalidField))
-                    {
-                        throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Invalid Field: {0}. Status.SubCode: {1}. Additional Data: {2}", pu.Status.InvalidField, pu.Status.SubCode, additionalData));
-                    }
-
-                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. Status.Code: {0}. Status.SubCode: {1}. Additional Data: {2}", pu.Status.Code, pu.Status.SubCode, additionalData));
+                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. {0}. Additional Data: {1}", pu.Status.GetErrorInfo(), additionalData));
                 }
 
                 if (pu.Principal != null)
