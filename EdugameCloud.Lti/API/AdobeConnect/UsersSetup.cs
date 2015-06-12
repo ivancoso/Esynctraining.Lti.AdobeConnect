@@ -773,6 +773,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCourseMeeting meeting,
             IEnumerable<LmsUserDTO> users,
             IEnumerable<LmsUser> lmsDbUsers,
+            List<PermissionInfo> enrollments,
             ref string error)
         {
             string meetingSco = meeting.GetMeetingScoId();
@@ -782,7 +783,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var meetingPermissions = new List<PermissionUpdateTrio>();
             var hostPrincipals = new List<string>();
 
-            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
             foreach (LmsUserDTO lmsUserDto in users)
@@ -951,8 +951,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 lmsDbUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
             }
-
-            return SetDefaultRolesForNonParticipants(lmsCompany, provider, meeting, users, lmsDbUsers, ref error);
+            List<PermissionInfo> enrollments = this.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
+            return SetDefaultRolesForNonParticipants(lmsCompany, provider, meeting, users, lmsDbUsers, enrollments, ref error);
         }
 
         /// <summary>

@@ -47,8 +47,8 @@ namespace EdugameCloud.Lti.API
                 .GroupBy(y => y.CourseId);
             foreach (var courseGroup in groupedMeetings)
             {
-                logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}",
-                    lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProvider.Id, courseGroup.Key);
+                logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}; MeetingIds:{3}",
+                    lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProvider.Id, courseGroup.Key, String.Join(",", courseGroup.Select(x=>x.Id)));
                 try
                 {
                     //todo: set extra data param
@@ -83,14 +83,20 @@ namespace EdugameCloud.Lti.API
                                     existedDbUsers.Where(
                                         x => meeting.MeetingRoles.Select(mr => mr.User).All(u => u.Id != x.Id)).ToList());
 
-                                logger.InfoFormat(
-                                    "LmsUser ids to delete from meetingId={0}, courseId={1}: {2}",
-                                    meeting.Id, meeting.CourseId,
-                                    String.Join(",", userRolesToDelete.Select(x => x.User.Id)));
-                                logger.InfoFormat(
-                                    "LmsUser ids to add to meetingId={0}, courseId={1}: {2}",
-                                    meeting.Id, meeting.CourseId,
-                                    String.Join(",", usersToAddToMeeting.Select(x => x.UserId)));
+                                if (userRolesToDelete.Any())
+                                {
+                                    logger.InfoFormat(
+                                        "LmsUser ids to delete from meetingId={0}, courseId={1}: {2}",
+                                        meeting.Id, meeting.CourseId,
+                                        String.Join(",", userRolesToDelete.Select(x => x.User.Id)));
+                                }
+                                if (usersToAddToMeeting.Any())
+                                {
+                                    logger.InfoFormat(
+                                        "LmsUser ids to add to meetingId={0}, courseId={1}: {2}",
+                                        meeting.Id, meeting.CourseId,
+                                        String.Join(",", usersToAddToMeeting.Select(x => x.UserId)));
+                                }
 
                                 userRolesToDelete.ForEach(x => meeting.MeetingRoles.Remove(x));
                                 usersToAddToMeeting.ForEach(x => meeting.MeetingRoles.Add(new LmsUserMeetingRole
@@ -101,9 +107,17 @@ namespace EdugameCloud.Lti.API
                                 }));
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
                                 // todo: optimize condition, probably refresh roles not for all users
-                                if (userRolesToDelete.Any() || usersToAddToMeeting.Any())
+                                var dbPrincipalIds = new HashSet<string>(
+                                    meeting.MeetingRoles.Where(x => x.User.PrincipalId != null).Select(x => x.User.PrincipalId));
+                                List<PermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
+                                var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
+
+                                if (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
+                                    || dbPrincipalIds.Count != acPrincipalIds.Count
+                                    || dbPrincipalIds.Any(x => acPrincipalIds.All(p => p != x)))
                                 {
-                                    UpdateACRoles(lmsCompany, meeting, acProvider);
+                                    logger.InfoFormat("Synchronizing AC for meetingId={0}, courseId={1}", meeting.Id, meeting.CourseId);
+                                    UpdateACRoles(lmsCompany, meeting, acProvider, enrollments);
                                 }
                             }
                         }
@@ -166,7 +180,8 @@ namespace EdugameCloud.Lti.API
             return newUsers;
         }
 
-        private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting, AdobeConnectProvider acProvider)
+        private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+            AdobeConnectProvider acProvider, List<PermissionInfo> enrollments)
         {
             string error = null;
             var meetingRoles = usersSetup.GetUserMeetingRoles(meeting);
@@ -190,6 +205,7 @@ namespace EdugameCloud.Lti.API
                         lms_role = x.LmsRole
                     }),
                     dbUsers,
+                    enrollments,
                     ref error);
             }
             catch (Exception e)
