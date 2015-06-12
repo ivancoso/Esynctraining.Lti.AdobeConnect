@@ -1,13 +1,13 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System.Diagnostics.CodeAnalysis;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using EdugameCloud.Core.Domain.DTO;
-using EdugameCloud.Lti.Core.DTO;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Domain.Entities;
+    using System.ServiceModel;
+    using System.ServiceModel.Web;
+    using EdugameCloud.Core.Domain.DTO;
+    using EdugameCloud.Lti.Core.DTO;
+    using EdugameCloud.Lti.DTO;
+    using EdugameCloud.WCFService.DTO;
+    using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
     /// The LMS Service interface.
@@ -25,6 +25,11 @@ using Esynctraining.Core.Domain.Entities;
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetProviders", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         LmsProviderDTO[] GetProviders();
+        
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetMeetingNameFormatters", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        IdNamePairDTO[] GetMeetingNameFormatters();
 
         /// <summary>
         /// The get quizzes for user.

@@ -60,6 +60,8 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// </summary>
         public virtual LmsUser Owner { get; set; }
 
+        public virtual string MeetingNameJson { get; set; }
+
         public virtual IList<LmsUserMeetingRole> MeetingRoles { get; protected set; }
 
         public virtual IList<LmsCourseMeetingGuest> MeetingGuests { get; protected set; }

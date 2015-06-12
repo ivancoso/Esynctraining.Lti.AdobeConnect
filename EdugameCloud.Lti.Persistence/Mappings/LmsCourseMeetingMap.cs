@@ -20,6 +20,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.CourseId).Not.Nullable();
             this.Map(x => x.ScoId).Nullable();
             this.Map(x => x.CachedUsers).CustomType("StringClob").CustomSqlType("nvarchar(max)").Nullable();
+            this.Map(x => x.MeetingNameJson).Length(128).Nullable();
             this.Map(x => x.AddedToCache).Nullable();
             this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Nullable();
             

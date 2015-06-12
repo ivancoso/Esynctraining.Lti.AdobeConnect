@@ -186,6 +186,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Business\MeetingNameFormatting\Formatters\CourseIdPrefixMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\Formatters\CourseNumPrefixDateTimeSuffixMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\Formatters\CourseNumPrefixIdSuffixMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\Formatters\CourseNumPrefixMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\Formatters\StraightMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\IMeetingNameFormatter.cs" />
+    <Compile Include="Business\MeetingNameFormatting\MeetingNameFormatterFactory.cs" />
     <Compile Include="Business\Models\AcCachePrincipalModel.cs" />
     <Compile Include="Business\Models\LmsCompanyRoleMappingModel.cs" />
     <Compile Include="Business\Models\LmsCompanyModel.cs" />

@@ -4,6 +4,7 @@ namespace EdugameCloud.Lti.Domain.Entities
 {
     using System;
     using System.Collections.Generic;
+    using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
@@ -244,6 +245,38 @@ namespace EdugameCloud.Lti.Domain.Entities
                     {
                         LmsCompany = this,
                         Name = "DenyACUserCreation",
+                        Value = value.ToString(),
+                    });
+                }
+                else
+                {
+                    setting.Value = value.ToString();
+                }
+            }
+        }
+
+        public virtual int MeetingNameFormatterId
+        {
+            get
+            {
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "MeetingNameFormatterId", true) == 0);
+                if (setting == null)
+                    return MeetingNameFormatterFactory.DefaultFormatterId;
+
+                return int.Parse(setting.Value);
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    Settings = new List<LmsCompanySetting>();
+
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "MeetingNameFormatterId", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "MeetingNameFormatterId",
                         Value = value.ToString(),
                     });
                 }

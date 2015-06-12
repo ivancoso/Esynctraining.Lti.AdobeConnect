@@ -22,7 +22,6 @@
         /// The <see cref="LookupAllDTO"/>.
         /// </returns>
         [OperationContract]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         LookupAllDTO GetAll();
@@ -47,7 +46,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetLanguages", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         LanguageDTO[] GetLanguages();
 
         /// <summary>
@@ -59,7 +57,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetBuildVersionTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         BuildVersionTypeDTO[] GetBuildVersionTypes();
 
         /// <summary>
@@ -71,7 +68,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetQuestionTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         QuestionTypeDTO[] GetQuestionTypes();
 
         /// <summary>
@@ -83,7 +79,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetScoreTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         ScoreTypeDTO[] GetScoreTypes();
 
         /// <summary>
@@ -95,7 +90,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetTimeZones", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         TimeZoneDTO[] GetTimeZones();
 
         /// <summary>
@@ -107,7 +101,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetUserRoles", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         UserRoleDTO[] GetUserRoles();
 
         /// <summary>
@@ -119,7 +112,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetQuizFormats", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         QuizFormatDTO[] GetQuizFormats();
 
         /// <summary>
@@ -131,7 +123,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetSurveyGroupingTypes", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         SurveyGroupingTypeDTO[] GetSurveyGroupingTypes();
 
         /// <summary>
@@ -143,7 +134,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetCountries", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         CountryDTO[] GetCountries();
 
         /// <summary>
@@ -155,7 +145,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetStates", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         StateDTO[] GetStates();
 
         /// <summary>
@@ -167,7 +156,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetServices", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         SNServiceDTO[] GetServices();
 
         /// <summary>
@@ -179,7 +167,6 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetMapProviders", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         SNMapProviderDTO[] GetMapProviders();
 
         /// <summary>
@@ -195,7 +182,6 @@
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "GetLocation", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Bare)]
-////    [WebORBCache(CacheScope = CacheScope.Global)]
         GeoResultDTO GetLocation(GeoDTO geoDTO);
 
         ///// <summary>

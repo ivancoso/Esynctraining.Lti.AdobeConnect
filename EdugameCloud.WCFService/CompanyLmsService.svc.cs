@@ -434,6 +434,7 @@ namespace EdugameCloud.WCFService
             instance.LoginUsingCookie = !dto.showAuthToken;
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
+            instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
             LmsCompanyModel.UpdateCompanySetting(instance, "UseSynchronizedUsers", dto.useSynchronizedUsers.ToString());
 
             ProcessRoleMapping(dto, instance);

@@ -70,6 +70,7 @@
                 this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
                 this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
                 this.useSynchronizedUsers = instance.UseSynchronizedUsers;
+                this.meetingNameFormatterId = instance.MeetingNameFormatterId;
                 this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
             }
         }
@@ -283,6 +284,9 @@
 
         [DataMember]
         public bool useSynchronizedUsers { get; set; }
+
+        [DataMember]
+        public int meetingNameFormatterId { get; set; }
 
         [DataMember]
         public LmsCompanyRoleMappingDTO[] roleMapping { get; set; }
