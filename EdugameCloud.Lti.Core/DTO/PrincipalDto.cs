@@ -16,7 +16,7 @@ namespace EdugameCloud.Lti.Core.DTO
         public string name { get; set; }
 
         //[DataMember(Name = "principalId")]
-        public string principalId { get; set; }
+        public string principal_id { get; set; }
 
 
         public static PrincipalDto Build(Principal arg)
@@ -26,7 +26,7 @@ namespace EdugameCloud.Lti.Core.DTO
                 login = arg.Login,
                 email = arg.Email,
                 name = arg.Name,
-                principalId = arg.PrincipalId,
+                principal_id = arg.PrincipalId,
             };
         }
 
