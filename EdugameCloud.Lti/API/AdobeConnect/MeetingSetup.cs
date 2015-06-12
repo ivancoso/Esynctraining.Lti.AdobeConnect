@@ -941,7 +941,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             SetMeetingUpateItemFields(
                 meetingDTO,
-                param,
                 updateItem,
                 meetingFolder,
                 courseId,
