@@ -6,27 +6,27 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public sealed class PrincipalDto
     {
-        [DataMember(Name = "login")]
-        public string Login { get; set; }
+        //[DataMember(Name = "login")]
+        public string login { get; set; }
 
-        [DataMember(Name = "email")]
-        public string Email { get; set; }
+        //[DataMember(Name = "email")]
+        public string email { get; set; }
 
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
+        //[DataMember(Name = "name")]
+        public string name { get; set; }
 
-        [DataMember(Name = "principalId")]
-        public string PrincipalId { get; set; }
+        //[DataMember(Name = "principalId")]
+        public string principalId { get; set; }
 
 
         public static PrincipalDto Build(Principal arg)
         {
             return new PrincipalDto
             {
-                Login = arg.Login,
-                Email = arg.Email,
-                Name = arg.Name,
-                PrincipalId = arg.PrincipalId,
+                login = arg.Login,
+                email = arg.Email,
+                name = arg.Name,
+                principalId = arg.PrincipalId,
             };
         }
 
