@@ -1,6 +1,6 @@
 ﻿using Esynctraining.AC.Provider.Entities;
 
-namespace EdugameCloud.Lti.DTO
+namespace EdugameCloud.Lti.Core.DTO
 {
     using System.Runtime.Serialization;
 
@@ -127,6 +127,9 @@ namespace EdugameCloud.Lti.DTO
                     break;
                 case "job-error":
                     recordingStatus = "job-error";
+                    break;
+                case "job-downloading":
+                    recordingStatus = "job-downloading";
                     break;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using EdugameCloud.Lti.Core.DTO;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
 using NHibernate.Linq.Functions;
@@ -309,19 +310,21 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("MP4 recording doesn't exist."));
                 }
 
-                if (!string.IsNullOrEmpty(recording.EncoderServiceJobStatus) && recording.EncoderServiceJobStatus == "WORKING")
+                if (string.IsNullOrEmpty(recording.EncoderServiceJobStatus))
                 {
-                    return Json(OperationResult.Error("MP4 converting is already in progress. Try to delete recording after converting."));
+                    var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
+
+                    if (recordingJob == null)
+                    {
+                        throw new InvalidOperationException("Adobe connect provider");
+                    }
+
+                    return Json(OperationResult.Success());
+                    
                 }
 
-                var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
+                return Json(this.CancelingMP4ConvertingErrorResult(recording.EncoderServiceJobStatus));
 
-                if (recordingJob == null)
-                {
-                    throw new InvalidOperationException("Adobe connect provider");
-                }
-
-                return Json(OperationResult.Success());
             }
             catch (Exception ex)
             {
@@ -331,6 +334,8 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         #endregion
+
+
         #region methods
 
         private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, AdobeConnectProvider adobeConnectProvider)
@@ -343,7 +348,15 @@ namespace EdugameCloud.Lti.Controllers
 
             return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         }
+        private OperationResult CancelingMP4ConvertingErrorResult(string serviceJobStatus)
+        {
+            if (serviceJobStatus == "WORKING" || serviceJobStatus == "COMPLETE")
+            {
+                return OperationResult.Error("Recording is already converting to MP4. Cannot cancel");
+            }
 
+            return OperationResult.Error("Recording status is not recognized.");
+        }
         private OperationResult GenerateErrorResult(StatusInfo status)
         {
             if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
