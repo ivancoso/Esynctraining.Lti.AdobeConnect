@@ -336,11 +336,13 @@ namespace EdugameCloud.Lti.Controllers
 
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode)
         {
-            string meetingsJson = TempData["meetings"] as string;
-            string password = TempData["RestoredACPassword"] as string;
-            bool acUsesEmailAsLogin = TempData["ACUsesEmailAsLogin"] as bool? ?? false;
-            string policies = TempData["ACPasswordPolicies"] as string;
-            bool usesSyncUsers = TempData["UseSynchronizedUsers"] as bool? ?? false;
+            var meetingsJson = TempData["meetings"] as string;
+            var password = TempData["RestoredACPassword"] as string;
+            var acUsesEmailAsLogin = TempData["ACUsesEmailAsLogin"] as bool? ?? false;
+            var policies = TempData["ACPasswordPolicies"] as string;
+            var usesSyncUsers = TempData["UseSynchronizedUsers"] as bool? ?? false;
+            var useFLV = TempData["UseFLV"] as bool? ?? false;
+            var useMP4 = TempData["UseMP4"] as bool? ?? false;
 
             if (string.IsNullOrWhiteSpace(meetingsJson))
             {
@@ -362,6 +364,8 @@ namespace EdugameCloud.Lti.Controllers
                 acUsesEmailAsLogin = credentials.ACUsesEmailAsLogin ?? false;
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
                 usesSyncUsers = credentials.UseSynchronizedUsers;
+                useFLV = credentials.UseFLV;
+                useMP4 = credentials.UseMP4;
             }
 
             ViewBag.MeetingsJson = meetingsJson;
@@ -369,6 +373,8 @@ namespace EdugameCloud.Lti.Controllers
             ViewBag.ACUsesEmailAsLogin = acUsesEmailAsLogin;
             ViewBag.ACPasswordPolicies = policies;
             ViewBag.UseSynchronizedUsers = usesSyncUsers;
+            ViewBag.UseFLV = useFLV;
+            ViewBag.UseMP4 = useMP4;
             return View("Index");
         }
 
@@ -834,7 +840,7 @@ namespace EdugameCloud.Lti.Controllers
         /// </returns>
         [HttpPost]
         public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user, string scoId)
-        {
+        {          
             try
             {
                 var session = this.GetSession(lmsProviderName);
@@ -1204,6 +1210,8 @@ namespace EdugameCloud.Lti.Controllers
             TempData["ACUsesEmailAsLogin"] = credentials.ACUsesEmailAsLogin;
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
             TempData["UseSynchronizedUsers"] = credentials.UseSynchronizedUsers;
+            TempData["UseFLV"] = credentials.UseFLV;
+            TempData["UseMP4"] = credentials.UseMP4;
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });
         }

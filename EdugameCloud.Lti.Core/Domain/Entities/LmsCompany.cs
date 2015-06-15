@@ -225,6 +225,69 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual IList<LmsCompanyRoleMapping> RoleMappings { get; set; }
 
+        /// <summary>
+        /// Gets or sets the enable use flv.
+        /// </summary>
+        public virtual bool UseFLV
+        {
+            get
+            {
+                var useFLV = false;
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "UseFLV") == 0);
+                return setting != null && bool.TryParse(setting.Value, out useFLV) && useFLV;
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    this.Settings = new List<LmsCompanySetting>();
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "UseFLV", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "UseFLV",
+                        Value = value.ToString(),
+                    });
+                }
+                else
+                {
+                    setting.Value = value.ToString();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the enable use mp4.
+        /// </summary>
+        public virtual bool UseMP4 {
+            get
+            {
+                var useMP4 = false;
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "UseMP4") == 0);
+                return setting != null && bool.TryParse(setting.Value, out useMP4) && useMP4;
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    this.Settings = new List<LmsCompanySetting>();
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "UseMP4", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "UseMP4",
+                        Value = value.ToString(),
+                    });
+                }
+                else
+                {
+                    setting.Value = value.ToString();
+                }
+            }
+        }
+
         public virtual bool DenyACUserCreation
         {
             get

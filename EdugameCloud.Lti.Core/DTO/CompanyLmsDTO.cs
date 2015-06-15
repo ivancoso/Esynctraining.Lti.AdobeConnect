@@ -32,6 +32,8 @@
             if (instance != null)
             {
                 this.id = instance.Id;
+                this.useFLV = instance.UseFLV;
+                this.useMP4 = instance.UseMP4;
                 this.acServer = instance.AcServer;
                 this.acUsername = instance.AcUsername;
                 this.companyId = instance.CompanyId.Return(x => x, 0);
@@ -74,6 +76,18 @@
                 this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
             }
         }
+
+        /// <summary>
+        /// Gets or sets the enable use MP4.
+        /// </summary>
+        [DataMember]
+        public bool useMP4 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the enable use FLV.
+        /// </summary>
+        [DataMember]
+        public bool useFLV { get; set; }
 
         /// <summary>
         /// Gets or sets the id.

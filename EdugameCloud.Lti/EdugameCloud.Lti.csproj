@@ -78,9 +78,9 @@
     <Reference Include="DotNetOpenAuth.OpenId.RelyingParty">
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.18, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.18\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.19, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.nuget\packages\Esynctraining.AC.Provider.1.0.1.19\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.11\lib\net40\Esynctraining.Core.dll</HintPath>
@@ -124,10 +124,6 @@
     </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.4.0.3.4000\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine, Version=3.6.4.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\RazorEngine.3.6.4\lib\net40\RazorEngine.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp, Version=105.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -37,6 +37,8 @@
             routes.MapLowercaseRoute("joinmeeting", "Lti/Meeting/Join", new { controller = "Lti", action = "JoinMeeting" });
             routes.MapLowercaseRoute("getrecordings", "Lti/Recording/GetAll", new { controller = "Lti", action = "GetRecordings" });
             routes.MapLowercaseRoute("deleterecording", "Lti/Recording/Delete/{id}", new { controller = "Lti", action = "DeleteRecording", id = UrlParameter.Optional });
+            routes.MapLowercaseRoute("converttoMP4", "Lti/Recording/MakeMP4", new { controller = "Lti", action = "ConvertToMP4" });
+            routes.MapLowercaseRoute("cancelMP4Converting", "Lti/Recording/CancelMP4Converting/{recordingId}", new { controller = "Lti", action = "CancelMP4Converting" });
             routes.MapLowercaseRoute("joinrecording", "Lti/Recording/Join/{recordingUrl}", new { controller = "Lti", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
             routes.MapLowercaseRoute("editrecording", "Lti/Recording/Edit/{recordingId}", new { controller = "Lti", action = "EditRecording", recordingId = UrlParameter.Optional });
             routes.MapLowercaseRoute("getrecordingflv", "Lti/Recording/GetFlv/{recordingUrl}", new { controller = "Lti", action = "GetRecordingFlv", recordingUrl = UrlParameter.Optional });

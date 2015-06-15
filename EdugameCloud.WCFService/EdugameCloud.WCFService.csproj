@@ -73,9 +73,9 @@
     <Reference Include="DotAmf.Wcf">
       <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.Wcf.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.18, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.18\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.19, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\.nuget\packages\Esynctraining.AC.Provider.1.0.1.19\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

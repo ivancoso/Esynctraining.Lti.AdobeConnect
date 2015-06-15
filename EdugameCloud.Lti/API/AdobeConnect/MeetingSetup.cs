@@ -381,17 +381,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return new List<RecordingDTO>();
             }
 
-            var result = provider.GetMeetingRecordings(meeting.GetMeetingScoId());
+            var result = provider.GetRecordingsList(meeting.GetMeetingScoId());
 
             if (!result.Success)
                 throw new InvalidOperationException("GetRecordings failed. Result Status: " + result.Status.Code + " " + result.Status.SubCode);
 
             var recordings = new List<RecordingDTO>();
+            var commonInfo = provider.GetCommonInfo();
+
+            if (!commonInfo.Success)
+                throw new InvalidOperationException("GetCommonInfo failed. Result Status: " + result.Status.Code + " " + result.Status.SubCode);
 
             foreach (var v in result.Values)
             {
                 var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
-                bool isPublic = false;
+                var isPublic = false;
                 if (moreDetails.Success && moreDetails.Values.Any())
                 {
                     isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
@@ -400,18 +404,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // NOTE: not in use on client-site
                 //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
 
-                recordings.Add(new RecordingDTO
-                        {
-                            id = v.ScoId, 
-                            name = v.Name, 
-                            //description = v.Description, 
-                            begin_date = v.BeginDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
-                            //end_date = v.EndDateLocal.ToString("MM/dd/yy h:mm:ss tt"), 
-                            duration = v.Duration, 
-                            url = "/Lti/Recording/Join/" + v.UrlPath.Trim("/".ToCharArray()),
-                            is_public = isPublic,
-                            //password = passcode,
-                        });
+                recordings.Add(new RecordingDTO(v, commonInfo.CommonInfo.AccountUrl)
+                {
+                    is_public = isPublic,
+
+                });
             }
 
             return recordings;
@@ -847,11 +844,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error("No meeting found");
             }
 
-            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.GetMeetingScoId() });
+            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.GetMeetingScoId() }, true);
 
-            if (result.Values.All(v => v.ScoId != recordingId))
+            var recording = result.Values.FirstOrDefault(x => x.ScoId == recordingId);
+
+            if (recording == null)
             {
                 return OperationResult.Error("No recording found");
+            }
+
+            if (recording.Icon == "mp4-archive")
+            {
+                var scheduledRecording = this.GetScheduledRecording(recordingId, scoId, provider);
+                if (scheduledRecording.JobStatus == "job-pending")
+                {
+                    return OperationResult.Error("Cannot delete "  + scheduledRecording.Name  + " MP4 recording. Recording converting - in progress");
+                }
             }
 
             provider.DeleteSco(recordingId);
@@ -1243,6 +1251,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
+
+        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, AdobeConnectProvider adobeConnectProvider)
+        {
+            var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
+            if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any())
+            {
+                return null;
+            }
+
+            return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
+        }
 
         /// <summary>
         /// The save LMS user parameters.

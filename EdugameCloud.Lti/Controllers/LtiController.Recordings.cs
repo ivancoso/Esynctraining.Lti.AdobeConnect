@@ -1,4 +1,10 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using System.Linq;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.Entities;
+using NHibernate.Linq.Functions;
+using Remotion.Linq.Parsing;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -36,6 +42,7 @@
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+
                 OperationResult result = this.meetingSetup.RemoveRecording(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
@@ -71,7 +78,8 @@
             {
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
+                var param = session.LtiSession.LtiParam;    
+
                 List<RecordingDTO> recordings = this.meetingSetup.GetRecordings(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
@@ -234,8 +242,127 @@
             }
         }
 
-        #endregion
+        [HttpPost]
+        public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, string meetingScoId)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
 
+                var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+
+                if (adobeConnectProvider == null)
+                {   
+                    throw new InvalidOperationException("Adobe connect provider");
+                }
+
+                var recordingJob = adobeConnectProvider.ScheduleRecordingJob(recordingId);
+
+                if (recordingJob == null)
+                {
+                    throw new InvalidOperationException("Adobe connect provider. Cannot get recording job.");
+                }
+
+                if (!recordingJob.Success)
+                {
+                    return Json(this.GenerateErrorResult(recordingJob.Status));
+                }
+
+                var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meetingScoId, adobeConnectProvider);
+
+                if (scheduledRecording == null)
+                {
+                    throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
+                }
+
+                var recording = new RecordingDTO(scheduledRecording, credentials.AcServer);
+
+                return Json(OperationResult.Success(recording));
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+        [HttpPost]
+        public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, string meetingScoId)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+
+                var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+
+                if (adobeConnectProvider == null)
+                {
+                    throw new InvalidOperationException("Adobe connect provider");
+                }
+
+                var recording = this.GetScheduledRecording(recordingId, meetingScoId, adobeConnectProvider);
+
+                if (recording == null)
+                {
+                    return Json(OperationResult.Error("MP4 recording doesn't exist."));
+                }
+
+                if (!string.IsNullOrEmpty(recording.EncoderServiceJobStatus) && recording.EncoderServiceJobStatus == "WORKING")
+                {
+                    return Json(OperationResult.Error("MP4 converting is already in progress. Try to delete recording after converting."));
+                }
+
+                var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
+
+                if (recordingJob == null)
+                {
+                    throw new InvalidOperationException("Adobe connect provider");
+                }
+
+                return Json(OperationResult.Success());
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+        #endregion
+        #region methods
+
+        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, AdobeConnectProvider adobeConnectProvider)
+        {
+            var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
+            if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )
+            {
+                return null;
+            }
+
+            return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
+        }
+
+        private OperationResult GenerateErrorResult(StatusInfo status)
+        {
+            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
+            {
+                return OperationResult.Error("Recording is already been converted to MP4.");
+            }
+            if (status.Code == StatusCodes.no_access && status.SubCode == StatusSubCodes.denied)
+            {
+                return OperationResult.Error("MP4 functionality is not enabled in Adobe Connect.");
+            }
+            if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.duplicate)
+            {
+                return OperationResult.Error("Trying to create MP4 duplicate recording.");
+            }
+
+            return OperationResult.Error("Unexpected error");
+        }
+
+        #endregion
     }
 
 }
