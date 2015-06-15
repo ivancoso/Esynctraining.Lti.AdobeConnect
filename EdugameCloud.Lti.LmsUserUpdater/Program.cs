@@ -52,7 +52,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                                     lmsCompany.LmsCourseMeetings.Any(
                                         x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
                                 {
-                                    syncService.SynchronizeUsers(lmsCompany);
+                                    syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
                                 }
                             }
                         }

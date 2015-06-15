@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.API
             this.logger = logger;
         }
 
-        public void SynchronizeUsers(LmsCompany lmsCompany, IEnumerable<string> scoIds = null)
+        public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<string> scoIds = null)
         {
             var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
             var acProvider = meetingSetup.GetProvider(lmsCompany);
@@ -112,9 +112,10 @@ namespace EdugameCloud.Lti.API
                                 List<PermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
                                 var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
-                                if (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
+                                if (syncACUsers && 
+                                    (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
                                     || dbPrincipalIds.Count != acPrincipalIds.Count
-                                    || dbPrincipalIds.Any(x => acPrincipalIds.All(p => p != x)))
+                                    || dbPrincipalIds.Any(x => acPrincipalIds.All(p => p != x))))
                                 {
                                     logger.InfoFormat("Synchronizing AC for meetingId={0}, courseId={1}", meeting.Id, meeting.CourseId);
                                     UpdateACRoles(lmsCompany, meeting, acProvider, enrollments);

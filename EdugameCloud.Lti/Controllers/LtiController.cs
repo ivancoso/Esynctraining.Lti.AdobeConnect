@@ -466,7 +466,7 @@ namespace EdugameCloud.Lti.Controllers
                     && lmsCompany.LmsCourseMeetings != null
                     && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
                 {
-                    syncUsersService.SynchronizeUsers(lmsCompany, new[] { scoId });
+                    syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, scoIds: new[] { scoId });
                 }
                 List<LmsUserDTO> users = this.usersSetup.GetUsers(
                     lmsCompany,
