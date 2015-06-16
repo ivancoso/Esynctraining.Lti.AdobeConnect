@@ -30,7 +30,9 @@ namespace EdugameCloud.Lti.Moodle
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate);
-            return error != null ? OperationResult<List<LmsUserDTO>>.Success(users): OperationResult<List<LmsUserDTO>>.Error(error);
+            return error != null
+                ? OperationResult<List<LmsUserDTO>>.Error(error)
+                : OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)
