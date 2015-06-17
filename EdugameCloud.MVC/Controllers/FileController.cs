@@ -199,7 +199,7 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-host-report")]
-        /*[CustomAuthorize]*/
+        [CustomAuthorize]
         public virtual ActionResult MeetingHostRreport(int lmsCompanyId, string format = "PDF")
         {
             var licence = this.lmsCompanyModel.GetOneById(lmsCompanyId).Value;
