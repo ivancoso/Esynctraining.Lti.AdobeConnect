@@ -854,14 +854,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error("No recording found");
             }
 
-            if (recording.Icon == "mp4-archive")
+            /*if (recording.Icon == "mp4-archive")
             {
                 var scheduledRecording = this.GetScheduledRecording(recordingId, scoId, provider);
                 if (scheduledRecording.JobStatus == "job-pending")
                 {
                     return OperationResult.Error("Cannot delete "  + scheduledRecording.Name  + " MP4 recording. Recording converting - in progress");
                 }
-            }
+            }*/
 
             provider.DeleteSco(recordingId);
             return OperationResult.Success();

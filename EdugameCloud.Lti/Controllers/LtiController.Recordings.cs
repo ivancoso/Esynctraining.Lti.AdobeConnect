@@ -283,7 +283,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
+                string errorMessage = GetOutputErrorMessage("ConvertToMP4", ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -310,7 +310,7 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("MP4 recording doesn't exist."));
                 }
 
-                if (string.IsNullOrEmpty(recording.EncoderServiceJobStatus))
+                if (recording.JobStatus == "job-queued")
                 {
                     var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
 
@@ -323,7 +323,7 @@ namespace EdugameCloud.Lti.Controllers
                     
                 }
 
-                return Json(this.CancelingMP4ConvertingErrorResult(recording.EncoderServiceJobStatus));
+                return Json(OperationResult.Error("Cannot delete. MP4 is already in progress."));
 
             }
             catch (Exception ex)
@@ -347,15 +347,6 @@ namespace EdugameCloud.Lti.Controllers
             }
 
             return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
-        }
-        private OperationResult CancelingMP4ConvertingErrorResult(string serviceJobStatus)
-        {
-            if (serviceJobStatus == "WORKING" || serviceJobStatus == "COMPLETE")
-            {
-                return OperationResult.Error("Recording is already converting to MP4. Cannot cancel");
-            }
-
-            return OperationResult.Error("Recording status is not recognized.");
         }
         private OperationResult GenerateErrorResult(StatusInfo status)
         {

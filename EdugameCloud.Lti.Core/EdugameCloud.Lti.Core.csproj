@@ -251,6 +251,8 @@
     <Compile Include="DTO\LtiSessionDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
+    <Compile Include="DTO\MeetingHostReportDto.cs" />
+    <Compile Include="DTO\MeetingHostReportItemDTO.cs" />
     <Compile Include="DTO\PrincipalReportDto.cs" />
     <Compile Include="DTO\PrincipalDto.cs" />
     <Compile Include="DTO\PrincipalInputDto.cs" />

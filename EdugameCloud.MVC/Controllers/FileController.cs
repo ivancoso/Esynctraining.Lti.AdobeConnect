@@ -1,4 +1,9 @@
-﻿namespace EdugameCloud.MVC.Controllers
+﻿using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.DTO;
+using Esynctraining.AC.Provider;
+
+namespace EdugameCloud.MVC.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -49,6 +54,21 @@
         ///     The company model.
         /// </summary>
         private readonly CompanyModel companyModel;
+
+        /// <summary>
+        /// The meeting setup.
+        /// </summary>
+        private readonly MeetingSetup meetingSetup;
+
+        /// <summary>
+        /// The LMS company model.
+        /// </summary>
+        private readonly LmsCompanyModel lmsCompanyModel;
+
+        /// <summary>
+        /// The adobe connect account service.
+        /// </summary>
+        private readonly IAdobeConnectAccountService adobeConnectAccountService;
 
         /// <summary>
         ///     The product model.
@@ -137,7 +157,10 @@
             ACSessionModel sessionModel,
             ACUserModeModel userModeModel,
             AuthenticationModel authenticationModel,
-            ApplicationSettingsProvider settings)
+            ApplicationSettingsProvider settings,
+            LmsCompanyModel lmsCompanyModel,
+            MeetingSetup meetingSetup,
+            IAdobeConnectAccountService adobeAccountService)
             : base(settings)
         {
             this.fileModel = fileModel;
@@ -149,6 +172,9 @@
             this.sessionModel = sessionModel;
             this.userModeModel = userModeModel;
             this.authenticationModel = authenticationModel;
+            this.lmsCompanyModel = lmsCompanyModel;
+            this.meetingSetup = meetingSetup;
+            this.adobeConnectAccountService = adobeAccountService;
         }
 
         #endregion
@@ -169,6 +195,80 @@
         #endregion
 
         #region Public Methods and Operators
+
+        [HttpGet]
+        [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
+        [ActionName("meeting-host-report")]
+        /*[CustomAuthorize]*/
+        public virtual ActionResult MeetingHostRreport(int lmsCompanyId, string format = "PDF")
+        {
+            var licence = this.lmsCompanyModel.GetOneById(lmsCompanyId).Value;
+
+            if (licence == null)
+            {
+               return this.HttpNotFound();
+            }
+
+            var lmsCompanyName = licence.LmsProvider.LmsProviderName;
+
+            var provider = meetingSetup.GetProvider(licence, login: true);
+
+            var meetingHosts =  adobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
+
+            var results = new List<MeetingHostReportItemDTO>();
+
+            if (meetingHosts.Any())
+            {
+                results = meetingHosts.Select(x => new MeetingHostReportItemDTO(x)).ToList();
+            }
+
+            format = format.ToUpper();
+            if (!this.SupportedReportFormats().Contains(format))
+            {
+                format = "PDF";
+            }
+
+            string mimeType;
+            var localReport = new LocalReport { EnableHyperlinks = true };
+
+            var reportPath = string.Format("EdugameCloud.MVC.Reports.{0}.rdlc", "MeetingHostReport");
+            var reportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(reportPath);
+            localReport.LoadReportDefinition(reportSource);
+
+            localReport.DataSources.Clear();
+
+            var reportParameters = new ReportParameterCollection
+            {
+                new ReportParameter("AccountUrl", licence.AcServer),
+                new ReportParameter("LmsCompanyName", lmsCompanyName)
+            };
+            localReport.SetParameters(reportParameters);
+
+            localReport.DataSources.Add(new ReportDataSource("ItemDataSet", new MeetingHostReportDto(results)));
+            string encoding;
+            string fileNameExtension;
+
+            Warning[] warnings;
+            string[] streams;
+            var renderedBytes = localReport.Render(
+                format,
+                this.GetDeviceInfo(format),
+                out mimeType,
+                out encoding,
+                out fileNameExtension,
+                out streams,
+                out warnings);
+            if (renderedBytes != null)
+            {
+                return this.File(
+                    renderedBytes,
+                    mimeType,
+                    string.Format("{0}.{1}", "meeting-host-report", this.GetFileExtensions(format)));
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+            
+        }
 
         /// <summary>
         /// Get exported file.
