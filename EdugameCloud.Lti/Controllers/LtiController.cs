@@ -548,6 +548,34 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
+        public virtual ActionResult JoinMeetingMobile(string lmsProviderName, string scoId)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+                var param = session.LtiSession.LtiParam;
+                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
+                string breezeSession = null;
+
+                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+
+                if (string.IsNullOrWhiteSpace(breezeSession))
+                    return Json(OperationResult.Error("Can't get Adobe Connect BreezeSession"), JsonRequestBehavior.AllowGet);
+
+                return Json(OperationResult.Success(breezeSession), JsonRequestBehavior.AllowGet);
+            }
+            catch (WarningMessageException ex)
+            {
+                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("JoinMeeting", ex);
+                return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
+            }
+        }
+
         /// <summary>
         /// The leave meeting.
         /// </summary>
@@ -670,8 +698,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
                 if (lmsCompany != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain)
-                        && !string.Equals(lmsCompany.LmsDomain.TrimEnd("/".ToCharArray()), param.lms_domain, StringComparison.InvariantCultureIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
                     {
                         this.ViewBag.Error = "This LTI integration is already set for different domain";
                         return this.View("Error");
@@ -1061,7 +1088,11 @@ namespace EdugameCloud.Lti.Controllers
                 return true;
             }
 
-            return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
+            // TODO: !!! WWW section!!!
+            return credentials.HasLmsDomain(param.lms_domain);
+
+            // TODO: !!! WWW section!!!
+            //return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>

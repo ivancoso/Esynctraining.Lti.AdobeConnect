@@ -133,9 +133,6 @@ namespace EdugameCloud.Lti.Controllers
                 string error;
 
                 var provider = GetAdobeConnectProvider(credentials);
-                // TODO: IMPLEMENT http://dev.connectextensions.com/api/xml?action=principal-list&filter-like-login=@esynctraining&filter-like-name=sergey
-                //PrincipalCollectionResult resultByEmail = provider.GetAllByEmail(searchTerm);
-
 
                 var result = new List<Principal>();
                 PrincipalCollectionResult byLogin = provider.GetAllByFieldLike("login", searchTerm);
@@ -158,12 +155,17 @@ namespace EdugameCloud.Lti.Controllers
                     // TODO: log error and return error!!
                 }
 
-                if (result.Count == 0)
+                var foundPrincipals = (from p in result
+                                      group p by new { p.Login }
+                                      into distinctLoginGroup
+                                      select distinctLoginGroup.First());
+
+                if (!foundPrincipals.Any())
                 {
                     return Json(OperationResult.Success(new PrincipalDto[0]));
                 }
 
-                return Json(OperationResult.Success(result
+                return Json(OperationResult.Success(foundPrincipals
                      .GroupBy(p => p.PrincipalId)
                      .Select(g => g.First())
                      .Return(x => x.Select(PrincipalDto.Build), Enumerable.Empty<PrincipalDto>())));
