@@ -125,72 +125,78 @@ namespace EdugameCloud.Lti.Canvas
             var result = new List<LmsUserDTO>();
             var client = CreateRestClient(domain);
 
-            var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
-                courseid, 100); // default is 10 records per page, max - 100
-
-            while (!string.IsNullOrEmpty(link))
+            foreach (string role in CanvasAPI.CanvasRoles)
             {
-                RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
+                var link = string.Format("/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
+                    courseid,
+                    role,
+                    100); // default is 10 records per page, max - 100
 
-                IRestResponse<List<CanvasLmsUserDTO>> response = client.Execute<List<CanvasLmsUserDTO>>(request);
-
-                if (response.StatusCode != HttpStatusCode.OK)
+                while (!string.IsNullOrEmpty(link))
                 {
-                    var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
-                    if (errorData != null && errorData.errors != null && errorData.errors.Any())
+                    RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
+
+                    IRestResponse<List<CanvasLmsUserDTO>> response = client.Execute<List<CanvasLmsUserDTO>>(request);
+
+                    if (response.StatusCode != HttpStatusCode.OK)
                     {
-                        logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}", response.StatusCode, response.StatusDescription, link);
-                        foreach (var error in errorData.errors)
+                        var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
+                        if (errorData != null && errorData.errors != null && errorData.errors.Any())
                         {
-                            logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
+                            logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}", response.StatusCode, response.StatusDescription, link);
+                            foreach (var error in errorData.errors)
+                            {
+                                logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
+                            }
                         }
+                        return result;
                     }
-                    return result;
-                }
-                link = string.Empty;
-                foreach (var h in response.Headers)
-                {
-                    if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
+
+                    link = string.Empty;
+                    foreach (var h in response.Headers)
                     {
-                        link = h.Value.ToString();
-                        var index = link.IndexOf("rel=\"next\"");
-                        if (index > -1)
+                        if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
                         {
-                            link = link.Substring(0, index - 2);
-                            index = link.LastIndexOf(">");
+                            link = h.Value.ToString();
+                            var index = link.IndexOf("rel=\"next\"");
                             if (index > -1)
                             {
-                                link = link.Substring(0, index);
-                                index = link.LastIndexOf("<");
+                                link = link.Substring(0, index - 2);
+                                index = link.LastIndexOf(">");
                                 if (index > -1)
                                 {
-                                    link = link.Substring(index + 1);
-                                    index = link.IndexOf("/api/v1/");
+                                    link = link.Substring(0, index);
+                                    index = link.LastIndexOf("<");
                                     if (index > -1)
                                     {
-                                        link = link.Substring(index);
+                                        link = link.Substring(index + 1);
+                                        index = link.IndexOf("/api/v1/");
+                                        if (index > -1)
+                                        {
+                                            link = link.Substring(index);
+                                        }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
+                        link = string.Empty;
                     }
-                    link = string.Empty;
-                }
 
-                List<CanvasLmsUserDTO> us = response.Data;
-                if (us == null)
-                {
-                    continue;
-                }
-                us.ForEach(
-                    u =>
+                    List<CanvasLmsUserDTO> us = response.Data;
+                    if (us == null)
+                    {
+                        continue;
+                    }
+                    us.ForEach(
+                        u =>
                         {
-                            SetRole(u, courseid);
+                            u.lms_role = role;
                             u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
                         });
 
-                result.AddRange(us);
+                    result.AddRange(us);
+                }
             }
 
             return result;

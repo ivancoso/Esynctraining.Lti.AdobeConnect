@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Web.Script.Serialization;
 using EdugameCloud.Lti.DTO;
 
 namespace EdugameCloud.Lti.Canvas
@@ -8,6 +9,9 @@ namespace EdugameCloud.Lti.Canvas
     /// </summary>
     internal sealed class CanvasLmsUserDTO : LmsUserDTO
     {
+        [ScriptIgnore]
         public List<CanvasEnrollment> enrollments { get; set; } 
+
     }
+
 }
