@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
     // [course_id] MeetingTitle
     internal sealed class CourseIdPrefixMeetingNameFormatter : IMeetingNameFormatter
     {
-        public string FormatName { get { return "[ID] : MeetingTitle"; } }
+        public string FormatName { get { return "[ID]: [Meeting Title]"; } }
 
 
         public string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId)
@@ -22,7 +22,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (courseId == null)
                 throw new ArgumentNullException("courseId");
 
-            return string.Format("[{0}] {1}", courseId, meeting.name).TruncateIfMoreThen(60);
+            return string.Format("[{0}]: {1}", courseId, meeting.name).TruncateIfMoreThen(60);
         }
 
         public string UpdateName(LmsCourseMeeting meeting, string lmsMeetingTitle)
@@ -36,7 +36,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             nameInfo.meetingName = lmsMeetingTitle;
             meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
 
-            return string.Format("[{0}] {1}", (string)nameInfo.courseId, lmsMeetingTitle).TruncateIfMoreThen(60);
+            return string.Format("[{0}]: {1}", (string)nameInfo.courseId, lmsMeetingTitle).TruncateIfMoreThen(60);
         }
 
     }

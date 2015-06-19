@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
     // MeetingTitle
     internal sealed class StraightMeetingNameFormatter : IMeetingNameFormatter
     {
-        public string FormatName { get { return "Custom"; } }
+        public string FormatName { get { return "[Meeting Title]"; } }
 
 
         public string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId)

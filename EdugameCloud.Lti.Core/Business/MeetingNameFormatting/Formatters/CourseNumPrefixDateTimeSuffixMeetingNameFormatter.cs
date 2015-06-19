@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
     // CourseNum: MeetingTitle (mm/dd/yy)
     internal sealed class CourseNumPrefixDateTimeSuffixMeetingNameFormatter : IMeetingNameFormatter
     {
-        public string FormatName { get { return "CourseNum: MeetingTitle (mm/dd/yy)"; } }
+        public string FormatName { get { return "[Course Label]: [Meeting Title] - (MM/DD/YY)"; } }
 
 
         public string BuildName(MeetingDTO meeting, LtiParamDTO param, string courseId)
@@ -24,7 +24,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
 
             int extraDataLength = ": ".Length + " (MM/dd/yy)".Length + param.context_label.Length;
 
-            return string.Format("{0}: {1} ({2})", param.context_label, meeting.name.TruncateIfMoreThen(60 - extraDataLength), DateTime.Today.ToString("MM/dd/yy"));
+            return string.Format("{0}: {1} - ({2})", param.context_label, meeting.name.TruncateIfMoreThen(60 - extraDataLength), DateTime.Today.ToString("MM/dd/yy"));
         }
 
         public string UpdateName(LmsCourseMeeting meeting, string lmsMeetingTitle)
@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
 
             int extraDataLength = ": ".Length + " (MM/dd/yy)".Length + ((string)nameInfo.courseNum).Length;
 
-            return string.Format("{0}: {1} ({2})", (string)nameInfo.courseNum, lmsMeetingTitle.TruncateIfMoreThen(60 - extraDataLength), (string)nameInfo.date);
+            return string.Format("{0}: {1} - ({2})", (string)nameInfo.courseNum, lmsMeetingTitle.TruncateIfMoreThen(60 - extraDataLength), (string)nameInfo.date);
         }
 
     }
