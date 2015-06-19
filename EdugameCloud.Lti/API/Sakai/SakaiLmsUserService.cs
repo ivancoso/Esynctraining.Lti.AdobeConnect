@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.API.Sakai
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate);
+            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
             return error != null ? OperationResult<List<LmsUserDTO>>.Success(users): OperationResult<List<LmsUserDTO>>.Error(error);
         }
 

@@ -100,6 +100,7 @@
             }
             catch (Exception ex)
             {
+                Esynctraining.Core.Utils.IoC.Resolve<Castle.Core.Logging.ILogger>().Error("LTI2Api.GetUsersForCourse", ex);
                 error = ex.Message;
             }
 
@@ -148,9 +149,15 @@
             ltiVersion = ltiVersion ?? LtiVersions.LTI1p0;
 
             const string BaseFormat =
-                "id={0}&" + "lti_message_type={1}&" + "lti_version={2}&" + "oauth_callback={3}&"
-                + "oauth_consumer_key={4}&" + "oauth_nonce={5}&" + "oauth_signature_method={6}&"
-                + "oauth_timestamp={7}&" + "oauth_version={8}";
+                "id={0}&" 
+                + "lti_message_type={1}&" 
+                + "lti_version={2}&" 
+                + "oauth_callback={3}&"
+                + "oauth_consumer_key={4}&" 
+                + "oauth_nonce={5}&" 
+                + "oauth_signature_method={6}&"
+                + "oauth_timestamp={7}&" 
+                + "oauth_version={8}";
 
             string baseString = string.Format(
                 BaseFormat, 
@@ -179,18 +186,18 @@
             var request = (HttpWebRequest)WebRequest.Create(url);
 
             var pairs = new NameValueCollection
-                            {
-                                { "id", lis_result_sourcedid }, 
-                                { "lti_message_type", ltiMessageType }, 
-                                { "lti_version", ltiVersion }, 
-                                { "oauth_callback", oauthCallback }, 
-                                { "oauth_consumer_key", key }, 
-                                { "oauth_nonce", oauthNonce }, 
-                                { "oauth_signature", oauthSignature }, 
-                                { "oauth_signature_method", OAuthSignatureMethod }, 
-                                { "oauth_timestamp", oauthTimestamp }, 
-                                { "oauth_version", OAuthVersion }
-                            };
+            {
+                { "id", lis_result_sourcedid }, 
+                { "lti_message_type", ltiMessageType }, 
+                { "lti_version", ltiVersion }, 
+                { "oauth_callback", oauthCallback }, 
+                { "oauth_consumer_key", key }, 
+                { "oauth_nonce", oauthNonce }, 
+                { "oauth_signature", oauthSignature }, 
+                { "oauth_signature_method", OAuthSignatureMethod }, 
+                { "oauth_timestamp", oauthTimestamp }, 
+                { "oauth_version", OAuthVersion }
+            };
 
             var builder = new UriBuilder(url);
 
@@ -204,7 +211,7 @@
             string resp;
             request.ContentType = "application/x-www-form-urlencoded";
             request.Method = "POST";
-            request.Timeout = 5000;
+            request.Timeout = 5000;  // TODO: add timeout
             request.Referer = url;
             request.Host = new Uri(url).Host;
             request.ContentLength = bytes.Length;

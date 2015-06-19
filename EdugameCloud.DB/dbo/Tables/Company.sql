@@ -12,38 +12,7 @@
     CONSTRAINT [FK_Company_CompanyTheme] FOREIGN KEY ([companyThemeId]) REFERENCES [dbo].[CompanyTheme] ([companyThemeId]),
     CONSTRAINT [FK_Company_PrimaryContact] FOREIGN KEY ([primaryContactId]) REFERENCES [dbo].[User] ([userId])
 );
-
-
 GO
+
 ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
-
-
-
 GO
-ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
-
-
-
-GO
-ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
-
-
-
-GO
-ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
-
-
-
-GO
-ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
-
-
-
-GO
-ALTER TABLE [dbo].[Company] NOCHECK CONSTRAINT [FK_Company_Address];
-
