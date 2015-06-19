@@ -4,6 +4,8 @@ using Esynctraining.AC.Provider.Entities;
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
+    [KnownType(typeof(PrincipalDto))]
+    [KnownType(typeof(TransactionInfoDto))]
     public sealed class PrincipalReportDto
     {
         [DataMember(Name = "principal")]

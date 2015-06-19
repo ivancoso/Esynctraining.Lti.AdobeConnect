@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.Core.DTO
         public string TransactionId { get; set; }
 
         [DataMember(Name = "type")]
-        public ScoType Type { get; set; }
+        public int Type { get; set; }
 
         [DataMember(Name = "url")]
         public string Url { get; set; }
@@ -60,7 +60,7 @@ namespace EdugameCloud.Lti.Core.DTO
                 Score = src.Score,
                 Status = src.Status,
                 TransactionId = src.TransactionId,
-                Type = src.Type,
+                Type = (int)src.Type,
                 Url = src.Url,
                 UserName = src.UserName,
             };

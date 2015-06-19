@@ -367,6 +367,23 @@ namespace EdugameCloud.Lti.Domain.Entities
             RoleMappings = new List<LmsCompanyRoleMapping>();
         }
 
+
+        // TODO: !!! WWW section!!!
+        public virtual bool HasLmsDomain(string domainToCheck)
+        {
+            string input = LmsDomain;
+            int index = input.IndexOf("/");
+            if (index > 0)
+                input = input.Substring(0, index);
+
+            // NOTE: sakai sends :8080 in our environment- check other LMS
+            //index = input.IndexOf(":");
+            //if (index > 0)
+            //    input = input.Substring(0, index);
+
+            return string.Equals(input, domainToCheck, StringComparison.OrdinalIgnoreCase);
+        }
+
     }
 
 }
