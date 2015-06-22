@@ -69,10 +69,17 @@ namespace EdugameCloud.Lti.Controllers
                 var provider = GetAdobeConnectProvider(credentials);
                 Principal principal;
 
-                if (string.IsNullOrWhiteSpace(user.principal_id))
-                    principal = CreatePrincipal(user, credentials, provider);
-                else
-                    principal = provider.GetOneByPrincipalId(user.principal_id).PrincipalInfo.Principal;
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(user.principal_id))
+                        principal = CreatePrincipal(user, credentials, provider);
+                    else
+                        principal = provider.GetOneByPrincipalId(user.principal_id).PrincipalInfo.Principal;
+                }
+                catch (WarningMessageException ex)
+                {
+                    return Json(OperationResult.Error(ex.Message));
+                }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
                 LmsCourseMeeting meeting = meetingSetup.GetLmsCourseMeeting(credentials, param.course_id, meetingScoId, (int)LmsMeetingType.Meeting);
@@ -200,6 +207,26 @@ namespace EdugameCloud.Lti.Controllers
 
             if (!pu.Success)
             {
+                if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
+                {
+                    throw new WarningMessageException(string.Format("User '{0}' already exists in Adobe Connect.", login ?? user.email));
+                }
+
+                if (pu.Status.InvalidField == "name" && pu.Status.SubCode == StatusSubCodes.range)
+                {
+                    throw new WarningMessageException("The combined length of First and Last name must be between 1 and 60 characters.");
+                }
+
+                if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.range)
+                {
+                    throw new WarningMessageException("E-mail must be between 1 and 60 characters long.");
+                }
+
+                if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.range)
+                {
+                    throw new WarningMessageException("Login must be between 1 and 60 characters long.");
+                }
+
                 string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.firstName, user.lastName, user.login, user.email);
                 if (pu.Status.UnderlyingExceptionInfo != null)
                 {

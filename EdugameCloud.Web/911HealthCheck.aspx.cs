@@ -140,12 +140,14 @@ namespace EdugameCloud.Web
                     "Either database startup timed out or most likely incorrect connection string or the connection string.");
             }
         }
-        
+
         private void TestWrite()
         {
             try
             {
-                File.AppendAllText(Server.MapPath("~/App_Data/" + Guid.NewGuid().ToString()), Guid.NewGuid().ToString());
+                string filePath = Server.MapPath("~/Logs/" + Guid.NewGuid().ToString() + ".txt");
+                File.AppendAllText(filePath, Guid.NewGuid().ToString());
+                File.Delete(filePath);
 
                 MarkAsPass(AppDataLabel);
             }
@@ -171,6 +173,14 @@ namespace EdugameCloud.Web
                         allPathOK = false;
                     }
                 }
+                else if (Path.IsPathRooted(value) && !value.StartsWith(@"\") && !value.StartsWith(@"/"))
+                {
+                    if (!Directory.Exists(value) && !File.Exists(value))
+                    {
+                        MarkAsFail(FilePathLabel, "Invalid path: " + key + "=" + value, string.Empty);
+                        allPathOK = false;
+                    }
+                }
             }
 
             if (allPathOK)
@@ -186,7 +196,7 @@ namespace EdugameCloud.Web
             {
                 string value = ConfigurationManager.AppSettings[key];
                 Uri uri;
-                if (Uri.TryCreate(value, UriKind.Absolute, out uri))
+                if (!Path.IsPathRooted(value) && Uri.TryCreate(value, UriKind.Absolute, out uri) && !string.IsNullOrEmpty(Path.GetExtension(value)))
                 {
                     // Got an URI, try hitting
                     using (var client = new WebClient())
@@ -213,8 +223,16 @@ namespace EdugameCloud.Web
             var client = new SmtpClient();
             try
             {
-                client.Send("sergeyi@esynctraining.com", "sergeyi@esynctraining.com", "EGC-LTI Test email", "Test body");
-                MarkAsPass(SMTPLabel);
+                KeyValueConfigurationCollection appSettings = GetServicesAppSettings();
+                string recipients = appSettings["ErrorEmailRecipients"].Value;
+
+                var emails = recipients
+                .Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                .ToList();
+
+                client.Send(emails.First(), recipients.Replace(";", ","), "EGC-LTI Test email", "This is test email sent from Health Page");
+                MarkAsPass(SMTPLabel,
+                    string.Format("Check any email from '{0}' for test message", recipients));
             }
             catch (Exception x)
             {
@@ -228,13 +246,20 @@ namespace EdugameCloud.Web
         {
             var appSettings = ConfigurationManager.AppSettings;
 
-            string fileStorage = appSettings["FileStorage"];
-            if (!Directory.Exists(fileStorage) && !File.Exists(fileStorage))
+            try
             {
-                MarkAsFail(FileStorageLabel, "Invalid path: FileStorage=" + fileStorage, string.Empty);
+                string fileStorage = appSettings["FileStorage"];
+                if (!Directory.Exists(fileStorage) && !File.Exists(fileStorage))
+                {
+                    MarkAsFail(FileStorageLabel, "Invalid path: FileStorage=" + fileStorage, string.Empty);
+                }
+                else
+                    MarkAsPass(FileStorageLabel);
             }
-            else
-                MarkAsPass(FileStorageLabel);
+            catch (Exception ex)
+            {
+                MarkAsFail(FileStorageLabel, "Error during 'FileStorage' setting check. ", ex.Message);
+            }
 
             string fullurl = Request.Url.ToString().ToLower();
             string baseUrl = fullurl.Substring(0, fullurl.IndexOf("911healthcheck.aspx")).TrimEnd('/');
@@ -245,35 +270,60 @@ namespace EdugameCloud.Web
             //else
             //    MarkAsPass(DeveloperModeLabel);
 
-            if (baseUrl != appSettings["BasePath"].TrimEnd('/'))
-                MarkAsWarning(BasePathLabel, "BasePath does not match with the current URL. BasePath should be: " + baseUrl);
-            else
-                MarkAsPass(BasePathLabel);
+            try
+            {
+                if (baseUrl != appSettings["BasePath"].TrimEnd('/'))
+                    MarkAsWarning(BasePathLabel, "BasePath does not match with the current URL. BasePath should be: " + baseUrl);
+                else
+                    MarkAsPass(BasePathLabel);
+            }
+            catch (Exception ex)
+            {
+                MarkAsFail(BasePathLabel, "Error during 'BasePath' setting check. ", ex.Message);
+            }
 
-            if (baseUrl != appSettings["PortalUrl"].TrimEnd('/'))
-                MarkAsWarning(PortalUrlLabel, "PortalUrl does not match with the current URL. BasePath should be: " + baseUrl);
-            else
-                MarkAsPass(PortalUrlLabel);
-
-            //TestPrefix(ConstantHelper.WebRoot, ConstantHelper.WebRoot.TrimEnd('/') + "/API/Proxy.svc/ajax/js", WebServiceProxyLabel,
-            //    "Make sure you have installed WCF REST Starter kit Preview 2 and inside web.config <baseAddresses> inside each <service> node under <system.serviceModel> has " + ConstantHelper.WebRoot);
+            try
+            {
+                KeyValueConfigurationCollection serviceAppSettings = GetServicesAppSettings();
+                if (baseUrl != serviceAppSettings["PortalUrl"].Value.TrimEnd('/'))
+                    MarkAsWarning(PortalUrlLabel, "( services/web.config ) PortalUrl does not match with the current URL. BasePath should be: " + baseUrl);
+                else
+                    MarkAsPass(PortalUrlLabel);
+            }
+            catch (Exception ex)
+            {
+                MarkAsFail(PortalUrlLabel, "Error during 'PortalUrl' setting check. ", ex.Message);
+            }
 
             KeyValueConfigurationCollection servicesAppSettings = GetServicesAppSettings();
-            if (ContainsValidEmails(servicesAppSettings["TrialContactEmail"].Value))
+            if ((servicesAppSettings["TrialContactEmail"] != null) && ContainsValidEmails(servicesAppSettings["TrialContactEmail"].Value))
+            {
                 MarkAsPass(TrialContactEmailLabel);
+            }
             else
-                MarkAsWarning(TrialContactEmailLabel, "TrialContactEmail is not valid Email Address. TrialContactEmail: " + servicesAppSettings["TrialContactEmail"].Value);
+            {
+                if (servicesAppSettings["TrialContactEmail"] == null)
+                    MarkAsWarning(TrialContactEmailLabel, "Missed TrialContactEmail setting");
+                else
+                    MarkAsWarning(TrialContactEmailLabel, "TrialContactEmail is not valid Email Address. TrialContactEmail: " + servicesAppSettings["TrialContactEmail"].Value);
+            }
 
-            if (ContainsValidEmails(servicesAppSettings["BCCActivationEmail"].Value))
+            if ((servicesAppSettings["BCCActivationEmail"] != null) && ContainsValidEmails(servicesAppSettings["BCCActivationEmail"].Value))
+            {
                 MarkAsPass(BCCActivationEmailLabel);
+            }
             else
-                MarkAsWarning(BCCActivationEmailLabel, "BCCActivationEmail contains not valid Email Address. BCCActivationEmail: " + servicesAppSettings["BCCActivationEmail"].Value);
+            {
+                if (servicesAppSettings["BCCActivationEmail"] == null)
+                    MarkAsWarning(BCCActivationEmailLabel, "Missed BCCActivationEmail setting");
+                else
+                    MarkAsWarning(BCCActivationEmailLabel, "BCCActivationEmail contains not valid Email Address. BCCActivationEmail: " + servicesAppSettings["BCCActivationEmail"].Value);
+            }
 
             if (ContainsValidEmails(servicesAppSettings["BCCNewEmail"].Value))
                 MarkAsPass(BCCNewEmailLabel);
             else
                 MarkAsWarning(BCCNewEmailLabel, "BCCNewEmail contains not valid Email Address. BCCNewEmail: " + servicesAppSettings["BCCNewEmail"].Value);
-
         }
 
         private void TestServicesPaths()
@@ -294,6 +344,14 @@ namespace EdugameCloud.Web
                         allPathOK = false;
                     }
                 }
+                else if (Path.IsPathRooted(value) && !value.StartsWith(@"\") && !value.StartsWith(@"/"))
+                {
+                    if (!Directory.Exists(value) && !File.Exists(value))
+                    {
+                        MarkAsFail(ServicesFilePathLabel, "Invalid path: " + key + "=" + value, string.Empty);
+                        allPathOK = false;
+                    }
+                }
             }
 
             if (allPathOK)
@@ -311,7 +369,7 @@ namespace EdugameCloud.Web
             {
                 string value = appSettings[key].Value;
                 Uri uri;
-                if (Uri.TryCreate(value, UriKind.Absolute, out uri))
+                if (!Path.IsPathRooted(value) && Uri.TryCreate(value, UriKind.Absolute, out uri) && !string.IsNullOrEmpty(Path.GetExtension(value)))
                 {
                     // Got an URI, try hitting
                     using (var client = new WebClient())

@@ -65,6 +65,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="DotAmf, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DotAmf.Wcf, Version=1.0.0.11, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.Wcf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DotNetOpenAuth.AspNet, Version=4.3.0.0, Culture=neutral, PublicKeyToken=2780ccd10d57b246, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\DotNetOpenAuth.AspNet.4.3.4.13329\lib\net40-full\DotNetOpenAuth.AspNet.dll</HintPath>
@@ -138,7 +146,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.Services" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO">
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
@@ -171,6 +181,7 @@
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
@@ -217,6 +228,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="911HealthCheck.aspx.cs">
+      <DependentUpon>911HealthCheck.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="911HealthCheck.aspx.designer.cs">
+      <DependentUpon>911HealthCheck.aspx</DependentUpon>
+    </Compile>
     <Compile Include="App_GlobalResources\Common.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -279,6 +297,10 @@
     <Compile Include="Providers\ResourceProviderActivator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="911HealthCheck.aspx" />
+    <Content Include="Content\images\ajax-loader.gif" />
+    <Content Include="Content\images\cross.png" />
+    <Content Include="Content\images\egcicon.png" />
     <Content Include="Content\images\flags\ad.gif" />
     <Content Include="Content\images\flags\ae.gif" />
     <Content Include="Content\images\flags\af.gif" />
@@ -542,6 +564,8 @@
     <Content Include="Content\images\logos\logoSmall.png" />
     <Content Include="Content\images\logos\meetingone.jpg" />
     <Content Include="Content\images\logos\singleUser.png" />
+    <Content Include="Content\images\tick.png" />
+    <Content Include="Content\images\warning.png" />
     <Content Include="Content\lti-config\blackboard.xml" />
     <Content Include="Content\lti-config\desire2learn.xml" />
     <Content Include="Content\lti-config\moodle.xml" />
@@ -769,6 +793,7 @@
     <Content Include="Views\Social\LoggedIn.cshtml" />
     <Content Include="Views\Home\Unsubscribed.cshtml" />
     <Content Include="Views\Lti\Index.cshtml" />
+    <Content Include="Views\Lti\LtiError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extjs\" />

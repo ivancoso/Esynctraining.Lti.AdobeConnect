@@ -181,7 +181,7 @@
                 return this.lms_role;
             }
 
-            return this.name.Substring(index);
+            return this.name.Substring(index + 1);
         }
 
         #endregion

@@ -6,6 +6,10 @@
 	<title>Health Check Page</title>
 </head>
 <style type="text/css">
+	body {
+		font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+	}
+
 	.inprogress, .pass, .fail, .warning {
 		padding-left: 35px;
 		display: block;
@@ -15,19 +19,19 @@
 	}
 
 	.inprogress {
-		background: transparent url("ajax-loader.gif") no-repeat;
+		background: transparent url("content/images/ajax-loader.gif") no-repeat;
 	}
 
 	.pass {
-		background: transparent url("tick.png") no-repeat;
+		background: transparent url("content/images/tick.png") no-repeat;
 	}
 
 	.fail {
-		background: transparent url("cross.png") no-repeat;
+		background: transparent url("content/images/cross.png") no-repeat;
 	}
 
 	.warning {
-		background: transparent url("warning.png") no-repeat;
+		background: transparent url("content/images/warning.png") no-repeat;
 	}
 
 	.error {
@@ -58,7 +62,7 @@
             </ul>
             <h2>ASP.NET Configuration</h2>
             <ul>
-                <li><asp:Label CssClass="inprogress" ID="AppDataLabel" Text="Write permission on App_Data folder." runat="server" /></li>
+                <li><asp:Label CssClass="inprogress" ID="AppDataLabel" Text="Write permission on '/Logs' folder." runat="server" /></li>
             </ul>
             <h2>Web.config appSettings paths and urls</h2>
             <ul>
@@ -69,15 +73,13 @@
             </ul>
             <h2>Mail Delivery</h2>
             <ul>
-                <li><asp:Label CssClass="inprogress" Text="SMTP server responded to EHLO" runat="server" ID="SMTPLabel" /></li>
+                <li><asp:Label CssClass="inprogress" Text="Check SMTP settings are valid to send email. (We send a test email from a server)" runat="server" ID="SMTPLabel" /></li>
             </ul>
             <h2>Application Settings</h2>
             <ul>
                 <li><asp:Label CssClass="inprogress" Text="FileStorage folder should exist and be available." ID="FileStorageLabel" runat="server" /></li>
                 <li><asp:Label CssClass="inprogress" Text="BasePath matches with the address of this site." ID="BasePathLabel" runat="server" /></li>
 				<li><asp:Label CssClass="inprogress" Text="PortalUrl matches with the address of this site." ID="PortalUrlLabel" runat="server" /></li>
-
-                <li><asp:Label CssClass="inprogress" Text="Webservice proxies are working." ID="WebServiceProxyLabel" runat="server" /></li>
 
 				<li><asp:Label CssClass="inprogress" Text="Services: TrialContactEmail is valid Email Address." ID="TrialContactEmailLabel" runat="server" /></li>
 				<li><asp:Label CssClass="inprogress" Text="Services: BCCActivationEmail contains only valid Email Addresses." ID="BCCActivationEmailLabel" runat="server" /></li>
