@@ -219,7 +219,7 @@ namespace EdugameCloud.MVC.Controllers
 
             if (meetingHosts.Any())
             {
-                results = meetingHosts.Select(x => new MeetingHostReportItemDTO(x)).ToList();
+                results = meetingHosts.Select(x => new MeetingHostReportItemDTO(x)).ToList().OrderByDescending(x => x.LastMeetingAttend).ToList();
             }
 
             format = format.ToUpper();

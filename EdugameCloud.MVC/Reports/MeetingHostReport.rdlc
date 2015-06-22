@@ -105,7 +105,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Meeting name</Value>
+                              <Value>Meeting Title</Value>
                               <Style>
                                 <FontFamily>Lucida Sans Unicode</FontFamily>
                                 <FontWeight>Medium</FontWeight>
@@ -142,7 +142,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Last meeting</Value>
+                              <Value>Date</Value>
                               <Style>
                                 <FontFamily>Lucida Sans Unicode</FontFamily>
                                 <FontWeight>Medium</FontWeight>
@@ -364,7 +364,6 @@
                         <PaddingBottom>1pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -441,37 +440,6 @@
             <VerticalAlign>Middle</VerticalAlign>
           </Style>
         </Textbox>
-        <Textbox Name="AccountUrlTextBox">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>Url:</Value>
-                  <Style>
-                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                    <FontWeight>Bold</FontWeight>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Left</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <Top>0.43603cm</Top>
-          <Left>9.10259cm</Left>
-          <Height>0.7905cm</Height>
-          <Width>0.7855cm</Width>
-          <ZIndex>1</ZIndex>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-          </Style>
-        </Textbox>
         <Textbox Name="AccountUrlValueTextBox">
           <CanGrow>true</CanGrow>
           <KeepTogether>true</KeepTogether>
@@ -479,7 +447,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>=Parameters!AccountUrl.Value</Value>
+                  <Value>="URL: " + Parameters!AccountUrl.Value</Value>
                   <Style>
                     <FontFamily>Lucida Sans Unicode</FontFamily>
                     <FontWeight>Medium</FontWeight>
@@ -488,7 +456,7 @@
                 </TextRun>
               </TextRuns>
               <Style>
-                <TextAlign>Left</TextAlign>
+                <TextAlign>Right</TextAlign>
               </Style>
             </Paragraph>
           </Paragraphs>
@@ -502,8 +470,8 @@
           <Top>0.43603cm</Top>
           <Left>10.0292cm</Left>
           <Height>0.7905cm</Height>
-          <Width>8.36317cm</Width>
-          <ZIndex>2</ZIndex>
+          <Width>9.71784cm</Width>
+          <ZIndex>1</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
