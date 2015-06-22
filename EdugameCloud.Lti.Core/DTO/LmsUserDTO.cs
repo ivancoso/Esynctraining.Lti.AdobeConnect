@@ -3,6 +3,7 @@
     using System;
     using System.Net.Mail;
     using System.Runtime.Serialization;
+    using System.Web.Script.Serialization;
 
     /// <summary>
     /// The user DTO.
@@ -51,6 +52,7 @@
         /// Gets or sets the login_id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string login_id { get; set; }
 
         /// <summary>
@@ -76,6 +78,7 @@
         /// Gets or sets the primary_email.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string primary_email { get; set; }
 
         /// <summary>
@@ -88,6 +91,7 @@
         /// Gets or sets the lti_id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string lti_id { get; set; }
 
         public string email { get; set; }
