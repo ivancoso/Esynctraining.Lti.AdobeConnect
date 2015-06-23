@@ -466,12 +466,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 //when users where not synchronized yet
                 if (!lmsUsers.Any())
                 {
-                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                    lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id).GroupBy(x => x.UserId).Select(x => x.OrderBy(u => u.Id).First());
                 }
             }
             else
             {
-                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id);
+                lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id).GroupBy(x => x.UserId).Select(x => x.OrderBy(u => u.Id).First());
             }
             // Debug.Assert(userIds.Length == lmsUsers.Count(), "Should return single user by userId+lmsCompany.Id");
 
@@ -487,21 +487,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     string login = user.GetLogin();
                     LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id))
                                       ?? new LmsUser
-                                             {
-                                                 LmsCompany = lmsCompany, 
-                                                 Username = login, 
-                                                 UserId = user.lti_id ?? user.id, 
-                                             };
+                                      {
+                                          LmsCompany = lmsCompany,
+                                          Username = login,
+                                          UserId = user.lti_id ?? user.id,
+                                      };
 
                     if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
                         Principal principal = acUserService.GetOrCreatePrincipal2(
-                            provider, 
-                            login, 
-                            user.GetEmail(), 
-                            user.GetFirstName(), 
-                            user.GetLastName(), 
-                            lmsCompany, 
+                            provider,
+                            login,
+                            user.GetEmail(),
+                            user.GetFirstName(),
+                            user.GetLastName(),
+                            lmsCompany,
                             principalCache);
 
                         if (principal != null)
@@ -511,8 +511,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             uncommitedChangesInLms = true;
                         }
                     }
+                    //var principalInfo = provider.GetOneByPrincipalId(lmsUser.PrincipalId);
+                }
 
-                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
                         continue;
                     }

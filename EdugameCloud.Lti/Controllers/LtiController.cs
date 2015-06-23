@@ -166,12 +166,14 @@ namespace EdugameCloud.Lti.Controllers
                 var hostUrl = authority.Replace(scheme, string.Empty);
 
                 string username = null;
-                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion));
+                LmsUserSession session = this.GetSession(providerKey);
+                var company = session.With(x => x.LmsCompany);
+                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion), company);
                 if (string.IsNullOrEmpty(user.UniqueName))
                 {
                     var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
                         String.Format(d2lService.GetUserUrlFormat, (string)Settings.D2LApiVersion,
-                            user.Identifier));
+                            user.Identifier), company);
                     if (userInfo != null)
                     {
                         username = userInfo.UserName;
@@ -755,7 +757,10 @@ namespace EdugameCloud.Lti.Controllers
                                     new { __provider__ = provider },
                                     Request.Url.Scheme);
                                 Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
-                                return Redirect(d2lService.GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain).AbsoluteUri);
+                                return Redirect(
+                                    d2lService
+                                        .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
+                                        .AbsoluteUri);
                             }
 
                             acPrincipal = acUserService.GetOrCreatePrincipal(
@@ -1179,7 +1184,8 @@ namespace EdugameCloud.Lti.Controllers
                                     param.lms_domain,
                                     String.Format(d2lService.EnrollmentsUrlFormat,
                                         (string) Settings.D2LApiVersion, param.context_id) +
-                                    (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
+                                    (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
+                                    company);
                                 if (enrollments != null || enrollments.Items == null)
                                 {
                                     enrollmentsList.AddRange(enrollments.Items);

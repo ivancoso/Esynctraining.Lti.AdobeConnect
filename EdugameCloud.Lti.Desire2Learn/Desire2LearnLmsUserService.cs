@@ -65,7 +65,8 @@ namespace EdugameCloud.Lti.Desire2Learn
                 string.Format(
                     d2lApiService.EnrollmentsClasslistUrlFormat,
                     (string)this.settings.D2LApiVersion,
-                    courseId));
+                    courseId),
+                lmsCompany);
 
             // get enrollments - this information contains user roles
             var enrollmentsList = new List<OrgUnitUser>();
@@ -80,7 +81,8 @@ namespace EdugameCloud.Lti.Desire2Learn
                         d2lApiService.EnrollmentsUrlFormat,
                         (string)this.settings.D2LApiVersion,
                         courseId)
-                    + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty));
+                    + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
+                    lmsCompany);
                 if (enrollments == null || enrollments.Items == null)
                 {
                     error = "Incorrect API call or returned data. Please contact site administrator";
@@ -103,7 +105,8 @@ namespace EdugameCloud.Lti.Desire2Learn
                         tokens[0],
                         tokens[1],
                         lmsCompany.LmsDomain,
-                        string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion));
+                        string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion),
+                        lmsCompany);
                     if (currentUserInfo != null)
                     {
                         classlistEnrollments.Add(

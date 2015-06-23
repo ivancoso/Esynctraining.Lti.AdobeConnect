@@ -1,4 +1,5 @@
-﻿// ReSharper disable once CheckNamespace
+﻿using EdugameCloud.Lti.Core.Constants;
+// ReSharper disable once CheckNamespace
 namespace EdugameCloud.WCFService
 {
     using System;
@@ -437,7 +438,9 @@ namespace EdugameCloud.WCFService
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
             instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
-            LmsCompanyModel.UpdateCompanySetting(instance, "UseSynchronizedUsers", dto.useSynchronizedUsers.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.D2LAppId, dto.d2lAppId);
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.D2LAppKey, dto.d2lAppKey);
 
             ProcessRoleMapping(dto, instance);
 

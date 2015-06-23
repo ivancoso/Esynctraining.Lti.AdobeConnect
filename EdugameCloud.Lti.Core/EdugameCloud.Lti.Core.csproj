@@ -207,6 +207,7 @@
     <Compile Include="Business\Models\ScheduleModel.cs" />
     <Compile Include="Business\RoleMappingService.cs" />
     <Compile Include="Constants\HttpScheme.cs" />
+    <Compile Include="Constants\LmsCompanySettingNames.cs" />
     <Compile Include="Domain\Entities\AcCachePrincipal.cs" />
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
     <Compile Include="Domain\Entities\AcRole.cs" />

@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
+
+namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Linq;
@@ -74,6 +77,8 @@
                 this.useSynchronizedUsers = instance.UseSynchronizedUsers;
                 this.meetingNameFormatterId = instance.MeetingNameFormatterId;
                 this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
+                this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
+                this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
             }
         }
 
@@ -304,6 +309,12 @@
 
         [DataMember]
         public LmsCompanyRoleMappingDTO[] roleMapping { get; set; }
+
+        [DataMember]
+        public string d2lAppId { get; set; }
+
+        [DataMember]
+        public string d2lAppKey { get; set; }
     }
 
 }

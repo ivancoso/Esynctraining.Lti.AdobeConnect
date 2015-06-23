@@ -384,6 +384,13 @@ namespace EdugameCloud.Lti.Domain.Entities
             return string.Equals(input, domainToCheck, StringComparison.OrdinalIgnoreCase);
         }
 
+        public virtual T GetSetting<T>(string settingName)
+        {
+            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, true) == 0);
+            return setting == null || String.IsNullOrWhiteSpace(setting.Value)
+                ? default(T)
+                : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
+        }
     }
 
 }
