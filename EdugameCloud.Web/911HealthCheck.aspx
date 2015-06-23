@@ -58,7 +58,7 @@
             <h1>Self Diagnostics</h1>
             <h2>Database Configuration</h2>
             <ul>
-                <li><asp:Label CssClass="inprogress" Text="Can aceess database using the connection string." runat="server" ID="ConnectionStringStatusLabel" /></li>
+                <li><asp:Label CssClass="inprogress" Text="Can access database using the connection string." runat="server" ID="ConnectionStringStatusLabel" /></li>
             </ul>
             <h2>ASP.NET Configuration</h2>
             <ul>

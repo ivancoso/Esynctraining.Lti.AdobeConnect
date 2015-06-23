@@ -132,11 +132,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool AddUserToMeetingHostsGroup(AdobeConnectProvider provider, string principalId)
+        public void AddUserToMeetingHostsGroup(AdobeConnectProvider provider, string principalId)
         {
-            bool group = provider.AddToGroupByType(principalId, "live-admins");
-
-            return group;
+            bool added = provider.AddToGroupByType(principalId, "live-admins");
+            if (!added)
+                throw new InvalidOperationException("Adobe Connect can't add Principal to Meeting Host group");
         }
 
         /// <summary>
