@@ -512,9 +512,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         }
                     }
                     //var principalInfo = provider.GetOneByPrincipalId(lmsUser.PrincipalId);
-                }
 
-                if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
                         continue;
                     }
