@@ -53,7 +53,7 @@ namespace EdugameCloud.Lti.API
                 {
                     //todo: set extra data param
                     var opResult = service.GetUsers(lmsCompany, null,
-                        lmsCompany.AdminUser, courseGroup.Key);
+                        lmsCompany.AdminUser, courseGroup.Key, forceUpdate: true);
                     if (opResult.isSuccess)
                     {
                         if (!opResult.data.Any())
