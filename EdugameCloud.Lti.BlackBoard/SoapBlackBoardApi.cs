@@ -648,6 +648,10 @@ namespace EdugameCloud.Lti.BlackBoard
             {
                 var result = action(client);
                 error = result.Item2;
+
+                if (!string.IsNullOrWhiteSpace(error))
+                    throw new InvalidOperationException("BlackBoard.LoginIfNecessary. Error: " + error);
+
                 return result.Item1;
             }
 

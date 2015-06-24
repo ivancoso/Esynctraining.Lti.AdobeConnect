@@ -21,6 +21,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.DTO;
     using Esynctraining.AC.Provider;
+    using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Domain.Entities;
@@ -300,7 +301,7 @@ namespace EdugameCloud.WCFService
             return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
         }
 
-        public OperationResultDto DeletePrincipals(int lmsCompanyId, string[] principalIds)
+        public OperationResultDto DeletePrincipals(int lmsCompanyId, string login, string password, string[] principalIds)
         {
             //http://dev.connectextensions.com/api/xml?action=principal-list&filter-principal-id=313091&filter-principal-id=256215&filter-principal-id=257331
             try
@@ -309,37 +310,42 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentNullException("principalIds");
 
                 LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
+                IEnumerable<LmsCompany> companyLicences = this.LmsCompanyModel.GetAllByCompanyId(this.LmsCompanyModel.GetOneById(lmsCompanyId).Value.CompanyId);
 
+                var lmsLicencePrincipals = new List<string>();
+                foreach (LmsCompany lms in companyLicences)
+                {
+                    AdobeConnectProvider provider = MeetingSetup.GetProvider(lms, login: true);
 
-                // TODO: uncomment after AC Principal nuget update!!!
-                //IEnumerable<LmsCompany> companyLicences = this.LmsCompanyModel.GetAllByCompanyId(this.LmsCompanyModel.GetOneById(lmsCompanyId).Value.CompanyId);
+                    PrincipalCollectionResult principalsToDelete = provider.GetAllByPrincipalIds(principalIds);
+                    if (principalsToDelete.Status.Code == StatusCodes.ok)
+                    {
+                        bool tryToDeleteAcUserFromLicence = principalsToDelete.Values.Select(x => x.Login).Contains(lms.AcUsername);
+                        if (tryToDeleteAcUserFromLicence)
+                            lmsLicencePrincipals.Add(string.Format("Adobe Connect account '{0}' is used within your LMS licence '{1}'. ", lms.AcUsername, lms.Title));
+                    }
+                }
 
-                //var lmsLicencePrincipals = new List<string>();
-                ////foreach (LmsCompany lms in companyLicences)
-                //foreach (LmsCompany lms in new List<LmsCompany> { currentLicence })
-                //{
-                //    AdobeConnectProvider provider = MeetingSetup.GetProvider(lms, login: true);
-
-                //    PrincipalCollectionResult principalsToDelete = null;//provider.GetAllByEmail
-                //    if (principalsToDelete.Status.Code == StatusCodes.ok)
-                //    {
-                //        bool tryToDeleteAcUserFromLicence = principalsToDelete.Values.Select(x => x.Login).Contains(lms.AcUsername);
-                //        if (tryToDeleteAcUserFromLicence)
-                //            lmsLicencePrincipals.Add(string.Format("Adobe Connect account '{0}' is used within your LMS licence '{1}'. ", lms.AcUsername, lms.Title));
-                //    }
-                //}
-
-                //if (lmsLicencePrincipals.Count > 0)
-                //{
-                //    string msg = (lmsLicencePrincipals.Count == 1)
-                //        ? "You should not delete account. "
-                //        : "You should not delete some accounts. ";
-                //    return OperationResultDto.Error(msg + string.Join("", lmsLicencePrincipals));
-                //}
+                if (lmsLicencePrincipals.Count > 0)
+                {
+                    string msg = (lmsLicencePrincipals.Count == 1)
+                        ? "You should not delete account. "
+                        : "You should not delete some accounts. ";
+                    return OperationResultDto.Error(msg + string.Join("", lmsLicencePrincipals));
+                }
 
                 bool allOK = true;
                 var failedPrincipals = new List<string>();
-                AdobeConnectProvider currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, login: true);
+                AdobeConnectProvider currentLicenseProvider = null;
+                try
+                {
+                    currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return OperationResultDto.Error("Login to Adobe Connect failed.");
+                }
+
                 foreach (string principalId in principalIds)
                 {
                     PrincipalResult deleteResult = currentLicenseProvider.PrincipalDelete(new PrincipalDelete { PrincipalId = principalId });

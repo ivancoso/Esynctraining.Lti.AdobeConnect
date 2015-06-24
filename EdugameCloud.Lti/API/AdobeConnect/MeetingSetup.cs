@@ -321,13 +321,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="AdobeConnectProvider"/>.
         /// </returns>
-        public AdobeConnectProvider GetProvider(LmsCompany credentials, bool login = true)
+        public AdobeConnectProvider GetProvider(LmsCompany license, bool login = true)
         {
-            string apiUrl = credentials.AcServer + (credentials.AcServer.EndsWith("/") ? string.Empty : "/");
+            var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
+            return GetProvider(license, credentials, login);
+        }
+
+        public AdobeConnectProvider GetProvider(LmsCompany license, UserCredentials credentials, bool login)
+        {
+            string apiUrl = license.AcServer + (license.AcServer.EndsWith("/") ? string.Empty : "/");
 
             apiUrl = apiUrl.EndsWith("api/xml/", StringComparison.OrdinalIgnoreCase)
-                         ? apiUrl.TrimEnd('/')
-                         : apiUrl + "api/xml";
+                ? apiUrl.TrimEnd('/')
+                : apiUrl + "api/xml";
 
             var connectionDetails = new ConnectionDetails
             {
@@ -345,10 +351,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
-                LoginResult result = provider.Login(new UserCredentials(credentials.AcUsername, credentials.AcPassword));
+                LoginResult result = provider.Login(credentials);
                 if (!result.Success)
                 {
-                    IoC.Resolve<ILogger>().Error("MeetingSetup.GetProvider. Login failed. Status.Code: " + result.Status.Code.ToString());
+                    IoC.Resolve<ILogger>().Error("MeetingSetup.GetProvider. Login failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
+                    throw new InvalidOperationException("Login to Adobe Connect failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
                 }
             }
 

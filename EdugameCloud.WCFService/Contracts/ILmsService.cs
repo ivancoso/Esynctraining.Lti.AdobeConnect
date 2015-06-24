@@ -137,7 +137,7 @@
         [FaultContract(typeof(Error))]
         [WebInvoke(UriTemplate = "DeletePrincipals", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        OperationResultDto DeletePrincipals(int lmsCompanyId, string[] principalIds);
+        OperationResultDto DeletePrincipals(int lmsCompanyId, string login, string password, string[] principalIds);
 
     }
 
