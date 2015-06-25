@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.Controllers
     using System.Xml.Linq;
     using System.Xml.XPath;
     using DotNetOpenAuth.AspNet;
+    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
@@ -704,12 +705,16 @@ namespace EdugameCloud.Lti.Controllers
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
                 if (lmsCompany != null)
                 {
-                    var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
-                    if (company == null || company.CurrentLicense == null ||
-                        company.CurrentLicense.ExpiryDate.ToUniversalTime() <= DateTime.UtcNow
-                        || (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain)))
+                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
                     {
                         this.ViewBag.Error = "This LTI integration is already set for different domain";
+                        return this.View("Error");
+                    }
+
+                    var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
+                    if ((company == null) || !company.IsActive())
+                    {
+                        this.ViewBag.Error = "Sorry, your company doesn't have any active license. Please contact administration.";
                         return this.View("Error");
                     }
                 }

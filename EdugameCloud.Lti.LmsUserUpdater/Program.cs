@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Castle.Core.Logging;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
@@ -77,8 +78,9 @@ namespace EdugameCloud.Lti.LmsUserUpdater
         {
             var companyModel = IoC.Resolve<CompanyModel>();
             var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
-            return company == null || company.CurrentLicense == null ||
-                   company.CurrentLicense.ExpiryDate.ToUniversalTime() <= DateTime.UtcNow;
+            return (company == null) || !company.IsActive();
         }
+
     }
+
 }
