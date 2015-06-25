@@ -310,15 +310,22 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentNullException("principalIds");
 
                 LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
-                IEnumerable<LmsCompany> companyLicences = this.LmsCompanyModel.GetAllByCompanyId(this.LmsCompanyModel.GetOneById(lmsCompanyId).Value.CompanyId);
+                AdobeConnectProvider currentLicenseProvider = null;
+                try
+                {
+                    currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return OperationResultDto.Error("Login to Adobe Connect failed.");
+                }
+                PrincipalCollectionResult principalsToDelete = currentLicenseProvider.GetAllByPrincipalIds(principalIds);
 
+                IEnumerable<LmsCompany> companyLicences = this.LmsCompanyModel.GetAllByCompanyId(currentLicence.CompanyId);
                 var lmsLicencePrincipals = new List<string>();
                 foreach (LmsCompany lms in companyLicences)
                 {
-                    AdobeConnectProvider provider = MeetingSetup.GetProvider(lms, login: true);
-
-                    PrincipalCollectionResult principalsToDelete = provider.GetAllByPrincipalIds(principalIds);
-                    if (principalsToDelete.Status.Code == StatusCodes.ok)
+                    if (lms.AcServer.TrimEnd(new char[] { '/' }) == currentLicence.AcServer.TrimEnd(new char[] { '/' }))
                     {
                         bool tryToDeleteAcUserFromLicence = principalsToDelete.Values.Select(x => x.Login).Contains(lms.AcUsername);
                         if (tryToDeleteAcUserFromLicence)
@@ -336,15 +343,6 @@ namespace EdugameCloud.WCFService
 
                 bool allOK = true;
                 var failedPrincipals = new List<string>();
-                AdobeConnectProvider currentLicenseProvider = null;
-                try
-                {
-                    currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return OperationResultDto.Error("Login to Adobe Connect failed.");
-                }
 
                 foreach (string principalId in principalIds)
                 {

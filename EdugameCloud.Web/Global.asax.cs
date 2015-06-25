@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -137,8 +139,9 @@ namespace EdugameCloud.Web
 
             container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
             container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
+            container.Register(Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"));
             container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-            
+
             container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>().LifestyleTransient());
 
             container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
