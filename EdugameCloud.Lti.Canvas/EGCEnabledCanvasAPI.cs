@@ -18,7 +18,9 @@ namespace EdugameCloud.Lti.Canvas
     // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
-        private ILogger logger;
+        private readonly ILogger logger;
+
+
         public EGCEnabledCanvasAPI(ILogger logger)
         {
             this.logger = logger;
@@ -65,7 +67,7 @@ namespace EdugameCloud.Lti.Canvas
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <param name="courseid">
@@ -79,7 +81,7 @@ namespace EdugameCloud.Lti.Canvas
         /// </returns>
         public List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
             string api,
-            string usertoken,
+            string userToken,
             int courseid,
             int quizid)
         {
@@ -90,7 +92,7 @@ namespace EdugameCloud.Lti.Canvas
                 api,
                 string.Format("/api/v1/courses/{0}/quizzes/{1}/submissions", courseid, quizid),
                 Method.POST,
-                usertoken);
+                userToken);
 
             IRestResponse<CanvasQuizSubmissionResultDTO> response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
 
@@ -99,14 +101,14 @@ namespace EdugameCloud.Lti.Canvas
             return ret;
         }
 
-        public LmsUserDTO GetCourseUser(string userId, string domain, string usertoken, int courseid)
+        public LmsUserDTO GetCourseUser(string userId, string domain, string userToken, int courseid)
         {
             var client = CreateRestClient(domain);
 
             var link = string.Format("/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
                     courseid, userId);
 
-            RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
+            RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
 
             IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
 
@@ -120,7 +122,7 @@ namespace EdugameCloud.Lti.Canvas
             return result;
         }
 
-        public List<LmsUserDTO> GetUsersForCourse(string domain, string usertoken, int courseid)
+        public List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseid)
         {
             var result = new List<LmsUserDTO>();
             var client = CreateRestClient(domain);
@@ -134,7 +136,7 @@ namespace EdugameCloud.Lti.Canvas
 
                 while (!string.IsNullOrEmpty(link))
                 {
-                    RestRequest request = CreateRequest(domain, link, Method.GET, usertoken);
+                    RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
 
                     IRestResponse<List<CanvasLmsUserDTO>> response = client.Execute<List<CanvasLmsUserDTO>>(request);
 
@@ -152,36 +154,7 @@ namespace EdugameCloud.Lti.Canvas
                         return result;
                     }
 
-                    link = string.Empty;
-                    foreach (var h in response.Headers)
-                    {
-                        if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            link = h.Value.ToString();
-                            var index = link.IndexOf("rel=\"next\"");
-                            if (index > -1)
-                            {
-                                link = link.Substring(0, index - 2);
-                                index = link.LastIndexOf(">");
-                                if (index > -1)
-                                {
-                                    link = link.Substring(0, index);
-                                    index = link.LastIndexOf("<");
-                                    if (index > -1)
-                                    {
-                                        link = link.Substring(index + 1);
-                                        index = link.IndexOf("/api/v1/");
-                                        if (index > -1)
-                                        {
-                                            link = link.Substring(index);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        link = string.Empty;
-                    }
+                    link = ExtractNextPageLink(response);
 
                     List<CanvasLmsUserDTO> us = response.Data;
                     if (us == null)
@@ -200,21 +173,6 @@ namespace EdugameCloud.Lti.Canvas
             }
 
             return result;
-        }
-
-        private void SetRole(CanvasLmsUserDTO userDto, int courseid)
-        {
-            if (userDto.enrollments != null)
-            {
-                var enrollment = userDto.enrollments.FirstOrDefault(x => x.course_id == courseid);
-                if (enrollment != null)
-                {
-                    userDto.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
-                    return;
-                }
-            }
-            logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
-                        courseid, userDto.id);
         }
 
         /// <summary>
@@ -390,5 +348,60 @@ namespace EdugameCloud.Lti.Canvas
                 isPublished = q.published
             });
         }
+
+
+        private static string ExtractNextPageLink(IRestResponse<List<CanvasLmsUserDTO>> response)
+        {
+            var link = string.Empty;
+
+            foreach (var h in response.Headers)
+            {
+                if (h.Name.Equals("Link", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    link = h.Value.ToString();
+                    var index = link.IndexOf("rel=\"next\"");
+                    if (index > -1)
+                    {
+                        link = link.Substring(0, index - 2);
+                        index = link.LastIndexOf(">");
+                        if (index > -1)
+                        {
+                            link = link.Substring(0, index);
+                            index = link.LastIndexOf("<");
+                            if (index > -1)
+                            {
+                                link = link.Substring(index + 1);
+                                index = link.IndexOf("/api/v1/");
+                                if (index > -1)
+                                {
+                                    link = link.Substring(index);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+                link = string.Empty;
+            }
+            return link;
+        }
+
+        private void SetRole(CanvasLmsUserDTO userDto, int courseid)
+        {
+            if (userDto.enrollments != null)
+            {
+                var enrollment = userDto.enrollments.FirstOrDefault(x => x.course_id == courseid);
+                if (enrollment != null)
+                {
+                    userDto.lms_role = enrollment.role.Replace("Enrollment", String.Empty);
+                    return;
+                }
+            }
+
+            logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
+                        courseid, userDto.id);
+        }
+
     }
+
 }

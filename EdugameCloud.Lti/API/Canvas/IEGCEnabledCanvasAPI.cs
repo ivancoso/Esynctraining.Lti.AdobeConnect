@@ -5,18 +5,19 @@ namespace EdugameCloud.Lti.API.Canvas
 {
     public interface IEGCEnabledCanvasAPI : IEGCEnabledLmsAPI, ICanvasAPI
     {
-        LmsUserDTO GetCourseUser(string userId, string domain, string usertoken, int courseid);
-        List<LmsUserDTO> GetUsersForCourse(string domain, string usertoken, int courseid);
+        LmsUserDTO GetCourseUser(string userId, string domain, string userToken, int courseid);
+
+        List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseid);
 
         List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
             string api,
-            string usertoken,
+            string userToken,
             int courseid,
             int quizid);
 
         void ReturnSubmissionForQuiz(
             string api,
-            string usertoken,
+            string userToken,
             int courseid,
             CanvasQuizSubmissionDTO submission);
     }

@@ -96,6 +96,14 @@
             Users = new List<User>();
         }
 
+
+        public virtual bool IsActive()
+        {
+            return Status == CompanyStatus.Active
+                && CurrentLicense != null
+                && CurrentLicense.ExpiryDate.ToUniversalTime() > DateTime.UtcNow;
+        }
+
     }
 
 }
