@@ -1,4 +1,5 @@
 ﻿using Castle.Core.Logging;
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API;
 
 namespace EdugameCloud.Lti.Controllers
@@ -52,6 +53,7 @@ namespace EdugameCloud.Lti.Controllers
         private static bool? isDebug;
 
         private readonly LmsCompanyModel lmsCompanyModel;
+        private readonly CompanyModel companyModel;
         private readonly LmsUserSessionModel userSessionModel;
         private readonly LmsUserModel lmsUserModel;
         private readonly MeetingSetup meetingSetup;
@@ -68,6 +70,7 @@ namespace EdugameCloud.Lti.Controllers
 
         public LtiController(
             LmsCompanyModel lmsCompanyModel,
+            CompanyModel companyModel,
             LmsUserSessionModel userSessionModel,
             LmsUserModel lmsUserModel, 
             MeetingSetup meetingSetup, 
@@ -80,6 +83,7 @@ namespace EdugameCloud.Lti.Controllers
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
+            this.companyModel = companyModel;
             this.userSessionModel = userSessionModel;
             this.lmsUserModel = lmsUserModel;
             this.meetingSetup = meetingSetup;
@@ -700,7 +704,10 @@ namespace EdugameCloud.Lti.Controllers
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
                 if (lmsCompany != null)
                 {
-                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
+                    var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
+                    if (company == null || company.CurrentLicense == null ||
+                        company.CurrentLicense.ExpiryDate.ToUniversalTime() <= DateTime.UtcNow
+                        || (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain)))
                     {
                         this.ViewBag.Error = "This LTI integration is already set for different domain";
                         return this.View("Error");

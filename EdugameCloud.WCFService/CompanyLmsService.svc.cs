@@ -47,6 +47,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
+        private LmsCompanySettingModel LmsCompanySettingModel
+        {
+            get
+            {
+                return IoC.Resolve<LmsCompanySettingModel>();
+            }
+        }
+
         /// <summary>
         ///     Gets the DLAP API.
         /// </summary>
@@ -409,7 +417,8 @@ namespace EdugameCloud.WCFService
             }
 
             instance.DateModified = DateTime.Now;
-            instance.LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
+            var lmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
+            instance.LmsProvider = lmsProvider;
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value.Return(x => x.Id, dto.createdBy);
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;
@@ -439,12 +448,37 @@ namespace EdugameCloud.WCFService
             instance.ShowAnnouncements = dto.enableAnnouncements;
             instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.D2LAppId, dto.d2lAppId);
-            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.D2LAppKey, dto.d2lAppKey);
+            //D2L only options
+            if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn)
+            {
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsD2LSandbox, dto.isSandbox);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppId, dto.d2lAppId);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppKey, dto.d2lAppKey);
+            }
 
             ProcessRoleMapping(dto, instance);
 
             return instance;
+        }
+
+        private void UpdateOrDeleteSetting(LmsCompany lmsCompany, string settingName, object settingValue)
+        {
+            var stringSettingValue = settingValue as string;
+            if (settingValue != null && (stringSettingValue == null || !string.IsNullOrEmpty(stringSettingValue)))
+            {
+                LmsCompanyModel.UpdateCompanySetting(lmsCompany, settingName,
+                    settingValue.ToString());
+            }
+            else
+            {
+                // todo: handle not-nullable values correctly if necessary
+                var setting = LmsCompanySettingModel.GetOneByLmsCompanyIdAndSettingName(lmsCompany.Id, settingName);
+                if (setting.Value != null)
+                {
+                    lmsCompany.Settings.Remove(lmsCompany.Settings.FirstOrDefault(x => x.Id == setting.Value.Id));
+                    LmsCompanySettingModel.RegisterDelete(setting.Value, true);
+                }
+            }
         }
 
         private static void ProcessRoleMapping(CompanyLmsDTO dto, LmsCompany instance)

@@ -197,6 +197,7 @@
     <Compile Include="Business\Models\AcCachePrincipalModel.cs" />
     <Compile Include="Business\Models\LmsCompanyRoleMappingModel.cs" />
     <Compile Include="Business\Models\LmsCompanyModel.cs" />
+    <Compile Include="Business\Models\LmsCompanySettingModel.cs" />
     <Compile Include="Business\Models\LmsCourseMeetingModel.cs" />
     <Compile Include="Business\Models\LmsProviderModel.cs" />
     <Compile Include="Business\Models\LmsQuestionTypeModel.cs" />

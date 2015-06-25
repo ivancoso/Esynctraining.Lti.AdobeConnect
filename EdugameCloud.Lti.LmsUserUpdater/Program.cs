@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using Castle.Core.Logging;
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
@@ -36,6 +38,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     var syncService = IoC.Resolve<ISynchronizationUserService>();
 
                     var companies = lmsCompanyModel.GetEnabledForSynchronization();
+                    companies = companies.Where(x => !LicenseExpired(x)).ToList();
                     var groupedByCompany = companies.GroupBy(x => x.LmsProvider.Id);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible
@@ -68,6 +71,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     logger.InfoFormat("===== Update Lms Users Engine stops. DateTime:{0} =====", DateTime.Now);
                 }
             }
+        }
+
+        private static bool LicenseExpired(LmsCompany lmsCompany)
+        {
+            var companyModel = IoC.Resolve<CompanyModel>();
+            var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
+            return company == null || company.CurrentLicense == null ||
+                   company.CurrentLicense.ExpiryDate.ToUniversalTime() <= DateTime.UtcNow;
         }
     }
 }

@@ -163,11 +163,4 @@ namespace EdugameCloud.Lti.Core.Business.Models
 
         #endregion
     }
-
-    public sealed class LmsCompanySettingModel : BaseModel<LmsCompanySetting, int>
-    {
-        protected LmsCompanySettingModel(IRepository<LmsCompanySetting, int> repository) : base(repository)
-        {
-        }
-    }
 }
