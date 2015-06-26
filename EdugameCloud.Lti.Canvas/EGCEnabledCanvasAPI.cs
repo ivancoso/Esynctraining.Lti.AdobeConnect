@@ -127,12 +127,15 @@ namespace EdugameCloud.Lti.Canvas
             var result = new List<LmsUserDTO>();
             var client = CreateRestClient(domain);
 
-            foreach (string role in CanvasAPI.CanvasRoles)
-            {
-                var link = string.Format("/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
-                    courseid,
-                    role,
-                    100); // default is 10 records per page, max - 100
+            //foreach (string role in CanvasAPI.CanvasRoles)
+            //{
+                //var link = string.Format("/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
+                //    courseid,
+                //    role,
+                //    100); // default is 10 records per page, max - 100
+
+            var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
+                courseid, 100); // default is 10 records per page, max - 100
 
                 while (!string.IsNullOrEmpty(link))
                 {
@@ -164,13 +167,13 @@ namespace EdugameCloud.Lti.Canvas
                     us.ForEach(
                         u =>
                         {
-                            u.lms_role = role;
+                            SetRole(u, courseid); //u.lms_role = role;
                             u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
                         });
 
                     result.AddRange(us);
                 }
-            }
+            //}
 
             return result;
         }
