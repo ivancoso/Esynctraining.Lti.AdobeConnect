@@ -37,7 +37,16 @@ namespace EdugameCloud.Lti.API
 
         public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<string> scoIds = null)
         {
-            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+            LmsUserServiceBase service = null;
+            if ((LmsProviderEnum)lmsCompany.LmsProvider.Id == LmsProviderEnum.Desire2Learn)
+            {
+                service = Esynctraining.Core.Utils.IoC.Container.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
+            }
+            else
+            {
+                service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+            }
+
             var acProvider = meetingSetup.GetProvider(lmsCompany);
             var groupedMeetings = lmsCompany.LmsCourseMeetings
                 .Where(x =>
@@ -217,5 +226,7 @@ namespace EdugameCloud.Lti.API
                 logger.Error(message, e);
             }
         }
+
     }
+
 }

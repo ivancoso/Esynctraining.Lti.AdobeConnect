@@ -98,24 +98,38 @@ namespace EdugameCloud.Lti.Desire2Learn
             var result = new List<LmsUserDTO>();
             if (classlistEnrollments != null)
             {
-                // current user is admin and not enrolled to this course -> add him to user list
+                // current is not enrolled to this course (user is admin) -> add him to user list
                 if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != lmsUserId))
                 {
-                    var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
-                        tokens[0],
-                        tokens[1],
-                        lmsCompany.LmsDomain,
-                        string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion),
-                        lmsCompany);
-                    if (currentUserInfo != null)
+                    var currentLmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
+
+                    if ((currentLmsUser != null) && !string.IsNullOrEmpty(currentLmsUser.Token))
                     {
-                        classlistEnrollments.Add(
-                            new ClasslistUser
-                            {
-                                Identifier = currentUserInfo.Identifier,
-                                Username = currentUserInfo.UniqueName,
-                                DisplayName = currentUserInfo.FirstName + " " + currentUserInfo.LastName
-                            });
+                        string[] currentUserTokens = currentLmsUser.Token.Split(' ');
+
+                        var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
+                            currentUserTokens[0],
+                            currentUserTokens[1],
+                            lmsCompany.LmsDomain,
+                            string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion),
+                            lmsCompany);
+
+                        if (currentUserInfo != null)
+                        {
+                            //
+                            var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1], lmsCompany.LmsDomain,
+                                string.Format(d2lApiService.GetUserUrlFormat, (string)this.settings.D2LApiVersion, currentUserInfo.Identifier), 
+                                lmsCompany);
+
+                            classlistEnrollments.Add(
+                                new ClasslistUser
+                                {
+                                    Identifier = currentUserInfo.Identifier,
+                                    Username = currentUserInfo.UniqueName,
+                                    DisplayName = currentUserInfo.FirstName + " " + currentUserInfo.LastName,
+                                    Email = userInfo.ExternalEmail, // TODO: is it OK??
+                                });
+                        }
                     }
                 }
 
@@ -123,13 +137,14 @@ namespace EdugameCloud.Lti.Desire2Learn
                 {
                     OrgUnitUser userInfo =
                         enrollmentsList.FirstOrDefault(e => e.User.Identifier == enrollment.Identifier);
+
                     var user = new LmsUserDTO
                     {
                         id = enrollment.Identifier,
                         login_id = enrollment.Username,
                         name = enrollment.DisplayName,
                         primary_email = enrollment.Email,
-                        lms_role = userInfo != null ? userInfo.Role.Name : "Unknown"
+                        lms_role = userInfo != null ? userInfo.Role.Name : "Unknown",
                     };
                     result.Add(user);
                 }
@@ -142,5 +157,23 @@ namespace EdugameCloud.Lti.Desire2Learn
         {
             get { return true; }
         }
+
     }
+
+    public class Desire2LearnLmsUserServiceSync : Desire2LearnLmsUserService
+    {
+        public Desire2LearnLmsUserServiceSync(ILogger logger, LmsUserModel lmsUserModel, IDesire2LearnApiService d2lApiService, ApplicationSettingsProvider settings)
+            : base(logger, lmsUserModel, d2lApiService, settings)
+        {
+        }
+
+        protected override bool AllowAdminAdditionToCourse
+        {
+            get
+            {
+                return false;
+            }
+        }
+    }
+
 }

@@ -6,18 +6,18 @@ using Esynctraining.Core.Providers;
 
 namespace LmsUserUpdater
 {
-    public class Desire2LearnLmsUserServiceSync : Desire2LearnLmsUserService
-    {
-        public Desire2LearnLmsUserServiceSync(ILogger logger, LmsUserModel lmsUserModel, IDesire2LearnApiService d2lApiService, ApplicationSettingsProvider settings) : base(logger, lmsUserModel, d2lApiService, settings)
-        {
-        }
+    //internal sealed class Desire2LearnLmsUserServiceSync : Desire2LearnLmsUserService
+    //{
+    //    public Desire2LearnLmsUserServiceSync(ILogger logger, LmsUserModel lmsUserModel, IDesire2LearnApiService d2lApiService, ApplicationSettingsProvider settings) : base(logger, lmsUserModel, d2lApiService, settings)
+    //    {
+    //    }
 
-        protected override bool AllowAdminAdditionToCourse
-        {
-            get
-            {
-                return false;
-            }
-        }
-    }
+    //    protected override bool AllowAdminAdditionToCourse
+    //    {
+    //        get
+    //        {
+    //            return false;
+    //        }
+    //    }
+    //}
 }
