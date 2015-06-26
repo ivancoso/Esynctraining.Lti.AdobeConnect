@@ -6,4 +6,7 @@
     CONSTRAINT [PK_LmsCompanySetting] PRIMARY KEY CLUSTERED ([lmsCompanySettingId] ASC),
     CONSTRAINT [FK_LmsCompanySetting_LmsCompany] FOREIGN KEY ([lmsCompanyId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]) ON DELETE CASCADE
 );
+GO
 
+CREATE UNIQUE NONCLUSTERED INDEX [UI_LmsCompanySetting_lmsCompanyId_name] ON [dbo].[LmsCompanySetting] ([lmsCompanyId], [name])
+GO
