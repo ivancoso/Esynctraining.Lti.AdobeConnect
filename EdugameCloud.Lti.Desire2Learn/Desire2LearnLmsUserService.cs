@@ -99,7 +99,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             if (classlistEnrollments != null)
             {
                 // current user is admin and not enrolled to this course -> add him to user list
-                if (classlistEnrollments.All(x => x.Identifier != lmsUserId))
+                if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != lmsUserId))
                 {
                     var currentUserInfo = d2lApiService.GetApiObjects<WhoAmIUser>(
                         tokens[0],
@@ -136,6 +136,11 @@ namespace EdugameCloud.Lti.Desire2Learn
             }
 
             return result;
+        }
+
+        protected virtual bool AllowAdminAdditionToCourse
+        {
+            get { return true; }
         }
     }
 }
