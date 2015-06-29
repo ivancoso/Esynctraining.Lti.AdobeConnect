@@ -22,6 +22,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (courseId == null)
                 throw new ArgumentNullException("courseId");
 
+            if (param.context_label.Length > 53)
+                throw new WarningMessageException("Can't generate Adobe Connect meeting name. Course Label is too long.");
+
             return string.Format("{0}: {1}", param.context_label, meeting.name).TruncateIfMoreThen(60);
         }
 

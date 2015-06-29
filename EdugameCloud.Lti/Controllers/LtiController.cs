@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.Constants;
+    using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.DTO;
@@ -472,12 +473,13 @@ namespace EdugameCloud.Lti.Controllers
                 var lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 string error;
-                var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
+                var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+
                 if (forceUpdate && lmsCompany.UseSynchronizedUsers
                     && service != null
                     && service.CanRetrieveUsersFromApiForCompany(lmsCompany)
                     && lmsCompany.LmsCourseMeetings != null
-                    && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
+                    && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int)LmsMeetingType.OfficeHours))
                 {
                     syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, scoIds: new[] { scoId });
                 }
@@ -544,10 +546,6 @@ namespace EdugameCloud.Lti.Controllers
                 string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
-            catch (WarningMessageException ex)
-            {
-                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
-            }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("JoinMeeting", ex);
@@ -571,10 +569,6 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("Can't get Adobe Connect BreezeSession"), JsonRequestBehavior.AllowGet);
 
                 return Json(OperationResult.Success(breezeSession), JsonRequestBehavior.AllowGet);
-            }
-            catch (WarningMessageException ex)
-            {
-                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -1541,6 +1535,11 @@ namespace EdugameCloud.Lti.Controllers
         private string GetOutputErrorMessage(string methodName, Exception ex)
         {
             logger.Error(methodName, ex);
+
+            var forcePassMessage = ex as WarningMessageException;
+            if (forcePassMessage != null)
+                return forcePassMessage.Message;
+
             return IsDebug
                 ? "An exception is occured. " + ex.ToString()
                 : ExceptionMessage;

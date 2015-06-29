@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Castle.Core.Logging;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Domain.Entities;
@@ -980,7 +981,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 });
                 meeting.MeetingNameJson = json;
             }
-            else
+                // TRICK: we cant update meeting names for OfficeHours
+            else if (type != (int)LmsMeetingType.OfficeHours)
             {
                 string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
                 updateItem.Name = acMeetingName;

@@ -8,11 +8,6 @@
     [addedToCache]       DATETIME       NULL,
     [officeHoursId]      INT            NULL,
     [ownerId]            INT            NULL,
-	[meetingNameJson]    NVARCHAR(128)  NULL,
+	[meetingNameJson]    NVARCHAR(4000)  NULL,
     CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
 );
-
-
-
-
-

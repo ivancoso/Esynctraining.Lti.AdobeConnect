@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;

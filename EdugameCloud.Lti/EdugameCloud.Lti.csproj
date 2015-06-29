@@ -269,7 +269,6 @@
     <Compile Include="OAuth\OAuthWebSecurityWrapper.cs" />
     <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WarningMessageException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

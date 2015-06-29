@@ -122,10 +122,6 @@ namespace EdugameCloud.Lti.Controllers
                 string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession);
                 return this.LoginToAC(url, breezeSession, credentials);
             }
-            catch (WarningMessageException ex)
-            {
-                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
-            }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("JoinRecording", ex);
@@ -195,10 +191,6 @@ namespace EdugameCloud.Lti.Controllers
                 string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "edit");
                 return this.LoginToAC(url, breezeSession, credentials);
             }
-            catch (WarningMessageException ex)
-            {
-                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
-            }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("EditRecording", ex);
@@ -231,10 +223,6 @@ namespace EdugameCloud.Lti.Controllers
 
                 string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "offline");
                 return this.LoginToAC(url, breezeSession, credentials);
-            }
-            catch (WarningMessageException ex)
-            {
-                return Json(OperationResult.Error(ex.Message), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
