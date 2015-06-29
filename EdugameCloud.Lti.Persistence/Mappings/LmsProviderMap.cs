@@ -15,8 +15,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
         /// </summary>
         public LmsProviderMap()
         {
-            this.Map(x => x.LmsProviderName).Nullable();
-            this.Map(x => x.ShortName).Nullable();
+            this.Map(x => x.LmsProviderName).Not.Nullable();
+            this.Map(x => x.ShortName).Not.Nullable();
             this.Map(x => x.ConfigurationUrl).Nullable();
             this.Map(x => x.UserGuideFileUrl).Nullable();
         }

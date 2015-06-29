@@ -14,7 +14,7 @@
         /// </summary>
         public StateMap()
         {
-            this.Map(x => x.StateName).Length(50).Nullable();
+            this.Map(x => x.StateName).Length(50).Not.Nullable();
             this.Map(x => x.StateCode).Length(10).Not.Nullable();
             this.Map(x => x.IsActive).Not.Nullable();
             this.Map(x => x.Latitude).Not.Nullable().Default("0");

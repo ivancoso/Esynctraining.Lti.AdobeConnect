@@ -48,7 +48,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// <summary>
         /// Gets or sets the lms meeting type.
         /// </summary>
-        public virtual int? LmsMeetingType { get; set; }
+        public virtual int LmsMeetingType { get; set; }
 
         /// <summary>
         /// Gets or sets the office hours.

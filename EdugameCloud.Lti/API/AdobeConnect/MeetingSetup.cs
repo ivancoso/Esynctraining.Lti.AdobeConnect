@@ -1664,7 +1664,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCourseMeeting lmsCourseMeeting)
         {
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
-            var type = lmsCourseMeeting.LmsMeetingType.GetValueOrDefault();            
+            var type = lmsCourseMeeting.LmsMeetingType;
             var canJoin = this.CanJoin(provider, lmsCompany, type, param, result.ScoId);
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
             string officeHoursString = null;

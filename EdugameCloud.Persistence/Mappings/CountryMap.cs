@@ -14,9 +14,9 @@
         /// </summary>
         public CountryMap()
         {
-            this.Map(x => x.CountryName).Length(255).Nullable();
-            this.Map(x => x.CountryCode).Length(3).Nullable();
-            this.Map(x => x.CountryCode3).Length(4).Nullable();
+            this.Map(x => x.CountryName).Length(255).Not.Nullable();
+            this.Map(x => x.CountryCode).Length(3).Not.Nullable();
+            this.Map(x => x.CountryCode3).Length(4).Not.Nullable();
             this.Map(x => x.Latitude).Not.Nullable().Default("0");
             this.Map(x => x.Longitude).Not.Nullable().Default("0");
             this.Map(x => x.ZoomLevel).Not.Nullable().Default("0");

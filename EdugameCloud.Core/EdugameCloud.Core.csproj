@@ -401,7 +401,6 @@
     <Compile Include="Domain\Entities\CompanyLicense.cs" />
     <Compile Include="Domain\Entities\BuildVersion.cs" />
     <Compile Include="Domain\Entities\BuildVersionType.cs" />
-    <Compile Include="Domain\Entities\FacebookSearchType.cs" />
     <Compile Include="Domain\Entities\SNMember.cs" />
     <Compile Include="Domain\Entities\SNService.cs" />
     <Compile Include="Domain\Entities\SNProfileSNService.cs" />

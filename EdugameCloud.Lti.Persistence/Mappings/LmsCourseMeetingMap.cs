@@ -18,13 +18,13 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             //this.OptimisticLock.Dirty();
             //this.DynamicUpdate();
             this.Map(x => x.CourseId).Not.Nullable();
-            this.Map(x => x.ScoId).Nullable();
+            this.Map(x => x.ScoId).Not.Nullable();
             this.Map(x => x.CachedUsers).CustomType("StringClob").CustomSqlType("nvarchar(max)").Nullable();
             this.Map(x => x.MeetingNameJson).Length(4000).Nullable();
             this.Map(x => x.AddedToCache).Nullable();
-            this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Nullable();
-            
-            this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
+            this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Not.Nullable();
+
+            this.References(x => x.LmsCompany).Column("companyLmsId").Not.Nullable();
             this.References(x => x.OfficeHours).Nullable();
             this.References(x => x.Owner).Column("ownerId").Nullable();
             HasMany(x => x.MeetingRoles).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();
