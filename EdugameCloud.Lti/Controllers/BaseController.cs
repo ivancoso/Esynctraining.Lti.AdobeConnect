@@ -121,7 +121,7 @@ namespace EdugameCloud.Lti.Controllers
         private void RedirectToError(string errorText)
         {
             this.Response.Clear();
-            this.Response.Write(string.Format("{{ \"error\": \"{0}\" }}", errorText));
+            this.Response.Write(string.Format("{{ \"isSuccess\": \"false\", \"message\": \"{0}\" }}", errorText));
             this.Response.End();
         }
 

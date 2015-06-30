@@ -1879,7 +1879,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
+            LmsCourseMeeting meeting = null;
+
+            if (!string.IsNullOrWhiteSpace(scoId))
+                meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
+
             if (meeting == null && type == (int)LmsMeetingType.OfficeHours)
             {
                 meeting =

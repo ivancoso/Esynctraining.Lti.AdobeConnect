@@ -61,6 +61,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     /// </summary>
     public class UsersSetup : IUsersSetup
     {
+        #region Inner Class: MeetingAttendees
+
+        private sealed class MeetingAttendees
+        {
+            public List<PermissionInfo> Hosts { get; set; }
+
+            public List<PermissionInfo> Presenters { get; set; }
+
+            public List<PermissionInfo> Participants { get; set; }
+
+        }
+
+        #endregion Inner Class: MeetingAttendees
+
         #region Fields
 
         /// <summary>
@@ -448,14 +462,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return users;
             }
 
-            List<PermissionInfo> hosts, participants, presenters;
             var nonEditable = new HashSet<string>();
-            GetMeetingAttendees(
+            MeetingAttendees attendees = GetMeetingAttendees(
                 provider, 
-                meeting.GetMeetingScoId(), 
-                out hosts, 
-                out presenters, 
-                out participants, 
+                meeting.GetMeetingScoId(),
                 nonEditable);
 
             string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
@@ -485,16 +495,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 foreach (LmsUserDTO user in users)
                 {
                     string login = user.GetLogin();
-                    LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id))
-                                      ?? new LmsUser
-                                      {
-                                          LmsCompany = lmsCompany,
-                                          Username = login,
-                                          UserId = user.lti_id ?? user.id,
-                                      };
+                    LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id));
+                    if (lmsUser == null)
+                    {
+                        lmsUser = new LmsUser
+                        {
+                            LmsCompany = lmsCompany,
+                            Username = login,
+                            UserId = user.lti_id ?? user.id,
+                        };
+                    }
 
                     if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
+                        // NOTE: we create Principals during Users/GetAll to have ability to join office hours meeting for all course participants.
                         Principal principal = acUserService.GetOrCreatePrincipal2(
                             provider,
                             login,
@@ -521,20 +535,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     user.ac_id = lmsUser.PrincipalId;
                     user.is_editable = !nonEditable.Contains(user.ac_id);
 
-                    if (hosts.Any(v => v.PrincipalId == user.ac_id))
+                    if (attendees.Hosts.Any(v => v.PrincipalId == user.ac_id))
                     {
                         user.ac_role = AcRole.Host.Name;
-                        hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        attendees.Hosts = attendees.Hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
-                    else if (presenters.Any(v => v.PrincipalId == user.ac_id))
+                    else if (attendees.Presenters.Any(v => v.PrincipalId == user.ac_id))
                     {
                         user.ac_role = AcRole.Presenter.Name;
-                        presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        attendees.Presenters = attendees.Presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
-                    else if (participants.Any(v => v.PrincipalId == user.ac_id))
+                    else if (attendees.Participants.Any(v => v.PrincipalId == user.ac_id))
                     {
                         user.ac_role = AcRole.Participant.Name;
-                        participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
+                        attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.ac_id).ToList();
                     }
                 }
 
@@ -544,46 +558,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            ProcessGuests(users, meeting, hosts.Where(h => !h.HasChildren), AcRole.Host);
-            ProcessGuests(users, meeting, presenters.Where(h => !h.HasChildren), AcRole.Presenter);
-            ProcessGuests(users, meeting, participants.Where(h => !h.HasChildren), AcRole.Participant);
+            ProcessGuests(users, meeting, attendees.Hosts.Where(h => !h.HasChildren), AcRole.Host);
+            ProcessGuests(users, meeting, attendees.Presenters.Where(h => !h.HasChildren), AcRole.Presenter);
+            ProcessGuests(users, meeting, attendees.Participants.Where(h => !h.HasChildren), AcRole.Participant);
             
-            //foreach (PermissionInfo permissionInfo in hosts.Where(h => !h.HasChildren))
-            //{
-            //    if (users.All(x => x.ac_id != permissionInfo.PrincipalId))
-            //    {
-            //        users.Add(
-            //            new LmsUserDTO
-            //            {
-            //                ac_id = permissionInfo.PrincipalId,
-            //                name = permissionInfo.Name,
-            //                ac_role = AcRole.Host.Name,
-            //            });
-            //    }
-            //}
-
-            //foreach (PermissionInfo permissionInfo in presenters.Where(h => !h.HasChildren))
-            //{
-            //    users.Add(
-            //        new LmsUserDTO
-            //            {
-            //                ac_id = permissionInfo.PrincipalId, 
-            //                name = permissionInfo.Name, 
-            //                ac_role = AcRole.Presenter.Name, 
-            //            });
-            //}
-
-            //foreach (PermissionInfo permissionInfo in participants.Where(h => !h.HasChildren))
-            //{
-            //    users.Add(
-            //        new LmsUserDTO
-            //            {
-            //                ac_id = permissionInfo.PrincipalId, 
-            //                name = permissionInfo.Name, 
-            //                ac_role = AcRole.Participant.Name, 
-            //            });
-            //}
-
             return users;
         }
 
@@ -644,21 +622,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (lmsUser != null)
             {
                 var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.id, lmsCompany.Id);
-                List<PermissionInfo> hosts, participants, presenters;
                 var nonEditable = new HashSet<string>();
-                GetMeetingAttendees(
+                MeetingAttendees attendees = GetMeetingAttendees(
                     provider,
                     meeting.GetMeetingScoId(),
-                    out hosts,
-                    out presenters,
-                    out participants,
                     nonEditable);
                 IEnumerable<Principal> principalCache = GetAllPrincipals(lmsCompany, provider, 
                     new List<LmsUserDTO>{lmsUser});
 
                 bool uncommitedChangesInLms = false;
                 ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser.Value, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
-                    nonEditable, ref hosts, ref participants, ref presenters);
+                    nonEditable, ref attendees);
 
                 if (uncommitedChangesInLms)
                 {
@@ -672,7 +646,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, LmsCompany lmsCompany,
             IEnumerable<Principal> principalCache, AdobeConnectProvider provider, ref bool uncommitedChangesInLms,
-            HashSet<string> nonEditable, ref List<PermissionInfo> hosts, ref List<PermissionInfo> participants, ref List<PermissionInfo> presenters)
+            HashSet<string> nonEditable, ref MeetingAttendees attendees)
         {
             string login = user.GetLogin();
             lmsDbUser = lmsDbUser ?? new LmsUser
@@ -708,20 +682,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             user.ac_id = lmsDbUser.PrincipalId;
             user.is_editable = !nonEditable.Contains(user.ac_id);
 
-            if (hosts.Any(v => v.PrincipalId == user.ac_id))
+            if (attendees.Hosts.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Host.Name;
-                hosts = hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
+                attendees.Hosts = attendees.Hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
-            else if (presenters.Any(v => v.PrincipalId == user.ac_id))
+            else if (attendees.Presenters.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Presenter.Name;
-                presenters = presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
+                attendees.Presenters = attendees.Presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
-            else if (participants.Any(v => v.PrincipalId == user.ac_id))
+            else if (attendees.Participants.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Participant.Name;
-                participants = participants.Where(v => v.PrincipalId != user.ac_id).ToList();
+                attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
         }
 
@@ -804,16 +778,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                 }
 
+                // TRICK: dbUser.PrincipalId can be updated within CreatePrincipalAndUpdateLmsUserPrincipalId
+                lmsUserDto.ac_id = dbUser.PrincipalId;
+
                 PermissionInfo enrollment = enrollments.FirstOrDefault(e => e.PrincipalId.Equals(dbUser.PrincipalId));
 
                 if (enrollment != null)
                 {
-                    lmsUserDto.ac_id = dbUser.PrincipalId;
                     lmsUserDto.ac_role = AcRole.GetRoleName(enrollment.PermissionId);
                     principalIds.Remove(dbUser.PrincipalId);
                 }
                 else if (!string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
+                    // NOTE: check that Principal is in AC yet
                     var principalInfo = provider.GetOneByPrincipalId(dbUser.PrincipalId);
                     if (!principalInfo.Success)
                     {
@@ -1117,20 +1094,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsCompany.Id, 
                 param.course_id, 
                 scoId);
+
+            // TODO:  DO WE NEED IT ?
             if (meeting == null)
             {
-                return skipReturningUsers ? null 
+                return skipReturningUsers 
+                    ? null 
                     : this.GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
+            // NOTE: now we create AC principal within Users/GetAll method. So user will always have ac_id here.
             if (user.ac_id == null)
             {
+                logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. ScoId:{1}. UserLogin:{2}.", lmsCompany.Id, scoId, user.GetLogin());
+
                 Principal principal = acUserService.GetOrCreatePrincipal(
-                    provider, 
-                    user.GetLogin(), 
-                    user.GetEmail(), 
-                    user.GetFirstName(), 
-                    user.GetLastName(), 
+                    provider,
+                    user.GetLogin(),
+                    user.GetEmail(),
+                    user.GetFirstName(),
+                    user.GetLastName(),
                     lmsCompany);
 
                 if (principal != null)
@@ -1146,7 +1129,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (user.ac_id == null)
             {
-                return skipReturningUsers ? null 
+                return skipReturningUsers ? null
                     : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
@@ -1156,7 +1139,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     meeting.GetMeetingScoId(), 
                     user.ac_id, 
                     MeetingPermissionId.remove);
-                return skipReturningUsers ? null 
+                return skipReturningUsers 
+                    ? null 
                     : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
@@ -1176,8 +1160,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 this.AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
 
-            return skipReturningUsers ? null 
-                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
+            return skipReturningUsers 
+                ? null 
+                : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
         }
 
         public LmsUserDTO UpdateGuest(
@@ -1464,12 +1449,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <param name="nonEditable">
         /// The non editable.
         /// </param>
-        private static void GetMeetingAttendees(
+        private static MeetingAttendees GetMeetingAttendees(
             AdobeConnectProvider provider, 
             string meetingSco, 
-            out List<PermissionInfo> hosts, 
-            out List<PermissionInfo> presenters, 
-            out List<PermissionInfo> participants, 
             HashSet<string> nonEditable = null)
         {
             var alreadyAdded = new HashSet<string>();
@@ -1503,9 +1485,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             nonEditable = nonEditable ?? new HashSet<string>();
 
-            hosts = ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
-            presenters = ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
-            participants = ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
+            var hosts = ProcessACMeetingAttendees(nonEditable, provider, hostsResult, alreadyAdded);
+            var presenters = ProcessACMeetingAttendees(nonEditable, provider, presentersResult, alreadyAdded);
+            var participants = ProcessACMeetingAttendees(nonEditable, provider, participantsResult, alreadyAdded);
+
+            return new MeetingAttendees 
+            {
+                Hosts = hosts,
+                Presenters = presenters,
+                Participants = participants,
+            };
         }
 
         /// <summary>
@@ -1697,7 +1686,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         if (lmsUser == null)
                         {
-                            lmsUser = new LmsUser { LmsCompany = lmsCompany, UserId = id, Username = login, };
+                            lmsUser = new LmsUser 
+                            {
+                                LmsCompany = lmsCompany, 
+                                UserId = id, 
+                                Username = login, 
+                                // TODO: email??
+                            };
                         }
 
                         lmsUser.PrincipalId = principal.PrincipalId;

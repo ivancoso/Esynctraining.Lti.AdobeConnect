@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.DTO;
+﻿using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
 
 namespace EdugameCloud.Lti.API.Canvas
 {
@@ -15,7 +16,9 @@ namespace EdugameCloud.Lti.API.Canvas
 
         void AddMoreDetailsForUser(string api, string usertoken, LmsUserDTO user);
 
-        void AnswerQuestionsForQuiz(string api, string usertoken, CanvasQuizSubmissionDTO submission);
+        void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission);
+
+        LmsUserDTO GetUser(string api, string userToken, string userId);
 
     }
 

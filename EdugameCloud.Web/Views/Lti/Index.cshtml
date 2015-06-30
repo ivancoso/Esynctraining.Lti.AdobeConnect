@@ -29,8 +29,9 @@
 	EsyncLti.acUsesEmailAsLogin = @ViewBag.ACUsesEmailAsLogin.ToString().ToLower();
 	EsyncLti.usesSyncUsers = @ViewBag.UseSynchronizedUsers.ToString().ToLower();
 	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);
-    EsyncLti.useFLV  = @ViewBag.UseFLV.ToString().ToLower();
-    EsyncLti.useMP4  = @ViewBag.UseMP4.ToString().ToLower();
+	EsyncLti.useFLV  = @ViewBag.UseFLV.ToString().ToLower();
+	EsyncLti.useMP4  = @ViewBag.UseMP4.ToString().ToLower();
+	EsyncLti.maxMeetingNameLength  = 120;
 
 	var Ext = Ext || {};
 	Ext.manifest = {

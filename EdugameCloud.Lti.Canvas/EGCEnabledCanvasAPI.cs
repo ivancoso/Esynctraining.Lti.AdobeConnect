@@ -1,14 +1,16 @@
-﻿using Castle.Core.Logging;
-using EdugameCloud.Lti.API;
-using EdugameCloud.Lti.API.Canvas;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Newtonsoft.Json;
-using RestSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Castle.Core.Logging;
+using EdugameCloud.Lti.API;
+using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Utils;
+using Newtonsoft.Json;
+using RestSharp;
 
 namespace EdugameCloud.Lti.Canvas
 {
@@ -19,6 +21,16 @@ namespace EdugameCloud.Lti.Canvas
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
         private readonly ILogger logger;
+        private LmsUserModel _lmsUserModel;
+
+
+        private LmsUserModel LmsUserModel
+        {
+            get 
+            {
+                return _lmsUserModel ?? (_lmsUserModel = IoC.Resolve<LmsUserModel>());
+            }
+        }
 
 
         public EGCEnabledCanvasAPI(ILogger logger)
@@ -101,7 +113,46 @@ namespace EdugameCloud.Lti.Canvas
             return ret;
         }
 
-        public LmsUserDTO GetCourseUser(string userId, string domain, string userToken, int courseid)
+        public LmsUserDTO GetCourseUser(string userId, LmsCompany lmsCompany, string userToken, int courseId)
+        {
+            string token = ((lmsCompany.AdminUser != null) && (lmsCompany.AdminUser.Token != null))
+                ? lmsCompany.AdminUser.Token
+                : userToken;
+
+            LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
+
+            List<string> courseTeacherTokens = null;
+            // IF emails is NOT included (for student + lmsCompany.AdminUser == null)
+            if (string.IsNullOrEmpty(user.primary_email))
+            {
+                List<LmsUserDTO> users = GetUsersForCourse(
+                    lmsCompany.LmsDomain,
+                    token,
+                    courseId);
+
+                IEnumerable<string> courseTeachers = users
+                    .Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
+                    .Select(u => u.id)
+                    .Distinct();
+
+                courseTeacherTokens =
+                    LmsUserModel.GetByUserIdAndCompanyLms(courseTeachers.ToArray(), lmsCompany.Id)
+                    .Where(t => !string.IsNullOrWhiteSpace(t.Token))
+                    .Select(v => v.Token)
+                    .ToList();
+
+                foreach (string teacherToken in courseTeacherTokens)
+                {
+                    user = FetchCourseUser(userId, lmsCompany.LmsDomain, courseTeacherTokens.FirstOrDefault(), courseId);
+                    if (!string.IsNullOrEmpty(user.primary_email))
+                        break;
+                }
+            }
+
+            return user;
+        }
+
+        private LmsUserDTO FetchCourseUser(string userId, string domain, string userToken, int courseid)
         {
             var client = CreateRestClient(domain);
 

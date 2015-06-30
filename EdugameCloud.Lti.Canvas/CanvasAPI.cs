@@ -2,9 +2,11 @@
 {
     using System.Collections.Generic;
     using System.Net;
+    using System.Linq;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Core.Constants;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
 
@@ -31,13 +33,13 @@
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool IsTokenExpired(string api, string usertoken)
+        public bool IsTokenExpired(string api, string userToken)
         {
             var client = CreateRestClient(api);
 
@@ -45,7 +47,7 @@
                 api,
                 "/api/v1/users/self/profile",
                 Method.GET,
-                usertoken);
+                userToken);
 
             IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
 
@@ -58,28 +60,34 @@
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <param name="user">
         /// The user.
         /// </param>
-        public void AddMoreDetailsForUser(string api, string usertoken, LmsUserDTO user)
+        public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
+        {
+            LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
+
+            if (canvasProfile != null)
+            {
+                user.primary_email = canvasProfile.primary_email;
+            }
+        }
+        
+        public LmsUserDTO GetUser(string api, string userToken, string userId)
         {
             var client = CreateRestClient(api);
 
             RestRequest request = CreateRequest(
-                api, 
-                string.Format("/api/v1/users/{0}/profile", user.id), 
-                Method.GET, 
-                usertoken);
+                api,
+                string.Format("/api/v1/users/{0}/profile", userId),
+                Method.GET,
+                userToken);
 
             IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
-
-            if (response.Data != null)
-            {
-                user.primary_email = response.Data.primary_email;
-            }
+            return response.Data;
         }
 
         /// <summary>
@@ -88,13 +96,13 @@
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <param name="submission">
         /// The submission.
         /// </param>
-        public void AnswerQuestionsForQuiz(string api, string usertoken, CanvasQuizSubmissionDTO submission)
+        public void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission)
         {
             var client = CreateRestClient(api);
 
@@ -102,7 +110,7 @@
                 api, 
                 string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id), 
                 Method.POST, 
-                usertoken);
+                userToken);
             request.RequestFormat = DataFormat.Json;
             request.AddBody(submission);
 
@@ -159,7 +167,7 @@
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <param name="courseid">
@@ -171,7 +179,7 @@
         /// <returns>
         /// The <see cref="List{QuizQuestionDTO}"/>.
         /// </returns>
-        public static List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string usertoken, int courseid, int quizid)
+        public static List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string userToken, int courseid, int quizid)
         {
             var ret = new List<CanvasQuestionDTO>();
             var client = CreateRestClient(api);
@@ -180,7 +188,7 @@
                 api, 
                 string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseid, quizid), 
                 Method.GET, 
-                usertoken);
+                userToken);
             request.AddParameter("per_page", 1000);
             IRestResponse<List<CanvasQuestionDTO>> response = client.Execute<List<CanvasQuestionDTO>>(request);
 
@@ -195,7 +203,7 @@
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
         /// <param name="courseid">
@@ -204,7 +212,7 @@
         /// <returns>
         /// The <see cref="LmsCourseDTO"/>.
         /// </returns>
-        public static LmsCourseDTO GetCourse(string api, string usertoken, int courseid)
+        public static LmsCourseDTO GetCourse(string api, string userToken, int courseid)
         {
             var client = CreateRestClient(api);
 
@@ -212,7 +220,7 @@
                 api,
                 string.Format("/api/v1/courses/{0}", courseid),
                 Method.GET,
-                usertoken);
+                userToken);
 
             IRestResponse<LmsCourseDTO> response = client.Execute<LmsCourseDTO>(request);
 

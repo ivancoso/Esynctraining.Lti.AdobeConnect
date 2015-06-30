@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.Core.Business;
@@ -45,6 +46,13 @@
         /// </returns>
         public LmsCourseMeeting GetOneByCourseAndScoId(int companyLmsId, int courseId, string scoId)
         {
+            if (companyLmsId <= 0)
+                throw new ArgumentOutOfRangeException("companyLmsId");
+            if (courseId <= 0)
+                throw new ArgumentOutOfRangeException("courseId");
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("scoId can not be empty", "scoId");
+
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
@@ -75,6 +83,13 @@
         /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByUserAndType(int companyLmsId, string userId, int type)
         {
+            if (companyLmsId <= 0)
+                throw new ArgumentOutOfRangeException("companyLmsId");
+            if (string.IsNullOrWhiteSpace(userId))
+                throw new ArgumentException("userId can not be empty", "userId");
+            if (type <= 0)
+                throw new ArgumentOutOfRangeException("type");
+
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             LmsUser u = null;
@@ -105,6 +120,13 @@
         /// </returns>
         public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, int type)
         {
+            if (companyLmsId <= 0)
+                throw new ArgumentOutOfRangeException("companyLmsId");
+            if (courseId <= 0)
+                throw new ArgumentOutOfRangeException("courseId");
+            if (type <= 0)
+                throw new ArgumentOutOfRangeException("type");
+
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
                 .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == type).Take(1);
             return this.Repository.FindOne(defaultQuery);
@@ -124,6 +146,11 @@
         /// </returns>
         public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, int courseId)
         {
+            if (companyLmsId <= 0)
+                throw new ArgumentOutOfRangeException("companyLmsId");
+            if (courseId <= 0)
+                throw new ArgumentOutOfRangeException("courseId");
+
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
                 .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId);
             return this.Repository.FindAll(defaultQuery);
@@ -138,15 +165,18 @@
         /// <returns>
         /// The <see cref="IEnumerable{LmsCourseMeeting}"/>.
         /// </returns>
-        public IEnumerable<LmsCourseMeeting> GetAllByMeetingId(string meetingId)
+        public IEnumerable<LmsCourseMeeting> GetAllByMeetingId(string meetingScoId)
         {
+            if (string.IsNullOrWhiteSpace(meetingScoId))
+                throw new ArgumentException("meetingId can not be empty", "meetingScoId");
+
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                .Where(() => (((x.ScoId != null) && (x.ScoId == meetingId)) ||
-                     (x.OfficeHours != null && oh.ScoId == meetingId)));
+                .Where(() => (((x.ScoId != null) && (x.ScoId == meetingScoId)) ||
+                     (x.OfficeHours != null && oh.ScoId == meetingScoId)));
             return this.Repository.FindAll(defaultQuery);
         }
 
@@ -161,6 +191,9 @@
         /// </returns>
         public IEnumerable<LmsCourseMeeting> GetAllByOfficeHoursId(int officeHoursId)
         {
+            if (officeHoursId <= 0)
+                throw new ArgumentOutOfRangeException("officeHoursId");
+
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()

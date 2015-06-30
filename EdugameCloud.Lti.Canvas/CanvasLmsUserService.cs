@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Canvas
             // probably it makes sence to call this method with company admin's token - for getting emails within one call
             var user = canvasApi.GetCourseUser(
                 lmsUserId,
-                lmsCompany.LmsDomain,
+                lmsCompany,
                 token,
                 courseId);
             
@@ -74,7 +74,7 @@ namespace EdugameCloud.Lti.Canvas
         {
             string token = ((lmsCompany.AdminUser != null) && (lmsCompany.AdminUser.Token != null))
                 ? lmsCompany.AdminUser.Token
-                : token = lmsUser.Token;
+                : lmsUser.Token;
 
             List<LmsUserDTO> users = canvasApi.GetUsersForCourse(
                 lmsCompany.LmsDomain,
@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.Canvas
                     .Select(v => v.Token)
                     .ToList();
 
-                if (!string.IsNullOrWhiteSpace(token))
+                if (courseTeacherTokens.Any())
                     users = canvasApi.GetUsersForCourse(
                         lmsCompany.LmsDomain,
                         courseTeacherTokens.FirstOrDefault(),
@@ -109,16 +109,6 @@ namespace EdugameCloud.Lti.Canvas
             if (users.Any(x => string.IsNullOrEmpty(x.primary_email)))
             {
                 logger.InfoFormat("[Canvas GetUsers] API did not return emails. CourseID={0}. LMSCompanyID:{1}. Current LmsUser ID: {2}.", courseId, lmsCompany.Id, lmsUser.Id);
-
-                //if (!adminCourseTokens.Contains(token))
-                //{
-                //    adminCourseTokens.Add(token);
-                //}
-                //if (lmsCompany.AdminUser != null && lmsCompany.AdminUser.Token != null
-                //    && !adminCourseTokens.Contains(lmsCompany.AdminUser.Token))
-                //{
-                //    adminCourseTokens.Add(lmsCompany.AdminUser.Token);
-                //}
 
                 foreach (var user in users)
                 {

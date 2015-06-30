@@ -212,6 +212,13 @@ namespace EdugameCloud.Lti.Controllers
                     AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
                     if (result.IsSuccessful)
                     {
+                        //if (provider.ToLower() == LmsProviderNames.Canvas)
+                        //{
+                        //    var param = this.GetSession(providerKey).LtiSession.LtiParam;
+                        //    if (param.lms_user_login == "$Canvas.user.loginId")
+                        //        throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
+                        //}
+
                         return AuthCallbackSave(providerKey,
                             result.ExtraData.ContainsKey("accesstoken")
                                 ? result.ExtraData["accesstoken"]
@@ -881,6 +888,11 @@ namespace EdugameCloud.Lti.Controllers
         {          
             try
             {
+                if (string.IsNullOrWhiteSpace(lmsProviderName))
+                    throw new ArgumentException("lmsProviderName cant be empty", "lmsProviderName");
+                if (string.IsNullOrWhiteSpace(scoId))
+                    throw new ArgumentException("scoId cant be empty", "scoId");
+
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
 
@@ -1152,7 +1164,18 @@ namespace EdugameCloud.Lti.Controllers
             var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
             if (!string.IsNullOrEmpty(token))
             {
-                var userName = username ?? GetUserNameOrEmail(param);
+                string userName = username;
+                if (string.IsNullOrWhiteSpace(username) && (providerKey.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
+                {
+                    logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
+                    LmsUserDTO user = canvasApi.GetUser(company.LmsDomain, token, userId);
+                    if (user != null)
+                        userName = user.login_id;
+                }
+
+                if (string.IsNullOrWhiteSpace(username))
+                    userName = GetUserNameOrEmail(param);
+
                 lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
@@ -1346,7 +1369,7 @@ namespace EdugameCloud.Lti.Controllers
         private void RedirectToError(string errorText)
         {
             this.Response.Clear();
-            this.Response.Write(string.Format("{{ \"error\": \"{0}\" }}", errorText));
+            this.Response.Write(string.Format("{{ \"isSuccess\": \"false\", \"message\": \"{0}\" }}", errorText));
             this.Response.End();
         }
 

@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[LmsCourseMeeting] (
 	[lmsCourseMeetingId]	INT				NOT NULL	IDENTITY(1, 1),
 	[courseId]				INT				NOT NULL,
-	[scoId]					NVARCHAR(50)	NOT NULL,
+	[scoId]					NVARCHAR(50)		NULL,	-- NOTE: IS NULL for Office Hours
 	[companyLmsId]			INT				NOT NULL,
 	[lmsMeetingTypeId]		INT				NOT NULL,
 	[cachedUsers]			NVARCHAR(MAX)		NULL,
