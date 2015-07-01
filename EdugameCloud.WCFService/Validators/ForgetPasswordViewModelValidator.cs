@@ -30,7 +30,7 @@
                 .EmailAddress()
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_LOGIN, "Email is invalid")
                 .Must(x => (user = userModel.GetOneByEmail(x).Value) != null && (user.Status == UserStatus.Active || user.Status == UserStatus.Activating))
-                .WithError(Errors.CODE_ERRORTYPE_USER_EXISTING, "User do not exist");
+                .WithError(Errors.CODE_ERRORTYPE_USER_EXISTING, "User does not exist");
         }
     }
 }

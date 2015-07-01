@@ -379,31 +379,31 @@
         public void ForgotPassword(string email)
         {
             ValidationResult validationResult;
-            if (this.IsValid(new ForgetPasswordViewModel { Email = email }, out validationResult))
+            if (!this.IsValid(new ForgetPasswordViewModel { Email = email }, out validationResult))
             {
-                User user = this.UserModel.GetOneByEmail(email).Value;
-                
-                UserActivationModel model = this.UserActivationModel;
-                UserActivation userActivation;
-                if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
-                {
-                    userActivation = new UserActivation
-                    {
-                        User = user,
-                        ActivationCode = Guid.NewGuid().ToString(),
-                        DateExpires = DateTime.Now.AddDays(7)
-                    };
-                    model.RegisterSave(userActivation);
-                }
-                
-                user.Status = UserStatus.Active;
-                this.UserModel.RegisterSave(user);
-                this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
+                var error = this.GenerateValidationError(validationResult);
+                this.LogError("User.ForgotPassword", error);
+                throw new FaultException<Error>(error, error.errorMessage);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("User.ForgotPassword", error);
-            throw new FaultException<Error>(error, error.errorMessage);
+            User user = this.UserModel.GetOneByEmail(email).Value;
+
+            UserActivationModel model = this.UserActivationModel;
+            UserActivation userActivation;
+            if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+            {
+                userActivation = new UserActivation
+                {
+                    User = user,
+                    ActivationCode = Guid.NewGuid().ToString(),
+                    DateExpires = DateTime.Now.AddDays(7),
+                };
+                model.RegisterSave(userActivation);
+            }
+
+            user.Status = UserStatus.Active;
+            this.UserModel.RegisterSave(user);
+            this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
         }
 
         /// <summary>

@@ -7,7 +7,6 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net.Mail;
-    using System.Reflection;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.Text.RegularExpressions;
@@ -543,7 +542,7 @@
                             new MailAddress(Common.JacquieEmail, Common.JacquieName)
                         };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -553,6 +552,7 @@
                 bcced: bcced);
 
             this.SaveHistory(
+                sentSuccessfully,
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -619,7 +619,7 @@
                             new MailAddress(Common.JacquieEmail, Common.JacquieName)
                         };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -629,6 +629,7 @@
                 bcced: bcced);
 
             this.SaveHistory(
+                sentSuccessfully,
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -715,7 +716,7 @@
                                 license.With(x => x.ExpiryDate.ToEst() + " EST")
                         };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 "License Admin",
                 (string)this.Settings.TrialContactEmail,
                 Emails.LicenseUpgradeRequested,
@@ -724,6 +725,7 @@
                 Common.AppEmail);
 
             this.SaveHistory(
+                sentSuccessfully,
                 "License Admin",
                 (string)this.Settings.TrialContactEmail,
                 Emails.LicenseUpgradeRequested,
@@ -753,7 +755,7 @@
                             TrialContactEmail = this.Settings.TrialContactEmail
                         };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -762,6 +764,7 @@
                 Common.AppEmail);
 
             this.SaveHistory(
+                sentSuccessfully,
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -788,10 +791,10 @@
             {
                 FirstName = firstName,
                 ActivationCode = activationCode,
-                TrialContactEmail = this.Settings.TrialContactEmail
+                TrialContactEmail = this.Settings.TrialContactEmail,
             };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -800,6 +803,7 @@
                 Common.AppEmail);
 
             this.SaveHistory(
+                sentSuccessfully,
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -850,9 +854,9 @@
                                TrialContactEmail =
                                    this.Settings.TrialContactEmail,
                                CompanyName = company.CompanyName
-                           };               
+                           };
 
-            this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmail(
                 firstName,
                 email,
                 Emails.ActivationSubject,
@@ -863,6 +867,7 @@
                 blindCopies);
 
             this.SaveHistory(
+                sentSuccessfully,
                 firstName,
                 email,
                 Emails.ActivationSubject,
@@ -996,7 +1001,7 @@
                 }
             }
 
-            return null;
+            return new Error { errorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage = "There were validation errors." };
         }
 
         /// <summary>
@@ -1049,7 +1054,14 @@
         /// <typeparam name="TModel">
         /// Mail Model 
         /// </typeparam>
-        private void SaveHistory<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null)
+        private void SaveHistory<TModel>(
+            bool mailWasSentSuccessfully,
+            string toName, string toEmail, 
+            string subject,
+            TModel model, 
+            string fromName = null, string fromEmail = null,
+            List<MailAddress> cced = null, 
+            List<MailAddress> bcced = null)
         {
             string body = this.TemplateProvider.GetTemplate<TModel>().TransformTemplate(model), message = body;
             if (message != null)
@@ -1064,27 +1076,27 @@
             }
 
             var emailHistory = new EmailHistory
-                               {
-                                   SentTo = toEmail,
-                                   SentToName = toName,
-                                   SentFrom = fromEmail,
-                                   SentFromName = fromName,
-                                   Date = DateTime.Now,
-                                   SentBcc =
-                                       bcced != null
-                                           ? bcced.Select(ma => ma.Address)
-                                       .Aggregate((a1, a2) => a1 + ";" + a2)
-                                           : null,
-                                   SentCc =
-                                       cced != null
-                                           ? cced.Select(ma => ma.Address)
-                                       .Aggregate((a1, a2) => a1 + ";" + a2)
-                                           : null,
-                                   Subject = subject,
-                                   User = UserModel.GetOneByEmail(toEmail).Value,
-                                   Body = body,
-                                   Message = message
-                               };
+            {
+                SentTo = toEmail,
+                SentToName = toName,
+                SentFrom = fromEmail,
+                SentFromName = fromName,
+                Date = DateTime.Now,
+                SentBcc =
+                    bcced != null
+                        ? bcced.Select(ma => ma.Address)
+                    .Aggregate((a1, a2) => a1 + ";" + a2)
+                        : null,
+                SentCc =
+                    cced != null
+                        ? cced.Select(ma => ma.Address)
+                    .Aggregate((a1, a2) => a1 + ";" + a2)
+                        : null,
+                Subject = subject,
+                User = UserModel.GetOneByEmail(toEmail).Value,
+                Body = body,
+                Message = message
+            };
 
             this.EmailHistoryModel.RegisterSave(emailHistory, true);
         }
@@ -1106,9 +1118,9 @@
             if (company != null && company.PrimaryContact != null && !email.Equals(company.PrimaryContact.Email, StringComparison.InvariantCultureIgnoreCase))
             {
                 return new List<MailAddress>
-                                     {
-                                         new MailAddress(company.PrimaryContact.Email, company.PrimaryContact.FullName)
-                                     };
+                {
+                    new MailAddress(company.PrimaryContact.Email, company.PrimaryContact.FullName)
+                };
             }
 
             return null;
@@ -1137,5 +1149,7 @@
         }
 
         #endregion
+
     }
+
 }
