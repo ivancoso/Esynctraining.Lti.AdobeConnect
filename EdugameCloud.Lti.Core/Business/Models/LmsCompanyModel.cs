@@ -5,13 +5,13 @@ using NHibernate.SqlCommand;
 namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System.Collections.Generic;
-    using EdugameCloud.Lti.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
-    using NHibernate;
-    using NHibernate.Criterion;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Business;
+using Esynctraining.Core.Business.Models;
+using Esynctraining.Core.Business.Queries;
+using NHibernate;
+using NHibernate.Criterion;
 
     /// <summary>
     /// The company LMS model.
@@ -161,6 +161,33 @@ namespace EdugameCloud.Lti.Core.Business.Models
             return this.Repository.FindAll(defaultQuery).ToList();
         }
 
+        public void ProcessLmsAdmin(LmsCompany entity, CompanyLmsDTO resultDto, LmsUserModel lmsUserModel, LmsCompanyModel lmsCompanyModel)
+        {
+            if (entity.LmsProvider.Id == (int)LmsProviderEnum.Canvas)
+                return;
+            if (entity.LmsProvider.Id == (int)LmsProviderEnum.Desire2Learn)
+                return;
+
+            if (!resultDto.enableProxyToolMode)
+            {
+                var lmsUser = entity.AdminUser ?? new LmsUser { LmsCompany = entity, UserId = "0" };
+
+                lmsUser.Username = resultDto.lmsAdmin;
+                if (!string.IsNullOrEmpty(resultDto.lmsAdminPassword))
+                {
+                    lmsUser.Password = resultDto.lmsAdminPassword;
+                }
+
+                lmsUser.Token = resultDto.lmsAdminToken;
+
+                lmsUserModel.RegisterSave(lmsUser, true);
+                entity.AdminUser = lmsUser;
+                lmsCompanyModel.RegisterSave(entity);
+            }
+        }
+
         #endregion
+
     }
+
 }

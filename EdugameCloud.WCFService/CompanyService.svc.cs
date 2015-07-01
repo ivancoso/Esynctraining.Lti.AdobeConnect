@@ -428,189 +428,137 @@ namespace EdugameCloud.WCFService
         public CompanyDTO Save(CompanyDTO dto)
         {
             ValidationResult validationResult;
-            if (this.IsValid(dto, out validationResult))
+            if (!this.IsValid(dto, out validationResult))
             {
-                var companyModel = this.CompanyModel;
-                var companyLicenseModel = this.CompanyLicenseModel;
-                var instance = (dto.companyId == 0)
-                    ? null
-                    : companyModel.GetOneById(dto.companyId).Value;
+                var error = this.GenerateValidationError(validationResult);
+                this.LogError("Company.Save", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+            
+            var companyModel = this.CompanyModel;
+            var companyLicenseModel = this.CompanyLicenseModel;
+            var instance = (dto.companyId == 0)
+                ? null
+                : companyModel.GetOneById(dto.companyId).Value;
 
-                instance = this.Convert(dto, instance);
-                var isTransient = instance.IsTransient();
-                companyModel.RegisterSave(instance, true);
+            instance = this.Convert(dto, instance);
+            var isTransient = instance.IsTransient();
+            companyModel.RegisterSave(instance, true);
 
-                if (isTransient && dto.licenseVO != null)
+            if (isTransient && dto.licenseVO != null)
+            {
+                var user = this.UserModel.GetOneById(dto.licenseVO.createdBy).Value;
+
+                var license = instance.CurrentLicense ?? new CompanyLicense();
+                license.Company = instance;
+                var licenseIsTransient = license.IsTransient();
+                if (licenseIsTransient)
                 {
-                    var user = this.UserModel.GetOneById(dto.licenseVO.createdBy).Value;
-
-                    var license = instance.CurrentLicense ?? new CompanyLicense();
-                    license.Company = instance;
-                    var licenseIsTransient = license.IsTransient();
-                    if (licenseIsTransient)
-                    {
-                        license.CreatedBy = user;
-                        license.DateCreated = DateTime.Now;
-                    }
-
-                    license.ModifiedBy = user;
-                    license.DateModified = DateTime.Now;
-                    var expiryDate = dto.licenseVO.expiryDate.ConvertFromUnixTimeStamp();
-                    license.ExpiryDate = expiryDate < DateTime.Now || expiryDate == DateTime.MinValue ? dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1) : expiryDate;
-                    var start = dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
-                    license.DateStart = start < DateTime.Now || start == SqlDateTime.MinValue.Value ? DateTime.Now : dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
-                    license.LicenseStatus = this.GetLicenseStatus(dto.licenseVO);
-                    license.TotalLicensesCount = dto.licenseVO.totalLicensesCount;
-                    
-                    license.TotalParticipantsCount = dto.licenseVO.totalParticipantsCount == 0 ? 100 : dto.licenseVO.totalParticipantsCount;
-                    license.Domain = dto.licenseVO.domain;
-                    license.LicenseNumber = Guid.NewGuid().ToString();
-
-                    companyLicenseModel.RegisterSave(license);
-
-                    if (licenseIsTransient)
-                    {
-                        instance.Licenses.Add(license);
-                        companyModel.RegisterSave(instance, false);
-                    }
+                    license.CreatedBy = user;
+                    license.DateCreated = DateTime.Now;
                 }
 
-                if (isTransient && dto.lmsVO != null)
+                license.ModifiedBy = user;
+                license.DateModified = DateTime.Now;
+                var expiryDate = dto.licenseVO.expiryDate.ConvertFromUnixTimeStamp();
+                license.ExpiryDate = expiryDate < DateTime.Now || expiryDate == DateTime.MinValue ? dto.licenseVO.isTrial ? DateTime.Now.AddDays(30) : DateTime.Now.AddYears(1) : expiryDate;
+                var start = dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
+                license.DateStart = start < DateTime.Now || start == SqlDateTime.MinValue.Value ? DateTime.Now : dto.licenseVO.startDate.ConvertFromUnixTimeStamp();
+                license.LicenseStatus = this.GetLicenseStatus(dto.licenseVO);
+                license.TotalLicensesCount = dto.licenseVO.totalLicensesCount;
+
+                license.TotalParticipantsCount = dto.licenseVO.totalParticipantsCount == 0 ? 100 : dto.licenseVO.totalParticipantsCount;
+                license.Domain = dto.licenseVO.domain;
+                license.LicenseNumber = Guid.NewGuid().ToString();
+
+                companyLicenseModel.RegisterSave(license);
+
+                if (licenseIsTransient)
                 {
-                    var lms = new LmsCompany
-                                  {
-                                      AcPassword = dto.lmsVO.acPassword,
-                                      AcServer = dto.lmsVO.acServer,
-                                      AcUsername = dto.lmsVO.acUsername,
-                                      CompanyId = instance.Id,
-                                      CreatedBy = dto.lmsVO.createdBy,
-                                      DateCreated = DateTime.Now,
-                                      DateModified = DateTime.Now,
-                                      LmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsVO.lmsProvider).Value,
-                                      ModifiedBy = this.UserModel.GetOneById(dto.lmsVO.modifiedBy).Value.Return(x => x.Id, dto.lmsVO.createdBy),
-                                      ConsumerKey = Guid.NewGuid().ToString(),
-                                      SharedSecret = Guid.NewGuid().ToString(),
-                                      LmsDomain = dto.lmsVO.lmsDomain.RemoveHttpProtocolAndTrailingSlash(),
-                                      PrimaryColor = dto.lmsVO.primaryColor,
-                                      Title = dto.lmsVO.title,
-                                      UseSSL = dto.lmsVO.lmsDomain.IsSSL(),
-                                      UseUserFolder = dto.lmsVO.useUserFolder,
-                                      CanRemoveMeeting = dto.lmsVO.canRemoveMeeting,
-                                      CanEditMeeting = dto.lmsVO.canEditMeeting,
-                                      IsSettingsVisible = dto.lmsVO.isSettingsVisible,
-                                      EnableOfficeHours = dto.lmsVO.enableOfficeHours,
-                                      EnableStudyGroups = dto.lmsVO.enableStudyGroups,
-                                      EnableCourseMeetings = dto.lmsVO.enableCourseMeetings,
-                                      ShowEGCHelp = dto.lmsVO.showEGCHelp,
-                                      ShowLmsHelp = dto.lmsVO.showLmsHelp,
-                                      AddPrefixToMeetingName = dto.lmsVO.addPrefixToMeetingName,
-                                      UserFolderName = dto.lmsVO.userFolderName,
-                                      EnableProxyToolMode = dto.lmsVO.enableProxyToolMode,
-                                      ProxyToolSharedPassword = dto.lmsVO.proxyToolPassword
-                                  };
-
-                    LmsCompanyModel.RegisterSave(lms);
-
-                    if (lms.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !dto.lmsVO.enableProxyToolMode)
-                    {
-                        var lmsUser = new LmsUser
-                                          {
-                                              LmsCompany = lms,
-                                              Username = dto.lmsVO.lmsAdmin,
-                                              Password = dto.lmsVO.lmsAdminPassword,
-                                              Token = dto.lmsVO.lmsAdminToken,
-                                              UserId = "0"
-                                          };
-                        LmsUserModel.RegisterSave(lmsUser, true);
-                        lms.AdminUser = lmsUser;
-                        LmsCompanyModel.RegisterSave(lms);
-                    }
+                    instance.Licenses.Add(license);
+                    companyModel.RegisterSave(instance, false);
                 }
-
-                if ((!dto.primaryContactId.HasValue || dto.primaryContactId == default(int)) && dto.primaryContactVO != null)
-                {
-                    bool passwordChanged, emailChanged;
-                    var user = this.ProcessPrimaryContact(dto, instance, out passwordChanged, out emailChanged);
-                    var isUserTransient = user.IsTransient();
-                    user.Company = instance;
-                    UserModel.RegisterSave(user);
-                    IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
-                    instance.PrimaryContact = user;
-                    companyModel.RegisterSave(instance, true);
-                    if (isUserTransient)
-                    {
-                        UserActivationModel model = this.UserActivationModel;
-                        UserActivation userActivation;
-                        if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
-                        {
-                            userActivation = new UserActivation
-                            {
-                                User = user,
-                                ActivationCode = Guid.NewGuid().ToString(),
-                                DateExpires = DateTime.Now.AddDays(7),
-                            };
-                            model.RegisterSave(userActivation);
-                        }
-
-                        var license = instance.Licenses.FirstOrDefault();
-                        if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false))
-                        {
-                            user.Status = UserStatus.Active;
-                            UserModel.RegisterSave(user);
-                            this.SendTrialEmail(user, userActivation.ActivationCode, instance);
-                        }
-                        else if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false))
-                        {
-                            user.Status = UserStatus.Active;
-                            UserModel.RegisterSave(user);
-                            this.SendEnterpriseEmail(user, userActivation.ActivationCode, instance);
-                        }
-                        else
-                        {
-                            this.SendActivation(user);    
-                        }
-                    }
-                    else if (passwordChanged || emailChanged)
-                    {
-                        UserActivationModel model = this.UserActivationModel;
-                        UserActivation userActivation;
-                        if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
-                        {
-                            userActivation = new UserActivation
-                            {
-                                User = user,
-                                ActivationCode = Guid.NewGuid().ToString(),
-                                DateExpires = DateTime.Now.AddDays(7),
-                            };
-                            model.RegisterSave(userActivation);
-                        }
-
-                        this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
-                    }
-                }
-                else if (instance.PrimaryContact == null)
-                {
-                    foreach (var companyLicense in instance.Licenses)
-                    {
-                        companyLicenseModel.RegisterDelete(companyLicense);
-                    }
-
-                    companyModel.RegisterDelete(instance);
-                    companyModel.Flush();
-                    var errorRes = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "CompanyWithoutContact", "Company was created without primary contact");
-                    throw new FaultException<Error>(errorRes, errorRes.errorMessage);
-                }
-
-                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
-                var dtoResult = new CompanyDTO(instance);
-                var lmses = isTransient ? LmsCompanyModel.GetAllByCompanyId(instance.Id).ToList() : new List<LmsCompany>();
-                dtoResult.lmsVO = new CompanyLmsDTO(lmses.FirstOrDefault());
-                return dtoResult;
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Company.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
+            if ((!dto.primaryContactId.HasValue || dto.primaryContactId == default(int)) && dto.primaryContactVO != null)
+            {
+                bool passwordChanged, emailChanged;
+                var user = this.ProcessPrimaryContact(dto, instance, out passwordChanged, out emailChanged);
+                var isUserTransient = user.IsTransient();
+                user.Company = instance;
+                UserModel.RegisterSave(user);
+                IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<User>(NotificationType.Update, user.Company.Id, user.Id);
+                instance.PrimaryContact = user;
+                companyModel.RegisterSave(instance, true);
+                if (isUserTransient)
+                {
+                    UserActivationModel model = this.UserActivationModel;
+                    UserActivation userActivation;
+                    if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                    {
+                        userActivation = new UserActivation
+                        {
+                            User = user,
+                            ActivationCode = Guid.NewGuid().ToString(),
+                            DateExpires = DateTime.Now.AddDays(7),
+                        };
+                        model.RegisterSave(userActivation);
+                    }
+
+                    var license = instance.Licenses.FirstOrDefault();
+                    if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false))
+                    {
+                        user.Status = UserStatus.Active;
+                        UserModel.RegisterSave(user);
+                        this.SendTrialEmail(user, userActivation.ActivationCode, instance);
+                    }
+                    else if (license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false))
+                    {
+                        user.Status = UserStatus.Active;
+                        UserModel.RegisterSave(user);
+                        this.SendEnterpriseEmail(user, userActivation.ActivationCode, instance);
+                    }
+                    else
+                    {
+                        this.SendActivation(user);
+                    }
+                }
+                else if (passwordChanged || emailChanged)
+                {
+                    UserActivationModel model = this.UserActivationModel;
+                    UserActivation userActivation;
+                    if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
+                    {
+                        userActivation = new UserActivation
+                        {
+                            User = user,
+                            ActivationCode = Guid.NewGuid().ToString(),
+                            DateExpires = DateTime.Now.AddDays(7),
+                        };
+                        model.RegisterSave(userActivation);
+                    }
+
+                    this.SendActivationLinkEmail(user.FirstName, user.Email, userActivation.ActivationCode);
+                }
+            }
+            else if (instance.PrimaryContact == null)
+            {
+                foreach (var companyLicense in instance.Licenses)
+                {
+                    companyLicenseModel.RegisterDelete(companyLicense);
+                }
+
+                companyModel.RegisterDelete(instance);
+                companyModel.Flush();
+                var errorRes = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "CompanyWithoutContact", "Company was created without primary contact");
+                throw new FaultException<Error>(errorRes, errorRes.errorMessage);
+            }
+
+            IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
+            var dtoResult = new CompanyDTO(instance);
+            var lmses = isTransient ? LmsCompanyModel.GetAllByCompanyId(instance.Id).ToList() : new List<LmsCompany>();
+            dtoResult.lmsVO = new CompanyLmsDTO(lmses.FirstOrDefault());
+            return dtoResult;
         }
 
         #endregion

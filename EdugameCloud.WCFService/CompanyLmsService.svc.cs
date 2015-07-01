@@ -137,43 +137,28 @@ namespace EdugameCloud.WCFService
         public CompanyLmsDTO Save(CompanyLmsDTO resultDto)
         {
             ValidationResult validationResult;
-            if (this.IsValid(resultDto, out validationResult))
+            if (!this.IsValid(resultDto, out validationResult))
             {
-                bool isTransient = resultDto.id == 0;
-                LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
-                entity = ConvertDto(resultDto, entity);
-                if (isTransient)
-                {
-                    entity.ConsumerKey = Guid.NewGuid().ToString();
-                    entity.SharedSecret = Guid.NewGuid().ToString();
-                }
-
-                this.LmsCompanyModel.RegisterSave(entity);
-                if (entity.LmsProvider.Id != (int)LmsProviderEnum.Canvas && !resultDto.enableProxyToolMode)
-                {
-                    var lmsUser = entity.AdminUser ?? new LmsUser { LmsCompany = entity, UserId = "0" };
-
-                    lmsUser.Username = resultDto.lmsAdmin;
-                    if (!string.IsNullOrEmpty(resultDto.lmsAdminPassword))
-                    {
-                        lmsUser.Password = resultDto.lmsAdminPassword;
-                    }
-
-                    lmsUser.Token = resultDto.lmsAdminToken;
-
-                    LmsUserModel.RegisterSave(lmsUser, true);
-                    entity.AdminUser = lmsUser;
-                    LmsCompanyModel.RegisterSave(entity);
-                }
-
-                this.UpdateAdobeConnectFolder(isTransient, entity);
-
-                return new CompanyLmsDTO(entity);
+                var error = this.GenerateValidationError(validationResult);
+                this.LogError("CompanyLMS.Save", error);
+                throw new FaultException<Error>(error, error.errorMessage);
             }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("CompanyLMS.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
+            bool isTransient = resultDto.id == 0;
+            LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
+            entity = ConvertDto(resultDto, entity);
+            if (isTransient)
+            {
+                entity.ConsumerKey = Guid.NewGuid().ToString();
+                entity.SharedSecret = Guid.NewGuid().ToString();
+            }
+
+            this.LmsCompanyModel.RegisterSave(entity);
+            this.LmsCompanyModel.ProcessLmsAdmin(entity, resultDto, LmsUserModel, LmsCompanyModel);
+
+            this.UpdateAdobeConnectFolder(isTransient, entity);
+
+            return new CompanyLmsDTO(entity);
         }
 
         /// <summary>
