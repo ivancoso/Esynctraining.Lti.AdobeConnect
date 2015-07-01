@@ -9,6 +9,8 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
+    using Castle.Core.Logging;
+    using System;
 
     /// <summary>
     /// The course API.
@@ -16,6 +18,8 @@
     // ReSharper disable once InconsistentNaming
     public class CanvasAPI : ILmsAPI, ICanvasAPI
     {
+        protected readonly ILogger _logger;
+
         #region Static Fields
 
         /// <summary>
@@ -25,276 +29,231 @@
 
         #endregion
 
+        public CanvasAPI(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         #region Public Methods and Operators
 
-        /// <summary>
-        /// Checks if token expired.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         public bool IsTokenExpired(string api, string userToken)
         {
-            var client = CreateRestClient(api);
-
-            RestRequest request = CreateRequest(
-                api,
-                "/api/v1/users/self/profile",
-                Method.GET,
-                userToken);
-
-            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
-
-            return response.StatusCode == HttpStatusCode.Unauthorized;
-        }
-
-        /// <summary>
-        /// The add more details for user.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
-        {
-            LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
-
-            if (canvasProfile != null)
+            try
             {
-                user.primary_email = canvasProfile.primary_email;
+                Validate(api, userToken);
+
+                var client = CreateRestClient(api);
+
+                RestRequest request = CreateRequest(
+                    api,
+                    "/api/v1/users/self/profile",
+                    Method.GET,
+                    userToken);
+
+                IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
+
+                return response.StatusCode == HttpStatusCode.Unauthorized;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.IsTokenExpired] API:{0}. UserToken:{1}.", api, userToken);
+                throw;
             }
         }
-        
+
+        public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
+        {
+            try
+            {
+                Validate(api, userToken);
+
+                LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
+
+                if (canvasProfile != null)
+                {
+                    user.primary_email = canvasProfile.primary_email;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.AddMoreDetailsForUser] API:{0}. UserToken:{1}.", api, userToken);
+                throw;
+            }
+        }
+
         public LmsUserDTO GetUser(string api, string userToken, string userId)
         {
-            var client = CreateRestClient(api);
+            try
+            {
+                Validate(api, userToken);
 
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/users/{0}/profile", userId),
-                Method.GET,
-                userToken);
+                var client = CreateRestClient(api);
 
-            IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
-            return response.Data;
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/users/{0}/profile", userId),
+                    Method.GET,
+                    userToken);
+
+                IRestResponse<LmsUserDTO> response = client.Execute<LmsUserDTO>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetUser] API:{0}. UserToken:{1}. UserId:{2}.", api, userToken, userId);
+                throw;
+            }
         }
 
-        /// <summary>
-        /// The answer questions for quiz.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <param name="submission">
-        /// The submission.
-        /// </param>
         public void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission)
         {
-            var client = CreateRestClient(api);
+            try
+            {
+                Validate(api, userToken);
 
-            RestRequest request = CreateRequest(
-                api, 
-                string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id), 
-                Method.POST, 
-                userToken);
-            request.RequestFormat = DataFormat.Json;
-            request.AddBody(submission);
+                var client = CreateRestClient(api);
 
-            // ReSharper disable once UnusedVariable
-            var res = client.Execute(request);
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id),
+                    Method.POST,
+                    userToken);
+                request.RequestFormat = DataFormat.Json;
+                request.AddBody(submission);
+
+                // ReSharper disable once UnusedVariable
+                var res = client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetUser] API:{0}. UserToken:{1}. SubmissionId:{2}.", api, userToken, submission.id);
+                throw;
+            }
         }
 
-        /// <summary>
-        /// The create announcement.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="title">
-        /// The title.
-        /// </param>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AnnouncementDTO"/>.
-        /// </returns>
         public AnnouncementDTO CreateAnnouncement(
-            string api, 
-            string usertoken, 
-            int courseid, 
-            string title, 
+            string api,
+            string userToken,
+            int courseid,
+            string title,
             string message)
         {
-            var client = CreateRestClient(api);
-            RestRequest request = CreateRequest(
-                api, 
-                string.Format("/api/v1/courses/{0}/discussion_topics", courseid), 
-                Method.POST, 
-                usertoken);
-            request.AddParameter("title", title);
-            request.AddParameter("message", message);
-            request.AddParameter("is_announcement", true);
+            try
+            {
+                Validate(api, userToken);
 
-            IRestResponse<AnnouncementDTO> response = client.Execute<AnnouncementDTO>(request);
+                var client = CreateRestClient(api);
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/courses/{0}/discussion_topics", courseid),
+                    Method.POST,
+                    userToken);
+                request.AddParameter("title", title);
+                request.AddParameter("message", message);
+                request.AddParameter("is_announcement", true);
 
-            return response.Data;
-        }
-
-        /// <summary>
-        /// The get questions for quiz.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="quizid">
-        /// The quiz id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{QuizQuestionDTO}"/>.
-        /// </returns>
-        public static List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string userToken, int courseid, int quizid)
-        {
-            var ret = new List<CanvasQuestionDTO>();
-            var client = CreateRestClient(api);
-
-            RestRequest request = CreateRequest(
-                api, 
-                string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseid, quizid), 
-                Method.GET, 
-                userToken);
-            request.AddParameter("per_page", 1000);
-            IRestResponse<List<CanvasQuestionDTO>> response = client.Execute<List<CanvasQuestionDTO>>(request);
-
-            ret.AddRange(response.Data);
-
-            return ret;
-        }
-
-        /// <summary>
-        /// The get course.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsCourseDTO"/>.
-        /// </returns>
-        public static LmsCourseDTO GetCourse(string api, string userToken, int courseid)
-        {
-            var client = CreateRestClient(api);
-
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/courses/{0}", courseid),
-                Method.GET,
-                userToken);
-
-            IRestResponse<LmsCourseDTO> response = client.Execute<LmsCourseDTO>(request);
-
-            return response.Data;
-        }
-
-        /// <summary>
-        /// The get file.
-        /// </summary>
-        /// <param name="api">
-        /// The api.
-        /// </param>
-        /// <param name="usertoken">
-        /// The usertoken.
-        /// </param>
-        /// <param name="fileid">
-        /// The fileid.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CanvasFileDTO"/>.
-        /// </returns>
-        public static CanvasFileDTO GetFile(string api, string usertoken, string fileid)
-        {
-            var client = CreateRestClient(api);
-
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/files/{0}", fileid),
-                Method.GET,
-                usertoken);
-
-            IRestResponse<CanvasFileDTO> response = client.Execute<CanvasFileDTO>(request);
-
-            return response.Data;
+                IRestResponse<AnnouncementDTO> response = client.Execute<AnnouncementDTO>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetUser] API:{0}. UserToken:{1}. CourseId:{2}.", api, userToken, courseid);
+                throw;
+            }
         }
 
         #endregion
 
         #region Methods
 
-        /// <summary>
-        /// The create rest client.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RestClient"/>.
-        /// </returns>
+        protected List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string userToken, int courseId, int quizId)
+        {
+            try
+            {
+                Validate(api, userToken);
+
+                var client = CreateRestClient(api);
+
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseId, quizId),
+                    Method.GET,
+                    userToken);
+                request.AddParameter("per_page", 1000);
+                IRestResponse<List<CanvasQuestionDTO>> response = client.Execute<List<CanvasQuestionDTO>>(request);
+
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetQuestionsForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}.", api, userToken, courseId, quizId);
+                throw;
+            }
+        }
+
+        protected LmsCourseDTO GetCourse(string api, string userToken, int courseId)
+        {
+            try
+            {
+                Validate(api, userToken);
+
+                var client = CreateRestClient(api);
+
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/courses/{0}", courseId),
+                    Method.GET,
+                    userToken);
+
+                IRestResponse<LmsCourseDTO> response = client.Execute<LmsCourseDTO>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetCourse] API:{0}. UserToken:{1}. CourseId:{2}.", api, userToken, courseId);
+                throw;
+            }
+        }
+
+        protected CanvasFileDTO GetFile(string api, string userToken, string fileId)
+        {
+            try
+            {
+                Validate(api, userToken);
+
+                var client = CreateRestClient(api);
+
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/files/{0}", fileId),
+                    Method.GET,
+                    userToken);
+
+                IRestResponse<CanvasFileDTO> response = client.Execute<CanvasFileDTO>(request);
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[CanvasAPI.GetFile] API:{0}. UserToken:{1}. FileId:{2}.", api, userToken, fileId);
+                throw;
+            }
+        }
+
+        protected static void Validate(string api, string userToken)
+        {
+            if (string.IsNullOrWhiteSpace(api))
+                throw new ArgumentException("Api can not be empty", "api");
+
+            if (string.IsNullOrWhiteSpace(api))
+                throw new ArgumentException("UserToken can not be empty", "userToken");
+        }
+
         protected static RestClient CreateRestClient(string api)
         {
             var client = new RestClient(string.Format("{0}{1}", HttpScheme.Https, api));
             return client;
         }
 
-        /// <summary>
-        /// The create request.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="resource">
-        /// The resource.
-        /// </param>
-        /// <param name="method">
-        /// The method.
-        /// </param>
-        /// <param name="usertoken">
-        /// The user token.
-        /// </param>
-        /// <returns>
-        /// The <see cref="RestRequest"/>.
-        /// </returns>
-        // ReSharper disable once UnusedParameter.Local
         protected static RestRequest CreateRequest(string api, string resource, Method method, string usertoken)
         {
             var request = new RestRequest(resource, method);
@@ -303,5 +262,7 @@
         }
 
         #endregion
+
     }
+
 }

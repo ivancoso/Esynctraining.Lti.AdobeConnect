@@ -20,7 +20,6 @@ namespace EdugameCloud.Lti.Canvas
     // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
-        private readonly ILogger logger;
         private LmsUserModel _lmsUserModel;
 
 
@@ -34,28 +33,10 @@ namespace EdugameCloud.Lti.Canvas
 
 
         public EGCEnabledCanvasAPI(ILogger logger)
+            : base(logger)
         {
-            this.logger = logger;
         }
 
-        ///// <summary>
-        ///// The get quiz by id.
-        ///// </summary>
-        ///// <param name="api">
-        ///// The API.
-        ///// </param>
-        ///// <param name="usertoken">
-        ///// The user token.
-        ///// </param>
-        ///// <param name="courseid">
-        ///// The course id.
-        ///// </param>
-        ///// <param name="quizid">
-        ///// The quiz id.
-        ///// </param>
-        ///// <returns>
-        ///// The <see cref="LmsQuizDTO"/>.
-        ///// </returns>
         //public static LmsQuizDTO GetQuizById(string api, string usertoken, int courseid, string quizid)
         //{
         //    var client = CreateRestClient(api);
@@ -73,120 +54,132 @@ namespace EdugameCloud.Lti.Canvas
         //    return response.Data;
         //}
 
-        /// <summary>
-        /// The get submission for quiz.
-        /// </summary>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="userToken">
-        /// The user token.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="quizid">
-        /// The quiz id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{QuizSubmissionDTO}"/>.
-        /// </returns>
         public List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
             string api,
             string userToken,
-            int courseid,
-            int quizid)
+            int courseId,
+            int quizId)
         {
-            var ret = new List<CanvasQuizSubmissionDTO>();
-            var client = CreateRestClient(api);
+            try
+            {
+                Validate(api, userToken);
 
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/courses/{0}/quizzes/{1}/submissions", courseid, quizid),
-                Method.POST,
-                userToken);
+                var client = CreateRestClient(api);
 
-            IRestResponse<CanvasQuizSubmissionResultDTO> response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/courses/{0}/quizzes/{1}/submissions", courseId, quizId),
+                    Method.POST,
+                    userToken);
 
-            ret.AddRange(response.Data.quiz_submissions);
-
-            return ret;
+                IRestResponse<CanvasQuizSubmissionResultDTO> response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
+                return response.Data.quiz_submissions;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}.", api, userToken, courseId, quizId);
+                throw;
+            }
         }
 
         public LmsUserDTO GetCourseUser(string userId, LmsCompany lmsCompany, string userToken, int courseId)
         {
-            string token = ((lmsCompany.AdminUser != null) && (lmsCompany.AdminUser.Token != null))
-                ? lmsCompany.AdminUser.Token
-                : userToken;
-
-            LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
-
-            List<string> courseTeacherTokens = null;
-            // IF emails is NOT included (for student + lmsCompany.AdminUser == null)
-            if (string.IsNullOrEmpty(user.primary_email))
+            try
             {
-                List<LmsUserDTO> users = GetUsersForCourse(
-                    lmsCompany.LmsDomain,
-                    token,
-                    courseId);
+                Validate(lmsCompany.LmsDomain, userToken);
 
-                IEnumerable<string> courseTeachers = users
-                    .Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
-                    .Select(u => u.id)
-                    .Distinct();
+                string token = ((lmsCompany.AdminUser != null) && (lmsCompany.AdminUser.Token != null))
+                    ? lmsCompany.AdminUser.Token
+                    : userToken;
 
-                courseTeacherTokens =
-                    LmsUserModel.GetByUserIdAndCompanyLms(courseTeachers.ToArray(), lmsCompany.Id)
-                    .Where(t => !string.IsNullOrWhiteSpace(t.Token))
-                    .Select(v => v.Token)
-                    .ToList();
+                LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
 
-                foreach (string teacherToken in courseTeacherTokens)
+                List<string> courseTeacherTokens = null;
+                // IF emails is NOT included (for student + lmsCompany.AdminUser == null)
+                if (string.IsNullOrEmpty(user.primary_email))
                 {
-                    user = FetchCourseUser(userId, lmsCompany.LmsDomain, courseTeacherTokens.FirstOrDefault(), courseId);
-                    if (!string.IsNullOrEmpty(user.primary_email))
-                        break;
+                    List<LmsUserDTO> users = GetUsersForCourse(
+                        lmsCompany.LmsDomain,
+                        token,
+                        courseId);
+
+                    IEnumerable<string> courseTeachers = users
+                        .Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
+                        .Select(u => u.id)
+                        .Distinct();
+
+                    courseTeacherTokens =
+                        LmsUserModel.GetByUserIdAndCompanyLms(courseTeachers.ToArray(), lmsCompany.Id)
+                        .Where(t => !string.IsNullOrWhiteSpace(t.Token))
+                        .Select(v => v.Token)
+                        .ToList();
+
+                    foreach (string teacherToken in courseTeacherTokens)
+                    {
+                        user = FetchCourseUser(userId, lmsCompany.LmsDomain, courseTeacherTokens.FirstOrDefault(), courseId);
+                        if (!string.IsNullOrEmpty(user.primary_email))
+                            break;
+                    }
                 }
+
+                return user;
             }
-
-            return user;
-        }
-
-        private LmsUserDTO FetchCourseUser(string userId, string domain, string userToken, int courseid)
-        {
-            var client = CreateRestClient(domain);
-
-            var link = string.Format("/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
-                    courseid, userId);
-
-            RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
-
-            IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
-
-            var result = response.Data;
-            if (result != null)
+            catch (Exception ex)
             {
-                result.primary_email = result.email;
-                SetRole(result, courseid);
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetCourseUser] API:{0}. UserToken:{1}. CourseId:{2}. UserId:{3}.", lmsCompany.LmsDomain, userToken, courseId, userId);
+                throw;
             }
-
-            return result;
         }
 
-        public List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseid)
+        private LmsUserDTO FetchCourseUser(string userId, string domain, string userToken, int courseId)
         {
-            var result = new List<LmsUserDTO>();
-            var client = CreateRestClient(domain);
+            try
+            {
+                Validate(domain, userToken);
 
-            //foreach (string role in CanvasAPI.CanvasRoles)
-            //{
+                var client = CreateRestClient(domain);
+
+                var link = string.Format("/api/v1/courses/{0}/users/{1}?include[]=email&include[]=enrollments",
+                        courseId, userId);
+
+                RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
+
+                IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
+
+                var result = response.Data;
+                if (result != null)
+                {
+                    result.primary_email = result.email;
+                    SetRole(result, courseId);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.FetchCourseUser] API:{0}. UserToken:{1}. CourseId:{2}. UserId:{3}.", domain, userToken, courseId, userId);
+                throw;
+            }
+        }
+
+        public List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseId)
+        {
+            try
+            {
+                Validate(domain, userToken);
+
+                var result = new List<LmsUserDTO>();
+                var client = CreateRestClient(domain);
+
+                //foreach (string role in CanvasAPI.CanvasRoles)
+                //{
                 //var link = string.Format("/api/v1/courses/{0}/users?enrollment_type={1}&per_page={2}&include[]=email",
                 //    courseid,
                 //    role,
                 //    100); // default is 10 records per page, max - 100
 
-            var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
-                courseid, 100); // default is 10 records per page, max - 100
+                var link = string.Format("/api/v1/courses/{0}/users?per_page={1}&include[]=email&include[]=enrollments",
+                    courseId, 100); // default is 10 records per page, max - 100
 
                 while (!string.IsNullOrEmpty(link))
                 {
@@ -199,10 +192,10 @@ namespace EdugameCloud.Lti.Canvas
                         var errorData = JsonConvert.DeserializeObject<CanvasApiErrorWrapper>(response.Content);
                         if (errorData != null && errorData.errors != null && errorData.errors.Any())
                         {
-                            logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}", response.StatusCode, response.StatusDescription, link);
+                            _logger.ErrorFormat("[Canvas API error] StatusCode:{0}, StatusDescription:{1}, link: {2}, domain:{3}.", response.StatusCode, response.StatusDescription, link, domain);
                             foreach (var error in errorData.errors)
                             {
-                                logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
+                                _logger.ErrorFormat("[Canvas API error] Response error: {0}", error.message);
                             }
                         }
                         return result;
@@ -218,15 +211,22 @@ namespace EdugameCloud.Lti.Canvas
                     us.ForEach(
                         u =>
                         {
-                            SetRole(u, courseid); //u.lms_role = role;
+                            SetRole(u, courseId); //u.lms_role = role;
                             u.primary_email = u.email; // todo: create separate canvas api class and map it to LmsUserDTO
                         });
 
                     result.AddRange(us);
                 }
-            //}
+                //}
 
-            return result;
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetUsersForCourse] API:{0}. UserToken:{1}. CourseId:{2}.", domain, userToken, courseId);
+                throw;
+            }
         }
 
         /// <summary>
@@ -235,10 +235,10 @@ namespace EdugameCloud.Lti.Canvas
         /// <param name="api">
         /// The API.
         /// </param>
-        /// <param name="usertoken">
+        /// <param name="userToken">
         /// The user token.
         /// </param>
-        /// <param name="courseid">
+        /// <param name="courseId">
         /// The course id.
         /// </param>
         /// <param name="submission">
@@ -246,21 +246,31 @@ namespace EdugameCloud.Lti.Canvas
         /// </param>
         public void ReturnSubmissionForQuiz(
             string api,
-            string usertoken,
-            int courseid,
+            string userToken,
+            int courseId,
             CanvasQuizSubmissionDTO submission)
         {
-            var client = CreateRestClient(api);
+            try
+            {
+                Validate(api, userToken);
 
-            RestRequest request = CreateRequest(
-                api,
-                string.Format("/api/v1/courses/{0}/quizzes/{1}/submissions/{2}/complete", courseid, submission.quiz_id, submission.id),
-                Method.POST,
-                usertoken);
-            request.AddParameter("attempt", submission.attempt);
-            request.AddParameter("validation_token", submission.validation_token);
+                var client = CreateRestClient(api);
 
-            client.Execute(request);
+                RestRequest request = CreateRequest(
+                    api,
+                    string.Format("/api/v1/courses/{0}/quizzes/{1}/submissions/{2}/complete", courseId, submission.quiz_id, submission.id),
+                    Method.POST,
+                    userToken);
+                request.AddParameter("attempt", submission.attempt);
+                request.AddParameter("validation_token", submission.validation_token);
+
+                client.Execute(request);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.ReturnSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. SubmissionQuizId:{3}. SubmissionId:{4}.", api, userToken, courseId, submission.quiz_id, submission.id);
+                throw;
+            }
         }
 
         /// <summary>
@@ -283,75 +293,83 @@ namespace EdugameCloud.Lti.Canvas
         /// </returns>
         public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
         {
-            var course = GetCourse(
+            try
+            {
+                Validate(lmsUserParameters.CompanyLms.LmsDomain, lmsUserParameters.LmsUser.Token);
+
+                var course = GetCourse(
+                        lmsUserParameters.CompanyLms.LmsDomain,
+                        lmsUserParameters.LmsUser.Token,
+                        lmsUserParameters.Course);
+
+                var client = CreateRestClient(lmsUserParameters.CompanyLms.LmsDomain);
+
+                RestRequest request = CreateRequest(
                     lmsUserParameters.CompanyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    lmsUserParameters.Course);
+                    string.Format("/api/v1/courses/{0}/quizzes", lmsUserParameters.Course),
+                    Method.GET,
+                    lmsUserParameters.LmsUser.Token);
+                request.AddParameter("per_page", 1000);
+                IRestResponse<List<CanvasQuizDTO>> response = client.Execute<List<CanvasQuizDTO>>(request);
 
-            var ret = new List<LmsQuizDTO>();
-            var client = CreateRestClient(lmsUserParameters.CompanyLms.LmsDomain);
-
-            RestRequest request = CreateRequest(
-                lmsUserParameters.CompanyLms.LmsDomain,
-                string.Format("/api/v1/courses/{0}/quizzes", lmsUserParameters.Course),
-                Method.GET,
-                lmsUserParameters.LmsUser.Token);
-            request.AddParameter("per_page", 1000);
-            IRestResponse<List<CanvasQuizDTO>> response = client.Execute<List<CanvasQuizDTO>>(request);
-
-            if (quizIds != null)
-            {
-                response.Data = response.Data.Where(q => quizIds.Contains(q.id)).ToList();
-            }
-
-            response.Data =
-                response.Data.Where(
-                    q =>
-                    isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
-                    .ToList();
-            
-            foreach (CanvasQuizDTO q in response.Data)
-            {
                 if (quizIds != null)
                 {
-                    q.questions =
-                        GetQuestionsForQuiz(
-                            lmsUserParameters.CompanyLms.LmsDomain,
-                            lmsUserParameters.LmsUser.Token,
-                            lmsUserParameters.Course,
-                            q.id).ToArray();
+                    response.Data = response.Data.Where(q => quizIds.Contains(q.id)).ToList();
+                }
 
-                    CanvasQuizParser.Parse(q);
+                response.Data =
+                    response.Data.Where(
+                        q =>
+                        isSurvey ? q.quiz_type.ToLower().Contains("survey") : (!q.quiz_type.ToLower().Contains("survey")))
+                        .ToList();
 
-                    foreach (var question in q.questions)
+                foreach (CanvasQuizDTO q in response.Data)
+                {
+                    if (quizIds != null)
                     {
-                        foreach (var fileIndex in question.files.Keys)
+                        q.questions =
+                            GetQuestionsForQuiz(
+                                lmsUserParameters.CompanyLms.LmsDomain,
+                                lmsUserParameters.LmsUser.Token,
+                                lmsUserParameters.Course,
+                                q.id).ToArray();
+
+                        CanvasQuizParser.Parse(q);
+
+                        foreach (var question in q.questions)
                         {
-                            var file = question.files[fileIndex];
-                            if (!file.fileUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+                            foreach (var fileIndex in question.files.Keys)
                             {
-                                var canvasFile = GetFile(
-                                    lmsUserParameters.CompanyLms.LmsDomain,
-                                    lmsUserParameters.LmsUser.Token,
-                                    CanvasQuizParser.GetFileId(file.fileUrl));
+                                var file = question.files[fileIndex];
+                                if (!file.fileUrl.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    var canvasFile = GetFile(
+                                        lmsUserParameters.CompanyLms.LmsDomain,
+                                        lmsUserParameters.LmsUser.Token,
+                                        CanvasQuizParser.GetFileId(file.fileUrl));
 
-                                file.fileUrl = canvasFile.url;
+                                    file.fileUrl = canvasFile.url;
+                                }
+
+                                question.question_text = CanvasQuizParser.ReplaceFilePlaceHolder(question.question_text, fileIndex, file);
+                                question.answers.ForEach(
+                                    a => a.text = CanvasQuizParser.ReplaceFilePlaceHolder(a.text, fileIndex, file));
                             }
-
-                            question.question_text = CanvasQuizParser.ReplaceFilePlaceHolder(question.question_text, fileIndex, file);
-                            question.answers.ForEach(
-                                a => a.text = CanvasQuizParser.ReplaceFilePlaceHolder(a.text, fileIndex, file));
                         }
                     }
+                    q.course = course.id;
+                    q.courseName = course.name;
                 }
-                q.course = course.id;
-                q.courseName = course.name;                
-            }
-            
-            ret.AddRange(response.Data);
-            error = string.Empty;
 
-            return ret;
+                error = string.Empty;
+                return response.Data;
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetItemsForUser] API:{0}. UserToken:{1}. CourseId:{2}.",
+                    lmsUserParameters.CompanyLms.LmsDomain, lmsUserParameters.LmsUser.Token, lmsUserParameters.Course);
+                throw;
+            }
         }
 
         /// <summary>
@@ -452,7 +470,7 @@ namespace EdugameCloud.Lti.Canvas
                 }
             }
 
-            logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
+            _logger.WarnFormat("[Canvas API] User without role. CourseId:{0}, UserId:{1}",
                         courseid, userDto.id);
         }
 
