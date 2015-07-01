@@ -47,6 +47,7 @@
                 this.body = string.Empty; //// TODO Either escape HTML inside XML or disable AMF String Referencing via config emailHistory.Body;
                 this.date = emailHistory.Date.ConvertToUnixTimestamp();
                 this.companyName = emailHistory.Return(x => x.User.Return(y => y.Company.Return(z => z.CompanyName, null), null), null);
+                this.status = emailHistory.Status;
             }
         }
 
@@ -126,6 +127,11 @@
         [DataMember]
         public string companyName { get; set; }
 
+        [DataMember]
+        public int status { get; set; }
+
         #endregion
+
     }
+
 }

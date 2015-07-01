@@ -50,8 +50,9 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Core">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.11\lib\net40\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.13\lib\net40\Esynctraining.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Persistence">
       <HintPath>..\packages\Esynctraining.Persistence.1.0.0.5\lib\net40\Esynctraining.Persistence.dll</HintPath>

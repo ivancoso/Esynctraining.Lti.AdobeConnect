@@ -318,9 +318,9 @@
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines",
             Justification = "Reviewed. Suppression is OK here.")]
-        protected ServiceResponse FormatErrorFromAC(ResultBase res)
+        protected static ServiceResponse FormatErrorFromAC(ResultBase res)
         {
-            return this.FormatErrorFromAC(res, new ServiceResponse());
+            return FormatErrorFromAC(res, new ServiceResponse());
         }
 
         /// <summary>
@@ -340,7 +340,7 @@
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines",
             Justification = "Reviewed. Suppression is OK here.")]
-        protected T FormatErrorFromAC<T>(ResultBase res, T result) where T : ServiceResponse
+        protected static T FormatErrorFromAC<T>(ResultBase res, T result) where T : ServiceResponse
         {
             if (res != null && res.Status != null)
             {
@@ -496,7 +496,7 @@
                 {
                     User = user,
                     ActivationCode = Guid.NewGuid().ToString(),
-                    DateExpires = DateTime.Now.AddDays(7)
+                    DateExpires = DateTime.Now.AddDays(7),
                 };
                 model.RegisterSave(userActivation);
                 bcced = GetBCCed(this.Settings.BCCNewEmail as string);
@@ -542,7 +542,7 @@
                             new MailAddress(Common.JacquieEmail, Common.JacquieName)
                         };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -619,7 +619,7 @@
                             new MailAddress(Common.JacquieEmail, Common.JacquieName)
                         };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 user.FirstName,
                 user.Email,
                 Emails.TrialSubject,
@@ -716,7 +716,7 @@
                                 license.With(x => x.ExpiryDate.ToEst() + " EST")
                         };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 "License Admin",
                 (string)this.Settings.TrialContactEmail,
                 Emails.LicenseUpgradeRequested,
@@ -755,7 +755,7 @@
                             TrialContactEmail = this.Settings.TrialContactEmail
                         };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -794,7 +794,7 @@
                 TrialContactEmail = this.Settings.TrialContactEmail,
             };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 firstName,
                 email,
                 Emails.ChangePasswordSubject,
@@ -847,16 +847,15 @@
             }
 
             var model = new ActivationInvitationModel(this.Settings)
-                           {
-                               FirstName = firstName,
-                               UserName = email,
-                               ActivationCode = activationCode,
-                               TrialContactEmail =
-                                   this.Settings.TrialContactEmail,
-                               CompanyName = company.CompanyName
-                           };
+            {
+                FirstName = firstName,
+                UserName = email,
+                ActivationCode = activationCode,
+                TrialContactEmail = this.Settings.TrialContactEmail,
+                CompanyName = company.CompanyName,
+            };
 
-            bool sentSuccessfully = this.MailModel.SendEmail(
+            bool sentSuccessfully = this.MailModel.SendEmailSync(
                 firstName,
                 email,
                 Emails.ActivationSubject,
@@ -1095,10 +1094,19 @@
                 Subject = subject,
                 User = UserModel.GetOneByEmail(toEmail).Value,
                 Body = body,
-                Message = message
+                Message = message,
+                Status = mailWasSentSuccessfully ? EmailHistory.StatusSent : EmailHistory.StatusFailed,
             };
 
             this.EmailHistoryModel.RegisterSave(emailHistory, true);
+
+            if (!mailWasSentSuccessfully)
+            {
+                Logger.ErrorFormat("[BaseService.SaveHistory] '{0}' mail to '{1}' has not been sent.", subject, toEmail);
+
+                var error = new Error { errorCode = 201, errorMessage = "Email has not been sent." };
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
         }
 
         /// <summary>

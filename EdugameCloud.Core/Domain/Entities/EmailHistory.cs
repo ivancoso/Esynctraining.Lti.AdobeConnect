@@ -12,6 +12,9 @@
     [Serializable]
     public class EmailHistory : Entity
     {
+        public const int StatusSent = 1;
+        public const int StatusFailed = 2;
+
         #region Public Properties
 
         /// <summary>
@@ -65,6 +68,8 @@
         /// Gets or sets the body.
         /// </summary>
         public virtual User User { get; set; }
+
+        public virtual int Status { get; set; }
 
         #endregion
     }

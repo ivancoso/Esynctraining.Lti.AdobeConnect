@@ -275,6 +275,7 @@ namespace EdugameCloud.WCFService
             instance.SentTo = history.sentTo;
             instance.Subject = history.subject;
             instance.User = this.UserModel.GetOneByEmail(history.sentTo).Value;
+            instance.Status = history.status;
 
             return instance;
         }

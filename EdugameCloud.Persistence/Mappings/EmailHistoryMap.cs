@@ -25,6 +25,7 @@
             this.Map(x => x.Body).CustomType("StringClob").CustomSqlType("nvarchar(max)").Nullable();
             this.Map(x => x.Date).Not.Nullable();
             this.References(x => x.User).Nullable().LazyLoad().NotFound.Ignore();
+            this.Map(x => x.Status).Not.Nullable();
         }
 
 
