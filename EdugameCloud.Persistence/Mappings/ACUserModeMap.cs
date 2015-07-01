@@ -14,7 +14,7 @@
         /// </summary>
         public ACUserModeMap()
         {
-            this.Map(x => x.UserMode).Length(50).Nullable();
+            this.Map(x => x.UserMode).Length(50).Not.Nullable();
             this.References(x => x.Image).Column("imageId");
         }
 

@@ -12,7 +12,7 @@
         /// <summary>
         /// Gets or sets the time zone gmt diff.
         /// </summary>
-        public virtual float? TimeZoneGMTDiff { get; set; }
+        public virtual float TimeZoneGMTDiff { get; set; }
 
         /// <summary>
         /// Gets or sets the time zone name.

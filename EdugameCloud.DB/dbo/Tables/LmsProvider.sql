@@ -4,10 +4,11 @@
     [shortName]        NVARCHAR (50)  NOT NULL,
     [configurationUrl] NVARCHAR (100) NULL,
     [userGuideFileUrl] NVARCHAR (100) NULL,
-    CONSTRAINT [PK_LmsProvider_1] PRIMARY KEY CLUSTERED ([lmsProviderId] ASC)
+    CONSTRAINT [PK_LmsProvider] PRIMARY KEY CLUSTERED ([lmsProviderId] ASC)
 );
+GO
 
-
-
-
-
+CREATE UNIQUE NONCLUSTERED INDEX [UI_LmsProvider_lmsProvider] ON [dbo].[LmsProvider] ([lmsProvider])
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [UI_LmsProvider_shortName] ON [dbo].[LmsProvider] ([shortName])
+GO
