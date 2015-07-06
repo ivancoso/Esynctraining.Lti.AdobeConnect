@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[QuestionType] (
     [questionTypeId]          INT            IDENTITY (1, 1) NOT NULL,
-    [type]                    VARCHAR (50)   NULL,
+    [type]                    VARCHAR (50)   NOT NULL,
     [questionTypeOrder]       INT            NULL,
     [questionTypeDescription] VARCHAR (200)  NULL,
     [instruction]             VARCHAR (500)  NULL,

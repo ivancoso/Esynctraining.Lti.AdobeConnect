@@ -14,7 +14,7 @@
         /// </summary>
         public QuestionTypeMap()
         {
-            this.Map(x => x.Type).Length(50).Nullable();
+            this.Map(x => x.Type).Length(50).Not.Nullable();
             this.Map(x => x.QuestionTypeOrder).Nullable();
             this.Map(x => x.QuestionTypeDescription).Length(200).Nullable();
             this.Map(x => x.Instruction).Length(500).Nullable();
