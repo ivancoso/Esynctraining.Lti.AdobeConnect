@@ -285,6 +285,10 @@
                 }
             }
 
+            // HACK: for supporting old licenses
+            if (providerName == "desire2learn")
+                providerName = LmsProviderNames.Brightspace;
+
             return providerName;
         }
 

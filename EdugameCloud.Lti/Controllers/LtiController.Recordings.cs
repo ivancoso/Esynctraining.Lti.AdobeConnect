@@ -10,6 +10,7 @@ namespace EdugameCloud.Lti.Controllers
     using System;
     using System.Collections.Generic;
     using System.Web.Mvc;
+    using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
 
@@ -326,7 +327,7 @@ namespace EdugameCloud.Lti.Controllers
 
         #region methods
 
-        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, AdobeConnectProvider adobeConnectProvider)
+        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         {
             var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
             if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )

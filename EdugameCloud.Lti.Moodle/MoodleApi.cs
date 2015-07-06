@@ -31,7 +31,7 @@
         /// </summary>
         // ReSharper disable once NotAccessedField.Local
         // ReSharper disable once InconsistentNaming
-        private readonly ILogger logger;
+        protected readonly ILogger logger;
 
         /// <summary>
         ///     The settings.
@@ -63,15 +63,9 @@
 
         #region Properties
 
-        /// <summary>
-        ///     Gets the Moodle service short name.
-        /// </summary>
         protected virtual string MoodleServiceShortName
         {
-            get
-            {
-                return "lms";
-            }
+            get { return "lms"; }
         }
 
         #endregion
@@ -80,25 +74,27 @@
 
         public List<LmsUserDTO> GetUsersForCourse(
             LmsCompany company, 
-            int courseid, 
+            int courseId, 
             out string error)
         {
-            MoodleSession token = null;
+            try
+            {
+                if (company == null)
+                    throw new ArgumentNullException("company");
 
-            var result = new List<LmsUserDTO>();
-            List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
-                token, 
-                c =>
+                MoodleSession token = null;
+
+                var result = new List<LmsUserDTO>();
+                List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
+                    token,
+                    c =>
                     {
                         var pairs = new NameValueCollection
-                                        {
-                                            { "wsfunction", "core_enrol_get_enrolled_users" }, 
-                                            { "wstoken", c.Token }, 
-                                            {
-                                                "courseid", 
-                                                courseid.ToString(CultureInfo.InvariantCulture)
-                                            }
-                                        };
+                        {
+                            { "wsfunction", "core_enrol_get_enrolled_users" }, 
+                            { "wstoken", c.Token }, 
+                            { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
+                        };
 
                         byte[] response;
                         using (var client = new WebClient())
@@ -116,19 +112,27 @@
                         }
                         catch (Exception ex)
                         {
+                            logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
+
                             return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
                         }
-                    }, 
-                company, 
-                out error);
+                    },
+                    company,
+                    out error);
 
-            if (enrollmentsResult == null)
-            {
-                error = error ?? "Moodle XML. Unable to retrive result from API";
-                return result;
+                if (enrollmentsResult == null)
+                {
+                    error = error ?? "Moodle XML. Unable to retrive result from API";
+                    return result;
+                }
+
+                return enrollmentsResult;
             }
-
-            return enrollmentsResult;
+            catch (Exception ex)
+            {
+                logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
+                throw;
+            }
         }
 
         public bool LoginAndCheckSession(
@@ -180,17 +184,20 @@
             bool recursive = false)
         {
             error = null;
-            var pairs = new NameValueCollection
-                            {
-                                { "username", userName }, 
-                                { "password", password }, 
-                                { "service", this.MoodleServiceShortName }
-                            };
             string resp = string.Empty;
-            byte[] response;
-            string url = this.GetTokenUrl(lmsDomain, useSsl);
+
             try
             {
+                var pairs = new NameValueCollection
+                {
+                    { "username", userName }, 
+                    { "password", password }, 
+                    { "service", this.MoodleServiceShortName }
+                };
+                
+                byte[] response;
+                string url = this.GetTokenUrl(lmsDomain, useSsl);
+
                 using (var client = new WebClient())
                 {
                     response = client.UploadValues(url, pairs);
@@ -215,14 +222,16 @@
                 }
 
                 return new MoodleSession
-                           {
-                               Token = token.token,
-                               Url = this.GetServicesUrl(lmsDomain, useSsl),
-                               UseSSL = useSsl
-                           };
+                {
+                    Token = token.token,
+                    Url = this.GetServicesUrl(lmsDomain, useSsl),
+                    UseSSL = useSsl,
+                };
             }
             catch (Exception ex)
             {
+                logger.ErrorFormat(ex, "[MoodleApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
+
                 error = string.Format(
                     "Not able to login into: {0} for user: {1};{2} error: {3}",
                     lmsDomain,
@@ -438,7 +447,7 @@
         /// <returns>
         /// The <see cref="XmlDocument"/>.
         /// </returns>
-        protected XmlDocument UploadValues(string url, NameValueCollection pairs)
+        protected static XmlDocument UploadValues(string url, NameValueCollection pairs)
         {
             byte[] response;
             using (var client = new WebClient())

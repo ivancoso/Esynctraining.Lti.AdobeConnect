@@ -6,9 +6,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IAdobeConnectAccountService
     {
-        ACPasswordPoliciesDTO GetPasswordPolicies(AdobeConnectProvider provider);
+        ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider);
 
-        IEnumerable<PrincipalReportDto> GetMeetingHostReport(AdobeConnectProvider provider);
+        IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
 
     }
 

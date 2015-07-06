@@ -32,7 +32,7 @@
                 .Must(
                     (model, x) =>
                     x.Equals(LmsProviderNames.Canvas, StringComparison.OrdinalIgnoreCase)
-                    || x.Equals(LmsProviderNames.Desire2Learn, StringComparison.OrdinalIgnoreCase)
+                    || x.Equals(LmsProviderNames.Brightspace, StringComparison.OrdinalIgnoreCase)
                     || model.enableProxyToolMode
                     || !string.IsNullOrWhiteSpace(model.lmsAdmin))
                 .WithError(

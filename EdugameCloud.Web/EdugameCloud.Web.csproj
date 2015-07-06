@@ -589,7 +589,7 @@
     <Content Include="Content\swf\admin\resources\icons\crosswordIcon.png" />
     <Content Include="Content\swf\admin\resources\icons\crosswordIconSolidColor.png" />
     <Content Include="Content\swf\admin\resources\icons\deleteIcon.png" />
-    <Content Include="Content\swf\admin\resources\icons\desire2Learn.jpg" />
+    <Content Include="Content\swf\admin\resources\icons\brightspace.jpg" />
     <Content Include="Content\swf\admin\resources\icons\dislike.png" />
     <Content Include="Content\swf\admin\resources\icons\downArrow.png" />
     <Content Include="Content\swf\admin\resources\icons\downListIcon.png" />

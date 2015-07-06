@@ -144,8 +144,8 @@ namespace EdugameCloud.Lti.API
             }
         }
 
-        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany, 
-            IEnumerable<LmsUser> existedDbUsers, AdobeConnectProvider provider)
+        private IEnumerable<LmsUser> UpdateDbUsers(List<LmsUserDTO> lmsUserDtos, LmsCompany lmsCompany,
+            IEnumerable<LmsUser> existedDbUsers, IAdobeConnectProxy provider)
         {
             var newUsers = new List<LmsUser>();
             foreach (var lmsUserDto in lmsUserDtos)
@@ -191,7 +191,7 @@ namespace EdugameCloud.Lti.API
         }
 
         private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting,
-            AdobeConnectProvider acProvider, List<PermissionInfo> enrollments)
+            IAdobeConnectProxy acProvider, List<PermissionInfo> enrollments)
         {
             string error = null;
             var meetingRoles = usersSetup.GetUserMeetingRoles(meeting);

@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #region Public Methods and Operators
 
         void SetLMSUserDefaultACPermissions(
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             LmsCompany lmsCompany,
             string meetingScoId, 
             LmsUserDTO user, 
@@ -46,7 +46,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         LmsUserDTO UpdateUser(
             LmsCompany lmsCompany,
-            AdobeConnectProvider provider, 
+            IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
             string scoId, 
@@ -146,7 +146,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public void AddUserToMeetingHostsGroup(AdobeConnectProvider provider, string principalId)
+        public void AddUserToMeetingHostsGroup(IAdobeConnectProxy provider, string principalId)
         {
             bool added = provider.AddToGroupByType(principalId, "live-admins");
             if (!added)
@@ -165,7 +165,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool AddUsersToMeetingHostsGroup(AdobeConnectProvider provider, IEnumerable<string> principalIds)
+        public bool AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds)
         {
             bool group = provider.AddToGroupByType(principalIds, "live-admins");
 
@@ -296,7 +296,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{PermissionInfo}"/>.
         /// </returns>
-        public List<PermissionInfo> GetMeetingAttendees(AdobeConnectProvider provider, string meetingSco)
+        public List<PermissionInfo> GetMeetingAttendees(IAdobeConnectProxy provider, string meetingSco)
         {
             var alreadyAdded = new HashSet<string>();
             PermissionCollectionResult allMeetingEnrollments = provider.GetAllMeetingEnrollments(meetingSco);
@@ -434,8 +434,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
 
         public List<LmsUserDTO> GetUsers(
-            LmsCompany lmsCompany, 
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             string scoId, 
             out string error,
@@ -597,7 +597,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public LmsUserDTO GetOrCreateUserWithAcRole(
             LmsCompany lmsCompany,
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             LtiParamDTO param,
             string scoId,
             out string error,
@@ -645,7 +645,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, LmsCompany lmsCompany,
-            IEnumerable<Principal> principalCache, AdobeConnectProvider provider, ref bool uncommitedChangesInLms,
+            IEnumerable<Principal> principalCache, IAdobeConnectProxy provider, ref bool uncommitedChangesInLms,
             HashSet<string> nonEditable, ref MeetingAttendees attendees)
         {
             string login = user.GetLogin();
@@ -744,7 +744,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
             LmsCompany lmsCompany,
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             LmsCourseMeeting meeting,
             IEnumerable<LmsUserDTO> users,
             IEnumerable<LmsUser> lmsDbUsers,
@@ -868,7 +868,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(AdobeConnectProvider provider,
+        private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(IAdobeConnectProxy provider,
             LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany)
         {
             Principal principal = acUserService.GetOrCreatePrincipal(
@@ -888,8 +888,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public List<LmsUserDTO> SetDefaultRolesForNonParticipants(
-            LmsCompany lmsCompany, 
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             string scoId, 
             bool forceUpdate, 
@@ -959,8 +959,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         public void SetDefaultUsers(
             LmsCompany lmsCompany, 
-            LmsCourseMeeting meeting, 
-            AdobeConnectProvider provider, 
+            LmsCourseMeeting meeting,
+            IAdobeConnectProxy provider, 
             string lmsUserId, 
             int courseId, 
             string meetingScoId, 
@@ -1014,7 +1014,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The ignore AC
         /// </param>
         public void SetLMSUserDefaultACPermissions(
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             LmsCompany lmsCompany, 
             string meetingScoId, 
             LmsUserDTO u, 
@@ -1081,8 +1081,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public LmsUserDTO UpdateUser(
-            LmsCompany lmsCompany, 
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
             string scoId, 
@@ -1167,7 +1167,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public LmsUserDTO UpdateGuest(
             LmsCompany lmsCompany,
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,
             string scoId,
@@ -1415,7 +1415,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{Principal}"/>.
         /// </returns>
-        private static List<Principal> GetGroupPrincipals(AdobeConnectProvider provider, IEnumerable<string> groupIds)
+        private static List<Principal> GetGroupPrincipals(IAdobeConnectProxy provider, IEnumerable<string> groupIds)
         {
             var principals = new List<Principal>();
 
@@ -1450,7 +1450,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The non editable.
         /// </param>
         private static MeetingAttendees GetMeetingAttendees(
-            AdobeConnectProvider provider, 
+            IAdobeConnectProxy provider, 
             string meetingSco, 
             HashSet<string> nonEditable = null)
         {
@@ -1516,8 +1516,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// The <see cref="List{PermissionInfo}"/>.
         /// </returns>
         private static List<PermissionInfo> ProcessACMeetingAttendees(
-            HashSet<string> nonEditable, 
-            AdobeConnectProvider provider, 
+            HashSet<string> nonEditable,
+            IAdobeConnectProxy provider, 
             List<PermissionInfo> values, 
             HashSet<string> alreadyAdded)
         {
@@ -1566,8 +1566,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <exception cref="InvalidOperationException">
         /// </exception>
         private IEnumerable<Principal> GetAllPrincipals(
-            LmsCompany lmsCompany, 
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider, 
             List<LmsUserDTO> users)
         {
             var cacheMode = this.settings.Lti_AcUserCache_Mode as string;
@@ -1650,8 +1650,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private void ProcessUsersInAC(
-            LmsCompany lmsCompany, 
-            AdobeConnectProvider provider, 
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider, 
             string meetingScoId, 
             List<LmsUserDTO> users, 
             IEnumerable<Principal> principalCache, 

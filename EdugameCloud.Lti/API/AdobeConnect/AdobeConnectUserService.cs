@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public class AdobeConnectUserService : IAdobeConnectUserService
     {
         public Principal GetOrCreatePrincipal(
-            AdobeConnectProvider provider, 
+            IAdobeConnectProxy provider, 
             string login, 
             string email, 
             string firstName, 
@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public Principal GetOrCreatePrincipal2(
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             string login,
             string email,
             string firstName,
@@ -107,7 +107,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public Principal GetPrincipalByLoginOrEmail(
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             string login,
             string email,
             bool searchByEmailFirst)

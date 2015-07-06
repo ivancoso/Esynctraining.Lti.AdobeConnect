@@ -163,7 +163,7 @@ namespace EdugameCloud.Lti.Controllers
             providerKey = FixExtraDataIssue(providerKey);
             string provider = __provider__;
 
-            if (provider.ToLower() == LmsProviderNames.Desire2Learn)
+            if (provider.ToLower() == LmsProviderNames.Brightspace)
             {
                 var d2lService = IoC.Resolve<IDesire2LearnApiService>();
 
@@ -694,7 +694,7 @@ namespace EdugameCloud.Lti.Controllers
                 //var sw = Stopwatch.StartNew();
 
                 string lmsProvider = param.GetLtiProviderName(provider);
-                if (lmsProvider.ToLower() == LmsProviderNames.Desire2Learn && !string.IsNullOrEmpty(param.user_id))
+                if (lmsProvider.ToLower() == LmsProviderNames.Brightspace && !string.IsNullOrEmpty(param.user_id))
                 {
                     logger.InfoFormat("[D2L login attempt]. Original user_id: {0}", param.user_id);
                     var parsedIdArray = param.user_id.Split('_');
@@ -759,7 +759,7 @@ namespace EdugameCloud.Lti.Controllers
                                 param.lis_person_name_family,
                                 lmsCompany);
                             break;
-                        case LmsProviderNames.Desire2Learn:
+                        case LmsProviderNames.Brightspace:
                             //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
                             if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                             {
@@ -1146,7 +1146,7 @@ namespace EdugameCloud.Lti.Controllers
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
                     OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
                     break;
-                case LmsProviderNames.Desire2Learn:
+                case LmsProviderNames.Brightspace:
                     UriBuilderExtensions.AddQueryStringParameter(
                         returnUrl, Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
@@ -1192,7 +1192,7 @@ namespace EdugameCloud.Lti.Controllers
                 bool currentUserIsAdmin = false;
                 if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
-                    if (providerKey.ToLower() == LmsProviderNames.Desire2Learn)
+                    if (providerKey.ToLower() == LmsProviderNames.Brightspace)
                     {
                         if (!string.IsNullOrEmpty(param.ext_d2l_role))
                         {
@@ -1332,24 +1332,12 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        /// <summary>
-        /// Gets the provider.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="lmsUserSession">
-        /// The LMS User Session.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AdobeConnectProvider"/>.
-        /// </returns>
-        private AdobeConnectProvider GetAdobeConnectProvider(LmsCompany lmsCompany)
+        private IAdobeConnectProxy GetAdobeConnectProvider(LmsCompany lmsCompany)
         {
-            AdobeConnectProvider provider = null;
+            IAdobeConnectProxy provider = null;
             if (lmsCompany != null)
             {
-                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as AdobeConnectProvider;
+                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 if (provider == null)
                 {
                     provider = this.meetingSetup.GetProvider(lmsCompany);
@@ -1534,7 +1522,7 @@ namespace EdugameCloud.Lti.Controllers
         /// <param name="acp">
         /// The ACP.
         /// </param>
-        private void SetAdobeConnectProvider(int key, AdobeConnectProvider acp)
+        private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
         {
             this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
         }

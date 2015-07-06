@@ -85,12 +85,12 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        protected AdobeConnectProvider GetAdobeConnectProvider(LmsCompany lmsCompany)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(LmsCompany lmsCompany)
         {
-            AdobeConnectProvider provider = null;
+            IAdobeConnectProxy provider = null;
             if (lmsCompany != null)
             {
-                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as AdobeConnectProvider;
+                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 if (provider == null)
                 {
                     provider = this.meetingSetup.GetProvider(lmsCompany);

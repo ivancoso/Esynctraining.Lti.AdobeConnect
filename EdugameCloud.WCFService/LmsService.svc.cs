@@ -296,7 +296,7 @@ namespace EdugameCloud.WCFService
         {
             LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
 
-            AdobeConnectProvider provider = MeetingSetup.GetProvider(licence, login: true);
+            IAdobeConnectProxy provider = MeetingSetup.GetProvider(licence, login: true);
 
             return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
         }
@@ -310,7 +310,7 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentNullException("principalIds");
 
                 LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
-                AdobeConnectProvider currentLicenseProvider = null;
+                IAdobeConnectProxy currentLicenseProvider = null;
                 try
                 {
                     currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);

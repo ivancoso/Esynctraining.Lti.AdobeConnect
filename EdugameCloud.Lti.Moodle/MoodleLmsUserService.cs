@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Moodle;

@@ -145,7 +145,7 @@ namespace EdugameCloud.Lti.BrainHoney
                         continue;
                     }
 
-                    AdobeConnectProvider adobeConnectProvider = this._meetingSetup.GetProvider(brainHoneyCompany);
+                    IAdobeConnectProxy adobeConnectProvider = this._meetingSetup.GetProvider(brainHoneyCompany);
                     this._meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
                     List<TemplateDTO> templates = this._meetingSetup.GetTemplates(
                         adobeConnectProvider,
@@ -267,7 +267,7 @@ namespace EdugameCloud.Lti.BrainHoney
             LmsCompany brainHoneyCompany,
             Session session,
             List<string> errors,
-            AdobeConnectProvider adobeConnectProvider,
+            IAdobeConnectProxy adobeConnectProvider,
             IEnumerable<TemplateDTO> templates)
         {
             var result = new List<LmsUserDTO>();
@@ -339,7 +339,7 @@ namespace EdugameCloud.Lti.BrainHoney
             Signal signal,
             LmsCompany brainHoneyCompany,
             List<string> errors,
-            AdobeConnectProvider adobeConnectProvider,
+            IAdobeConnectProxy adobeConnectProvider,
             string scoId)
         {
             string error;
@@ -364,7 +364,7 @@ namespace EdugameCloud.Lti.BrainHoney
             List<string> errors,
             DlapAPI api,
             Session session,
-            AdobeConnectProvider provider,
+            IAdobeConnectProxy provider,
             string scoId)
         {
             Dictionary<int, IGrouping<int, Signal>> grouped =

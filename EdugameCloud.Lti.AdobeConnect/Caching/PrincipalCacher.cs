@@ -42,7 +42,7 @@ namespace EdugameCloud.Lti.AdobeConnect.Caching
 
         private void ProcessAc(LmsCompany lmsCompany)
         {
-            AdobeConnectProvider provider = IoC.Resolve<IMeetingSetup>().GetProvider(lmsCompany);
+            IAdobeConnectProxy provider = IoC.Resolve<IMeetingSetup>().GetProvider(lmsCompany);
 
             var stopwatch = Stopwatch.StartNew();
 

@@ -186,7 +186,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
 
-        private static Principal CreatePrincipal(PrincipalInputDto user, LmsCompany credentials, AdobeConnectProvider provider)
+        private static Principal CreatePrincipal(PrincipalInputDto user, LmsCompany credentials, IAdobeConnectProxy provider)
         {
             string login = (credentials.ACUsesEmailAsLogin ?? false) ? null : user.login;
 

@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Moodle
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
     using System.Globalization;
@@ -22,67 +23,54 @@
         { }
         
 
-        /// <summary>
-        /// The Moodle service short name.
-        /// </summary>
         protected override string MoodleServiceShortName
         {
-            get
-            {
-                return "edugamecloud";
-            }
+            get { return "edugamecloud"; }
         }
 
-        /// <summary>
-        /// The get items info for user.
-        /// </summary>
-        /// <param name="lmsUserParameters">
-        /// The LMS user parameters.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is survey.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{LmsQuizInfoDTO}"/>.
-        /// </returns>
         public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
-            var quizResult = this.LoginIfNecessary(
-                null,
-                c => {
-
+            try
+            {
+                var quizResult = this.LoginIfNecessary(
+                    null,
+                    c =>
+                    {
                         var functionName = isSurvey
-                                               ? "local_edugamecloud_get_total_survey_list"
-                                               : "local_edugamecloud_get_total_quiz_list";
-                        var pairs = new NameValueCollection
-                                        {
-                                            { "wsfunction", functionName },
-                                            { "wstoken", c.Token },
-                                            {
-                                                "course",
-                                                lmsUserParameters.Course.ToString(
-                                                    CultureInfo.InvariantCulture)
-                                            }
-                                        };
+                            ? "local_edugamecloud_get_total_survey_list"
+                            : "local_edugamecloud_get_total_quiz_list";
 
-                        var xmlDoc = this.UploadValues(c.Url, pairs);
+                        var pairs = new NameValueCollection
+                        {
+                            { "wsfunction", functionName },
+                            { "wstoken", c.Token },
+                            { "course", lmsUserParameters.Course.ToString( CultureInfo.InvariantCulture) }
+                        };
+
+                        var xmlDoc = UploadValues(c.Url, pairs);
 
                         return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
                     },
-                out error,
-                lmsUserParameters.LmsUser);
+                    out error,
+                    lmsUserParameters.LmsUser);
 
-            if (quizResult == null)
-            {
-                error = error ?? "Moodle XML. Unable to retrive result from API";
-                return Enumerable.Empty<LmsQuizInfoDTO>();
+                if (quizResult == null)
+                {
+                    error = error ?? "Moodle XML. Unable to retrive result from API";
+
+                    logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+
+                    return Enumerable.Empty<LmsQuizInfoDTO>();
+                }
+
+                error = string.Empty;
+                return quizResult;
             }
-
-            error = string.Empty;
-            return quizResult;
+            catch (Exception ex)
+            {
+                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                throw;
+            }
         }
 
         /// <summary>
@@ -105,46 +93,51 @@
         /// </returns>
         public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
         {
-            var result = new List<LmsQuizDTO>();
-            
-            foreach (var quizId in quizIds)
+            try
             {
-                int id = quizId;
-                var quizResult = this.LoginIfNecessary(
-                    null,
-                    c =>
+                var result = new List<LmsQuizDTO>();
+
+                foreach (int quizId in quizIds)
+                {
+                    int id = quizId;
+                    var quizResult = this.LoginIfNecessary(
+                        null,
+                        c =>
                         {
                             var pairs = new NameValueCollection
-                                            {
-                                                {
-                                                    "wsfunction",
-                                                    isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id"
-                                                },
-                                                { "wstoken", c.Token },
-                                                { 
-                                                    isSurvey ? "surveyId" : "quizId", 
-                                                    id.ToString(CultureInfo.InvariantCulture) 
-                                                }
-                                            };
+                            {
+                                { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
+                                { "wstoken", c.Token },
+                                {  isSurvey ? "surveyId" : "quizId",  id.ToString(CultureInfo.InvariantCulture) }
+                            };
 
-                            var xmlDoc = this.UploadValues(c.Url, pairs);
-
-                            string errorMessage = string.Empty, err = string.Empty;
+                            var xmlDoc = UploadValues(c.Url, pairs);
+                            string errorMessage = string.Empty;
+                            string err = string.Empty;
                             return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
                         },
-                    out error,
-                    lmsUserParameters.LmsUser);
-                if (quizResult == null)
-                {
-                    error = error ?? "Moodle XML. Unable to retrive result from API";
-                    return result;
+                        out error,
+                        lmsUserParameters.LmsUser);
+                    if (quizResult == null)
+                    {
+                        error = error ?? "Moodle XML. Unable to retrive result from API";
+
+                        logger.ErrorFormat("[EGCEnabledMoodleApi.GetItemsForUser] LmsUserParametersId:{0}. IsSurvey:{1}. Error: {2}.", lmsUserParameters.Id, isSurvey, error);
+
+                        return result;
+                    }
+
+                    result.Add(quizResult);
                 }
 
-                result.Add(quizResult);
+                error = string.Empty;
+                return result;
             }
-            
-            error = string.Empty;
-            return result;
+            catch (Exception ex)
+            {
+                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
+                throw;
+            }
         }
 
         /// <summary>
@@ -163,29 +156,49 @@
         {
             string error;
 
-            // ReSharper disable once UnusedVariable
-            var quizResult = this.LoginIfNecessary(
-                null,
-                c =>
+            try
+            {
+                // ReSharper disable once UnusedVariable
+                var quizResult = this.LoginIfNecessary(
+                    null,
+                    c =>
                     {
                         json = json.Replace("\"", "\"");
                         var pairs = new NameValueCollection
-                                        {
-                                            {
-                                                "wsfunction",
-                                                isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report"
-                                            },
-                                            { "wstoken", c.Token },
-                                            { "reportObject", json }
-                                        };
+                        {
+                            { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
+                            { "wstoken", c.Token },
+                            { "reportObject", json }
+                        };
 
-                        var xmlDoc = this.UploadValues(c.Url, pairs);
+                        var xmlDoc = UploadValues(c.Url, pairs);
 
-                        string errorMessage = string.Empty, err = string.Empty;
-                        return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                        string errorMessage = string.Empty;
+                        string err = string.Empty;
+                        var result = MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+
+                        if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
+                        {
+                            logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
+                                lmsUserParameters.Id, 
+                                isSurvey,
+                                errorMessage,
+                                err,
+                                json);
+                        }
+
+                        return result;
                     },
-                out error,
-                lmsUserParameters.LmsUser);
+                    out error,
+                    lmsUserParameters.LmsUser);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.SendAnswers] LmsUserParametersId:{0}. IsSurvey:{1}. JSON:{2}.", lmsUserParameters.Id, isSurvey, json);
+                throw;
+            }
         }
+
     }
+
 }

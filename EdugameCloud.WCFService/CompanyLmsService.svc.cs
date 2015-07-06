@@ -221,7 +221,7 @@ namespace EdugameCloud.WCFService
         {
             if (!isTransient && instance.UseUserFolder.GetValueOrDefault() == false)
             {
-                AdobeConnectProvider acp = null;
+                IAdobeConnectProxy acp = null;
                 try
                 {
                     acp = this.MeetingSetup.GetProvider(instance);

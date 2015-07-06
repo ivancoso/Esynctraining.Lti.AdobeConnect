@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public ACPasswordPoliciesDTO GetPasswordPolicies(AdobeConnectProvider provider)
+        public ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
@@ -69,7 +69,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return null;
         }
 
-        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(AdobeConnectProvider provider)
+        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");

@@ -1,0 +1,372 @@
+﻿using System;
+using System.Collections.Generic;
+using Castle.Core.Logging;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.AC.Provider.Entities;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
+{
+    public class AdobeConnectProxy : IAdobeConnectProxy
+    {
+        private readonly AdobeConnectProvider _provider;
+        private readonly ILogger _logger;
+        // TRICK: for logging only
+        private readonly string _apiUrl;
+
+
+        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl)
+        {
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
+            _provider = provider;
+            _logger = logger;
+            _apiUrl = apiUrl;
+        }
+
+
+        public bool AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        {
+            if (principalIds == null)
+                throw new ArgumentNullException("principalIds");
+
+            return Execute(() => { return _provider.AddToGroupByType(principalIds, typeName); },
+                string.Join(";", principalIds), typeName);
+        }
+
+        public bool AddToGroupByType(string principalId, string typeName)
+        {
+            return Execute(() => { return _provider.AddToGroupByType(principalId, typeName); }, 
+                principalId, typeName);
+        }
+
+        public CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId)
+        {
+            return Execute(() => { return _provider.CancelRecordingJob(jobRecordingScoId); },
+                jobRecordingScoId);
+        }
+
+        public ScoInfoResult CreateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase
+        {
+            if (scoUpdateItem == null)
+                throw new ArgumentNullException("scoUpdateItem");
+
+            return Execute(() => { return _provider.CreateSco(scoUpdateItem); },
+                scoUpdateItem.Name, scoUpdateItem.FolderId);
+        }
+
+        public StatusInfo DeleteSco(string scoId)
+        {
+            return Execute(() => { return _provider.DeleteSco(scoId); },
+                scoId);
+        }
+
+        public FieldCollectionResult GetAclFields(int aclId)
+        {
+            return Execute(() => { return _provider.GetAclFields(aclId); },
+                aclId.ToString());
+        }
+
+        public PrincipalCollectionResult GetAllByEmail(string email)
+        {
+            return Execute(() => { return _provider.GetAllByEmail(email); },
+                email);
+        }
+
+        public PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm)
+        {
+            return Execute(() => { return _provider.GetAllByFieldLike(fieldName, searchTerm); },
+                fieldName, searchTerm);
+        }
+
+        public PrincipalCollectionResult GetAllByLogin(string login)
+        {
+            return Execute(() => { return _provider.GetAllByLogin(login); },
+                login);
+        }
+
+        public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
+        {
+            if (principalIdsToFind == null)
+                throw new ArgumentNullException("principalIdsToFind");
+
+            return Execute(() => { return _provider.GetAllByPrincipalIds(principalIdsToFind); },
+                string.Join(";", principalIdsToFind));
+        }
+
+        public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
+        {
+            return Execute(() => { return _provider.GetAllMeetingEnrollments(meetingId); },
+                meetingId);
+        }
+
+        public PrincipalCollectionResult GetAllPrincipal()
+        {
+            return Execute(() => { return _provider.GetAllPrincipal(); });
+        }
+
+        public PrincipalCollectionResult GetAllPrincipals()
+        {
+            return Execute(() => { return _provider.GetAllPrincipals(); });
+        }
+
+        public CommonInfoResult GetCommonInfo()
+        {
+            return Execute(() => { return _provider.GetCommonInfo(); });
+        }
+
+        public ScoContentCollectionResult GetContentsByScoId(string scoId)
+        {
+            return Execute(() => { return _provider.GetContentsByScoId(scoId); },
+                scoId);
+        }
+
+        public ScoContentCollectionResult GetContentsByType(string type)
+        {
+            return Execute(() => { return _provider.GetContentsByType(type); },
+                type);
+        }
+
+        public Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type)
+        {
+            return Execute(() => { return _provider.GetGroupsByType(type); },
+                type);
+        }
+
+        public PrincipalCollectionResult GetGroupUsers(string groupId)
+        {
+            return Execute(() => { return _provider.GetGroupUsers(groupId); },
+                groupId);
+        }
+
+        public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds, bool includeMP4recordings = false)
+        {
+            return Execute(() => { return _provider.GetMeetingRecordings(scoIds, includeMP4recordings); },
+                string.Join(";", scoIds), includeMP4recordings.ToString());
+        }
+
+        public PrincipalInfoResult GetOneByPrincipalId(string principalId)
+        {
+            return Execute(() => { return _provider.GetOneByPrincipalId(principalId); },
+                principalId);
+        }
+
+        public RecordingCollectionResult GetRecordingsList(string folderId)
+        {
+            return Execute(() => { return _provider.GetRecordingsList(folderId); },
+                folderId);
+        }
+
+        public ScoContentResult GetScoContent(string scoId)
+        {
+            return Execute(() => { return _provider.GetScoContent(scoId); },
+                scoId);
+        }
+
+        public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
+        {
+            return Execute(() => { return _provider.GetScoExpandedContentByName(scoId, name); },
+                scoId, name);
+        }
+
+        public ScoInfoResult GetScoInfo(string scoId)
+        {
+            return Execute(() => { return _provider.GetScoInfo(scoId); }, 
+                scoId);
+        }
+
+        public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
+        {
+            return Execute(() => { return _provider.GetScoPublicAccessPermissions(scoId); },
+                scoId);
+        }
+
+        public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserInfo GetUserInfo(out StatusInfo status)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LoginResult Login(UserCredentials credentials)
+        {
+            if (credentials == null)
+                throw new ArgumentNullException("credentials");
+
+            return Execute(() => { return _provider.Login(credentials); },
+                credentials.Login, credentials.Password);
+        }
+
+        public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)
+        {
+            if (principalDelete == null)
+                throw new ArgumentNullException("principalDelete");
+
+            return Execute(() => { return _provider.PrincipalDelete(principalDelete); },
+                principalDelete.PrincipalId);
+        }
+
+        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup)
+        {
+            if (principalSetup == null)
+                throw new ArgumentNullException("principalSetup");
+
+            return Execute(() => { return _provider.PrincipalUpdate(principalSetup); },
+                principalSetup.PrincipalId, principalSetup.Login);
+        }
+
+        public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
+        {
+            return Execute(() => { return _provider.PrincipalUpdatePassword(principalId, newPassword); },
+                principalId, newPassword);
+        }
+
+        public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMeetingTransactionsForPrincipal(principalId, startIndex, limit); },
+                principalId);
+        }
+
+        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMettingAttendance(scoId, startIndex, limit); },
+                scoId);
+        }
+
+        public MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMettingSessions(scoId, startIndex, limit); },
+                scoId);
+        }
+
+        public RecordingJobResult ScheduleRecordingJob(string recordingScoId)
+        {
+            return Execute(() => { return _provider.ScheduleRecordingJob(recordingScoId); },
+                recordingScoId);
+        }
+
+        public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
+        {
+            return Execute(() => { return _provider.UpdatePublicAccessPermissions(aclId, permissionId); },
+                aclId, permissionId.ToString());
+        }
+
+        public StatusInfo UpdatePublicAccessPermissions(string aclId, SpecialPermissionId permissionId)
+        {
+            return Execute(() => { return _provider.UpdatePublicAccessPermissions(aclId, permissionId); },
+                aclId, permissionId.ToString());
+        }
+
+        public ScoInfoResult UpdateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase
+        {
+            if (scoUpdateItem == null)
+                throw new ArgumentNullException("scoUpdateItem");
+
+            return Execute(() => { return _provider.UpdateSco(scoUpdateItem); },
+                scoUpdateItem.ScoId, scoUpdateItem.Name);
+        }
+
+        public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId)
+        {
+            return Execute(() => { return _provider.UpdateScoPermissionForPrincipal(scoId, principalId, permissionId); },
+                scoId, principalId);
+        }
+
+
+        private T Execute<T>(Func<T> func)
+        {
+            T result;
+            try
+            {
+                result = func();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw;
+            }
+
+            ResultBase acResult = result as ResultBase;
+            if ((acResult != null) && !acResult.Success)
+            {
+                string errorInfo = acResult.Status.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new InvalidOperationException(errorInfo);
+            }
+
+            return result;
+        }
+
+        private T Execute<T>(Func<T> func, string parameterValue)
+        {
+            T result;
+            try
+            {
+                result = func();
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "Parameter1:{0}.", parameterValue);
+                throw;
+            }
+
+            ResultBase acResult = result as ResultBase;
+            if ((acResult != null) && !acResult.Success)
+            {
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+                    acResult.Status.GetErrorInfo(),
+                    parameterValue);
+                _logger.Error(msg);
+                throw new InvalidOperationException(msg);
+            }
+
+            return result;
+        }
+
+        private T Execute<T>(Func<T> func, string parameter1Value, string parameter2Value)
+        {
+            T result;
+            try
+            {
+                result = func();
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "Parameter1:{0}.Parameter2:{1}.", parameter1Value, parameter2Value);
+                throw;
+            }
+
+            ResultBase acResult = result as ResultBase;
+            if ((acResult != null) && !acResult.Success)
+            {
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.Parameter2:{2}.",
+                    acResult.Status.GetErrorInfo(),
+                    parameter1Value,
+                    parameter2Value);
+                _logger.Error(msg);
+                throw new InvalidOperationException(msg);
+            }
+
+            return result;
+        }
+
+    }
+
+}

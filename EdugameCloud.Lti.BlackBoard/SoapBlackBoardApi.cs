@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -11,15 +10,12 @@ using BbWsClient.User;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.Core.Business.Queries;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
-using Esynctraining.Core.Utils;
 using RestSharp;
 
 namespace EdugameCloud.Lti.BlackBoard

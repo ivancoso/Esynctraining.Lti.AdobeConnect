@@ -209,6 +209,8 @@
     <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectAccountService.cs" />
+    <Compile Include="API\AdobeConnect\AdobeConnectProxy.cs" />
+    <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\StatusInfoExtentions.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
