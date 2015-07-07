@@ -881,9 +881,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            var existingMeeting = provider.GetScoInfo(meetingSco);
-
-            var isNewMeeting = !existingMeeting.Success;
+            bool isNewMeeting = string.IsNullOrEmpty(meetingSco) || !provider.GetScoInfo(meetingSco).Success;
             
             var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 

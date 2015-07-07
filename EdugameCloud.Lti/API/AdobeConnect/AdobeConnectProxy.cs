@@ -187,12 +187,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
         {
-            throw new NotImplementedException();
+            ScoShortcut result;
+            try
+            {
+                result = _provider.GetShortcutByType(type, out status);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw;
+            }
         }
 
         public UserInfo GetUserInfo(out StatusInfo status)
         {
-            throw new NotImplementedException();
+            UserInfo result;
+            try
+            {
+                result = _provider.GetUserInfo(out status);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw;
+            }
         }
 
         public LoginResult Login(UserCredentials credentials)
@@ -254,7 +274,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
         {
-            throw new NotImplementedException();
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateAclField(aclId, fieldId, value);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw;
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new InvalidOperationException(errorInfo);
+            }
+
+            return result;
         }
 
         public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
@@ -280,7 +318,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
         {
-            throw new NotImplementedException();
+            StatusInfo result;
+            try
+            {
+                result = _provider.UpdateScoPermissionForPrincipal(values);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("[AdobeConnectProxy Error]", ex);
+                throw;
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                string errorInfo = result.GetErrorInfo();
+                _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                throw new InvalidOperationException(errorInfo);
+            }
+
+            return result;
         }
 
         public StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId)
@@ -328,7 +384,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             ResultBase acResult = result as ResultBase;
-            if ((acResult != null) && !acResult.Success)
+            if ((acResult != null) && !acResult.Success && (acResult.Status.Code != StatusCodes.no_data))
             {
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
                     acResult.Status.GetErrorInfo(),
