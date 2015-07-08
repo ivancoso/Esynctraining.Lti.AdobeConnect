@@ -49,12 +49,13 @@
     <Reference Include="Castle.Windsor">
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.19, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.19\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.20, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.20\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Core">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.11\lib\net40\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.13\lib\net40\Esynctraining.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>

@@ -2,6 +2,7 @@
 {
     using System;
     using EdugameCloud.Lti.Core.Constants;
+    using System.Web;
 
     /// <summary>
     /// The url string extension.
@@ -91,5 +92,35 @@
 
             return HttpScheme.Http + domain;
         }
+
+        public static string GetScheme(this HttpRequestBase request)
+        {
+            if (request == null)
+                throw new ArgumentNullException("request");
+
+            var protoHeader = request.Headers["X-Forwarded-Proto"];
+            bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
+            string schema = request.Url.Scheme;
+            if (isHttps)
+                schema = "https";
+
+            return schema;
+        }
+
+        public static string GetScheme(this HttpRequest request)
+        {
+            if (request == null)
+                throw new ArgumentNullException("request");
+
+            var protoHeader = request.Headers["X-Forwarded-Proto"];
+            bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
+            string schema = request.Url.Scheme;
+            if (isHttps)
+                schema = "https";
+
+            return schema;
+        }
+
     }
+
 }

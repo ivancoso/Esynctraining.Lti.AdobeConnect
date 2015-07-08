@@ -738,7 +738,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
 
-                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
+                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, logger, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
                 {
                     Principal acPrincipal = null;
 
@@ -763,12 +763,14 @@ namespace EdugameCloud.Lti.Controllers
                             //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
                             if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
                             {
+                                string schema = Request.GetScheme();
+
                                 var d2lService = IoC.Resolve<IDesire2LearnApiService>();
                                 string returnUrl = this.Url.AbsoluteAction(
                                     "callback",
                                     "Lti",
                                     new { __provider__ = provider },
-                                    Request.Url.Scheme);
+                                    schema);
                                 Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
                                 return Redirect(
                                     d2lService
@@ -1132,11 +1134,13 @@ namespace EdugameCloud.Lti.Controllers
         /// </param>
         private void StartOAuth2Authentication(string provider, string providerKey, LtiParamDTO model)
         {
+            string schema = Request.GetScheme();
+
             string returnUrl = this.Url.AbsoluteAction(
                         "callback",
                         "Lti",
                         new { __provider__ = provider, providerKey },
-                        Request.Url.Scheme);
+                        schema);
             switch (provider)
             {
                 case LmsProviderNames.Canvas:

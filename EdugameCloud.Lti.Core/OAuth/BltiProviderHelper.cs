@@ -6,6 +6,8 @@
     using System.Text;
     using System.Web;
     using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.Extensions;
+    using Castle.Core.Logging;
 
     /// <summary>
     /// The BLTI provider helper.
@@ -47,14 +49,14 @@
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(LmsCompany credentials, Func<bool> validateLmsCaller)
+        public static bool VerifyBltiRequest(LmsCompany credentials, ILogger logger, Func<bool> validateLmsCaller)
         {
             var request = HttpContext.Current.Request;
             //// First check the nonce to make sure it has not been used
             var nonce = new NonceData(request.Form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
             {
-                // This nonce has already been used so the request is invalid
+                logger.WarnFormat("This nonce has already been used so the request is invalid, oauth_nonce:{0}.", request.Form["oauth_nonce"]);
                 return false;
             }
 
@@ -77,16 +79,18 @@
             double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             if (Math.Abs(secondsSince1970 - timestamp) > 5400)
             {
-                // The timestamp is missing or outside of the 90 minute window so the request is invalid
+                logger.WarnFormat("The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
                 return false;
             }
 
+            string schema = request.GetScheme();
+            
             // Generate the normalized URL
             // Note that the scheme and authority must be lowercase...HttpRequestBase.Url.Scheme and HttpRequestBase.Url.Host in C# are always lowercase
-            string normalizedUrl = string.Format("{0}://{1}", request.Url.Scheme, request.Url.Host);
+            string normalizedUrl = string.Format("{0}://{1}", schema, request.Url.Host);
             if (
-                !((request.Url.Scheme == "http" && request.Url.Port == 80)
-                  || (request.Url.Scheme == "https" && request.Url.Port == 443)))
+                !((schema == "http" && request.Url.Port == 80)
+                  || (schema == "https" && request.Url.Port == 443)))
             {
                 normalizedUrl += ":" + request.Url.Port;
             }
@@ -108,15 +112,17 @@
 
             // Create the signature base
             var signatureBase = new StringBuilder();
-            signatureBase.AppendFormat("{0}&", request.HttpMethod.ToUpper());
-            signatureBase.AppendFormat("{0}&", normalizedUrl.OAuthUrlEncode());
-            signatureBase.AppendFormat("{0}", normalizedRequestParameters.OAuthUrlEncode());
+            signatureBase.AppendFormat("{0}&{1}&{2}", 
+                request.HttpMethod.ToUpper()
+                ,normalizedUrl.OAuthUrlEncode()
+                ,normalizedRequestParameters.OAuthUrlEncode());
 
             // Look up the secret using oauth_consumer_key
             string secret = RetrieveSecretForKey(request["oauth_consumer_key"], credentials);
 
             if (string.IsNullOrWhiteSpace(secret))
             {
+                logger.WarnFormat("Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
                 return false;
             }
 
@@ -133,8 +139,11 @@
             {
                 return validateLmsCaller();
             }
-
-            return false;
+            else
+            {
+                logger.WarnFormat("Check to make sure the signature matches what was passed in oauth_signature - failed.");
+                return false;
+            }
         }
 
         #endregion

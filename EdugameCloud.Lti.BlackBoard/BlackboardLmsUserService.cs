@@ -33,8 +33,39 @@ namespace EdugameCloud.Lti.BlackBoard
 
         public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
+            //Guid guid;
+            //return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
+            //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
+
+            string[] userIds = null;
+            if (!string.IsNullOrWhiteSpace(lmsUserId))
+                userIds = new string[] { lmsUserId };
+
+            WebserviceWrapper client = null;
+            List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
+                lmsCompany,
+                courseId,
+                userIds,
+                out error,
+                ref client);
+
+            if ((users.Count == 0)
+                && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
+            {
+                logger.Warn("BlackboardLmsUserService.GetUser.AccessDenied. " + error);
+
+                // NOTE: set to null to re-create session.
+                client = null;
+                users = this.soapApi.GetUsersForCourse(
+                    lmsCompany,
+                    courseId,
+                    userIds,
+                    out error,
+                    ref client);
+            }
+
             Guid guid;
-            return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
+            return users
                 .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
         }
 
@@ -71,10 +102,13 @@ namespace EdugameCloud.Lti.BlackBoard
                     cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
                     if (cachedUsers == null)
                     {
+                        string[] userIds = null;
+
                         WebserviceWrapper client = null;
                         List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
                             lmsCompany,
                             courseId,
+                            userIds,
                             out error,
                             ref client);
 
@@ -90,6 +124,7 @@ namespace EdugameCloud.Lti.BlackBoard
                             users = this.soapApi.GetUsersForCourse(
                                 lmsCompany,
                                 courseId,
+                                userIds,
                                 out error,
                                 ref client);
                         }

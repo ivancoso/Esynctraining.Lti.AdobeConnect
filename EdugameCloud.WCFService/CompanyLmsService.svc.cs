@@ -312,19 +312,19 @@ namespace EdugameCloud.WCFService
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
             var session = test.enableProxyToolMode
+                ? this.SoapAPI.LoginToolAndCreateAClient(
+                    out info,
+                    test.domain.IsSSL(),
+                    test.domain,
+                    test.password)
 
-                              ? this.SoapAPI.LoginToolAndCreateAClient(
-                                  out info,
-                                  test.domain.IsSSL(),
-                                  test.domain,
-                                  test.password)
+                : this.SoapAPI.LoginUserAndCreateAClient(
+                    out info,
+                    test.domain.IsSSL(),
+                    test.domain,
+                    test.login,
+                    test.password);
 
-                              : this.SoapAPI.LoginUserAndCreateAClient(
-                                  out info,
-                                  test.domain.IsSSL(),
-                                  test.domain,
-                                  test.login,
-                                  test.password);
             return session != null;
         }
 

@@ -188,6 +188,7 @@ namespace EdugameCloud.Lti.BlackBoard
         public List<LmsUserDTO> GetUsersForCourse(
             LmsCompany company,
             int courseid,
+            string[] userIds,
             out string error,
             ref WebserviceWrapper client)
         {
@@ -199,11 +200,15 @@ namespace EdugameCloud.Lti.BlackBoard
                     {
                         string errorDuringEnrollments = null;
                         var resultedList = new List<LmsUserDTO>();
+
+                        // NOTE: check http://library.blackboard.com/ref/fd8c40a0-f670-4c48-9e02-c5d84e61eda7/blackboard/ws/coursemembership/CourseMembershipWS.html
+                        // for filterType
                         var membershipFilter = new MembershipFilter
                         {
-                            filterType = 2,
+                            filterType = (userIds == null) ? 2 : 6,
                             filterTypeSpecified = true,
                             courseIds = new[] { courseIdFixed },
+                            userIds = userIds,
                         };
 
                         CourseMembershipWrapper membership = c.getCourseMembershipWrapper();

@@ -10,6 +10,7 @@ namespace EdugameCloud.Lti.API.BlackBoard
         List<LmsUserDTO> GetUsersForCourse(
             LmsCompany company,
             int courseid,
+            string[] userIds,
             out string error,
             ref WebserviceWrapper client);
 
