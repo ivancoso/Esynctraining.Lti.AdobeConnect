@@ -79,7 +79,7 @@
         {
             var queryOver =
                 new DefaultQueryOver<UserActivation, int>().GetQueryOver()
-                                                           .Where(x => x.ActivationCode == activationCode).Take(1);
+                .Where(x => x.ActivationCode == activationCode).Take(1);
             return this.Repository.FindOne<UserActivation>(queryOver);
         }
 

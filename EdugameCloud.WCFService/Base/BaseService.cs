@@ -492,12 +492,7 @@
 
             if ((userActivation = model.GetLatestByUser(user.Id).Value) == null)
             {
-                userActivation = new UserActivation
-                {
-                    User = user,
-                    ActivationCode = Guid.NewGuid().ToString(),
-                    DateExpires = DateTime.Now.AddDays(7),
-                };
+                userActivation = UserActivation.Build(user);
                 model.RegisterSave(userActivation);
                 bcced = GetBCCed(this.Settings.BCCNewEmail as string);
             }

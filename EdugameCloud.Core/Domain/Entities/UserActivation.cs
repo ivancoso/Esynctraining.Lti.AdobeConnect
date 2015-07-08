@@ -27,5 +27,21 @@
         public virtual User User { get; set; }
 
         #endregion
+
+
+        public static UserActivation Build(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            return new UserActivation
+            {
+                User = user,
+                ActivationCode = Guid.NewGuid().ToString(),
+                DateExpires = DateTime.Now.AddDays(7),
+            };
+        }
+
     }
+
 }
