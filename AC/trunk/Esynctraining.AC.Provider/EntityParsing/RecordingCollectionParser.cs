@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.Extensions;
 
 namespace Esynctraining.AC.Provider.EntityParsing
 {
-    public static class RecordingCollectionParser
+    internal static class RecordingCollectionParser
     {
         private const string Path = "//recordings/sco";
 

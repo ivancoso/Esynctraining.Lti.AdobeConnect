@@ -1265,11 +1265,11 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
-        public ScoContentCollectionResult GetMeetingRecordings(string scoId)
+        public ScoContentCollectionResult GetMeetingRecordings(string scoId, bool includeMP4recordings = false)
         {
             StatusInfo status;
 
-            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.MeetingArchives, scoId), out status);
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(includeMP4recordings ? CommandParams.MeetingArchivesWithMP4 : CommandParams.MeetingArchives, scoId), out status);
 
             return ResponseIsOk(scos, status)
                 ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
@@ -1283,13 +1283,13 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>. Values item's FolderId is parent folder id or meeting id.
         /// </returns>
-        public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds)
+        public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds, bool includeMP4recordings = false)
         {
             var result = new ScoContentCollectionResult(
                 new StatusInfo { Code = StatusCodes.ok }, new List<ScoContent>());
             foreach (var id in scoIds)
             {
-                var recordings = this.GetMeetingRecordings(id);
+                var recordings = this.GetMeetingRecordings(id, includeMP4recordings);
                 if (recordings.Success)
                 {
                     result.Values = result.Values.Concat(recordings.Values);

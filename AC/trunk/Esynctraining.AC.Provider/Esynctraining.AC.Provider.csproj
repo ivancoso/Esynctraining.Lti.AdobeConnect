@@ -58,7 +58,6 @@
     <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
     <Compile Include="DataObjects\Results\RecordingCollectionResult.cs" />
-    <Compile Include="DataObjects\Results\RecordingJobCollectionParser.cs" />
     <Compile Include="DataObjects\Results\RecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\RecordingJobResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfilesCollectionResult.cs" />
@@ -133,6 +132,7 @@
     <Compile Include="EntityParsing\CurriculumContentCollectionParser.cs" />
     <Compile Include="EntityParsing\CurriculumContentParser.cs" />
     <Compile Include="EntityParsing\RecordingCollectionParser.cs" />
+    <Compile Include="EntityParsing\RecordingJobCollectionParser.cs" />
     <Compile Include="EntityParsing\RecordingJobParser.cs" />
     <Compile Include="EntityParsing\RecordingParser.cs" />
     <Compile Include="EntityParsing\TelephonyProfileParser.cs" />
@@ -188,7 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
-
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

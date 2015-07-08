@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
@@ -14,8 +11,8 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
 
         }
 
-        public GeneratedRecordingJobCollectionResult(StatusInfo ststus, IEnumerable<GeneratedRecordingJob> generatedRecordings)
-            : base(ststus, generatedRecordings)
+        public GeneratedRecordingJobCollectionResult(StatusInfo status, IEnumerable<GeneratedRecordingJob> generatedRecordings)
+            : base(status, generatedRecordings)
         {
 
         }

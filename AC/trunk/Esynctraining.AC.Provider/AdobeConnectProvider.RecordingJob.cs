@@ -13,7 +13,7 @@ namespace Esynctraining.AC.Provider
     {
         public RecordingJobResult ScheduleRecordingJob(string recordingScoId)
         {
-            // act: "list-recording-jobs"
+            // act: "schedule-recording-job"
             const string recordingJobPath = "//results/recording-job";
 
             StatusInfo status;

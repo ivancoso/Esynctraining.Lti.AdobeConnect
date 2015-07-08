@@ -105,7 +105,12 @@
         /// <summary>
         /// A passed parameter had the wrong format.
         /// </summary>
-        format
+        format,
+        /// <summary>
+        /// Recording is already been converted to MP4.
+        /// </summary>
+        invalid_recording_job_in_progress
+
     }
 
     public enum ScoType
