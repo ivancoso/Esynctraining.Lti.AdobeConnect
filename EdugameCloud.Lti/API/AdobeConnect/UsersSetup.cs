@@ -390,16 +390,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // todo: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
-                    lmsCompany.Id, 
-                    param.course_id, 
-                    null);
                 var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
                 var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
                 LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
                     currentUser,
-                    meeting,
                     param.lms_user_id,
                     param.course_id,
                     out error,
@@ -612,7 +607,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
             //todo: not param for BrainHoney
-            var lmsUser = service.GetUser(lmsCompany, currentUser, meeting, lmsUserId, param.course_id, out error, param, forceUpdate);
+            var lmsUser = service.GetUser(lmsCompany, currentUser, lmsUserId, param.course_id, out error, param, forceUpdate);
 
             if (meeting == null)
             {

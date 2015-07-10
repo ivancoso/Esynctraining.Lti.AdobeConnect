@@ -31,7 +31,8 @@ namespace EdugameCloud.Lti.BlackBoard
             this.settings = settings;
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
+            string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             //Guid guid;
             //return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)

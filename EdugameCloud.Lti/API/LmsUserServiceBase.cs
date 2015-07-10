@@ -18,9 +18,11 @@ namespace EdugameCloud.Lti.API
 
         /// <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         /// <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
-        public virtual LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, LmsCourseMeeting meeting, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public virtual LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
-            return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
+            // meeting parameter(second) is used for Blackboard calls of the below method.
+            // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
+            return GetUsersOldStyle(lmsCompany, null, lmsUserId, courseId, out error, forceUpdate)
                 .FirstOrDefault(u => u.id == lmsUserId);
         }
 

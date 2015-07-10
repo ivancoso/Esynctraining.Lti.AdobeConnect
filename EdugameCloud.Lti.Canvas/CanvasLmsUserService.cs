@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.Canvas
             this.lmsUserModel = lmsUserModel;
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, LmsCourseMeeting meeting, 
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
             string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             var token = currentUser.Return(

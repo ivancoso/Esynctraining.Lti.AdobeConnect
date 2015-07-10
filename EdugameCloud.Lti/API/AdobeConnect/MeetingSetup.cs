@@ -629,7 +629,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     string error;
 
                     var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
-                    var currentUser = lmsUserService.GetUser(lmsCompany, lmsUser, currentMeeting,
+                    var currentUser = lmsUserService.GetUser(lmsCompany, lmsUser, 
                         param.lms_user_id,
                         param.course_id,
                         out error,
@@ -1734,8 +1734,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
 
-            LoginResult resultByLogin = userProvider.Login(new UserCredentials(login, password));
-            if (resultByLogin.Success)
+            LoginResult resultByLogin = null;
+            if(!string.IsNullOrEmpty(login))
+            {
+                resultByLogin = userProvider.Login(new UserCredentials(login, password));
+            }
+            if (resultByLogin != null && resultByLogin.Success)
             {
                 breezeToken = resultByLogin.Status.SessionInfo;
             }
