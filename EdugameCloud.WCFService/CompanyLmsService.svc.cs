@@ -25,6 +25,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
+    using BbWsClient;
 
     /// <summary>
     /// The company LMS service.
@@ -297,21 +298,9 @@ namespace EdugameCloud.WCFService
             return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
         }
 
-        /// <summary>
-        /// The test brain honey connection.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
-            var session = test.enableProxyToolMode
+            WebserviceWrapper session = test.enableProxyToolMode
                 ? this.SoapAPI.LoginToolAndCreateAClient(
                     out info,
                     test.domain.IsSSL(),
@@ -325,7 +314,11 @@ namespace EdugameCloud.WCFService
                     test.login,
                     test.password);
 
-            return session != null;
+            bool success = session != null;
+            if (session != null)
+                session.logout();
+
+            return success;
         }
 
         /// <summary>

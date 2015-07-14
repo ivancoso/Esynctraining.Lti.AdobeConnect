@@ -52,11 +52,11 @@
         public static bool VerifyBltiRequest(LmsCompany credentials, ILogger logger, Func<bool> validateLmsCaller)
         {
             var request = HttpContext.Current.Request;
-            //// First check the nonce to make sure it has not been used
+            // First check the nonce to make sure it has not been used
             var nonce = new NonceData(request.Form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
             {
-                logger.WarnFormat("This nonce has already been used so the request is invalid, oauth_nonce:{0}.", request.Form["oauth_nonce"]);
+                logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", request.Form["oauth_nonce"]);
                 return false;
             }
 
@@ -79,7 +79,7 @@
             double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             if (Math.Abs(secondsSince1970 - timestamp) > 5400)
             {
-                logger.WarnFormat("The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
+                logger.WarnFormat("[BltiProviderHelper] The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
                 return false;
             }
 
@@ -90,7 +90,9 @@
             string normalizedUrl = string.Format("{0}://{1}", schema, request.Url.Host);
             if (
                 !((schema == "http" && request.Url.Port == 80)
-                  || (schema == "https" && request.Url.Port == 443)))
+                  || (schema == "https" && request.Url.Port == 443)
+                  || (schema == "https" && request.Url.Port == 80 && request.Url.Scheme == "http") // TRICK: using "X-Forwarded-Proto" proxy
+                  ))
             {
                 normalizedUrl += ":" + request.Url.Port;
             }
@@ -122,7 +124,7 @@
 
             if (string.IsNullOrWhiteSpace(secret))
             {
-                logger.WarnFormat("Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
+                logger.WarnFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
                 return false;
             }
 
@@ -141,7 +143,7 @@
             }
             else
             {
-                logger.WarnFormat("Check to make sure the signature matches what was passed in oauth_signature - failed.");
+                logger.WarnFormat("[BltiProviderHelper] Check to make sure the signature matches what was passed in oauth_signature - failed.");
                 return false;
             }
         }

@@ -55,6 +55,8 @@ namespace EdugameCloud.Lti.BlackBoard
             {
                 logger.Warn("BlackboardLmsUserService.GetUser.AccessDenied. " + error);
 
+                if (client != null)
+                    client.logout();
                 // NOTE: set to null to re-create session.
                 client = null;
                 users = this.soapApi.GetUsersForCourse(
@@ -120,6 +122,8 @@ namespace EdugameCloud.Lti.BlackBoard
                         {
                             logger.Warn("GetBlackBoardUsers.AccessDenied. " + error);
 
+                            if (client != null)
+                                client.logout();
                             // NOTE: set to null to re-create session.
                             client = null;
                             users = this.soapApi.GetUsersForCourse(
@@ -130,8 +134,10 @@ namespace EdugameCloud.Lti.BlackBoard
                                 ref client);
                         }
 
-                        // TODO: try to call logout
-                        // client.logout();
+                        // NOTE: always call logout
+                        if (client != null)
+                            client.logout();
+
                         if (string.IsNullOrWhiteSpace(error) && (meeting != null))
                         {
                             meeting.AddedToCache = DateTime.Now;
