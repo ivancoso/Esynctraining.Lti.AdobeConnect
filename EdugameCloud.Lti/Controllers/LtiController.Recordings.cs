@@ -13,6 +13,7 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     ///     The LTI controller.
@@ -39,10 +40,11 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult DeleteRecording(string lmsProviderName, string scoId, string id)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
                 OperationResult result = this.meetingSetup.RemoveRecording(
@@ -56,7 +58,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("DeleteRecording", ex);
+                string errorMessage = GetOutputErrorMessage("DeleteRecording", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -76,10 +78,11 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult GetRecordings(string lmsProviderName, string scoId)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;    
 
                 List<RecordingDTO> recordings = this.meetingSetup.GetRecordings(
@@ -92,7 +95,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordings", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -112,10 +115,11 @@ namespace EdugameCloud.Lti.Controllers
         [HttpGet]
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
@@ -125,7 +129,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("JoinRecording", ex);
+                string errorMessage = GetOutputErrorMessage("JoinRecording", credentials, ex);
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
@@ -151,17 +155,18 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual ActionResult ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var link = this.meetingSetup.UpdateRecording(credentials, this.GetAdobeConnectProvider(credentials), recordingId, isPublic, password);
 
                 return Json(OperationResult.Success(link));
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ShareRecording", ex);
+                string errorMessage = GetOutputErrorMessage("ShareRecording", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -181,10 +186,11 @@ namespace EdugameCloud.Lti.Controllers
         [HttpGet]
         public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
@@ -194,7 +200,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("EditRecording", ex);
+                string errorMessage = GetOutputErrorMessage("EditRecording", credentials, ex);
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
@@ -214,10 +220,11 @@ namespace EdugameCloud.Lti.Controllers
         [HttpGet]
         public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
@@ -227,7 +234,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordingFlv", ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordingFlv", credentials, ex);
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
@@ -235,20 +242,19 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, string meetingScoId)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
-
                 if (adobeConnectProvider == null)
                 {   
                     throw new InvalidOperationException("Adobe connect provider");
                 }
 
                 var recordingJob = adobeConnectProvider.ScheduleRecordingJob(recordingId);
-
                 if (recordingJob == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider. Cannot get recording job.");
@@ -260,7 +266,6 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meetingScoId, adobeConnectProvider);
-
                 if (scheduledRecording == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
@@ -272,7 +277,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ConvertToMP4", ex);
+                string errorMessage = GetOutputErrorMessage("ConvertToMP4", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -280,20 +285,19 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, string meetingScoId)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
-
                 if (adobeConnectProvider == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider");
                 }
 
                 var recording = this.GetScheduledRecording(recordingId, meetingScoId, adobeConnectProvider);
-
                 if (recording == null)
                 {
                     return Json(OperationResult.Error("MP4 recording doesn't exist."));
@@ -302,14 +306,12 @@ namespace EdugameCloud.Lti.Controllers
                 if (recording.JobStatus == "job-queued")
                 {
                     var recordingJob = adobeConnectProvider.CancelRecordingJob(recordingId);
-
                     if (recordingJob == null)
                     {
                         throw new InvalidOperationException("Adobe connect provider");
                     }
 
-                    return Json(OperationResult.Success());
-                    
+                    return Json(OperationResult.Success());                    
                 }
 
                 return Json(OperationResult.Error("Cannot delete. MP4 is already in progress."));
@@ -317,7 +319,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordings", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }

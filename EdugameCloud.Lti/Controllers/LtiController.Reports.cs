@@ -5,6 +5,7 @@
     using System.Web.Mvc;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
+    using EdugameCloud.Lti.Domain.Entities;
 
     /// <summary>
     ///     The LTI controller.
@@ -33,10 +34,11 @@
         /// </returns>
         public virtual JsonResult GetAttendanceReport(string lmsProviderName, string scoId, int startIndex = 0, int limit = 0)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 List<ACSessionParticipantDTO> report = this.meetingSetup.GetAttendanceReport(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
@@ -49,7 +51,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetAttendanceReport", ex);
+                string errorMessage = GetOutputErrorMessage("GetAttendanceReport", credentials, ex);
                 return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
             }
         }
@@ -74,10 +76,11 @@
         /// </returns>
         public virtual JsonResult GetSessionsReport(string lmsProviderName, string scoId, int startIndex = 0, int limit = 0)
         {
+            LmsCompany credentials = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;
+                credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 List<ACSessionDTO> report = this.meetingSetup.GetSessionsReport(
                     credentials,
@@ -91,7 +94,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetSessionsReport", ex);
+                string errorMessage = GetOutputErrorMessage("GetSessionsReport", credentials, ex);
                 return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
             }
         }

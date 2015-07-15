@@ -51,6 +51,11 @@
         /// </returns>
         public static bool VerifyBltiRequest(LmsCompany credentials, ILogger logger, Func<bool> validateLmsCaller)
         {
+            if (credentials == null)
+                throw new ArgumentNullException("credentials");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
             var request = HttpContext.Current.Request;
             // First check the nonce to make sure it has not been used
             var nonce = new NonceData(request.Form["oauth_nonce"], DateTime.UtcNow);
@@ -79,7 +84,7 @@
             double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             if (Math.Abs(secondsSince1970 - timestamp) > 5400)
             {
-                logger.WarnFormat("[BltiProviderHelper] The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
+                logger.ErrorFormat("[BltiProviderHelper] The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
                 return false;
             }
 
@@ -116,7 +121,7 @@
             var signatureBase = new StringBuilder();
             signatureBase.AppendFormat("{0}&{1}&{2}", 
                 request.HttpMethod.ToUpper()
-                ,normalizedUrl.OAuthUrlEncode()
+                ,normalizedUrl.OAuthUrlEncode().Replace("%3a80", string.Empty)
                 ,normalizedRequestParameters.OAuthUrlEncode());
 
             // Look up the secret using oauth_consumer_key
@@ -124,7 +129,7 @@
 
             if (string.IsNullOrWhiteSpace(secret))
             {
-                logger.WarnFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
+                logger.ErrorFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
                 return false;
             }
 
@@ -143,7 +148,7 @@
             }
             else
             {
-                logger.WarnFormat("[BltiProviderHelper] Check to make sure the signature matches what was passed in oauth_signature - failed.");
+                logger.ErrorFormat("[BltiProviderHelper] Check to make sure the signature matches what was passed in oauth_signature - failed.");
                 return false;
             }
         }
