@@ -4,7 +4,9 @@
     using System.Reflection;
     using System.Text;
     using System.Xml.Serialization;
+    using System.Linq;
 
+    using Esynctraining.AC.Provider.Attributes;
     using Esynctraining.AC.Provider.Constants;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
@@ -23,7 +25,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string EntityToQueryString(object entityObject)
+        public static string EntityToQueryString(object entityObject, bool isUpdateOperation = false)
         {
             if (entityObject == null)
             {
@@ -34,6 +36,12 @@
 
             foreach (var propertyInfo in entityObject.GetType().GetProperties())
             {
+                var attributes = propertyInfo.GetCustomAttributes(typeof(SkipDuringUpdateAttribute), false);
+                if (isUpdateOperation && attributes.Any())
+                {
+                    continue;
+                }
+
                 if (!propertyInfo.PropertyType.IsPublic)
                 {
                     continue;

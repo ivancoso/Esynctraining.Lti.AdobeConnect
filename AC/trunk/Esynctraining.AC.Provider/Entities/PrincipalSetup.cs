@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.AC.Provider.Entities
+﻿using Esynctraining.AC.Provider.Attributes;
+
+namespace Esynctraining.AC.Provider.Entities
 {
     using System.Xml.Serialization;
 
@@ -11,6 +13,7 @@
         /// The type of principal. Use only when creating a new principal
         /// </summary>
         [XmlElement("type")]
+        [SkipDuringUpdate]
         public PrincipalTypes Type { get; set; }
 
         /// <summary>

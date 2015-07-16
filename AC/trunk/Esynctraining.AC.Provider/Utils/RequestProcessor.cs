@@ -403,7 +403,7 @@
                         status.SessionInfo = this.sessionCookie.Value;
                     }
                 }
-
+                
                 Stream receiveStream = webResponse.GetResponseStream();
 
                 if (receiveStream == null)

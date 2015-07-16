@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
+    <Compile Include="Attributes\SkipDuringUpdateAttribute.cs" />
     <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
     <Compile Include="Constants\Commands.cs" />
     <Compile Include="Constants\CommandParams.cs" />

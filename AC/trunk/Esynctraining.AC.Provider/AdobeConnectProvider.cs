@@ -1324,10 +1324,10 @@
         /// </summary>
         /// <param name="principalSetup">The principal setup.</param>
         /// <returns>Status Info.</returns>
-        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup)
+        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation = false)
         {
             // action=principal-update
-            var commandParams = QueryStringBuilder.EntityToQueryString(principalSetup);
+            var commandParams = QueryStringBuilder.EntityToQueryString(principalSetup, isUpdateOperation);
 
             StatusInfo status;
 
