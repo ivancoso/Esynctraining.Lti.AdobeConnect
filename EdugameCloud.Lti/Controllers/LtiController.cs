@@ -747,9 +747,12 @@ namespace EdugameCloud.Lti.Controllers
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
 
-                string email, login;
+                // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
+                string email;
+                string login;
                 this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
                 param.ext_user_username = login;
+
                 var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
 
                 LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
@@ -913,9 +916,9 @@ namespace EdugameCloud.Lti.Controllers
             try
             {
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("lmsProviderName cant be empty", "lmsProviderName");
+                    throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
                 if (string.IsNullOrWhiteSpace(scoId))
-                    throw new ArgumentException("scoId cant be empty", "scoId");
+                    throw new ArgumentException("scoId can't be empty", "scoId");
 
                 var session = this.GetSession(lmsProviderName);
                 credentials = session.LmsCompany;

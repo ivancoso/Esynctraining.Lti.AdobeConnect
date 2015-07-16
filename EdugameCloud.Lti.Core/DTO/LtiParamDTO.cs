@@ -99,9 +99,6 @@
         /// </summary>
         public string ext_ims_lti_tool_setting_url { get; set; }
 
-        /// <summary>
-        ///     Gets or sets the extended Moodle user username.
-        /// </summary>
         public string ext_user_username { get; set; }
 
         /// <summary>

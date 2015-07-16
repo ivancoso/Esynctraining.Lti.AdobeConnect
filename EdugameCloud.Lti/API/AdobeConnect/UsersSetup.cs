@@ -311,84 +311,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ProcessACMeetingAttendees(new HashSet<string>(), provider, allValues, alreadyAdded);
         }
 
-        /// <summary>
-        /// The get or create principal.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="lastName">
-        /// The last name.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// </exception>
-
-        /// <summary>
-        /// The get or create principal 2.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="lastName">
-        /// The last name.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="principalCache">
-        /// The principal cache.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
-
-
-        /// <summary>
-        /// The get param login and email.
-        /// </summary>
-        /// <param name="param">
-        /// The param.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
         public void GetParamLoginAndEmail(LtiParamDTO param, LmsCompany lmsCompany, out string email, out string login)
         {
             email = param.lis_person_contact_email_primary;
             login = param.lms_user_login;
-            if (string.IsNullOrEmpty(email) && string.IsNullOrEmpty(login))
+            if (string.IsNullOrWhiteSpace(login))
             {
-                // todo: for D2L more effective would be to get WhoIAm and UserInfo information from their API
+                // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
                 var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
@@ -407,26 +336,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
         }
-
-        /// <summary>
-        /// The get AC user.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="searchByEmailFirst">
-        /// The search By Email First.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Principal"/>.
-        /// </returns>
-
 
         public List<LmsUserDTO> GetUsers(
             LmsCompany lmsCompany,

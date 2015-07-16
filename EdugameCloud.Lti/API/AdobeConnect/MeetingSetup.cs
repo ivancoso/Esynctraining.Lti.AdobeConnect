@@ -584,23 +584,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             var password = this.UsersSetup.GetACPassword(lmsCompany, userSettings, email, login);
-            var principalInfo = lmsUser.PrincipalId != null ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
-            var registeredUser = principalInfo != null ? principalInfo.Principal : null;
+            var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
+            Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
             
             if (currentMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
-                var userid = currentMeeting.OfficeHours != null && currentMeeting.OfficeHours.LmsUser != null
+                var userId = currentMeeting.OfficeHours != null && currentMeeting.OfficeHours.LmsUser != null
                                  ? currentMeeting.OfficeHours.LmsUser.UserId
                                  : string.Empty;
-                var isOwner = userid.Equals(param.lms_user_id);
+                var isOwner = userId.Equals(param.lms_user_id);
 
-                provider.UpdateScoPermissionForPrincipal(
-                    currentMeetingScoId,
-                    registeredUser.With(x => x.PrincipalId),
-                    isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
-                if (isOwner)
+                if (registeredUser != null)
                 {
-                    this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.With(x => x.PrincipalId));
+                    provider.UpdateScoPermissionForPrincipal(
+                        currentMeetingScoId,
+                        registeredUser.PrincipalId,
+                        isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
+                    if (isOwner)
+                    {
+                        this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                    }
                 }
             }
 
@@ -905,8 +908,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 updateItem,
                 meetingFolder,
                 courseId,
-                isNewMeeting,
-                lmsCompany.AddPrefixToMeetingName.GetValueOrDefault());
+                isNewMeeting);
 
             int formatterId = lmsCompany.MeetingNameFormatterId;
             IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
@@ -1887,8 +1889,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingUpdateItem updateItem, 
             string folderSco, 
             string courseId,
-            bool isNew,
-            bool addPrefix)
+            bool isNew)
         {
             updateItem.Description = meetingDTO.summary;
             updateItem.FolderId = folderSco;
