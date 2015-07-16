@@ -559,8 +559,8 @@
                             this.QuestionForSingleMultipleChoiceModel.RegisterSave(
                                 new QuestionForSingleMultipleChoice
                                     {
-                                        Question = question, 
-                                        Restrictions = !quizQuestion.is_single ? "multi_choice" : null,
+                                        Question = question,
+                                        Restrictions = !quizQuestion.is_single && questionType.LmsQuestionTypeName != "Opinion Scale" ? "multi_choice" : null,
                                         IsMandatory = quizQuestion.is_mandatory
                                     });
                             break;

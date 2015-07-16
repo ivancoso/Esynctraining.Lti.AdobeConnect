@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using System.Linq;
+
+namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Collections.Generic;

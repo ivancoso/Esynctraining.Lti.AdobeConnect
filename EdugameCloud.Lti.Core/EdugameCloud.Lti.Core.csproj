@@ -235,6 +235,8 @@
     <Compile Include="DTO\ACPasswordPoliciesDTO.cs" />
     <Compile Include="DTO\ACSessionDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantDTO.cs" />
+    <Compile Include="DTO\ACSessionParticipantReportDTO.cs" />
+    <Compile Include="DTO\ACSessionReportDTO.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
     <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
@@ -256,6 +258,7 @@
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingHostReportDto.cs" />
     <Compile Include="DTO\MeetingHostReportItemDTO.cs" />
+    <Compile Include="DTO\MeetingSessionReportDTO.cs" />
     <Compile Include="DTO\PrincipalReportDto.cs" />
     <Compile Include="DTO\PrincipalDto.cs" />
     <Compile Include="DTO\PrincipalInputDto.cs" />

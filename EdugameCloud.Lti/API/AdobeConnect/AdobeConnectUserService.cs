@@ -36,7 +36,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     Type = PrincipalTypes.user, 
                 };
 
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
+                PrincipalResult pu = provider.PrincipalUpdate(setup, false);
 
                 if (!pu.Success)
                 {
@@ -88,7 +88,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     Type = PrincipalTypes.user,
                 };
 
-                PrincipalResult pu = provider.PrincipalUpdate(setup);
+                PrincipalResult pu = provider.PrincipalUpdate(setup, false);
 
                 // TODO: review and add
                 // if (!pu.Success)

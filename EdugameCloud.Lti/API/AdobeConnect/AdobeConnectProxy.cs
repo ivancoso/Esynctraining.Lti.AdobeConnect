@@ -182,7 +182,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
         {
             return Execute(() => { return _provider.GetScoPublicAccessPermissions(scoId); },
-                scoId);
+                    scoId);
         }
 
         public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
@@ -233,12 +233,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 principalDelete.PrincipalId);
         }
 
-        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup)
+        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation = false)
         {
             if (principalSetup == null)
                 throw new ArgumentNullException("principalSetup");
 
-            return Execute(() => { return _provider.PrincipalUpdate(principalSetup); },
+            return Execute(() => { return _provider.PrincipalUpdate(principalSetup, isUpdateOperation); },
                 principalSetup.PrincipalId, principalSetup.Login);
         }
 

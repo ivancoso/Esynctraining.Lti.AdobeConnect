@@ -1377,6 +1377,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         us =>
                         new ACSessionParticipantDTO
                         {
+                            scoId = us.ScoId,
+                            scoName = us.ScoName,
+                            participantName = us.ParticipantName,
+                            assetId = us.AssetId,
+                            sessionName = us.SessionName,
+                            principalId = us.PrincipalId,
                             firstName = us.SessionName,
                             login = us.Login,
                             dateTimeEntered = us.DateCreated,
@@ -1729,8 +1735,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         Name = registeredUser.Name, 
                         Login = registeredUser.Login, 
                         Email = registeredUser.Email, 
-                        HasChildren = registeredUser.HasChildren
-                    });
+                        HasChildren = registeredUser.HasChildren,
+                    }, true);
 
             var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
 

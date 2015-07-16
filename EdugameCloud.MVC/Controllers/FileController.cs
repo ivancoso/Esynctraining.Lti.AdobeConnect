@@ -1,7 +1,14 @@
-﻿using EdugameCloud.Lti.API.AdobeConnect;
+﻿using EdugameCloud.Lti;
+using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Entities;
+using WcfRestContrib.ServiceModel.Web.Exceptions;
 
 namespace EdugameCloud.MVC.Controllers
 {
@@ -46,6 +53,11 @@ namespace EdugameCloud.MVC.Controllers
         #region Fields
 
         /// <summary>
+        /// The logger.
+        /// </summary>
+        private readonly ILogger logger;
+
+        /// <summary>
         /// The public folder path.
         /// </summary>
         private const string PublicFolderPath = "~/Content/swf/pub";
@@ -84,6 +96,11 @@ namespace EdugameCloud.MVC.Controllers
         ///     The user model.
         /// </summary>
         private readonly UserModel userModel;
+
+        /// <summary>
+        ///     The LMS user session model.
+        /// </summary>
+        private readonly LmsUserSessionModel userSessionModel;
 
         /// <summary>
         /// The survey result model.
@@ -147,6 +164,12 @@ namespace EdugameCloud.MVC.Controllers
         /// <param name="settings">
         /// The settings
         /// </param>
+        /// <param name="userSessionModel">
+        /// The lms user session model
+        /// </param>
+        /// <param name="logger">
+        /// The logger.
+        /// </param>
         public FileController(
             FileModel fileModel, 
             VCFModel vcfModel, 
@@ -160,7 +183,9 @@ namespace EdugameCloud.MVC.Controllers
             ApplicationSettingsProvider settings,
             LmsCompanyModel lmsCompanyModel,
             MeetingSetup meetingSetup,
-            IAdobeConnectAccountService adobeAccountService)
+            IAdobeConnectAccountService adobeAccountService, 
+            LmsUserSessionModel userSessionModel, 
+            ILogger logger)
             : base(settings)
         {
             this.fileModel = fileModel;
@@ -175,6 +200,8 @@ namespace EdugameCloud.MVC.Controllers
             this.lmsCompanyModel = lmsCompanyModel;
             this.meetingSetup = meetingSetup;
             this.adobeConnectAccountService = adobeAccountService;
+            this.userSessionModel = userSessionModel;
+            this.logger = logger;
         }
 
         #endregion
@@ -195,6 +222,164 @@ namespace EdugameCloud.MVC.Controllers
         #endregion
 
         #region Public Methods and Operators
+
+        [HttpGet]
+        [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
+        [ActionName("meeting-attendance-report")]
+        [CustomAuthorize]
+        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+                var acProvider = this.GetAdobeConnectProvider(credentials);
+
+                if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
+                {
+                    this.RedirectToError("Unable to generate report in such format " + " \"" + format + "\"");
+                    return null;
+                }
+
+                var tempParticipants = this.meetingSetup.GetAttendanceReport(
+                    credentials,
+                    this.GetAdobeConnectProvider(credentials),
+                    session.LtiSession.LtiParam,
+                    meetingScoId,
+                    startIndex,
+                    limit);
+
+                var participants = new List<ACSessionParticipantReportDTO>();
+                if (tempParticipants.Any())
+                {
+                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDTO(x)).ToList();
+                }
+
+                string mimeType;
+                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+
+                if (company == null)
+                {
+                    this.RedirectToError(" Unable to retrieve data about company");
+                    return null;
+                }
+               
+                var parametersList = GetReportParameters(format, company, session);
+
+                var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
+                    out mimeType, parametersList);
+
+                if (reportRenderedBytes != null)
+                {
+                    return this.File(
+                        reportRenderedBytes,
+                        mimeType,
+                        string.Format("{0}.{1}", "meeting-attendance-report", this.GetFileExtensions(format.ToUpper())));
+                }
+
+                this.RedirectToError("Unable to generate report. Try again later.");
+
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error("MeetingAttendanceReport", ex);
+                this.RedirectToError("Unable to generate report. Try again later.");
+            }
+
+            return null;
+        }
+
+
+        [HttpGet]
+        [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
+        [ActionName("meeting-sessions-report")]
+        [CustomAuthorize]
+        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+                var param = session.LtiSession.With(x => x.LtiParam);
+                var tempMeetingSessions  = this.meetingSetup.GetSessionsReport(
+                    credentials,
+                    this.GetAdobeConnectProvider(credentials),
+                    param,
+                    meetingScoId,
+                    startIndex,
+                    limit);
+
+                var meetingSessions = new List<ACSessionReportDTO>();
+
+                if (tempMeetingSessions.Any())
+                {
+                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDTO(x)).ToList();
+                }
+
+                if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
+                {
+                    this.RedirectToError("Unable to generate report in such format " + " \"" + format + "\"");
+                    return null;
+                }
+
+                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+
+                if (company == null)
+                {
+                    this.RedirectToError("Unable to retrieve data about company");
+                    return null;
+                }
+
+                var parametersList = GetReportParameters(format, company, session);
+                var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
+                {
+                    {
+                        "ParticipantsSubReport",
+                        new KeyValuePair<string, SubreportProcessingEventHandler>("ParticipantsSubReport",
+                            (sender, args) =>
+                            {
+                                var assetId = Convert.ToInt32(args.Parameters[0].Values[0]);
+                                args.DataSources.Clear();
+
+                                var sessions = (IEnumerable<ACSessionReportDTO>)(((LocalReport) sender).DataSources["ItemDataSet"].Value);
+                                var participants = new List<ACSessionParticipantReportDTO>();
+                                if (sessions.Any())
+                                {
+                                    var tempSession = sessions.FirstOrDefault(x => x.assetId == assetId);
+                                    if (tempSession != null && tempSession.participants != null && tempSession.participants.Any())
+                                    {
+                                        participants = tempSession.participants;
+                                    }
+                                }
+                                args.DataSources.Add(new ReportDataSource("ItemDataSet", participants));
+                            })
+                    }
+                };
+
+
+                string mimeType;
+                var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingSessionsReport", meetingSessions,
+                    out mimeType, parametersList, subreports);
+                if (reportRenderedBytes != null)
+                {
+                    return this.File(
+                        reportRenderedBytes,
+                        mimeType,
+                        string.Format("{0}.{1}", "meeting-sessions-report", this.GetFileExtensions(format.ToUpper())));
+                }
+
+                this.RedirectToError("Unable to generate report. Try again later.");
+            }
+
+            catch (Exception ex)
+            {
+                this.logger.Error("MeetingSessionsReport", ex);
+                this.RedirectToError("Unable to generate report. Try again later.");
+            }
+
+            return null;
+
+        }
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
@@ -2483,6 +2668,145 @@ namespace EdugameCloud.MVC.Controllers
         private List<string> SupportedReportFormats()
         {
             return new List<string> { "IMAGE", "PDF", "EXCEL" };
+        }
+        private LmsUserSession GetSession(string key)
+        {
+            Guid uid;
+            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
+
+            if (session == null)
+            {
+                this.RedirectToError("Session timed out. Please refresh the page.");
+                return null;
+            }
+
+            return session;
+        }
+        private void RedirectToError(string errorText)
+        {
+            this.Response.Clear();
+            this.Response.Write(string.Format("<h1>{0}</h1>", errorText));
+            this.Response.End();
+        }
+        private IAdobeConnectProxy GetAdobeConnectProvider(LmsCompany lmsCompany)
+        {
+            IAdobeConnectProxy provider = null;
+            if (lmsCompany != null)
+            {
+                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
+                if (provider == null)
+                {
+                    provider = this.meetingSetup.GetProvider(lmsCompany);
+                    this.SetAdobeConnectProvider(lmsCompany.Id, provider);
+                }
+            }
+
+            return provider;
+        }
+
+        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession)
+        {
+            if (company == null)
+            {
+                throw new ArgumentNullException("company");
+            }
+
+            if (userSession == null)
+            {
+                throw new ArgumentNullException("userSession");
+            }
+
+            var companyName = company.CompanyName;
+            var companyLogo = this.GetCompanyLogoUrl(company);
+            var isExcelFormat = (format.ToUpper() == "EXCEL").ToString();
+            var courseName = userSession.LtiSession.LtiParam.context_title ?? string.Empty;
+
+            var companyNameParam = new ReportParameter("CompanyName", companyName);
+            var companyLogoParam = new ReportParameter("CompanyLogo", companyLogo);
+            var isExcelParam = new ReportParameter("IsExcelFormat", isExcelFormat);
+            var courseNameParam = new ReportParameter("CourseName", courseName);
+
+            var parametersList = new List<ReportParameter>
+            {
+                companyNameParam,
+                companyLogoParam,
+                isExcelParam,
+                courseNameParam
+            };
+            return parametersList;
+        }
+        private string GetCompanyLogoUrl(Company company)
+        {
+            if (company.Theme == null || company.Theme.Logo == null)
+            {
+                return string.Empty;
+            }
+
+            var basePath = this.Settings.BasePath;
+            if (string.IsNullOrEmpty(basePath))
+            {
+                throw new InvalidOperationException("BasePath");
+            }
+
+            return basePath + "file/get?id=" + company.Theme.Logo.Id;
+        }
+        private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
+        {
+            this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
+        }
+        private byte[] GenerateReportBytes<T>(
+            string format,
+            string reportName,
+            IEnumerable<T> reportDataSource,
+            out string mimeType, 
+            IEnumerable<ReportParameter> reportParameters = null,
+            IDictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>> subReports = null)
+        {
+            var localReport = new LocalReport { EnableHyperlinks = true , EnableExternalImages = true};
+
+            var reportPath = string.Format("EdugameCloud.MVC.Reports.{0}.rdlc", reportName);
+            var reportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(reportPath);
+            localReport.LoadReportDefinition(reportSource);
+
+            if (subReports != null && subReports.Any())
+            {
+                foreach (string placeholder in subReports.Keys)
+                {
+                        var subReportName = string.Format(
+                        "EdugameCloud.MVC.Reports.SubReports.{0}.rdlc",
+                        subReports[placeholder].Key);
+
+                    var subReportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(subReportName);
+                    if (null != subReportSource)
+                    {
+                        localReport.LoadSubreportDefinition(placeholder, subReportSource);
+                    }
+
+                    localReport.SubreportProcessing += subReports[placeholder].Value;
+                }
+            }
+
+            localReport.DataSources.Clear();
+            if (reportParameters != null)
+            {
+                localReport.SetParameters(reportParameters);
+            }
+
+                localReport.DataSources.Add(new ReportDataSource("ItemDataSet", reportDataSource));
+                string encoding;
+                string fileNameExtension;
+
+                Warning[] warnings;
+                string[] streams;
+                return localReport.Render(
+                    format,
+                    this.GetDeviceInfo(format),
+                    out mimeType,
+                    out encoding,
+                    out fileNameExtension,
+                    out streams,
+                    out warnings);
+
         }
 
         #endregion

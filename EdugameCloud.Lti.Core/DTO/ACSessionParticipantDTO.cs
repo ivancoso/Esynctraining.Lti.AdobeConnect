@@ -13,6 +13,42 @@
         #region Public Properties
 
         /// <summary>
+        ///     Gets or sets the sco id.
+        /// </summary>
+        [DataMember]
+        public string scoId  { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the participant name.
+        /// </summary>
+        [DataMember]
+        public string participantName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the sco name.
+        /// </summary>
+        [DataMember]
+        public string scoName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the session name.
+        /// </summary>
+        [DataMember]
+        public string sessionName{ get; set; }
+
+        /// <summary>
+        ///     Gets or sets the principal id.
+        /// </summary>
+        [DataMember]
+        public string principalId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the asset id.
+        /// </summary>
+        [DataMember]
+        public string assetId { get; set; }
+
+        /// <summary>
         ///     Gets or sets the date entered.
         /// </summary>
         [DataMember]

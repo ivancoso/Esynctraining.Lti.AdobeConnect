@@ -321,7 +321,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Reports\MeetingHostReport.rdlc" />
+    <EmbeddedResource Include="Reports\MeetingAttendanceReport.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\MeetingHostReport.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\MeetingSessionsReport.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\SessionsReportNoQuestionsNoParticipants.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -382,6 +390,7 @@
     <EmbeddedResource Include="Reports\SessionDetails\Survey.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SubReports\ParticipantsSubReport.rdlc" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Reports\Content\header.png" />
