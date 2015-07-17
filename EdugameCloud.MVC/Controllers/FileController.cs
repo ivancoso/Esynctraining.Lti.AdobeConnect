@@ -226,7 +226,6 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-attendance-report")]
-        [CustomAuthorize]
         public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
@@ -293,7 +292,6 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-sessions-report")]
-        [CustomAuthorize]
         public virtual ActionResult MeetingSessionsReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
@@ -2676,7 +2674,7 @@ namespace EdugameCloud.MVC.Controllers
 
             if (session == null)
             {
-                this.RedirectToError("Session timed out. Please refresh the page.");
+                this.RedirectToError("Session timed out.");
                 return null;
             }
 

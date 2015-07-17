@@ -1743,9 +1743,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
 
             LoginResult resultByLogin = null;
+
+            //Maybe we should remove if statement : unable to use lms login instead of ac login, sometimes they are not matched
             if(!string.IsNullOrEmpty(login))
             {
-                resultByLogin = userProvider.Login(new UserCredentials(login, password));
+                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
             }
             if (resultByLogin != null && resultByLogin.Success)
             {
