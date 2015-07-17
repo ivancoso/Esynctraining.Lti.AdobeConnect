@@ -55,8 +55,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (scoUpdateItem == null)
                 throw new ArgumentNullException("scoUpdateItem");
 
-            return Execute(() => { return _provider.CreateSco(scoUpdateItem); },
-                scoUpdateItem.Name, scoUpdateItem.FolderId);
+            return _provider.CreateSco(scoUpdateItem);
+            //return Execute(() => { return _provider.CreateSco(scoUpdateItem); },
+            //    scoUpdateItem.Name, scoUpdateItem.FolderId);
         }
 
         public StatusInfo DeleteSco(string scoId)
@@ -312,8 +313,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (scoUpdateItem == null)
                 throw new ArgumentNullException("scoUpdateItem");
 
-            return Execute(() => { return _provider.UpdateSco(scoUpdateItem); },
-                scoUpdateItem.ScoId, scoUpdateItem.Name);
+            return _provider.UpdateSco(scoUpdateItem);
+            //return Execute(() => { return _provider.UpdateSco(scoUpdateItem); },
+            //    scoUpdateItem.ScoId, scoUpdateItem.Name);
         }
 
         public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
