@@ -756,16 +756,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meeting.MeetingGuests.Remove(guestToDelete);
             LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
 
-
-            provider.UpdateScoPermissionForPrincipal(
-                principalIds.Select(
-                    principalId =>
-                    new PermissionUpdateTrio
-                    {
-                        ScoId = meetingSco,
-                        PrincipalId = principalId,
-                        PermissionId = MeetingPermissionId.remove,
-                    }));
+            if (principalIds.Any())
+            {
+                provider.UpdateScoPermissionForPrincipal(
+                    principalIds.Select(
+                        principalId =>
+                            new PermissionUpdateTrio
+                            {
+                                ScoId = meetingSco,
+                                PrincipalId = principalId,
+                                PermissionId = MeetingPermissionId.remove,
+                            }));
+            }
 
             this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
 
