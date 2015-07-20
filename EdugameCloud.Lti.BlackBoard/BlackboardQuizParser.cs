@@ -291,7 +291,8 @@
                         text = answers != null && answers.Count > i ? answers[i] : answerText,
                         order = order,
                         question_text = questionText,
-                        weight = i == correctAnswerId ? 100 : 0
+                        /*weight = i == correctAnswerId ? 100 : 0*/
+                        weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
                     });
                     i++;
                 }

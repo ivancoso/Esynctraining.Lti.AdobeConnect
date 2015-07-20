@@ -1734,11 +1734,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         PrincipalId = registeredUser.PrincipalId, 
                         FirstName = param.lis_person_name_given, 
-                        LastName = param.lis_person_name_family, 
-                        Name = registeredUser.Name, 
-                        Login = registeredUser.Login, 
-                        Email = registeredUser.Email, 
-                        HasChildren = registeredUser.HasChildren,
+                        LastName = param.lis_person_name_family
                     }, true);
 
             var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
