@@ -8,6 +8,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.OAuth.Desire2Learn;
 using Esynctraining.Core.Providers;
+using EdugameCloud.Lti.Core;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {
@@ -17,6 +18,7 @@ namespace EdugameCloud.Lti.Desire2Learn
         private readonly dynamic settings;
         private readonly IDesire2LearnApiService d2lApiService;
 
+
         public Desire2LearnLmsUserService(ILogger logger, LmsUserModel lmsUserModel, IDesire2LearnApiService d2lApiService,
             ApplicationSettingsProvider settings
             ) : base(logger)
@@ -25,6 +27,7 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.d2lApiService = d2lApiService;
             this.settings = settings;
         }
+
 
         public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
@@ -41,18 +44,14 @@ namespace EdugameCloud.Lti.Desire2Learn
             LmsUser lmsUser = lmsCompany.AdminUser;
             if (lmsUser == null)
             {
-                this.logger.WarnFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
-                lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    return new List<LmsUserDTO>();
-                }
+                this.logger.ErrorFormat("[GetD2LUsers] AdminUser is not set for LmsCompany with id={0}", lmsCompany.Id);
+                throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
             }
 
             if (string.IsNullOrEmpty(lmsUser.Token))
             {
-                this.logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}", lmsUser.Id);
-                return new List<LmsUserDTO>();
+                this.logger.WarnFormat("[GetD2LUsers]: Token does not exist for LmsUser with id={0}. LmsCompany ID: {1}.", lmsUser.Id, lmsCompany.Id);
+                throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
             }
 
             string[] tokens = lmsUser.Token.Split(' ');

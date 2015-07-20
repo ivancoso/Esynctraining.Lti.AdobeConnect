@@ -1,8 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.Entities
 {
-    /// <summary>
-    /// The company status.
-    /// </summary>
     public enum CompanyLicenseStatus
     {
         /// <summary>
@@ -18,6 +15,8 @@
         /// <summary>
         /// The enterprise.
         /// </summary>
-        Enterprise = 3
+        Enterprise = 3,
+
     }
+
 }

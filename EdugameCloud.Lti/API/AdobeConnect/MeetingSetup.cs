@@ -571,12 +571,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (currentMeetingSco != null)
                 {
                     meetingUrl = (lmsCompany.AcServer.EndsWith("/")
-                                        ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
-                                        : lmsCompany.AcServer) + currentMeetingSco.UrlPath;
+                        ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
+                        : lmsCompany.AcServer) + currentMeetingSco.UrlPath;
                 }
             }
 
-            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
+            string email = param.lis_person_contact_email_primary;
+            string login = param.lms_user_login;
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
