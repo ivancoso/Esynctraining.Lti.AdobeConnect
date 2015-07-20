@@ -129,123 +129,140 @@ namespace EdugameCloud.Lti.Controllers
 
         #region Public Methods and Operators
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."), ActionName("callback")]
+        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."),
+        ActionName("callback")]
         [AllowAnonymous]
         public virtual ActionResult AuthenticationCallback(
             // ReSharper disable once InconsistentNaming
-            string __provider__, 
+            string __provider__,
             // ReSharper disable once InconsistentNaming
-            string __sid__ = null, 
-            string code = null, 
+            string __sid__ = null,
+            string code = null,
             string state = null,
             string providerKey = null)
         {
-            if (string.IsNullOrEmpty(__provider__))
+
+            try
             {
-                logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
-                this.ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
-                return this.View("Error");
-            }
-            __provider__ = FixExtraDataIssue(__provider__);
-            if (string.IsNullOrEmpty(providerKey))
-            {
-                if (Request.Cookies.AllKeys.Contains(ProviderKeyCookieName))
+                if (string.IsNullOrEmpty(__provider__))
                 {
-                    providerKey = Request.Cookies[ProviderKeyCookieName].Value;
-                }
-                else
-                {
-                    logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
-                    this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
+                    logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
+                    this.ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
                     return this.View("Error");
                 }
-            }
-            providerKey = FixExtraDataIssue(providerKey);
-            string provider = __provider__;
-            LmsUserSession session = this.GetSession(providerKey);
-            var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
-
-            if (param.GetLtiProviderName(provider) == LmsProviderNames.Brightspace)
-            {
-                var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-
-                string scheme = Request.UrlReferrer.GetLeftPart(UriPartial.Scheme).ToLowerInvariant();
-                string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
-                var hostUrl = authority.Replace(scheme, string.Empty);
-
-                string username = null;
-                var company = session.With(x => x.LmsCompany);
-                var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion), company);
-                if (string.IsNullOrEmpty(user.UniqueName))
+                __provider__ = FixExtraDataIssue(__provider__);
+                if (string.IsNullOrEmpty(providerKey))
                 {
-                    var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
-                        String.Format(d2lService.GetUserUrlFormat, (string)Settings.D2LApiVersion,
-                            user.Identifier), company);
-                    if (userInfo != null)
+                    if (Request.Cookies.AllKeys.Contains(ProviderKeyCookieName))
                     {
-                        username = userInfo.UserName;
-                    }
-                }
-                else
-                {
-                    username = user.UniqueName;
-                }
-                string userId = Request.QueryString["x_a"];
-                string userKey = Request.QueryString["x_b"];
-                string token = null;
-                if (!userId.Contains(' ') && !userKey.Contains(' '))
-                {
-                    token = userId + " " + userKey;
-                }
-                else
-                {
-                    logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
-                    this.ViewBag.Error = "Could not save user information in database. Please contact system administrator.";
-                    return this.View("Error");
-                }
-
-                return AuthCallbackSave(providerKey, token, user.Identifier, username, "Error");
-            }
-            else
-            {
-                try
-                {
-                    AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
-                    if (result.IsSuccessful)
-                    {
-                        //if (provider.ToLower() == LmsProviderNames.Canvas)
-                        //{
-                        //    var param = this.GetSession(providerKey).LtiSession.LtiParam;
-                        //    if (param.lms_user_login == "$Canvas.user.loginId")
-                        //        throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
-                        //}
-
-                        return AuthCallbackSave(providerKey,
-                            result.ExtraData.ContainsKey("accesstoken")
-                                ? result.ExtraData["accesstoken"]
-                                : null,
-                            result.ExtraData["id"], null, "Error");
+                        providerKey = Request.Cookies[ProviderKeyCookieName].Value;
                     }
                     else
                     {
-                        var sid = Request.QueryString["__sid__"] ?? string.Empty;
-                        var cookie = Request.Cookies[sid];
-
-                        this.ViewBag.Error = string.Format(
-                            "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
-                            Request.QueryString["code"] ?? string.Empty,
-                            Request.QueryString["__provider__"] ?? string.Empty,
-                            sid,
-                            cookie != null ? cookie.Value : string.Empty);
+                        logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
+                        this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
+                        return this.View("Error");
                     }
                 }
-                catch (ApplicationException ex)
-                {
-                    this.ViewBag.Error = string.Format(ex.ToString());
-                }
-            }
+                providerKey = FixExtraDataIssue(providerKey);
+                string provider = __provider__;
+                LmsUserSession session = this.GetSession(providerKey);
+                var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
 
-            return this.View("Error");
+                if (param.GetLtiProviderName(provider) == LmsProviderNames.Brightspace)
+                {
+                    var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+
+                    string scheme = Request.UrlReferrer.GetLeftPart(UriPartial.Scheme).ToLowerInvariant();
+                    string authority = Request.UrlReferrer.GetLeftPart(UriPartial.Authority).ToLowerInvariant();
+                    var hostUrl = authority.Replace(scheme, string.Empty);
+
+                    string username = null;
+                    var company = session.With(x => x.LmsCompany);
+                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion), company);
+                    if (string.IsNullOrEmpty(user.UniqueName))
+                    {
+                        var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
+                            String.Format(d2lService.GetUserUrlFormat, (string)Settings.D2LApiVersion,
+                                user.Identifier), company);
+                        if (userInfo != null)
+                        {
+                            username = userInfo.UserName;
+                        }
+                    }
+                    else
+                    {
+                        username = user.UniqueName;
+                    }
+                    string userId = Request.QueryString["x_a"];
+                    string userKey = Request.QueryString["x_b"];
+                    string token = null;
+                    if (!userId.Contains(' ') && !userKey.Contains(' '))
+                    {
+                        token = userId + " " + userKey;
+                    }
+                    else
+                    {
+                        logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
+                        this.ViewBag.Error = "Could not save user information in database. Please contact system administrator.";
+                        return this.View("Error");
+                    }
+
+                    return AuthCallbackSave(providerKey, token, user.Identifier, username, "Error");
+                }
+                else
+                {
+                    try
+                    {
+                        AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
+                        if (result.IsSuccessful)
+                        {
+                            //if (provider.ToLower() == LmsProviderNames.Canvas)
+                            //{
+                            //    var param = this.GetSession(providerKey).LtiSession.LtiParam;
+                            //    if (param.lms_user_login == "$Canvas.user.loginId")
+                            //        throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
+                            //}
+
+                            return AuthCallbackSave(providerKey,
+                                result.ExtraData.ContainsKey("accesstoken")
+                                    ? result.ExtraData["accesstoken"]
+                                    : null,
+                                result.ExtraData["id"], null, "Error");
+                        }
+                        else
+                        {
+                            var sid = Request.QueryString["__sid__"] ?? string.Empty;
+                            var cookie = Request.Cookies[sid];
+
+                            this.ViewBag.Error = string.Format(
+                                "Generic OAuth fail: code:[{0}] provider:[{1}] sid:[{2}] cookie:[{3}]",
+                                Request.QueryString["code"] ?? string.Empty,
+                                Request.QueryString["__provider__"] ?? string.Empty,
+                                sid,
+                                cookie != null ? cookie.Value : string.Empty);
+                        }
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        this.ViewBag.Error = ex.ToString();
+                    }
+                }
+
+                return this.View("Error");
+            }
+            catch (WarningMessageException ex)
+            {
+                logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                this.ViewBag.Message = ex.Message;
+                return this.View("~/Views/Lti/LtiError.cshtml");
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                return this.View("~/Views/Lti/LtiError.cshtml");
+            }
         }
 
         /// <summary>
@@ -752,7 +769,7 @@ namespace EdugameCloud.Lti.Controllers
                 string email;
                 string login;
                 this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
-                param.ext_user_username = login;
+                param.ext_user_username = login; // NOTE: is saved in session!
 
                 var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
 
@@ -772,6 +789,13 @@ namespace EdugameCloud.Lti.Controllers
                             {
                                 this.StartOAuth2Authentication(provider, key, param);
                                 return null;
+                            }
+
+                            if (lmsCompany.AdminUser == null)
+                            {
+                                this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                                this.ViewBag.Message = "Sorry, LMS Admin is not set for current license. Please contact administrator.";
+                                return this.View("~/Views/Lti/LtiError.cshtml");
                             }
 
                             acPrincipal = acUserService.GetOrCreatePrincipal(
@@ -799,6 +823,13 @@ namespace EdugameCloud.Lti.Controllers
                                     d2lService
                                         .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
                                         .AbsoluteUri);
+                            }
+
+                            if (lmsCompany.AdminUser == null)
+                            {
+                                this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                                this.ViewBag.Message = "Sorry, LMS Admin is not set for current license. Please contact administrator.";
+                                return this.View("~/Views/Lti/LtiError.cshtml");
                             }
 
                             acPrincipal = acUserService.GetOrCreatePrincipal(
@@ -1207,7 +1238,8 @@ namespace EdugameCloud.Lti.Controllers
                 if (string.IsNullOrWhiteSpace(username))
                     userName = GetUserNameOrEmail(param);
 
-                lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
+                lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(userId, company.Id).Value 
+                    ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
                 if (lmsUser.IsTransient())
@@ -1220,9 +1252,9 @@ namespace EdugameCloud.Lti.Controllers
 
             if (company != null)
             {
-                bool currentUserIsAdmin = false;
                 if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
+                    bool currentUserIsAdmin = false;
                     if (providerKey.ToLower() == LmsProviderNames.Brightspace)
                     {
                         if (!string.IsNullOrEmpty(param.ext_d2l_role))
@@ -1257,7 +1289,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     else
                     {
-                        currentUserIsAdmin = IsAdminRole(providerKey);
+                        currentUserIsAdmin = IsAdminRole(param);
                     }
 
                     if (currentUserIsAdmin)
@@ -1265,8 +1297,13 @@ namespace EdugameCloud.Lti.Controllers
                         company.AdminUser = lmsUser;
                         lmsCompanyModel.RegisterSave(company);
                     }
+                    else
+                    {
+                        this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
+                        throw new WarningMessageException("Sorry, LMS Admin is not set for current license. Please contact administrator.");
+                    }
                 }
-
+                
                 return this.RedirectToExtJs(session, lmsUser, providerKey);
             }
 
@@ -1322,11 +1359,8 @@ namespace EdugameCloud.Lti.Controllers
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool IsAdminRole(string providerName)
+        private bool IsAdminRole(LtiParamDTO param)
         {
-            var session = this.GetSession(providerName);
-            var param = session.LtiSession.With(x => x.LtiParam);
-
             if (param == null)
             {
                 return this.IsDebug;
