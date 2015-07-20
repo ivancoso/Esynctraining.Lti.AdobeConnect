@@ -183,7 +183,7 @@ namespace EdugameCloud.Lti.API
                 }
                 dbUser.Name = lmsUserDto.name;
                 dbUser.Email = lmsUserDto.primary_email;
-                dbUser.UserIdExtended = lmsUserDto.lti_id;
+                dbUser.UserIdExtended = lmsUserDto.lti_id != null ? lmsUserDto.id : null;
                 // todo: save lmsUserDto.id to dbUser.UserId
             }
 
@@ -207,7 +207,7 @@ namespace EdugameCloud.Lti.API
                     meetingRoles.Select(x => new LmsUserDTO
                     {
                         ac_id = x.User.PrincipalId,
-                        id = x.User.UserId,
+                        id = x.User.UserIdExtended ?? x.User.UserId,
                         lti_id = x.User.UserId,
                         login_id = x.User.Username,
                         name = x.User.Name,

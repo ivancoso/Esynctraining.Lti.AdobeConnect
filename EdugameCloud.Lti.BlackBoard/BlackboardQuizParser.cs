@@ -15,6 +15,7 @@
 
     internal sealed class BlackboardQuizParser
     {
+        private static readonly string[] singleQuestionTypes = new[] {"Multiple Choice", "Opinion Scale"};
         public static int GetBBId(string id)
         {
             return int.Parse(id.TrimStart("_".ToCharArray()).Split('_').First());
@@ -29,7 +30,7 @@
                                         {
                                             question_text = q.text.ClearName(),
                                             question_type = q.type,
-                                            is_single = q.type.Equals("Multiple Choice", StringComparison.InvariantCultureIgnoreCase),
+                                            is_single = singleQuestionTypes.Any(x => q.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
                                             question_name = q.title.ClearName(),
                                             id = GetBBId(q.id),
                                             answers = ParseAnswers(q)

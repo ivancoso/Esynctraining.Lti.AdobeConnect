@@ -250,7 +250,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var userDtos = dbUserMeetingRoles.Select(x => new LmsUserDTO
                 {
                     ac_id = x.User.PrincipalId,
-                    id = x.User.UserId,
+                    id = x.User.UserIdExtended ?? x.User.UserId,
                     lti_id = x.User.UserId,
                     login_id = x.User.Username,
                     name = x.User.Name,

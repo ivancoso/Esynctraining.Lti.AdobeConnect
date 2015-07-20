@@ -162,8 +162,10 @@ namespace EdugameCloud.Lti.Controllers
             }
             providerKey = FixExtraDataIssue(providerKey);
             string provider = __provider__;
+            LmsUserSession session = this.GetSession(providerKey);
+            var param = session.With(x => x.LtiSession).With(x => x.LtiParam);
 
-            if (provider.ToLower() == LmsProviderNames.Brightspace)
+            if (param.GetLtiProviderName(provider) == LmsProviderNames.Brightspace)
             {
                 var d2lService = IoC.Resolve<IDesire2LearnApiService>();
 
@@ -172,7 +174,6 @@ namespace EdugameCloud.Lti.Controllers
                 var hostUrl = authority.Replace(scheme, string.Empty);
 
                 string username = null;
-                LmsUserSession session = this.GetSession(providerKey);
                 var company = session.With(x => x.LmsCompany);
                 var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion), company);
                 if (string.IsNullOrEmpty(user.UniqueName))
