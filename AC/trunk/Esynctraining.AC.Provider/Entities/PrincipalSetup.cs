@@ -73,6 +73,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// principal is a user, use 0 or false.
         /// </summary>
         [XmlElement("has-children")]
+        [SkipDuringUpdate]
         public bool HasChildren { get; set; }
 
         /// <summary>
