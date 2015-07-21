@@ -9,7 +9,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
         {
             this.References(x => x.LmsCompany).Column("lmsCompanyId").Not.Nullable();
             this.Map(x => x.Name).Not.Nullable();
-            this.Map(x => x.Value).Not.Nullable();
+            this.Map(x => x.Value).CustomType("StringClob").CustomSqlType("nvarchar(max)").Not.Nullable();
         }
     }
 }

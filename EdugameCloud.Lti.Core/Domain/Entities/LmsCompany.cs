@@ -360,6 +360,42 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        public virtual string SupportPageHtml
+        {
+            get
+            {
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "SupportPageHtml", true) == 0);
+                if (setting == null)
+                    return null;
+
+                return setting.Value;
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    Settings = new List<LmsCompanySetting>();
+
+                string val = value;
+                if (string.IsNullOrWhiteSpace(value))
+                    val = null;
+
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "SupportPageHtml", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "SupportPageHtml",
+                        Value = val,
+                    });
+                }
+                else
+                {
+                    setting.Value = val;
+                }
+            }
+        }
+
         #endregion
 
         public LmsCompany()
