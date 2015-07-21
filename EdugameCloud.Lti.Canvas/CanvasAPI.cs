@@ -61,25 +61,25 @@
             }
         }
 
-        public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
-        {
-            try
-            {
-                Validate(api, userToken);
+        //public void AddMoreDetailsForUser(string api, string userToken, LmsUserDTO user)
+        //{
+        //    try
+        //    {
+        //        Validate(api, userToken);
 
-                LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
+        //        LmsUserDTO canvasProfile = GetUser(api, userToken, user.id);
 
-                if (canvasProfile != null)
-                {
-                    user.primary_email = canvasProfile.primary_email;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.AddMoreDetailsForUser] API:{0}. UserToken:{1}.", api, userToken);
-                throw;
-            }
-        }
+        //        if (canvasProfile != null)
+        //        {
+        //            user.primary_email = canvasProfile.primary_email;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.ErrorFormat(ex, "[CanvasAPI.AddMoreDetailsForUser] API:{0}. UserToken:{1}.", api, userToken);
+        //        throw;
+        //    }
+        //}
 
         public LmsUserDTO GetUser(string api, string userToken, string userId)
         {
