@@ -20,6 +20,7 @@ namespace PDFAnnotation.Persistence.Mappings
             this.Map(x => x.LastName).Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.References(x => x.Category).Not.Nullable();
+            this.HasMany(x => x.Files).Cascade.Delete().Inverse().ExtraLazyLoad();
         }
 
         #endregion
