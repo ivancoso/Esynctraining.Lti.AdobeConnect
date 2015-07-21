@@ -37,6 +37,7 @@ namespace PDFAnnotation.Core.Domain.DTO
                 this.lastName = topic.LastName;
                 this.fullName = topic.FullName;
                 this.dateCreated = topic.DateCreated;
+                this.exhibitsCount = topic.Files.Count;
             }
         }
 
@@ -79,6 +80,12 @@ namespace PDFAnnotation.Core.Domain.DTO
         /// </summary>
         [DataMember]
         public int topicId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets exhibits count
+        /// </summary>
+        [DataMember]
+        public int exhibitsCount { get; set; }
 
         #endregion
     }

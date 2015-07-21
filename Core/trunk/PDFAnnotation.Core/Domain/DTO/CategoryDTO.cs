@@ -30,10 +30,16 @@
         /// <param name="category">
         /// The category.
         /// </param>
+        /// <param name="categoryContacts">
+        /// The category Contacts.
+        /// </param>
         /// <param name="topics">
         /// The topics.
         /// </param>
-        public CategoryDTO(Category category, IEnumerable<int> categoryContacts = null, IEnumerable<Topic> topics = null)
+        public CategoryDTO(
+            Category category,
+            IEnumerable<int> categoryContacts = null,
+            IEnumerable<Topic> topics = null)
             : this()
         {
             this.categoryId = category.Id;
@@ -42,16 +48,21 @@
             this.details = category.Details;
             this.companyId = category.Company.With(x => x.Id);
             this.isFileNumbersAutoIncremented = category.IsFileNumbersAutoIncremented;
+            this.exhibitsCount = category.Files.Count;
 
             if (categoryContacts != null)
             {
                 this.categoryContacts = categoryContacts.ToList();
             }
 
-            if (topics != null)
+            if (topics == null)
             {
-                this.topics = topics.Select(x => new TopicDTO(x)).ToList();
+                topics = category.Topics.ToList();
             }
+
+            this.topics = topics.Select(x => new TopicDTO(x)).ToList();
+            var topicsFilesCount = this.topics.Any() ? this.topics.Sum(x => x.exhibitsCount) : 0;
+            this.exhibitsCount += topicsFilesCount;
         }
 
         #region Public Properties
@@ -103,6 +114,12 @@
         /// </summary>
         [DataMember]
         public string details { get; set; }
+
+        /// <summary>
+        ///     Gets or sets exhibits count
+        /// </summary>
+        [DataMember]
+        public int exhibitsCount { get; set; }
 
         #endregion
     }

@@ -5,12 +5,20 @@ namespace PDFAnnotation.Core.Domain.Entities
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.FullText;
 
+    using Iesi.Collections.Generic;
+
     /// <summary>
     /// The Topic.
     /// </summary>
     [FullTextEnabled]
     public class Topic : Entity
     {
+
+        /// <summary>
+        /// The files.
+        /// </summary>
+        private ISet<File> files = new HashedSet<File>();
+
         #region Public Properties
 
         /// <summary>
@@ -51,6 +59,23 @@ namespace PDFAnnotation.Core.Domain.Entities
             {
             }
         }
+        
+        /// <summary>
+        ///     Gets or sets the files.
+        /// </summary>
+        public virtual ISet<File> Files
+        {
+            get
+            {
+                return this.files;
+            }
+
+            set
+            {
+                this.files = value;
+            }
+        }
+
 
         #endregion
     }
