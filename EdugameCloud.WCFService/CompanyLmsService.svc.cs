@@ -425,7 +425,9 @@ namespace EdugameCloud.WCFService
             instance.ACUsesEmailAsLogin = dto.acUsesEmailAsLogin;
             instance.ShowAnnouncements = dto.enableAnnouncements;
             instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
-            instance.SupportPageHtml = dto.supportPageHtml;
+
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SupportPageHtml, dto.supportPageHtml);
+
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
             //D2L only options
             if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn)

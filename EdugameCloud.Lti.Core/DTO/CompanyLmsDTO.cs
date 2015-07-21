@@ -80,7 +80,7 @@ namespace EdugameCloud.Lti.DTO
                 this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsD2LSandbox);
                 this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
                 this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
-                this.supportPageHtml = instance.SupportPageHtml;
+                this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
             }
         }
 
