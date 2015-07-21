@@ -56,7 +56,14 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                                     lmsCompany.LmsCourseMeetings.Any(
                                         x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
                                 {
-                                    syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                    try
+                                    {
+                                        syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        logger.ErrorFormat(ex, "Unexpected error during execution for LmsCompanyId: {0}.", lmsCompany.Id);
+                                    }
                                 }
                             }
                         }
