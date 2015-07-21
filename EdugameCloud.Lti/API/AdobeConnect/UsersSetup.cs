@@ -71,6 +71,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             public List<PermissionInfo> Participants { get; set; }
 
+            public bool Contains(string principalId)
+            {
+                return Hosts.Any(x => x.PrincipalId == principalId)
+                       || Presenters.Any(x => x.PrincipalId == principalId)
+                       || Participants.Any(x => x.PrincipalId == principalId);
+            }
+
         }
 
         #endregion Inner Class: MeetingAttendees
@@ -525,7 +532,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsUser != null)
             {
-                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.id, lmsCompany.Id);
+                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.lti_id ?? lmsUser.id, lmsCompany.Id);
                 var nonEditable = new HashSet<string>();
                 MeetingAttendees attendees = GetMeetingAttendees(
                     provider,
@@ -536,7 +543,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 bool uncommitedChangesInLms = false;
                 ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser.Value, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
-                    nonEditable, ref attendees);
+                    nonEditable, attendees);
 
                 if (uncommitedChangesInLms)
                 {
@@ -545,12 +552,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 return lmsUser;
             }
+
             return null;
         }
 
         private void ProcessLmsUserDtoAcInfo(LmsUserDTO user, LmsUser lmsDbUser, LmsCompany lmsCompany,
             IEnumerable<Principal> principalCache, IAdobeConnectProxy provider, ref bool uncommitedChangesInLms,
-            HashSet<string> nonEditable, ref MeetingAttendees attendees)
+            HashSet<string> nonEditable, MeetingAttendees attendees)
         {
             string login = user.GetLogin();
             lmsDbUser = lmsDbUser ?? new LmsUser
@@ -589,17 +597,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (attendees.Hosts.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Host.Name;
-                attendees.Hosts = attendees.Hosts.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
             else if (attendees.Presenters.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Presenter.Name;
-                attendees.Presenters = attendees.Presenters.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
             else if (attendees.Participants.Any(v => v.PrincipalId == user.ac_id))
             {
                 user.ac_role = AcRole.Participant.Name;
-                attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.ac_id).ToList();
             }
         }
 
@@ -1006,7 +1011,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 return skipReturningUsers 
                     ? null 
-                    : this.GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
 
             // NOTE: now we create AC principal within Users/GetAll method. So user will always have ac_id here.
@@ -1032,38 +1037,44 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
                 }
             }
-
-            if (user.ac_id == null)
-            {
-                return skipReturningUsers ? null
-                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
-            }
+            var nonEditable = new HashSet<string>();
 
             if (user.ac_role == null)
             {
                 provider.UpdateScoPermissionForPrincipal(
-                    meeting.GetMeetingScoId(), 
-                    user.ac_id, 
+                    meeting.GetMeetingScoId(),
+                    user.ac_id,
                     MeetingPermissionId.remove);
-                return skipReturningUsers 
-                    ? null 
-                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
             }
+            else
+            {
+                var attendees = GetMeetingAttendees(
+                    provider,
+                    meeting.GetMeetingScoId(),
+                    nonEditable);
+                var permission = MeetingPermissionId.view;
+                if (attendees.Contains(user.ac_id))
+                {
+                    if (user.ac_role.Equals(AcRole.Presenter.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        permission = MeetingPermissionId.mini_host;
+                    }
+                    else if (user.ac_role.Equals(AcRole.Host.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        permission = MeetingPermissionId.host;
+                    }
+                }
+                else
+                {
+                    permission = new RoleMappingService().SetAcRole(lmsCompany, user);
+                }
 
-            var permission = MeetingPermissionId.view;
-            if (user.ac_role.Equals(AcRole.Presenter.Name, StringComparison.OrdinalIgnoreCase))
-            {
-                permission = MeetingPermissionId.mini_host;
-            }
-            else if (user.ac_role.Equals(AcRole.Host.Name, StringComparison.OrdinalIgnoreCase))
-            {
-                permission = MeetingPermissionId.host;
-            }
+                provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
 
-            provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
-            if (permission == MeetingPermissionId.host)
-            {
-                this.AddUserToMeetingHostsGroup(provider, user.ac_id);
+                if (permission == MeetingPermissionId.host)
+                {
+                    this.AddUserToMeetingHostsGroup(provider, user.ac_id);
+                }
             }
 
             return skipReturningUsers 
