@@ -97,11 +97,11 @@
         protected string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
         {
             Distractor distractor = question.Distractors != null
-                                                    ? question.Distractors.FirstOrDefault()
-                                                    : null;
+                ? question.Distractors.FirstOrDefault()
+                : null;
             if (distractor != null)
             {
-                var answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                bool answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
                             || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
                 return answ ? distractor.LmsAnswer : distractor.LmsAnswerId.ToString();
             }
@@ -124,12 +124,13 @@
         protected string GetTrueFalseStringAnswer(Question question, QuizQuestionResultDTO answer)
         {
             Distractor distractor = question.Distractors != null
-                                                    ? question.Distractors.FirstOrDefault()
-                                                    : null;
+                ? question.Distractors.FirstOrDefault()
+                : null;
             if (distractor != null)
             {
                 bool answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
                             || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+
                 return string.Format(
                     "{0}{1}",
                     distractor.DistractorName == null || distractor.DistractorName.Equals("truefalse") || distractor.DistractorName.Equals(string.Empty)
