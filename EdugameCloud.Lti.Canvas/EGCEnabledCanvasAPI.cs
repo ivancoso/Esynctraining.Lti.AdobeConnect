@@ -60,6 +60,7 @@ namespace EdugameCloud.Lti.Canvas
             int courseId,
             int quizId)
         {
+            IRestResponse<CanvasQuizSubmissionResultDTO> response;
             try
             {
                 Validate(api, userToken);
@@ -72,14 +73,21 @@ namespace EdugameCloud.Lti.Canvas
                     Method.POST,
                     userToken);
 
-                IRestResponse<CanvasQuizSubmissionResultDTO> response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
-                return response.Data.quiz_submissions;
+                response = client.Execute<CanvasQuizSubmissionResultDTO>(request);
             }
             catch (Exception ex)
             {
                 _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.GetSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}.", api, userToken, courseId, quizId);
                 throw;
             }
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.ErrorFormat("[EGCEnabledCanvasAPI.GetSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}. {4}",
+                    api, userToken, courseId, quizId, BuildInformation(response));
+                throw new InvalidOperationException(string.Format("[CanvasAPI.GetSubmissionForQuiz] Canvas returns '{0}'", response.StatusDescription));
+            }
+            return response.Data.quiz_submissions;
         }
 
         public LmsUserDTO GetCourseUser(string userId, LmsCompany lmsCompany, string userToken, int courseId)
@@ -145,6 +153,13 @@ namespace EdugameCloud.Lti.Canvas
                 RestRequest request = CreateRequest(domain, link, Method.GET, userToken);
 
                 IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.ErrorFormat("[EGCEnabledCanvasAPI.FetchCourseUser] API:{0}. UserToken:{1}. CourseId:{2}. UserId:{3}. {4}",
+                        domain, userToken, courseId, userId, BuildInformation(response));
+                    throw new InvalidOperationException(string.Format("[EGCEnabledCanvasAPI.FetchCourseUser] Canvas returns '{0}'", response.StatusDescription));
+                }
 
                 var result = response.Data;
                 if (result != null)
@@ -250,6 +265,7 @@ namespace EdugameCloud.Lti.Canvas
             int courseId,
             CanvasQuizSubmissionDTO submission)
         {
+            IRestResponse response;
             try
             {
                 Validate(api, userToken);
@@ -264,12 +280,20 @@ namespace EdugameCloud.Lti.Canvas
                 request.AddParameter("attempt", submission.attempt);
                 request.AddParameter("validation_token", submission.validation_token);
 
-                client.Execute(request);
+                response = client.Execute(request);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.ReturnSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. SubmissionQuizId:{3}. SubmissionId:{4}.", api, userToken, courseId, submission.quiz_id, submission.id);
+                _logger.ErrorFormat(ex, "[EGCEnabledCanvasAPI.ReturnSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. SubmissionQuizId:{3}. SubmissionId:{4}.", 
+                    api, userToken, courseId, submission.quiz_id, submission.id);
                 throw;
+            }
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                _logger.ErrorFormat("[EGCEnabledCanvasAPI.ReturnSubmissionForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. SubmissionQuizId:{3}. SubmissionId:{4}. {5}",
+                    api, userToken, courseId, submission.quiz_id, submission.id, BuildInformation(response));
+                throw new InvalidOperationException(string.Format("[EGCEnabledCanvasAPI.ReturnSubmissionForQuiz] Canvas returns '{0}'", response.StatusDescription));
             }
         }
 
@@ -310,7 +334,15 @@ namespace EdugameCloud.Lti.Canvas
                     Method.GET,
                     lmsUserParameters.LmsUser.Token);
                 request.AddParameter("per_page", 1000);
+
                 IRestResponse<List<CanvasQuizDTO>> response = client.Execute<List<CanvasQuizDTO>>(request);
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    _logger.ErrorFormat("[EGCEnabledCanvasAPI.GetItemsForUser] API:{0}. UserToken:{1}. CourseId:{2}. {3}",
+                        lmsUserParameters.CompanyLms.LmsDomain, lmsUserParameters.LmsUser.Token, lmsUserParameters.Course, BuildInformation(response));
+                    throw new InvalidOperationException(string.Format("[EGCEnabledCanvasAPI.GetItemsForUser] Canvas returns '{0}'", response.StatusDescription));
+                }
 
                 if (quizIds != null)
                 {
