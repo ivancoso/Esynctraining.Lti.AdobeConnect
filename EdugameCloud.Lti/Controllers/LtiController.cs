@@ -875,6 +875,12 @@ namespace EdugameCloud.Lti.Controllers
                         this.lmsUserModel.RegisterSave(lmsUser);
                     }
 
+                    if (acPrincipal == null)
+                    {
+                        this.logger.ErrorFormat("[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", lmsCompany.Id, lmsUser.Id, param.lms_user_login);
+                        throw new WarningMessageException("Sorry, Adobe Connect account does not exist for you. Please contact administrator.");
+                    }
+
                     //sw.Stop();
                     //var time = sw.Elapsed;
 
@@ -884,6 +890,11 @@ namespace EdugameCloud.Lti.Controllers
                 logger.ErrorFormat("Invalid LTI request. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                 this.ViewBag.Error = "Invalid LTI request";
                 return this.View("Error");
+            }
+            catch (WarningMessageException ex)
+            {
+                this.ViewBag.Message = ex.Message;
+                return this.View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
@@ -1250,7 +1261,26 @@ namespace EdugameCloud.Lti.Controllers
                     this.SaveSessionUser(session, lmsUser);
                 }
 
+                // TRICK: during loginwithprovider we redirect to Oauth before we create AC principal - so we need to do it here
+                Principal acPrincipal = acUserService.GetOrCreatePrincipal(
+                                this.GetAdobeConnectProvider(company),
+                                param.lms_user_login,
+                                param.lis_person_contact_email_primary,
+                                param.lis_person_name_given,
+                                param.lis_person_name_family,
+                                company);
+                if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
+                {
+                    lmsUser.PrincipalId = acPrincipal.PrincipalId;
+                }
+
                 this.lmsUserModel.RegisterSave(lmsUser);
+
+                if (acPrincipal == null)
+                {
+                    this.logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
+                    throw new WarningMessageException("Sorry, Adobe Connect account does not exist for you. Please contact administrator.");
+                }
             }
 
             if (company != null)
@@ -1369,7 +1399,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 return this.IsDebug;
             }
-            
+
             return param.roles.Contains("Administrator");
         }
 
