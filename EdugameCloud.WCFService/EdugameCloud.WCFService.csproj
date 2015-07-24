@@ -262,6 +262,7 @@
     <Compile Include="CORS\CustomHeaderMessageInspector.cs" />
     <Compile Include="CORS\EnableCrossOriginResourceSharingBehavior.cs" />
     <Compile Include="DTO\CompanyDTO.cs" />
+    <Compile Include="DTO\FileDownloadDTO.cs" />
     <Compile Include="DTO\IdNamePairDTO.cs" />
     <Compile Include="DTO\UserDTOWithSplashScreenDTO.cs" />
     <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
@@ -550,7 +551,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/services/</IISUrl>
+          <IISUrl>http://localhost/services</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
