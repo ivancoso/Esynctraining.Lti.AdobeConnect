@@ -735,9 +735,10 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.", param.user_id, param.oauth_consumer_key);
                     var parsedIdArray = param.user_id.Split('_');
-                    if (parsedIdArray.Length == 2)
+                    // temporary fix
+                    if (parsedIdArray.Length > 1)
                     {
-                        param.user_id = parsedIdArray[1];
+                        param.user_id = parsedIdArray.Last();
                     }
                 }
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
