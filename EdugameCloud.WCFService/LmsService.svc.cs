@@ -29,6 +29,9 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Utils;
     using Resources;
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
+    using EdugameCloud.Lti.Core;
+    using System.IO;
+    using System.Web;
 
     /// <summary>
     /// The LMS service.
@@ -201,6 +204,53 @@ namespace EdugameCloud.WCFService
                         pdto.nameWithoutSpaces = pdto.lmsProviderName.Replace(" ", string.Empty);
                         return pdto;
                     }).ToArray();
+        }
+
+        public FileDownloadDTO[] GetFiles(int lmsProviderId)
+        {
+            switch (lmsProviderId)
+            {
+                case (int)LmsProviderEnum.Blackboard:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("blackboard"),
+                        BuildBlackboardJar(),
+                    };
+
+                case (int)LmsProviderEnum.Moodle:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("moodle"),
+                        BuildMoodleZip(),
+                    };
+
+                case (int)LmsProviderEnum.Canvas:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("canvas"),
+                    };
+
+                case (int)LmsProviderEnum.BrainHoney:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("brainhoney"),
+                    };
+
+                case (int)LmsProviderEnum.Desire2Learn:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("brightspace"),
+                    };
+
+                case (int)LmsProviderEnum.Sakai:
+                    return new FileDownloadDTO[]
+                    {
+                        BuildUserGuide("sakai"),
+                    };
+            }
+
+            var error = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Invalid lmsProviderId", "Not supported LMS.");
+            throw new FaultException<Error>(error, error.errorMessage);
         }
 
         public IdNamePairDTO[] GetMeetingNameFormatters() 
@@ -472,60 +522,119 @@ namespace EdugameCloud.WCFService
                 return null;
             }
 
-            var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
-
-            if (lmsUserParameters != null)
+            try
             {
-                var user = UserModel.GetOneById(userId).Value;
-                if (user == null)
+                var lmsUserParameters = LmsUserParametersModel.GetOneById(lmsUserParametersId).Value;
+
+                if (lmsUserParameters != null)
                 {
-                    var err = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No user found");
-                    this.LogError("LMS.Convert", err);
-                    throw new FaultException<Error>(err, err.errorMessage);
-                }
-
-                var companyLms = lmsUserParameters.CompanyLms;
-                
-                string error;
-                IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
-                    .GetItemsForUser(
-                        lmsUserParameters,
-                        isSurvey,
-                        quizIds,
-                        out error);
-
-                var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.Id);
-
-                if (isSurvey)
-                {
-                    var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
-                    var surveys = this.SurveyModel.GetLmsSurveys(user.Id, lmsUserParameters.Course, companyLms.Id);
-
-                    return new SurveysAndSubModuleItemsDTO
+                    var user = UserModel.GetOneById(userId).Value;
+                    if (user == null)
                     {
-                        surveys = subModuleItemsQuizes.Select(x => surveys.FirstOrDefault(q => q.surveyId == x.Value)).ToArray(),
-                        subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToArray(),
-                    };
+                        var err = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No user found");
+                        this.LogError("LMS.Convert", err);
+                        throw new FaultException<Error>(err, err.errorMessage);
+                    }
+
+                    var companyLms = lmsUserParameters.CompanyLms;
+
+                    string error;
+                    IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
+                        .GetItemsForUser(
+                            lmsUserParameters,
+                            isSurvey,
+                            quizIds,
+                            out error);
+
+                    var subModuleItemsQuizes = QuizConverter.ConvertQuizzes(quizzes, user, isSurvey, lmsUserParameters.CompanyLms.Id);
+
+                    if (isSurvey)
+                    {
+                        var items = this.SubModuleItemModel.GetSurveySubModuleItemsByUserId(user.Id).ToList();
+                        var surveys = this.SurveyModel.GetLmsSurveys(user.Id, lmsUserParameters.Course, companyLms.Id);
+
+                        return new SurveysAndSubModuleItemsDTO
+                        {
+                            surveys = subModuleItemsQuizes.Select(x => surveys.FirstOrDefault(q => q.surveyId == x.Value)).ToArray(),
+                            subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToArray(),
+                        };
+                    }
+                    else
+                    {
+                        var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
+                        var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.Id);
+
+                        return new QuizesAndSubModuleItemsDTO
+                        {
+                            quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value))
+                            .ToList().Select(x => new QuizFromStoredProcedureDTO(x)).ToArray(),
+                            subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToArray(),
+                        };
+                    }
                 }
                 else
                 {
-                    var items = this.SubModuleItemModel.GetQuizSMItemsByUserId(user.Id).ToList();
-                    var quizes = this.QuizModel.GetLMSQuizzes(user.Id, lmsUserParameters.Course, companyLms.Id);
-
-                    return new QuizesAndSubModuleItemsDTO
-                    {
-                        quizzes = subModuleItemsQuizes.Select(x => quizes.FirstOrDefault(q => q.quizId == x.Value))
-                        .ToList().Select(x => new QuizFromStoredProcedureDTO(x)).ToArray(),
-                        subModuleItems = subModuleItemsQuizes.Select(x => items.FirstOrDefault(q => q.subModuleItemId == x.Key)).ToArray(),
-                    };
+                    var error = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found");
+                    this.LogError("LMS.Convert", error);
+                    throw new FaultException<Error>(error, error.errorMessage);
                 }
             }
-            else
+            catch (WarningMessageException ex)
             {
-                var error = new Error(Errors.CODE_ERRORTYPE_INVALID_PARAMETER, "Wrong id", "No lms user parameters found");
+                var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Integration", ex.Message);
                 this.LogError("LMS.Convert", error);
-                throw new FaultException<Error>(error, error.errorMessage);
+                throw new FaultException<Error>(error, ex.Message);
             }
+        }
+
+        private FileDownloadDTO BuildUserGuide(string name)
+        {
+            var result = new FileDownloadDTO();
+
+            result.downloadUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, name);
+            result.fileName = string.Format("{0}.pdf", name);
+            result.title = "User Guide";
+
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-instructions/{0}.pdf", name));
+            var file = new FileInfo(path);
+            result.lastModifyDate = file.CreationTimeUtc;
+            result.sizeInBytes = file.Length;
+
+            return result;
+        }
+
+        private FileDownloadDTO BuildBlackboardJar()
+        {
+            var result = new FileDownloadDTO();
+            // 1.0.25
+            string version = (string)this.Settings.BlackBoardJarVersion;
+            result.downloadUrl = string.Format("{0}content/lti-files/edugame-cloud-ws-{1}.jar", (string)this.Settings.PortalUrl, version);
+            result.fileName = string.Format("edugame-cloud-ws-{0}.jar", version);
+            result.title = "Blackboard EGC Web Service";
+
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-files/edugame-cloud-ws-{0}.jar", version));
+            var file = new FileInfo(path);
+            result.lastModifyDate = file.CreationTimeUtc;
+            result.sizeInBytes = file.Length;
+
+            return result;
+        }
+
+        private FileDownloadDTO BuildMoodleZip()
+        {
+            var result = new FileDownloadDTO();
+            // 1.0.25
+            string version = (string)this.Settings.MoodleZipVersion;
+            result.downloadUrl = string.Format("{0}content/lti-files/edugamecloud_{1}.zip", (string)this.Settings.PortalUrl, version);
+            result.fileName = string.Format("edugamecloud_{0}.zip", version);
+            result.title = "Moodle EGC Web Service";
+
+            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-files/edugamecloud_{0}.zip", version));
+            var file = new FileInfo(path);
+            result.lastModifyDate = file.CreationTimeUtc;
+            result.sizeInBytes = file.Length;
+
+            return result;
         }
 
         #endregion

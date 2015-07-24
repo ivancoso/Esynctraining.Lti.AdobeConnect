@@ -16,10 +16,10 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
-    <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressSSLPort>443</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <NuGetPackageImportStamp>aff28e60</NuGetPackageImportStamp>
@@ -570,6 +570,7 @@
     <Content Include="Content\lti-config\desire2learn.xml" />
     <Content Include="Content\lti-config\moodle.xml" />
     <Content Include="Content\lti-config\sakai.xml" />
+    <Content Include="Content\lti-files\edugame-cloud-ws-1.0.25.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
     <Content Include="Content\swf\admin\Adm_EdugameCloud_1.5.6579.swf" />
@@ -740,6 +741,7 @@
     </Content>
     <Content Include="Content\lti-instructions\Desire2Learn.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
+    <Content Include="Content\lti-files\edugamecloud_1.0.6.zip" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="PublishProfiles\EdugameCloud.Web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
@@ -800,7 +802,9 @@
     <Folder Include="Mail\Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

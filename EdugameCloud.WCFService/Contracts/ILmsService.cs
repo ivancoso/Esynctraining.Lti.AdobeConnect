@@ -25,6 +25,11 @@
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetProviders", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         LmsProviderDTO[] GetProviders();
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        //[WebGet(UriTemplate = "GetFiles", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        FileDownloadDTO[] GetFiles(int lmsProviderId);
         
         [OperationContract]
         [FaultContract(typeof(Error))]
