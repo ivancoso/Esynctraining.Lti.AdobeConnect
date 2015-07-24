@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService.Converters
+﻿using System;
+
+namespace EdugameCloud.WCFService.Converters
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -27,7 +29,7 @@
             var quizSubmissions = _canvasApi.GetSubmissionForQuiz(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
-                lmsUserParameters.Course,
+                lmsUserParameters.Course,                
                 quizResult.Quiz.LmsQuizId.GetValueOrDefault());
 
             foreach (var submission in quizSubmissions)
@@ -49,16 +51,21 @@
                     }
                 }
 
-                _canvasApi.AnswerQuestionsForQuiz(
-                    lmsUserParameters.CompanyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    submission);
-
-                _canvasApi.ReturnSubmissionForQuiz(
-                    lmsUserParameters.CompanyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    lmsUserParameters.Course,
-                    submission);
+                try
+                {
+                    _canvasApi.AnswerQuestionsForQuiz(
+                        lmsUserParameters.CompanyLms.LmsDomain,
+                        lmsUserParameters.LmsUser.Token,
+                        submission);
+                }
+                finally
+                {
+                    _canvasApi.CompleteQuizSubmission(
+                   lmsUserParameters.CompanyLms.LmsDomain,
+                   lmsUserParameters.LmsUser.Token,
+                   lmsUserParameters.Course,
+                   submission);
+                }
             }
         }
 
@@ -68,7 +75,8 @@
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,
-                surveyResult.Survey.LmsSurveyId.GetValueOrDefault());
+                surveyResult.Survey.LmsSurveyId.GetValueOrDefault()
+                );
 
             foreach (var submission in quizSubmissions)
             {
@@ -105,16 +113,21 @@
                     }
                 }
 
-                _canvasApi.AnswerQuestionsForQuiz(
-                    lmsUserParameters.CompanyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    submission);
-
-                _canvasApi.ReturnSubmissionForQuiz(
-                    lmsUserParameters.CompanyLms.LmsDomain,
-                    lmsUserParameters.LmsUser.Token,
-                    lmsUserParameters.Course,
-                    submission);
+                try
+                {
+                    _canvasApi.AnswerQuestionsForQuiz(
+                        lmsUserParameters.CompanyLms.LmsDomain,
+                        lmsUserParameters.LmsUser.Token,
+                        submission);
+                }
+                finally
+                {
+                    _canvasApi.CompleteQuizSubmission(
+                   lmsUserParameters.CompanyLms.LmsDomain,
+                   lmsUserParameters.LmsUser.Token,
+                   lmsUserParameters.Course,
+                   submission);
+                }
             }
         }
 

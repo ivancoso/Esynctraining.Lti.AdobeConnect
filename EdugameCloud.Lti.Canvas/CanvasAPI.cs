@@ -135,7 +135,8 @@
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "[CanvasAPI.AnswerQuestionsForQuiz] API:{0}. UserToken:{1}. SubmissionId:{2}.", api, userToken, submission.id);
+                _logger.ErrorFormat(ex, "[CanvasAPI.AnswerQuestionsForQuiz] API:{0}. UserToken:{1}. SubmissionId:{2}.",
+                    api, userToken, submission.id);
                 throw;
             }
 

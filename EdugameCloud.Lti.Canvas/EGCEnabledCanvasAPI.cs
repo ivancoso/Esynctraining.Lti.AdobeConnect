@@ -259,7 +259,7 @@ namespace EdugameCloud.Lti.Canvas
         /// <param name="submission">
         /// The submission.
         /// </param>
-        public void ReturnSubmissionForQuiz(
+        public void CompleteQuizSubmission(
             string api,
             string userToken,
             int courseId,
