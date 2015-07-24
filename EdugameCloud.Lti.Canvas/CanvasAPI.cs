@@ -12,9 +12,6 @@
     using Castle.Core.Logging;
     using System;
 
-    /// <summary>
-    /// The course API.
-    /// </summary>
     // ReSharper disable once InconsistentNaming
     public class CanvasAPI : ILmsAPI, ICanvasAPI
     {

@@ -94,7 +94,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        protected string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
+        protected virtual string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
         {
             Distractor distractor = question.Distractors != null
                 ? question.Distractors.FirstOrDefault()
@@ -264,9 +264,11 @@
                     if (textTag != null)
                     {
                         var id = textTag.Attributes["id"].Value;
+
+                        xmlDoc.DocumentElement.SetAttribute("searchName", userText);
                         var optionTag =
                             xmlDoc.SelectSingleNode(
-                                string.Format("data//options[@id='{0}']//option[@name='{1}']", id, userText));
+                                string.Format("data//options[@id='{0}']//option[@name=/*/@searchName]", id, userText));
                         if (optionTag != null && optionTag.Attributes["lmsid"] != null)
                         {
                             ret.Add(orderAsKey ? orderAsKey.ToString() : key, optionTag.Attributes["lmsid"].Value);

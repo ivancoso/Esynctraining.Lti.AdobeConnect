@@ -69,7 +69,9 @@ namespace EdugameCloud.WCFService.Converters
             }
         }
 
-        public override void ConvertAndSendSurveyResultToLms(IEnumerable<SurveyQuestionResultDTO> results, SurveyResult surveyResult, LmsUserParameters lmsUserParameters)
+        public override void ConvertAndSendSurveyResultToLms(IEnumerable<SurveyQuestionResultDTO> results, 
+            SurveyResult surveyResult, 
+            LmsUserParameters lmsUserParameters)
         {
             var quizSubmissions = _canvasApi.GetSubmissionForQuiz(
                 lmsUserParameters.CompanyLms.LmsDomain,
@@ -129,6 +131,32 @@ namespace EdugameCloud.WCFService.Converters
                    submission);
                 }
             }
+        }
+
+        protected override string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)
+        {
+            Distractor distractor = question.Distractors != null
+                ? question.Distractors.FirstOrDefault(x => x.IsActive.GetValueOrDefault())
+                : null;
+            if (distractor != null)
+            {
+                bool answ;
+                // TRICK: for survey using isCorrect logic is not valid
+                // but only surveys have 'answers' property populated
+                if ((answer.answers != null) && (answer.answers.Length > 0))
+                {
+                    answ = answer.answers[0] == "1";
+                }
+                else 
+                {
+                    answ = (answer.isCorrect && distractor.IsCorrect.GetValueOrDefault())
+                        || (!answer.isCorrect && !distractor.IsCorrect.GetValueOrDefault());
+                }
+
+                return answ ? distractor.LmsAnswer : distractor.LmsAnswerId.ToString();
+            }
+
+            return string.Empty;
         }
 
         /// <summary>

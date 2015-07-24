@@ -13,8 +13,6 @@
 
     using HtmlAgilityPack;
 
-    //using NHibernate.Mapping;
-
     using RestSharp.Contrib;
 
     /// <summary>
@@ -22,15 +20,6 @@
     /// </summary>
     internal sealed class CanvasQuizParser
     {
-        /// <summary>
-        /// The parse.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsQuizDTO"/>.
-        /// </returns>
         public static void Parse(CanvasQuizDTO quiz)
         {
             if (quiz.questions == null)
