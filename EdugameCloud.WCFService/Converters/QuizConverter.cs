@@ -3,13 +3,9 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net;
     using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Threading;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
@@ -20,208 +16,101 @@
     using Esynctraining.Core.Utils;
     using Newtonsoft.Json;
     using RestSharp;
+    using EdugameCloud.Lti.Core;
 
     /// <summary>
     /// The quiz converter.
     /// </summary>
     public sealed class QuizConverter
     {
-        /// <summary>
-        ///     Gets the quiz model.
-        /// </summary>
         private QuizModel QuizModel
         {
-            get
-            {
-                return IoC.Resolve<QuizModel>();
-            }
+            get { return IoC.Resolve<QuizModel>(); }
         }
 
-        /// <summary>
-        /// Gets the survey model.
-        /// </summary>
         private SurveyModel SurveyModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyModel>();
-            }
+            get { return IoC.Resolve<SurveyModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private QuestionForSingleMultipleChoiceModel QuestionForSingleMultipleChoiceModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionForSingleMultipleChoiceModel>();
-            }
+            get { return IoC.Resolve<QuestionForSingleMultipleChoiceModel>(); }
         }
 
-        /// <summary>
-        /// Gets the question for rate model.
-        /// </summary>
         private QuestionForRateModel QuestionForRateModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionForRateModel>();
-            }
+            get { return IoC.Resolve<QuestionForRateModel>(); }
         }
 
-        /// <summary>
-        /// Gets the question for open answer model.
-        /// </summary>
         private QuestionForOpenAnswerModel QuestionForOpenAnswerModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionForOpenAnswerModel>();
-            }
+            get { return IoC.Resolve<QuestionForOpenAnswerModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private SubModuleCategoryModel SubModuleCategoryModel
         {
-            get
-            {
-                return IoC.Resolve<SubModuleCategoryModel>();
-            }
+            get { return IoC.Resolve<SubModuleCategoryModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private SubModuleModel SubModuleModel
         {
-            get
-            {
-                return IoC.Resolve<SubModuleModel>();
-            }
+            get { return IoC.Resolve<SubModuleModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private SubModuleItemModel SubModuleItemModel
         {
-            get
-            {
-                return IoC.Resolve<SubModuleItemModel>();
-            }
+            get { return IoC.Resolve<SubModuleItemModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private QuestionForTrueFalseModel QuestionForTrueFalseModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionForTrueFalseModel>();
-            }
+            get { return IoC.Resolve<QuestionForTrueFalseModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private LmsQuestionTypeModel LmsQuestionTypeModel
         {
-            get
-            {
-                return IoC.Resolve<LmsQuestionTypeModel>();
-            }
+            get { return IoC.Resolve<LmsQuestionTypeModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private QuestionModel QuestionModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionModel>();
-            }
+            get { return IoC.Resolve<QuestionModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private QuestionTypeModel QuestionTypeModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
+            get { return IoC.Resolve<QuestionTypeModel>(); }
         }
 
-        /// <summary>
-        /// Gets the quiz format model.
-        /// </summary>
         private QuizFormatModel QuizFormatModel
         {
-            get
-            {
-                return IoC.Resolve<QuizFormatModel>();
-            }
+            get { return IoC.Resolve<QuizFormatModel>(); }
         }
 
-        /// <summary>
-        /// Gets the file model.
-        /// </summary>
         private FileModel FileModel
         {
-            get
-            {
-                return IoC.Resolve<FileModel>();
-            }
+            get { return IoC.Resolve<FileModel>(); }
         }
 
-        /// <summary>
-        /// Gets the score type model.
-        /// </summary>
         private ScoreTypeModel ScoreTypeModel
         {
-            get
-            {
-                return IoC.Resolve<ScoreTypeModel>();
-            }
+            get { return IoC.Resolve<ScoreTypeModel>(); }
         }
 
-        /// <summary>
-        /// Gets the survey grouping type model.
-        /// </summary>
         private SurveyGroupingTypeModel SurveyGroupingTypeModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyGroupingTypeModel>();
-            }
+            get { return IoC.Resolve<SurveyGroupingTypeModel>(); }
         }
 
-        /// <summary>
-        /// Gets the distractor model.
-        /// </summary>
         private DistractorModel DistractorModel
         {
-            get
-            {
-                return IoC.Resolve<DistractorModel>();
-            }
+            get { return IoC.Resolve<DistractorModel>(); }
         }
 
-        /// <summary>
-        /// Gets the company lms model.
-        /// </summary>
         private LmsCompanyModel LmsCompanyModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyModel>(); }
         }
         
         /// <summary>
@@ -260,27 +149,6 @@
             return submoduleQuiz;
         }
 
-        /// <summary>
-        /// The convert quiz.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="subModuleCategory">
-        /// The sub Module Category.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <param name="companyLmsId">
-        /// The company lms Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Tuple"/>.
-        /// </returns>
         private Tuple<int, int> ConvertQuiz(LmsQuizDTO quiz, User user, SubModuleCategory subModuleCategory, bool isSurvey, int companyLmsId)
         {
             SubModuleItem subModuleItem;
@@ -311,21 +179,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The process sub module category.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="companyLmsId">
-        /// The company Lms Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleCategory"/>.
-        /// </returns>
         private SubModuleCategory ProcessSubModuleCategory(LmsQuizDTO quiz, User user, int companyLmsId, bool isSurvey)
         {
             var subModuleCategoryModel = this.SubModuleCategoryModel;
@@ -349,24 +202,6 @@
             return subModuleCategory;
         }
 
-        /// <summary>
-        /// The process sub module.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="subModuleCategory">
-        /// The sub Module Category.
-        /// </param>
-        /// <param name="item">
-        /// The item.
-        /// </param>
-        /// <param name="lmsQuiz">
-        /// The lms quiz.
-        /// </param>
-        /// <returns>
-        /// The <see cref="SubModuleItem"/>.
-        /// </returns>
         private SubModuleItem ProcessSubModule(User user, SubModuleCategory subModuleCategory, SubModuleItem item, LmsQuizDTO lmsQuiz)
         {
             var submodule = item ??
@@ -386,21 +221,6 @@
             return submodule;
         }
 
-        /// <summary>
-        /// The process quiz data.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="egcQuiz">
-        /// The egc quiz.
-        /// </param>
-        /// <param name="submoduleItem">
-        /// The submodule item.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Tuple"/>.
-        /// </returns>
         private Tuple<int, int> ProcessQuizData(LmsQuizDTO quiz, Quiz egcQuiz, SubModuleItem submoduleItem)
         {
             egcQuiz.LmsQuizId = quiz.id;
@@ -432,21 +252,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The process survey data.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="egcSurvey">
-        /// The egc survey.
-        /// </param>
-        /// <param name="submoduleItem">
-        /// The submodule item.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Tuple"/>.
-        /// </returns>
         private Tuple<int, int> ProcessSurveyData(LmsQuizDTO quiz, Survey egcSurvey, SubModuleItem submoduleItem)
         {
             egcSurvey.LmsSurveyId = quiz.id;
@@ -477,24 +282,6 @@
             return result;
         }
 
-        /// <summary>
-        /// The process quiz questions.
-        /// </summary>
-        /// <param name="quiz">
-        /// The quiz.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="submodule">
-        /// The submodule.
-        /// </param>
-        /// <param name="isSurvey">
-        /// The is Survey.
-        /// </param>
-        /// <param name="companyLmsId">
-        /// The company Lms Id.
-        /// </param>
         private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int companyLmsId)
         {
             var companyLms = this.LmsCompanyModel.GetOneById(companyLmsId).Value;
@@ -592,27 +379,6 @@
             }
         }
 
-        /// <summary>
-        /// The process distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="companyLms">
-        /// The company Lms.
-        /// </param>
-        /// <param name="qtypeId">
-        /// The question type Id.
-        /// </param>
-        /// <param name="q">
-        /// The question.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="lmsProvider">
-        /// The lms Provider.
-        /// </param>
         private void ProcessDistractors(User user, LmsCompany lmsCompany, int qtypeId, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider)
         {
             var disctarctorModel = this.DistractorModel;
@@ -676,18 +442,6 @@
             }
         }
 
-        /// <summary>
-        /// The process fill in the blank question text.
-        /// </summary>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="lmsProvider">
-        /// The lms provider.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string ProcessFillInTheBlankQuestionText(LmsQuestionDTO q, LmsProviderEnum lmsProvider)
         {
             switch (lmsProvider)
@@ -701,15 +455,6 @@
             return string.Empty;
         }
 
-        /// <summary>
-        /// The process fill in the blank question text moodle.
-        /// </summary>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string ProcessFillInTheBlankQuestionTextMoodle(LmsQuestionDTO q)
         {
             var i = 1;
@@ -726,15 +471,6 @@
             return questionText;
         }
 
-        /// <summary>
-        /// The process fill in the blank question text.
-        /// </summary>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string ProcessFillInTheBlankQuestionTextCanvas(LmsQuestionDTO q)
         {
             var questionText = q.question_text;
@@ -752,24 +488,6 @@
             return questionText;
         }
 
-        /// <summary>
-        /// The process fill in the blank distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="option">
-        /// The option.
-        /// </param>
-        /// <param name="lmsProvider">
-        /// The lms provider.
-        /// </param>
         private void ProcessFillInTheBlankDistractors(
             User user,
             LmsQuestionDTO q,
@@ -780,30 +498,24 @@
             switch (lmsProvider)
             {
                 case LmsProviderEnum.Canvas:
+                    if (!q.answers.Any())
+                    {
+                        throw new WarningMessageException("Unable to import. Fill In Multiple Blanks questions should have possible answers.");
+                    }
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    break;
+
                 case LmsProviderEnum.Blackboard:
                     this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
                     break;
+
                 case LmsProviderEnum.Moodle:
                     this.ProcessFillInTheBlankDistractorsMoodle(user, q, question, option);
                     break;
+
             }
         }
 
-        /// <summary>
-        /// The process fill in the blank distractors moodle.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="option">
-        /// The option.
-        /// </param>
         private void ProcessFillInTheBlankDistractorsMoodle(
             User user,
             LmsQuestionDTO q,
@@ -876,21 +588,6 @@
             this.DistractorModel.RegisterSave(distractor);
         }
 
-        /// <summary>
-        /// The process fill in the blank distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="option">
-        /// The option.
-        /// </param>
         private void ProcessFillInTheBlankDistractorsCanvas(
             User user,
             LmsQuestionDTO q,
@@ -901,7 +598,8 @@
             var questionText = q.question_text.ClearName();
             while (questionText.Length > 0)
             {
-                int nextPlaceholderStart = questionText.IndexOf("["), nextPlaceholderEnd = questionText.IndexOf("]");
+                int nextPlaceholderStart = questionText.IndexOf("[");
+                int nextPlaceholderEnd = questionText.IndexOf("]");
                 if (nextPlaceholderEnd < 0 || nextPlaceholderStart < 0)
                 {
                     splitText.Add(questionText);
@@ -985,21 +683,6 @@
             this.DistractorModel.Flush();
         }
 
-        /// <summary>
-        /// The process sequence distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="companyLms">
-        /// The company Lms.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessHotSpotDistractors(
             User user,
             LmsCompany lmsCompany,
@@ -1095,18 +778,6 @@
             }
         }
 
-        /// <summary>
-        /// The process sequence distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessSequenceDistractors(
             User user,
             LmsQuestionDTO q,
@@ -1135,18 +806,6 @@
             }
         }
 
-        /// <summary>
-        /// The process numerical distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessNumericalDistractors(
             User user,
             LmsQuestionDTO q,
@@ -1181,21 +840,6 @@
             }
         }
 
-        /// <summary>
-        /// The process calculated distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="lmsProvider">
-        /// The lms provider.
-        /// </param>
         private void ProcessCalculatedDistractors(User user, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider)
         {
             switch (lmsProvider)
@@ -1210,18 +854,6 @@
             }
         }
 
-        /// <summary>
-        /// The process calculated distractors moodle.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessCalculatedDistractorsMoodle(User user, LmsQuestionDTO q, Question question)
         {
             var answerNumber = 1;//question.IsMoodleSingle.GetValueOrDefault() ? 0 : 1; // singlechoice starts from 0, multichoice from 1
@@ -1262,18 +894,6 @@
             }
         }
 
-        /// <summary>
-        /// The process calculated distractors canvas.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessCalculatedDistractorsCanvas(
             User user,
             LmsQuestionDTO q,
@@ -1309,18 +929,6 @@
             this.DistractorModel.RegisterSave(distractor);
         }
 
-        /// <summary>
-        /// The process calculated question text.
-        /// </summary>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="lmsProvider">
-        /// The lms Provider.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string ProcessCalculatedQuestionText(LmsQuestionDTO q, LmsProviderEnum lmsProvider)
         {
             var questionText = q.question_text;
@@ -1358,18 +966,6 @@
             return questionText;
         }
 
-        /// <summary>
-        /// The process matching distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void ProcessMatchingDistractors(
             User user,
             LmsQuestionDTO q,
@@ -1401,21 +997,6 @@
             }
         }
 
-        /// <summary>
-        /// The process single multiple choice text distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="distractorModel">
-        /// The distractor model.
-        /// </param>
         private void ProcessSingleMultipleChoiceTextDistractors(
             User user,
             LmsQuestionDTO q,
@@ -1447,18 +1028,6 @@
             }
         }
 
-        /// <summary>
-        /// The add likert question distractor.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
         private void AddLikertQuestionDistractor(
             User user,
             LmsQuestionDTO q,
@@ -1484,21 +1053,6 @@
             this.DistractorModel.RegisterSave(distractor);
         }
 
-        /// <summary>
-        /// The process question for true false distractors.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="q">
-        /// The q.
-        /// </param>
-        /// <param name="question">
-        /// The question.
-        /// </param>
-        /// <param name="distractorModel">
-        /// The distractor model.
-        /// </param>
         private void ProcessQuestionForTrueFalseDistractors(
             User user,
             LmsQuestionDTO q,
@@ -1547,5 +1101,8 @@
             distractor.IsCorrect = isCorrect;
             distractorModel.RegisterSave(distractor);
         }
+
     }
+
 }
+
