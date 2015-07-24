@@ -71,7 +71,7 @@
         /// <summary>
         /// Gets or sets the display name key.
         /// </summary>
-        public string DisplayNameKey { get; set; }
+        public string DisplayNameKey { get; private set; }
 
         /// <summary>
         /// Gets or sets resource manager type used to access resources within particular resource file

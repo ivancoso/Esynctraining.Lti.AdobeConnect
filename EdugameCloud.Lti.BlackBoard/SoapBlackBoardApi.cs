@@ -163,28 +163,7 @@ namespace EdugameCloud.Lti.BlackBoard
 
             return result.status;
         }
-        
-        /// <summary>
-        /// The get users for course.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="courseid">
-        /// The course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="client">
-        /// The client.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// Forces update
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
+
         public List<LmsUserDTO> GetUsersForCourse(
             LmsCompany company,
             int courseid,
@@ -388,65 +367,6 @@ namespace EdugameCloud.Lti.BlackBoard
             error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
             return null;
         }
-
-        /// <summary>
-        /// The login and create a client.
-        /// </summary>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="useSsl">
-        /// The use SSL.
-        /// </param>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <param name="password">
-        /// The password.
-        /// </param>
-        /// <returns>
-        /// The <see cref="WebserviceWrapper"/>.
-        /// </returns>
-        //public WebserviceWrapper LoginTicketAndCreateAClient(
-        //    out string error,
-        //    bool useSsl,
-        //    string lmsDomain,
-        //    string password)
-        //{
-        //    try
-        //    {
-        //        var lmsDomainFixed = GetHost(lmsDomain, useSsl);
-        //        WebserviceWrapper client;
-        //        if (!InitializeClient(lmsDomainFixed, out client, out error))
-        //        {
-        //            return null;
-        //        }
-
-        //        client.initialize_v1();
-        //        if (HadError(client, out error))
-        //        {
-        //            return null;
-        //        }
-                /*
-        //        if (client.loginTicket(password))
-        //        {
-        //            return client;
-        //        }
-                */
-        //        if (HadError(client, out error))
-        //        {
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        error = ex.Message;
-        //        return null;
-        //    }
-
-        //    error = "Not able to login into: " + lmsDomain + " for tool, password: " + password;
-        //    return null;
-        //}
 
         #endregion
 
@@ -708,22 +628,20 @@ namespace EdugameCloud.Lti.BlackBoard
 
             var userWS = client.getUserWrapper();
             var courseUsersFilter = new UserFilter
-                                {
-                                    filterTypeSpecified = true,
-                                    filterType = 2,
-                                    id = enrollments.Select(x => x.userId).ToArray(),
-                                };
+            {
+                filterTypeSpecified = true,
+                filterType = 2,
+                id = enrollments.Select(x => x.userId).ToArray(),
+            };
             var courseUsers = userWS.getUser(courseUsersFilter);
             var uuidString = "USER.UUID=" + userUuid;
-            var user = courseUsers.FirstOrDefault(cu => cu != null && cu.expansionData != null
-                                                        &&
-                                                        cu.expansionData.Any(
-                                                            ed =>
-                                                                String.Compare(uuidString, ed,
-                                                                    StringComparison.OrdinalIgnoreCase) == 0));
+            var user = courseUsers.FirstOrDefault(cu => cu != null 
+                && cu.expansionData != null
+                && cu.expansionData.Any(ed => string.Compare(uuidString, ed, StringComparison.OrdinalIgnoreCase) == 0));
+
             if (user == null)
             {
-                var adminRoles = new[] {"SYSTEM_ADMIN", "COURSE_CREATOR"};
+                var adminRoles = new[] { "SYSTEM_ADMIN", "COURSE_CREATOR" };
                 user = courseUsers.FirstOrDefault(x => x.systemRoles.Any(role => adminRoles.Contains(role)));
             }
 
@@ -740,7 +658,7 @@ namespace EdugameCloud.Lti.BlackBoard
                     positionSpecified = true,
                     pushNotify = true,
                     pushNotifySpecified = true,
-                    title = announcementTitle
+                    title = announcementTitle,
                 };
 
                 var annWS = client.getAnnouncementWrapper();
@@ -755,4 +673,5 @@ namespace EdugameCloud.Lti.BlackBoard
         #endregion
 
     }
+
 }

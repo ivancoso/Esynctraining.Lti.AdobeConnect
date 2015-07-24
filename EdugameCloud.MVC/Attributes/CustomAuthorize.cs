@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CustomAuthorize.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The custom authorize.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace EdugameCloud.MVC.Attributes
+﻿namespace EdugameCloud.MVC.Attributes
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -22,10 +13,7 @@ namespace EdugameCloud.MVC.Attributes
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
 
-    /// <summary>
-    ///     The custom authorize.
-    /// </summary>
-    public class CustomAuthorize : AuthorizeAttribute
+    public sealed class CustomAuthorize : AuthorizeAttribute
     {
         #region Constructors and Destructors
 
@@ -52,7 +40,7 @@ namespace EdugameCloud.MVC.Attributes
         /// <summary>
         /// Gets or sets the roles list.
         /// </summary>
-        public IEnumerable<UserRoleEnum> RolesList { get; set; }
+        public IEnumerable<UserRoleEnum> RolesList { get; private set; }
 
         public bool RedirectToLogin { get; set; }
 
@@ -113,5 +101,7 @@ namespace EdugameCloud.MVC.Attributes
         }
 
         #endregion
+
     }
+
 }

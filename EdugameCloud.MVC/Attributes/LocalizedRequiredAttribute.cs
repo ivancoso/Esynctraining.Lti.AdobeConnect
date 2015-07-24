@@ -9,7 +9,7 @@
     /// <summary>
     /// The localized required attribute.
     /// </summary>
-    public class LocalizedRequiredAttribute : RequiredAttribute
+    public sealed class LocalizedRequiredAttribute : RequiredAttribute
     {
         #region Fields
 
@@ -63,7 +63,7 @@
         /// <summary>
         /// Gets or sets the error message key name.
         /// </summary>
-        public string ErrorMessageKeyName { get; set; }
+        public string ErrorMessageKeyName { get; private set; }
 
         #endregion
 
