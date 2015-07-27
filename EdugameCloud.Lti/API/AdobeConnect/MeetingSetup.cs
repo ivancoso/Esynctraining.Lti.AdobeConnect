@@ -2009,6 +2009,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         ScoInfoResult newFolder = provider.CreateSco(new FolderUpdateItem { Name = name, FolderId = sharedMeetings.ScoId, Type = ScoType.folder });
                         if (newFolder.Success && newFolder.ScoInfo != null)
                         {
+                            provider.UpdatePublicAccessPermissions(newFolder.ScoInfo.ScoId, SpecialPermissionId.denied);
                             credentials.ACScoId = newFolder.ScoInfo.ScoId;
                         }
                     }
