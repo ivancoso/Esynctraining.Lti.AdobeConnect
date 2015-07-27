@@ -26,14 +26,12 @@ namespace EdugameCloud.WCFService.Converters
 
         public override void ConvertAndSendQuizResultToLms(IEnumerable<QuizQuestionResultDTO> results, QuizResult quizResult, LmsUserParameters lmsUserParameters)
         {
-            var quizSubmissions = _canvasApi.GetSubmissionForQuiz(
+            var quizSubmission = _canvasApi.CreateQuizSubmission(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,                
                 quizResult.Quiz.LmsQuizId.GetValueOrDefault());
 
-            foreach (var submission in quizSubmissions)
-            {
                 foreach (var answer in results)
                 {
                     Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
@@ -46,25 +44,28 @@ namespace EdugameCloud.WCFService.Converters
 
                     if (answers != null)
                     {
-                        submission.quiz_questions.Add(
+                        quizSubmission.quiz_questions.Add(
                             new CanvasQuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
                     }
-                }
 
-                try
-                {
-                    _canvasApi.AnswerQuestionsForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token,
-                        submission);
-                }
+                    try
+                    {
+                        _canvasApi.AnswerQuestionsForQuiz(
+                            lmsUserParameters.CompanyLms.LmsDomain,
+                            lmsUserParameters.LmsUser.Token,
+                            quizSubmission);
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                    }
                 finally
                 {
                     _canvasApi.CompleteQuizSubmission(
                    lmsUserParameters.CompanyLms.LmsDomain,
                    lmsUserParameters.LmsUser.Token,
                    lmsUserParameters.Course,
-                   submission);
+                   quizSubmission);
                 }
             }
         }
@@ -73,64 +74,66 @@ namespace EdugameCloud.WCFService.Converters
             SurveyResult surveyResult, 
             LmsUserParameters lmsUserParameters)
         {
-            var quizSubmissions = _canvasApi.GetSubmissionForQuiz(
+            var quizSubmission = _canvasApi.CreateQuizSubmission(
                 lmsUserParameters.CompanyLms.LmsDomain,
                 lmsUserParameters.LmsUser.Token,
                 lmsUserParameters.Course,
                 surveyResult.Survey.LmsSurveyId.GetValueOrDefault()
                 );
 
-            foreach (var submission in quizSubmissions)
+            foreach (var answer in results)
             {
-                foreach (var answer in results)
+                Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                if (question.LmsQuestionId == null)
                 {
-                    Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
-                    if (question.LmsQuestionId == null)
-                    {
-                        continue;
-                    }
-
-                    var quizAnswer = new QuizQuestionResultDTO();
-                    quizAnswer.isCorrect = answer.isCorrect;
-                    if (question.QuestionType.Id == (int)QuestionTypeEnum.SingleMultipleChoiceText)
-                    {
-                        quizAnswer.answers =
-                            answer.answers.Where(a => a.surveyDistractorAnswerId != null)
-                                .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
-                                .ToArray();
-                    }
-                    else
-                    {
-                        quizAnswer.answers =
-                            answer.answers.Where(a => a.value != null)
-                                .Select(a => a.value)
-                                .ToArray();
-                    }
-                    var answers = this.ProcessAnswers(question, quizAnswer);
-
-                    if (answers != null)
-                    {
-                        submission.quiz_questions.Add(
-                            new CanvasQuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
-                    }
+                    continue;
                 }
 
-                try
+                var quizAnswer = new QuizQuestionResultDTO();
+                quizAnswer.isCorrect = answer.isCorrect;
+                if (question.QuestionType.Id == (int) QuestionTypeEnum.SingleMultipleChoiceText)
                 {
-                    _canvasApi.AnswerQuestionsForQuiz(
-                        lmsUserParameters.CompanyLms.LmsDomain,
-                        lmsUserParameters.LmsUser.Token,
-                        submission);
+                    quizAnswer.answers =
+                        answer.answers.Where(a => a.surveyDistractorAnswerId != null)
+                            .Select(a => a.surveyDistractorAnswerId.GetValueOrDefault().ToString())
+                            .ToArray();
                 }
+                else
+                {
+                    quizAnswer.answers =
+                        answer.answers.Where(a => a.value != null)
+                            .Select(a => a.value)
+                            .ToArray();
+                }
+                var answers = this.ProcessAnswers(question, quizAnswer);
+
+                if (answers != null)
+                {
+                    quizSubmission.quiz_questions.Add(
+                        new CanvasQuizSubmissionQuestionDTO {id = question.LmsQuestionId.Value, answer = answers});
+                }
+            }
+
+            try
+            {
+                _canvasApi.AnswerQuestionsForQuiz(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    quizSubmission);
+            }
+            catch (Exception ex)
+            {
+                
+            }
                 finally
                 {
                     _canvasApi.CompleteQuizSubmission(
                    lmsUserParameters.CompanyLms.LmsDomain,
                    lmsUserParameters.LmsUser.Token,
                    lmsUserParameters.Course,
-                   submission);
+                   quizSubmission);
                 }
-            }
+            
         }
 
         protected override string GetTrueFalseLmsIdAnswer(Question question, QuizQuestionResultDTO answer)

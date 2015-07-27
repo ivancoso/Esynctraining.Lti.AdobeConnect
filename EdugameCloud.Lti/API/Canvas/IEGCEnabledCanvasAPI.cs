@@ -10,7 +10,7 @@ namespace EdugameCloud.Lti.API.Canvas
 
         List<LmsUserDTO> GetUsersForCourse(string domain, string userToken, int courseid);
 
-        List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
+        CanvasQuizSubmissionDTO CreateQuizSubmission(
             string api,
             string userToken,
             int courseid,

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EdugameCloud.Lti.DTO;
+using Org.BouncyCastle.Asn1.Cms;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
@@ -20,7 +21,7 @@ namespace EdugameCloud.Lti.Core.DTO
             this.assetId = acSession.assetId;
             this.dateTimeEntered = acSession.dateTimeEntered;
             this.dateTimeLeft = acSession.dateTimeLeft;
-            this.durationInHours = acSession.durationInHours;
+            this.duration = GetParticipantAttendanceDuration(acSession.durationInHours);
             this.login = acSession.login;
             this.firstName = acSession.firstName;
             this.lastName = acSession.lastName;
@@ -39,7 +40,7 @@ namespace EdugameCloud.Lti.Core.DTO
         public string assetId { get; set; }
         public DateTime dateTimeEntered { get; set; }
         public DateTime? dateTimeLeft { get; set; }
-        public float durationInHours { get; set; }
+        public string duration { get; set; }
         public string login { get; set; }
         public string loginOrFullName
         {
@@ -58,6 +59,17 @@ namespace EdugameCloud.Lti.Core.DTO
         public string firstName { get; set; }
         public string lastName { get; set; }
         public int transcriptId { get; set; }
+
+        #endregion
+
+        #region methods
+
+        private static string GetParticipantAttendanceDuration(float duration)
+        {
+            var timeStamp = TimeSpan.FromHours(duration);
+            var totalSeconds = (int)timeStamp.TotalSeconds;
+            return TimeSpan.FromSeconds(totalSeconds).ToString();
+        }
 
         #endregion
     }

@@ -54,11 +54,7 @@ namespace EdugameCloud.Lti.Canvas
         //    return response.Data;
         //}
 
-        public List<CanvasQuizSubmissionDTO> GetSubmissionForQuiz(
-            string api,
-            string userToken,
-            int courseId,
-            int quizId)
+        public CanvasQuizSubmissionDTO CreateQuizSubmission(string api, string userToken, int courseId, int quizId)
         {
             IRestResponse<CanvasQuizSubmissionResultDTO> response;
             try
@@ -87,7 +83,7 @@ namespace EdugameCloud.Lti.Canvas
                     api, userToken, courseId, quizId, BuildInformation(response));
                 throw new InvalidOperationException(string.Format("[CanvasAPI.GetSubmissionForQuiz] Canvas returns '{0}'", response.StatusDescription));
             }
-            return response.Data.quiz_submissions;
+            return response.Data.quiz_submissions.Single();
         }
 
         public LmsUserDTO GetCourseUser(string userId, LmsCompany lmsCompany, string userToken, int courseId)

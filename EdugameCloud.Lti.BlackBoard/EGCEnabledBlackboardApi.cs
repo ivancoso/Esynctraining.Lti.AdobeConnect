@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.BlackBoard
+﻿using Remotion.Linq.Clauses.ResultOperators;
+
+namespace EdugameCloud.Lti.BlackBoard
 {
     using System;
     using System.Collections.Generic;
@@ -102,6 +104,7 @@
                                 continue;
                             }
                             testData = egc.getAssessmentDetails(t.id, isSurvey);
+
                             if (testData != null && !testData.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(testData);

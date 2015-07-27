@@ -234,6 +234,16 @@ namespace EdugameCloud.MVC.Controllers
                 var credentials = session.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
+                var acMeeting = acProvider.GetScoInfo(meetingScoId);
+                var acServer = credentials.AcServer;
+                if (credentials.AcServer.EndsWith("/"))
+                {
+                    acServer = acServer.Substring(0, acServer.Length - 1);
+                }
+
+                var acMeetingUrl = acServer + acMeeting.ScoInfo.UrlPath;
+                var acMeetingTitle = acMeeting.ScoInfo.Name;
+
                 if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
                 {
                     this.RedirectToError("Unable to generate report in such format " + " \"" + format + "\"");
@@ -263,7 +273,7 @@ namespace EdugameCloud.MVC.Controllers
                     return null;
                 }
                
-                var parametersList = GetReportParameters(format, company, session);
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);
 
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
@@ -299,9 +309,15 @@ namespace EdugameCloud.MVC.Controllers
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+                var acProvider = this.GetAdobeConnectProvider(credentials);
+
+                var acMeeting = acProvider.GetScoInfo(meetingScoId);
+                var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
+                var acMeetingTitle = acMeeting.ScoInfo.Name;
+
                 var tempMeetingSessions  = this.meetingSetup.GetSessionsReport(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    acProvider,
                     param,
                     meetingScoId,
                     startIndex,
@@ -328,7 +344,7 @@ namespace EdugameCloud.MVC.Controllers
                     return null;
                 }
 
-                var parametersList = GetReportParameters(format, company, session);
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
                     {
@@ -2702,7 +2718,7 @@ namespace EdugameCloud.MVC.Controllers
             return provider;
         }
 
-        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession)
+        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession, string acMeetingUrl, string acMeetingTitle)
         {
             if (company == null)
             {
@@ -2714,11 +2730,23 @@ namespace EdugameCloud.MVC.Controllers
                 throw new ArgumentNullException("userSession");
             }
 
+            if (acMeetingUrl == null)
+            {
+                throw new ArgumentNullException("acMeetingUrl");
+            }
+
+            if (acMeetingTitle == null)
+            {
+                throw new ArgumentNullException("acMeetingUrl");
+            }
+
             var companyName = company.CompanyName;
             var companyLogo = this.GetCompanyLogoUrl(company);
             var isExcelFormat = (format.ToUpper() == "EXCEL").ToString();
             var courseName = userSession.LtiSession.LtiParam.context_title ?? string.Empty;
 
+            var acMeetingUrlParam = new ReportParameter("ACMeetingUrl", acMeetingUrl);
+            var acMeetingTitleParam = new ReportParameter("ACMeetingTitle", acMeetingTitle);
             var companyNameParam = new ReportParameter("CompanyName", companyName);
             var companyLogoParam = new ReportParameter("CompanyLogo", companyLogo);
             var isExcelParam = new ReportParameter("IsExcelFormat", isExcelFormat);
@@ -2729,7 +2757,9 @@ namespace EdugameCloud.MVC.Controllers
                 companyNameParam,
                 companyLogoParam,
                 isExcelParam,
-                courseNameParam
+                courseNameParam,
+                acMeetingUrlParam,
+                acMeetingTitleParam
             };
             return parametersList;
         }
