@@ -213,39 +213,39 @@ namespace EdugameCloud.WCFService
                 case (int)LmsProviderEnum.Blackboard:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("blackboard"),
+                        BuildUserGuide(LmsProviderNames.Blackboard),
                         BuildBlackboardJar(),
                     };
 
                 case (int)LmsProviderEnum.Moodle:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("moodle"),
+                        BuildUserGuide(LmsProviderNames.Moodle),
                         BuildMoodleZip(),
                     };
 
                 case (int)LmsProviderEnum.Canvas:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("canvas"),
+                        BuildUserGuide(LmsProviderNames.Canvas),
                     };
 
                 case (int)LmsProviderEnum.BrainHoney:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("brainhoney"),
+                        BuildUserGuide(LmsProviderNames.BrainHoney),
                     };
 
                 case (int)LmsProviderEnum.Desire2Learn:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("brightspace"),
+                        BuildUserGuide(LmsProviderNames.Brightspace),
                     };
 
                 case (int)LmsProviderEnum.Sakai:
                     return new FileDownloadDTO[]
                     {
-                        BuildUserGuide("sakai"),
+                        BuildUserGuide(LmsProviderNames.Sakai),
                     };
             }
 
