@@ -11,7 +11,7 @@
     /// <summary>
     /// The AppletResult DTO validator.
     /// </summary>
-    public class AppletResultDTOValidator : AbstractValidator<AppletResultDTO>
+    public sealed class AppletResultDTOValidator : AbstractValidator<AppletResultDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AppletResultDTOValidator"/> class.

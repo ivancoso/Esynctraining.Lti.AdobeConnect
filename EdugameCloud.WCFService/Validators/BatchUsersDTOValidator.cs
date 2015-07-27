@@ -9,7 +9,7 @@
     /// <summary>
     /// The BatchUsersDTO validator.
     /// </summary>
-    public class BatchUsersDTOValidator : AbstractValidator<BatchUsersDTO>
+    public sealed class BatchUsersDTOValidator : AbstractValidator<BatchUsersDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BatchUsersDTOValidator"/> class.

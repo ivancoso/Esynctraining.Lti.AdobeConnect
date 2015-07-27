@@ -10,7 +10,7 @@
     /// <summary>
     /// The AppletItem DTO validator.
     /// </summary>
-    public class AppletItemDTOValidator : AbstractValidator<AppletItemDTO>
+    public sealed class AppletItemDTOValidator : AbstractValidator<AppletItemDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AppletItemDTOValidator"/> class.

@@ -15,7 +15,7 @@
     /// <summary>
     /// The VCFProfileDTO validator.
     /// </summary>
-    public class VCFProfileDTOValidator : AbstractValidator<VCFProfileDTO>
+    public sealed class VCFProfileDTOValidator : AbstractValidator<VCFProfileDTO>
     {
         private readonly dynamic settings;
 

@@ -12,7 +12,7 @@
     /// <summary>
     ///     The company DTO validator.
     /// </summary>
-    public class NewsletterSubscriptionDTOValidator : AbstractValidator<NewsletterSubscriptionDTO>
+    public sealed class NewsletterSubscriptionDTOValidator : AbstractValidator<NewsletterSubscriptionDTO>
     {
         #region Fields
 

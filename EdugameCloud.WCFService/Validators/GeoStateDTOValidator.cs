@@ -9,7 +9,7 @@
     /// <summary>
     /// The user DTO validator.
     /// </summary>
-    public class GeoStateDTOValidator : AbstractValidator<GeoStateDTO>
+    public sealed class GeoStateDTOValidator : AbstractValidator<GeoStateDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GeoStateDTOValidator"/> class.

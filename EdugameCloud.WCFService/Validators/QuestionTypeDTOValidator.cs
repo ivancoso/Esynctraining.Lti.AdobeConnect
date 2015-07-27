@@ -10,7 +10,7 @@
     /// <summary>
     /// The Question Type DTO validator.
     /// </summary>
-    public class QuestionTypeDTOValidator : AbstractValidator<QuestionTypeDTO>
+    public sealed class QuestionTypeDTOValidator : AbstractValidator<QuestionTypeDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="QuestionTypeDTOValidator"/> class.

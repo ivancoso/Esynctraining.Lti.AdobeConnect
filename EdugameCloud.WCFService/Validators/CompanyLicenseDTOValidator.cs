@@ -10,7 +10,7 @@
     /// <summary>
     /// The company license DTO validator.
     /// </summary>
-    public class CompanyLicenseDTOValidator : AbstractValidator<CompanyLicenseDTO>
+    public sealed class CompanyLicenseDTOValidator : AbstractValidator<CompanyLicenseDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLicenseDTOValidator"/> class.

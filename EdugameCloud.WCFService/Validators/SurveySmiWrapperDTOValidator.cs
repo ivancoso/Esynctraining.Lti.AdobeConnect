@@ -10,7 +10,7 @@
     /// <summary>
     /// The Survey SMI Wrapper DTO validator.
     /// </summary>
-    public class SurveySMIWrapperDTOValidator : AbstractValidator<SurveySMIWrapperDTO>
+    public sealed class SurveySMIWrapperDTOValidator : AbstractValidator<SurveySMIWrapperDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SurveySMIWrapperDTOValidator"/> class.

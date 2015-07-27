@@ -12,7 +12,7 @@
     /// <summary>
     /// The user DTO validator.
     /// </summary>
-    public class UserDTOValidator : AbstractValidator<UserDTO>
+    public sealed class UserDTOValidator : AbstractValidator<UserDTO>
     {
         /// <summary>
         /// The user model.

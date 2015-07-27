@@ -6,7 +6,7 @@
     /// <summary>
     /// The SNMapSettingsDTO validator.
     /// </summary>
-    public class SNMapSettingsDTOValidator : AbstractValidator<SNMapSettingsDTO>
+    public sealed class SNMapSettingsDTOValidator : AbstractValidator<SNMapSettingsDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SNMapSettingsDTOValidator"/> class.

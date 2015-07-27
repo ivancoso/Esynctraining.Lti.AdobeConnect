@@ -10,7 +10,7 @@
     /// <summary>
     /// The Survey DTO validator.
     /// </summary>
-    public class SurveyDTOValidator : AbstractValidator<SurveyDTO>
+    public sealed class SurveyDTOValidator : AbstractValidator<SurveyDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SurveyDTOValidator"/> class.

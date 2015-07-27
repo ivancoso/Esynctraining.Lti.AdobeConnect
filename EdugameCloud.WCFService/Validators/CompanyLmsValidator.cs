@@ -11,7 +11,7 @@
     /// <summary>
     /// The company LMS validator.
     /// </summary>
-    public class CompanyLmsValidator : AbstractValidator<CompanyLmsDTO>
+    public sealed class CompanyLmsValidator : AbstractValidator<CompanyLmsDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.

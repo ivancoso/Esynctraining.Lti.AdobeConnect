@@ -10,7 +10,7 @@
     /// <summary>
     /// The SNSessionMemberDTO validator.
     /// </summary>
-    public class SNMemberDTOValidator : AbstractValidator<SNMemberDTO>
+    public sealed class SNMemberDTOValidator : AbstractValidator<SNMemberDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SNMemberDTOValidator"/> class.

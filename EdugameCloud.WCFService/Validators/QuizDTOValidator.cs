@@ -10,7 +10,7 @@
     /// <summary>
     /// The Quiz DTO validator.
     /// </summary>
-    public class QuizDTOValidator : AbstractValidator<QuizDTO>
+    public sealed class QuizDTOValidator : AbstractValidator<QuizDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="QuizDTOValidator"/> class.

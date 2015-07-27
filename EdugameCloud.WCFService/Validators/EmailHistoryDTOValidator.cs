@@ -10,7 +10,7 @@
     /// <summary>
     ///     The company DTO validator.
     /// </summary>
-    public class EmailHistoryDTOValidator : AbstractValidator<EmailHistoryDTO>
+    public sealed class EmailHistoryDTOValidator : AbstractValidator<EmailHistoryDTO>
     {
         #region Fields
 

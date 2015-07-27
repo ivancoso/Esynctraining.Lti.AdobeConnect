@@ -11,7 +11,7 @@
     /// <summary>
     /// The SurveyResult DTO validator.
     /// </summary>
-    public class SurveyResultDTOValidator : AbstractValidator<SurveyResultDTO>
+    public sealed class SurveyResultDTOValidator : AbstractValidator<SurveyResultDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SurveyResultDTOValidator"/> class.

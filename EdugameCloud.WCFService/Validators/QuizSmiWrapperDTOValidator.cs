@@ -10,7 +10,7 @@
     /// <summary>
     /// The Quiz SMI Wrapper DTO validator.
     /// </summary>
-    public class QuizSMIWrapperDTOValidator : AbstractValidator<QuizSMIWrapperDTO>
+    public sealed class QuizSMIWrapperDTOValidator : AbstractValidator<QuizSMIWrapperDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="QuizSMIWrapperDTOValidator"/> class.

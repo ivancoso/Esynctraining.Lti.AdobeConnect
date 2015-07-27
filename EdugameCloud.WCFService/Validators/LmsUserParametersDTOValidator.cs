@@ -9,7 +9,7 @@
     /// <summary>
     /// The LMS user parameters DTO validator.
     /// </summary>
-    public class LmsUserParametersDTOValidator : AbstractValidator<LmsUserParametersDTO>
+    public sealed class LmsUserParametersDTOValidator : AbstractValidator<LmsUserParametersDTO>
     {
         #region Constructors and Destructors
 

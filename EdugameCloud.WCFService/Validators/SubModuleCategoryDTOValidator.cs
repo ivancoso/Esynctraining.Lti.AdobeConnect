@@ -10,7 +10,7 @@
     /// <summary>
     /// The SubModuleCategory DTO validator.
     /// </summary>
-    public class SubModuleCategoryDTOValidator : AbstractValidator<SubModuleCategoryDTO>
+    public sealed class SubModuleCategoryDTOValidator : AbstractValidator<SubModuleCategoryDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SubModuleCategoryDTOValidator"/> class.

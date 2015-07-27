@@ -10,7 +10,7 @@
     /// <summary>
     /// The ACSession DTO validator.
     /// </summary>
-    public class ACSessionValidator : AbstractValidator<ACSessionDTO>
+    public sealed class ACSessionValidator : AbstractValidator<ACSessionDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ACSessionValidator"/> class.

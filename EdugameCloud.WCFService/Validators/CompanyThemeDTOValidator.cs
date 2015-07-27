@@ -12,7 +12,7 @@
     /// <summary>
     /// The SubModuleItem DTO validator.
     /// </summary>
-    public class CompanyThemeDTOValidator : AbstractValidator<CompanyThemeDTO>
+    public sealed class CompanyThemeDTOValidator : AbstractValidator<CompanyThemeDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyThemeDTOValidator"/> class.

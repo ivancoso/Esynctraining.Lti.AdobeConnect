@@ -9,7 +9,7 @@
     /// <summary>
     /// The user DTO validator.
     /// </summary>
-    public class GeoCountryDTOValidator : AbstractValidator<GeoCountryDTO>
+    public sealed class GeoCountryDTOValidator : AbstractValidator<GeoCountryDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GeoCountryDTOValidator"/> class.

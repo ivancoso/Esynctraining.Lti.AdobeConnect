@@ -10,7 +10,7 @@
     /// <summary>
     /// The Test SMI Wrapper DTO validator.
     /// </summary>
-    public class TestSMIWrapperDTOValidator : AbstractValidator<TestSMIWrapperDTO>
+    public sealed class TestSMIWrapperDTOValidator : AbstractValidator<TestSMIWrapperDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TestSMIWrapperDTOValidator"/> class.

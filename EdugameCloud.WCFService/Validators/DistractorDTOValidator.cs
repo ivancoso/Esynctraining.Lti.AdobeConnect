@@ -10,7 +10,7 @@
     /// <summary>
     /// The DistractorDTO validator.
     /// </summary>
-    public class DistractorDTOValidator : AbstractValidator<DistractorDTO>
+    public sealed class DistractorDTOValidator : AbstractValidator<DistractorDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DistractorDTOValidator"/> class.

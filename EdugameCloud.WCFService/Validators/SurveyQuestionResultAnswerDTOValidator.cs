@@ -8,7 +8,7 @@
     /// <summary>
     /// The Survey QuestionResult Answer DTO validator.
     /// </summary>
-    public class SurveyQuestionResultAnswerDTOValidator : AbstractValidator<SurveyQuestionResultAnswerDTO>
+    public sealed class SurveyQuestionResultAnswerDTOValidator : AbstractValidator<SurveyQuestionResultAnswerDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SurveyQuestionResultAnswerDTOValidator"/> class.

@@ -10,7 +10,7 @@
     /// <summary>
     /// The SNGroupDiscussionDTO validator.
     /// </summary>
-    public class SNGroupDiscussionDTOValidator : AbstractValidator<SNGroupDiscussionDTO>
+    public sealed class SNGroupDiscussionDTOValidator : AbstractValidator<SNGroupDiscussionDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SNGroupDiscussionDTOValidator"/> class.

@@ -10,7 +10,7 @@
     /// <summary>
     /// The Theme DTO validator.
     /// </summary>
-    public class ThemeDTOValidator : AbstractValidator<ThemeDTO>
+    public sealed class ThemeDTOValidator : AbstractValidator<ThemeDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeDTOValidator"/> class.

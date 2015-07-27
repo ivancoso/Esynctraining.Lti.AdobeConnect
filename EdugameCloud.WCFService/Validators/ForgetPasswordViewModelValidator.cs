@@ -12,7 +12,7 @@
     /// <summary>
     /// The forget password view model validator.
     /// </summary>
-    public class ForgetPasswordViewModelValidator : AbstractValidator<ForgetPasswordViewModel>
+    public sealed class ForgetPasswordViewModelValidator : AbstractValidator<ForgetPasswordViewModel>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ForgetPasswordViewModelValidator"/> class.

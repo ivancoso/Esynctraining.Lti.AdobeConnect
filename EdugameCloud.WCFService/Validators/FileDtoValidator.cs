@@ -12,7 +12,7 @@
     /// <summary>
     /// The file validator.
     /// </summary>
-    public class FileDtoValidator : AbstractValidator<FileDTO>
+    public sealed class FileDtoValidator : AbstractValidator<FileDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FileDtoValidator"/> class.

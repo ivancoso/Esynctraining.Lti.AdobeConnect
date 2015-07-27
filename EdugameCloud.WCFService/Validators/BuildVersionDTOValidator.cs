@@ -9,7 +9,7 @@
     /// <summary>
     /// The BuildVersion DTO validator.
     /// </summary>
-    public class BuildVersionDTOValidator : AbstractValidator<BuildVersionDTO>
+    public sealed class BuildVersionDTOValidator : AbstractValidator<BuildVersionDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BuildVersionDTOValidator"/> class.

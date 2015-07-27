@@ -16,7 +16,7 @@
     /// <summary>
     ///     The company DTO validator.
     /// </summary>
-    public class CompanyDTOValidator : AbstractValidator<CompanyDTO>
+    public sealed class CompanyDTOValidator : AbstractValidator<CompanyDTO>
     {
         #region Fields
 

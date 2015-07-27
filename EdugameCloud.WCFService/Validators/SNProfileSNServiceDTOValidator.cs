@@ -10,7 +10,7 @@
     /// <summary>
     /// The SNProfileSNServiceDTO validator.
     /// </summary>
-    public class SNProfileSNServiceDTOValidator : AbstractValidator<SNProfileSNServiceDTO>
+    public sealed class SNProfileSNServiceDTOValidator : AbstractValidator<SNProfileSNServiceDTO>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SNProfileSNServiceDTOValidator"/> class.
