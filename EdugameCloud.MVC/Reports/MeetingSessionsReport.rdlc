@@ -1066,6 +1066,24 @@
             <VerticalAlign>Middle</VerticalAlign>
           </Style>
         </Textbox>
+        <Image Name="CompanyLogo">
+          <Source>External</Source>
+          <Value>=Parameters!CompanyLogo.Value</Value>
+          <Sizing>FitProportional</Sizing>
+          <Top>0.19125cm</Top>
+          <Left>0.54059cm</Left>
+          <Height>1.33069cm</Height>
+          <Width>3.45cm</Width>
+          <ZIndex>6</ZIndex>
+          <Visibility>
+            <Hidden>=iif(Parameters!CompanyLogo.Value = string.Empty or Parameters!IsExcelFormat.Value, true, false)</Hidden>
+          </Visibility>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </Image>
       </ReportItems>
       <Style>
         <Border>
