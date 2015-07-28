@@ -12,7 +12,7 @@
               <Width>7cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>7.208cm</Width>
+              <Width>7.7993cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -226,7 +226,7 @@
         <Top>1.37639cm</Top>
         <Left>0.5207cm</Left>
         <Height>1.2cm</Height>
-        <Width>19.208cm</Width>
+        <Width>19.7993cm</Width>
         <Visibility>
           <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
         </Visibility>
@@ -616,7 +616,7 @@
   <Width>8in</Width>
   <Page>
     <PageHeader>
-      <Height>6cm</Height>
+      <Height>6.5cm</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <ReportItems>
@@ -624,8 +624,8 @@
           <Source>Embedded</Source>
           <Value>esync_logo</Value>
           <Sizing>FitProportional</Sizing>
-          <Top>0.19194cm</Top>
-          <Left>0.5207cm</Left>
+          <Top>0.95394cm</Top>
+          <Left>8.8222cm</Left>
           <Height>1.33cm</Height>
           <Width>3.45663cm</Width>
           <Visibility>
@@ -637,47 +637,6 @@
             </Border>
           </Style>
         </Image>
-        <Textbox Name="EsyncInfoEmail">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>info@esynctraining.com</Value>
-                  <Style>
-                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                    <Color>SteelBlue</Color>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <ActionInfo>
-            <Actions>
-              <Action>
-                <Hyperlink>malito:esynctraining.com</Hyperlink>
-              </Action>
-            </Actions>
-          </ActionInfo>
-          <Top>0.60648cm</Top>
-          <Left>15.39049cm</Left>
-          <Height>0.50094cm</Height>
-          <Width>4.33821cm</Width>
-          <ZIndex>1</ZIndex>
-          <Visibility>
-            <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
-          </Visibility>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-          </Style>
-        </Textbox>
         <Rectangle Name="AttendanceTitleRectangle">
           <ReportItems>
             <Image Name="AttendanceLogo">
@@ -694,13 +653,49 @@
                 </Border>
               </Style>
             </Image>
+            <Textbox Name="AttendanceReportTitle">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>MEETING SESSIONS REPORT</Value>
+                      <Style>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontSize>15pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <Color>White</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Left</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.10584cm</Top>
+              <Left>1.00424cm</Left>
+              <Height>0.69144cm</Height>
+              <Width>7.87633cm</Width>
+              <ZIndex>1</ZIndex>
+              <Visibility>
+                <Hidden>=Microsoft.VisualBasic.Interaction.iif(Parameters!IsExcelFormat.Value, True, False)</Hidden>
+              </Visibility>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+              </Style>
+            </Textbox>
           </ReportItems>
           <KeepTogether>true</KeepTogether>
-          <Top>2.11167cm</Top>
+          <Top>2.68223cm</Top>
           <Left>0.52733cm</Left>
           <Height>0.86783cm</Height>
-          <Width>19.20137cm</Width>
-          <ZIndex>2</ZIndex>
+          <Width>19.79267cm</Width>
+          <ZIndex>1</ZIndex>
           <Visibility>
             <Hidden>=Microsoft.VisualBasic.Interaction.iif(Parameters!IsExcelFormat.Value, True, False)</Hidden>
           </Visibility>
@@ -997,11 +992,11 @@
             </Textbox>
           </ReportItems>
           <KeepTogether>true</KeepTogether>
-          <Top>3.01478cm</Top>
+          <Top>3.58534cm</Top>
           <Left>0.52733cm</Left>
           <Height>2.5cm</Height>
-          <Width>19.20137cm</Width>
-          <ZIndex>3</ZIndex>
+          <Width>19.79267cm</Width>
+          <ZIndex>2</ZIndex>
           <Visibility>
             <Hidden>=Microsoft.VisualBasic.Interaction.iif(Parameters!IsExcelFormat.Value, True, False)</Hidden>
           </Visibility>
@@ -1012,69 +1007,15 @@
             <BackgroundColor>WhiteSmoke</BackgroundColor>
           </Style>
         </Rectangle>
-        <Image Name="EmailEnvelope">
-          <Source>Embedded</Source>
-          <Value>email_envelope_256</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.64175cm</Top>
-          <Left>14.86838cm</Left>
-          <Height>0.46567cm</Height>
-          <Width>0.48683cm</Width>
-          <ZIndex>4</ZIndex>
-          <Visibility>
-            <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
-          </Visibility>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
-        <Textbox Name="AttendanceReportTitle">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>MEETING SESSIONS REPORT</Value>
-                  <Style>
-                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                    <FontSize>15pt</FontSize>
-                    <FontWeight>Bold</FontWeight>
-                    <Color>White</Color>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Left</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <Top>2.18223cm</Top>
-          <Left>1.49629cm</Left>
-          <Height>0.69144cm</Height>
-          <Width>7.87633cm</Width>
-          <ZIndex>5</ZIndex>
-          <Visibility>
-            <Hidden>=Microsoft.VisualBasic.Interaction.iif(Parameters!IsExcelFormat.Value, True, False)</Hidden>
-          </Visibility>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-          </Style>
-        </Textbox>
         <Image Name="CompanyLogo">
           <Source>External</Source>
           <Value>=Parameters!CompanyLogo.Value</Value>
           <Sizing>FitProportional</Sizing>
-          <Top>0.19125cm</Top>
-          <Left>0.54059cm</Left>
+          <Top>0.95325cm</Top>
+          <Left>8.8222cm</Left>
           <Height>1.33069cm</Height>
           <Width>3.45cm</Width>
-          <ZIndex>6</ZIndex>
+          <ZIndex>3</ZIndex>
           <Visibility>
             <Hidden>=iif(Parameters!CompanyLogo.Value = string.Empty or Parameters!IsExcelFormat.Value, true, false)</Hidden>
           </Visibility>
@@ -1116,8 +1057,15 @@
               </Style>
             </Paragraph>
           </Paragraphs>
+          <ActionInfo>
+            <Actions>
+              <Action>
+                <Hyperlink>http://esynctraining.com</Hyperlink>
+              </Action>
+            </Actions>
+          </ActionInfo>
           <Top>0.24695cm</Top>
-          <Left>0.25847cm</Left>
+          <Left>0.5207cm</Left>
           <Height>0.51533cm</Height>
           <Width>6.14778cm</Width>
           <Style>
@@ -1150,7 +1098,7 @@
               </Style>
             </Paragraph>
           </Paragraphs>
-          <Top>0.17639cm</Top>
+          <Top>0.24695cm</Top>
           <Left>9.50414cm</Left>
           <Height>0.51533cm</Height>
           <Width>2.38706cm</Width>

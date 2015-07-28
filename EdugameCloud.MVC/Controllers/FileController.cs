@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti;
+﻿using System.Text;
+using EdugameCloud.Lti;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -273,17 +274,17 @@ namespace EdugameCloud.MVC.Controllers
                     return null;
                 }
                
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);
-
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);               
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
 
                 if (reportRenderedBytes != null)
                 {
+                    var reportName = GenerateReportName(session, "attendance");
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
-                        string.Format("{0}.{1}", "meeting-attendance-report", this.GetFileExtensions(format.ToUpper())));
+                        string.Format("{0}.{1}", reportName, this.GetFileExtensions(format.ToUpper())));
                 }
 
                 this.RedirectToError("Unable to generate report. Try again later.");
@@ -374,12 +375,16 @@ namespace EdugameCloud.MVC.Controllers
                 string mimeType;
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingSessionsReport", meetingSessions,
                     out mimeType, parametersList, subreports);
+
+
                 if (reportRenderedBytes != null)
                 {
+                    var reportName = GenerateReportName(session, "sessions");
+
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
-                        string.Format("{0}.{1}", "meeting-sessions-report", this.GetFileExtensions(format.ToUpper())));
+                        string.Format("{0}.{1}", reportName, this.GetFileExtensions(format.ToUpper())));
                 }
 
                 this.RedirectToError("Unable to generate report. Try again later.");
@@ -2781,6 +2786,21 @@ namespace EdugameCloud.MVC.Controllers
         private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
         {
             this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
+        }
+        private static string GenerateReportName(LmsUserSession session, string reportName)
+        {
+            var strBiulder = new StringBuilder();
+            if (!string.IsNullOrEmpty(session.LtiSession.LtiParam.context_title))
+            {
+                strBiulder.Append(session.LtiSession.LtiParam.context_title + "_");
+            }
+
+            strBiulder.Append(reportName + "_");
+            var date = DateTime.Now;
+            strBiulder.Append(date.ToString("MMddyyyy") + "_");
+            strBiulder.Append(date.ToString("HHmmss"));
+
+            return strBiulder.ToString();
         }
         private byte[] GenerateReportBytes<T>(
             string format,

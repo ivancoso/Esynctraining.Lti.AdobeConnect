@@ -12,7 +12,7 @@
               <Width>5cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.37349cm</Width>
+              <Width>2.03792cm</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
@@ -404,7 +404,7 @@
         <Top>1.37639cm</Top>
         <Left>1.61815cm</Left>
         <Height>1.45889cm</Height>
-        <Width>18cm</Width>
+        <Width>17.66443cm</Width>
         <Visibility>
           <Hidden>=Parameters!IsExcelFormat.Value = true</Hidden>
         </Visibility>
@@ -1136,10 +1136,10 @@
           <Source>External</Source>
           <Value>=Parameters!CompanyLogo.Value</Value>
           <Sizing>FitProportional</Sizing>
-          <Top>0.26954cm</Top>
-          <Left>1.61815cm</Left>
+          <Top>0.73452cm</Top>
+          <Left>8.79466cm</Left>
           <Height>1.33069cm</Height>
-          <Width>3.45cm</Width>
+          <Width>3.35877cm</Width>
           <Visibility>
             <Hidden>=iif(Parameters!CompanyLogo.Value = string.Empty or Parameters!IsExcelFormat.Value, true, false)</Hidden>
           </Visibility>
@@ -1153,72 +1153,13 @@
           <Source>Embedded</Source>
           <Value>esync_logo</Value>
           <Sizing>FitProportional</Sizing>
-          <Top>0.27023cm</Top>
-          <Left>1.61815cm</Left>
+          <Top>0.73521cm</Top>
+          <Left>8.80129cm</Left>
           <Height>1.33cm</Height>
-          <Width>3.45663cm</Width>
+          <Width>3.35214cm</Width>
           <ZIndex>1</ZIndex>
           <Visibility>
             <Hidden>=iif(Parameters!CompanyLogo.Value &lt;&gt; string.Empty or Parameters!IsExcelFormat.Value, true, false)</Hidden>
-          </Visibility>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
-        <Textbox Name="EsyncInfoEmail">
-          <CanGrow>true</CanGrow>
-          <KeepTogether>true</KeepTogether>
-          <Paragraphs>
-            <Paragraph>
-              <TextRuns>
-                <TextRun>
-                  <Value>info@esynctraining.com</Value>
-                  <Style>
-                    <FontFamily>Lucida Sans Unicode</FontFamily>
-                    <Color>SteelBlue</Color>
-                  </Style>
-                </TextRun>
-              </TextRuns>
-              <Style>
-                <TextAlign>Center</TextAlign>
-              </Style>
-            </Paragraph>
-          </Paragraphs>
-          <ActionInfo>
-            <Actions>
-              <Action>
-                <Hyperlink>malito:esynctraining.com</Hyperlink>
-              </Action>
-            </Actions>
-          </ActionInfo>
-          <Top>0.60537cm</Top>
-          <Left>15.27994cm</Left>
-          <Height>0.50094cm</Height>
-          <Width>4.33821cm</Width>
-          <ZIndex>2</ZIndex>
-          <Visibility>
-            <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
-          </Visibility>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-            <VerticalAlign>Middle</VerticalAlign>
-          </Style>
-        </Textbox>
-        <Image Name="EmailEnvelope">
-          <Source>Embedded</Source>
-          <Value>email_envelope_256</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.60537cm</Top>
-          <Left>14.73666cm</Left>
-          <Height>0.50094cm</Height>
-          <Width>0.508cm</Width>
-          <ZIndex>3</ZIndex>
-          <Visibility>
-            <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
           </Visibility>
           <Style>
             <Border>
@@ -1283,8 +1224,8 @@
           <Top>2.66562cm</Top>
           <Left>1.58258cm</Left>
           <Height>0.86783cm</Height>
-          <Width>18cm</Width>
-          <ZIndex>4</ZIndex>
+          <Width>17.7cm</Width>
+          <ZIndex>2</ZIndex>
           <Visibility>
             <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
           </Visibility>
@@ -1584,8 +1525,8 @@
           <Top>3.56873cm</Top>
           <Left>1.58258cm</Left>
           <Height>2.5cm</Height>
-          <Width>18cm</Width>
-          <ZIndex>5</ZIndex>
+          <Width>17.7cm</Width>
+          <ZIndex>3</ZIndex>
           <Visibility>
             <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
           </Visibility>
@@ -1627,8 +1568,15 @@
               </Style>
             </Paragraph>
           </Paragraphs>
+          <ActionInfo>
+            <Actions>
+              <Action>
+                <Hyperlink>http://esynctraining.com</Hyperlink>
+              </Action>
+            </Actions>
+          </ActionInfo>
           <Top>0.17639cm</Top>
-          <Left>0.5207cm</Left>
+          <Left>1.58258cm</Left>
           <Height>0.51533cm</Height>
           <Width>6.14778cm</Width>
           <Style>
@@ -1661,7 +1609,7 @@
               </Style>
             </Paragraph>
           </Paragraphs>
-          <Top>0.10583cm</Top>
+          <Top>0.17639cm</Top>
           <Left>9.76637cm</Left>
           <Height>0.51533cm</Height>
           <Width>2.38706cm</Width>
