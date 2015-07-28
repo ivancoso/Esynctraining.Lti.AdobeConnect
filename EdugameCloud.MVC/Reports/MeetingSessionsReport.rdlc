@@ -610,7 +610,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>9.7in</Height>
+    <Height>7in</Height>
     <Style />
   </Body>
   <Width>8in</Width>
@@ -624,8 +624,8 @@
           <Source>Embedded</Source>
           <Value>esync_logo</Value>
           <Sizing>FitProportional</Sizing>
-          <Top>0.95394cm</Top>
-          <Left>8.8222cm</Left>
+          <Top>0.95325cm</Top>
+          <Left>8.43457cm</Left>
           <Height>1.33cm</Height>
           <Width>3.45663cm</Width>
           <Visibility>
@@ -1012,7 +1012,7 @@
           <Value>=Parameters!CompanyLogo.Value</Value>
           <Sizing>FitProportional</Sizing>
           <Top>0.95325cm</Top>
-          <Left>8.8222cm</Left>
+          <Left>8.4412cm</Left>
           <Height>1.33069cm</Height>
           <Width>3.45cm</Width>
           <ZIndex>3</ZIndex>
