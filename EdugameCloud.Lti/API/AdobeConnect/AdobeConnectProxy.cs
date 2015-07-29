@@ -176,8 +176,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public ScoInfoResult GetScoInfo(string scoId)
         {
-            return Execute(() => { return _provider.GetScoInfo(scoId); }, 
-                scoId);
+            ScoInfoResult result;
+            try
+            {
+                result = _provider.GetScoInfo(scoId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "scoId:{0}.", scoId);
+                throw;
+            }
+
+            // TRICK: we process !Success result in our code
+            //ResultBase acResult = result as ResultBase;
+            //if ((acResult != null) && !acResult.Success && (acResult.Status.Code != StatusCodes.no_data))
+            //{
+            //    string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+            //        acResult.Status.GetErrorInfo(),
+            //        parameterValue);
+            //    _logger.Error(msg);
+            //    throw new InvalidOperationException(msg);
+            //}
+
+            return result;
         }
 
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
