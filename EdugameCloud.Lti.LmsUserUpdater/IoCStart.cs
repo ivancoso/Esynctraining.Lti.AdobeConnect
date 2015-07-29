@@ -59,7 +59,8 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BlackboardLmsUserService>().Named(LmsProviderEnum.Blackboard.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BrainHoneyLmsUserService>().Named(LmsProviderEnum.BrainHoney.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<CanvasLmsUserService>().Named(LmsProviderEnum.Canvas.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserServiceSync>().Named(LmsProviderEnum.Desire2Learn.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserService>().Named(LmsProviderEnum.Desire2Learn.ToString()));
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserServiceSync>().Named(LmsProviderEnum.Desire2Learn.ToString() + "_Sync"));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<MoodleLmsUserService>().Named(LmsProviderEnum.Moodle.ToString()));
             container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
             container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());

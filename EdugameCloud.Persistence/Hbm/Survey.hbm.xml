@@ -24,4 +24,8 @@
 		<query-param name="subModuleItemId" type="System.Int32"/>
 		exec getSurveyResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
 	</sql-query>
+	<sql-query name="getSurveyResultAnswers">
+		<query-param name="surveyResultIds" type="System.String"/>
+		exec getSurveyResultAnswers @surveyResultIds=:surveyResultIds
+	</sql-query>
 </hibernate-mapping>

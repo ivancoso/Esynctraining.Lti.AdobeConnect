@@ -1,17 +1,15 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using System.Linq;
+using System.Xml.Linq;
+using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
+using Esynctraining.Core.Business;
+using Esynctraining.Core.Business.Models;
+using Esynctraining.Core.Business.Queries;
+using NHibernate;
+using NHibernate.Transform;
+
+namespace EdugameCloud.Core.Business.Models
 {
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
-    using NHibernate;
-
     /// <summary>
     ///     The SurveyResult model.
     /// </summary>
@@ -106,26 +104,26 @@
 
             var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().WhereRestrictionOn(x => x.Question.Id).IsIn(questionIds);
 
-            var playerAnswers = this.surveyQuestionResultRepository.FindAll(query).ToList();
+            var surveyQuestionResults = this.surveyQuestionResultRepository.FindAll(query).ToList();
 
             var distractors = this.distractorRepository.FindAll(distractorsQuery).ToList();
-
-            var answersQuery = new DefaultQueryOver<SurveyQuestionResultAnswer, int>().GetQueryOver()
-                    .WhereRestrictionOn(x => x.SurveyQuestionResult.Id)
-                    .IsIn(playerAnswers.Select(q => q.Id).ToList());
-
-            var realAnswers = this.answerRepository.FindAll(answersQuery).ToList();
-
+            
+            var xmlSurveyResultIds = new XElement("Ids", surveyQuestionResults.Select(q => new XElement("Id", q.Id)));
+            var answersQuery = this.Repository.Session.GetNamedQuery("getSurveyResultAnswers");
+            answersQuery.SetParameter("surveyResultIds", xmlSurveyResultIds.ToString(), NHibernateUtil.StringClob);
+            answersQuery = answersQuery.SetResultTransformer(new AliasToBeanResultTransformer(typeof(SurveyQuestionResultAnswerDTO)));
+            var answers = answersQuery.List<SurveyQuestionResultAnswerDTO>();
+            
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.questionResultIds = playerAnswers.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToArray();
+                questionForAdminDTO.questionResultIds = surveyQuestionResults.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToArray();
                 questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
             }
 
             foreach (var surveyPlayerDTO in res.players)
             {
-                var playerAnswersIds = playerAnswers.Where(x => x.SurveyResult.Id == surveyPlayerDTO.surveyResultId).Select(x => x.Id).ToList();
-                surveyPlayerDTO.answers = realAnswers.Where(x => playerAnswersIds.Contains(x.SurveyQuestionResult.Id)).Select(x => new SurveyQuestionResultAnswerDTO(x)).ToArray();
+                var playerSurveyQuestionResultIds = surveyQuestionResults.Where(x => x.SurveyResult.Id == surveyPlayerDTO.surveyResultId).Select(x => x.Id).ToList();
+                surveyPlayerDTO.answers = answers.Where(x => playerSurveyQuestionResultIds.Contains(x.surveyQuestionResultId)).ToArray();
             }
 
             return res;

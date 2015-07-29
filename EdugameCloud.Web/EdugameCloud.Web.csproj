@@ -567,7 +567,7 @@
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
     <Content Include="Content\lti-config\blackboard.xml" />
-    <Content Include="Content\lti-config\desire2learn.xml" />
+    <Content Include="Content\lti-config\brightspace.xml" />
     <Content Include="Content\lti-config\moodle.xml" />
     <Content Include="Content\lti-config\sakai.xml" />
     <Content Include="Content\lti-files\edugame-cloud-ws-1.0.25.jar" />
