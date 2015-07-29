@@ -24,6 +24,7 @@
 
 	<script type="text/javascript">
 	var EsyncLti = {};
+	EsyncLti.version = '@ViewBag.LtiVersion';
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
 	EsyncLti.acPassword = @if (ViewBag.RestoredACPassword == null) { @Html.Raw("null"); } else { @Html.Raw("'" + ViewBag.RestoredACPassword + "'"); };
 	EsyncLti.acUsesEmailAsLogin = @ViewBag.ACUsesEmailAsLogin.ToString().ToLower();

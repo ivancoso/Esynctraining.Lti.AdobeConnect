@@ -10,6 +10,7 @@ namespace EdugameCloud.Lti.Controllers
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Net;
+    using System.Reflection;
     using System.Web;
     using System.Web.Mvc;
     using System.Xml.Linq;
@@ -405,6 +406,9 @@ namespace EdugameCloud.Lti.Controllers
                 supportPageHtml = credentials.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
             }
 
+            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
+            version = version.Substring(0, version.LastIndexOf('.'));
+            ViewBag.LtiVersion = version;
             ViewBag.MeetingsJson = meetingsJson;
             ViewBag.RestoredACPassword = password;
             ViewBag.ACUsesEmailAsLogin = acUsesEmailAsLogin;
