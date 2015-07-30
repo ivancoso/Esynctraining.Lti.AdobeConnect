@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authentication\EdugameCloudIdentity.cs" />
+    <Compile Include="BuildVersionProcessor.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />

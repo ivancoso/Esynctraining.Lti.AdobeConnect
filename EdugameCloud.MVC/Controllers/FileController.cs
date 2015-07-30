@@ -27,6 +27,7 @@ namespace EdugameCloud.MVC.Controllers
     using System.Web.UI;
     using System.Xml.Linq;
     using Castle.Core.Logging;
+    using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
@@ -1160,18 +1161,16 @@ namespace EdugameCloud.MVC.Controllers
             var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), fileName));
             if (file.Exists)
             {
-                return File(file.FullName, file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase) ? "application/zip" : "application/x-shockwave-flash", file.Name);
+                return File(file.FullName, 
+                    file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase) 
+                        ? "application/zip" 
+                        : "application/x-shockwave-flash", 
+                    file.Name);
             }
 
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
         }
 
-        /// <summary>
-        /// The products.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("get-public-build")]
@@ -1193,6 +1192,74 @@ namespace EdugameCloud.MVC.Controllers
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
                     if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) && (company.Theme != null) && System.IO.File.Exists(physicalPath))
+                    {
+                        // NOTE: current POD size is about 960kb
+                        var ms = new MemoryStream(960 * 1024);
+
+                        using (var archive = ZipArchive.OpenOnFile(physicalPath))
+                        {
+                            using (var arc = ZipArchive.OpenOnStream(ms))
+                            {
+                                foreach (var file in archive.Files.Where(x => x.Name != "config.xml"))
+                                {
+                                    using (Stream fs = arc.AddFile(file.Name).GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                    {
+                                        file.GetStream().CopyTo(fs);
+                                    }
+                                }
+
+                                using (var fs = arc.AddFile("config.xml").GetStream(FileMode.Open, FileAccess.ReadWrite))
+                                {
+                                    var xml = string.Format("<config><themeId>{0}</themeId><gateway>{1}</gateway></config>",
+                                        company.Theme.With(x => x.Id),
+                                        Settings.BaseServiceUrl);
+
+                                    var xmlBuffer = System.Text.Encoding.ASCII.GetBytes(xml);
+                                    fs.Write(xmlBuffer, 0, xmlBuffer.Length);
+                                }
+                            }
+                        }
+
+                        ms.Position = 0;
+                        return this.File(ms, "application/zip", Path.GetFileName(physicalPath));
+                    }
+
+                    EnsureServicePathConfigExists(physicalPath);
+                    return this.Redirect("/public/" + publicBuild);
+                }
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("FileController.GetPublicBuild.", ex);
+                throw;
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+        }
+
+        [HttpGet]
+        [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
+        [ActionName("get-mobile-build")]
+        [CustomAuthorize]
+        public virtual ActionResult GetMobileBuild()
+        {
+            try
+            {
+                var user = this.CurrentUser;
+                if ((user != null) && (user.Company != null))
+                {
+                    string publicBuild = BuildVersionProcessor.ProcessVersion(PublicFolderPath, (string)this.Settings.MobileBuildSelector);
+                    if (string.IsNullOrEmpty(publicBuild))
+                    {
+                        IoC.Resolve<ILogger>().Warn("Could'n find any mobile POD build");
+                        return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                    }
+
+                    string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
+                    Company company = user.Company;
+                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) 
+                        && (company.Theme != null) 
+                        && System.IO.File.Exists(physicalPath))
                     {
                         // NOTE: current POD size is about 960kb
                         var ms = new MemoryStream(960 * 1024);

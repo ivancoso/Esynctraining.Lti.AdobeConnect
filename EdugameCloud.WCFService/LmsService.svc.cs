@@ -4,14 +4,18 @@ namespace EdugameCloud.WCFService
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Web;
+    using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
+    using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.DTO;
@@ -20,7 +24,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.DTO;
-    using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
@@ -29,9 +32,6 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Utils;
     using Resources;
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
-    using EdugameCloud.Lti.Core;
-    using System.IO;
-    using System.Web;
 
     /// <summary>
     /// The LMS service.
@@ -43,105 +43,54 @@ namespace EdugameCloud.WCFService
     {
         #region Properties
 
-        /// <summary>
-        /// Gets the quiz model.
-        /// </summary>
         private QuizModel QuizModel
         {
-            get
-            {
-                return IoC.Resolve<QuizModel>();
-            }
+            get { return IoC.Resolve<QuizModel>(); }
         }
 
-        /// <summary>
-        /// Gets the survey model.
-        /// </summary>
         private SurveyModel SurveyModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyModel>();
-            }
+            get { return IoC.Resolve<SurveyModel>(); }
         }
 
-        /// <summary>
-        /// Gets the meeting setup.
-        /// </summary>
         private MeetingSetup MeetingSetup
         {
-            get
-            {
-                return IoC.Resolve<MeetingSetup>();
-            }
+            get { return IoC.Resolve<MeetingSetup>(); }
         }
 
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
         private LmsUserParametersModel LmsUserParametersModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
+            get { return IoC.Resolve<LmsUserParametersModel>(); }
         }
 
-        /// <summary>
-        /// Gets the LMS factory.
-        /// </summary>
         private LmsFactory LmsFactory
         {
-            get
-            {
-                return IoC.Resolve<LmsFactory>();
-            }
+            get { return IoC.Resolve<LmsFactory>(); }
         }
 
-        /// <summary>
-        /// Gets the quiz converter.
-        /// </summary>
         private QuizConverter QuizConverter
         {
-            get
-            {
-                return IoC.Resolve<QuizConverter>();
-            }
+            get { return IoC.Resolve<QuizConverter>(); }
         }
 
-        /// <summary>
-        /// Gets the LMS provider model.
-        /// </summary>
         private LmsProviderModel LmsProviderModel
         {
-            get
-            {
-                return IoC.Resolve<LmsProviderModel>();
-            }
+            get { return IoC.Resolve<LmsProviderModel>(); }
         }
 
         private LmsCompanyModel LmsCompanyModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyModel>(); }
         }
 
         private LmsCompanyRoleMappingModel LmsCompanyRoleMappingModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyRoleMappingModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyRoleMappingModel>(); }
         }
 
         private IAdobeConnectAccountService AdobeConnectAccountService
         {
-            get
-            {
-                return IoC.Resolve<IAdobeConnectAccountService>();
-            }
+            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
         }
         
         #endregion
@@ -214,6 +163,8 @@ namespace EdugameCloud.WCFService
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.Blackboard),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                         BuildBlackboardJar(),
                     };
 
@@ -221,6 +172,8 @@ namespace EdugameCloud.WCFService
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.Moodle),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                         BuildMoodleZip(),
                     };
 
@@ -228,24 +181,32 @@ namespace EdugameCloud.WCFService
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.Canvas),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                     };
 
                 case (int)LmsProviderEnum.BrainHoney:
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.BrainHoney),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                     };
 
                 case (int)LmsProviderEnum.Desire2Learn:
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.Brightspace),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                     };
 
                 case (int)LmsProviderEnum.Sakai:
                     return new FileDownloadDTO[]
                     {
                         BuildUserGuide(LmsProviderNames.Sakai),
+                        BuildMobileDownload(),
+                        BuildOfficeHoursePod(),
                     };
             }
 
@@ -596,6 +557,42 @@ namespace EdugameCloud.WCFService
             result.title = "User Guide";
 
             string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-instructions/{0}.pdf", name));
+            var file = new FileInfo(path);
+            result.lastModifyDate = file.CreationTimeUtc;
+            result.sizeInBytes = file.Length;
+
+            return result;
+        }
+
+        private FileDownloadDTO BuildMobileDownload()
+        {
+            var result = new FileDownloadDTO();
+
+            // TRICK: dup with FileController
+            const string PublicFolderPath = "~/../Content/swf/pub";
+            string publicBuild = BuildVersionProcessor.ProcessVersion(PublicFolderPath, (string)this.Settings.MobileBuildSelector);
+
+            result.downloadUrl = string.Format("{0}file/get-mobile-build", (string)this.Settings.PortalUrl);
+            result.fileName = publicBuild;
+            result.title = "Desktop + Mobile (Requires Connect 9.4.2+)";
+
+            string physicalPath = Path.Combine(HttpContext.Current.Server.MapPath(PublicFolderPath), publicBuild);
+            var file = new FileInfo(physicalPath);
+            result.lastModifyDate = file.CreationTimeUtc;
+            result.sizeInBytes = file.Length;
+
+            return result;
+        }
+
+        private FileDownloadDTO BuildOfficeHoursePod()
+        {
+            var result = new FileDownloadDTO();
+
+            result.downloadUrl = string.Format("{0}content/lti-files/OfficeHoursPod.zip", (string)this.Settings.PortalUrl);
+            result.fileName = "OfficeHoursPod.zip";
+            result.title = "Office Hours Pod";
+
+            string path = HttpContext.Current.Server.MapPath("~/../Content/lti-files/OfficeHoursPod.zip");
             var file = new FileInfo(path);
             result.lastModifyDate = file.CreationTimeUtc;
             result.sizeInBytes = file.Length;
