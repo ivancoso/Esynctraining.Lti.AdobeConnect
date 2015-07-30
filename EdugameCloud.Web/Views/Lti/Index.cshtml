@@ -7,20 +7,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>eSyncTraining</title>
-	<style type="text/css">
-		#loading {
-			position: absolute;
-			top: 40%;
-			left: 45%;
-			z-index: 2;
-		}
-
-			#loading SPAN {
-				width: 220px;
-				height: 20px;
-				display: block;
-			}
-	</style>
+	<link rel="stylesheet" href="resources/preloader.css" />
 
 	<script type="text/javascript">
 	var EsyncLti = {};
@@ -75,8 +62,20 @@ Ext.manifest=JSON.parse(j.content);h.load(f)})}else h.load(f)},load:function(f){
 return h}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
 </head>
 <body>
-    <div id="loading">
-        <span id="loading-message">...loading...</span>
-    </div>
+	<div id="loading">
+		<div id="loading-tbar">
+			<img id="loading-preloader" src="resources/preloader.GIF" /> <br />
+			<span id="loading-title" style="">Loading LTI application</span>
+		</div>
+		<div id="loading-bbar">
+			<span id="loading-version"></span>
+			<span id="loading-copyright">Developed by <a id="loading-link" href="http://www.esynctraining.com/professional-services/custom-development/" style="">eSyncTraining</a></span>
+			<script type="text/javascript">
+				if (window.EsyncLti && window.EsyncLti.version)
+					document.getElementById("loading-version").textContent = 'Version: ' + window.EsyncLti.version;
+			</script>
+		</div>
+	</div>
 </body>
+
 </html>
