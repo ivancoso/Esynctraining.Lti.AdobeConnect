@@ -280,7 +280,7 @@ namespace EdugameCloud.MVC.Controllers
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "attendance");
+                    var reportName = GenerateReportName(session, "Attendance");
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
@@ -379,7 +379,7 @@ namespace EdugameCloud.MVC.Controllers
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "sessions");
+                    var reportName = GenerateReportName(session, "Sessions");
 
                     return this.File(
                         reportRenderedBytes,
@@ -2742,7 +2742,7 @@ namespace EdugameCloud.MVC.Controllers
 
             if (acMeetingTitle == null)
             {
-                throw new ArgumentNullException("acMeetingUrl");
+                throw new ArgumentNullException("acMeetingTitle");
             }
 
             var companyName = company.CompanyName;
@@ -2790,9 +2790,17 @@ namespace EdugameCloud.MVC.Controllers
         private static string GenerateReportName(LmsUserSession session, string reportName)
         {
             var strBiulder = new StringBuilder();
-            if (!string.IsNullOrEmpty(session.LtiSession.LtiParam.context_title))
+
+            var courseLabel = session.LtiSession.LtiParam.context_label;
+            var courseTitle = session.LtiSession.LtiParam.context_title;
+
+            if (!string.IsNullOrEmpty(courseLabel))
             {
-                strBiulder.Append(session.LtiSession.LtiParam.context_title + "_");
+                strBiulder.Append(courseLabel.Replace(" ", "_") + "_");
+            }
+            else if (string.IsNullOrEmpty(courseLabel) && !string.IsNullOrEmpty(courseTitle))
+            {
+                strBiulder.Append(courseTitle.Replace(" ", "_") + "_");
             }
 
             strBiulder.Append(reportName + "_");

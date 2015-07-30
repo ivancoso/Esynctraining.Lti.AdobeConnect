@@ -32,41 +32,39 @@ namespace EdugameCloud.WCFService.Converters
                 lmsUserParameters.Course,                
                 quizResult.Quiz.LmsQuizId.GetValueOrDefault());
 
-                foreach (var answer in results)
+            foreach (var answer in results)
+            {
+                Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
+                if (question.LmsQuestionId == null)
                 {
-                    Question question = this.QuestionModel.GetOneById(answer.questionId).Value;
-                    if (question.LmsQuestionId == null)
-                    {
-                        continue;
-                    }
-
-                    var answers = this.ProcessAnswers(question, answer);
-
-                    if (answers != null)
-                    {
-                        quizSubmission.quiz_questions.Add(
-                            new CanvasQuizSubmissionQuestionDTO { id = question.LmsQuestionId.Value, answer = answers });
-                    }
-
-                    try
-                    {
-                        _canvasApi.AnswerQuestionsForQuiz(
-                            lmsUserParameters.CompanyLms.LmsDomain,
-                            lmsUserParameters.LmsUser.Token,
-                            quizSubmission);
-                    }
-                    catch (Exception ex)
-                    {
-                        
-                    }
-                finally
-                {
-                    _canvasApi.CompleteQuizSubmission(
-                   lmsUserParameters.CompanyLms.LmsDomain,
-                   lmsUserParameters.LmsUser.Token,
-                   lmsUserParameters.Course,
-                   quizSubmission);
+                    continue;
                 }
+
+                var answers = this.ProcessAnswers(question, answer);
+
+                if (answers != null)
+                {
+                    quizSubmission.quiz_questions.Add(
+                        new CanvasQuizSubmissionQuestionDTO {id = question.LmsQuestionId.Value, answer = answers});
+                }
+            }
+            try
+            {
+                _canvasApi.AnswerQuestionsForQuiz(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    quizSubmission);
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                _canvasApi.CompleteQuizSubmission(
+                    lmsUserParameters.CompanyLms.LmsDomain,
+                    lmsUserParameters.LmsUser.Token,
+                    lmsUserParameters.Course,
+                    quizSubmission);
             }
         }
 
