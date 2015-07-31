@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
             if (permissionId == PermissionId.view)
                 return Participant.Name;
 
-            throw new InvalidOperationException(string.Format("Not supported PermissionId: {0}", permissionId));
+            return null;
         }
 
     }
