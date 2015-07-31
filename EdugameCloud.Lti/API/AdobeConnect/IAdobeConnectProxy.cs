@@ -10,8 +10,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         //StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);
-        bool AddToGroupByType(IEnumerable<string> principalIds, string typeName);
-        bool AddToGroupByType(string principalId, string typeName);
+        StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName);
+        StatusInfo AddToGroupByType(string principalId, string typeName);
         CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId);
         ScoInfoResult CreateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase;
         StatusInfo DeleteSco(string scoId);

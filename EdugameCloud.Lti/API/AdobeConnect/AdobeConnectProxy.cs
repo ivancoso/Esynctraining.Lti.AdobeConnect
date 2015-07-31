@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Castle.Core.Logging;
+using EdugameCloud.Lti.Core;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -29,18 +30,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public bool AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
         {
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
 
-            return Execute(() => { return _provider.AddToGroupByType(principalIds, typeName); },
+            return Execute(() => _provider.AddToGroupByType(principalIds, typeName),
                 string.Join(";", principalIds), typeName);
         }
 
-        public bool AddToGroupByType(string principalId, string typeName)
+        public StatusInfo AddToGroupByType(string principalId, string typeName)
         {
-            return Execute(() => { return _provider.AddToGroupByType(principalId, typeName); }, 
+            return Execute(() => _provider.AddToGroupByType(principalId, typeName), 
                 principalId, typeName);
         }
 
@@ -432,7 +433,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw;
             }
 
-            ResultBase acResult = result as ResultBase;
+            var acStatus = result as StatusInfo;
+            if (acStatus != null && acStatus.Code != StatusCodes.ok && acStatus.SubCode == StatusSubCodes.no_quota && acStatus.Type == "num-of-members-quota")
+            {
+                throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+            }
+
+            var acResult = result as ResultBase;
             if ((acResult != null) && !acResult.Success)
             {
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.Parameter2:{2}.",
@@ -443,7 +450,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new InvalidOperationException(msg);
             }
 
-            return result;
+          return result;
         }
 
     }
