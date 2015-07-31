@@ -474,14 +474,19 @@
                     {
                         status.SubCode = EnumReflector.ReflectEnum(node.SelectAttributeValue("subcode"), StatusSubCodes.not_set);
                         status.InvalidField = node.SelectAttributeValue("field");
+                        status.Type = node.SelectAttributeValue("type");
                     }
 
                     break;
 
                 case StatusCodes.no_access:
+
+                    XmlNode tNode = doc.SelectSingleNode("//status");
+
                     status.SubCode = EnumReflector.ReflectEnum(
                         doc.SelectSingleNodeValue("//status/@subcode"),
                         StatusSubCodes.not_set);
+                    status.Type = tNode.SelectAttributeValue("type");
                     break;
             }
 

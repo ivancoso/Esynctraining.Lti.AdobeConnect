@@ -18,7 +18,14 @@ namespace Esynctraining.AC.Provider.Entities
             this.InnerXml = string.Empty;
             this.SessionInfo = string.Empty;
             this.InvalidField = string.Empty;
+            this.Type = string.Empty;
         }
+
+        /// <summary>
+        /// Gets or sets the type.
+        /// </summary>
+        public string Type { get; set; }
+
 
         /// <summary>
         /// Gets or sets the code.

@@ -912,26 +912,18 @@
         /// <returns>
         /// The <see cref="PrincipalCollectionResult"/>.
         /// </returns>
-        public bool AddToGroupByType(string principalId, string typeName)
+        public StatusInfo AddToGroupByType(string principalId, string typeName)
         {
-            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
-            if (group != null)
-            {
-                return ResponseIsOk(this.AddToGroup(principalId, group.PrincipalId));
-            }
-
-            return false;
+            var groups = this.GetGroupsByType(typeName);
+            var group = groups.Item2.FirstOrDefault();
+            return group != null ? this.AddToGroup(principalId, group.PrincipalId) : groups.Item1;
         }
 
-        public bool AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
         {
-            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
-            if (group != null)
-            {
-                return ResponseIsOk(this.AddToGroup(principalIds, group.PrincipalId));
-            }
-
-            return false;
+            var groups = this.GetGroupsByType(typeName);
+            var group = groups.Item2.FirstOrDefault();
+            return group != null ? this.AddToGroup(principalIds, group.PrincipalId) : groups.Item1;
         }
 
         /// <summary>
