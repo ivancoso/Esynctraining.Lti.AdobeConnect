@@ -98,64 +98,7 @@
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The error.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        /// <param name="errorCode">
-        /// The error code.
-        /// </param>
-        public void Error(string message, Exception e, int errorCode)
-        {
-            this.logger.Error(message + errorCode, e);
-        }
-
-        /// <summary>
-        /// The error.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        /// <param name="e">
-        /// The e.
-        /// </param>
-        public void Error(string message, Exception e)
-        {
-            this.logger.Error(message, e);
-        }
-
-        /// <summary>
-        /// The error.
-        /// </summary>
-        /// <param name="message">
-        /// The message.
-        /// </param>
-        public void Error(string message)
-        {
-            this.logger.Error(message);
-        }
-
-        /// <summary>
-        /// The handle error.
-        /// </summary>
-        /// <param name="exception">
-        /// The exception.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public bool HandleError(Exception exception)
-        {
-            this.logger.Error("Unhandled WCF exception", exception);
-            return true;
-        }
-
+        
         /// <summary>
         /// The provide fault.
         /// </summary>
@@ -178,12 +121,12 @@
                 if (wasCalledOn.EndsWith("jsonp", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var resultedError = new WcfErrorWrapper
-                                            {
-                                                ErrorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, 
-                                                Message = error.Message, 
-                                                StackTrace = error.StackTrace, 
-                                                FullException = error.ToString()
-                                            };
+                    {
+                        ErrorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, 
+                        Message = error.Message, 
+                        StackTrace = error.StackTrace, 
+                        FullException = error.ToString()
+                    };
                     OutgoingWebResponseContext response = WebOperationContext.Current.With(x => x.OutgoingResponse);
                     response.StatusCode = HttpStatusCode.OK;
                     response.ContentType = "application/json";
