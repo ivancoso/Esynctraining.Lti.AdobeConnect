@@ -1,10 +1,4 @@
-﻿USE [EduGameCloud]
-GO
-/****** Object:  StoredProcedure [dbo].[getSurveyResultAnswers]    Script Date: 29.07.2015 12:26:31 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
+﻿
 CREATE PROCEDURE [dbo].[getSurveyResultAnswers]
 (
 	@surveyResultIds AS XML
