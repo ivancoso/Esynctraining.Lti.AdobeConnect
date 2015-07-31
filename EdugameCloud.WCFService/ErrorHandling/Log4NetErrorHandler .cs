@@ -98,7 +98,22 @@
         #endregion
 
         #region Public Methods and Operators
-        
+
+        /// <summary>
+        /// The handle error.
+        /// </summary>
+        /// <param name="exception">
+        /// The exception.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        public bool HandleError(Exception exception)
+        {
+            this.logger.Error("Unhandled WCF exception", exception);
+            return true;
+        }
+
         /// <summary>
         /// The provide fault.
         /// </summary>
