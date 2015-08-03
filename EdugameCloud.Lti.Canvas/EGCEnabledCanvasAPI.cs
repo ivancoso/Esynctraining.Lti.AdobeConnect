@@ -5,6 +5,7 @@ using System.Net;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Canvas;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -92,40 +93,20 @@ namespace EdugameCloud.Lti.Canvas
             {
                 Validate(lmsCompany.LmsDomain, userToken);
 
-                string token = ((lmsCompany.AdminUser != null) && (lmsCompany.AdminUser.Token != null))
-                    ? lmsCompany.AdminUser.Token
-                    : userToken;
-
-                LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
-
-                List<string> courseTeacherTokens = null;
-                // IF emails is NOT included (for student + lmsCompany.AdminUser == null)
-                if (string.IsNullOrEmpty(user.primary_email))
+                if (lmsCompany.AdminUser == null)
                 {
-                    List<LmsUserDTO> users = GetUsersForCourse(
-                        lmsCompany.LmsDomain,
-                        token,
-                        courseId);
-
-                    IEnumerable<string> courseTeachers = users
-                        .Where(u => u.lms_role.ToUpper().Equals("TEACHER") || u.lms_role.ToUpper().Equals("TA"))
-                        .Select(u => u.id)
-                        .Distinct();
-
-                    courseTeacherTokens =
-                        LmsUserModel.GetByUserIdAndCompanyLms(courseTeachers.ToArray(), lmsCompany.Id)
-                        .Where(t => !string.IsNullOrWhiteSpace(t.Token))
-                        .Select(v => v.Token)
-                        .ToList();
-
-                    foreach (string teacherToken in courseTeacherTokens)
-                    {
-                        user = FetchCourseUser(userId, lmsCompany.LmsDomain, courseTeacherTokens.FirstOrDefault(), courseId);
-                        if (!string.IsNullOrEmpty(user.primary_email))
-                            break;
-                    }
+                    _logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", lmsCompany.Id);
+                    throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
                 }
 
+                var token = lmsCompany.AdminUser.Token;
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    _logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
+                    throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
+                }
+
+                LmsUserDTO user = FetchCourseUser(userId, lmsCompany.LmsDomain, token, courseId);
                 return user;
             }
             catch (Exception ex)
