@@ -265,6 +265,36 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 principalSetup.PrincipalId, principalSetup.Login);
         }
 
+        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError)
+        {
+            if (principalSetup == null)
+                throw new ArgumentNullException("principalSetup");
+
+            PrincipalResult result;
+            try
+            {
+                result = _provider.PrincipalUpdate(principalSetup, isUpdateOperation);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "PrincipalId:{0}.Login:{1}.", principalSetup.PrincipalId, principalSetup.Login);
+                throw;
+            }
+
+            if (throwOnAdobeError && !result.Success)
+            {
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.Login:{2}.",
+                    result.Status.GetErrorInfo(),
+                    principalSetup.PrincipalId, 
+                    principalSetup.Login);
+                _logger.Error(msg);
+                throw new InvalidOperationException(msg);
+            }
+
+            return result;
+        }
+
+
         public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
         {
             return Execute(() => { return _provider.PrincipalUpdatePassword(principalId, newPassword); },
@@ -383,6 +413,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw;
             }
 
+            if (typeof(T) == typeof(StatusInfo))
+            {
+                StatusInfo status = result as StatusInfo;
+                if (status.Code != StatusCodes.ok)
+                {
+                    string errorInfo = status.GetErrorInfo();
+                    _logger.Error("[AdobeConnectProxy Error] " + errorInfo);
+                    throw new InvalidOperationException(errorInfo);
+                }
+            }
+
             ResultBase acResult = result as ResultBase;
             if ((acResult != null) && !acResult.Success)
             {
@@ -405,6 +446,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 _logger.ErrorFormat(ex, "Parameter1:{0}.", parameterValue);
                 throw;
+            }
+
+            if (typeof(T) == typeof(StatusInfo))
+            {
+                StatusInfo status = result as StatusInfo;
+                if (status.Code != StatusCodes.ok)
+                {
+                    string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+                    status.GetErrorInfo(),
+                    parameterValue);
+                    _logger.Error(msg);
+                    throw new InvalidOperationException(msg);
+                }
             }
 
             ResultBase acResult = result as ResultBase;
@@ -433,13 +487,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw;
             }
 
-            var acStatus = result as StatusInfo;
-            if (acStatus != null && acStatus.Code != StatusCodes.ok && acStatus.SubCode == StatusSubCodes.no_quota && acStatus.Type == "num-of-members-quota")
+            if (typeof(T) == typeof(StatusInfo))
             {
-                throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                StatusInfo status = result as StatusInfo;
+                if (status != null 
+                    && status.Code != StatusCodes.ok
+                    && status.SubCode == StatusSubCodes.no_quota
+                    && status.Type == "num-of-members-quota")
+                {
+                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                }
+
+                if (status.Code != StatusCodes.ok)
+                {
+                    string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.Parameter2:{2}.",
+                    status.GetErrorInfo(),
+                    parameter1Value,
+                    parameter2Value);
+                    _logger.Error(msg);
+                    throw new InvalidOperationException(msg);
+                }
             }
 
-            var acResult = result as ResultBase;
+            ResultBase acResult = result as ResultBase;
             if ((acResult != null) && !acResult.Success)
             {
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.Parameter2:{2}.",
@@ -450,7 +520,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new InvalidOperationException(msg);
             }
 
-          return result;
+            return result;
         }
 
     }

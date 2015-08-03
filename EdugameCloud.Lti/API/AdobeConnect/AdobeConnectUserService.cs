@@ -37,13 +37,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 };
 
                 PrincipalResult pu = provider.PrincipalUpdate(setup, false);
-
-                if (!pu.Success)
-                {
-                    string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", firstName, lastName, login, email);
-                    throw new InvalidOperationException(string.Format("AC.PrincipalUpdate error. {0}. Additional Data: {1}", pu.Status.GetErrorInfo(), additionalData));
-                }
-
+                
                 if (pu.Principal != null)
                 {
                     principal = pu.Principal;
@@ -90,18 +84,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 PrincipalResult pu = provider.PrincipalUpdate(setup, false);
 
-                // TODO: review and add
-                // if (!pu.Success)
-                // {
-                // throw new InvalidOperationException("AC.PrincipalUpdate error", pu.Status.UnderlyingExceptionInfo);
-                // }
                 if (pu.Principal != null)
                 {
                     principal = pu.Principal;
                 }
             }
-
-
 
             return principal;
         }

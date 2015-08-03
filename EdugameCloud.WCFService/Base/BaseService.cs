@@ -11,13 +11,10 @@
     using System.ServiceModel.Channels;
     using System.Text.RegularExpressions;
     using System.Web;
-
     using Castle.Core.Logging;
     using Castle.MicroKernel;
-
     using DotAmf.Data;
     using DotAmf.ServiceModel.Messaging;
-
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
@@ -25,9 +22,7 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
-
     using Esynctraining.AC.Provider.DataObjects.Results;
-    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Contracts;
@@ -37,10 +32,8 @@
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
-
     using FluentValidation;
     using FluentValidation.Results;
-
     using Resources;
 
     /// <summary>
@@ -345,14 +338,19 @@
             if (res != null && res.Status != null)
             {
                 string field = res.Status.InvalidField;
-                StatusCodes errorCode = res.Status.Code;
-                StatusSubCodes errorSubCode = res.Status.SubCode;
+                Esynctraining.AC.Provider.Entities.StatusCodes errorCode = res.Status.Code;
+                Esynctraining.AC.Provider.Entities.StatusSubCodes errorSubCode = res.Status.SubCode;
                 string message;
-                if (field == "login" && errorCode == StatusCodes.invalid && errorSubCode == StatusSubCodes.duplicate)
+                if (field == "login" 
+                    && errorCode == Esynctraining.AC.Provider.Entities.StatusCodes.invalid 
+                    && errorSubCode == Esynctraining.AC.Provider.Entities.StatusSubCodes.duplicate)
                 {
                     message = "User already exists in Adobe Connect.";
                 }
-                else if (res is LoginResult && !res.Success && string.IsNullOrWhiteSpace(field) && errorCode == StatusCodes.no_data)
+                else if (res is LoginResult 
+                    && !res.Success 
+                    && string.IsNullOrWhiteSpace(field) 
+                    && errorCode == Esynctraining.AC.Provider.Entities.StatusCodes.no_data)
                 {
                     message = "Login failed";
                 }
@@ -361,8 +359,8 @@
                     message = string.Format(
                         "Adobe Connect error: {0}{1}{2}",
                         field,
-                        errorCode == StatusCodes.not_set ? string.Empty : " is " + errorCode,
-                        errorSubCode == StatusSubCodes.not_set
+                        errorCode == Esynctraining.AC.Provider.Entities.StatusCodes.not_set ? string.Empty : " is " + errorCode,
+                        errorSubCode == Esynctraining.AC.Provider.Entities.StatusSubCodes.not_set
                             ? string.Empty
                             : string.Format(" (reason : {0})", errorSubCode));
                 }

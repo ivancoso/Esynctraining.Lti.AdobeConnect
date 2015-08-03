@@ -65,6 +65,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //StatusInfo MoveSco(string folderId, string scoId);
         PrincipalResult PrincipalDelete(PrincipalDelete principalDelete);
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation);
+        PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError);
         GenericResult PrincipalUpdatePassword(string principalId, string newPassword);
         //StatusInfo RemoveFromGroup(string principalId, string groupId);
         //bool RemoveFromGroupByType(string principalId, string typeName);

@@ -204,7 +204,7 @@ namespace EdugameCloud.Lti.Controllers
             };
 
 
-            PrincipalResult pu = provider.PrincipalUpdate(setup, false);
+            PrincipalResult pu = provider.PrincipalUpdate(setup, false, false);
 
             if (!pu.Success)
             {

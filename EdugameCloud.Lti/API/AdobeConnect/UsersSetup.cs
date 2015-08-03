@@ -558,11 +558,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             string login = user.GetLogin();
             lmsDbUser = lmsDbUser ?? new LmsUser
-                              {
-                                  LmsCompany = lmsCompany,
-                                  Username = login,
-                                  UserId = user.lti_id ?? user.id,
-                              };
+            {
+                LmsCompany = lmsCompany,
+                Username = login,
+                UserId = user.lti_id ?? user.id,
+            };
 
             if (string.IsNullOrEmpty(lmsDbUser.PrincipalId))
             {
@@ -787,6 +787,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         lmsCompany);
             if (principal != null)
             {
+                lmsUserDto.ac_id = principal.PrincipalId;
                 dbUser.PrincipalId = principal.PrincipalId;
                 this.LmsUserModel.RegisterSave(dbUser);
             }
@@ -1065,7 +1066,30 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     permission = new RoleMappingService().SetAcRole(lmsCompany, user);
                 }
 
-                provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+                try
+                {
+                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+                }
+                catch (InvalidOperationException)
+                {
+                    // NOTE: check that Principal is in AC yet
+                    var principalInfo = provider.GetOneByPrincipalId(user.ac_id);
+                    if (!principalInfo.Success)
+                    {
+                        var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value;
+
+                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany);
+
+                        if (principal == null && lmsCompany.DenyACUserCreation)
+                        {
+                            error = "User does not exist in AC database. You must create AC accounts manually";
+                            return null;
+                        }
+                    }
+
+                    // NOTE: try again
+                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+                }
 
                 if (permission == MeetingPermissionId.host)
                 {
