@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Guest.cs" />
     <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
     <Compile Include="Attributes\SkipDuringUpdateAttribute.cs" />
     <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="DataObjects\Results\FieldResult.cs" />
     <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
     <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
     <Compile Include="DataObjects\Results\RecordingCollectionResult.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Entities\FolderUpdateItem.cs" />
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
+    <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\PermissionUpdateTrio.cs" />
     <Compile Include="Entities\Recording.cs" />
     <Compile Include="Entities\RecordingJob.cs" />
@@ -128,6 +131,8 @@
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
+    <Compile Include="EntityParsing\UserParser.cs" />
+    <Compile Include="EntityParsing\UserCollectionParser.cs" />
     <Compile Include="EntityParsing\PrincipalInfoParser.cs" />
     <Compile Include="EntityParsing\PrincipalPreferencesParser.cs" />
     <Compile Include="EntityParsing\CurriculumContentCollectionParser.cs" />

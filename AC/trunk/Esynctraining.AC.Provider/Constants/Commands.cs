@@ -25,6 +25,8 @@
         /// </summary>
         public const string ReportBulkObjects = "report-bulk-objects";
 
+        public const string ReportBulkUsers = "report-bulk-users";
+
         /// <summary>
         /// The report bulk attendance.
         /// </summary>

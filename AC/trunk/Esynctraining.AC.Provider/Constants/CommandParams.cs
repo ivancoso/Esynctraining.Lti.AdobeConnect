@@ -182,6 +182,16 @@
             public const string Recording = "filter-icon=archive";
         }
 
+        internal static class ReportBulkUsersFilters
+        {
+            //public const string Guest = "filter-type=guest";
+
+            public const string GuestByLogin = "filter-type=guest&filter-login={0}";
+
+            public const string GuestByEmail = "filter-type=guest&filter-email={0}";
+
+        }
+
         /// <summary>
         /// The features.
         /// </summary>

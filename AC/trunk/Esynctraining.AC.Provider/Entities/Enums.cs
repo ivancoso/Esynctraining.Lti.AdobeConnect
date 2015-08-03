@@ -143,7 +143,7 @@
         learners,
         live_admins,
         seminar_admins,
-        user
+        user,
     }
 
     public enum SpecialPermissionId
