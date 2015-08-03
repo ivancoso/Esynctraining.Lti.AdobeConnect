@@ -281,14 +281,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw;
             }
 
-            if (throwOnAdobeError && !result.Success)
+            if (!result.Success)
             {
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.Login:{2}.",
                     result.Status.GetErrorInfo(),
                     principalSetup.PrincipalId, 
                     principalSetup.Login);
                 _logger.Error(msg);
-                throw new InvalidOperationException(msg);
+
+                if (throwOnAdobeError)
+                    throw new InvalidOperationException(msg);
             }
 
             return result;
@@ -399,6 +401,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 scoId, principalId);
         }
 
+        public UserCollectionResult ReportGuestsByEmail(string email)
+        {
+            return Execute(() => { return _provider.ReportGuestsByEmail(email); },
+                email);
+        }
+
+        public UserCollectionResult ReportGuestsByLogin(string login)
+        {
+            return Execute(() => { return _provider.ReportGuestsByEmail(login); },
+                login);
+        }
 
         private T Execute<T>(Func<T> func)
         {

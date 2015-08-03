@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider;
@@ -26,22 +27,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (principal == null && !denyUserCreation)
             {
-                var setup = new PrincipalSetup
-                {
-                    Email = string.IsNullOrWhiteSpace(email) ? null : email, 
-                    FirstName = firstName, 
-                    LastName = lastName, 
-                    Name = login, 
-                    Login = login, 
-                    Type = PrincipalTypes.user, 
-                };
-
-                PrincipalResult pu = provider.PrincipalUpdate(setup, false);
-                
-                if (pu.Principal != null)
-                {
-                    principal = pu.Principal;
-                }
+                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmailFirst);
             }
 
             return principal;
@@ -72,22 +58,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!denyUserCreation && (principal == null))
             {
-                var setup = new PrincipalSetup
-                {
-                    Email = string.IsNullOrWhiteSpace(email) ? null : email,
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Name = login,
-                    Login = login,
-                    Type = PrincipalTypes.user,
-                };
-
-                PrincipalResult pu = provider.PrincipalUpdate(setup, false);
-
-                if (pu.Principal != null)
-                {
-                    principal = pu.Principal;
-                }
+                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmailFirst);
             }
 
             return principal;
@@ -165,5 +136,53 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return principal;
         }
+
+        private Principal CreatePrincipal(
+            IAdobeConnectProxy provider,
+            string login,
+            string email,
+            string firstName,
+            string lastName,
+            bool acUsesEmailAsLogin)
+        {
+            var setup = new PrincipalSetup
+            {
+                Email = string.IsNullOrWhiteSpace(email) ? null : email,
+                FirstName = firstName,
+                LastName = lastName,
+                Name = login,
+                Login = login,
+                Type = PrincipalTypes.user,
+            };
+
+            PrincipalResult pu = provider.PrincipalUpdate(setup, false, false);
+
+            if (!pu.Success)
+            {
+                if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
+                {
+                    if (acUsesEmailAsLogin)
+                    {
+                        UserCollectionResult guestsByEmail = provider.ReportGuestsByEmail(email);
+                        if (guestsByEmail.Success && guestsByEmail.Values.Any())
+                            throw new WarningMessageException(string.Format("Unable to sync users. Guest record with email '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.", email));
+                    }
+                    else
+                    {
+                        UserCollectionResult guestsByLogin = provider.ReportGuestsByLogin(login);
+                        if (guestsByLogin.Success && guestsByLogin.Values.Any())
+                            throw new WarningMessageException(string.Format("Unable to sync users. Guest record with login '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.", login));
+                    }
+                }
+            }
+
+            if (pu.Principal != null)
+            {
+                return pu.Principal;
+            }
+            return null;
+        }
+
     }
+
 }

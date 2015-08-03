@@ -91,5 +91,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values);
         StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId);
         //StatusInfo UploadContent(UploadScoInfo uploadScoInfo);
+
+        UserCollectionResult ReportGuestsByEmail(string email);
+        UserCollectionResult ReportGuestsByLogin(string login);
     }
 }
