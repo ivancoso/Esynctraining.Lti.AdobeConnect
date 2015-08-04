@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.Core;
 using Esynctraining.AC.Provider;
@@ -34,6 +35,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
+
+            if (!principalIds.Any())
+                throw new ArgumentException("Non empty principal id list required", "principalIds");
 
             return Execute(() => _provider.AddToGroupByType(principalIds, typeName),
                 string.Join(";", principalIds), typeName);

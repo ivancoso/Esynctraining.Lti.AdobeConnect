@@ -172,7 +172,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public void AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds)
         {
-            provider.AddToGroupByType(principalIds, "live-admins");
+            if (principalIds.Any())
+                provider.AddToGroupByType(principalIds, "live-admins");
         }
 
         /// <summary>
