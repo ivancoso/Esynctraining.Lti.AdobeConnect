@@ -218,12 +218,11 @@ namespace EdugameCloud.Lti.Controllers
                         AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
                         if (result.IsSuccessful)
                         {
-                            //if (provider.ToLower() == LmsProviderNames.Canvas)
-                            //{
-                            //    var param = this.GetSession(providerKey).LtiSession.LtiParam;
-                            //    if (param.lms_user_login == "$Canvas.user.loginId")
-                            //        throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
-                            //}
+                            if (provider.ToLower() == LmsProviderNames.Canvas)
+                            {
+                                if (param.lms_user_login == "$Canvas.user.loginId")
+                                    throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
+                            }
 
                             return AuthCallbackSave(providerKey,
                                 result.ExtraData.ContainsKey("accesstoken")
