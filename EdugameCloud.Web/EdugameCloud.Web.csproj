@@ -571,6 +571,7 @@
     <Content Include="Content\lti-config\moodle.xml" />
     <Content Include="Content\lti-config\sakai.xml" />
     <Content Include="Content\lti-files\edugame-cloud-ws-1.0.25.jar" />
+    <Content Include="Content\lti-files\edugame-cloud-ws-1.0.37.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
     <Content Include="Content\swf\admin\Adm_EdugameCloud_1.5.6579.swf" />
