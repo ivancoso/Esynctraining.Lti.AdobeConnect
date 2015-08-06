@@ -31,46 +31,46 @@ namespace EdugameCloud.Lti.BlackBoard
             this.settings = settings;
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
-            string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
-        {
-            //Guid guid;
-            //return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
-            //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
+        //public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
+        //    string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        //{
+        //    //Guid guid;
+        //    //return GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate)
+        //    //    .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
 
-            string[] userIds = null;
-            if (!string.IsNullOrWhiteSpace(lmsUserId))
-                userIds = new string[] { lmsUserId };
+        //    string[] userIds = null;
+        //    if (!string.IsNullOrWhiteSpace(lmsUserId))
+        //        userIds = new string[] { lmsUserId };
 
-            WebserviceWrapper client = null;
-            List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
-                lmsCompany,
-                courseId,
-                userIds,
-                out error,
-                ref client);
+        //    WebserviceWrapper client = null;
+        //    List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
+        //        lmsCompany,
+        //        courseId,
+        //        userIds,
+        //        out error,
+        //        ref client);
 
-            if ((users.Count == 0)
-                && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
-            {
-                logger.Warn("BlackboardLmsUserService.GetUser.AccessDenied. " + error);
+        //    if ((users.Count == 0)
+        //        && error.Return(x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0, false))
+        //    {
+        //        logger.Warn("BlackboardLmsUserService.GetUser.AccessDenied. " + error);
 
-                if (client != null)
-                    client.logout();
-                // NOTE: set to null to re-create session.
-                client = null;
-                users = this.soapApi.GetUsersForCourse(
-                    lmsCompany,
-                    courseId,
-                    userIds,
-                    out error,
-                    ref client);
-            }
+        //        if (client != null)
+        //            client.logout();
+        //        // NOTE: set to null to re-create session.
+        //        client = null;
+        //        users = this.soapApi.GetUsersForCourse(
+        //            lmsCompany,
+        //            courseId,
+        //            userIds,
+        //            out error,
+        //            ref client);
+        //    }
 
-            Guid guid;
-            return users
-                .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
-        }
+        //    Guid guid;
+        //    return users
+        //        .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
+        //}
 
         public override bool CanRetrieveUsersFromApiForCompany(LmsCompany lmsCompany)
         {

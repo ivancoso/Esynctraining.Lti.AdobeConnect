@@ -230,7 +230,7 @@ namespace EdugameCloud.Web
         /// </param>
         public void FormsAuthentication_OnAuthenticate(Object sender, FormsAuthenticationEventArgs e)
         {
-            var sw = Stopwatch.StartNew();
+            //var sw = Stopwatch.StartNew();
             try
             {
                 if (Request.QueryString.HasKey("egcSession"))
@@ -300,7 +300,7 @@ namespace EdugameCloud.Web
             }
             finally
             {
-                sw.Stop();
+                //sw.Stop();
                 //var time = sw.Elapsed;
                 //IoC.Resolve<ILogger>().InfoFormat("FormsAuthentication_OnAuthenticate: time: {0}.", time.ToString());
             }

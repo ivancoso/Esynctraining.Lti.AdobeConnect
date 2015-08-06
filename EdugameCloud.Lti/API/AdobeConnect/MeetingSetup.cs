@@ -380,14 +380,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var result = provider.GetRecordingsList(meeting.GetMeetingScoId());
 
-            if (!result.Success)
-                throw new InvalidOperationException("GetRecordings failed. Result Status: " + result.Status.Code + " " + result.Status.SubCode);
-
             var recordings = new List<RecordingDTO>();
             var commonInfo = provider.GetCommonInfo();
-
-            if (!commonInfo.Success)
-                throw new InvalidOperationException("GetCommonInfo failed. Result Status: " + result.Status.Code + " " + result.Status.SubCode);
 
             foreach (var v in result.Values)
             {
@@ -1165,6 +1159,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var serverCourseMeetings = courseMeetings.Where(
                 cm =>
                 {
+                    // TODO: add to LOg
                     var acServer = cm.Return(c => c.LmsCompany.Return(cl => cl.AcServer, null), null);
                     if (acServer == null)
                     {
@@ -1175,7 +1170,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         acServer = acServer.Substring(0, acServer.Length - 1);
                     }
-
+                    // TODO: add to LOg
                     return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
                 })
                     .ToList();
@@ -1186,7 +1181,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return null;
             }
 
-            List<LmsUserParameters> paramList = new List<LmsUserParameters>();
+            var paramList = new List<LmsUserParameters>();
 
             foreach (var courseMeeting in serverCourseMeetings)
             {
