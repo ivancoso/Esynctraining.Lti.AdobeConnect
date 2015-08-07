@@ -173,11 +173,11 @@ namespace EdugameCloud.Lti.BlackBoard
         {
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
-            var enrollmentsResult = this.LoginIfNecessary(
-                ref client,
-                c =>
+            //var enrollmentsResult = this.LoginIfNecessary(
+            //    ref client,
+            //    c =>
                     {
-                        string errorDuringEnrollments = null;
+//                        string errorDuringEnrollments = null;
                         var resultedList = new List<LmsUserDTO>();
 
                         // NOTE: check http://library.blackboard.com/ref/fd8c40a0-f670-4c48-9e02-c5d84e61eda7/blackboard/ws/coursemembership/CourseMembershipWS.html
@@ -196,36 +196,64 @@ namespace EdugameCloud.Lti.BlackBoard
                             courseIds = new[] { courseIdFixed },
                         };
 
-                        CourseMembershipWrapper membership = c.getCourseMembershipWrapper();
+                        var bcc = this.BeginBatch(out error, company);
+
+                        CourseMembershipWrapper membership = bcc.getCourseMembershipWrapper();
 
                         if (membership != null)
                         {
                             CourseMembershipVO[] enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
-                            if (HadError(c, out errorDuringEnrollments))
+                            
+                            if (HadError(bcc, out error))
                             {
-                                return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
+                                if (bcc != null)
+                                    bcc.logout();
+                                return resultedList;
                             }
+
+                            if (bcc != null)
+                                bcc.logout();
 
                             if (enrollments != null)
                             {
+                                var activeEnrollments = enrollments.Where(x => x.available.HasValue && x.available.Value);
+
+                                bcc = this.BeginBatch(out error, company);
+                                membership = bcc.getCourseMembershipWrapper();
                                 CourseMembershipRoleVO[] roles = membership.loadRoles(null);
+                                if (HadError(bcc, out error))
+                                {
+                                    if (bcc != null)
+                                        bcc.logout();
+                                    return resultedList;
+                                }
+                                if (bcc != null)
+                                    bcc.logout();
+
                                 var userFilter = new UserFilter
                                 {
                                     filterTypeSpecified = true,
                                     filterType = 2,
-                                    id = enrollments.Select(x => x.userId).ToArray(),
+                                    id = activeEnrollments.Select(x => x.userId).ToArray(),
                                 };
-                                UserWrapper userService = c.getUserWrapper();
+                                
+                                bcc = this.BeginBatch(out error, company);
+                                UserWrapper userService = bcc.getUserWrapper();
                                 if (userService != null)
                                 {
                                     UserVO[] users = userService.getUser(userFilter);
                                     if (users == null)
                                     {
-                                        HadError(c, out errorDuringEnrollments);
-                                        return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
-                                    }
+                                        HadError(bcc, out error);
+                                        if (bcc != null)
+                                            bcc.logout();
 
-                                    resultedList = enrollments.Select(
+                                        return resultedList;
+                                    }
+                                    if (bcc != null)
+                                        bcc.logout();
+
+                                    resultedList = activeEnrollments.Select(
                                         e =>
                                             {
                                                 var user = users.FirstOrDefault(u => e.userId == u.id);
@@ -251,17 +279,18 @@ namespace EdugameCloud.Lti.BlackBoard
                             }
                         }
 
-                        return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
-                    },
-                company,
-                out error);
+                        return resultedList;
+                    }
+                        //,
+                //company,
+                //out error);
 
-            if (enrollmentsResult == null)
-            {
-                error = error ?? "SOAP. Unable to retrive result from API";
-                return new List<LmsUserDTO>();
-            }
-            return enrollmentsResult;
+            //if (enrollmentsResult == null)
+            //{
+            //    error = error ?? "SOAP. Unable to retrive result from API";
+            //    return new List<LmsUserDTO>();
+            //}
+            //return enrollmentsResult;
         }
 
         /// <summary>
@@ -432,7 +461,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 lmsDomain, 
                 VendorEgc, 
                 ProgramLti,
-                TimeSpan.FromMinutes(30).Seconds,
+                TimeSpan.FromSeconds(5).Seconds,
                 new CastleLoggerAdapter(logger));
 
             if (HadError(client, out error))
@@ -575,6 +604,9 @@ namespace EdugameCloud.Lti.BlackBoard
             {
                 var result = action(client);
                 error = result.Item2;
+
+                client.logout();
+                client = null;
 
                 if (!string.IsNullOrWhiteSpace(error))
                     throw new InvalidOperationException("BlackBoard.LoginIfNecessary. Error: " + error);
