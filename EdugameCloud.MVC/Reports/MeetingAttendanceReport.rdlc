@@ -1417,7 +1417,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>=CDate(Now()).ToString("f")</Value>
+                      <Value>=Parameters!LocalDate.Value</Value>
                       <Style>
                         <FontFamily>Lucida Sans Unicode</FontFamily>
                         <FontWeight>Medium</FontWeight>
@@ -1760,6 +1760,10 @@
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
     <ReportParameter Name="ACMeetingTitle">
+      <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="LocalDate">
       <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>

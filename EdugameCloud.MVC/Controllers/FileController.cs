@@ -228,7 +228,7 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-attendance-report")]
-        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, string meetingScoId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -274,14 +274,14 @@ namespace EdugameCloud.MVC.Controllers
                     this.RedirectToError(" Unable to retrieve data about company");
                     return null;
                 }
-               
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);               
+                var localDate = GetLocalDate(timezoneOffset);
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);               
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "Attendance");
+                    var reportName = GenerateReportName(session, "Attendance", localDate);
                     return this.File(
                         reportRenderedBytes,
                         mimeType,
@@ -304,7 +304,7 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-sessions-report")]
-        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, string meetingScoId, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, string meetingScoId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -345,8 +345,8 @@ namespace EdugameCloud.MVC.Controllers
                     this.RedirectToError("Unable to retrieve data about company");
                     return null;
                 }
-
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle);
+                var localDate = GetLocalDate(timezoneOffset);
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
                     {
@@ -380,7 +380,7 @@ namespace EdugameCloud.MVC.Controllers
 
                 if (reportRenderedBytes != null)
                 {
-                    var reportName = GenerateReportName(session, "Sessions");
+                    var reportName = GenerateReportName(session, "Sessions", localDate);
 
                     return this.File(
                         reportRenderedBytes,
@@ -2790,7 +2790,7 @@ namespace EdugameCloud.MVC.Controllers
             return provider;
         }
 
-        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession, string acMeetingUrl, string acMeetingTitle)
+        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession, string acMeetingUrl, string acMeetingTitle, DateTime localDate)
         {
             if (company == null)
             {
@@ -2823,6 +2823,7 @@ namespace EdugameCloud.MVC.Controllers
             var companyLogoParam = new ReportParameter("CompanyLogo", companyLogo);
             var isExcelParam = new ReportParameter("IsExcelFormat", isExcelFormat);
             var courseNameParam = new ReportParameter("CourseName", courseName);
+            var localDateParam = new ReportParameter("LocalDate", String.Format("{0:F}", localDate));
 
             var parametersList = new List<ReportParameter>
             {
@@ -2831,7 +2832,8 @@ namespace EdugameCloud.MVC.Controllers
                 isExcelParam,
                 courseNameParam,
                 acMeetingUrlParam,
-                acMeetingTitleParam
+                acMeetingTitleParam,
+                localDateParam
             };
             return parametersList;
         }
@@ -2854,7 +2856,7 @@ namespace EdugameCloud.MVC.Controllers
         {
             this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
         }
-        private static string GenerateReportName(LmsUserSession session, string reportName)
+        private static string GenerateReportName(LmsUserSession session, string reportName, DateTime localDate)
         {
             var strBiulder = new StringBuilder();
 
@@ -2871,9 +2873,8 @@ namespace EdugameCloud.MVC.Controllers
             }
 
             strBiulder.Append(reportName + "_");
-            var date = DateTime.Now;
-            strBiulder.Append(date.ToString("MMddyyyy") + "_");
-            strBiulder.Append(date.ToString("HHmmss"));
+            strBiulder.Append(localDate.ToString("MMddyyyy") + "_");
+            strBiulder.Append(localDate.ToString("HHmmss"));
 
             return strBiulder.ToString();
         }
@@ -2929,6 +2930,13 @@ namespace EdugameCloud.MVC.Controllers
                     out fileNameExtension,
                     out streams,
                     out warnings);
+
+        }
+
+        private DateTime GetLocalDate(int timezoneOffset)
+        {
+            var utcDate = DateTime.Now.ToUniversalTime();
+            return utcDate.ConverToClientTime(timezoneOffset);
 
         }
 

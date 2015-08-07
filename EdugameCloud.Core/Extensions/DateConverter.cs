@@ -84,6 +84,18 @@
             return (int)Math.Floor((date - _origin).TotalSeconds);
         }
 
+        public static DateTime ConverToClientTime(this DateTime date, int timezoneOffset)
+        {
+            if (timezoneOffset != 0)
+            {
+                var offset = int.Parse(timezoneOffset.ToString());
+                date = date.AddMinutes(-1 * offset);
+
+                return date;
+            }
+
+            return date.ToLocalTime();
+        }
     }
 
 }
