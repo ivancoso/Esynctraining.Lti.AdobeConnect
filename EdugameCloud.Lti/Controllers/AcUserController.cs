@@ -138,8 +138,6 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
-                string error;
-
                 var provider = GetAdobeConnectProvider(credentials);
 
                 var result = new List<Principal>();

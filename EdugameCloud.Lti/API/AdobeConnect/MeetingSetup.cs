@@ -379,10 +379,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             var result = provider.GetRecordingsList(meeting.GetMeetingScoId());
-
-            var recordings = new List<RecordingDTO>();
             var commonInfo = provider.GetCommonInfo();
 
+            var recordings = new List<RecordingDTO>();
             foreach (var v in result.Values)
             {
                 var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
@@ -552,7 +551,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (currentMeeting == null)
             {
-                throw new WarningMessageException(string.Format("No meeting for course {0} and sco id {1} found", param.course_id, scoId));
+                throw new WarningMessageException(string.Format("No meeting for course {0} and sco id {1} found.", param.course_id, scoId));
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
@@ -644,7 +643,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 var error = string.Format(
-                    "Cannot find Adobe Connect user with principal id {0} or email {1} or login {2}",
+                    "Cannot find Adobe Connect user with principal id {0} or email {1} or login {2}.",
                     lmsUser.PrincipalId ?? string.Empty,
                     email,
                     login);
@@ -858,13 +857,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             FixMeetingDTOFields(meetingDTO, param);
             
-            int type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
                 return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id));
             }
 
+            int type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
             LmsCourseMeeting meeting = this.GetLmsCourseMeeting(lmsCompany, param.course_id, meetingDTO.id, type);
             var meetingSco = meeting.GetMeetingScoId();
 
@@ -1723,14 +1722,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, password);
             }
 
-            // ReSharper disable once UnusedVariable
-            var principalUpdateResult = provider.PrincipalUpdate(
-                new PrincipalSetup
+            try
+            {
+                var principalUpdateResult = provider.PrincipalUpdate(
+                    new PrincipalSetup
                     {
-                        PrincipalId = registeredUser.PrincipalId, 
-                        FirstName = param.lis_person_name_given, 
-                        LastName = param.lis_person_name_family
+                        PrincipalId = registeredUser.PrincipalId,
+                        FirstName = param.lis_person_name_given,
+                        LastName = param.lis_person_name_family,
                     }, true);
+            }
+            catch
+            {
+                throw new WarningMessageException(string.Format("Error has occured trying to access \"{0} {1}\" account in Adobe Connect. Please check that account used to access has sufficient permissions."
+                    , param.lis_person_name_given
+                    , param.lis_person_name_family));
+            }
 
             var userProvider = this.GetProvider(credentials, false); // separate provider for user not to lose admin logging in
 

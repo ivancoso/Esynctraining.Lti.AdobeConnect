@@ -584,10 +584,18 @@ namespace EdugameCloud.Lti.Controllers
                 string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
+            catch (WarningMessageException ex)
+            {
+                this.ViewBag.Message = ex.Message;
+                // TRICK: to increase window height
+                this.ViewBag.DebugError = "eSyncTraining Inc.";
+                return this.View("~/Views/Lti/LtiError.cshtml");
+            }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("JoinMeeting", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
+                logger.ErrorFormat(ex, "JoinMeeting exception. scoId:{0}.", scoId);
+                this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
 
