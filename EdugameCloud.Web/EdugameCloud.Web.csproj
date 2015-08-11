@@ -574,7 +574,6 @@
     <Content Include="Content\lti-files\edugame-cloud-ws-1.0.37.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
-    <Content Include="Content\swf\admin\Adm_EdugameCloud_1.5.6579.swf" />
     <Content Include="Content\swf\admin\appStyles.css" />
     <Content Include="Content\swf\admin\resources\icons\add.png" />
     <Content Include="Content\swf\admin\resources\icons\addSmall.png" />
