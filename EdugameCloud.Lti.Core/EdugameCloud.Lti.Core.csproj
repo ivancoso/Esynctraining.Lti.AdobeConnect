@@ -254,6 +254,7 @@
     <Compile Include="DTO\LmsUserParametersDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />
     <Compile Include="DTO\LtiSessionDTO.cs" />
+    <Compile Include="DTO\MeetingAndLmsUsersDTO.cs" />
     <Compile Include="DTO\MeetingAttendanceReportDTO.cs" />
     <Compile Include="DTO\MeetingDTO.cs" />
     <Compile Include="DTO\MeetingHostReportDto.cs" />
