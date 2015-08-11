@@ -1,10 +1,9 @@
 ﻿namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
-
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.DTO;
-
+    using EdugameCloud.WCFService.DTO;
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
@@ -15,7 +14,7 @@
     {
         [OperationContract]
         [FaultContract(typeof(Error))]
-        CompanyLmsDTO Save(CompanyLmsDTO resultDto);
+        CompanyLmsOperationDTO Save(CompanyLmsDTO resultDto);
 
         [OperationContract]
         [FaultContract(typeof(Error))]

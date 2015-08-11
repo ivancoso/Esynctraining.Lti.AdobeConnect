@@ -176,7 +176,7 @@ namespace EdugameCloud.WCFService
             if (lmsConnectionTest.status != OkMessage
                 || !acConnectionTest)
             {
-                var message = new StringBuilder("LMS license has been created inactive due the following issues: \r\n");
+                var message = new StringBuilder("LMS License is inactive due to following reasons: \r\n");
                 if (lmsConnectionTest.status != OkMessage)
                 {
                     message.AppendFormat("{0} connection failed. ({1}) \r\n",

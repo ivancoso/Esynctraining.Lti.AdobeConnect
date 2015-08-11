@@ -261,6 +261,7 @@
     <Compile Include="Converters\QuizResultConverter.cs" />
     <Compile Include="CORS\CustomHeaderMessageInspector.cs" />
     <Compile Include="CORS\EnableCrossOriginResourceSharingBehavior.cs" />
+    <Compile Include="DTO\CompanyLmsOperationDTO.cs" />
     <Compile Include="DTO\CompanyDTO.cs" />
     <Compile Include="DTO\FileDownloadDTO.cs" />
     <Compile Include="DTO\IdNamePairDTO.cs" />
