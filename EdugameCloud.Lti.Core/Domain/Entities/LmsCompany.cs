@@ -211,6 +211,8 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// </summary>
         public virtual bool? AddPrefixToMeetingName { get; set; }
 
+        public virtual bool IsActive { get; set; }
+
         /// <summary>
         /// Gets or sets the LMS users.
         /// </summary>

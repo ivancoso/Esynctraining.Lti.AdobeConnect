@@ -763,6 +763,13 @@ namespace EdugameCloud.Lti.Controllers
                         return this.View("Error");
                     }
 
+                    if (!lmsCompany.IsActive)
+                    {
+                        logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                        this.ViewBag.Error = "LMS License is not active. Please contact administration.";
+                        return this.View("Error");
+                    }
+
                     var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
                     if ((company == null) || !company.IsActive())
                     {

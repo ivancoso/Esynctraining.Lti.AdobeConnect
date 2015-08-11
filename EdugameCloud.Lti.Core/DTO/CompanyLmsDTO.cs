@@ -62,6 +62,7 @@ namespace EdugameCloud.Lti.DTO
                 this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
                 this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
                 this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
+                this.isActive = instance.IsActive;
                 this.userFolderName = instance.UserFolderName;
                 this.setupUrl = instance.LmsProvider != null ? 
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
@@ -281,6 +282,9 @@ namespace EdugameCloud.Lti.DTO
         /// </summary>
         [DataMember]
         public bool addPrefixToMeetingName { get; set; }
+
+        [DataMember]
+        public bool isActive { get; set; }
 
         /// <summary>
         /// Gets or sets the setup url.

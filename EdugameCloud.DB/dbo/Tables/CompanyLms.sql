@@ -35,6 +35,7 @@
     [acUsesEmailAsLogin]      BIT            NULL,
     [loginUsingCookie]        BIT            NULL,
     [addPrefixToMeetingName]  BIT            NULL,
+	[isActive]				  BIT		 NOT NULL,
     CONSTRAINT [PK_CompanyLms] PRIMARY KEY CLUSTERED ([companyLmsId] ASC),
     CONSTRAINT [FK_CompanyLms_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]) ON DELETE CASCADE,
     CONSTRAINT [FK_CompanyLms_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),

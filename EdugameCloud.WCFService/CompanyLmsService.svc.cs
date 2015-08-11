@@ -7,6 +7,8 @@ namespace EdugameCloud.WCFService
     using System.Linq;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
+    using System.Text;
+    using BbWsClient;
     using Castle.Core.Logging;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Lti.API.AdobeConnect;
@@ -19,13 +21,16 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
+    using EdugameCloud.WCFService.DTO;
     using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects;
+    using Esynctraining.AC.Provider.DataObjects.Results;
+    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Domain.Entities;
+    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
-    using BbWsClient;
 
     /// <summary>
     /// The company LMS service.
@@ -35,6 +40,8 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyLmsService : BaseService, ICompanyLmsService
     {
+        private const string OkMessage = "Connected successfully";
+
         #region Properties
 
         /// <summary>
@@ -135,7 +142,7 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="CompanyLmsDTO"/>.
         /// </returns>
-        public CompanyLmsDTO Save(CompanyLmsDTO resultDto)
+        public CompanyLmsOperationDTO Save(CompanyLmsDTO resultDto)
         {
             ValidationResult validationResult;
             if (!this.IsValid(resultDto, out validationResult))
@@ -145,9 +152,60 @@ namespace EdugameCloud.WCFService
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
+            ConnectionInfoDTO lmsConnectionTest = TestConnection(new ConnectionTestDTO
+            {
+                domain = resultDto.lmsDomain,
+                enableProxyToolMode = resultDto.enableProxyToolMode,
+                login = resultDto.lmsAdmin,
+                password = resultDto.lmsAdminPassword,
+                type = resultDto.lmsProvider,
+            });
+
+            string acConnectionInfo;
+            bool loginSameAsEmail;
+            bool acConnectionTest = TestACConnection(new ConnectionTestDTO
+            {
+                domain = resultDto.acServer,
+                enableProxyToolMode = resultDto.enableProxyToolMode,
+                login = resultDto.acUsername,
+                password = resultDto.acPassword,
+                type = "ac",
+            }, out acConnectionInfo, out loginSameAsEmail);
+
+            string licenseTestResultMessage = null;
+            if (lmsConnectionTest.status != OkMessage
+                || !acConnectionTest)
+            {
+                var message = new StringBuilder("LMS license has been created inactive due the following issues: \r\n");
+                if (lmsConnectionTest.status != OkMessage)
+                {
+                    message.AppendFormat("{0} connection failed. ({1}) \r\n",
+                        this.LmsProviderModel.GetOneByName(resultDto.lmsProvider).Value.LmsProviderName,
+                        lmsConnectionTest.info);
+                }
+
+                if (!acConnectionTest)
+                {
+                    message.AppendFormat("Adobe Connect connection failed. ({0})",
+                        acConnectionInfo);
+                }
+
+                //var error = new Error(
+                //    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
+                //    "Connection failed",
+                //    message.ToString());
+                //throw new FaultException<Error>(error, message.ToString());
+                licenseTestResultMessage = message.ToString();
+            }
+
             bool isTransient = resultDto.id == 0;
             LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
             entity = ConvertDto(resultDto, entity);
+
+            // NOTE: always use setting from AC not UI
+            entity.ACUsesEmailAsLogin = loginSameAsEmail;
+            entity.IsActive = lmsConnectionTest.status == OkMessage && acConnectionTest;
+
             if (isTransient)
             {
                 entity.ConsumerKey = Guid.NewGuid().ToString();
@@ -159,7 +217,11 @@ namespace EdugameCloud.WCFService
 
             this.UpdateAdobeConnectFolder(isTransient, entity);
 
-            return new CompanyLmsDTO(entity);
+            return new CompanyLmsOperationDTO 
+            { 
+                companyLmsVO = new CompanyLmsDTO(entity),
+                message = licenseTestResultMessage,
+            };
         }
 
         /// <summary>
@@ -185,7 +247,8 @@ namespace EdugameCloud.WCFService
                 switch (test.type.ToLowerInvariant())
                 {
                     case "ac":
-                        success = this.TestACConnection(test, out info);
+                        bool loginSameAsEmail;
+                        success = this.TestACConnection(test, out info, out loginSameAsEmail);
                         break;
                     case "brainhoney":
                         success = this.TestBrainHoneyConnection(test, out info);
@@ -201,8 +264,8 @@ namespace EdugameCloud.WCFService
                         break;
                 }    
             }
-            
-            return new ConnectionInfoDTO { status = success ? "Connected successfully" : "Failed to connect", info = info };
+
+            return new ConnectionInfoDTO { status = success ? OkMessage : "Failed to connect", info = info };
         }
 
         #endregion
@@ -333,8 +396,9 @@ namespace EdugameCloud.WCFService
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private bool TestACConnection(ConnectionTestDTO test, out string info)
+        private bool TestACConnection(ConnectionTestDTO test, out string info, out bool loginSameAsEmail)
         {
+            loginSameAsEmail = false;
             info = string.Empty;
             var domainUrl = test.domain.ToLowerInvariant();
             if (!domainUrl.StartsWithProtocol())
@@ -357,9 +421,38 @@ namespace EdugameCloud.WCFService
                 {
                     info = error.errorMessage;
                 }
+
+                return false;
             }
 
-            return result.Success;
+            StatusInfo status;
+            UserInfo usr = provider.GetUserInfo(out status);
+
+            if (status.Code != StatusCodes.ok)
+            {
+                logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", status.GetErrorInfo());
+                info = status.GetErrorInfo();
+                return false;
+            }
+
+            if ((usr != null) && usr.AccountId.HasValue)
+            {
+                FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
+
+                if (!fields.Success)
+                {
+                    logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. {0}.", fields.Status.GetErrorInfo());
+                    info = fields.Status.GetErrorInfo();
+                    return false;
+                }
+
+                loginSameAsEmail = "YES".Equals(GetField(fields, "login-same-as-email"), StringComparison.OrdinalIgnoreCase);
+                return true;
+            }
+
+            logger.Error("GetPasswordPolicies. Account is NULL. Check Adobe Connect account permissions. Admin account expected.");
+            info = "Check Adobe Connect account permissions. Admin account expected.";
+            return false;            
         }
 
         /// <summary>
@@ -411,6 +504,9 @@ namespace EdugameCloud.WCFService
             instance.ShowEGCHelp = dto.showEGCHelp;
             instance.ShowLmsHelp = dto.showLmsHelp;
             instance.AddPrefixToMeetingName = dto.addPrefixToMeetingName;
+
+            // TRICK: always should set directly
+            instance.IsActive = false;// dto.isActive;
             instance.UserFolderName = dto.userFolderName;
             instance.EnableProxyToolMode = dto.enableProxyToolMode;
             instance.ProxyToolSharedPassword = dto.proxyToolPassword;
@@ -498,6 +594,17 @@ namespace EdugameCloud.WCFService
                     instance.RoleMappings.Add(map);
                 }
             }
+        }
+
+        private static string GetField(FieldCollectionResult value, string fieldName)
+        {
+            Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
+            if (field == null)
+            {
+                return null;
+            }
+
+            return field.Value;
         }
 
         #endregion

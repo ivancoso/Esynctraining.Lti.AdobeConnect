@@ -354,6 +354,10 @@
                 {
                     message = "Login failed";
                 }
+                else if (res.Status.UnderlyingExceptionInfo != null)
+                {
+                    message = res.Status.UnderlyingExceptionInfo.Message;
+                }
                 else
                 {
                     message = string.Format(

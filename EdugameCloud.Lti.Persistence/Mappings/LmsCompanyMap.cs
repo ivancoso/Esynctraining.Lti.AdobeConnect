@@ -45,7 +45,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.ACUsesEmailAsLogin).Nullable();
             this.Map(x => x.LoginUsingCookie).Nullable();
             this.Map(x => x.AddPrefixToMeetingName).Nullable();
-
+            this.Map(x => x.IsActive).Not.Nullable();
+            
             this.Map(x => x.EnableProxyToolMode).Nullable();
             this.Map(x => x.ProxyToolSharedPassword).Nullable();
 
