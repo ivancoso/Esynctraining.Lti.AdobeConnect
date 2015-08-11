@@ -357,7 +357,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 scoId);
 
             // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
-            var guests = meeting.MeetingGuests.ToList();
+            if (meeting.MeetingGuests != null)
+            {
+                 var guests = meeting.MeetingGuests.ToList();
+            }
             if (users == null || !users.Any())
             {
                 users = this.GetLMSUsers(

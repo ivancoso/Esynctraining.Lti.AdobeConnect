@@ -8,7 +8,7 @@ namespace EdugameCloud.Lti.Core.DTO
 {
     public class MeetingAndLmsUsersDTO
     {
-        public MeetingDTO Meeting { get; set; }
-        public IEnumerable<LmsUserDTO> LmsUsers { get; set; }
+        public MeetingDTO meeting { get; set; }
+        public IEnumerable<LmsUserDTO> lmsUsers { get; set; }
     }
 }

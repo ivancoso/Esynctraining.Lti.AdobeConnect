@@ -1064,8 +1064,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 		        return OperationResult.Success(
                     new MeetingAndLmsUsersDTO()
                     {
-                        Meeting = updatedMeeting,
-                        LmsUsers = users
+                        meeting = updatedMeeting,
+                        lmsUsers = users
                     });
 	        }
 
