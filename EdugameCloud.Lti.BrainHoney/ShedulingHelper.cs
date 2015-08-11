@@ -307,8 +307,7 @@ namespace EdugameCloud.Lti.BrainHoney
                         id = courseSignal.ItemId,
                         name = course.Title,
                         template = templates.First().With(x => x.id)
-                    },
-                    session);
+                    });
             }
 
             return result;

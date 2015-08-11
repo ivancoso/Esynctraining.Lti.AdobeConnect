@@ -520,12 +520,13 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, scoIds: new[] { scoId });
                 }
-                List<LmsUserDTO> users = this.usersSetup.GetUsers(
+                var users = this.usersSetup.GetUsers(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param,
                     scoId,
                     out error,
+                    null,
                     forceUpdate);
 
                 if (string.IsNullOrWhiteSpace(error))
@@ -913,6 +914,31 @@ namespace EdugameCloud.Lti.Controllers
                 logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                 this.ViewBag.DebugError = IsDebug? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
+            }
+        }
+
+        [HttpPost]
+        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(string lmsProviderName, MeetingDTO meeting)
+        {
+            LmsCompany credentials = null;
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                credentials = session.LmsCompany;
+                var param = session.LtiSession.With(x => x.LtiParam);
+                var ret = this.meetingSetup.SaveMeeting(
+                    credentials,
+                    this.GetAdobeConnectProvider(credentials),
+                    param,
+                    meeting,
+                    true);
+
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("UpdateMeetingAndReturnLmsUsers", credentials, ex);
+                return Json(OperationResult.Error(errorMessage));
             }
         }
 

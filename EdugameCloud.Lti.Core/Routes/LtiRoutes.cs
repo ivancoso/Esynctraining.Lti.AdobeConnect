@@ -34,6 +34,7 @@
             routes.MapLowercaseRoute("getmeetingattendance", "Lti/Meeting/Attendance", new { controller = "Lti", action = "GetAttendanceReport" });
             routes.MapLowercaseRoute("getmeetingsessions", "Lti/Meeting/Sessions", new { controller = "Lti", action = "GetSessionsReport" });
             routes.MapLowercaseRoute("updatemeeting", "Lti/Meeting/Update", new { controller = "Lti", action = "UpdateMeeting" });
+            routes.MapLowercaseRoute("updatemeetingreturnusers", "Lti/Meeting/UpdateAndReturnLmsUsers", new { controller = "Lti", action = "UpdateMeetingAndReturnLmsUsers" });
             routes.MapLowercaseRoute("deletemeeting", "Lti/Meeting/Delete", new { controller = "Lti", action = "DeleteMeeting" });
             routes.MapLowercaseRoute("joinmeeting", "Lti/Meeting/Join", new { controller = "Lti", action = "JoinMeeting" });
             routes.MapLowercaseRoute("joinmeetingmobile", "Lti/Meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });

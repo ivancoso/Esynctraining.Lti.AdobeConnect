@@ -32,6 +32,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             MeetingDTO meetingDTO,
+            bool retrieveLmsUsers = false,
             object extraData = null);
 
         List<string> DeleteMeeting(
@@ -842,8 +843,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public OperationResult SaveMeeting(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
-            LtiParamDTO param, 
+            LtiParamDTO param,
             MeetingDTO meetingDTO,
+            bool retrieveLmsUsers = false,
             object extraData = null)
         {
             if (lmsCompany == null)
@@ -937,7 +939,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
-
+            var lmsUsers = new List<LmsUserDTO>();
+            if (type == (int)LmsMeetingType.StudyGroup || type == (int)LmsMeetingType.Meeting)
+            {
+                string error;
+                lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
+                        meeting,
+                        param.lms_user_id,
+                        meeting.CourseId,
+                        out error,
+                        extraData ?? param);
+                if (error != null)
+                {
+                    return OperationResult.Error("Unable retrieve information about LMS users.");
+                }
+            }
             if (isNewMeeting)
             {
                 // newly created meeting
@@ -961,6 +977,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         param.lms_user_id,
                         meeting.CourseId,
                         result.ScoInfo.ScoId,
+                        lmsUsers,
                         extraData ?? param);
                 }
                 else
@@ -1029,6 +1046,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 result.ScoInfo,
                 permission,
                 meeting);
+
+            if (retrieveLmsUsers)
+            {
+                string error;
+                var users = this.UsersSetup.GetUsers(lmsCompany,
+                    provider,
+                    param,
+                    updatedMeeting.id,
+                    out error,
+                    lmsUsers);
+                if (error != null)
+                {
+                    return OperationResult.Error("Unable retrieve information about users.");
+                }
+
+		        return OperationResult.Success(
+                    new MeetingAndLmsUsersDTO()
+                    {
+                        Meeting = updatedMeeting,
+                        LmsUsers = users
+                    });
+	        }
 
             return OperationResult.Success(updatedMeeting);
         }

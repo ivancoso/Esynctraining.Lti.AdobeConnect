@@ -93,7 +93,7 @@
             return result;
         }
 
-        public IEnumerable<LmsUser> GetByCompanyLms(int companyLmsId, List<LmsUserDTO> usersToFind)
+        public IEnumerable<LmsUser> GetByCompanyLms(int companyLmsId, IList<LmsUserDTO> usersToFind)
         {
             var lmsUserSelectParam = new StringBuilder(50 * usersToFind.Count);
             lmsUserSelectParam.Append("<users>");

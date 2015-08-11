@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.Core.Domain.Entities;
+﻿using DotNetOpenAuth.Messaging.Reflection;
+using EdugameCloud.Lti.Core.Domain.Entities;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -341,12 +342,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public List<LmsUserDTO> GetUsers(
+        public IList<LmsUserDTO> GetUsers(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             string scoId, 
             out string error,
+            List<LmsUserDTO> users = null,
             bool forceUpdate = false)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
@@ -356,20 +358,24 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
             var guests = meeting.MeetingGuests.ToList();
-
-            List<LmsUserDTO> users = this.GetLMSUsers(
+            if (users == null || !users.Any())
+            {
+                users = this.GetLMSUsers(
                 lmsCompany,
                 meeting,
                 param.lms_user_id,
                 param.course_id,
                 out error,
                 param,
-                forceUpdate);
-            if (meeting == null)
-            {
-                return users;
-            }
+                forceUpdate).ToList();
 
+                if (error != null)
+                {
+                    throw new InvalidOperationException("Lms users");
+                }
+
+            }
+               
             var nonEditable = new HashSet<string>();
             MeetingAttendees attendees = GetMeetingAttendees(
                 provider, 
@@ -469,11 +475,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ProcessGuests(users, meeting, attendees.Hosts.Where(h => !h.HasChildren), AcRole.Host);
             ProcessGuests(users, meeting, attendees.Presenters.Where(h => !h.HasChildren), AcRole.Presenter);
             ProcessGuests(users, meeting, attendees.Participants.Where(h => !h.HasChildren), AcRole.Participant);
-            
+
+            error = null;
             return users;
         }
 
-        private static void ProcessGuests(List<LmsUserDTO> users, LmsCourseMeeting meeting, IEnumerable<PermissionInfo> permissions, AcRole role)
+        private static void ProcessGuests(IList<LmsUserDTO> users, LmsCourseMeeting meeting, IEnumerable<PermissionInfo> permissions, AcRole role)
         {
             foreach (PermissionInfo permissionInfo in permissions)
             {
@@ -872,17 +879,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             string lmsUserId, 
             int courseId, 
-            string meetingScoId, 
+            string meetingScoId,
+            List<LmsUserDTO> users,
             object extraData = null)
         {
             string error;
-            List<LmsUserDTO> users = this.GetLMSUsers(
-                lmsCompany, 
-                meeting, 
-                lmsUserId, 
-                courseId, 
-                out error, 
-                extraData);
 
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
 //            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
