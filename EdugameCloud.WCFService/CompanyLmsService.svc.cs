@@ -478,6 +478,7 @@ namespace EdugameCloud.WCFService
             instance.AcServer = dto.acServer;
             instance.UseFLV = dto.useFLV;
             instance.UseMP4 = dto.useMP4;
+            instance.EnableMultipleMeetings = dto.enableMultipleMeetings;
             instance.AcUsername = dto.acUsername;
             instance.CompanyId = dto.companyId;
             instance.ConsumerKey = dto.consumerKey;

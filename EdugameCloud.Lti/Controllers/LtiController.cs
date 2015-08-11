@@ -378,6 +378,7 @@ namespace EdugameCloud.Lti.Controllers
             var usesSyncUsers = TempData["UseSynchronizedUsers"] as bool? ?? false;
             var useFLV = TempData["UseFLV"] as bool? ?? false;
             var useMP4 = TempData["UseMP4"] as bool? ?? false;
+            var enableMultipleMeetings = TempData["EnableMultipleMeetings"] as bool? ?? false;
             string supportPageHtml = TempData["SupportPageHtml"] as string;
 
             if (string.IsNullOrWhiteSpace(meetingsJson))
@@ -402,6 +403,7 @@ namespace EdugameCloud.Lti.Controllers
                 usesSyncUsers = credentials.UseSynchronizedUsers;
                 useFLV = credentials.UseFLV;
                 useMP4 = credentials.UseMP4;
+                enableMultipleMeetings = credentials.EnableMultipleMeetings;
                 supportPageHtml = credentials.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
             }
 
@@ -415,6 +417,7 @@ namespace EdugameCloud.Lti.Controllers
             ViewBag.UseSynchronizedUsers = usesSyncUsers;
             ViewBag.UseFLV = useFLV;
             ViewBag.UseMP4 = useMP4;
+            ViewBag.EnableMultipleMeetings = enableMultipleMeetings;
             ViewBag.SupportPageHtml = supportPageHtml;
             return View("Index");
         }
@@ -1424,6 +1427,7 @@ namespace EdugameCloud.Lti.Controllers
             TempData["UseSynchronizedUsers"] = credentials.UseSynchronizedUsers;
             TempData["UseFLV"] = credentials.UseFLV;
             TempData["UseMP4"] = credentials.UseMP4;
+            TempData["EnableMultipleMeetings"] = credentials.EnableMultipleMeetings;
             TempData["SupportPageHtml"] = credentials.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });

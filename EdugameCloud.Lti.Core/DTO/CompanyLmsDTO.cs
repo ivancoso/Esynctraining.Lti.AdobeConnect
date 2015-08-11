@@ -37,6 +37,7 @@ namespace EdugameCloud.Lti.DTO
                 this.id = instance.Id;
                 this.useFLV = instance.UseFLV;
                 this.useMP4 = instance.UseMP4;
+                this.enableMultipleMeetings = instance.EnableMultipleMeetings;
                 this.acServer = instance.AcServer;
                 this.acUsername = instance.AcUsername;
                 this.companyId = instance.CompanyId.Return(x => x, 0);
@@ -84,6 +85,12 @@ namespace EdugameCloud.Lti.DTO
                 this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
             }
         }
+
+        /// <summary>
+        /// Gets or setsthe condition of multiple meetings.
+        /// </summary>
+        [DataMember]
+        public bool enableMultipleMeetings { get; set; }
 
         /// <summary>
         /// Gets or sets the enable use MP4.

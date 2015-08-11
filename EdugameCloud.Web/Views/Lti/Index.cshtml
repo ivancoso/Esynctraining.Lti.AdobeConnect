@@ -19,6 +19,7 @@
 	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);
 	EsyncLti.useFLV  = @ViewBag.UseFLV.ToString().ToLower();
 	EsyncLti.useMP4  = @ViewBag.UseMP4.ToString().ToLower();
+	EsyncLti.enableMultipleMeetings = @ViewBag.EnableMultipleMeetings.ToString().ToLower();
 	EsyncLti.maxMeetingNameLength  = 120;
 	EsyncLti.instructionText = @if (ViewBag.SupportPageHtml == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(ViewBag.SupportPageHtml.ToString()) + "'"); };
 

@@ -290,6 +290,38 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        /// <summary>
+        /// Gets or sets the condition of multiple meetings .
+        /// </summary>
+        public virtual bool EnableMultipleMeetings
+        {
+            get
+            {
+                var enableMultipleMeetings = false;
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "EnableMultipleMeetings") == 0);
+                return setting != null && bool.TryParse(setting.Value, out enableMultipleMeetings) && enableMultipleMeetings;
+            }
+            set
+            {
+                if ((Id == default(int)) && (Settings == null))
+                    this.Settings = new List<LmsCompanySetting>();
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "EnableMultipleMeetings", true) == 0);
+                if (setting == null)
+                {
+                    Settings.Add(new LmsCompanySetting
+                    {
+                        LmsCompany = this,
+                        Name = "EnableMultipleMeetings",
+                        Value = value.ToString(),
+                    });
+                }
+                else
+                {
+                    setting.Value = value.ToString();
+                }
+            }
+        }
+
         public virtual bool DenyACUserCreation
         {
             get
