@@ -211,7 +211,7 @@ namespace EdugameCloud.WCFService
             var lmsCompany = this.LmsCompanyModel.GetOneByConsumerKey(consumerKey).Value;
             if (lmsCompany == null)
             {
-                return new CompanyFlatDTO[0]
+                return new CompanyFlatDTO[0];
             }
             var company = this.CompanyModel.GetOneById(lmsCompany.CompanyId).Value;
             if (company == null)

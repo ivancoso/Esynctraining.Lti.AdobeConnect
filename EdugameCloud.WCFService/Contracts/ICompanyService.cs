@@ -125,6 +125,7 @@ namespace EdugameCloud.WCFService.Contracts
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetThemeById?id={id}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         CompanyThemeDTO GetThemeById(string id);
 
         /// <summary>
