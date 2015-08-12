@@ -356,6 +356,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 param.course_id, 
                 scoId);
 
+            if (meeting == null)
+            {
+                logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ScoID: {2}.", 
+                    lmsCompany.Id,
+                    param.course_id,
+                    scoId);
+
+                error = "Meeting not found";
+                return new List<LmsUserDTO>();
+            }
+
             // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
             if (meeting.MeetingGuests != null)
             {
