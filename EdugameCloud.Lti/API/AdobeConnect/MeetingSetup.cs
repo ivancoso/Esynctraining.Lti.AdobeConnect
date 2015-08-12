@@ -32,8 +32,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             MeetingDTO meetingDTO,
-            bool retrieveLmsUsers = false,
-            object extraData = null);
+            bool retrieveLmsUsers = false);
 
         List<string> DeleteMeeting(
             LmsCompany credentials,
@@ -845,8 +844,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             LtiParamDTO param,
             MeetingDTO meetingDTO,
-            bool retrieveLmsUsers = false,
-            object extraData = null)
+            bool retrieveLmsUsers = false)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
@@ -952,7 +950,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             param.lms_user_id,
                             meeting.CourseId,
                             out error,
-                            extraData ?? param);
+                            param);
                     if (error != null)
                     {
                         return OperationResult.Error("Unable retrieve information about LMS users.");
@@ -981,7 +979,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         meeting.CourseId,
                         result.ScoInfo.ScoId,
                         lmsUsers,
-                        extraData ?? param);
+                        param);
                 }
                 else
                 {
