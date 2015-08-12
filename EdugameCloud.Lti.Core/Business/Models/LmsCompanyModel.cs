@@ -111,6 +111,13 @@ using NHibernate.Criterion;
             return this.Repository.FindOne(defaultQuery);
         }
 
+        public IFutureValue<LmsCompany> GetOneByConsumerKey(string consumerKey)
+        {
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
+                .Where(x => (x.ConsumerKey != null && x.ConsumerKey == consumerKey));
+            return this.Repository.FindOne(defaultQuery);
+        }
+
         /// <summary>
         /// The get one by provider.
         /// </summary>

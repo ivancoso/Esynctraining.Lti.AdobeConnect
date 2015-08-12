@@ -38,29 +38,8 @@
 
             var companies = this.Repository.FindAll(queryOver);
 
-            DateTime now = DateTime.Now;
-            return companies.Select(x =>
-            {
-                CompanyLicense license =
-                    x.Licenses.ToList().Where(cl => cl.DateStart <= DateTime.Now)
-                    .OrderByDescending(cl => (int)cl.LicenseStatus)
-                    .ThenByDescending(cl => cl.DateCreated)
-                    .FirstOrDefault();
-
-                bool isTrial = (license != null) && (license.LicenseStatus == CompanyLicenseStatus.Trial);
-                
-                var dto = new CompanyFlatDTO
-                {
-                    id = x.Id,
-                    name = x.CompanyName,
-                    isActive = x.Status == CompanyStatus.Active,
-
-                    isActiveTrial = isTrial && (license.ExpiryDate >= now),
-                    isExpiredTrial = isTrial && (license.ExpiryDate < now),
-                };
-                return dto;
-
-                }).ToList();
+            var now = DateTime.Now;
+            return companies.Select(CompanyFlatDTO.CreateCompanyFlatDto).ToList();
         }
 
         public Company GetWithRelated(int companyId)

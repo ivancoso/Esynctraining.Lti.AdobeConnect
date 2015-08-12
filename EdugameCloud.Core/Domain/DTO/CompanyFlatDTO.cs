@@ -1,4 +1,7 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Linq;
+using System.Runtime.Serialization;
+using EdugameCloud.Core.Domain.Entities;
 
 namespace EdugameCloud.Core.Domain.DTO
 {
@@ -20,6 +23,31 @@ namespace EdugameCloud.Core.Domain.DTO
 
         [DataMember]
         public bool isExpiredTrial { get; set; }
+
+        public static CompanyFlatDTO CreateCompanyFlatDto(Company company)
+        {
+            if (company == null)
+            {
+                throw new ArgumentNullException("company");
+            }
+            var now = DateTime.Now;
+            var license =
+                   company.Licenses.ToList().Where(cl => cl.DateStart <= DateTime.Now)
+                   .OrderByDescending(cl => (int)cl.LicenseStatus)
+                   .ThenByDescending(cl => cl.DateCreated)
+                   .FirstOrDefault();
+
+            var isTrial = (license != null) && (license.LicenseStatus == CompanyLicenseStatus.Trial);
+            return new CompanyFlatDTO()
+            {
+                id = company.Id,
+                name = company.CompanyName,
+                isActive = company.Status == CompanyStatus.Active,
+
+                isActiveTrial = isTrial && (license.ExpiryDate >= now),
+                isExpiredTrial = isTrial && (license.ExpiryDate < now),
+            };
+        }
 
     }
 

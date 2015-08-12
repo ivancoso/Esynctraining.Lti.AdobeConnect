@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.WCFService.Contracts
+﻿using System.ServiceModel.Web;
+
+namespace EdugameCloud.WCFService.Contracts
 {
     using System.ServiceModel;
 
@@ -68,6 +70,11 @@
         [OperationContract]
         [FaultContract(typeof(Error))]
         CompanyFlatDTO[] GetAll();
+
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet]
+        CompanyFlatDTO[] GetByLmsCompanyConsumerKey(string consumerKey);
 
         /// <summary>
         /// The get license history by company id.
