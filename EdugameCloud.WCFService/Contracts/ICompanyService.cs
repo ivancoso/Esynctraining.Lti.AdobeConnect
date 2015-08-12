@@ -73,7 +73,6 @@ namespace EdugameCloud.WCFService.Contracts
 
         [OperationContract]
         [FaultContract(typeof(Error))]
-        [WebGet]
         CompanyFlatDTO[] GetByLmsCompanyConsumerKey(string consumerKey);
 
         /// <summary>

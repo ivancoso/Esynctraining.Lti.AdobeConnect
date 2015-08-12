@@ -209,14 +209,14 @@ namespace EdugameCloud.WCFService
         public CompanyFlatDTO[] GetByLmsCompanyConsumerKey(string consumerKey)
         {
             var lmsCompany = this.LmsCompanyModel.GetOneByConsumerKey(consumerKey).Value;
-            if (lmsCompany == null || lmsCompany.CompanyId == 0)
+            if (lmsCompany == null)
             {
-                return new CompanyFlatDTO[] {};
+                return new CompanyFlatDTO[0]
             }
             var company = this.CompanyModel.GetOneById(lmsCompany.CompanyId).Value;
             if (company == null)
             {
-                return new CompanyFlatDTO[] { };
+                return new CompanyFlatDTO[0];
             }
             var companyFlatDto = CompanyFlatDTO.CreateCompanyFlatDto(company);
 
