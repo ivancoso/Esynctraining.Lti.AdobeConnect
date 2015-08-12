@@ -152,14 +152,31 @@ namespace EdugameCloud.WCFService
                 throw new FaultException<Error>(error, error.errorMessage);
             }
 
+            bool isTransient = resultDto.id == 0;
+            LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
+
+            string lmsPassword = resultDto.lmsAdminPassword;
+            if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
+            {
+                if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Moodle)
+                || ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
+                {
+                    lmsPassword = entity.AdminUser.Password;
+                }
+            }
+
             ConnectionInfoDTO lmsConnectionTest = TestConnection(new ConnectionTestDTO
             {
                 domain = resultDto.lmsDomain,
                 enableProxyToolMode = resultDto.enableProxyToolMode,
                 login = resultDto.lmsAdmin,
-                password = resultDto.lmsAdminPassword,
+                password = lmsPassword,
                 type = resultDto.lmsProvider,
             });
+
+            string acPassword = (isTransient || !string.IsNullOrWhiteSpace(resultDto.acPassword)) 
+                ? resultDto.acPassword 
+                : entity.AcPassword;
 
             string acConnectionInfo;
             bool loginSameAsEmail;
@@ -168,7 +185,7 @@ namespace EdugameCloud.WCFService
                 domain = resultDto.acServer,
                 enableProxyToolMode = resultDto.enableProxyToolMode,
                 login = resultDto.acUsername,
-                password = resultDto.acPassword,
+                password = acPassword,
                 type = "ac",
             }, out acConnectionInfo, out loginSameAsEmail);
 
@@ -198,8 +215,6 @@ namespace EdugameCloud.WCFService
                 licenseTestResultMessage = message.ToString();
             }
 
-            bool isTransient = resultDto.id == 0;
-            LmsCompany entity = isTransient ? null : this.LmsCompanyModel.GetOneById(resultDto.id).Value;
             entity = ConvertDto(resultDto, entity);
 
             // NOTE: always use setting from AC not UI
@@ -262,6 +277,12 @@ namespace EdugameCloud.WCFService
                     case "sakai":
                         success = this.TestSakaiConnection(test, out info);
                         break;
+                    case "canvas":
+                        success = TestCanvasConnection(test, out info);
+                        break;
+                    case "brightspace":
+                        success = TestBrightspaceConnection(test, out info);
+                        break;
                 }    
             }
 
@@ -322,7 +343,11 @@ namespace EdugameCloud.WCFService
         /// </returns>
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
-            return this.MoodleAPI.LoginAndCheckSession(out info, test.domain.IsSSL(), test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
+            return this.MoodleAPI.LoginAndCheckSession(out info,
+                test.domain.IsSSL(), 
+                test.domain.RemoveHttpProtocolAndTrailingSlash(), 
+                test.login, 
+                test.password);
         }
 
         /// <summary>
@@ -341,7 +366,19 @@ namespace EdugameCloud.WCFService
         private bool TestSakaiConnection(ConnectionTestDTO test, out string info)
         {
             info = "Not yet implemented";
-            return false;
+            return true;
+        }
+
+        private bool TestCanvasConnection(ConnectionTestDTO test, out string info)
+        {
+            info = "Not supported";
+            return true;
+        }
+
+        private bool TestBrightspaceConnection(ConnectionTestDTO test, out string info)
+        {
+            info = "Not supported";
+            return true;
         }
 
         /// <summary>
