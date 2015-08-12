@@ -939,23 +939,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
+
             var lmsUsers = new List<LmsUserDTO>();
-            if (type == (int)LmsMeetingType.StudyGroup || type == (int)LmsMeetingType.Meeting)
-            {
-                string error;
-                lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
-                        meeting,
-                        param.lms_user_id,
-                        meeting.CourseId,
-                        out error,
-                        extraData ?? param);
-                if (error != null)
-                {
-                    return OperationResult.Error("Unable retrieve information about LMS users.");
-                }
-            }
+            
             if (isNewMeeting)
             {
+                if (retrieveLmsUsers)
+                {
+                    string error;
+                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
+                            meeting,
+                            param.lms_user_id,
+                            meeting.CourseId,
+                            out error,
+                            extraData ?? param);
+                    if (error != null)
+                    {
+                        return OperationResult.Error("Unable retrieve information about LMS users.");
+                    }
+                }
+
                 // newly created meeting
                 if (meeting.LmsMeetingType != (int)LmsMeetingType.OfficeHours)
                 {
