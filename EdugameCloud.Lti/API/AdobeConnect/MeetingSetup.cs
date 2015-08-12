@@ -942,21 +942,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             if (isNewMeeting)
             {
-                if (retrieveLmsUsers)
-                {
-                    string error;
-                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
-                            meeting,
-                            param.lms_user_id,
-                            meeting.CourseId,
-                            out error,
-                            param);
-                    if (error != null)
-                    {
-                        return OperationResult.Error("Unable retrieve information about LMS users.");
-                    }
-                }
-
                 // newly created meeting
                 if (meeting.LmsMeetingType != (int)LmsMeetingType.OfficeHours)
                 {
@@ -971,6 +956,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
                 {
+                    string error;
+                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
+                            meeting,
+                            param.lms_user_id,
+                            meeting.CourseId,
+                            out error,
+                            param);
+                    if (error != null)
+                    {
+                        return OperationResult.Error("Unable retrieve information about LMS users.");
+                    }                   
+
                     this.UsersSetup.SetDefaultUsers(
                         lmsCompany,
                         meeting,
