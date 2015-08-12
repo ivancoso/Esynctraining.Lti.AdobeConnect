@@ -176,6 +176,8 @@
             /// </summary>
             public const string Meeting = "filter-type=meeting";
 
+            public const string MeetingByNameLike = "filter-type=meeting&filter-like-name={0}";
+
             /// <summary>
             /// Gets the recordings.
             /// </summary>

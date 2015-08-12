@@ -196,6 +196,18 @@
                        : new MeetingItemCollectionResult(status);
         }
 
+        public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
+        {
+            // act: "report-bulk-objects"
+            StatusInfo status;
+            string parameters = string.Format(CommandParams.ReportBulkObjectsFilters.MeetingByNameLike, nameLikeCriteria).AppendPagingIfNeeded(startIndex, limit);
+            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, parameters, out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
+                       : new MeetingItemCollectionResult(status);
+        }
+
         /// <summary>
         /// List all meeting's attendance
         /// </summary>
@@ -656,6 +668,11 @@
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
         {
             return this.GetPermissionsInfo(scoId, CommandParams.PrincipalIdPublicAccess);
+        }
+
+        public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)
+        {
+            return this.GetPermissionsInfo(scoId, principalId);
         }
 
         /// <summary>
