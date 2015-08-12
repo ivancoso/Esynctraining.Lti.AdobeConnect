@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Lti.Domain.Entities
 {
     /// <summary>
-    ///     The AC connection mode.
+    /// The AC connection mode.
     /// </summary>
     public enum AcConnectionMode
     {

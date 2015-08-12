@@ -212,6 +212,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     scoId);
         }
 
+        public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)
+        {
+            return Execute(() => { return _provider.GetScoPermissions(scoId, principalId); },
+                    scoId, principalId, true);
+        }
+
         public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
         {
             ScoShortcut result;
@@ -305,6 +311,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             return Execute(() => { return _provider.PrincipalUpdatePassword(principalId, newPassword); },
                 principalId, newPassword);
+        }
+
+        public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMeetingsByName(nameLikeCriteria, startIndex, limit); },
+                nameLikeCriteria);
         }
 
         public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)
@@ -491,7 +503,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private T Execute<T>(Func<T> func, string parameter1Value, string parameter2Value)
+        private T Execute<T>(Func<T> func, string parameter1Value, string parameter2Value, bool skipAcResultProcessing = false)
         {
             T result;
             try
@@ -503,6 +515,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 _logger.ErrorFormat(ex, "Parameter1:{0}.Parameter2:{1}.", parameter1Value, parameter2Value);
                 throw;
             }
+
+            if (skipAcResultProcessing)
+                return result;
 
             if (typeof(T) == typeof(StatusInfo))
             {

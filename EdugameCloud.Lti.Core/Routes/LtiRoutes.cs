@@ -53,6 +53,8 @@
             routes.MapLowercaseRoute("addNewAcUser", "lti/acNewUser", new { controller = "AcUser", action = "AddNewUser" });
             routes.MapLowercaseRoute("searchExistingAcUser", "lti/acSearchUser", new { controller = "AcUser", action = "SearchExistingUser" });
 
+            routes.MapLowercaseRoute("searchExistingAcMeeting", "lti/acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
+
             routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });            
         }
 

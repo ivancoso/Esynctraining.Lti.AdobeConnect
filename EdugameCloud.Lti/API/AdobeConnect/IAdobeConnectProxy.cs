@@ -54,6 +54,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name);
         ScoInfoResult GetScoInfo(string scoId);
         PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
+        PermissionCollectionResult GetScoPermissions(string scoId, string principalId);
         ScoShortcut GetShortcutByType(string type, out StatusInfo status);
         //UserInfo GetUserInfo();
         UserInfo GetUserInfo(out StatusInfo status);
@@ -70,6 +71,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //StatusInfo RemoveFromGroup(string principalId, string groupId);
         //bool RemoveFromGroupByType(string principalId, string typeName);
         //MeetingItemCollectionResult ReportAllMeetings();
+        MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);

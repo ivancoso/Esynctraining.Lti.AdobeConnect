@@ -84,8 +84,8 @@
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.0.3.12153\lib\net40-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.23, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.23\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.24, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.24\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
@@ -260,6 +260,7 @@
     <Compile Include="DTO\MeetingHostReportDto.cs" />
     <Compile Include="DTO\MeetingHostReportItemDTO.cs" />
     <Compile Include="DTO\MeetingSessionReportDTO.cs" />
+    <Compile Include="DTO\MeetingItemDto.cs" />
     <Compile Include="DTO\PrincipalReportDto.cs" />
     <Compile Include="DTO\PrincipalDto.cs" />
     <Compile Include="DTO\PrincipalInputDto.cs" />
