@@ -461,7 +461,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 lmsDomain, 
                 VendorEgc, 
                 ProgramLti,
-                TimeSpan.FromSeconds(5).Seconds,
+                TimeSpan.FromMinutes(10).Seconds,
                 new CastleLoggerAdapter(logger));
 
             if (HadError(client, out error))

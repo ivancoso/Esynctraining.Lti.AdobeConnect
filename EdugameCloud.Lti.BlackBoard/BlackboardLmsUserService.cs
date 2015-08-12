@@ -31,6 +31,13 @@ namespace EdugameCloud.Lti.BlackBoard
             this.settings = settings;
         }
 
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        {
+            Guid guid;
+            return GetUsersOldStyle(lmsCompany, null, lmsUserId, courseId, out error, forceUpdate)
+                .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
+        }
+
         //public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
         //    string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         //{
