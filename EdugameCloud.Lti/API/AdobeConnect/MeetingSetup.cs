@@ -1021,15 +1021,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return OperationResult.Error("Unable retrieve information about users.");
                 }
 
-		        return OperationResult.Success(
+		        return OperationResult.Success(message,
                     new MeetingAndLmsUsersDTO
                     {
                         meeting = updatedMeeting,
                         lmsUsers = users,
-                    });
+                    }); ;
 	        }
 
-            return OperationResult.Success(updatedMeeting);
+            return OperationResult.Success(message, updatedMeeting);
         }
 
         /// <summary>

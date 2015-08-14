@@ -75,6 +75,17 @@ namespace EdugameCloud.Lti
                 data = data,
             };
         }
+
+        public static OperationResult Success(string message, object data)
+        {
+            return new OperationResult
+            {
+                isSuccess = true,
+                message = message,
+                data = data,
+            };
+        }
+
     }
 
 }
