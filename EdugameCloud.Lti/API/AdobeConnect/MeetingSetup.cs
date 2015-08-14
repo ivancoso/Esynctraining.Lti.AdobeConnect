@@ -228,14 +228,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     continue;
                 }
 
-                IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(meeting.GetMeetingScoId()).Values;
-
                 MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
-                    credentials,
                     provider,
                     param,
                     result.ScoInfo,
-                    permission,
                     meeting);
                 ret.Add(meetingDTO);
             }
@@ -275,14 +271,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     ScoInfoResult result = provider.GetScoInfo(officeHoursMeetings.GetMeetingScoId());
                     if (result.Success && result.ScoInfo != null)
                     {
-                        IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(officeHoursMeetings.GetMeetingScoId()).Values;
-
                         MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
-                            credentials,
                             provider,
                             param,
                             result.ScoInfo,
-                            permission,
                             officeHoursMeetings);
                         meetingDTO.is_disabled_for_this_course = true;
                         ret.Add(meetingDTO);
@@ -932,8 +924,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!result.Success || result.ScoInfo == null)
             {
-                if (result.Status.SubCode == StatusSubCodes.duplicate)
-                    return OperationResult.Error("This meeting is already in use. Please try another name.");
+                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
+                    return OperationResult.Error("There is already another item with this name. Please try again.");
+
+                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "url-path"))
+                    return OperationResult.Error("URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.");
 
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
@@ -1033,16 +1028,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                                                                        : SpecialPermissionId.remove);
 
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-            List<PermissionInfo> permission =
-                provider.GetScoPublicAccessPermissions(result.ScoInfo.ScoId)
-                    .Values.Return(x => x.ToList(), new List<PermissionInfo>());
-
+            
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
-                lmsCompany,
                 provider,
                 param,
-                result.ScoInfo,
-                permission,
+                result.ScoInfo,                
                 meeting);
 
             if (retrieveLmsUsers)
@@ -1374,7 +1364,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             
             // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
-            if (lmsUser == null || lmsUser.PrincipalId == null)
+            if ((lmsUser == null) || string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
             {
                 return false;
             }
@@ -1615,38 +1605,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        /// <summary>
-        /// The get meeting DTO by SCO info.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="permission">
-        /// The permission.
-        /// </param>
-        /// <param name="lmsCourseMeeting">
-        /// The LMS Course Meeting.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingDTO"/>.
-        /// </returns>
         private MeetingDTO GetMeetingDTOByScoInfo(
-            LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
-            ScoInfo result, 
-            IEnumerable<PermissionInfo> permission,
+            ScoInfo result,
             LmsCourseMeeting lmsCourseMeeting)
         {
+            LmsCompany lmsCompany = lmsCourseMeeting.LmsCompany;
+            IEnumerable<PermissionInfo> permission = provider.GetScoPublicAccessPermissions(lmsCourseMeeting.GetMeetingScoId()).Values;
+
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
             var type = lmsCourseMeeting.LmsMeetingType;
             var canJoin = this.CanJoin(provider, lmsCompany, type, param, result.ScoId);
