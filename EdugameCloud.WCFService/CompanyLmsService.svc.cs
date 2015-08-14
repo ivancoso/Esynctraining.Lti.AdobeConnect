@@ -211,11 +211,6 @@ namespace EdugameCloud.WCFService
                         acConnectionInfo);
                 }
 
-                //var error = new Error(
-                //    Errors.CODE_ERRORTYPE_INVALID_OBJECT,
-                //    "Connection failed",
-                //    message.ToString());
-                //throw new FaultException<Error>(error, message.ToString());
                 licenseTestResultMessage = message.ToString();
             }
 
@@ -257,37 +252,30 @@ namespace EdugameCloud.WCFService
             bool success = false;
             string info = string.Empty;
 
-            if (!test.domain.StartsWithProtocol())
+            switch (test.type.ToLowerInvariant())
             {
-                info = "Domain url should start with http:// or https://";
-            }
-            else
-            {
-                switch (test.type.ToLowerInvariant())
-                {
-                    case "ac":
-                        bool loginSameAsEmail;
-                        success = this.TestACConnection(test, out info, out loginSameAsEmail);
-                        break;
-                    case "brainhoney":
-                        success = this.TestBrainHoneyConnection(test, out info);
-                        break;
-                    case "blackboard":
-                        success = this.TestBlackBoardConnection(test, out info);
-                        break;
-                    case "moodle":
-                        success = this.TestMoodleConnection(test, out info);
-                        break;
-                    case "sakai":
-                        success = this.TestSakaiConnection(test, out info);
-                        break;
-                    case "canvas":
-                        success = TestCanvasConnection(test, out info);
-                        break;
-                    case "brightspace":
-                        success = TestBrightspaceConnection(test, out info);
-                        break;
-                }    
+                case "ac":
+                    bool loginSameAsEmail;
+                    success = this.TestACConnection(test, out info, out loginSameAsEmail);
+                    break;
+                case "brainhoney":
+                    success = this.TestBrainHoneyConnection(test, out info);
+                    break;
+                case "blackboard":
+                    success = this.TestBlackBoardConnection(test, out info);
+                    break;
+                case "moodle":
+                    success = this.TestMoodleConnection(test, out info);
+                    break;
+                case "sakai":
+                    success = this.TestSakaiConnection(test, out info);
+                    break;
+                case "canvas":
+                    success = TestCanvasConnection(test, out info);
+                    break;
+                case "brightspace":
+                    success = TestBrightspaceConnection(test, out info);
+                    break;
             }
 
             return new ConnectionInfoDTO { status = success ? OkMessage : "Failed to connect", info = info };
@@ -333,20 +321,14 @@ namespace EdugameCloud.WCFService
             }
         }
 
-        /// <summary>
-        /// The test MOODLE connection.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
+            if (!test.domain.StartsWithProtocol())
+            {
+                info = "Domain url should start with http:// or https://";
+                return false;
+            }
+
             return this.MoodleAPI.LoginAndCheckSession(out info,
                 test.domain.IsSSL(), 
                 test.domain.RemoveHttpProtocolAndTrailingSlash(), 
@@ -354,19 +336,6 @@ namespace EdugameCloud.WCFService
                 test.password);
         }
 
-        /// <summary>
-        /// The test SAKAI connection.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        // ReSharper disable once UnusedParameter.Local
         private bool TestSakaiConnection(ConnectionTestDTO test, out string info)
         {
             info = "Not yet implemented";
@@ -385,25 +354,25 @@ namespace EdugameCloud.WCFService
             return true;
         }
 
-        /// <summary>
-        /// The test brain honey connection.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
         {
+            if (!test.domain.StartsWithProtocol())
+            {
+                info = "Domain url should start with http:// or https://";
+                return false;
+            }
+
             return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
         }
 
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
+            if (!test.domain.StartsWithProtocol())
+            {
+                info = "Domain url should start with http:// or https://";
+                return false;
+            }
+
             WebserviceWrapper session = test.enableProxyToolMode
                 ? this.SoapAPI.LoginToolAndCreateAClient(
                     out info,
@@ -425,18 +394,6 @@ namespace EdugameCloud.WCFService
             return success;
         }
 
-        /// <summary>
-        /// The test AC connection.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <param name="info">
-        /// The info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool TestACConnection(ConnectionTestDTO test, out string info, out bool loginSameAsEmail)
         {
             loginSameAsEmail = false;
@@ -487,7 +444,8 @@ namespace EdugameCloud.WCFService
                     return false;
                 }
 
-                loginSameAsEmail = "YES".Equals(GetField(fields, "login-same-as-email"), StringComparison.OrdinalIgnoreCase);
+                string setting = GetField(fields, "login-same-as-email");
+                loginSameAsEmail = string.IsNullOrEmpty(setting) || "YES".Equals(setting, StringComparison.OrdinalIgnoreCase);
                 return true;
             }
 
@@ -496,18 +454,6 @@ namespace EdugameCloud.WCFService
             return false;            
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="dto">
-        /// The DTO.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsCompany"/>.
-        /// </returns>
         private LmsCompany ConvertDto(CompanyLmsDTO dto, LmsCompany instance)
         {
             instance = instance ?? new LmsCompany();
@@ -565,6 +511,10 @@ namespace EdugameCloud.WCFService
             instance.MeetingNameFormatterId = dto.meetingNameFormatterId;
 
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SupportPageHtml, dto.supportPageHtml);
+
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelMeeting, dto.labelMeeting);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelOfficeHour, dto.labelOfficeHour);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelStudyGroup, dto.labelStudyGroup);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
             //D2L only options

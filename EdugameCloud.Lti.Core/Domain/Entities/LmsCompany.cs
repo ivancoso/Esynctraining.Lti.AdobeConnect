@@ -425,6 +425,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                 ? default(T)
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
+
     }
 
 }

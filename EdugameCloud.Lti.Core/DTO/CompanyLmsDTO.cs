@@ -63,7 +63,6 @@ namespace EdugameCloud.Lti.DTO
                 this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
                 this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
                 this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
-                this.isActive = instance.IsActive;
                 this.userFolderName = instance.UserFolderName;
                 this.setupUrl = instance.LmsProvider != null ? 
                     (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
@@ -83,6 +82,11 @@ namespace EdugameCloud.Lti.DTO
                 this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
                 this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
                 this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
+                this.isActive = instance.IsActive;
+
+                this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
+                this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
+                this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
             }
         }
 
@@ -334,6 +338,15 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public string supportPageHtml { get; set; }
+
+        [DataMember]
+        public string labelMeeting { get; set; }
+
+        [DataMember]
+        public string labelOfficeHour { get; set; }
+
+        [DataMember]
+        public string labelStudyGroup { get; set; }
 
     }
 

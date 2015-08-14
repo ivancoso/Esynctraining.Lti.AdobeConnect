@@ -373,13 +373,8 @@ namespace EdugameCloud.Lti.Controllers
         {
             var meetingsJson = TempData["meetings"] as string;
             var password = TempData["RestoredACPassword"] as string;
-            var acUsesEmailAsLogin = TempData["ACUsesEmailAsLogin"] as bool? ?? false;
             var policies = TempData["ACPasswordPolicies"] as string;
-            var usesSyncUsers = TempData["UseSynchronizedUsers"] as bool? ?? false;
-            var useFLV = TempData["UseFLV"] as bool? ?? false;
-            var useMP4 = TempData["UseMP4"] as bool? ?? false;
-            var enableMultipleMeetings = TempData["EnableMultipleMeetings"] as bool? ?? false;
-            string supportPageHtml = TempData["SupportPageHtml"] as string;
+            LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
 
             if (string.IsNullOrWhiteSpace(meetingsJson))
             {
@@ -397,14 +392,9 @@ namespace EdugameCloud.Lti.Controllers
                     password = session.LtiSession.RestoredACPassword;
                 }
 
-                meetingsJson = JsonConvert.SerializeObject(meetings);
-                acUsesEmailAsLogin = credentials.ACUsesEmailAsLogin ?? false;
+                meetingsJson = JsonConvert.SerializeObject(meetings);                
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
-                usesSyncUsers = credentials.UseSynchronizedUsers;
-                useFLV = credentials.UseFLV;
-                useMP4 = credentials.UseMP4;
-                enableMultipleMeetings = credentials.EnableMultipleMeetings;
-                supportPageHtml = credentials.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
+                settings = LicenceSettingsDto.Build(credentials);
             }
 
             string version = typeof(LtiController).Assembly.GetName().Version.ToString();
@@ -412,13 +402,8 @@ namespace EdugameCloud.Lti.Controllers
             ViewBag.LtiVersion = version;
             ViewBag.MeetingsJson = meetingsJson;
             ViewBag.RestoredACPassword = password;
-            ViewBag.ACUsesEmailAsLogin = acUsesEmailAsLogin;
             ViewBag.ACPasswordPolicies = policies;
-            ViewBag.UseSynchronizedUsers = usesSyncUsers;
-            ViewBag.UseFLV = useFLV;
-            ViewBag.UseMP4 = useMP4;
-            ViewBag.EnableMultipleMeetings = enableMultipleMeetings;
-            ViewBag.SupportPageHtml = supportPageHtml;
+            ViewBag.LmsLicenceSettings = settings;
             return View("Index");
         }
 
@@ -1422,13 +1407,8 @@ namespace EdugameCloud.Lti.Controllers
 
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
-            TempData["ACUsesEmailAsLogin"] = credentials.ACUsesEmailAsLogin;
+            TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials);
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
-            TempData["UseSynchronizedUsers"] = credentials.UseSynchronizedUsers;
-            TempData["UseFLV"] = credentials.UseFLV;
-            TempData["UseMP4"] = credentials.UseMP4;
-            TempData["EnableMultipleMeetings"] = credentials.EnableMultipleMeetings;
-            TempData["SupportPageHtml"] = credentials.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });
         }

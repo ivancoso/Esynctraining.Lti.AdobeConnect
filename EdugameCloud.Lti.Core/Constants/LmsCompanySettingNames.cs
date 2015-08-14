@@ -7,5 +7,8 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string D2LAppKey = "D2LAppKey";
         public const string UseSynchronizedUsers = "UseSynchronizedUsers";
         public const string SupportPageHtml = "SupportPageHtml";
+        public const string LabelMeeting = "LabelMeeting";
+        public const string LabelOfficeHour = "LabelOfficeHour";
+        public const string LabelStudyGroup = "LabelStudyGroup";
     }
 }
