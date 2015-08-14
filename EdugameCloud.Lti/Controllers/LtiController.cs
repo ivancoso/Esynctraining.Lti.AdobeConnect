@@ -508,6 +508,7 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, scoIds: new[] { scoId });
                 }
+
                 var users = this.usersSetup.GetUsers(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
@@ -754,7 +755,7 @@ namespace EdugameCloud.Lti.Controllers
                     if (!lmsCompany.IsActive)
                     {
                         logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-                        this.ViewBag.Error = "LMS License is not active. Please contact administration.";
+                        this.ViewBag.Error = "LMS License is not active. Please contact administrator.";
                         return this.View("Error");
                     }
 
@@ -762,7 +763,7 @@ namespace EdugameCloud.Lti.Controllers
                     if ((company == null) || !company.IsActive())
                     {
                         logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                        this.ViewBag.Error = "Sorry, your company doesn't have any active license. Please contact administration.";
+                        this.ViewBag.Error = "Sorry, your company doesn't have any active license. Please contact administrator.";
                         return this.View("Error");
                     }
                 }

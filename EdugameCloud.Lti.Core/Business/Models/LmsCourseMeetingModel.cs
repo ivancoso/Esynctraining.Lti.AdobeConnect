@@ -81,7 +81,7 @@
         /// <returns>
         /// The <see cref="IFutureValue"/>.
         /// </returns>
-        public IFutureValue<LmsCourseMeeting> GetOneByUserAndType(int companyLmsId, string userId, int type)
+        public IFutureValue<LmsCourseMeeting> GetOneByUserAndType(int companyLmsId, string userId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
@@ -90,6 +90,7 @@
             if (type <= 0)
                 throw new ArgumentOutOfRangeException("type");
 
+            int typeValue = (int)type;
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
             LmsUser u = null;
@@ -97,8 +98,9 @@
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.InnerJoin)
                 .JoinAlias(() => oh.LmsUser, () => u, JoinType.InnerJoin)
-                .Where(() => x.LmsCompany.Id == companyLmsId && x.LmsMeetingType == type &&
-                    (x.OfficeHours != null && u.UserId == userId))
+                .Where(() => x.LmsCompany.Id == companyLmsId 
+                    && x.LmsMeetingType == typeValue 
+                    && (x.OfficeHours != null && u.UserId == userId))
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
@@ -118,7 +120,7 @@
         /// <returns>
         /// The <see cref="IFutureValue"/>.
         /// </returns>
-        public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, int type)
+        public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
@@ -127,8 +129,9 @@
             if (type <= 0)
                 throw new ArgumentOutOfRangeException("type");
 
+            int typeValue = (int)type;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == type).Take(1);
+                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == typeValue).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 

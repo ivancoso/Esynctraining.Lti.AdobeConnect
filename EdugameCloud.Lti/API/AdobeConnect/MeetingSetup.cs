@@ -245,7 +245,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
             {
                 var officeHoursMeetings =
-                    this.LmsCourseMeetingModel.GetOneByUserAndType(credentials.Id, param.lms_user_id, (int)LmsMeetingType.OfficeHours).Value;
+                    this.LmsCourseMeetingModel.GetOneByUserAndType(credentials.Id, param.lms_user_id, LmsMeetingType.OfficeHours).Value;
 
                 if (officeHoursMeetings == null)
                 {
@@ -810,27 +810,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Success();
         }
 
-        /// <summary>
-        /// The save meeting.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="meetingDTO">
-        /// The meeting DTO.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra Data.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingDTO"/>.
-        /// </returns>
         public OperationResult SaveMeeting(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
@@ -847,7 +826,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (meetingDTO == null)
                 throw new ArgumentNullException("meetingDTO");
 
-            FixMeetingDTOFields(meetingDTO, param);
+            FixDateTimeFields(meetingDTO, param);
             
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
@@ -855,13 +834,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id));
             }
 
-            int type = meetingDTO.type > 0 ? meetingDTO.type : (int)LmsMeetingType.Meeting;
-            LmsCourseMeeting meeting = this.GetLmsCourseMeeting(lmsCompany, param.course_id, meetingDTO.id, type);
-            var meetingSco = meeting.GetMeetingScoId();
+            LmsCourseMeeting meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingDTO.id, meetingDTO.GetMeetingType());
+            string meetingSco = meeting.GetMeetingScoId();
 
             OfficeHours officeHours = null;
-            if (type == (int)LmsMeetingType.OfficeHours)
+            if (meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours)
             {
+                meetingDTO.name = param.lis_person_name_full + "'s Office Hours";                
                 officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
                 if (string.IsNullOrEmpty(meetingSco) && (officeHours != null))
                 {
@@ -871,30 +850,48 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             bool isNewMeeting = string.IsNullOrEmpty(meetingSco) || !provider.GetScoInfo(meetingSco).Success;
+
+            //===========================================
+            var lmsUsers = new List<LmsUserDTO>();
+            if (isNewMeeting)
+            {
+                // NOTE: for meeting we need users to add to AC meeting;
+                // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
+                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup))
+                {
+                    string error;
+                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany, 
+                        meeting,
+                        param.lms_user_id,
+                        meeting.CourseId,
+                        out error,
+                        param);
+                    if (error != null)
+                    {
+                        return OperationResult.Error("Unable retrieve information about LMS users.");
+                    }
+                }            
+            }
+            //===========================================
             
             var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 
-            var registeredUser = AcUserService.GetPrincipalByLoginOrEmail(
+            var currentUserPrincipal = AcUserService.GetPrincipalByLoginOrEmail(
                 provider,
                 param.lms_user_login,
                 param.lis_person_contact_email_primary,
                 lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
-
-            if (type == (int)LmsMeetingType.StudyGroup)
-            {
-                this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
-            }
-
-            var meetingFolder = this.GetMeetingFolder(lmsCompany, provider, registeredUser);
             
-            string courseId = type == (int)LmsMeetingType.OfficeHours ? lmsUser.Id.ToString(CultureInfo.InvariantCulture) : param.course_id.ToString(CultureInfo.InvariantCulture);
-
+            string meetingFolder = this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal);            
             SetMeetingUpateItemFields(
                 meetingDTO,
                 updateItem,
                 meetingFolder,
-                courseId,
                 isNewMeeting);
+
+            string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours 
+                ? lmsUser.Id.ToString(CultureInfo.InvariantCulture) 
+                : param.course_id.ToString(CultureInfo.InvariantCulture);
 
             int formatterId = lmsCompany.MeetingNameFormatterId;
             IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
@@ -913,8 +910,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 });
                 meeting.MeetingNameJson = json;
             }
-                // TRICK: we cant update meeting names for OfficeHours
-            else if (type != (int)LmsMeetingType.OfficeHours)
+            // TRICK: we cant update meeting names for OfficeHours
+            else if (meetingDTO.GetMeetingType() != LmsMeetingType.OfficeHours)
             {
                 string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
                 updateItem.Name = acMeetingName;
@@ -933,8 +930,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            var lmsUsers = new List<LmsUserDTO>();
-            
             if (isNewMeeting)
             {
                 // newly created meeting
@@ -943,71 +938,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     meeting.ScoId = result.ScoInfo.ScoId;
                 }
 
-                CreateAnnouncement(
-                        (LmsMeetingType)meeting.LmsMeetingType,
-                        lmsCompany,
-                        param,
-                        meetingDTO);
-
-                if (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting)
-                {
-                    string error;
-                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
-                            meeting,
-                            param.lms_user_id,
-                            meeting.CourseId,
-                            out error,
-                            param);
-                    if (error != null)
-                    {
-                        return OperationResult.Error("Unable retrieve information about LMS users.");
-                    }                   
-
-                    this.UsersSetup.SetDefaultUsers(
-                        lmsCompany,
-                        meeting,
-                        provider,
-                        param.lms_user_id,
-                        meeting.CourseId,
-                        result.ScoInfo.ScoId,
-                        lmsUsers,
-                        param);
-                }
-                else
-                {
-                    var user = AcUserService.GetPrincipalByLoginOrEmail(provider, 
-                        param.lms_user_login, 
-                        param.lis_person_contact_email_primary, 
-                        lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
-                    if (user != null)
-                    {
-                        provider.UpdateScoPermissionForPrincipal(
-                            result.ScoInfo.ScoId,
-                            user.PrincipalId,
-                            MeetingPermissionId.host);
-                        this.UsersSetup.AddUserToMeetingHostsGroup(provider, user.PrincipalId);
-                    }
-                }
+                // NOTE: always add current user as host - then process others (for meeting)
+                // two extra calls for meeting type - but more secure (we always will have a meeting's host!)
+                provider.UpdateScoPermissionForPrincipal(
+                    result.ScoInfo.ScoId,
+                    currentUserPrincipal.PrincipalId,
+                    MeetingPermissionId.host);
+                this.UsersSetup.AddUserToMeetingHostsGroup(provider, currentUserPrincipal.PrincipalId);
             }
 
+            bool attachToExistedOfficeHours = false;
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
                 officeHours = officeHours ?? new OfficeHours { LmsUser = lmsUser };
                 officeHours.Hours = meetingDTO.office_hours;
-                officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;
-                    
+                officeHours.ScoId = meeting.ScoId = result.ScoInfo.ScoId;                    
                 this.OfficeHoursModel.RegisterSave(officeHours);
 
                 meeting.OfficeHours = officeHours;
                 meeting.ScoId = null;
-                if (!isNewMeeting && meeting.Id == 0) // we attach existed office hours meeting for another course
-                {
-                    CreateAnnouncement(
-                        (LmsMeetingType) meeting.LmsMeetingType,
-                        lmsCompany,
-                        param,
-                        meetingDTO);
-                }
+                attachToExistedOfficeHours = !isNewMeeting && (meeting.Id == 0); // we attach existed office hours meeting for another course
             }
             else if (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
             {
@@ -1017,18 +967,40 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.LmsCourseMeetingModel.RegisterSave(meeting);
             this.LmsCourseMeetingModel.Flush();
 
-            SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(meetingDTO.access_level)
-                                                          ? (meetingDTO.allow_guests
-                                                                 ? SpecialPermissionId.remove
-                                                                 : SpecialPermissionId.denied)
-                                                          : "denied".Equals(meetingDTO.access_level, StringComparison.OrdinalIgnoreCase)
-                                                                ? SpecialPermissionId.denied
-                                                                : ("view_hidden".Equals(meetingDTO.access_level, StringComparison.OrdinalIgnoreCase)
-                                                                       ? SpecialPermissionId.view_hidden
-                                                                       : SpecialPermissionId.remove);
-
+            SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-            
+
+            if (isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting))
+            {
+                // NOTE: lmsUsers are selected already from LMS
+                this.UsersSetup.SetDefaultUsers(
+                    lmsCompany,
+                    meeting,
+                    provider,
+                    param.lms_user_id,
+                    meeting.CourseId,
+                    result.ScoInfo.ScoId,
+                    lmsUsers,
+                    param);
+            }
+
+            string message = null;
+            if (isNewMeeting || attachToExistedOfficeHours)
+            {
+                try
+                {
+                    CreateAnnouncement(
+                        (LmsMeetingType)meeting.LmsMeetingType,
+                        lmsCompany,
+                        param,
+                        meetingDTO);
+                }
+                catch (Exception)
+                {
+                    message = "Meetings was created without announcement. Please contact administrator.";
+                }
+            }
+
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
                 param,
@@ -1050,10 +1022,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
 
 		        return OperationResult.Success(
-                    new MeetingAndLmsUsersDTO()
+                    new MeetingAndLmsUsersDTO
                     {
                         meeting = updatedMeeting,
-                        lmsUsers = users
+                        lmsUsers = users,
                     });
 	        }
 
@@ -1789,69 +1761,34 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.SaveLMSUserParameters(param.course_id, lmsCompany, param.lms_user_id, adobeConnectUserId, param.context_title, param.lis_person_contact_email_primary, wstoken);
         }
 
-        /// <summary>
-        /// The fix meeting DTO fields.
-        /// </summary>
-        /// <param name="meetingDTO">
-        /// The meeting DTO.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        private static void FixMeetingDTOFields(MeetingDTO meetingDTO, LtiParamDTO param)
+        private static void FixDateTimeFields(MeetingDTO meetingDTO, LtiParamDTO param)
         {
             if (meetingDTO.start_time != null)
             {
                 meetingDTO.start_time = meetingDTO.start_time.PadLeft(8, '0');
             }
 
-            // ReSharper disable once UnusedVariable
-            string oldStartDate = meetingDTO.start_date;
-
             if (meetingDTO.start_date != null)
             {
                 meetingDTO.start_date = meetingDTO.start_date.Substring(6, 4) + "-"
                                         + meetingDTO.start_date.Substring(0, 5);
             }
-
-            if (meetingDTO.type == (int)LmsMeetingType.OfficeHours)
-            {
-                meetingDTO.name = param.lis_person_name_full + "'s Office Hours";
-            }
         }
 
-        /// <summary>
-        /// The get LMS course meeting.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsCourseMeeting"/>.
-        /// </returns>
-        public LmsCourseMeeting GetLmsCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, int type)
+        public LmsCourseMeeting GetCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, LmsMeetingType type)
         {
             LmsCourseMeeting meeting = null;
 
             if (!string.IsNullOrWhiteSpace(scoId))
                 meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
 
-            if (meeting == null && type == (int)LmsMeetingType.OfficeHours)
+            if (meeting == null && type == LmsMeetingType.OfficeHours)
             {
                 meeting =
                     this.LmsCourseMeetingModel.GetOneByCourseAndType(
                         lmsCompany.Id,
                         courseId,
-                        (int)LmsMeetingType.OfficeHours).Value;
+                        LmsMeetingType.OfficeHours).Value;
             }
 
             if (meeting == null)
@@ -1860,40 +1797,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     LmsCompany = lmsCompany,
                     CourseId = courseId,
-                    LmsMeetingType = type,
-                    ScoId = type == (int)LmsMeetingType.OfficeHours ? scoId : null
+                    LmsMeetingType = (int)type,
+                    ScoId = type == LmsMeetingType.OfficeHours ? scoId : null,
                 };
             }
 
             return meeting;
         }
 
-        /// <summary>
-        /// The set meeting update item fields.
-        /// </summary>
-        /// <param name="meetingDTO">
-        /// The meeting DTO.
-        /// </param>
-        /// <param name="updateItem">
-        /// The update item.
-        /// </param>
-        /// <param name="folderSco">
-        /// The folder SCO.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="isNew">
-        /// The is New.
-        /// </param>
-        /// <param name="addPrefix">
-        /// The add prefix
-        /// </param>
         private static void SetMeetingUpateItemFields(
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
-            string courseId,
             bool isNew)
         {
             updateItem.Description = meetingDTO.summary;

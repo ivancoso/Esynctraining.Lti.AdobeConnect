@@ -83,7 +83,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
-                LmsCourseMeeting meeting = meetingSetup.GetLmsCourseMeeting(credentials, param.course_id, meetingScoId, (int)LmsMeetingType.Meeting);
+                LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(credentials, param.course_id, meetingScoId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
                 PermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());

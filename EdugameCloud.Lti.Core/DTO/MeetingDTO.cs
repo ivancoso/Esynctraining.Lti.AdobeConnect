@@ -1,6 +1,9 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
+    using System;
     using System.Runtime.Serialization;
+    using EdugameCloud.Lti.Domain.Entities;
+    using Esynctraining.AC.Provider.Entities;
 
     /// <summary>
     /// The meeting DTO.
@@ -101,5 +104,22 @@
         public bool is_disabled_for_this_course { get; set; }
 
         #endregion
+
+        public SpecialPermissionId GetPermissionId()
+        {
+            SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(access_level)
+                ? (allow_guests ? SpecialPermissionId.remove : SpecialPermissionId.denied)
+                : "denied".Equals(access_level, StringComparison.OrdinalIgnoreCase)
+                    ? SpecialPermissionId.denied
+                    : ("view_hidden".Equals(access_level, StringComparison.OrdinalIgnoreCase) ? SpecialPermissionId.view_hidden : SpecialPermissionId.remove);
+            return specialPermissionId;
+        }
+
+        public LmsMeetingType GetMeetingType()
+        {
+            return type > 0 ? (LmsMeetingType)type : LmsMeetingType.Meeting;
+        }
+
     }
+
 }

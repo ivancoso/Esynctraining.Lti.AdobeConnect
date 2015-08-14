@@ -217,7 +217,7 @@
     <value>GetSessionError</value>
   </data>
   <data name="UnexpectedError" xml:space="preserve">
-    <value>Some unexpected error happen. Please contact administration.</value>
+    <value>Some unexpected error happen. Please contact administrator.</value>
   </data>
   <data name="UnexpectedError_Subject" xml:space="preserve">
     <value>Unhandled WCF Error</value>
@@ -250,7 +250,7 @@
     <value>Email already registered in the system.</value>
   </data>
   <data name="UserCreationError_LicenseError" xml:space="preserve">
-    <value>You have reached the limit of users. Please contact administration to upgrade your license.</value>
+    <value>You have reached the limit of users. Please contact administrator to upgrade your license.</value>
   </data>
   <data name="UserCreationError_Subject" xml:space="preserve">
     <value>UserCreationError</value>
