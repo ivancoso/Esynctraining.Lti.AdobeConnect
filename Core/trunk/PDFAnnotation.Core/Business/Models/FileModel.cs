@@ -22,6 +22,8 @@
     using Esynctraining.Core.Utils;
     using Esynctraining.PdfProcessor;
 
+    using Iesi.Collections.Generic;
+
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Linq;
@@ -171,6 +173,19 @@
 
         #region Public Methods and Operators
 
+        public byte[] ReadAllBytes(string filePath)
+        {
+            byte[] oFileBytes = null;
+            using (FileStream fs = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                int numBytesToRead = Convert.ToInt32(fs.Length);
+                oFileBytes = new byte[(numBytesToRead)];
+                fs.Read(oFileBytes, 0, numBytesToRead);
+            }
+
+            return oFileBytes;
+        }
+
         /// <summary>
         /// The update witness files.
         /// </summary>
@@ -263,6 +278,49 @@
         }
 
         /// <summary>
+        /// The check exhibit number.
+        /// </summary>
+        /// <param name="case">
+        /// The case.
+        /// </param>
+        /// <param name="event">
+        /// The event.
+        /// </param>
+        /// <param name="exhibitNumber">
+        /// The exhibit number.
+        /// </param>
+        /// <returns>
+        /// The <see cref="int"/>.
+        /// </returns>
+        public int CheckExhibitNumber(Category @case = null, Topic @event = null, int? exhibitNumber = null)
+        {
+            @case = @event.Return(x => x.Category, @case);
+            List<File> files = @case.Return(x => x.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false), new HashedSet<File>())
+                    .Union(@case.Return(c => c.Topics.SelectMany(e => e.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false)), new HashedSet<File>()))
+                    .Distinct().ToList();
+            int nextNumber;
+            if (@case.Return(c => c.IsFileNumbersAutoIncremented, @event == null && @case == null) || !exhibitNumber.HasValue || exhibitNumber.Value == 0)
+            {
+                int lastNumber = files.Where(f => f.FileNumber.HasValue).Max(f => f.FileNumber) ?? 0;
+                nextNumber = lastNumber + 1;
+            }
+            else
+            {
+                List<int> numbers = // ReSharper disable once PossibleInvalidOperationException
+                    files.Where(f => f.FileNumber.HasValue).Select(f => f.FileNumber.Value).ToList();
+                int n = Math.Max(exhibitNumber.Value, 1);
+                while (numbers.Contains(n))
+                {
+                    n++;
+                }
+
+                nextNumber = n;
+            }
+
+            return nextNumber;
+        }
+
+        /// <summary>
         /// The complete file.
         /// </summary>
         /// <param name="file">
@@ -282,7 +340,7 @@
                 if (Directory.Exists(webOrbFolderName)
                     && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
                 {
-                    byte[] content = System.IO.File.ReadAllBytes(webOrbFile);
+                    byte[] content = ReadAllBytes(webOrbFile);
                     if (isPdf)
                     {
                         content = this.FixContentForBlackSquares(content);
@@ -644,7 +702,7 @@
             string fileName = this.PermanentFileName(file);
             if (System.IO.File.Exists(fileName))
             {
-                return System.IO.File.ReadAllBytes(fileName);
+                return ReadAllBytes(fileName);
             }
 
             return null;
@@ -716,7 +774,7 @@
                 string fileName = this.PermanentPdfName(file);
                 if (System.IO.File.Exists(fileName))
                 {
-                    return System.IO.File.ReadAllBytes(fileName);
+                    return ReadAllBytes(fileName);
                 }
             }
 
@@ -785,7 +843,7 @@
             string fileName = this.PermanentSWFName(file, pageIndex);
             if (System.IO.File.Exists(fileName))
             {
-                return System.IO.File.ReadAllBytes(fileName);
+                return ReadAllBytes(fileName);
             }
 
             return null;
@@ -924,7 +982,7 @@
                 IoC.Resolve<Pdf2SwfConverter>().Convert(tmpPDF, tmpSWF);
                 if (System.IO.File.Exists(tmpSWF))
                 {
-                    return System.IO.File.ReadAllBytes(tmpSWF);
+                    ReadAllBytes(tmpSWF);
                 }
             }
 

@@ -1,6 +1,7 @@
 namespace PDFAnnotation.Core.Domain.DTO
 {
     using System;
+    using System.Linq;
     using System.Runtime.Serialization;
     using Esynctraining.Core.Extensions;
 
@@ -37,7 +38,7 @@ namespace PDFAnnotation.Core.Domain.DTO
                 this.lastName = topic.LastName;
                 this.fullName = topic.FullName;
                 this.dateCreated = topic.DateCreated;
-                this.exhibitsCount = topic.Files.Count;
+                this.exhibitsCount = topic.Files.ToList().Count(x => x.FileNumber.HasValue);
             }
         }
 

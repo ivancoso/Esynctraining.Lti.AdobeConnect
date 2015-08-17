@@ -48,7 +48,7 @@
             this.details = category.Details;
             this.companyId = category.Company.With(x => x.Id);
             this.isFileNumbersAutoIncremented = category.IsFileNumbersAutoIncremented;
-            this.exhibitsCount = category.Files.Count;
+            this.exhibitsCount = category.Files.ToList().Count(x => x.FileNumber.HasValue);
 
             if (categoryContacts != null)
             {
