@@ -20,7 +20,7 @@ using RestSharp;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
-    public class SoapBlackBoardApi : ILmsAPI , IBlackBoardApi
+    public class SoapBlackBoardApi : ILmsAPI, IBlackBoardApi
     {
         #region Constants
 
@@ -173,124 +173,95 @@ namespace EdugameCloud.Lti.BlackBoard
         {
             var courseIdFixed = string.Format("_{0}_1", courseId);
 
-            //var enrollmentsResult = this.LoginIfNecessary(
-            //    ref client,
-            //    c =>
+            var enrollmentsResult = this.LoginIfNecessary(
+                ref client,
+                c =>
+                {
+                    string errorDuringEnrollments = null;
+                    var resultedList = new List<LmsUserDTO>();
+
+                    // NOTE: check http://library.blackboard.com/ref/fd8c40a0-f670-4c48-9e02-c5d84e61eda7/blackboard/ws/coursemembership/CourseMembershipWS.html
+                    // for filterType
+                    //var membershipFilter = new MembershipFilter
+                    //{
+                    //    filterType = (userIds == null) ? 2 : 6,
+                    //    filterTypeSpecified = true,
+                    //    courseIds = new[] { courseIdFixed },
+                    //    userIds = userIds,
+                    //};
+                    var membershipFilter = new MembershipFilter
                     {
-//                        string errorDuringEnrollments = null;
-                        var resultedList = new List<LmsUserDTO>();
+                        filterType = 2,
+                        filterTypeSpecified = true,
+                        courseIds = new[] { courseIdFixed },
+                    };
 
-                        // NOTE: check http://library.blackboard.com/ref/fd8c40a0-f670-4c48-9e02-c5d84e61eda7/blackboard/ws/coursemembership/CourseMembershipWS.html
-                        // for filterType
-                        //var membershipFilter = new MembershipFilter
-                        //{
-                        //    filterType = (userIds == null) ? 2 : 6,
-                        //    filterTypeSpecified = true,
-                        //    courseIds = new[] { courseIdFixed },
-                        //    userIds = userIds,
-                        //};
-                        var membershipFilter = new MembershipFilter
+                    CourseMembershipWrapper membership = c.getCourseMembershipWrapper();
+
+                    if (membership != null)
+                    {
+                        CourseMembershipVO[] enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
+                        if (HadError(c, out errorDuringEnrollments))
                         {
-                            filterType = 2,
-                            filterTypeSpecified = true,
-                            courseIds = new[] { courseIdFixed },
-                        };
-
-                        var bcc = this.BeginBatch(out error, company);
-
-                        CourseMembershipWrapper membership = bcc.getCourseMembershipWrapper();
-
-                        if (membership != null)
-                        {
-                            CourseMembershipVO[] enrollments = membership.loadCourseMembership(courseIdFixed, membershipFilter);
-                            
-                            if (HadError(bcc, out error))
-                            {
-                                if (bcc != null)
-                                    bcc.logout();
-                                return resultedList;
-                            }
-
-                            if (bcc != null)
-                                bcc.logout();
-
-                            if (enrollments != null)
-                            {
-                                var activeEnrollments = enrollments.Where(x => x.available.HasValue && x.available.Value);
-
-                                bcc = this.BeginBatch(out error, company);
-                                membership = bcc.getCourseMembershipWrapper();
-                                CourseMembershipRoleVO[] roles = membership.loadRoles(null);
-                                if (HadError(bcc, out error))
-                                {
-                                    if (bcc != null)
-                                        bcc.logout();
-                                    return resultedList;
-                                }
-                                if (bcc != null)
-                                    bcc.logout();
-
-                                var userFilter = new UserFilter
-                                {
-                                    filterTypeSpecified = true,
-                                    filterType = 2,
-                                    id = activeEnrollments.Select(x => x.userId).ToArray(),
-                                };
-                                
-                                bcc = this.BeginBatch(out error, company);
-                                UserWrapper userService = bcc.getUserWrapper();
-                                if (userService != null)
-                                {
-                                    UserVO[] users = userService.getUser(userFilter);
-                                    if (users == null)
-                                    {
-                                        HadError(bcc, out error);
-                                        if (bcc != null)
-                                            bcc.logout();
-
-                                        return resultedList;
-                                    }
-                                    if (bcc != null)
-                                        bcc.logout();
-
-                                    resultedList = activeEnrollments.Select(
-                                        e =>
-                                            {
-                                                var user = users.FirstOrDefault(u => e.userId == u.id);
-                                                var ltiIdString = user != null && user.expansionData != null
-                                                    ? user.expansionData.FirstOrDefault(ed => ed.StartsWith("USER.UUID", StringComparison.OrdinalIgnoreCase))
-                                                    : null;
-                                                if (ltiIdString != null)
-                                                {
-                                                    ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);                                                
-                                                }
-
-                                                return new LmsUserDTO
-                                                {
-                                                    id = e.userId,
-                                                    login_id = user.With(x => x.name),
-                                                    primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
-                                                    name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
-                                                    lms_role = GetRole(e.roleId, roles),
-                                                    lti_id = ltiIdString,
-                                                };
-                                            }).ToList();
-                                }
-                            }
+                            return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                         }
 
-                        return resultedList;
-                    }
-                        //,
-                //company,
-                //out error);
+                        if (enrollments != null)
+                        {
+                            CourseMembershipRoleVO[] roles = membership.loadRoles(null);
+                            var userFilter = new UserFilter
+                            {
+                                filterTypeSpecified = true,
+                                filterType = 2,
+                                id = enrollments.Select(x => x.userId).ToArray(),
+                            };
+                            UserWrapper userService = c.getUserWrapper();
+                            if (userService != null)
+                            {
+                                UserVO[] users = userService.getUser(userFilter);
+                                if (users == null)
+                                {
+                                    HadError(c, out errorDuringEnrollments);
+                                    return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
+                                }
 
-            //if (enrollmentsResult == null)
-            //{
-            //    error = error ?? "SOAP. Unable to retrive result from API";
-            //    return new List<LmsUserDTO>();
-            //}
-            //return enrollmentsResult;
+                                resultedList = enrollments.Select(
+                                    e =>
+                                    {
+                                        var user = users.FirstOrDefault(u => e.userId == u.id);
+                                        var ltiIdString = user != null && user.expansionData != null
+                                            ? user.expansionData.FirstOrDefault(ed => ed.StartsWith("USER.UUID", StringComparison.OrdinalIgnoreCase))
+                                            : null;
+                                        if (ltiIdString != null)
+                                        {
+                                            ltiIdString = ltiIdString.Substring(ltiIdString.IndexOf('=') + 1);
+                                        }
+
+                                        return new LmsUserDTO
+                                        {
+                                            id = e.userId,
+                                            login_id = user.With(x => x.name),
+                                            primary_email = user.With(x => x.extendedInfo).With(x => x.emailAddress),
+                                            name = user.With(x => x.extendedInfo).Return(x => string.Format("{0} {1}", x.givenName, x.familyName).Trim(), user.With(s => s.name)),
+                                            lms_role = GetRole(e.roleId, roles),
+                                            lti_id = ltiIdString,
+                                        };
+                                    }).ToList();
+                            }
+                        }
+                    }
+
+                    return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
+                },
+                company,
+                out error);
+
+            if (enrollmentsResult == null)
+            {
+                error = error ?? "SOAP. Unable to retrive result from API";
+                return new List<LmsUserDTO>();
+            }
+            return enrollmentsResult;
         }
 
         /// <summary>
@@ -458,10 +429,10 @@ namespace EdugameCloud.Lti.BlackBoard
         private bool InitializeClient(string lmsDomain, out WebserviceWrapper client, out string error)
         {
             client = new WebserviceWrapper(
-                lmsDomain, 
-                VendorEgc, 
+                lmsDomain,
+                VendorEgc,
                 ProgramLti,
-                TimeSpan.FromMinutes(10).Seconds,
+                TimeSpan.FromMinutes(1).Seconds,
                 new CastleLoggerAdapter(logger));
 
             if (HadError(client, out error))
@@ -494,7 +465,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 .Trim(':')
                 .Split(":".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                 .LastOrDefault();
-                //.IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
+            //.IfElse(x => x.Length <= 1, x => x.FirstOrDefault(), x => x.LastOrDefault());
             //return Inflector.Capitalize(role);
 
             return role;
@@ -605,9 +576,6 @@ namespace EdugameCloud.Lti.BlackBoard
                 var result = action(client);
                 error = result.Item2;
 
-                client.logout();
-                client = null;
-
                 if (!string.IsNullOrWhiteSpace(error))
                     throw new InvalidOperationException("BlackBoard.LoginIfNecessary. Error: " + error);
 
@@ -673,7 +641,7 @@ namespace EdugameCloud.Lti.BlackBoard
             };
             var courseUsers = userWS.getUser(courseUsersFilter);
             var uuidString = "USER.UUID=" + userUuid;
-            var user = courseUsers.FirstOrDefault(cu => cu != null 
+            var user = courseUsers.FirstOrDefault(cu => cu != null
                 && cu.expansionData != null
                 && cu.expansionData.Any(ed => string.Compare(uuidString, ed, StringComparison.OrdinalIgnoreCase) == 0));
 

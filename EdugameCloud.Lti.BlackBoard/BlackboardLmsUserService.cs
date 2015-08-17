@@ -92,100 +92,100 @@ namespace EdugameCloud.Lti.BlackBoard
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting,
             string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
-            TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
-            string key = lmsCompany.LmsDomain + ".course." + courseId;
+            //TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
+            //string key = lmsCompany.LmsDomain + ".course." + courseId;
             error = null;
-            List<LmsUserDTO> cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-            if (cachedUsers == null)
+            //List<LmsUserDTO> cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
+            //if (cachedUsers == null)
+            //{
+            //object lockMe = GetLocker(key);
+            //lock (lockMe)
+            //{
+            //if (meeting != null)
+            //{
+            //lmsCourseMeetingModel.Refresh(ref meeting);
+            //}
+
+            //cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
+            //if (cachedUsers == null)
+            //{
+            string[] userIds = null;
+
+            WebserviceWrapper client = null;
+            List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
+                lmsCompany,
+                courseId,
+                userIds,
+                out error,
+                ref client);
+
+            if ((users.Count == 0)
+                && error.Return(
+                    x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
+                    false))
             {
-                object lockMe = GetLocker(key);
-                lock (lockMe)
-                {
-                    if (meeting != null)
-                    {
-                        lmsCourseMeetingModel.Refresh(ref meeting);
-                    }
+                logger.Warn("GetBlackBoardUsers.AccessDenied. " + error);
 
-                    cachedUsers = CheckCachedUsers(meeting, forceUpdate, timeout);
-                    if (cachedUsers == null)
-                    {
-                        string[] userIds = null;
-
-                        WebserviceWrapper client = null;
-                        List<LmsUserDTO> users = this.soapApi.GetUsersForCourse(
-                            lmsCompany,
-                            courseId,
-                            userIds,
-                            out error,
-                            ref client);
-
-                        if ((users.Count == 0)
-                            && error.Return(
-                                x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
-                                false))
-                        {
-                            logger.Warn("GetBlackBoardUsers.AccessDenied. " + error);
-
-                            if (client != null)
-                                client.logout();
-                            // NOTE: set to null to re-create session.
-                            client = null;
-                            users = this.soapApi.GetUsersForCourse(
-                                lmsCompany,
-                                courseId,
-                                userIds,
-                                out error,
-                                ref client);
-                        }
-
-                        // NOTE: always call logout
-                        if (client != null)
-                            client.logout();
-
-                        if (string.IsNullOrWhiteSpace(error) && (meeting != null))
-                        {
-                            meeting.AddedToCache = DateTime.Now;
-                            meeting.CachedUsers = JsonConvert.SerializeObject(users);
-                            lmsCourseMeetingModel.RegisterSave(meeting, true);
-                        }
-                        else if ((users.Count == 0)
-                                 && error.Return(
-                                     x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
-                                     false))
-                        {
-                            users = CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
-                        }
-
-                        cachedUsers = users;
-                    }
-                }
+                if (client != null)
+                    client.logout();
+                // NOTE: set to null to re-create session.
+                client = null;
+                users = this.soapApi.GetUsersForCourse(
+                    lmsCompany,
+                    courseId,
+                    userIds,
+                    out error,
+                    ref client);
             }
 
-            return GroupUsers(cachedUsers);
+            // NOTE: always call logout
+            if (client != null)
+                client.logout();
+
+            //if (string.IsNullOrWhiteSpace(error) && (meeting != null))
+            //{
+            //    meeting.AddedToCache = DateTime.Now;
+            //    meeting.CachedUsers = JsonConvert.SerializeObject(users);
+            //    lmsCourseMeetingModel.RegisterSave(meeting, true);
+            //}
+            //else if ((users.Count == 0)
+            //         && error.Return(
+            //             x => x.IndexOf("ACCESS DENIED", StringComparison.InvariantCultureIgnoreCase) >= 0,
+            //             false))
+            //{
+            //    users = CheckCachedUsers(meeting, false, timeout) ?? new List<LmsUserDTO>();
+            //}
+
+            //cachedUsers = users;
+            //}
+            //}
+            //}
+
+            return GroupUsers(users);
         }
 
-        private static List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
-        {
-            return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
-        }
+        //private static List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
+        //{
+        //    return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
+        //}
 
-        private static object GetLocker(string lockerKey)
-        {
-            if (!locker.ContainsKey(lockerKey))
-            {
-                lock (locker)
-                {
-                    if (!locker.ContainsKey(lockerKey))
-                    {
-                        locker.Add(lockerKey, new object());
-                    }
-                }
-            }
+        //private static object GetLocker(string lockerKey)
+        //{
+        //    if (!locker.ContainsKey(lockerKey))
+        //    {
+        //        lock (locker)
+        //        {
+        //            if (!locker.ContainsKey(lockerKey))
+        //            {
+        //                locker.Add(lockerKey, new object());
+        //            }
+        //        }
+        //    }
 
-            return locker[lockerKey];
-        }
+        //    return locker[lockerKey];
+        //}
     }
 }
