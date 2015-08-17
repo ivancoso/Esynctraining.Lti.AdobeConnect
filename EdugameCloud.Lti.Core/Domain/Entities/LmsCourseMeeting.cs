@@ -1,34 +1,15 @@
-﻿using EdugameCloud.Lti.Core.Domain.Entities;
-
-namespace EdugameCloud.Lti.Domain.Entities
+﻿namespace EdugameCloud.Lti.Domain.Entities
 {
-    using System;
     using System.Collections.Generic;
-
-    using EdugameCloud.Lti.DTO;
-
     using Esynctraining.Core.Domain.Entities;
-
-    using Newtonsoft.Json;
-
-    using NHibernate.Mapping;
+    using EdugameCloud.Lti.Core.Domain.Entities;
 
     /// <summary>
-    ///     The LMS AC meeting
+    /// The LMS AC meeting.
     /// </summary>
     public class LmsCourseMeeting : Entity
     {
         #region Public Properties
-
-        /// <summary>
-        ///     Gets or sets the added to cache.
-        /// </summary>
-        public virtual DateTime? AddedToCache { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the cached users.
-        /// </summary>
-        public virtual string CachedUsers { get; set; }
 
         /// <summary>
         ///     Gets or sets the company LMS.
@@ -68,32 +49,6 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         #endregion
 
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The cached users parsed.
-        /// </summary>
-        /// <param name="validCacheTimeout">
-        /// The valid cache timeout.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
-        public virtual List<LmsUserDTO> CachedUsersParsed(TimeSpan validCacheTimeout)
-        {
-            try
-            {
-                return this.CachedUsers != null && this.AddedToCache != null
-                   && DateTime.Now - this.AddedToCache <= validCacheTimeout
-                       ? JsonConvert.DeserializeObject<List<LmsUserDTO>>(this.CachedUsers)
-                       : null;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        #endregion
     }
+
 }

@@ -897,8 +897,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<LmsUserDTO> users,
             object extraData = null)
         {
-            string error;
-
             IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
 //            string[] userIds = users.Select(user => user.lti_id ?? user.id).ToArray();
             IEnumerable<LmsUser> lmsUsers = null;
@@ -1188,26 +1186,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The check cached users.
-        /// </summary>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force update.
-        /// </param>
-        /// <param name="timeout">
-        /// The timeout.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
-        private static List<LmsUserDTO> CheckCachedUsers(LmsCourseMeeting meeting, bool forceUpdate, TimeSpan timeout)
-        {
-            return forceUpdate ? null : meeting.Return(x => x.CachedUsersParsed(timeout), null);
-        }
 
         /// <summary>
         /// The chunk.

@@ -4,8 +4,6 @@
 	[scoId]					NVARCHAR(50)		NULL,	-- NOTE: IS NULL for Office Hours
 	[companyLmsId]			INT				NOT NULL,
 	[lmsMeetingTypeId]		INT				NOT NULL,
-	[cachedUsers]			NVARCHAR(MAX)		NULL,
-	[addedToCache]			DATETIME			NULL,
 	[officeHoursId]			INT					NULL,
 	[ownerId]				INT					NULL,
 	[meetingNameJson]		NVARCHAR(4000)		NULL,
