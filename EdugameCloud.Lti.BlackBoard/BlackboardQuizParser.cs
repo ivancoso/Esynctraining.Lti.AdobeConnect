@@ -1,18 +1,14 @@
-﻿namespace EdugameCloud.Lti.BlackBoard
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Castle.Core.Internal;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Newtonsoft.Json.Linq;
+using RestSharp.Contrib;
+
+namespace EdugameCloud.Lti.BlackBoard
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using Castle.Core.Internal;
-
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-
-    using Newtonsoft.Json.Linq;
-
-    using RestSharp.Contrib;
-
     internal sealed class BlackboardQuizParser
     {
         private static readonly string[] singleQuestionTypes = new[] {"Multiple Choice", "Opinion Scale"};
@@ -23,26 +19,34 @@
 
         public static LmsQuestionDTO[] ParseQuestions(BBAssessmentDTO td)
         {
-            var ret = td.questions == null ? new LmsQuestionDTO[] { }
-                                                    : td.questions.Select(
-                                                        q =>
-                                        new LmsQuestionDTO()
-                                        {
-                                            question_text = q.text.ClearName(),
-                                            question_type = q.type,
-                                            is_single = singleQuestionTypes.Any(x => q.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
-                                            question_name = q.title.ClearName(),
-                                            id = GetBBId(q.id),
-                                            answers = ParseAnswers(q)
-                                        })
-                                        .ToArray();
+            var ret = td.questions == null
+                ? new LmsQuestionDTO[] {}
+                : td.questions.Select(
+                    q =>
+                        new LmsQuestionDTO()
+                        {
+                            question_text = q.text.ClearName(),
+                            question_type = q.type,
+                            is_single =
+                                singleQuestionTypes.Any(
+                                    x => q.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
+                            question_name = q.title.ClearName(),
+                            id = GetBBId(q.id),
+                            answers = ParseAnswers(q)
+                        })
+                    .ToArray();
 
-            ret.ForEach(q => q.answers.ForEach(
-                a =>
-                    {
-                        a.text = a.text.ClearName();
-                        a.question_text = a.question_text.ClearName();
-                    }));
+            ret.ForEach(q =>
+                {
+                    q.answers.ForEach(
+                        a =>
+                        {
+                            a.text = a.text.ClearName();
+                            a.question_text = a.question_text.ClearName();
+                        });
+                    q.caseSensitive = q.answers.Any(x => x.caseSensitive);
+                }
+            );
 
             return ret;
         }
@@ -126,7 +130,7 @@
                     if (answer.Value is JContainer && answer.Value.Any())
                     {
                         isList = true;
-                        stringValue = answer.Value.First().ToString();
+                        stringValue = String.Join("$$", answer.Value.Select(a => ((JObject)a).Properties().FirstOrDefault(x => x.Name == "text")).Where(v => v != null).Select(u => u.Value));
                     }
                     else if (answer.Value != null)
                     {
@@ -138,9 +142,12 @@
                         id = i++,
                         text = isList ? stringValue : answer.Key,
                         blank_id = answer.Key,
-                        weight = stringValue.Equals("true", StringComparison.InvariantCultureIgnoreCase) ? 100 : 0
+                        weight = stringValue.Equals("true", StringComparison.InvariantCultureIgnoreCase) ? 100 : 0,
+                        question_type = String.Join("$$", answer.Value.Select(a => ((JObject)a).Properties().FirstOrDefault(x => x.Name == "subType")).Where(v => v!= null).Select(u => u.Value)),
+                        caseSensitive = answer.Value.Any(a => ((JObject)a).Properties().FirstOrDefault(x => x.Name == "caseSensitive" && x.Value.ToString() == "true") != null)
                     });
                 }
+
                 return ret;
             }
 
@@ -268,7 +275,7 @@
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null;
+                    string questionText = null, answerText = null, lmsValue = null;
 
                     if (answer is JObject)
                     {
@@ -277,6 +284,11 @@
                             questionText = option.Key;
                             answerText = option.Value.ToString();
                             break;
+                        }
+                        var prop = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
+                        if (prop != null)
+                        {
+                            lmsValue = prop.Value.ToString();
                         }
                     }
                     else
@@ -288,6 +300,7 @@
                     ret.Add(new AnswerDTO()
                     {
                         id = i,
+                        match_id = lmsValue,
                         text = answers != null && answers.Count > i ? answers[i] : answerText,
                         order = order,
                         question_text = questionText,

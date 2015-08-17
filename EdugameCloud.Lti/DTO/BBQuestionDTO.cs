@@ -79,5 +79,12 @@
         /// Gets or sets the answer phrases list.
         /// </summary>
         public string[] answerPhrasesList { get; set; }
+
+        /// <summary>
+        /// Indicates whether answers for this question should be checked for case sensitivity. Default value is false.
+        /// </summary>
+        /// note: currently is not used
+        public bool caseSensitive { get; set; }
+
     }
 }

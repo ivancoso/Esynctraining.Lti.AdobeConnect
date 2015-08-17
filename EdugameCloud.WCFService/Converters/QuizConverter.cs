@@ -625,15 +625,18 @@
                 {
                     var blank = textPart.Substring(1, textPart.Length - 2);
                     var options = q.answers.Where(a => a.blank_id != null && a.blank_id.Equals(blank)).ToList();
-                    var correct = options.FirstOrDefault(o => o.weight == 100);
-                    if (correct == null)
+                    var correct = options.FirstOrDefault(o => o.weight == 100) ?? options.FirstOrDefault();
+                    string subType = null;
+                    if (correct != null && correct.question_type != null)
                     {
-                        correct = options.FirstOrDefault();
+                        subType = string.Format(" subType=\"{0}\"", correct.question_type);
                     }
                     distractorText.AppendFormat(
-                        "<text id=\"{0}\" isBlank=\"true\">{1}</text>",
+                        "<text id=\"{0}\" isBlank=\"true\"{2}{3}>{1}</text>",
                         textId,
-                        correct != null ? correct.text : string.Empty);
+                        correct != null ? correct.text : string.Empty,
+                        subType,
+                        q.caseSensitive ? " caseSensitive=\"true\"" : string.Empty);
                     
                     if (option)
                     {    

@@ -111,6 +111,12 @@
         /// Gets or sets the html.
         /// </summary>
         public string html { get; set; }
+
+        /// <summary>
+        /// Indicates whether answer should be checked for case sensitivity. Default value is false.
+        /// </summary>
+        /// todo: will be removed from answer if this is question-level property
+        public bool caseSensitive { get; set; }
         
         #endregion
     }

@@ -74,6 +74,11 @@
         /// </summary>
         public Dictionary<int, LmsQuestionFileDTO> files { get; set; } 
 
+        /// <summary>
+        /// Indicates whether answers for this question should be checked for case sensitivity. Default value is false.
+        /// </summary>
+        public bool caseSensitive { get; set; }
+
         #endregion
     }
 }
