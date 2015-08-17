@@ -13,10 +13,10 @@ GO
 create unique index IX_LmsUser_companyLmsId_userId on LmsUser(companyLmsId,userId);
 go
 
-alter PROCEDURE getUsersByLmsCompanyId
+ALTER PROCEDURE [dbo].[getUsersByLmsCompanyId]
 (
 	@lmsCompanyId	INT,
-	@userFilter	XML
+	@userFilter		XML
 )
 AS
 BEGIN
@@ -46,7 +46,7 @@ BEGIN
 		SELECT T.x.value('@id', 'NVARCHAR(256)') AS id,
 			   T.x.value('@email', 'NVARCHAR(256)') AS email,
 			   T.x.value('@login', 'NVARCHAR(256)') AS login
-		FROM @userFilter.nodes('/users/user') AS T(x)?
+		FROM @userFilter.nodes('/users/user') T(x)?
 	) flt
 	LEFT OUTER JOIN LmsUser lms_usr
 		ON lms_usr.userId = flt.id OR lms_usr.username = flt.login OR lms_usr.username = flt.email
@@ -63,7 +63,3 @@ BEGIN
 		INNER JOIN @tmp tmp ON lms_usr.lmsUserId = tmp.lmsUserId
 
 END
-go
-
-
-
