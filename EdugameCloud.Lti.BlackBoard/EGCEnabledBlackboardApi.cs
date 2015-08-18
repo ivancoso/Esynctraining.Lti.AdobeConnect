@@ -1,20 +1,18 @@
-﻿using Remotion.Linq.Clauses.ResultOperators;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BbWsClient;
+using BbWsClient.Content;
+using Castle.Core.Logging;
+using EdugameCloud.Lti.API.BlackBoard;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Providers;
+using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using BbWsClient;
-    using BbWsClient.Content;
-    using Castle.Core.Logging;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-    using Esynctraining.Core.Providers;
-    using Newtonsoft.Json;
-
     public sealed class EGCEnabledBlackboardApi : SoapBlackBoardApi, IEGCEnabledBlackBoardApi
     {
         public EGCEnabledBlackboardApi(ApplicationSettingsProvider settings, ILogger logger)
@@ -96,7 +94,7 @@ namespace EdugameCloud.Lti.BlackBoard
                                         courseName = lmsUserParameters.CourseName,
                                         description = t.body.ClearName(),
                                         title = t.title.ClearName(),
-                                        id = BlackboardQuizParser.GetBBId(t.id),
+                                        id = BlackboardHelper.GetBBId(t.id),
                                         published = true
                                     };
                             if (quizIds != null && !quizIds.Contains(lqd.id))
