@@ -10,6 +10,9 @@ ALTER TABLE [CompanyLms]
 	ALTER COLUMN [isActive] BIT NOT NULL
 GO
 
+update lmsquestiontype set questiontypeid=4 where lmsproviderid=4 and lmsQuestionType='Fill in the Blank'
+GO
+
 create unique index IX_LmsUser_companyLmsId_userId on LmsUser(companyLmsId,userId);
 go
 
