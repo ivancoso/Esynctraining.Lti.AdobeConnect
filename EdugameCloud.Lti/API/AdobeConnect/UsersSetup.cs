@@ -775,8 +775,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     });
                 }
             }
+
             foreach (LmsCourseMeetingGuest guestToDelete in guestsToDelete)
                 meeting.MeetingGuests.Remove(guestToDelete);
+            // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
+            LmsCourseMeetingModel.Refresh(ref meeting);
             LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
 
             if (principalIds.Any())
@@ -829,6 +832,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsCompany.Id, 
                 param.course_id, 
                 scoId);
+
+            // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
+            if (meeting.MeetingGuests != null)
+            {
+                var guestsTmp = meeting.MeetingGuests.ToList();
+            }
 
             List<LmsUserDTO> users = this.GetLMSUsers(
                 lmsCompany, 
