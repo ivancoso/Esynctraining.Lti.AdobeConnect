@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using System.Linq;
@@ -23,17 +25,17 @@
         /// <summary>
         ///     The passwordActivations.
         /// </summary>
-        private ISet<PasswordActivation> passwordActivations = new HashedSet<PasswordActivation>();
+        private ISet<PasswordActivation> passwordActivations = new HashSet<PasswordActivation>();
 
         /// <summary>
         ///     The categories.
         /// </summary>
-        private ISet<Category> categories = new HashedSet<Category>();
+        private ISet<Category> categories = new HashSet<Category>();
 
         /// <summary>
         ///     The companyContacts.
         /// </summary>
-        private ISet<CompanyContact> companyContacts = new HashedSet<CompanyContact>();
+        private ISet<CompanyContact> companyContacts = new HashSet<CompanyContact>();
 
         #endregion
 

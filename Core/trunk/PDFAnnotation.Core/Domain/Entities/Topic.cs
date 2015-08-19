@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
@@ -17,7 +19,7 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// <summary>
         /// The files.
         /// </summary>
-        private ISet<File> files = new HashedSet<File>();
+        private ISet<File> files = new HashSet<File>();
 
         #region Public Properties
 

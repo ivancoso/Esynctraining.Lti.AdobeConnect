@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>Esynctraining.Core.Weborb.Only</id>
-    <version>1.0.0.2</version>
-    <title>Esynctraining.Core.Weborb.Only</title>
+    <id>Esynctraining.Core.Weborb</id>
+    <version>1.0.0.4</version>
+    <title>Esynctraining.Core.Weborb</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
     <projectUrl>http://esynctraining.com/</projectUrl>
     <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Provides weborb support for eSyncTraining projects.</description>
-    <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
+    <copyright>Copyright © 2013-2015 eSyncTraining.com</copyright>
     <tags>core, weborb, wcf</tags>
     <releaseNotes>Provides weborb support for eSyncTraining projects</releaseNotes>
     <dependencies>
-      <dependency id="Esynctraining.Core.Only" version="1.0.0.0" />
+      <dependency id="Esynctraining.Core.Only" version="1.0.0.15" />
       <dependency id="weborb" version="5.1.0.24" />
     </dependencies>
     <references>

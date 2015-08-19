@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace PDFAnnotation.Core.Domain.Entities
 {
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.FullText;
@@ -13,17 +15,17 @@
         /// <summary>
         /// The emailHistory.
         /// </summary>
-        private ISet<Topic> topics = new HashedSet<Topic>();
+        private ISet<Topic> topics = new HashSet<Topic>();
 
         /// <summary>
         /// The files.
         /// </summary>
-        private ISet<File> files = new HashedSet<File>();
+        private ISet<File> files = new HashSet<File>();
 
         /// <summary>
         /// The contacts.
         /// </summary>
-        private ISet<Contact> contacts = new HashedSet<Contact>();
+        private ISet<Contact> contacts = new HashSet<Contact>();
 
         #region Public Properties
 

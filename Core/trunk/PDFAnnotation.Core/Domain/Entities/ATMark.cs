@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using Esynctraining.Core.Domain.Entities;
@@ -20,27 +22,27 @@
         /// <summary>
         /// The notes.
         /// </summary>
-        private ISet<ATShape> shapes = new HashedSet<ATShape>();
+        private ISet<ATShape> shapes = new HashSet<ATShape>();
 
         /// <summary>
         /// The rotations.
         /// </summary>
-        private ISet<ATRotation> rotations = new HashedSet<ATRotation>();
+        private ISet<ATRotation> rotations = new HashSet<ATRotation>();
 
         /// <summary>
         /// The drawings.
         /// </summary>
-        private ISet<ATDrawing> drawings = new HashedSet<ATDrawing>();
+        private ISet<ATDrawing> drawings = new HashSet<ATDrawing>();
 
         /// <summary>
         /// The highlight strike outs.
         /// </summary>
-        private ISet<ATHighlightStrikeOut> highlightStrikeOuts = new HashedSet<ATHighlightStrikeOut>();
+        private ISet<ATHighlightStrikeOut> highlightStrikeOuts = new HashSet<ATHighlightStrikeOut>();
 
         /// <summary>
         /// The text items.
         /// </summary>
-        private ISet<ATTextItem> textItems = new HashedSet<ATTextItem>();
+        private ISet<ATTextItem> textItems = new HashSet<ATTextItem>();
 
         #endregion
 

@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using Esynctraining.Core.Domain.Entities;
@@ -24,7 +26,7 @@
         /// <summary>
         ///     The ACSessions.
         /// </summary>
-        private ISet<ATMark> marks = new HashedSet<ATMark>();
+        private ISet<ATMark> marks = new HashSet<ATMark>();
 
         /// <summary>
         /// The date created.

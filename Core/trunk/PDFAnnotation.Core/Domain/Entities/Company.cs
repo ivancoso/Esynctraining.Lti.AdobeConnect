@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
 
@@ -15,7 +17,7 @@
         /// <summary>
         ///     The companyContacts.
         /// </summary>
-        private ISet<CompanyContact> companyContacts = new HashedSet<CompanyContact>();
+        private ISet<CompanyContact> companyContacts = new HashSet<CompanyContact>();
 
         #region Public Properties
 

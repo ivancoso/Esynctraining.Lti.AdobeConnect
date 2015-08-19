@@ -295,8 +295,8 @@
         public int CheckExhibitNumber(Category @case = null, Topic @event = null, int? exhibitNumber = null)
         {
             @case = @event.Return(x => x.Category, @case);
-            List<File> files = @case.Return(x => x.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false), new HashedSet<File>())
-                    .Union(@case.Return(c => c.Topics.SelectMany(e => e.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false)), new HashedSet<File>()))
+            List<File> files = @case.Return(x => x.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false), new HashSet<File>())
+                    .Union(@case.Return(c => c.Topics.SelectMany(e => e.Files.Where(f => f.IsOriginal == null || f.IsOriginal == false)), new HashSet<File>()))
                     .Distinct().ToList();
             int nextNumber;
             if (@case.Return(c => c.IsFileNumbersAutoIncremented, @event == null && @case == null) || !exhibitNumber.HasValue || exhibitNumber.Value == 0)

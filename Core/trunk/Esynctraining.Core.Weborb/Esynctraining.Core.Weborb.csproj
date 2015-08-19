@@ -82,7 +82,9 @@
     <Compile Include="WCFExtension\WCFUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Esynctraining.Core.Weborb.nuspec" />
+    <None Include="Esynctraining.Core.Weborb.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="nuget.config" />
     <None Include="packages.config" />
     <None Include="PostBuildScripts\BuildNewPackage-RanAutomatically.ps1" />
