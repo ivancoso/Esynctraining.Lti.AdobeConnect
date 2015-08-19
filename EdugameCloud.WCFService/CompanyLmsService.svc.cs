@@ -229,8 +229,6 @@ namespace EdugameCloud.WCFService
             this.LmsCompanyModel.RegisterSave(entity);
             this.LmsCompanyModel.ProcessLmsAdmin(entity, resultDto, LmsUserModel, LmsCompanyModel);
 
-            this.UpdateAdobeConnectFolder(isTransient, entity);
-
             return new CompanyLmsOperationDTO 
             { 
                 companyLmsVO = new CompanyLmsDTO(entity),
@@ -284,43 +282,6 @@ namespace EdugameCloud.WCFService
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The update adobe connect folder.
-        /// </summary>
-        /// <param name="isTransient">
-        /// The is transient.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        private void UpdateAdobeConnectFolder(bool isTransient, LmsCompany instance)
-        {
-            if (!isTransient && instance.UseUserFolder.GetValueOrDefault() == false)
-            {
-                IAdobeConnectProxy acp = null;
-                try
-                {
-                    acp = this.MeetingSetup.GetProvider(instance);
-                }
-                catch (Exception ex)
-                {
-                    IoC.Resolve<ILogger>().Error("UpdateAdobeConnectFolder", ex);
-                }
-
-                if (acp != null)
-                {
-                    var scoId = instance.ACScoId;
-                    var resultedId = this.MeetingSetup.GetMeetingFolder(instance, acp, null);
-                    if (scoId != resultedId)
-                    {
-                        instance.ACScoId = resultedId;
-                        this.LmsCompanyModel.RegisterSave(instance);
-                    }
-                }
-            }
-        }
-
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
             if (!test.domain.StartsWithProtocol())

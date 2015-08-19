@@ -218,19 +218,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     scoId, principalId, true);
         }
 
-        public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
+        public ScoShortcut GetShortcutByType(string type)
         {
-            ScoShortcut result;
-            try
-            {
-                result = _provider.GetShortcutByType(type, out status);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("[AdobeConnectProxy Error]", ex);
-                throw;
-            }
+            StatusInfo status;
+            return Execute(() => _provider.GetShortcutByType(type, out status));
         }
 
         public UserInfo GetUserInfo(out StatusInfo status)

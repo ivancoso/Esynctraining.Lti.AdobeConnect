@@ -851,16 +851,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             bool isNewMeeting = string.IsNullOrEmpty(meetingSco) || !provider.GetScoInfo(meetingSco).Success;
 
+            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
+
+            var currentUserPrincipal = AcUserService.GetPrincipalByLoginOrEmail(
+                provider,
+                param.lms_user_login,
+                param.lis_person_contact_email_primary,
+                lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
+
             //===========================================
             var lmsUsers = new List<LmsUserDTO>();
             if (isNewMeeting)
             {
+                //NOTE: need to call before use GetMeetingFolder method;
+                // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
+                this.UsersSetup.AddUserToMeetingHostsGroup(provider, currentUserPrincipal.PrincipalId);
+
                 // NOTE: for meeting we need users to add to AC meeting;
                 // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
                 if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup))
                 {
                     string error;
-                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany, 
+                    lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
                         meeting,
                         param.lms_user_id,
                         meeting.CourseId,
@@ -870,19 +882,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         return OperationResult.Error("Unable retrieve information about LMS users.");
                     }
-                }            
+                }
             }
             //===========================================
-            
-            var updateItem = new MeetingUpdateItem { ScoId = isNewMeeting ? null : meetingSco };
 
-            var currentUserPrincipal = AcUserService.GetPrincipalByLoginOrEmail(
-                provider,
-                param.lms_user_login,
-                param.lis_person_contact_email_primary,
-                lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
-            
-            string meetingFolder = this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal);            
+            var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
+
+            string meetingFolder = this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal, useLmsUserEmailForSearch);     
+             
             SetMeetingUpateItemFields(
                 meetingDTO,
                 updateItem,
@@ -943,8 +950,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 provider.UpdateScoPermissionForPrincipal(
                     result.ScoInfo.ScoId,
                     currentUserPrincipal.PrincipalId,
-                    MeetingPermissionId.host);
-                this.UsersSetup.AddUserToMeetingHostsGroup(provider, currentUserPrincipal.PrincipalId);
+                    MeetingPermissionId.host);               
             }
 
             bool attachToExistedOfficeHours = false;
@@ -1109,14 +1115,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public string GetMeetingFolder(LmsCompany credentials, IAdobeConnectProxy provider, Principal user)
+        public string GetMeetingFolder(LmsCompany credentials, IAdobeConnectProxy provider, Principal user, bool useLmsUserEmailForSearch)
         {
             string adobeConnectScoId = null;
 
             if (credentials.UseUserFolder.GetValueOrDefault() && user != null)
             {
                 ////TODO Think about user folders + renaming directory
-                adobeConnectScoId = SetupUserMeetingsFolder(credentials, provider, user);
+                adobeConnectScoId = SetupUserMeetingsFolder(credentials, provider, user, useLmsUserEmailForSearch);
             }
 
             if (adobeConnectScoId == null)
@@ -1938,6 +1944,49 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private static void CreateUserFoldersStructure(string folderScoId, IAdobeConnectProxy provider, 
+            string userFolderName,
+            string userMeetingsFolderName,
+            out string innerFolderScoId)
+        {
+            var folderContent = provider.GetContentsByScoId(folderScoId);
+            var userFolder = folderContent.Values.FirstOrDefault(x => x.Name == userFolderName);
+            if (userFolder == null)
+            {
+                var userFolderScoId = CreateFolder(folderScoId, userFolderName, provider);
+                var userMeetingsFolderScoId = CreateFolder(userFolderScoId, userMeetingsFolderName, provider);
+                innerFolderScoId = userMeetingsFolderScoId;
+                return;
+            }
+
+            var userFolderContent = provider.GetContentsByScoId(userFolder.ScoId);
+            var userMeetingsFolder = userFolderContent.Values.FirstOrDefault(x => x.Name == userMeetingsFolderName);
+            if (userMeetingsFolder == null)
+            {
+                innerFolderScoId =  CreateFolder(userFolder.ScoId, userMeetingsFolderName, provider);
+                return;
+            }
+
+            innerFolderScoId = userMeetingsFolder.ScoId;
+        }
+
+        private static string CreateFolder(string folderScoId, string folderName, IAdobeConnectProxy provider)
+        {
+            var newFolder = provider.CreateSco(new FolderUpdateItem
+            {
+                Name = folderName.TruncateIfMoreThen(60),
+                FolderId = folderScoId,
+                Type = ScoType.folder
+            });
+
+            if(!newFolder.Success)
+            {
+                var msg =string.Format("[AdobeConnectProxy Error] CreateSco " + "Parameters: FolderId:{0}, Name:{1}", folderScoId, folderName);
+                throw new InvalidOperationException(msg);
+            }
+            return newFolder.ScoInfo.ScoId;
+
+        }
         /// <summary>
         /// The setup user meetings folder.
         /// </summary>
@@ -1953,66 +2002,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private static string SetupUserMeetingsFolder(LmsCompany credentials, IAdobeConnectProxy provider, Principal user)
+        private static string SetupUserMeetingsFolder(LmsCompany credentials, IAdobeConnectProxy provider,
+            Principal user, bool useLmsUserEmailForSearch)
         {
-            string ltiFolderSco = null;
+            var shortcut = provider.GetShortcutByType("user-meetings");
 
-            StatusInfo status;
-            var shortcut = provider.GetShortcutByType("user-meetings", out status);
-            List<ScoContent> userFolders = new List<ScoContent>();
-
-            if (shortcut != null)
-            {
-                var userMeetings = provider.GetScoExpandedContentByName(shortcut.ScoId, user.Login);
-                if (userMeetings != null && userMeetings.Values != null)
-                {
-                    userFolders.AddRange(userMeetings.Values);
-                }
-
-                userMeetings = provider.GetScoExpandedContentByName(shortcut.ScoId, user.Email);
-                if (userMeetings != null && userMeetings.Values != null)
-                {
-                    userFolders.AddRange(userMeetings.Values);
-                }                
-            }
-            
-            if (userFolders.Count > 0)
-            {
-                ScoContent userFolder = userFolders.FirstOrDefault(uf => uf.Type.Equals("folder"));
-
-                if (userFolder == null)
-                {
-                    return null;
-                }
-
-                string name = credentials.UserFolderName ?? credentials.LmsProvider.LmsProviderName;
-                name = name.TruncateIfMoreThen(60);
-                var existingFolder = provider.GetContentsByScoId(userFolder.ScoId).Values.FirstOrDefault(v => v.Name.Equals(name, StringComparison.OrdinalIgnoreCase) && v.IsFolder);
-
-                if (existingFolder != null)
-                {
-                    ltiFolderSco = existingFolder.ScoId;
-                }
-                else
-                {
-                    ScoInfoResult newFolder =
-                        provider.CreateSco(
-                            new FolderUpdateItem
-                            {
-                                Name = name,
-                                FolderId = userFolder.ScoId,
-                                Type = ScoType.folder
-                            });
-                    if (newFolder.Success && newFolder.ScoInfo != null)
-                    {
-                        ltiFolderSco = newFolder.ScoInfo.ScoId;
-                    }
-                }
-            }
-
-            return ltiFolderSco;
+            var userFolderName = useLmsUserEmailForSearch ? user.Email : user.Login;
+            var meetingsFolderName = string.IsNullOrEmpty(credentials.UserFolderName)
+                ? userFolderName
+                : credentials.UserFolderName;
+            string meetingFolderScoId;
+            CreateUserFoldersStructure(shortcut.ScoId, provider, userFolderName,
+                meetingsFolderName, out meetingFolderScoId);
+            return meetingFolderScoId;
         }
-
         #endregion
 
     }
