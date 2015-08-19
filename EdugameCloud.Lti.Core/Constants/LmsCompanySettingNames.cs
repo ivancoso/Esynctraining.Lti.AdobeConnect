@@ -10,5 +10,11 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string LabelMeeting = "LabelMeeting";
         public const string LabelOfficeHour = "LabelOfficeHour";
         public const string LabelStudyGroup = "LabelStudyGroup";
+        public const string EnableMeetingReuse = "EnableMeetingReuse";
+        public const string MeetingNameFormatterId = "MeetingNameFormatterId";
+        public const string DenyACUserCreation = "DenyACUserCreation";
+        public const string EnableMultipleMeetings = "EnableMultipleMeetings";
+        public const string UseMP4 = "UseMP4";
+        public const string UseFLV = "UseFLV";
     }
 }

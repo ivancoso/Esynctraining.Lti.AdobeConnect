@@ -36,6 +36,10 @@
         /// </summary>
         public virtual OfficeHours OfficeHours { get; set; }
 
+        public virtual bool? Reused { get; set; }
+
+        public virtual int? SourceCourseMeetingId { get; set; }
+
         /// <summary>
         /// Gets or sets the owner.
         /// </summary>
@@ -48,6 +52,12 @@
         public virtual IList<LmsCourseMeetingGuest> MeetingGuests { get; protected set; }
 
         #endregion
+
+        public LmsCourseMeeting()
+        {
+            MeetingRoles = new List<LmsUserMeetingRole>();
+            MeetingGuests = new List<LmsCourseMeetingGuest>();
+        }
 
     }
 

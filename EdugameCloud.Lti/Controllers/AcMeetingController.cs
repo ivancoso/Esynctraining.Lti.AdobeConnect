@@ -39,6 +39,8 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = this.GetSession(lmsProviderName);
 
+                if (session.LmsUser == null)
+                    return Json(OperationResult.Error("Session doesn't contain LMS user."));
                 if (string.IsNullOrWhiteSpace(session.LmsUser.PrincipalId))
                     return Json(OperationResult.Error("You don't have Adobe Connect account."));
                 

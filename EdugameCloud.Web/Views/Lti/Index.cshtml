@@ -24,6 +24,7 @@
 	EsyncLti.maxMeetingNameLength  = 120;
 	EsyncLti.instructionText = @if (settings.SupportPageHtml == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(settings.SupportPageHtml.ToString()) + "'"); };
 	EsyncLti.labels = { "meeting": "@settings.LabelMeeting", "officehour": "@settings.LabelOfficeHour", "studygroup": "@settings.LabelStudyGroup"  };
+	EsyncLti.currentUserName = @if (ViewBag.CurrentUserFullName == null) { @Html.Raw("null"); } else { @Html.Raw("'" + ViewBag.CurrentUserFullName + "'"); };
 
 	var Ext = Ext || {};
 	Ext.manifest = {

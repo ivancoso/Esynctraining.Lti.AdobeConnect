@@ -477,6 +477,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelOfficeHour, dto.labelOfficeHour);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelStudyGroup, dto.labelStudyGroup);
 
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
             //D2L only options
             if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn)

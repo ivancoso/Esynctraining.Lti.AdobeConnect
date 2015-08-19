@@ -3,9 +3,6 @@ using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Persistence.Mappings
 {
-    /// <summary>
-    /// The canvas AC meeting map
-    /// </summary>
     public sealed class LmsCourseMeetingMap : BaseClassMap<LmsCourseMeeting>
     {
         #region Constructors and Destructors
@@ -21,6 +18,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.ScoId).Nullable();
             this.Map(x => x.MeetingNameJson).Length(4000).Nullable();
             this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Not.Nullable();
+            this.Map(x => x.Reused).Nullable();
+            this.Map(x => x.SourceCourseMeetingId).Nullable();
 
             this.References(x => x.LmsCompany).Column("companyLmsId").Not.Nullable();
             this.References(x => x.OfficeHours).Nullable();

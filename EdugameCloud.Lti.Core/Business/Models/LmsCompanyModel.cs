@@ -117,15 +117,6 @@ using NHibernate.Criterion;
             return this.Repository.FindOne(defaultQuery);
         }
 
-        /// <summary>
-        /// The get one by provider.
-        /// </summary>
-        /// <param name="providerId">
-        /// The provider Id.
-        /// </param>
-        /// <returns>
-        /// The canvas AC meeting
-        /// </returns>
         public IEnumerable<LmsCompany> GetAllByProviderId(int providerId)
         {
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver().Where(x => x.LmsProvider.Id == providerId);

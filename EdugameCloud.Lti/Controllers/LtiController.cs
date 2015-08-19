@@ -11,6 +11,7 @@ namespace EdugameCloud.Lti.Controllers
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Mvc;
     using System.Xml.Linq;
@@ -374,6 +375,7 @@ namespace EdugameCloud.Lti.Controllers
             var meetingsJson = TempData["meetings"] as string;
             var password = TempData["RestoredACPassword"] as string;
             var policies = TempData["ACPasswordPolicies"] as string;
+            var userFullName = TempData["CurrentUserFullName"] as string;
             LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
 
             if (string.IsNullOrWhiteSpace(meetingsJson))
@@ -394,6 +396,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 meetingsJson = JsonConvert.SerializeObject(meetings);                
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
+                userFullName = param.lis_person_name_full;
                 settings = LicenceSettingsDto.Build(credentials);
             }
 
@@ -403,44 +406,11 @@ namespace EdugameCloud.Lti.Controllers
             ViewBag.MeetingsJson = meetingsJson;
             ViewBag.RestoredACPassword = password;
             ViewBag.ACPasswordPolicies = policies;
+            // TRICK:
+            // BB contains: lis_person_name_full:" Blackboard  Administrator"
+            ViewBag.CurrentUserFullName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline);
             ViewBag.LmsLicenceSettings = settings;
             return View("Index");
-        }
-
-        /// <summary>
-        /// The delete meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
-        [HttpPost]
-        public virtual JsonResult DeleteMeeting(string lmsProviderName, string scoId)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                OperationResult result = this.meetingSetup.DeleteMeeting(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
-                    param,
-                    scoId);
-
-                return Json(result);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("DeleteMeeting", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
         }
 
         /// <summary>
@@ -873,6 +843,12 @@ namespace EdugameCloud.Lti.Controllers
                                     PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
                                 };
                                 this.lmsUserModel.RegisterSave(lmsUser);
+
+                                // TRICK: save lmsUser to session!
+                                // TRICK: remove the previous session - with [lmsUserId]==NULL
+                                this.userSessionModel.RegisterDelete(session, flush: true);
+                                session = this.SaveSession(lmsCompany, param, lmsUser);
+                                key = session.Id.ToString();
                             }
 
                             break;
@@ -1409,6 +1385,7 @@ namespace EdugameCloud.Lti.Controllers
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
             TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials);
+            TempData["CurrentUserFullName"] = param.lis_person_name_full;
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode });
@@ -1552,31 +1529,13 @@ namespace EdugameCloud.Lti.Controllers
         //    }
         //}
 
-        /// <summary>
-        /// Sets the parameter.
-        /// </summary>
-        /// <param name="company">
-        /// The credentials.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
-        /// </param>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsUserSession"/>.
-        /// </returns>
         private LmsUserSession SaveSession(LmsCompany company, LtiParamDTO param, LmsUser lmsUser)
         {
             var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value;
             session = session ?? new LmsUserSession { LmsCompany = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
             var sessionData = new LtiSessionDTO { LtiParam = param };
             session.SessionData = JsonConvert.SerializeObject(sessionData);
-            this.userSessionModel.RegisterSave(session);
+            this.userSessionModel.RegisterSave(session, flush: true);
 
             return session;
         }

@@ -5,6 +5,7 @@ namespace EdugameCloud.Lti.Domain.Entities
     using System;
     using System.Collections.Generic;
     using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
+    using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
@@ -235,20 +236,20 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 var useFLV = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "UseFLV") == 0);
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useFLV) && useFLV;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "UseFLV", true) == 0);
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseFLV, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
                     {
                         LmsCompany = this,
-                        Name = "UseFLV",
+                        Name = LmsCompanySettingNames.UseFLV,
                         Value = value.ToString(),
                     });
                 }
@@ -262,24 +263,25 @@ namespace EdugameCloud.Lti.Domain.Entities
         /// <summary>
         /// Gets or sets the enable use mp4.
         /// </summary>
-        public virtual bool UseMP4 {
+        public virtual bool UseMP4 
+        {
             get
             {
                 var useMP4 = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "UseMP4") == 0);
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useMP4) && useMP4;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "UseMP4", true) == 0);
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseMP4, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
                     {
                         LmsCompany = this,
-                        Name = "UseMP4",
+                        Name = LmsCompanySettingNames.UseMP4,
                         Value = value.ToString(),
                     });
                 }
@@ -298,20 +300,20 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 var enableMultipleMeetings = false;
-                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, "EnableMultipleMeetings") == 0);
+                var setting = this.Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings) == 0);
                 return setting != null && bool.TryParse(setting.Value, out enableMultipleMeetings) && enableMultipleMeetings;
             }
             set
             {
                 if ((Id == default(int)) && (Settings == null))
                     this.Settings = new List<LmsCompanySetting>();
-                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "EnableMultipleMeetings", true) == 0);
+                var setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.EnableMultipleMeetings, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
                     {
                         LmsCompany = this,
-                        Name = "EnableMultipleMeetings",
+                        Name = LmsCompanySettingNames.EnableMultipleMeetings,
                         Value = value.ToString(),
                     });
                 }
@@ -327,7 +329,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool denyACUserCreation = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "DenyACUserCreation", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out denyACUserCreation) && denyACUserCreation;
             }
             set
@@ -335,13 +337,13 @@ namespace EdugameCloud.Lti.Domain.Entities
                 if ((Id == default(int)) && (Settings == null))
                     Settings = new List<LmsCompanySetting>();
 
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "DenyACUserCreation", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.DenyACUserCreation, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
                     {
                         LmsCompany = this,
-                        Name = "DenyACUserCreation",
+                        Name = LmsCompanySettingNames.DenyACUserCreation,
                         Value = value.ToString(),
                     });
                 }
@@ -356,7 +358,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         {
             get
             {
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "MeetingNameFormatterId", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
                 if (setting == null)
                     return MeetingNameFormatterFactory.DefaultFormatterId;
 
@@ -367,13 +369,13 @@ namespace EdugameCloud.Lti.Domain.Entities
                 if ((Id == default(int)) && (Settings == null))
                     Settings = new List<LmsCompanySetting>();
 
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, "MeetingNameFormatterId", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.MeetingNameFormatterId, true) == 0);
                 if (setting == null)
                 {
                     Settings.Add(new LmsCompanySetting
                     {
                         LmsCompany = this,
-                        Name = "MeetingNameFormatterId",
+                        Name = LmsCompanySettingNames.MeetingNameFormatterId,
                         Value = value.ToString(),
                     });
                 }
@@ -389,8 +391,18 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool useSynchronizedUsers = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, "UseSynchronizedUsers", true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.UseSynchronizedUsers, true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useSynchronizedUsers) && useSynchronizedUsers;
+            }
+        }
+
+        public virtual bool EnableMeetingReuse
+        {
+            get
+            {
+                bool enableMeetingReuse = false;
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.EnableMeetingReuse, true) == 0);
+                return setting != null && bool.TryParse(setting.Value, out enableMeetingReuse) && enableMeetingReuse;
             }
         }
 

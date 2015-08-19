@@ -87,6 +87,7 @@ namespace EdugameCloud.Lti.DTO
                 this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
                 this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
                 this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
+                this.enableMeetingReuse = instance.EnableMeetingReuse;
             }
         }
 
@@ -95,6 +96,9 @@ namespace EdugameCloud.Lti.DTO
         /// </summary>
         [DataMember]
         public bool enableMultipleMeetings { get; set; }
+
+        [DataMember]
+        public bool enableMeetingReuse { get; set; }
 
         /// <summary>
         /// Gets or sets the enable use MP4.
