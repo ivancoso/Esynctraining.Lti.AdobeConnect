@@ -86,12 +86,9 @@ namespace EdugameCloud.Lti.API
 
         private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
         {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
+            if (!TestDomainFormat(test, out info))
                 return false;
-            }
-
+        
             return this.MoodleAPI.LoginAndCheckSession(out info,
                 test.domain.IsSSL(),
                 test.domain.RemoveHttpProtocolAndTrailingSlash(),
@@ -119,22 +116,16 @@ namespace EdugameCloud.Lti.API
 
         private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
         {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
+            if (!TestDomainFormat(test, out info))
                 return false;
-            }
 
             return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
         }
 
         private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
         {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
+            if (!TestDomainFormat(test, out info))
                 return false;
-            }
 
             WebserviceWrapper session = test.enableProxyToolMode
                 ? this.SoapAPI.LoginToolAndCreateAClient(
@@ -161,18 +152,12 @@ namespace EdugameCloud.Lti.API
         {
             loginSameAsEmail = false;
             info = string.Empty;
-            var domainUrl = test.domain.ToLowerInvariant();
-            if (!domainUrl.StartsWithProtocol())
-            {
-                info = "Adobe Connect Domain url should start with http or https";
+
+            if (!TestDomainFormat(test, out info))
                 return false;
-            }
 
-            var fixedUrl = domainUrl.EndsWith("/") ? domainUrl : string.Format("{0}/", domainUrl);
-            fixedUrl = fixedUrl.EndsWith("api/xml/") ? fixedUrl : string.Format("{0}api/xml", fixedUrl);
-
-            var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = fixedUrl });
-
+            var apiUrl = string.Format("{0}/api/xml", test.domain.ToLowerInvariant());
+            var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = apiUrl });
             var result = provider.Login(new UserCredentials(test.login, test.password));
 
             if (!result.Success)
@@ -215,6 +200,24 @@ namespace EdugameCloud.Lti.API
             logger.Error("GetPasswordPolicies. Account is NULL. Check Adobe Connect account permissions. Admin account expected.");
             info = "Check Adobe Connect account permissions. Admin account expected.";
             return false;
+        }
+
+        private bool TestDomainFormat(ConnectionTestDTO test, out string error)
+        {
+            if (!test.domain.StartsWithProtocol())
+            {
+                error = "Domain url should start with http:// or https://";
+                return false;
+            }
+
+            if (!test.domain.EndsWith("/"))
+            {
+                error = "Domain url should not end with '/'";
+                return false;
+            }
+
+            error = null;
+            return true;
         }
 
         private static string GetField(FieldCollectionResult value, string fieldName)

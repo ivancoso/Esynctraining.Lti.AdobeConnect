@@ -243,7 +243,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meetings = ret,
                 is_teacher = this.UsersSetup.IsTeacher(param),
                 lms_provider_name = credentials.LmsProvider.LmsProviderName,
-                connect_server = credentials.AcServer.EndsWith("/") ? credentials.AcServer : credentials.AcServer + "/",
+                connect_server = credentials.AcServer + "/",
                 is_settings_visible = credentials.IsSettingsVisible.GetValueOrDefault(),
                 is_removable = credentials.CanRemoveMeeting.GetValueOrDefault(),
                 can_edit_meeting = credentials.CanEditMeeting.GetValueOrDefault(),
@@ -266,11 +266,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public IAdobeConnectProxy GetProvider(LmsCompany license, UserCredentials credentials, bool login)
         {
-            string apiUrl = license.AcServer + (license.AcServer.EndsWith("/") ? string.Empty : "/");
-
-            apiUrl = apiUrl.EndsWith("api/xml/", StringComparison.OrdinalIgnoreCase)
-                ? apiUrl.TrimEnd('/')
-                : apiUrl + "api/xml";
+            string apiUrl = license.AcServer + "/api/xml";
 
             var connectionDetails = new ConnectionDetails
             {
@@ -695,9 +691,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            var baseUrl = lmsCompany.AcServer
-                          + (lmsCompany.AcServer != null && lmsCompany.AcServer.EndsWith(@"/") ? string.Empty : "/")
-                          + recordingUrl;
+            var baseUrl = lmsCompany.AcServer + "/" + recordingUrl;
 
             breezeSession = breezeToken ?? string.Empty;
 
