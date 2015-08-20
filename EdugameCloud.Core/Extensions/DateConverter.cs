@@ -84,7 +84,7 @@
             return (int)Math.Floor((date - _origin).TotalSeconds);
         }
 
-        public static DateTime ConverToClientTime(this DateTime date, int timezoneOffset)
+        public static DateTime ConvertToClientTime(this DateTime date, int timezoneOffset)
         {
             if (timezoneOffset != 0)
             {

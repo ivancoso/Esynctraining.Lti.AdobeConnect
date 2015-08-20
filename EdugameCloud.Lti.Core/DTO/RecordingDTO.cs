@@ -1,4 +1,5 @@
-﻿using Esynctraining.AC.Provider.Entities;
+﻿using System;
+using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
@@ -21,8 +22,8 @@ namespace EdugameCloud.Lti.Core.DTO
         {
             this.id = recording.ScoId;
             this.name = recording.Name;
-            this.begin_date = recording.BeginDateLocal.ToString("MM/dd/yy h:mm:ss tt");
-            this.duration = duration;
+            this.begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
+            this.duration = this.GetDurationWithoutMilliseconds(recording.Duration);
             this.url = this.GenerateJoinLink(recording.UrlPath);
             this.status = this.GetRecordingStatus(recording.JobStatus);
             this.is_mp4 = recording.Icon == "mp4-archive";
@@ -71,7 +72,7 @@ namespace EdugameCloud.Lti.Core.DTO
         /// Gets or sets the duration.
         /// </summary>
         [DataMember]
-        public int duration { get; set; }
+        public string duration { get; set; }
 
         //[DataMember]
         //public string end_date { get; set; }
@@ -102,7 +103,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         //[DataMember]
         //public string password { get; set; }
-
+   
         #region methods
 
         private string GetRecordingStatus(string jobStatus)
@@ -142,6 +143,16 @@ namespace EdugameCloud.Lti.Core.DTO
         private string GenerateDownloadLink(string accountUrl, string recordingPath, string recordingName)
         {
             return accountUrl + recordingPath + "output/ " + recordingName + ".zip?download=zip";
+        }
+        private string GetDurationWithoutMilliseconds(string date)
+        {
+            var index = date.IndexOf(".");
+            if (index > 0)
+            {
+                return date.Substring(0, index);
+            }
+
+            return date;
         }
 
         #endregion

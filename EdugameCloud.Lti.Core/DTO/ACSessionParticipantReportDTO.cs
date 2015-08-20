@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.DTO;
 using Org.BouncyCastle.Asn1.Cms;
 
@@ -11,7 +12,7 @@ namespace EdugameCloud.Lti.Core.DTO
     {
         #region Constructors and Destructors
 
-        public ACSessionParticipantReportDTO(ACSessionParticipantDTO acSession)
+        public ACSessionParticipantReportDTO(ACSessionParticipantDTO acSession, int timezoneOffset)
         {
             this.scoId = acSession.scoId;
             this.participantName = acSession.participantName;
@@ -19,8 +20,8 @@ namespace EdugameCloud.Lti.Core.DTO
             this.sessionName = acSession.sessionName;
             this.principalId = acSession.principalId;
             this.assetId = acSession.assetId;
-            this.dateTimeEntered = acSession.dateTimeEntered;
-            this.dateTimeLeft = acSession.dateTimeLeft;
+            this.dateTimeEntered = acSession.dateTimeEntered.ConvertToClientTime(timezoneOffset);
+            this.dateTimeLeft = acSession.dateTimeLeft == null ? null: (DateTime?)acSession.dateTimeLeft.Value.ConvertToClientTime(timezoneOffset);
             this.duration = GetParticipantAttendanceDuration(acSession.durationInHours);
             this.login = acSession.login;
             this.firstName = acSession.firstName;

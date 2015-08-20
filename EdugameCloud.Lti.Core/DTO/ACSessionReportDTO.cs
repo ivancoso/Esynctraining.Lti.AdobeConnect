@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.DTO;
 
 namespace EdugameCloud.Lti.Core.DTO
@@ -10,7 +11,7 @@ namespace EdugameCloud.Lti.Core.DTO
     {
         #region Constructors and Destructors
 
-        public ACSessionReportDTO(ACSessionDTO acSession)
+        public ACSessionReportDTO(ACSessionDTO acSession, int timezoneOffset)
         {
             if (acSession.participants == null || !acSession.participants.Any())
             {
@@ -18,11 +19,11 @@ namespace EdugameCloud.Lti.Core.DTO
             }
             else
             {
-                this.participants = acSession.participants.Select(x => new ACSessionParticipantReportDTO(x)).ToList();
+                this.participants = acSession.participants.Select(x => new ACSessionParticipantReportDTO(x, timezoneOffset)).ToList();
             }
 
-            this.dateStarted = acSession.dateStarted;
-            this.dateEnded = acSession.dateEnded;
+            this.dateStarted = acSession.dateStarted == null ? null : (DateTime?)acSession.dateStarted.Value.ConvertToClientTime(timezoneOffset);
+            this.dateEnded = acSession.dateEnded == null ? null : (DateTime?)acSession.dateEnded.Value.ConvertToClientTime(timezoneOffset);
             this.scoId = acSession.scoId;
             this.acSessionId = acSession.acSessionId;
             this.meetingName = acSession.meetingName;

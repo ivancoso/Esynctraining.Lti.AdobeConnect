@@ -263,7 +263,7 @@ namespace EdugameCloud.MVC.Controllers
                 var participants = new List<ACSessionParticipantReportDTO>();
                 if (tempParticipants.Any())
                 {
-                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDTO(x)).ToList();
+                    participants = tempParticipants.Select(x => new ACSessionParticipantReportDTO(x, timezoneOffset)).ToList();
                 }
 
                 string mimeType;
@@ -329,7 +329,7 @@ namespace EdugameCloud.MVC.Controllers
 
                 if (tempMeetingSessions.Any())
                 {
-                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDTO(x)).ToList();
+                    meetingSessions = tempMeetingSessions.Select(x => new ACSessionReportDTO(x, timezoneOffset)).ToList();
                 }
 
                 if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
@@ -2936,7 +2936,7 @@ namespace EdugameCloud.MVC.Controllers
         private DateTime GetLocalDate(int timezoneOffset)
         {
             var utcDate = DateTime.Now.ToUniversalTime();
-            return utcDate.ConverToClientTime(timezoneOffset);
+            return utcDate.ConvertToClientTime(timezoneOffset);
 
         }
 
