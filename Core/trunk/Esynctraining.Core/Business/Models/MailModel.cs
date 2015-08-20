@@ -274,6 +274,40 @@
             }
         }
 
+        public bool SendEmailSync(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, IEnumerable<Attachment> attachments, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<LinkedResource> linkedResources = null)
+        {
+            bool flag;
+            using (SmtpClientWrapper smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
+            {
+                flag = this.SendEmailSync(smtpClientWrapper, toName, toEmail, subject, body, fromName, fromEmail, attachments, cced, bcced, linkedResources, false);
+            }
+            return flag;
+        }
+
+        public bool SendEmailSync<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        {
+            string str = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
+            IEnumerable<string> strs = toName;
+            IEnumerable<string> strs1 = toEmail;
+            string str1 = subject;
+            string str2 = str;
+            string str3 = fromName;
+            string str4 = fromEmail;
+            object obj = attachments;
+            if (obj == null)
+            {
+                obj = this.attachmentsProvider.GetAttachments<TModel>();
+            }
+            return this.SendEmailSync(strs, strs1, str1, str2, str3, str4, (IEnumerable<Attachment>)obj, cced, bcced, linkedResources);
+        }
+
+        public bool SendEmailSync<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        {
+            string[] strArrays = new string[] { toName };
+            string[] strArrays1 = new string[] { toEmail };
+            return this.SendEmailSync<TModel>(strArrays, strArrays1, subject, model, fromName, fromEmail, cced, bcced, attachments, linkedResources);
+        }
+
         #endregion
 
         #region Methods
@@ -393,6 +427,83 @@
             }
         }
 
+        private bool SendEmailSync(SmtpClientWrapper smtpClientWrapper, IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, IEnumerable<Attachment> attachments, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<LinkedResource> linkedResources = null, bool useSsl = false)
+        {
+            bool flag;
+            try
+            {
+                MailMessage mailMessage = new MailMessage()
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
+                MailMessage mailAddress = mailMessage;
+                if (linkedResources != null && linkedResources.Any<LinkedResource>())
+                {
+                    AlternateView alternateView = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                    foreach (LinkedResource linkedResource in linkedResources)
+                    {
+                        alternateView.LinkedResources.Add(linkedResource);
+                    }
+                    mailAddress.AlternateViews.Add(alternateView);
+                }
+                List<string> list = toEmail.ToList<string>();
+                List<string> strs = toName.With<IEnumerable<string>, List<string>>((IEnumerable<string> x) => x.ToList<string>());
+                for (int i = 0; i < list.Count<string>(); i++)
+                {
+                    int num = i;
+                    string str = strs.With<List<string>, string>((List<string> x) => x.ElementAtOrDefault<string>(num) ?? string.Empty);
+                    string str1 = list.ElementAt<string>(num);
+                    if (!string.IsNullOrWhiteSpace(str1))
+                    {
+                        mailAddress.To.Add(new MailAddress(str1, str));
+                    }
+                }
+                if (!string.IsNullOrWhiteSpace(fromName) && !string.IsNullOrWhiteSpace(fromEmail))
+                {
+                    mailAddress.From = new MailAddress(fromEmail, fromName);
+                }
+                if (attachments != null)
+                {
+                    foreach (Attachment attachment in attachments)
+                    {
+                        mailAddress.Attachments.Add(attachment);
+                    }
+                }
+                if (cced != null && cced.Any<MailAddress>())
+                {
+                    foreach (MailAddress mailAddress1 in cced)
+                    {
+                        mailAddress.CC.Add(mailAddress1);
+                    }
+                }
+                if (bcced != null && bcced.Any<MailAddress>())
+                {
+                    foreach (MailAddress mailAddress2 in bcced)
+                    {
+                        mailAddress.Bcc.Add(mailAddress2);
+                    }
+                }
+                if (useSsl)
+                {
+                    smtpClientWrapper.EnableSsl = true;
+                }
+                smtpClientWrapper.Send(mailAddress);
+                flag = true;
+            }
+            catch (Exception exception1)
+            {
+                Exception exception = exception1;
+                this.LastError = exception;
+                IoC.Resolve<ILogger>().Error("Error, while sending email", exception);
+                flag = false;
+            }
+            return flag;
+        }
+
         #endregion
+
     }
+
 }
