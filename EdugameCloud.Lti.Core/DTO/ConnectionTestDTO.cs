@@ -1,21 +1,9 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConnectionTestDTO.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The connection test DTO.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+﻿using System.Runtime.Serialization;
 
-namespace EdugameCloud.Core.Domain.DTO
+namespace EdugameCloud.Lti.Core.DTO
 {
-    using System.Runtime.Serialization;
-
-    /// <summary>
-    ///     The connection test DTO.
-    /// </summary>
     [DataContract]
-    public class ConnectionTestDTO
+    public sealed class ConnectionTestDTO
     {
         #region Public Properties
 
@@ -51,4 +39,5 @@ namespace EdugameCloud.Core.Domain.DTO
 
         #endregion
     }
+
 }

@@ -173,6 +173,8 @@ namespace EdugameCloud.Web
             container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
             container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
 
+            container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
+
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick().If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
         }
 

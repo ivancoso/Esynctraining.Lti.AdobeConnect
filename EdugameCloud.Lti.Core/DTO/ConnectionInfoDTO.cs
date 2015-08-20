@@ -1,12 +1,12 @@
-﻿namespace EdugameCloud.Core.Domain.DTO
-{
-    using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
+namespace EdugameCloud.Lti.Core.DTO
+{
     /// <summary>
     /// The connection info DTO.
     /// </summary>
     [DataContract]
-    public class ConnectionInfoDTO
+    public sealed class ConnectionInfoDTO
     {
         /// <summary>
         /// Gets or sets the status.
@@ -20,4 +20,5 @@
         [DataMember]
         public string info { get; set; }
     }
+
 }

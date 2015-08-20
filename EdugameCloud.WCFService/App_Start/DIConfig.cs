@@ -175,6 +175,8 @@ namespace EdugameCloud.WCFService
             container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
             container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
             container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
+
+            container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
         }
 
         #endregion

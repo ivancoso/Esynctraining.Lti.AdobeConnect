@@ -8,9 +8,6 @@
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
 
-    /// <summary>
-    /// The global.
-    /// </summary>
     public class Global : HttpApplication
     {
         #region Methods

@@ -233,6 +233,7 @@
     <Compile Include="API\Moodle\IMoodleApi.cs" />
     <Compile Include="API\Sakai\SakaiLmsUserService.cs" />
     <Compile Include="API\SynchronizationUserService.cs" />
+    <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />

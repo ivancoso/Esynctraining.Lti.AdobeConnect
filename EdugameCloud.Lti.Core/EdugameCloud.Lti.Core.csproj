@@ -241,6 +241,8 @@
     <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
     <Compile Include="DTO\CompanyLmsDTO.cs" />
+    <Compile Include="DTO\ConnectionInfoDTO.cs" />
+    <Compile Include="DTO\ConnectionTestDTO.cs" />
     <Compile Include="DTO\LmsAuthenticationParametersDTO.cs" />
     <Compile Include="DTO\LmsCourseDTO.cs" />
     <Compile Include="DTO\LmsProviderDTO.cs" />

@@ -8,26 +8,17 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.Text;
-    using BbWsClient;
-    using Castle.Core.Logging;
-    using EdugameCloud.Core.Domain.DTO;
+    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
-    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Core.Business.Models;
+    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.DTO;
-    using Esynctraining.AC.Provider;
-    using Esynctraining.AC.Provider.DataObjects;
-    using Esynctraining.AC.Provider.DataObjects.Results;
-    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
@@ -64,39 +55,6 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the DLAP API.
-        /// </summary>
-        private IBrainHoneyApi DlapAPI
-        {
-            get
-            {
-                return IoC.Resolve<IBrainHoneyApi>();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the Moodle API.
-        /// </summary>
-        private IMoodleApi MoodleAPI
-        {
-            get
-            {
-                return IoC.Resolve<IMoodleApi>();
-            }
-        }
-
-        /// <summary>
-        ///     Gets the SOAP API.
-        /// </summary>
-        private IBlackBoardApi SoapAPI
-        {
-            get
-            {
-                return IoC.Resolve<IBlackBoardApi>();
-            }
-        }
-
-        /// <summary>
         ///     Gets the SOAP API.
         /// </summary>
         private MeetingSetup MeetingSetup
@@ -126,6 +84,14 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<LmsProviderModel>();
+            }
+        }
+
+        private TestConnectionService TestConnectionService
+        {
+            get
+            {
+                return IoC.Resolve<TestConnectionService>();
             }
         }
 
@@ -184,7 +150,7 @@ namespace EdugameCloud.WCFService
 
             string acConnectionInfo;
             bool loginSameAsEmail;
-            bool acConnectionTest = TestACConnection(new ConnectionTestDTO
+            bool acConnectionTest = TestConnectionService.TestACConnection(new ConnectionTestDTO
             {
                 domain = resultDto.acServer,
                 enableProxyToolMode = resultDto.enableProxyToolMode,
@@ -247,174 +213,13 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public ConnectionInfoDTO TestConnection(ConnectionTestDTO test)
         {
-            bool success = false;
-            string info = string.Empty;
-
-            switch (test.type.ToLowerInvariant())
-            {
-                case "ac":
-                    bool loginSameAsEmail;
-                    success = this.TestACConnection(test, out info, out loginSameAsEmail);
-                    break;
-                case "brainhoney":
-                    success = this.TestBrainHoneyConnection(test, out info);
-                    break;
-                case "blackboard":
-                    success = this.TestBlackBoardConnection(test, out info);
-                    break;
-                case "moodle":
-                    success = this.TestMoodleConnection(test, out info);
-                    break;
-                case "sakai":
-                    success = this.TestSakaiConnection(test, out info);
-                    break;
-                case "canvas":
-                    success = TestCanvasConnection(test, out info);
-                    break;
-                case "brightspace":
-                    success = TestBrightspaceConnection(test, out info);
-                    break;
-            }
-
-            return new ConnectionInfoDTO { status = success ? OkMessage : "Failed to connect", info = info };
+            return TestConnectionService.TestConnection(test);
         }
 
         #endregion
 
         #region Methods
-        private bool TestMoodleConnection(ConnectionTestDTO test, out string info)
-        {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
-                return false;
-            }
-
-            return this.MoodleAPI.LoginAndCheckSession(out info,
-                test.domain.IsSSL(), 
-                test.domain.RemoveHttpProtocolAndTrailingSlash(), 
-                test.login, 
-                test.password);
-        }
-
-        private bool TestSakaiConnection(ConnectionTestDTO test, out string info)
-        {
-            info = "Not yet implemented";
-            return true;
-        }
-
-        private bool TestCanvasConnection(ConnectionTestDTO test, out string info)
-        {
-            info = "Not supported";
-            return true;
-        }
-
-        private bool TestBrightspaceConnection(ConnectionTestDTO test, out string info)
-        {
-            info = "Not supported";
-            return true;
-        }
-
-        private bool TestBrainHoneyConnection(ConnectionTestDTO test, out string info)
-        {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
-                return false;
-            }
-
-            return this.DlapAPI.LoginAndCheckSession(out info, test.domain.RemoveHttpProtocolAndTrailingSlash(), test.login, test.password);
-        }
-
-        private bool TestBlackBoardConnection(ConnectionTestDTO test, out string info)
-        {
-            if (!test.domain.StartsWithProtocol())
-            {
-                info = "Domain url should start with http:// or https://";
-                return false;
-            }
-
-            WebserviceWrapper session = test.enableProxyToolMode
-                ? this.SoapAPI.LoginToolAndCreateAClient(
-                    out info,
-                    test.domain.IsSSL(),
-                    test.domain,
-                    test.password)
-
-                : this.SoapAPI.LoginUserAndCreateAClient(
-                    out info,
-                    test.domain.IsSSL(),
-                    test.domain,
-                    test.login,
-                    test.password);
-
-            bool success = session != null;
-            if (session != null)
-                session.logout();
-
-            return success;
-        }
-
-        private bool TestACConnection(ConnectionTestDTO test, out string info, out bool loginSameAsEmail)
-        {
-            loginSameAsEmail = false;
-            info = string.Empty;
-            var domainUrl = test.domain.ToLowerInvariant();
-            if (!domainUrl.StartsWithProtocol())
-            {
-                info = "Adobe Connect Domain url should start with http or https";
-                return false;
-            }
-
-            var fixedUrl = domainUrl.EndsWith("/") ? domainUrl : string.Format("{0}/", domainUrl);
-            fixedUrl = fixedUrl.EndsWith("api/xml/") ? fixedUrl : string.Format("{0}api/xml", fixedUrl);
-
-            var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = fixedUrl });
-
-            var result = provider.Login(new UserCredentials(test.login, test.password));
-
-            if (!result.Success)
-            {
-                var error = FormatErrorFromAC(result).With(x => x.error);
-                if (error != null)
-                {
-                    info = error.errorMessage;
-                }
-
-                return false;
-            }
-
-            StatusInfo status;
-            UserInfo usr = provider.GetUserInfo(out status);
-
-            if (status.Code != StatusCodes.ok)
-            {
-                logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", status.GetErrorInfo());
-                info = status.GetErrorInfo();
-                return false;
-            }
-
-            if ((usr != null) && usr.AccountId.HasValue)
-            {
-                FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
-
-                if (!fields.Success)
-                {
-                    logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. {0}.", fields.Status.GetErrorInfo());
-                    info = fields.Status.GetErrorInfo();
-                    return false;
-                }
-
-                string setting = GetField(fields, "login-same-as-email");
-                loginSameAsEmail = string.IsNullOrEmpty(setting) || "YES".Equals(setting, StringComparison.OrdinalIgnoreCase);
-                return true;
-            }
-
-            logger.Error("GetPasswordPolicies. Account is NULL. Check Adobe Connect account permissions. Admin account expected.");
-            info = "Check Adobe Connect account permissions. Admin account expected.";
-            return false;            
-        }
-
+        
         private LmsCompany ConvertDto(CompanyLmsDTO dto, LmsCompany instance)
         {
             instance = instance ?? new LmsCompany();
@@ -548,17 +353,6 @@ namespace EdugameCloud.WCFService
                     instance.RoleMappings.Add(map);
                 }
             }
-        }
-
-        private static string GetField(FieldCollectionResult value, string fieldName)
-        {
-            Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
-            if (field == null)
-            {
-                return null;
-            }
-
-            return field.Value;
         }
 
         #endregion
