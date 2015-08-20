@@ -22,6 +22,7 @@ namespace EdugameCloud.Lti.DTO
         public CompanyLmsDTO()
         {
             roleMapping = new LmsCompanyRoleMappingDTO[0];
+            additionalLmsDomains = new string[0];
         }
 
         /// <summary>
@@ -88,11 +89,12 @@ namespace EdugameCloud.Lti.DTO
                 this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
                 this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
                 this.enableMeetingReuse = instance.EnableMeetingReuse;
+                this.additionalLmsDomains = instance.AdditionalLmsDomains;                
             }
         }
 
         /// <summary>
-        /// Gets or setsthe condition of multiple meetings.
+        /// Gets or sets the condition of multiple meetings.
         /// </summary>
         [DataMember]
         public bool enableMultipleMeetings { get; set; }
@@ -351,6 +353,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public string labelStudyGroup { get; set; }
+
+        [DataMember]
+        public string[] additionalLmsDomains { get; set; }
 
     }
 

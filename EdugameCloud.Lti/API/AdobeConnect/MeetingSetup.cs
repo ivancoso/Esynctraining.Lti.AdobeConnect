@@ -857,6 +857,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             int formatterId = lmsCompany.MeetingNameFormatterId;
             IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
+
+            // officeHours - map existing AC meeting but new LmsCourseMeeting record
             if (isNewMeeting)
             {
                 string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
@@ -872,6 +874,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 });
                 meeting.MeetingNameJson = json;
             }
+                // TODO: !!!
+                // NOTE: use already existed OfficeHours meeting
+            //else if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && (meeting.Id == 0))
+            //{
+            //    var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(officeHours.Id);
+            //    foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
+            //        Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
+            //    {
+            //        dynamic nameInfo = JObject.Parse(officeHoursMeeting.MeetingNameJson);
+            //        nameInfo.meetingName = meetingDTO.name;
+            //        officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+            //        this.LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
+            //    }
+            //}
             else
             {
                 string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);

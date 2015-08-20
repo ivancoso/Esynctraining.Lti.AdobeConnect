@@ -76,6 +76,30 @@
         }
 
         [HttpPost]
+        public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTO meeting)
+        {
+            LmsCompany credentials = null;
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                credentials = session.LmsCompany;
+                var param = session.LtiSession.With(x => x.LtiParam);
+                OperationResult ret = this.meetingSetup.SaveMeeting(
+                    credentials,
+                    this.GetAdobeConnectProvider(credentials),
+                    param,
+                    meeting);
+
+                return Json(ret);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("UpdateMeeting", credentials, ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+        [HttpPost]
         public virtual JsonResult DeleteMeeting(string lmsProviderName, string scoId)
         {
             LmsCompany credentials = null;

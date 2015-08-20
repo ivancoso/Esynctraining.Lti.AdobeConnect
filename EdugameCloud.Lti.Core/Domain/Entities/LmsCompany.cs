@@ -9,6 +9,7 @@ namespace EdugameCloud.Lti.Domain.Entities
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// The company LMS.
@@ -417,17 +418,20 @@ namespace EdugameCloud.Lti.Domain.Entities
         // TODO: !!! WWW section!!!
         public virtual bool HasLmsDomain(string domainToCheck)
         {
-            string input = LmsDomain;
-            int index = input.IndexOf("/");
-            if (index > 0)
-                input = input.Substring(0, index);
+            var domains = new List<string>();
+            domains.Add(CleanDomain(LmsDomain));
+
+            if ((LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
+            {
+                domains.AddRange(AdditionalLmsDomains);
+            }
 
             // NOTE: sakai sends :8080 in our environment- check other LMS
             //index = input.IndexOf(":");
             //if (index > 0)
             //    input = input.Substring(0, index);
 
-            return string.Equals(input, domainToCheck, StringComparison.OrdinalIgnoreCase);
+            return domains.Any(s => s.Equals(domainToCheck, StringComparison.OrdinalIgnoreCase));
         }
 
         public virtual T GetSetting<T>(string settingName)
@@ -436,6 +440,27 @@ namespace EdugameCloud.Lti.Domain.Entities
             return setting == null || String.IsNullOrWhiteSpace(setting.Value)
                 ? default(T)
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
+        }
+
+
+        public string[] AdditionalLmsDomains 
+        {
+            get
+            {
+                string json = GetSetting<string>(LmsCompanySettingNames.AdditionalLmsDomains);
+                if (string.IsNullOrWhiteSpace(json))
+                    return new string[0];
+                return JsonConvert.DeserializeObject<string[]>(json);
+            } 
+        }
+
+
+        private static string CleanDomain(string input)
+        {
+            int index = input.IndexOf("/");
+            if (index > 0)
+                input = input.Substring(0, index);
+            return input;
         }
 
     }

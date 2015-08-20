@@ -712,38 +712,15 @@ namespace EdugameCloud.Lti.Controllers
                         param.user_id = parsedIdArray.Last();
                     }
                 }
+
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
-                if (lmsCompany != null)
+                string validationError = ValidateLmsLicense(lmsCompany, param);
+                if (!string.IsNullOrWhiteSpace(validationError))
                 {
-                    if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
-                    {
-                        logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-                        this.ViewBag.Error = "This LTI integration is already set for different domain";
-                        return this.View("Error");
-                    }
-
-                    if (!lmsCompany.IsActive)
-                    {
-                        logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-                        this.ViewBag.Error = "LMS License is not active. Please contact administrator.";
-                        return this.View("Error");
-                    }
-
-                    var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
-                    if ((company == null) || !company.IsActive())
-                    {
-                        logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                        this.ViewBag.Error = "Sorry, your company doesn't have any active license. Please contact administrator.";
-                        return this.View("Error");
-                    }
-                }
-                else
-                {
-                    logger.ErrorFormat("Adobe Connect integration is not set up. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                    this.ViewBag.Error = string.Format("Your Adobe Connect integration is not set up.");
+                    this.ViewBag.Error = validationError;
                     return this.View("Error");
                 }
-
+               
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
 
@@ -915,42 +892,6 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         /// <summary>
-        /// The update meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
-        [HttpPost]
-        public virtual JsonResult UpdateMeeting(string lmsProviderName, MeetingDTO meeting)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                OperationResult ret = this.meetingSetup.SaveMeeting(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
-                    param,
-                    meeting);
-
-                return Json(ret);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("UpdateMeeting", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
-        /// <summary>
         /// The update user.
         /// </summary>
         /// <param name="lmsProviderName">
@@ -1047,6 +988,38 @@ namespace EdugameCloud.Lti.Controllers
         #endregion
 
         #region Methods
+
+        private string ValidateLmsLicense(LmsCompany lmsCompany, LtiParamDTO param)
+        {
+            if (lmsCompany != null)
+            {
+                if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
+                {
+                    logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                    return "This LTI integration is already set for different domain";
+                }
+
+                if (!lmsCompany.IsActive)
+                {
+                    logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                    return "LMS License is not active. Please contact administrator.";
+                }
+
+                var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
+                if ((company == null) || !company.IsActive())
+                {
+                    logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                    return "Sorry, your company doesn't have any active license. Please contact administrator.";
+                }
+            }
+            else
+            {
+                logger.ErrorFormat("Adobe Connect integration is not set up. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                return string.Format("Your Adobe Connect integration is not set up.");
+            }
+
+            return null;
+        }
 
         /// <summary>
         /// The fix extra data issue.

@@ -16,5 +16,6 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string EnableMultipleMeetings = "EnableMultipleMeetings";
         public const string UseMP4 = "UseMP4";
         public const string UseFLV = "UseFLV";
+        public const string AdditionalLmsDomains = "AdditionalLmsDomains";
     }
 }

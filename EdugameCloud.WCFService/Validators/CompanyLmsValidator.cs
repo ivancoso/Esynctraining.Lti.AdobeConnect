@@ -1,6 +1,8 @@
 ﻿namespace EdugameCloud.WCFService.Validators
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
@@ -38,6 +40,23 @@
                 .WithError(
                     Errors.CODE_ERRORTYPE_INVALID_OBJECT,
                     "Invalid LMS Setup. Please provide with administrative Username and Password");
+
+            this.RuleFor(model => model.additionalLmsDomains)
+               .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
+               .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be unique.");
+
         }
+
+        private static bool UniqueLmsDomains(string mainLmsDomain, string[] additionalDomains)
+        {
+            if (additionalDomains == null)
+                additionalDomains = new string[0];
+
+            var domains = new List<string>(additionalDomains);
+            domains.Add(mainLmsDomain);
+            return domains.Count == domains.Distinct().Count();
+        }
+
     }
+
 }

@@ -22,6 +22,7 @@ namespace EdugameCloud.WCFService
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using FluentValidation.Results;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// The company LMS service.
@@ -290,6 +291,20 @@ namespace EdugameCloud.WCFService
                 UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsD2LSandbox, dto.isSandbox);
                 UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppId, dto.d2lAppId);
                 UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppKey, dto.d2lAppKey);
+            }
+            else if (lmsProvider.Id == (int)LmsProviderEnum.Blackboard)
+            {
+                if (dto.enableProxyToolMode)
+                {
+                    string json = (dto.additionalLmsDomains == null) || (dto.additionalLmsDomains.Length == 0)
+                        ? null
+                        : JsonConvert.SerializeObject(dto.additionalLmsDomains);
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AdditionalLmsDomains, json);
+                }
+                else
+                {
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AdditionalLmsDomains, null);
+                }
             }
 
             ProcessRoleMapping(dto, instance);
