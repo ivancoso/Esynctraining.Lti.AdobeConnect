@@ -9,9 +9,6 @@ namespace Esynctraining.AC.Provider.Entities
     [Serializable]
     public class GeneratedRecordingJob : Recording
     {
-        [XmlElement("duration")]
-        public string ExactRecordingDuration { get; set; }
-
         [XmlElement("job-date-created")]
         public DateTime JobDateCreated { get; set; }
 
