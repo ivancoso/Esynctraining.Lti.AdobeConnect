@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
@@ -16,8 +18,9 @@ namespace EdugameCloud.Lti.LmsUserUpdater
     {
         static void Main(string[] args)
         {
+            const string ConsumerKeyParameterName = "consumerkey";
             const string neMutexName = "EdugameCloud.Lti.LmsUserUpdater.BackgroundMutexName";
-
+            var parameters = ParseArgumentList(args);
             // prevent two instances from running
             bool created;
 
@@ -39,6 +42,11 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     var syncService = IoC.Resolve<ISynchronizationUserService>();
 
                     var companies = lmsCompanyModel.GetEnabledForSynchronization();
+                    if (parameters.ContainsKey(ConsumerKeyParameterName))
+                    {
+                        companies = companies.Where(x => x.ConsumerKey == parameters[ConsumerKeyParameterName]).ToList();
+                    }
+
                     companies = companies.Where(x => x.IsActive && !LicenseExpired(x)).ToList();
                     var groupedByCompany = companies.GroupBy(x => x.LmsProvider.Id);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
@@ -88,6 +96,45 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             return (company == null) || !company.IsActive();
         }
 
+        private static Dictionary<string, string> ParseArgumentList(string[] args)
+        {
+            var result = new Dictionary<string, string>();
+            if (args != null)
+            {
+                foreach (string argument in args)
+                {
+                    if (argument.Length > 0)
+                    {
+                        switch (argument[0])
+                        {
+                            case '-':
+                            case '/':
+                                int endIndex = argument.IndexOfAny(new char[] { ':' }, 1);
+                                string option = argument.Substring(1, endIndex == -1 ? argument.Length - 1 : endIndex - 1);
+                                string optionArgument;
+                                if (option.Length + 1 == argument.Length)
+                                {
+                                    optionArgument = null;
+                                }
+                                else if (argument.Length > 1 + option.Length && argument[1 + option.Length] == ':')
+                                {
+                                    optionArgument = argument.Substring(option.Length + 2);
+                                }
+                                else
+                                {
+                                    optionArgument = argument.Substring(option.Length + 1);
+                                }
+
+                                result.Add(option.ToLowerInvariant(), optionArgument);
+                                break;
+                        }
+                        // skipping other parameter signs
+                    }
+                }
+            }
+
+            return result;
+        }
     }
 
 }
