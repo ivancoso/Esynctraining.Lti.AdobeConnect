@@ -407,6 +407,17 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        public virtual string[] AdditionalLmsDomains
+        {
+            get
+            {
+                string json = GetSetting<string>(LmsCompanySettingNames.AdditionalLmsDomains);
+                if (string.IsNullOrWhiteSpace(json))
+                    return new string[0];
+                return JsonConvert.DeserializeObject<string[]>(json);
+            }
+        }
+
         #endregion
 
         public LmsCompany()
@@ -440,18 +451,6 @@ namespace EdugameCloud.Lti.Domain.Entities
             return setting == null || String.IsNullOrWhiteSpace(setting.Value)
                 ? default(T)
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
-        }
-
-
-        public string[] AdditionalLmsDomains 
-        {
-            get
-            {
-                string json = GetSetting<string>(LmsCompanySettingNames.AdditionalLmsDomains);
-                if (string.IsNullOrWhiteSpace(json))
-                    return new string[0];
-                return JsonConvert.DeserializeObject<string[]>(json);
-            } 
         }
 
 

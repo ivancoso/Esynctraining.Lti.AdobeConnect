@@ -8,6 +8,8 @@
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
     using Castle.Core.Logging;
+    using System.Web.Helpers;
+    using System.Web.Mvc;
 
     /// <summary>
     /// The BLTI provider helper.
@@ -57,11 +59,12 @@
                 throw new ArgumentNullException("logger");
 
             var request = HttpContext.Current.Request;
+            FormCollection form = new FormCollection(request.Unvalidated().Form);
             // First check the nonce to make sure it has not been used
-            var nonce = new NonceData(request.Form["oauth_nonce"], DateTime.UtcNow);
+            var nonce = new NonceData(form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
             {
-                logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", request.Form["oauth_nonce"]);
+                logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", form["oauth_nonce"]);
                 return false;
             }
 
@@ -80,7 +83,7 @@
 
             // Check the timestamp of the request and make sure it is within 90 minutes of the current server time
             double timestamp;
-            double.TryParse(request.Form["oauth_timestamp"], out timestamp);
+            double.TryParse(form["oauth_timestamp"], out timestamp);
             double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             if (Math.Abs(secondsSince1970 - timestamp) > 5400)
             {
@@ -106,11 +109,11 @@
 
             // Get a sorted list of all the form parameters except oauth_signature
             var parameters = new List<QueryParameter>();
-            foreach (string key in request.Form.AllKeys)
+            foreach (string key in form.AllKeys)
             {
                 if (key != "oauth_signature")
                 {
-                    parameters.Add(new QueryParameter(key, request.Form[key]));
+                    parameters.Add(new QueryParameter(key, form[key]));
                 }
             }
 
@@ -142,7 +145,7 @@
             string signature = Convert.ToBase64String(hashBytes);
 
             // Check to make sure the signature matches what was passed in oauth_signature
-            if (signature == request.Form["oauth_signature"])
+            if (signature == form["oauth_signature"])
             {
                 return validateLmsCaller();
             }

@@ -3,9 +3,9 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Web;
+    using System.Web.Mvc;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
-
     using Esynctraining.Core.Extensions;
 
     /// <summary>
@@ -248,6 +248,9 @@
         ///     Gets or sets the user id.
         /// </summary>
         public string user_id { get; set; }
+
+        [AllowHtml]
+        public string resource_link_description { get; set; }
 
         // D2L properties
         public string ext_d2l_username { get; set; }
