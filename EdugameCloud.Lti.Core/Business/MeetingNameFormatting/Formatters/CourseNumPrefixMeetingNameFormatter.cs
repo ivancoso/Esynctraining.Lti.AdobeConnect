@@ -22,6 +22,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (courseId == null)
                 throw new ArgumentNullException("courseId");
 
+            if (meeting.GetMeetingType() == LmsMeetingType.OfficeHours)
+                return meeting.name.TruncateIfMoreThen(60);
+
             if (param.context_label.Length > 53)
                 throw new WarningMessageException("Can't generate Adobe Connect meeting name. Course Label is too long.");
 
@@ -38,6 +41,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             dynamic nameInfo = JObject.Parse(meeting.MeetingNameJson);
             nameInfo.meetingName = lmsMeetingTitle;
             meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+                return lmsMeetingTitle.TruncateIfMoreThen(60);
 
             return string.Format("{0}: {1}", (string)nameInfo.courseNum, lmsMeetingTitle).TruncateIfMoreThen(60);
         }

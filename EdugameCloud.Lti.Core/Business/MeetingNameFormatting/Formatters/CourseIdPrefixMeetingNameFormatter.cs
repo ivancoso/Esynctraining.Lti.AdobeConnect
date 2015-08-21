@@ -22,6 +22,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (courseId == null)
                 throw new ArgumentNullException("courseId");
 
+            if (meeting.GetMeetingType() == LmsMeetingType.OfficeHours)
+                return meeting.name.TruncateIfMoreThen(60);
+
             return string.Format("[{0}]: {1}", courseId, meeting.name).TruncateIfMoreThen(60);
         }
 
@@ -35,6 +38,9 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             dynamic nameInfo = JObject.Parse(meeting.MeetingNameJson);
             nameInfo.meetingName = lmsMeetingTitle;
             meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+
+            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+                return lmsMeetingTitle.TruncateIfMoreThen(60);
 
             return string.Format("[{0}]: {1}", (string)nameInfo.courseId, lmsMeetingTitle).TruncateIfMoreThen(60);
         }

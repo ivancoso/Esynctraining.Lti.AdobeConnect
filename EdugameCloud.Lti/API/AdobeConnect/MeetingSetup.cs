@@ -868,24 +868,40 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 });
                 meeting.MeetingNameJson = json;
             }
-                // TODO: !!!
-                // NOTE: use already existed OfficeHours meeting
-            //else if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && (meeting.Id == 0))
-            //{
-            //    var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(officeHours.Id);
-            //    foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
-            //        Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
-            //    {
-            //        dynamic nameInfo = JObject.Parse(officeHoursMeeting.MeetingNameJson);
-            //        nameInfo.meetingName = meetingDTO.name;
-            //        officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
-            //        this.LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
-            //    }
-            //}
+            // TODO: !!!
+            // NOTE: use already existed OfficeHours meeting
+            else if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && (meeting.Id == 0))
+            {
+                string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
+                updateItem.Name = acMeetingName;
+
+                // TODO: move TO formatter base?
+                var json = JsonConvert.SerializeObject(new
+                {
+                    courseId = courseId,
+                    courseNum = param.context_label,
+                    meetingName = meetingDTO.name,
+                    date = DateTime.Today.ToString("MM/dd/yy"),
+                });
+                meeting.MeetingNameJson = json;
+            }
             else
             {
                 string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
                 updateItem.Name = acMeetingName;
+            }
+
+            if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
+            {
+                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(officeHours.Id);
+                foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
+                    Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
+                {
+                    dynamic nameInfo = JObject.Parse(officeHoursMeeting.MeetingNameJson);
+                    nameInfo.meetingName = meetingDTO.name;
+                    officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                    LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
+                }
             }
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
@@ -1331,7 +1347,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting)
         {
-            if (meeting == null || meeting.LmsMeetingType == null)
+            if (meeting == null)
             {
                 return false;
             }
@@ -1672,7 +1688,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 });
 
                 lmsCourseMeeting.MeetingNameJson = js;
-                this.LmsCourseMeetingModel.RegisterSave(lmsCourseMeeting, flush: true);
+                LmsCourseMeetingModel.RegisterSave(lmsCourseMeeting, flush: true);
             }
             else
             {
