@@ -4,14 +4,15 @@ using NHibernate.SqlCommand;
 
 namespace EdugameCloud.Lti.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
-using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Business;
-using Esynctraining.Core.Business.Models;
-using Esynctraining.Core.Business.Queries;
-using NHibernate;
-using NHibernate.Criterion;
+    using EdugameCloud.Lti.Domain.Entities;
+    using EdugameCloud.Lti.DTO;
+    using Esynctraining.Core.Business;
+    using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+    using NHibernate;
+    using NHibernate.Criterion;
 
     /// <summary>
     /// The company LMS model.
@@ -181,6 +182,13 @@ using NHibernate.Criterion;
                 entity.AdminUser = lmsUser;
                 lmsCompanyModel.RegisterSave(entity);
             }
+        }
+
+        public void DeleteWithDependencies(int lmsCompanyId)
+        {
+            var query = this.Repository.Session.GetNamedQuery("deleteLmsCompanyWithDependencies");
+            query.SetInt32("lmsCompanyId", lmsCompanyId);
+            query.UniqueResult();
         }
 
         #endregion

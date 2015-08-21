@@ -183,6 +183,7 @@
     <Build Include="dbo\Tables\LmsUserMeetingRole.sql" />
     <Build Include="dbo\Tables\LmsCourseMeetingGuest.sql" />
     <Build Include="dbo\Stored Procedures\getSurveyResultAnswers.sql" />
+    <Build Include="dbo\Stored Procedures\deleteLmsCompanyWithDependencies.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />

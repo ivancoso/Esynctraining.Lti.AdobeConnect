@@ -326,7 +326,7 @@ namespace EdugameCloud.WCFService
                 {
                     currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException)
                 {
                     return OperationResultDto.Error("Login to Adobe Connect failed.");
                 }

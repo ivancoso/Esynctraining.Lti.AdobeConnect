@@ -36,64 +36,39 @@ namespace EdugameCloud.WCFService
 
         #region Properties
 
-        /// <summary>
-        ///     Gets the company license model.
-        /// </summary>
         private LmsCompanyModel LmsCompanyModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyModel>(); }
         }
 
         private LmsCompanySettingModel LmsCompanySettingModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanySettingModel>();
-            }
+            get { return IoC.Resolve<LmsCompanySettingModel>(); }
         }
 
-        /// <summary>
-        ///     Gets the SOAP API.
-        /// </summary>
+        private LmsCourseMeetingModel LmsCourseMeetingModel
+        {
+            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+        }
+
         private MeetingSetup MeetingSetup
         {
-            get
-            {
-                return IoC.Resolve<MeetingSetup>();
-            }
+            get { return IoC.Resolve<MeetingSetup>(); }
         }
-
-        /// <summary>
-        ///     Gets the LMS User model.
-        /// </summary>
+        
         private LmsUserModel LmsUserModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserModel>();
-            }
+            get { return IoC.Resolve<LmsUserModel>(); }
         }
-
-        /// <summary>
-        ///     Gets the company model.
-        /// </summary>
+        
         private LmsProviderModel LmsProviderModel
         {
-            get
-            {
-                return IoC.Resolve<LmsProviderModel>();
-            }
+            get { return IoC.Resolve<LmsProviderModel>(); }
         }
 
         private TestConnectionService TestConnectionService
         {
-            get
-            {
-                return IoC.Resolve<TestConnectionService>();
-            }
+            get { return IoC.Resolve<TestConnectionService>(); }
         }
 
         #endregion
@@ -216,11 +191,21 @@ namespace EdugameCloud.WCFService
         {
             return TestConnectionService.TestConnection(test);
         }
+        
+        public int DeleteById(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException("id");
+
+            LmsCompanyModel.DeleteWithDependencies(id);
+            
+            return id;
+        }
 
         #endregion
 
         #region Methods
-        
+
         private LmsCompany ConvertDto(CompanyLmsDTO dto, LmsCompany instance)
         {
             instance = instance ?? new LmsCompany();
