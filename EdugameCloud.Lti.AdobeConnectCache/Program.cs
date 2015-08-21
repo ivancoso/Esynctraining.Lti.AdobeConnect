@@ -69,7 +69,7 @@ namespace EdugameCloud.Lti.AdobeConnectCache
                 {
                     var tmp = new Uri(lmsLicence.AcServer);
                 }
-                catch (Exception ex)
+                catch
                 {
                     logger.WriteLine("     " + lmsLicence.AcServer);
                 }

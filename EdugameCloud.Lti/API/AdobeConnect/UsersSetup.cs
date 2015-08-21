@@ -1546,7 +1546,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 catch (Exception ex)
                 {
                     throw new InvalidOperationException("UsersSetup.GetAllPrincipals.DATABASE error", ex);
-                    return null;
                 }
             }
 

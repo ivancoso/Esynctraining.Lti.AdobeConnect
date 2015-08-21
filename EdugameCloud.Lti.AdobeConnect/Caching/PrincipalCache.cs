@@ -33,7 +33,7 @@ namespace EdugameCloud.Lti.AdobeConnect.Caching
                 {
                     var tmp = new Uri(license.AcServer);
                 }
-                catch (Exception ex)
+                catch
                 {
                     continue;
                 }

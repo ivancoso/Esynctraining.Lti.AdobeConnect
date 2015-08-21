@@ -210,7 +210,7 @@ namespace EdugameCloud.Lti.API
                 return false;
             }
 
-            if (!test.domain.EndsWith("/"))
+            if (test.domain.EndsWith("/"))
             {
                 error = "Domain url should not end with '/'";
                 return false;

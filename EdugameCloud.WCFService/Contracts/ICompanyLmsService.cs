@@ -21,6 +21,10 @@
         [FaultContract(typeof(Error))]
         ConnectionInfoDTO TestConnection(ConnectionTestDTO resultDto);
 
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        int DeleteById(int id);
+
     }
 
 }
