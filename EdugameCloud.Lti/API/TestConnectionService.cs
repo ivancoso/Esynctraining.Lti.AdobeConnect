@@ -216,6 +216,13 @@ namespace EdugameCloud.Lti.API
                 return false;
             }
 
+            Uri tmp;
+            if (!Uri.TryCreate(test.domain, UriKind.Absolute, out tmp))
+            {
+                error = "Invalid domain format";
+                return false;
+            }
+
             error = null;
             return true;
         }

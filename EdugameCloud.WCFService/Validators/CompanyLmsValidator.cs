@@ -45,6 +45,9 @@
                .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
                .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be unique.");
 
+            this.RuleFor(model => model.additionalLmsDomains)
+               .Must((model, x) => UniqueLmsDomains(model.lmsDomain, x))
+               .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "LMS domains should be valid absolute URI addressess.");
         }
 
         private static bool UniqueLmsDomains(string mainLmsDomain, string[] additionalDomains)
@@ -55,6 +58,21 @@
             var domains = new List<string>(additionalDomains);
             domains.Add(mainLmsDomain);
             return domains.Count == domains.Distinct().Count();
+        }
+
+        private static bool ValidLmsDomains(string mainLmsDomain, string[] additionalDomains)
+        {
+            if (additionalDomains == null)
+                additionalDomains = new string[0];
+
+            foreach (string domain in additionalDomains)
+            {
+                Uri tmp;
+                if (!Uri.TryCreate(domain, UriKind.Absolute, out tmp))
+                    return false;
+            }
+
+            return true;
         }
 
     }
