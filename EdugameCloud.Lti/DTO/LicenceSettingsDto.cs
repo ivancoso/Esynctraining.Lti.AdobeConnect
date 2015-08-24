@@ -18,6 +18,8 @@ namespace EdugameCloud.Lti.DTO
 
         public bool EnableMultipleMeetings { get; set; }
 
+        public bool EnableMeetingReuse { get; set; }
+
         public string SupportPageHtml { get; set; }
 
         public string LabelMeeting { get; set; }
@@ -45,6 +47,7 @@ namespace EdugameCloud.Lti.DTO
                 LabelMeeting = value.GetSetting<string>(LmsCompanySettingNames.LabelMeeting) ?? "Course Meetings",
                 LabelOfficeHour = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
                 LabelStudyGroup = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
+                EnableMeetingReuse = value.EnableMeetingReuse,
             };
         }
 
