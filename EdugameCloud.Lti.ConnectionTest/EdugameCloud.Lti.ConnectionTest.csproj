@@ -55,6 +55,10 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.25, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.25\lib\net40\Esynctraining.AC.Provider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.16, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.16\lib\net40\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
@@ -163,6 +167,16 @@
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="log4net.cfg.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="nhibernate.cfg.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
