@@ -2,37 +2,29 @@ using System.Collections.Generic;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BrainHoney;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.BrainHoney
 {
     public class BrainHoneyLmsUserService : LmsUserServiceBase
     {
-        private readonly LmsUserModel lmsUserModel;
-        private readonly dynamic settings;
         private readonly IBrainHoneyApi dlapApi;
 
-        public BrainHoneyLmsUserService(ILogger logger, LmsUserModel lmsUserModel, IBrainHoneyApi dlapApi,
-            ApplicationSettingsProvider settings
-            ) : base(logger)
+        public BrainHoneyLmsUserService(ILogger logger, IBrainHoneyApi dlapApi) : base(logger)
         {
-            this.lmsUserModel = lmsUserModel;
             this.dlapApi = dlapApi;
-            this.settings = settings;
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
             string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(

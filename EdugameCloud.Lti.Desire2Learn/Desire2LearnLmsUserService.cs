@@ -29,15 +29,15 @@ namespace EdugameCloud.Lti.Desire2Learn
         }
 
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
             string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             error = null; // todo: set when something is wrong

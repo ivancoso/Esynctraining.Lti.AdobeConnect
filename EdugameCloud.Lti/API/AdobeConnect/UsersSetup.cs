@@ -271,7 +271,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-            var serviceResult = service.GetUsers(lmsCompany, meeting, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
+            var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
             if (serviceResult.isSuccess)
             {
                 error = null;
@@ -279,7 +279,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
                 "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
-            var users = service.GetUsersOldStyle(lmsCompany, meeting, lmsUserId, courseId, out error, forceUpdate, extraData);
+            var users = service.GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate, extraData);
             return error == null ? users : new List<LmsUserDTO>();
         }
 

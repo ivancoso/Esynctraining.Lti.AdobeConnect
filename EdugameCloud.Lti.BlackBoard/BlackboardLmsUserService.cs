@@ -5,36 +5,26 @@ using BbWsClient;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
-using Esynctraining.Core.Providers;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
     public class BlackboardLmsUserService : LmsUserServiceBase
     {
-        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
-        private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
-        private readonly dynamic settings;
+//        private static readonly Dictionary<string, object> locker = new Dictionary<string, object>();
         private readonly IBlackBoardApi soapApi;
 
-        public BlackboardLmsUserService(ILogger logger, LmsCourseMeetingModel lmsCourseMeetingModel,
-            IBlackBoardApi soapApi, 
-            ApplicationSettingsProvider settings
-            ) : base(logger)
+        public BlackboardLmsUserService(ILogger logger, IBlackBoardApi soapApi) : base(logger)
         {
             this.soapApi = soapApi; 
-            this.lmsCourseMeetingModel = lmsCourseMeetingModel;
-            this.settings = settings;
         }
 
         public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             Guid guid;
-            return GetUsersOldStyle(lmsCompany, null, lmsUserId, courseId, out error, forceUpdate)
+            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate)
                 .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
         }
 
@@ -84,15 +74,15 @@ namespace EdugameCloud.Lti.BlackBoard
             return lmsCompany.AdminUser != null || (lmsCompany.EnableProxyToolMode.GetValueOrDefault() && lmsCompany.ProxyToolSharedPassword != null);
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
+        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser != null ? lmsUser.UserId : null, courseId, out error, forceUpdate);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error, forceUpdate);
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
             string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             //TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);

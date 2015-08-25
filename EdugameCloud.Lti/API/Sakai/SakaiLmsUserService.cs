@@ -1,37 +1,29 @@
 using System.Collections.Generic;
-using System.Linq;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API.Common;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.API.Sakai
 {
     public class SakaiLmsUserService : LmsUserServiceBase
     {
-        private readonly LmsUserModel lmsUserModel;
-        private readonly dynamic settings;
         private readonly LTI2Api lti2Api;
 
-        public SakaiLmsUserService(ILogger logger, LmsUserModel lmsUserModel, LTI2Api lti2Api,
-            ApplicationSettingsProvider settings) : base(logger)
+        public SakaiLmsUserService(ILogger logger, LTI2Api lti2Api) : base(logger)
         {
-            this.lmsUserModel = lmsUserModel;
             this.lti2Api = lti2Api;
-            this.settings = settings;
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting, 
+        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, meeting, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
             return error != null ? OperationResult<List<LmsUserDTO>>.Success(users): OperationResult<List<LmsUserDTO>>.Error(error);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, string lmsUserId, 
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, 
             int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             var paramDto = param as LtiParamDTO;

@@ -4,23 +4,20 @@ using System.Linq;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Canvas;
-using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using EdugameCloud.Lti.Core;
 
 namespace EdugameCloud.Lti.Canvas
 {
     public class CanvasLmsUserService : LmsUserServiceBase
     {
         private readonly IEGCEnabledCanvasAPI canvasApi;
-        private readonly LmsUserModel lmsUserModel;
 
 
-        public CanvasLmsUserService(IEGCEnabledCanvasAPI canvasApi, ILogger logger, LmsUserModel lmsUserModel) : base(logger)
+        public CanvasLmsUserService(IEGCEnabledCanvasAPI canvasApi, ILogger logger) : base(logger)
         {
             this.canvasApi = canvasApi;
-            this.lmsUserModel = lmsUserModel;
         }
 
 
@@ -55,21 +52,19 @@ namespace EdugameCloud.Lti.Canvas
             return user;
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsCourseMeeting meeting,
+        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
-            if (meeting == null)
-                throw new ArgumentNullException("meeting");
             if (lmsUser == null)
                 throw new ArgumentNullException("lmsUser");
 
             if (lmsCompany.AdminUser == null)
             {
                 var message =
-                    string.Format("There is no admin user set for LmsCompanyId={0}. MeetingId={1}, CourseId={2}",
-                    lmsCompany.Id, meeting != null ? meeting.Id : (object)string.Empty, courseId);
+                    string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}",
+                    lmsCompany.Id, courseId);
                 logger.Error(message);
                 return OperationResult<List<LmsUserDTO>>.Error("There is no admin user set for the LMS license. Please check integration guides.");
             }
@@ -85,7 +80,7 @@ namespace EdugameCloud.Lti.Canvas
             return OperationResult<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, LmsCourseMeeting meeting, string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
 

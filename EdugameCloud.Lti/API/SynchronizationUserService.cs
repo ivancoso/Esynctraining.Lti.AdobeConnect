@@ -8,8 +8,8 @@ using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API
 {
@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.API
             LmsUserServiceBase service = null;
             if ((LmsProviderEnum)lmsCompany.LmsProvider.Id == LmsProviderEnum.Desire2Learn)
             {
-                service = Esynctraining.Core.Utils.IoC.Container.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
+                service = IoC.Container.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
             }
             else
             {
@@ -61,8 +61,7 @@ namespace EdugameCloud.Lti.API
                 try
                 {
                     //todo: set extra data param
-                    var opResult = service.GetUsers(lmsCompany, null,
-                        lmsCompany.AdminUser, courseGroup.Key, forceUpdate: true);
+                    var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key, forceUpdate: true);
                     if (opResult.isSuccess)
                     {
                         if (!opResult.data.Any())

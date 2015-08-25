@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using Castle.Core.Logging;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
@@ -61,8 +62,13 @@ namespace EdugameCloud.Lti.Desire2Learn
             var request = new RestRequest(apiUrl);
             authenticator.Authenticate(client, request);
             var response = client.Execute<T>(request);
-            logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}", 
-                apiUrl, (int)response.StatusCode, response.StatusDescription, response.ErrorMessage, response.Content);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}",
+                    apiUrl, (int) response.StatusCode, response.StatusDescription, response.ErrorMessage,
+                    response.Content);
+            }
+
             return response.Data;
         }
 
