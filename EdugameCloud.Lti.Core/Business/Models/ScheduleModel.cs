@@ -83,7 +83,10 @@ using NHibernate.Criterion;
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool ExecuteIfPossible(Schedule schedule, Func<IEnumerable<LmsCompany>, DateTime, string, string> scheduledAction, IEnumerable<LmsCompany> companies, string scoId, out string output)
+        public bool ExecuteIfPossible(Schedule schedule, Func<IEnumerable<LmsCompany>, DateTime, int, string> scheduledAction,
+            IEnumerable<LmsCompany> companies, 
+            int meetingId,
+            out string output)
         {
             output = null;
             bool result = false;
@@ -92,7 +95,7 @@ using NHibernate.Criterion;
                     // time to run the scheduled task
                     if (scheduledAction != null)
                     {
-                        output = scheduledAction(companies, schedule.NextRun, scoId);
+                        output = scheduledAction(companies, schedule.NextRun, meetingId);
                         result = true;
                     }
             }

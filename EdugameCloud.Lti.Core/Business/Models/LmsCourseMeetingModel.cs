@@ -31,38 +31,22 @@
         }
 
         #endregion
-
-        /// <summary>
-        /// Gets one by course id
-        /// </summary>
-        /// <param name="companyLmsId">
-        /// The company LMS id</param>
-        /// <param name="courseId">
-        /// The course id
-        /// </param>
-        /// <param name="scoId">
-        /// The sco id.
-        /// </param>
-        /// <returns>
-        /// The canvas AC meeting
-        /// </returns>
-        public LmsCourseMeeting GetOneByCourseAndScoId(int companyLmsId, int courseId, string scoId)
+        
+        public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, int courseId, int id)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
             if (courseId <= 0)
                 throw new ArgumentOutOfRangeException("courseId");
-            if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("scoId can not be empty", "scoId");
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException("id");
 
             LmsCourseMeeting x = null;
-            OfficeHours oh = null;
+            //OfficeHours oh = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
-                .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                .Where(() => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId &&
-                    (((x.ScoId != null) && (x.ScoId == scoId)) ||
-                     (x.OfficeHours != null && oh.ScoId == scoId)))
+                //.JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
+                .Where(() => x.Id == id && x.LmsCompany.Id == companyLmsId && x.CourseId == courseId)
                 .Take(1);
 
             return this.Repository.FindOne(defaultQuery).Value;
@@ -99,6 +83,39 @@
 
             return this.Repository.FindOne(defaultQuery).Value != null;
         }
+
+        public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException("lmsCompany");
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("scoId can not be empty", "scoId");
+
+            // NOTE: check only licences of the company with the same AC!!
+            var query = from c in this.Repository.Session.Query<LmsCompany>()
+                        where c.CompanyId == lmsCompany.CompanyId
+                        select new { c.Id, c.AcServer };
+            var currentLicenceAc = new Uri(lmsCompany.AcServer);
+            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
+
+            LmsCourseMeeting x = null;
+            OfficeHours oh = null;
+            LmsCompany lms = null;
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
+                .GetQueryOver(() => x)
+                .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
+                //.Clone()
+                .JoinAlias(() => x.LmsCompany, () => lms, JoinType.InnerJoin)
+                .WhereRestrictionOn(() => lms.Id).IsIn(companyLicenses)
+                .And(() =>
+                    ((x.ScoId != null) && (x.ScoId == scoId)) ||
+                     (x.OfficeHours != null && oh.ScoId == scoId))
+
+                .Take(1);
+
+            return this.Repository.FindAll(defaultQuery);
+        }
+
 
         public LmsCourseMeeting GetLtiCreatedByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
         {

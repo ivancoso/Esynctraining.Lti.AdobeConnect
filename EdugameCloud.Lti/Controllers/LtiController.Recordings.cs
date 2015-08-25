@@ -1,44 +1,21 @@
-﻿using System.Linq;
-using EdugameCloud.Lti.Core.DTO;
-using Esynctraining.AC.Provider;
-using Esynctraining.AC.Provider.Entities;
-using NHibernate.Linq.Functions;
-using Remotion.Linq.Parsing;
-
-namespace EdugameCloud.Lti.Controllers
+﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Extensions;
+    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Domain.Entities;
-
-    /// <summary>
-    ///     The LTI controller.
-    /// </summary>
+    using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.Core.Extensions;
+    
     public partial class LtiController
     {
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The delete recording.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
+        
         [HttpPost]
-        public virtual JsonResult DeleteRecording(string lmsProviderName, string scoId, string id)
+        public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
         {
             LmsCompany credentials = null;
             try
@@ -52,7 +29,7 @@ namespace EdugameCloud.Lti.Controllers
                     this.GetAdobeConnectProvider(credentials),
                     param.course_id,
                     id,
-                    scoId);
+                    meetingId);
 
                 return Json(result);
             }
@@ -63,20 +40,8 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        /// <summary>
-        /// The get recordings.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
         [HttpPost]
-        public virtual JsonResult GetRecordings(string lmsProviderName, string scoId)
+        public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -89,7 +54,7 @@ namespace EdugameCloud.Lti.Controllers
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     param.course_id,
-                    scoId);
+                    meetingId);
 
                 return Json(OperationResult.Success(recordings));
             }
@@ -99,19 +64,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The join recording.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="recordingUrl">
-        /// The recording url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
@@ -133,25 +86,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
-
-        /// <summary>
-        /// The share recording.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="recordingId">
-        /// The recording id.
-        /// </param>
-        /// <param name="isPublic">
-        /// The is public.
-        /// </param>
-        /// <param name="password">
-        /// The password.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
+        
         [HttpPost]
         public virtual ActionResult ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
         {
@@ -170,19 +105,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The edit recording.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="recordingUrl">
-        /// The recording url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
         {
@@ -204,19 +127,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
-
-        /// <summary>
-        /// The get recording FLV.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="recordingUrl">
-        /// The recording url.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
         {
@@ -325,8 +236,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         #endregion
-
-
+        
         #region methods
 
         private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
@@ -339,6 +249,7 @@ namespace EdugameCloud.Lti.Controllers
 
             return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         }
+
         private OperationResult GenerateErrorResult(StatusInfo status)
         {
             if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
@@ -358,6 +269,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         #endregion
+
     }
 
 }

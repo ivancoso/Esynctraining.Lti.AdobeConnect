@@ -238,6 +238,7 @@
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\LtiController.ProxyTool.cs" />
     <Compile Include="Controllers\LtiController.Meeting.cs" />
     <Compile Include="Controllers\LtiController.OfficeHoursPod.cs" />
     <Compile Include="Controllers\LtiController.Reports.cs" />

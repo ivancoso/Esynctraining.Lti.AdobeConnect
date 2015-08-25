@@ -1,16 +1,12 @@
 ﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
-    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.Models;
-    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
@@ -100,7 +96,7 @@
         }
 
         [HttpPost]
-        public virtual JsonResult DeleteMeeting(string lmsProviderName, string scoId)
+        public virtual JsonResult DeleteMeeting(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -112,7 +108,7 @@
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     param,
-                    scoId);
+                    meetingId);
 
                 return Json(result);
             }

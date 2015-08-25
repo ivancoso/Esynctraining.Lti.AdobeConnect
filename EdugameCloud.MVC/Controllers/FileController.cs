@@ -1,15 +1,10 @@
 ﻿using System.Text;
-using EdugameCloud.Lti;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Esynctraining.AC.Provider;
-using Esynctraining.AC.Provider.DataObjects;
-using Esynctraining.AC.Provider.Entities;
-using WcfRestContrib.ServiceModel.Web.Exceptions;
+using EdugameCloud.Lti.Extensions;
 
 namespace EdugameCloud.MVC.Controllers
 {
@@ -129,49 +124,12 @@ namespace EdugameCloud.MVC.Controllers
         /// </summary>
         private readonly VCFModel vcfModel;
 
+        private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
+
         #endregion
 
         #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileController"/> class.
-        /// </summary>
-        /// <param name="fileModel">
-        /// The file Model.
-        /// </param>
-        /// <param name="vcfModel">
-        /// The VCF Model.
-        /// </param>
-        /// <param name="companyModel">
-        /// The company Model.
-        /// </param>
-        /// <param name="groupDiscussionModel">
-        /// the group discussion model
-        /// </param>
-        /// <param name="userModel">
-        /// The user Model.
-        /// </param>
-        /// <param name="surveyResultModel">
-        /// The survey Result Model.
-        /// </param>
-        /// <param name="sessionModel">
-        /// The ac Session Model.
-        /// </param>
-        /// <param name="userModeModel">
-        /// The ac User Mode Model.
-        /// </param>
-        /// <param name="authenticationModel">
-        /// The authentication Model.
-        /// </param>
-        /// <param name="settings">
-        /// The settings
-        /// </param>
-        /// <param name="userSessionModel">
-        /// The lms user session model
-        /// </param>
-        /// <param name="logger">
-        /// The logger.
-        /// </param>
         public FileController(
             FileModel fileModel, 
             VCFModel vcfModel, 
@@ -186,7 +144,8 @@ namespace EdugameCloud.MVC.Controllers
             LmsCompanyModel lmsCompanyModel,
             MeetingSetup meetingSetup,
             IAdobeConnectAccountService adobeAccountService, 
-            LmsUserSessionModel userSessionModel, 
+            LmsUserSessionModel userSessionModel,
+            LmsCourseMeetingModel lmsCourseMeetingModel,
             ILogger logger)
             : base(settings)
         {
@@ -203,6 +162,7 @@ namespace EdugameCloud.MVC.Controllers
             this.meetingSetup = meetingSetup;
             this.adobeConnectAccountService = adobeAccountService;
             this.userSessionModel = userSessionModel;
+            this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.logger = logger;
         }
 
@@ -228,7 +188,7 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-attendance-report")]
-        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, string meetingScoId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingAttendanceReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -236,7 +196,9 @@ namespace EdugameCloud.MVC.Controllers
                 var credentials = session.LmsCompany;
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                var acMeeting = acProvider.GetScoInfo(meetingScoId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+
+                var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acServer = credentials.AcServer;
                 if (credentials.AcServer.EndsWith("/"))
                 {
@@ -253,10 +215,8 @@ namespace EdugameCloud.MVC.Controllers
                 }
 
                 var tempParticipants = this.meetingSetup.GetAttendanceReport(
-                    credentials,
                     this.GetAdobeConnectProvider(credentials),
-                    session.LtiSession.LtiParam,
-                    meetingScoId,
+                    meeting,
                     startIndex,
                     limit);
 
@@ -304,7 +264,7 @@ namespace EdugameCloud.MVC.Controllers
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-sessions-report")]
-        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, string meetingScoId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        public virtual ActionResult MeetingSessionsReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -313,15 +273,15 @@ namespace EdugameCloud.MVC.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var acProvider = this.GetAdobeConnectProvider(credentials);
 
-                var acMeeting = acProvider.GetScoInfo(meetingScoId);
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+
+                var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
                 var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
 
                 var tempMeetingSessions  = this.meetingSetup.GetSessionsReport(
-                    credentials,
-                    acProvider,
-                    param,
-                    meetingScoId,
+                    acProvider,                   
+                    meeting,
                     startIndex,
                     limit);
 

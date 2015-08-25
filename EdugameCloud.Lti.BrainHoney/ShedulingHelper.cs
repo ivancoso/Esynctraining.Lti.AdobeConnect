@@ -114,7 +114,7 @@ namespace EdugameCloud.Lti.BrainHoney
             }
         }
 
-        public string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, string scoId)
+        public string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId)
         {
             var errors = new List<string>();
             DlapAPI api = _dlapApi;
@@ -200,7 +200,7 @@ namespace EdugameCloud.Lti.BrainHoney
                                                 brainHoneyCompany,
                                                 errors,
                                                 adobeConnectProvider,
-                                                scoId);
+                                                meetingId);
                                         int key = signalGroup.RepresentativeSignal.EntityId;
                                         if (!userNamesAndEmailsDeleted.ContainsKey(key))
                                         {
@@ -219,7 +219,7 @@ namespace EdugameCloud.Lti.BrainHoney
                                 api,
                                 session,
                                 adobeConnectProvider,
-                                scoId);
+                                meetingId);
 
                             Signal lastSignal = signals.LastOrDefault();
                             if (lastSignal != null)
@@ -234,33 +234,6 @@ namespace EdugameCloud.Lti.BrainHoney
             return errors.ToPlainString();
         }
 
-        /// <summary>
-        /// The process course created.
-        /// </summary>
-        /// <param name="signal">
-        /// The signal.
-        /// </param>
-        /// <param name="api">
-        /// The API.
-        /// </param>
-        /// <param name="brainHoneyCompany">
-        /// The Brain Honey company.
-        /// </param>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="errors">
-        /// The errors.
-        /// </param>
-        /// <param name="adobeConnectProvider">
-        /// The adobe connect provider.
-        /// </param>
-        /// <param name="templates">
-        /// The templates.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
         private List<LmsUserDTO> ProcessCourseCreated(
             Signal signal,
             DlapAPI api,
@@ -290,6 +263,8 @@ namespace EdugameCloud.Lti.BrainHoney
                     result.AddRange(courseEnrolledUsers);
                 }
 
+                throw new NotImplementedException("TODO: it seems this API doesnt work ans nobody calls it");
+
                 DateTime startDate = DateTime.Parse(course.StartDate);
                 _meetingSetup.SaveMeeting(
                     brainHoneyCompany,
@@ -304,7 +279,10 @@ namespace EdugameCloud.Lti.BrainHoney
                         start_date = startDate.ToString("MM-dd-yyyy"),
                         start_time = startDate.ToString("hh:mm tt"),
                         duration = "01:00",
-                        id = courseSignal.ItemId,
+
+                        // TODO: review it!!
+                        //id = courseSignal.ItemId,
+
                         name = course.Title,
                         template = templates.First().With(x => x.id)
                     });
@@ -339,14 +317,14 @@ namespace EdugameCloud.Lti.BrainHoney
             LmsCompany brainHoneyCompany,
             List<string> errors,
             IAdobeConnectProxy adobeConnectProvider,
-            string scoId)
+            int meetingId)
         {
             string error;
             List<string> result = this._meetingSetup.DeleteMeeting(
                 brainHoneyCompany,
                 adobeConnectProvider,
                 new LtiParamDTO { context_id = signal.EntityId.ToString(CultureInfo.InvariantCulture) },
-                scoId,
+                meetingId,
                 out error);
             if (error != null)
             {
@@ -364,7 +342,7 @@ namespace EdugameCloud.Lti.BrainHoney
             DlapAPI api,
             Session session,
             IAdobeConnectProxy provider,
-            string scoId)
+            int meetingId)
         {
             Dictionary<int, IGrouping<int, Signal>> grouped =
                 soleEnrollments.OrderBy(x => x.SignalId)
@@ -406,7 +384,7 @@ namespace EdugameCloud.Lti.BrainHoney
                                     context_id = enrollment.CourseId.ToString(CultureInfo.InvariantCulture)
                                 },
                                 lmsUser,
-                                scoId,
+                                meetingId,
                                 out error,
                                 true);
                         }

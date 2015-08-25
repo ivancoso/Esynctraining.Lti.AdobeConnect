@@ -5,6 +5,6 @@ namespace EdugameCloud.Lti.API
 {
     public interface ISynchronizationUserService
     {
-        void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<string> scoIds = null);
+        void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null);
     }
 }

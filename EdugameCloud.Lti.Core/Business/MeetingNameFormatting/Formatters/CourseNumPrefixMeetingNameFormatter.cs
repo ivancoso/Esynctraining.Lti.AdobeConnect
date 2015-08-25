@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.Core.Business.MeetingNameFormatting.Formatters
             if (string.IsNullOrWhiteSpace(lmsMeetingTitle))
                 throw new ArgumentException("Meeting Title is required", "lmsMeetingTitle");
 
-            dynamic nameInfo = JObject.Parse(meeting.MeetingNameJson);
+            MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
             nameInfo.meetingName = lmsMeetingTitle;
             meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
 

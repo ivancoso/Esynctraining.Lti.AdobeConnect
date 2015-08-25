@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany credentials,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            string scoId,
+            int id,
             out string error);
 
         List<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder);
@@ -104,14 +104,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany credentials,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            string scoId)
+            int id)
         {
             if (!credentials.CanRemoveMeeting.GetValueOrDefault())
             {
                 return OperationResult.Error("Meeting deleting is disabled for this company lms.");
             }
 
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, param.course_id, id);
             if (meeting == null)
             {
                 return OperationResult.Error("Meeting not found");
@@ -135,7 +135,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 this.OfficeHoursModel.RegisterDelete(meeting.OfficeHours, flush: true);
             }
 
-            bool acMeetingIsStillUsed = this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(credentials, scoId);
+            bool acMeetingIsStillUsed = this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(credentials, meeting.ScoId);
             if (acMeetingIsStillUsed)
             {
                 return OperationResult.Success();
@@ -313,9 +313,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{RecordingDTO}"/>.
         /// </returns>
-        public List<RecordingDTO> GetRecordings(LmsCompany credentials, IAdobeConnectProxy provider, int courseId, string scoId)
+        public List<RecordingDTO> GetRecordings(LmsCompany credentials, IAdobeConnectProxy provider, int courseId, int id)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId);
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, courseId, id);
 
             if (meeting == null)
             {
@@ -437,15 +437,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionDTO> GetSessionsReport(LmsCompany credentials, IAdobeConnectProxy provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
+        public List<ACSessionDTO> GetSessionsReport(IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
-
-            if (meeting == null)
-            {
-                return new List<ACSessionDTO>();
-            }
-
             return GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
@@ -475,27 +468,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
-        public List<ACSessionParticipantDTO> GetAttendanceReport(LmsCompany credentials, IAdobeConnectProxy provider, LtiParamDTO param, string scoId, int startIndex = 0, int limit = 0)
+        public List<ACSessionParticipantDTO> GetAttendanceReport(IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
-
-            if (meeting == null)
-            {
-                return new List<ACSessionParticipantDTO>();
-            }
-
             return GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
-        public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, LmsUserSettingsDTO userSettings, string scoId, ref string breezeSession, IAdobeConnectProxy adobeConnectProvider = null)
+        public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, LmsUserSettingsDTO userSettings, int id, ref string breezeSession, IAdobeConnectProxy adobeConnectProvider = null)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting =
-                this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId);
+                this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
 
             if (currentMeeting == null)
             {
-                throw new WarningMessageException(string.Format("No meeting for course {0} and sco id {1} found.", param.course_id, scoId));
+                throw new WarningMessageException(string.Format("No meeting for course {0} and id {1} found.", param.course_id, id));
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
@@ -598,10 +584,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return lmsCompany.LoginUsingCookie.GetValueOrDefault() ? meetingUrl : string.Format("{0}?session={1}", meetingUrl, breezeToken ?? "null");
         }
 
-        public OperationResult LeaveMeeting(LmsCompany lmsCompany, LtiParamDTO param, string scoId, IAdobeConnectProxy provider)
+        public OperationResult LeaveMeeting(LmsCompany lmsCompany, LtiParamDTO param, int id, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
-            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, param.course_id, scoId);
+            LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, id);
 
             if (currentMeeting == null)
             {
@@ -729,9 +715,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             int courseId, 
             string recordingId,
-            string scoId)
+            int id)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(credentials.Id, courseId, scoId);
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, courseId, id);
 
             if (meeting == null)
             {
@@ -777,8 +763,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("meetingDTO");
 
             FixDateTimeFields(meetingDTO, param);
-            
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+
+            LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
                 return OperationResult.Error(string.Format("No lms user found with id={0} and companyLmsId={1}", param.lms_user_id, lmsCompany.Id));
@@ -794,7 +780,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (string.IsNullOrEmpty(meetingSco) && (officeHours != null))
                 {
                     meetingSco = officeHours.ScoId;
-                    meetingDTO.id = meetingSco;
+                    meeting.ScoId = officeHours.ScoId;
+                    //meetingDTO.id = meetingSco;
                 }
             }
 
@@ -845,64 +832,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meetingFolder,
                 isNewMeeting);
 
-            string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours 
-                ? lmsUser.Id.ToString(CultureInfo.InvariantCulture) 
-                : param.course_id.ToString(CultureInfo.InvariantCulture);
-
-            int formatterId = lmsCompany.MeetingNameFormatterId;
-            IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
-
-            // officeHours - map existing AC meeting but new LmsCourseMeeting record
-            if (isNewMeeting)
-            {
-                string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
-                updateItem.Name = acMeetingName;
-
-                // TODO: move TO formatter base?
-                var json = JsonConvert.SerializeObject(new
-                {
-                    courseId = courseId,
-                    courseNum = param.context_label,
-                    meetingName = meetingDTO.name,
-                    date = DateTime.Today.ToString("MM/dd/yy"),
-                });
-                meeting.MeetingNameJson = json;
-            }
-            // TODO: !!!
-            // NOTE: use already existed OfficeHours meeting
-            else if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && (meeting.Id == 0))
-            {
-                string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
-                updateItem.Name = acMeetingName;
-
-                // TODO: move TO formatter base?
-                var json = JsonConvert.SerializeObject(new
-                {
-                    courseId = courseId,
-                    courseNum = param.context_label,
-                    meetingName = meetingDTO.name,
-                    date = DateTime.Today.ToString("MM/dd/yy"),
-                });
-                meeting.MeetingNameJson = json;
-            }
-            else
-            {
-                string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
-                updateItem.Name = acMeetingName;
-            }
-
-            if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
-            {
-                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(officeHours.Id);
-                foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
-                    Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
-                {
-                    dynamic nameInfo = JObject.Parse(officeHoursMeeting.MeetingNameJson);
-                    nameInfo.meetingName = meetingDTO.name;
-                    officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
-                    LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
-                }
-            }
+            ProcessMeetingName(lmsCompany, param, meetingDTO, lmsUser,
+                isNewMeeting, updateItem, meeting, officeHours);
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
@@ -1037,6 +968,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCourseMeeting originalMeeting = this.LmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(credentials, dto.sco_id);
             int? sourceLtiCreatedMeetingId = (originalMeeting != null) ? originalMeeting.Id : default(int?);
 
+            var json = JsonConvert.SerializeObject(new MeetingNameInfo
+            {
+                //courseId =  ,
+                //courseNum = param.context_label,
+                //meetingName = meetingDTO.name,
+                //date = DateTime.Today.ToString("MM/dd/yy"),
+                reusedMeetingName = meetingSco.ScoInfo.Name,
+            });
+            
             var meeting = new LmsCourseMeeting
             {
                 LmsCompany = credentials,
@@ -1045,6 +985,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ScoId = dto.sco_id,
                 Reused = true,
                 SourceCourseMeetingId = sourceLtiCreatedMeetingId,
+                MeetingNameJson = json,
             };
 
             var lmsUsers = new List<LmsUserDTO>();
@@ -1118,12 +1059,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany credentials,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            string scoId,
+            int id,
             out string error)
         {
             error = null;
             var model = this.LmsCourseMeetingModel;
-            LmsCourseMeeting meeting = model.GetOneByCourseAndScoId(credentials.Id, param.course_id, scoId);
+            LmsCourseMeeting meeting = model.GetOneByCourseAndId(credentials.Id, param.course_id, id);
 
             if (meeting == null)
             {
@@ -1134,7 +1075,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             List<PermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
             model.RegisterDelete(meeting, true);
 
-            bool acMeetingIsStillUsed = this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(credentials, scoId);
+            bool acMeetingIsStillUsed = this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(credentials, meeting.GetMeetingScoId());
             if (!acMeetingIsStillUsed)
             {
                 if  (!meeting.Reused.GetValueOrDefault() || (meeting.Reused.GetValueOrDefault() && meeting.SourceCourseMeetingId.HasValue))
@@ -1268,6 +1209,89 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
+
+        private void ProcessMeetingName(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, LmsUser lmsUser,
+            bool isNewMeeting, MeetingUpdateItem updateItem, LmsCourseMeeting meeting, OfficeHours officeHours)
+        {
+            string courseId = meetingDTO.GetMeetingType() == LmsMeetingType.OfficeHours
+                ? lmsUser.Id.ToString(CultureInfo.InvariantCulture)
+                : param.course_id.ToString(CultureInfo.InvariantCulture);
+
+            int formatterId = lmsCompany.MeetingNameFormatterId;
+            IMeetingNameFormatter formatter = MeetingNameFormatterFactory.GetFormatter(formatterId);
+
+            // officeHours - map existing AC meeting but new LmsCourseMeeting record
+            if (isNewMeeting)
+            {
+                string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
+                updateItem.Name = acMeetingName;
+
+                // TODO: move TO formatter base?
+                var json = JsonConvert.SerializeObject(new MeetingNameInfo
+                {
+                    courseId = courseId,
+                    courseNum = param.context_label,
+                    meetingName = meetingDTO.name,
+                    date = DateTime.Today.ToString("MM/dd/yy"),
+                });
+                meeting.MeetingNameJson = json;
+            }
+            // TODO: !!!
+            // NOTE: use already existed OfficeHours meeting
+            else if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && (meeting.Id == 0))
+            {
+                string acMeetingName = formatter.BuildName(meetingDTO, param, courseId);
+                updateItem.Name = acMeetingName;
+
+                // TODO: move TO formatter base?
+                var json = JsonConvert.SerializeObject(new MeetingNameInfo
+                {
+                    courseId = courseId,
+                    courseNum = param.context_label,
+                    meetingName = meetingDTO.name,
+                    date = DateTime.Today.ToString("MM/dd/yy"),
+                });
+                meeting.MeetingNameJson = json;
+            }
+            else
+            {
+                MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                // NOTE: it's reused meeting or source for any reused meeting
+                if (!string.IsNullOrEmpty(nameInfo.reusedMeetingName) || meeting.Reused.GetValueOrDefault())
+                {
+                    nameInfo.reusedMeetingName = meetingDTO.name;
+                    meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                    updateItem.Name = meetingDTO.name;
+
+                    // NOTE: find original LTI meeting and all its reusings; and change their name AS WELL
+                    var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
+                    foreach (LmsCourseMeeting m in thisScoMeetings)
+                    {
+                        MeetingNameInfo name = JsonConvert.DeserializeObject<MeetingNameInfo>(m.MeetingNameJson);
+                        name.reusedMeetingName = meetingDTO.name;
+                        m.MeetingNameJson = JsonConvert.SerializeObject(name);
+                    }
+                }
+                else
+                {
+                    string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
+                    updateItem.Name = acMeetingName;
+                }
+            }
+
+            if (!isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
+            {
+                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(officeHours.Id);
+                foreach (LmsCourseMeeting officeHoursMeeting in coursesWithThisOfficeHours.
+                    Where(x => !string.IsNullOrWhiteSpace(x.MeetingNameJson)))
+                {
+                    MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(officeHoursMeeting.MeetingNameJson);
+                    nameInfo.meetingName = meetingDTO.name;
+                    officeHoursMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                    LmsCourseMeetingModel.RegisterSave(officeHoursMeeting);
+                }
+            }
+        }
 
         private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         {
@@ -1462,7 +1486,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return new List<ACSessionParticipantDTO>();
         }
-
         
         private static List<ACSessionDTO> GetSessionsWithParticipantsBySessionTime(string meetingId, List<MeetingAttendee> meetingAttendees,
             IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
@@ -1679,9 +1702,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 int bracketIndex = meetingSco.Name.IndexOf("]", StringComparison.Ordinal);
                 meetingName = meetingSco.Name.Substring(bracketIndex < 0 || (bracketIndex + 2 > meetingSco.Name.Length) ? 0 : bracketIndex + 2);
 
-                string js = JsonConvert.SerializeObject(new
+                string js = JsonConvert.SerializeObject(new MeetingNameInfo
                 {
-                    courseId = param.course_id,
+                    courseId = param.course_id.ToString(),
                     courseNum = param.context_label,
                     meetingName = meetingName,
                     date = meetingSco.DateCreated.ToString("MM/dd/yy"),
@@ -1692,13 +1715,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
-                dynamic nameInfo = JObject.Parse(lmsCourseMeeting.MeetingNameJson);
-                meetingName = nameInfo.meetingName;
+                MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(lmsCourseMeeting.MeetingNameJson);
+                // NOTE: it is reused meeting or source of reusing
+                if (!string.IsNullOrWhiteSpace(nameInfo.reusedMeetingName))
+                {
+                    meetingName = nameInfo.reusedMeetingName;
+                }
+                else
+                {
+                    meetingName = nameInfo.meetingName;
+                }
             }
 
             var ret = new MeetingDTO
             {
-                id = meetingSco.ScoId, 
+                //id = meetingSco.ScoId, 
+                id = lmsCourseMeeting.Id,
                 ac_room_url = meetingSco.UrlPath.Trim("/".ToCharArray()),
                 name = meetingName,
                 summary = meetingSco.Description, 
@@ -1812,21 +1844,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        public LmsCourseMeeting GetCourseMeeting(LmsCompany lmsCompany, int courseId, string scoId, LmsMeetingType type)
+        public LmsCourseMeeting GetCourseMeeting(LmsCompany lmsCompany, int courseId, int id, LmsMeetingType type)
         {
             LmsCourseMeeting meeting = null;
 
-            if (!string.IsNullOrWhiteSpace(scoId))
-                meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(lmsCompany.Id, courseId, scoId);
+            if (id > 0)
+                meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
 
-            if (meeting == null && type == LmsMeetingType.OfficeHours)
-            {
-                meeting =
-                    this.LmsCourseMeetingModel.GetOneByCourseAndType(
-                        lmsCompany.Id,
-                        courseId,
-                        LmsMeetingType.OfficeHours).Value;
-            }
+            // TRICK: we should always pass ID from client if it's UPDATE operation for meeting within the course
+            //if (meeting == null && type == LmsMeetingType.OfficeHours)
+            //{
+            //    meeting =
+            //        this.LmsCourseMeetingModel.GetOneByCourseAndType(
+            //            lmsCompany.Id,
+            //            courseId,
+            //            LmsMeetingType.OfficeHours).Value;
+            //}
 
             if (meeting == null)
             {
@@ -1835,7 +1868,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LmsCompany = lmsCompany,
                     CourseId = courseId,
                     LmsMeetingType = (int)type,
-                    ScoId = type == LmsMeetingType.OfficeHours ? scoId : null,
+                    // HACK: IMPLEMENT
+                    //ScoId = type == LmsMeetingType.OfficeHours ? scoId : null,
                 };
             }
 
@@ -2018,21 +2052,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return newFolder.ScoInfo.ScoId;
 
         }
-        /// <summary>
-        /// The setup user meetings folder.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         private static string SetupUserMeetingsFolder(LmsCompany credentials, IAdobeConnectProxy provider,
             Principal user, bool useLmsUserEmailForSearch)
         {

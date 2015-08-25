@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.Controllers
         #endregion
 
         [HttpPost]
-        public virtual ActionResult AddNewUser(string lmsProviderName, PrincipalInputDto user, string meetingScoId)
+        public virtual ActionResult AddNewUser(string lmsProviderName, PrincipalInputDto user, int meetingId)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
-                LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(credentials, param.course_id, meetingScoId, LmsMeetingType.Meeting);
+                LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
                 PermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());
@@ -102,7 +102,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 AcRole role = AcRole.GetByName(user.meetingRole);
-                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meetingScoId, principal.PrincipalId, role.MeetingPermissionId);
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), principal.PrincipalId, role.MeetingPermissionId);
 
                 // Add user as guest to DB
                 var guest = new LmsCourseMeetingGuest

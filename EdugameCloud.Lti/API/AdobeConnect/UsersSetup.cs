@@ -50,7 +50,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
-            string scoId, 
+            int meetingId, 
             out string error, 
             bool skipReturningUsers = false);
 
@@ -271,7 +271,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-            var serviceResult = service.GetUsers(lmsCompany, meeting, lmsUser ?? new LmsUser{UserId = lmsUserId}, courseId, extraData, forceUpdate);
+            var serviceResult = service.GetUsers(lmsCompany, meeting, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
             if (serviceResult.isSuccess)
             {
                 error = null;
@@ -346,22 +346,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
-            string scoId, 
+            int id, 
             out string error,
             List<LmsUserDTO> users = null,
             bool forceUpdate = false)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id, 
                 param.course_id, 
-                scoId);
+                id);
 
             if (meeting == null)
             {
-                logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ScoID: {2}.", 
+                logger.ErrorFormat("[GetUsers] Meeting not found in DB. LmsCompanyID: {0}. CourseID: {1}. ID: {2}.", 
                     lmsCompany.Id,
                     param.course_id,
-                    scoId);
+                    id);
 
                 error = "Meeting not found";
                 return new List<LmsUserDTO>();
@@ -493,7 +493,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             error = null;
             return users;
         }
-
+        
         private static void ProcessGuests(IList<LmsUserDTO> users, LmsCourseMeeting meeting, IEnumerable<PermissionInfo> permissions, AcRole role)
         {
             foreach (PermissionInfo permissionInfo in permissions)
@@ -528,15 +528,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            string scoId,
+            LmsCourseMeeting meeting,
             out string error,
             bool forceUpdate = false, string lmsUserId = null)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
-                lmsCompany.Id,
-                param.course_id,
-                scoId);
-
             var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
             var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
@@ -784,15 +779,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (principalIds.Any())
             {
-                provider.UpdateScoPermissionForPrincipal(
-                    principalIds.Select(
-                        principalId =>
-                            new PermissionUpdateTrio
-                            {
-                                ScoId = meetingSco,
-                                PrincipalId = principalId,
-                                PermissionId = MeetingPermissionId.remove,
-                            }));
+                // TRICK: do not delete participants if meeting is ReUsed
+                if (meeting.Reused.HasValue && meeting.Reused.Value)
+                {
+                    provider.UpdateScoPermissionForPrincipal(
+                        principalIds.Select(
+                            principalId =>
+                                new PermissionUpdateTrio
+                                {
+                                    ScoId = meetingSco,
+                                    PrincipalId = principalId,
+                                    PermissionId = MeetingPermissionId.remove,
+                                }));
+                }
             }
 
             this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
@@ -824,14 +823,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
-            string scoId, 
+            int id, 
             bool forceUpdate, 
             out string error)
         {
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id, 
                 param.course_id, 
-                scoId);
+                id);
 
             // TRICK: not to have nhibernate 'no session or session was closed' error later in the method
             if (meeting.MeetingGuests != null)
@@ -1016,28 +1015,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             LmsUserDTO user, 
-            string scoId, 
+            int id, 
             out string error, 
             bool skipReturningUsers = false)
         {
             error = null;
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id, 
                 param.course_id, 
-                scoId);
+                id);
 
             // TODO:  DO WE NEED IT ?
             if (meeting == null)
             {
                 return skipReturningUsers 
                     ? null 
-                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
+                    : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
             }
 
             // NOTE: now we create AC principal within Users/GetAll method. So user will always have ac_id here.
             if (user.ac_id == null)
             {
-                logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. ScoId:{1}. UserLogin:{2}.", lmsCompany.Id, scoId, user.GetLogin());
+                logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. Id:{1}. UserLogin:{2}.", lmsCompany.Id, id, user.GetLogin());
 
                 Principal principal = acUserService.GetOrCreatePrincipal(
                     provider,
@@ -1122,7 +1121,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return skipReturningUsers 
                 ? null 
-                : GetOrCreateUserWithAcRole(lmsCompany, provider, param, scoId, out error, lmsUserId: user.id);
+                : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
         }
 
         public LmsUserDTO UpdateGuest(
@@ -1130,18 +1129,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             LmsUserDTO user,
-            string scoId,
+            int id,
             out string error)
         {
             error = null;
-            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndScoId(
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id,
                 param.course_id,
-                scoId);
+                id);
 
             if (meeting == null)
             {
-                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ScoID: {2}.", lmsCompany.Id, param.course_id, scoId);
+                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, id);
                 error = "Meeting not found";
                 return null;
             }

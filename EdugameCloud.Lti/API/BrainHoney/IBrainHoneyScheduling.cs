@@ -6,7 +6,7 @@ namespace EdugameCloud.Lti.API.BrainHoney
 {
     public interface IBrainHoneyScheduling
     {
-        string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, string scoId);
+        string CheckForBrainHoneySignals(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId);
 
     }
 

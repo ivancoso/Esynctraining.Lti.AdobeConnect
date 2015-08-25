@@ -127,13 +127,13 @@
         /// </returns>
         [HttpGet]
         [ActionName("force-update")]
-        public virtual ActionResult ForceUpdate(string scoId)
+        public virtual ActionResult ForceUpdate(int meetingId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
             foreach (Schedule schedule in schedules)
             {
-                Func<IEnumerable<LmsCompany>, DateTime, string, string> scheduledAction = null;
+                Func<IEnumerable<LmsCompany>, DateTime, int, string> scheduledAction = null;
 
                 IEnumerable<LmsCompany> brainHoneyCompanies = null;
                 switch (schedule.ScheduleDescriptor)
@@ -149,7 +149,7 @@
                 }
 
                 string error;
-                bool res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, brainHoneyCompanies, scoId, out error);
+                bool res = this.scheduleModel.ExecuteIfPossible(schedule, scheduledAction, brainHoneyCompanies, meetingId, out error);
                 result += "'" + schedule.ScheduleDescriptor
                           + (res ? "' task succedded; Errors: " + error : "' task failed; Errors: " + error);
             }
@@ -165,7 +165,7 @@
         /// </returns>
         [HttpGet]
         [ActionName("update-if-necessary")]
-        public virtual ActionResult UpdateIfNecessary(string scoId)
+        public virtual ActionResult UpdateIfNecessary(int meetingId)
         {
             string result = null;
             IEnumerable<Schedule> schedules = this.scheduleModel.GetAll();
@@ -178,11 +178,11 @@
                     case ScheduleDescriptor.BrainHoneySignals:
                         IEnumerable<LmsCompany> brainHoneyCompanies =
                             this.lmsCompanyModel.GetAllByProviderId((int)LmsProviderEnum.BrainHoney);
-                        scheduledAction = dt => _bhScheduling.CheckForBrainHoneySignals(brainHoneyCompanies, dt, scoId);
+                        scheduledAction = dt => _bhScheduling.CheckForBrainHoneySignals(brainHoneyCompanies, dt, meetingId);
                         break;
 
                     case ScheduleDescriptor.CleanLmsSessions:
-                        scheduledAction = dt => this.CleanLmsSessions(null, dt, scoId);
+                        scheduledAction = dt => this.CleanLmsSessions(null, dt, meetingId);
                         break;
                 }
 
@@ -211,7 +211,7 @@
         /// </returns>
         [NonAction]
         // ReSharper disable once UnusedParameter.Local
-        private string CleanLmsSessions(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, string scoId = null)
+        private string CleanLmsSessions(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId = -1)
         {
             IEnumerable<LmsUserSession> lmsSessions = this.lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-7));
             foreach (var lmsSession in lmsSessions)

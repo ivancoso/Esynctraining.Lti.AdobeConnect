@@ -1,42 +1,31 @@
-﻿using Castle.Core.Logging;
-using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Lti.API;
-
-namespace EdugameCloud.Lti.Controllers
+﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Net;
-    using System.Reflection;
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Mvc;
-    using System.Xml.Linq;
-    using System.Xml.XPath;
+    using Castle.Core.Logging;
     using DotNetOpenAuth.AspNet;
-    using EdugameCloud.Core.Domain.Entities;
+    using EdugameCloud.Core.Business.Models;
+    using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
-    using EdugameCloud.Lti.Core.DTO;
     using EdugameCloud.Lti.Core.OAuth;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
-    using EdugameCloud.Lti.Models;
     using EdugameCloud.Lti.OAuth;
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
     using EdugameCloud.Lti.Utils;
-    using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
@@ -44,9 +33,6 @@ namespace EdugameCloud.Lti.Controllers
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
 
-    /// <summary>
-    ///     The LTI controller.
-    /// </summary>
     public partial class LtiController : Controller
     {
         private const string ExceptionMessage = "An exception is occured. Try again later or contact your administrator.";
@@ -459,7 +445,7 @@ namespace EdugameCloud.Lti.Controllers
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual ActionResult GetUsers(string lmsProviderName, string scoId, bool forceUpdate = false)
+        public virtual ActionResult GetUsers(string lmsProviderName, int meetingId, bool forceUpdate = false)
         {
             LmsCompany lmsCompany = null;
             try
@@ -476,14 +462,14 @@ namespace EdugameCloud.Lti.Controllers
                     && lmsCompany.LmsCourseMeetings != null
                     && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int)LmsMeetingType.OfficeHours))
                 {
-                    syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, scoIds: new[] { scoId });
+                    syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
                 }
 
                 var users = this.usersSetup.GetUsers(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param,
-                    scoId,
+                    meetingId,
                     out error,
                     null,
                     forceUpdate);
@@ -517,20 +503,8 @@ namespace EdugameCloud.Lti.Controllers
             string providerName = model.tool_consumer_info_product_family_code;
             return this.LoginWithProvider(providerName, model);
         }
-
-        /// <summary>
-        /// The join meeting.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        public virtual ActionResult JoinMeeting(string lmsProviderName, string scoId)
+        
+        public virtual ActionResult JoinMeeting(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -541,7 +515,7 @@ namespace EdugameCloud.Lti.Controllers
                 var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 string breezeSession = null;
 
-                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, meetingId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
             catch (WarningMessageException ex)
@@ -553,13 +527,13 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "JoinMeeting exception. scoId:{0}.", scoId);
+                logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}.", meetingId);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
 
-        public virtual ActionResult JoinMeetingMobile(string lmsProviderName, string scoId)
+        public virtual ActionResult JoinMeetingMobile(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -570,7 +544,7 @@ namespace EdugameCloud.Lti.Controllers
                 var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 string breezeSession = null;
 
-                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, scoId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, meetingId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
 
                 if (string.IsNullOrWhiteSpace(breezeSession))
                     return Json(OperationResult.Error("Can't get Adobe Connect BreezeSession"), JsonRequestBehavior.AllowGet);
@@ -597,7 +571,7 @@ namespace EdugameCloud.Lti.Controllers
         /// The <see cref="JsonResult"/>.
         /// </returns>
         [HttpPost]
-        public virtual JsonResult LeaveMeeting(string lmsProviderName, string scoId)
+        public virtual JsonResult LeaveMeeting(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -605,7 +579,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = this.GetSession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
-                OperationResult result = this.meetingSetup.LeaveMeeting(credentials, param, scoId, this.GetAdobeConnectProvider(credentials));
+                OperationResult result = this.meetingSetup.LeaveMeeting(credentials, param, meetingId, this.GetAdobeConnectProvider(credentials));
 
                 return Json(result);
             }
@@ -615,65 +589,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The login with provider.
-        /// </summary>
-        /// <param name="lmsDomain">
-        /// The LMS Domain.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        [ActionName("register-proxy-tool")]
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        [HttpGet]
-        public virtual ActionResult RegisterProxyTool(string lmsDomain)
-        {
-            if (string.IsNullOrWhiteSpace(lmsDomain))
-            {
-                this.ViewBag.Error = "Blackboard LMS domain is missing";
-                return this.View("Error");
-            }
-
-            lmsDomain = lmsDomain.TrimEnd(@"\/".ToCharArray());
-            var blackBoardProfile = ParseBlackBoardSharedInfo(lmsDomain);
-            return this.View(
-                "ProxyToolPassword",
-                new ProxyToolPasswordModel
-                {
-                    LmsDomain = lmsDomain,
-                    BlackBoardTitle =
-                    string.IsNullOrWhiteSpace(blackBoardProfile.Name)
-                    ? lmsDomain
-                    : blackBoardProfile.Name,
-                    LtiVersion = string.IsNullOrWhiteSpace(blackBoardProfile.LtiVersion) ? "2.0-July08" : blackBoardProfile.LtiVersion,
-                });
-        }
-
-        /// <summary>
-        /// The register proxy tools.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        [ActionName("register-proxy-tool")]
-        [HttpPost]
-        public virtual ActionResult RegisterProxyTool(ProxyToolPasswordModel model)
-        {
-            string error;
-            if (!this.TryRegisterEGCTool(model, out error))
-            {
-                this.ViewBag.Error = error;
-                return this.View("Error");
-            }
-
-            return this.View("ProxyToolRegistrationSucceeded", model);
-        }
-
+        
         /// <summary>
         /// The login with provider.
         /// </summary>
@@ -891,31 +807,16 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        /// <summary>
-        /// The update user.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO id
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
         [HttpPost]
-        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user, string scoId)
+        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user, int meetingId)
         {
             LmsCompany credentials = null;
             try
             {
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
                     throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
-                if (string.IsNullOrWhiteSpace(scoId))
-                    throw new ArgumentException("scoId can't be empty", "scoId");
+                if (meetingId <= 0)
+                    throw new ArgumentOutOfRangeException("meetingId");
 
                 var session = this.GetSession(lmsProviderName);
                 credentials = session.LmsCompany;
@@ -929,7 +830,7 @@ namespace EdugameCloud.Lti.Controllers
                         this.GetAdobeConnectProvider(credentials),
                         session.LtiSession.LtiParam,
                         user,
-                        scoId,
+                        meetingId,
                         out error);
                 }
                 else
@@ -939,7 +840,7 @@ namespace EdugameCloud.Lti.Controllers
                         this.GetAdobeConnectProvider(credentials),
                         session.LtiSession.LtiParam,
                         user,
-                        scoId,
+                        meetingId,
                         out error);
                 }
 
@@ -956,7 +857,7 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, string scoId)
+        public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -969,7 +870,7 @@ namespace EdugameCloud.Lti.Controllers
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     param,
-                    scoId,
+                    meetingId,
                     false,
                     out error);
 
@@ -1040,61 +941,7 @@ namespace EdugameCloud.Lti.Controllers
 
             return keyToFix;
         }
-
-        /// <summary>
-        /// The try register EGC tool.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
-        {
-            var pass = (string)this.Settings.InitialBBPassword;
-            var soapApi = IoC.Resolve<IBlackBoardApi>();
-            return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
-        }
-
-        /// <summary>
-        /// The parse black board shared info.
-        /// </summary>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <returns>
-        /// The <see cref="BBConsumerProfileDTO"/>.
-        /// </returns>
-        private BBConsumerProfileDTO ParseBlackBoardSharedInfo(string lmsDomain)
-        {
-            var res = new BBConsumerProfileDTO();
-            try
-            {
-                var uriBuilder = new UriBuilder(lmsDomain + "/webapps/ws/wsadmin/tcprofile");
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                var xmlResponse = new WebClient().DownloadString(uriBuilder.Uri);
-                var response = XElement.Parse(xmlResponse);
-                var name = response.XPathEvaluate("string(/tool-consumer-info/name)").ToString();
-                res.Name = name;
-                var ltiVersion = response.XPathEvaluate("string(/@ltiVersion)").ToString();
-                res.LtiVersion = ltiVersion;
-                IEnumerable<XElement> services = response.XPathSelectElements("/services-offered/service");
-                var servicesList = services.Select(service => service.XPathEvaluate("string(@name)").ToString()).ToList();
-                res.Services = servicesList;
-            }
-                // ReSharper disable once EmptyGeneralCatchClause
-            catch (Exception ex)
-            {
-                logger.Error("ParseBlackBoardSharedInfo", ex);
-            }
-
-            return res;
-        }
-
+        
         /// <summary>
         /// The get user name or email.
         /// </summary>

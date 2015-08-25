@@ -35,7 +35,7 @@ namespace EdugameCloud.Lti.API
             this.logger = logger;
         }
 
-        public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<string> scoIds = null)
+        public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {
             LmsUserServiceBase service = null;
             if ((LmsProviderEnum)lmsCompany.LmsProvider.Id == LmsProviderEnum.Desire2Learn)
@@ -51,7 +51,7 @@ namespace EdugameCloud.Lti.API
             var groupedMeetings = lmsCompany.LmsCourseMeetings
                 .Where(x =>
                     x.LmsMeetingType != (int) LmsMeetingType.OfficeHours
-                    && (scoIds == null || scoIds.Any(m => m == x.ScoId))
+                    && (meetingIds == null || meetingIds.Any(m => m == x.Id))
                     && acProvider.GetScoInfo(x.GetMeetingScoId()).Status.Code == StatusCodes.ok)
                 .GroupBy(y => y.CourseId);
             foreach (var courseGroup in groupedMeetings)
