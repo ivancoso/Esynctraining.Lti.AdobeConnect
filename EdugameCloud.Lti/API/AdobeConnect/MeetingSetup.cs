@@ -8,7 +8,6 @@ using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -20,36 +19,9 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    public interface IMeetingSetup
-    {
-        void SetupFolders(LmsCompany credentials, IAdobeConnectProxy provider);
-
-        OperationResult SaveMeeting(
-            LmsCompany lmsCompany,
-            IAdobeConnectProxy provider,
-            LtiParamDTO param,
-            MeetingDTO meetingDTO,
-            bool retrieveLmsUsers = false);
-
-        List<string> DeleteMeeting(
-            LmsCompany credentials,
-            IAdobeConnectProxy provider,
-            LtiParamDTO param,
-            int id,
-            out string error);
-
-        List<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder);
-
-        IAdobeConnectProxy GetProvider(LmsCompany credentials, bool login = true);
-    }
-
-    /// <summary>
-    ///     The meeting setup.
-    /// </summary>
     public sealed partial class MeetingSetup : IMeetingSetup
     {
         #region Properties
@@ -191,13 +163,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     meeting);
                 ret.Add(meetingDTO);
             }
-
-            //if (!ret.Any(m => m.type == (int)LmsMeetingType.Meeting))
-            //{
-               // var empty = this.CreateEmptyMeetingResponse(param);
-               // ret.Add(empty);
-            //}
-
+            
             if (!ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
             {
                 var officeHoursMeetings =
@@ -967,13 +933,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             LmsCourseMeeting originalMeeting = this.LmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(credentials, dto.sco_id);
             int? sourceLtiCreatedMeetingId = (originalMeeting != null) ? originalMeeting.Id : default(int?);
-
+            
             var json = JsonConvert.SerializeObject(new MeetingNameInfo
             {
-                //courseId =  ,
-                //courseNum = param.context_label,
-                //meetingName = meetingDTO.name,
-                //date = DateTime.Today.ToString("MM/dd/yy"),
                 reusedMeetingName = meetingSco.ScoInfo.Name,
             });
             
@@ -1255,21 +1217,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
-                MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                // TODO: is it OK to use the setting here? if (lmsCompany.EnableMeetingReuse)
+                var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
+                
                 // NOTE: it's reused meeting or source for any reused meeting
-                if (!string.IsNullOrEmpty(nameInfo.reusedMeetingName) || meeting.Reused.GetValueOrDefault())
+                //if (!string.IsNullOrEmpty(nameInfo.reusedMeetingName) || meeting.Reused.GetValueOrDefault())
+                if (thisScoMeetings.Any(x => x.Id != meeting.Id))
                 {
-                    nameInfo.reusedMeetingName = meetingDTO.name;
-                    meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                    //MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                    //nameInfo.reusedMeetingName = meetingDTO.name;
+                    //meeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
                     updateItem.Name = meetingDTO.name;
 
                     // NOTE: find original LTI meeting and all its reusings; and change their name AS WELL
-                    var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
+                    //var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
                     foreach (LmsCourseMeeting m in thisScoMeetings)
                     {
                         MeetingNameInfo name = JsonConvert.DeserializeObject<MeetingNameInfo>(m.MeetingNameJson);
                         name.reusedMeetingName = meetingDTO.name;
                         m.MeetingNameJson = JsonConvert.SerializeObject(name);
+                        LmsCourseMeetingModel.RegisterSave(m);
                     }
                 }
                 else
@@ -1293,16 +1260,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
-        {
-            var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
-            if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any())
-            {
-                return null;
-            }
+        //private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
+        //{
+        //    var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
+        //    if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any())
+        //    {
+        //        return null;
+        //    }
 
-            return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
-        }
+        //    return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
+        //}
 
         /// <summary>
         /// The save LMS user parameters.

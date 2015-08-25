@@ -9,7 +9,8 @@
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
-    
+    using EdugameCloud.Lti.Extensions;
+
     public partial class LtiController
     {
         #region Public Methods and Operators
@@ -151,7 +152,7 @@
         }
 
         [HttpPost]
-        public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, string meetingScoId)
+        public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -176,7 +177,8 @@
                     return Json(this.GenerateErrorResult(recordingJob.Status));
                 }
 
-                var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meetingScoId, adobeConnectProvider);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (scheduledRecording == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
@@ -194,7 +196,7 @@
         }
 
         [HttpPost]
-        public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, string meetingScoId)
+        public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, int meetingId)
         {
             LmsCompany credentials = null;
             try
@@ -208,7 +210,8 @@
                     throw new InvalidOperationException("Adobe connect provider");
                 }
 
-                var recording = this.GetScheduledRecording(recordingId, meetingScoId, adobeConnectProvider);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                var recording = this.GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (recording == null)
                 {
                     return Json(OperationResult.Error("MP4 recording doesn't exist."));

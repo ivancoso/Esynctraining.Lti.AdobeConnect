@@ -331,13 +331,11 @@ namespace EdugameCloud.MVC.Controllers
                             })
                     }
                 };
-
-
+                
                 string mimeType;
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingSessionsReport", meetingSessions,
                     out mimeType, parametersList, subreports);
-
-
+                
                 if (reportRenderedBytes != null)
                 {
                     var reportName = GenerateReportName(session, "Sessions", localDate);
@@ -358,14 +356,13 @@ namespace EdugameCloud.MVC.Controllers
             }
 
             return null;
-
         }
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-host-report")]
         [CustomAuthorize]
-        public virtual ActionResult MeetingHostRreport(int lmsCompanyId, string format = "PDF")
+        public virtual ActionResult MeetingHostReport(int lmsCompanyId, string format = "PDF")
         {
             var licence = this.lmsCompanyModel.GetOneById(lmsCompanyId).Value;
 

@@ -212,6 +212,7 @@
     <Compile Include="API\AdobeConnect\AdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
+    <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\StatusInfoExtentions.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />

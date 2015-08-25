@@ -590,18 +590,6 @@
             }
         }
         
-        /// <summary>
-        /// The login with provider.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
@@ -628,7 +616,7 @@
                         param.user_id = parsedIdArray.Last();
                     }
                 }
-
+                
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(lmsProvider, param.oauth_consumer_key).Value;
                 string validationError = ValidateLmsLicense(lmsCompany, param);
                 if (!string.IsNullOrWhiteSpace(validationError))
