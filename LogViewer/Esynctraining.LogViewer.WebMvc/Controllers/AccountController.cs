@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -136,6 +137,8 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            throw new InvalidOperationException("Register is not supported");
+
             return View();
         }
 
@@ -146,6 +149,8 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
+            throw new InvalidOperationException("Register is not supported");
+
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };

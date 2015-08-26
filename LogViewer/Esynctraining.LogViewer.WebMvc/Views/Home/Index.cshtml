@@ -39,7 +39,7 @@
                 <legend>Search</legend>
                 <div class="form-group">
                     <div class="input-group">
-                        @Html.TextBoxFor(m => m.SearchTerm, Model.SearchTerm, new { @class = "form-control", placeholder = "Search", title = "Search", type = "search" })
+                        @Html.TextBoxFor(m => m.SearchTerm, Model.SearchTerm, new { @class = "form-control search-input", placeholder = "Search", title = "Search", type = "search" })
                         
                         <span class="input-group-btn">
                             <button class="btn btn-primary" type="submit" title="Search"><span class="glyphicon glyphicon-search"></span>&nbsp;Search</button>
@@ -90,6 +90,7 @@
 
 @section scripts
 {
+    @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
         $(function () {
             $("#truncate-logs-form").submit(function(evt) {
