@@ -4,10 +4,7 @@
     using System.Net.Mail;
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
-
-    /// <summary>
-    /// The user DTO.
-    /// </summary>
+    
     [DataContract]
     public class LmsUserDTO
     {
@@ -23,41 +20,23 @@
         }
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the ac_id.
-        /// </summary>
+        
         [DataMember]
         public string ac_id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the ac_role.
-        /// </summary>
+        
         [DataMember]
         public string ac_role { get; set; }
-
-        /// <summary>
-        /// Gets or sets the LMS role.
-        /// </summary>
+        
         [DataMember]
         public string lms_role { get; set; }
-
-        /// <summary>
-        /// Gets or sets the id.
-        /// </summary>
+        
         [DataMember]
         public string id { get; set; }
 
-        /// <summary>
-        /// Gets or sets the login_id.
-        /// </summary>
         [DataMember]
         [ScriptIgnore]
         public string login_id { get; set; }
-
-        /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
+        
         [DataMember]
         public string name 
         {
@@ -74,53 +53,31 @@
             } 
         }
 
-        /// <summary>
-        /// Gets or sets the primary_email.
-        /// </summary>
         [DataMember]
         [ScriptIgnore]
         public string primary_email { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether is_editable.
-        /// </summary>
+        
         [DataMember]
         public bool is_editable { get; set; }
-
-        /// <summary>
-        /// Gets or sets the lti_id.
-        /// </summary>
+        
         [DataMember]
         [ScriptIgnore]
         public string lti_id { get; set; }
 
         public string email { get; set; }
-
-        // TODO:
+        
         [DataMember]
         public int? guest_id { get; set; }
 
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// Gets the login.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetLogin()
         {
             return this.login_id ?? this.name;
         }
-
-        /// <summary>
-        /// Gets the email.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetEmail()
         {
             if (this.primary_email != null)
@@ -139,13 +96,7 @@
                 return null;
             }
         }
-
-        /// <summary>
-        /// Gets the first name.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetFirstName()
         {
             if (this.name == null)
@@ -161,13 +112,7 @@
 
             return this.name.Substring(0, index);
         }
-
-        /// <summary>
-        /// Gets the last name.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetLastName()
         {
             if (this.name == null)

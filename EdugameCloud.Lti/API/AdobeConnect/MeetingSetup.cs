@@ -853,9 +853,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
 
+            string message = string.Empty;
             if (isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting))
             {
-                // NOTE: lmsUsers are selected already from LMS
+                List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out message);
+                
                 this.UsersSetup.SetDefaultUsers(
                     lmsCompany,
                     meeting,
@@ -863,11 +865,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     param.lms_user_id,
                     meeting.CourseId,
                     result.ScoInfo.ScoId,
-                    lmsUsers,
+                    usersToAddToMeeting,
                     param);
             }
-
-            string message = null;
+                        
             if (isNewMeeting || attachToExistedOfficeHours)
             {
                 try
@@ -880,7 +881,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 catch (Exception)
                 {
-                    message = "Meetings was created without announcement. Please contact administrator.";
+                    message += "Meetings was created without announcement. Please contact administrator. ";
                 }
             }
 
@@ -967,8 +968,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            this.LmsCourseMeetingModel.RegisterSave(meeting);
-            this.LmsCourseMeetingModel.Flush();
+            if (originalMeeting != null)
+            {
+                MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(originalMeeting.MeetingNameJson)
+                    ? new MeetingNameInfo()
+                    : JsonConvert.DeserializeObject<MeetingNameInfo>(originalMeeting.MeetingNameJson);
+
+                nameInfo.reusedMeetingName = meetingSco.ScoInfo.Name;
+                originalMeeting.MeetingNameJson = JsonConvert.SerializeObject(nameInfo);
+                LmsCourseMeetingModel.RegisterSave(originalMeeting);
+            }
+            LmsCourseMeetingModel.RegisterSave(meeting);
+            LmsCourseMeetingModel.Flush();
 
             if (!dto.mergeUsers)
             {
@@ -1664,18 +1675,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var canJoin = this.CanJoin(provider, lmsCompany, type, param, meetingSco.ScoId);
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault() : null;
             string officeHoursString = null;
-            
+
             if (type == (int)LmsMeetingType.OfficeHours)
             {
-                var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                if (lmsUser != null)
-                {
-                    var officeHours = this.OfficeHoursModel.GetByLmsUserId(lmsUser.Id).Value;
-                    if (officeHours != null)
-                    {
-                        officeHoursString = officeHours.Hours;
-                    }
-                }
+                officeHoursString = lmsCourseMeeting.OfficeHours.Hours;
             }
 
             string meetingName = string.Empty;
@@ -1710,8 +1713,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            bool scoIdReused = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId())
-                .Any(x => x.Id != lmsCourseMeeting.Id);
+            bool scoIdReused = (lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value) 
+                || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId()).Any(x => x.Id != lmsCourseMeeting.Id);
 
             var ret = new MeetingDTO
             {

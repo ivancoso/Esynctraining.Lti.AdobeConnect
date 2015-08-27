@@ -862,10 +862,10 @@
                     false,
                     out error);
 
-                if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(updatedUsers));
+                //if (string.IsNullOrEmpty(error))
+                    return Json(OperationResult.Success(error, updatedUsers));
 
-                return Json(OperationResult.Error(error));
+                //return Json(OperationResult.Error(error));
             }
             catch (Exception ex)
             {

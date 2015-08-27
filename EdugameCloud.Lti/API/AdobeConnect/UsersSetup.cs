@@ -182,19 +182,7 @@
             return meeting.MeetingRoles
                     .GroupBy(x => x.User.UserId).Select(x => x.OrderBy(u => u.User.Id).First());
         }
-
-        /// <summary>
-        /// The get meeting attendees.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="meetingSco">
-        /// The meeting SCO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{PermissionInfo}"/>.
-        /// </returns>
+        
         public List<PermissionInfo> GetMeetingAttendees(IAdobeConnectProxy provider, string meetingSco)
         {
             var alreadyAdded = new HashSet<string>();
@@ -314,6 +302,10 @@
                 IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
 
                 bool uncommitedChangesInLms = false;
+
+                string message;
+                List<LmsUserDTO> usersToAddToMeeting = GetUsersToAddToMeeting(lmsCompany, users, out message);
+
                 foreach (LmsUserDTO user in users)
                 {
                     string login = user.GetLogin();
@@ -328,7 +320,8 @@
                         };
                     }
 
-                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                    if (string.IsNullOrEmpty(lmsUser.PrincipalId)
+                        && usersToAddToMeeting.Contains(user))
                     {
                         // NOTE: we create Principals during Users/GetAll to have ability to join office hours meeting for all course participants.
                         Principal principal = acUserService.GetOrCreatePrincipal2(
@@ -384,6 +377,16 @@
             ProcessGuests(users, meeting, attendees.Presenters.Where(h => !h.HasChildren), AcRole.Presenter);
             ProcessGuests(users, meeting, attendees.Participants.Where(h => !h.HasChildren), AcRole.Participant);
 
+            //TRICK: we need email on client side only if AC uses emails as login!!
+            // we use emails to check they are not empty and are unique within a course
+            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
+            {
+                users.ForEach(x => 
+                {
+                    x.email = x.primary_email;
+                });
+            }
+            
             error = null;
             return users;
         }
@@ -575,13 +578,15 @@
             var hostPrincipals = new List<string>();
 
             var principalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
+            
+            List<LmsUserDTO> usersToAddToMeeting = GetUsersToAddToMeeting(lmsCompany, users, out error);
 
-            foreach (LmsUserDTO lmsUserDto in users)
+            foreach (LmsUserDTO lmsUserDto in usersToAddToMeeting)
             {
                 // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
                 string id = lmsUserDto.lti_id ?? lmsUserDto.id;
                 LmsUser dbUser = lmsDbUsers.FirstOrDefault(x => x.UserId == id)
-                               ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUserDto.GetLogin(), UserId = id, };
+                    ?? new LmsUser { LmsCompany = lmsCompany, Username = lmsUserDto.GetLogin(), UserId = id, };
 
                 if (string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
@@ -675,8 +680,10 @@
             {
                 // TRICK: do not delete participants if meeting is ReUsed
                 // TRICK: do not delete participants if meeting is source for any ReUsed meeting
-                if ((meeting.Reused.HasValue && meeting.Reused.Value) 
-                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId()).Any(x => x.Id != meeting.Id))
+                bool skipSyncAcUsers = (meeting.Reused.HasValue && meeting.Reused.Value)
+                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId()).Any(x => x.Id != meeting.Id);
+
+                if (!skipSyncAcUsers)
                 {
                     provider.UpdateScoPermissionForPrincipal(
                         principalIds.Select(
@@ -699,12 +706,13 @@
             LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany)
         {
             Principal principal = acUserService.GetOrCreatePrincipal(
-                        provider,
-                        lmsUserDto.GetLogin(),
-                        lmsUserDto.GetEmail(),
-                        lmsUserDto.GetFirstName(),
-                        lmsUserDto.GetLastName(),
-                        lmsCompany);
+                provider,
+                lmsUserDto.GetLogin(),
+                lmsUserDto.GetEmail(),
+                lmsUserDto.GetFirstName(),
+                lmsUserDto.GetLastName(),
+                lmsCompany);
+
             if (principal != null)
             {
                 lmsUserDto.ac_id = principal.PrincipalId;
@@ -767,30 +775,39 @@
             return SetDefaultRolesForNonParticipants(lmsCompany, provider, meeting, users, lmsDbUsers, enrollments, ref error);
         }
 
-        /// <summary>
-        /// The set default users.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lmsCompany.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="courseId">
-        /// The LMS course id.
-        /// </param>
-        /// <param name="meetingScoId">
-        /// The meeting SCO id.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra Data.
-        /// </param>
+        public List<LmsUserDTO> GetUsersToAddToMeeting(LmsCompany lmsCompany, IEnumerable<LmsUserDTO> lmsUsers, out string message)
+        {
+            message = string.Empty;
+            List<LmsUserDTO> usersToAddToMeeting = lmsUsers.ToList();
+
+            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
+            {
+                bool containsEmptyEmails = lmsUsers.Any(x => string.IsNullOrWhiteSpace(x.primary_email));
+                bool containsDuplicateEmails = lmsUsers.Select(x => x.primary_email).Count() != lmsUsers.Select(x => x.primary_email).Distinct().Count();
+                if (containsEmptyEmails || containsDuplicateEmails)
+                {
+                    message += "Some of the users cannot be synchronized due to: ";
+                    if (containsEmptyEmails)
+                        message += "users with empty email exist, ";
+                    if (containsDuplicateEmails)
+                        message += "users with duplicate email exist, ";
+                    // TRICK: ugly string processing )
+                    message = message.Substring(0, message.Length - 2);
+                    message += ". ";
+                }
+
+                var duplicateEmails = lmsUsers.GroupBy(x => x.primary_email)
+                    .Where(g => g.Count() > 1)
+                    .Select(y => y.Key)
+                    .ToList();
+
+                // NOTE: process ONLY VALID users
+                usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.primary_email) && !duplicateEmails.Contains(x.primary_email)).ToList();
+            }
+
+            return usersToAddToMeeting;
+        }
+
         public void SetDefaultUsers(
             LmsCompany lmsCompany, 
             LmsCourseMeeting meeting,
@@ -917,8 +934,8 @@
         {
             error = null;
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
-                lmsCompany.Id, 
-                param.course_id, 
+                lmsCompany.Id,
+                param.course_id,
                 id);
 
             // TODO:  DO WE NEED IT ?
@@ -933,6 +950,9 @@
             if (user.ac_id == null)
             {
                 logger.WarnFormat("[UpdateUser]. ac_id == null. LmsCompanyId:{0}. Id:{1}. UserLogin:{2}.", lmsCompany.Id, id, user.GetLogin());
+
+                // Get all users from COURSE
+                // Process if they have empty\duplicate with current user
 
                 Principal principal = acUserService.GetOrCreatePrincipal(
                     provider,
@@ -996,6 +1016,9 @@
                     {
                         var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value;
 
+                        //
+                        // TODO: CHECK EMAIL IS VALID (UNIQUE AND NON-EMPTY) if AC uses Emails-as-Logins
+                        //
                         var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany);
 
                         if (principal == null && lmsCompany.DenyACUserCreation)
@@ -1584,5 +1607,7 @@
         }
 
         #endregion
+
     }
+
 }
