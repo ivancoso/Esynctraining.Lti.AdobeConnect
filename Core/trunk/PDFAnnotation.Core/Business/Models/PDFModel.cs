@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Business.Models.Annotation
+﻿using System.Text.RegularExpressions;
+
+namespace PDFAnnotation.Core.Business.Models.Annotation
 {
     using System;
     using System.Collections.Generic;
@@ -65,7 +67,52 @@
         /// </returns>
         public bool ConvertIfNotExist(Domain.Entities.File file, byte[] ms = null)
         {
-            return this.converter.ConvertIfNotExist(new FileDTO(file), ms);
+            var failedFolder = (string)Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
+            var connectionString = (string)this.settings.ConnectionString;
+            return this.converter.ConvertIfNotExist(new FileDTO(file), failedFolder, connectionString, ms);
+        }
+
+        /// <summary>
+        /// The get number of pages.
+        /// </summary>
+        /// <param name="webOrbFile">
+        /// The web orb file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Nullable{Int32}"/>.
+        /// </returns>
+        public int? GetNumberOfPages(string webOrbFile)
+        {
+            try
+            {
+                using (var reader = new PdfReader(webOrbFile))
+                {
+                    return reader.NumberOfPages;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// The get number of pages using stream.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Nullable{Int32}"/>.
+        /// </returns>
+        public int? GetNumberOfPagesUsingStream(string file)
+        {
+            using (var sr = new StreamReader(System.IO.File.OpenRead(file)))
+            {
+                var regex = new Regex(@"/Type\s*/Page[^s]");
+                var matches = regex.Matches(sr.ReadToEnd());
+                return matches.Count;
+            }
         }
 
         /// <summary>
@@ -82,7 +129,9 @@
         /// </returns>
         public bool ConvertIfNotExist(FileDTO fileDTO, byte[] ms = null)
         {
-            return this.converter.ConvertIfNotExist(fileDTO, ms);
+            var failedFolder = (string)Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
+            var connectionString = (string)this.settings.ConnectionString;
+            return this.converter.ConvertIfNotExist(fileDTO, failedFolder, connectionString, ms);
         }
 
         /// <summary>

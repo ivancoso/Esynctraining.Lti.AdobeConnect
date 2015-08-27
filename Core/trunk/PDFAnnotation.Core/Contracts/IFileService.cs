@@ -88,6 +88,9 @@
         [OperationContract]
         ServiceResponse<FileDTO> GetFilesByCategory(int categoryId);
 
+        [OperationContract]
+        ServiceResponse<FileConvertationDTO> WasFileConvertedToSwf(string id, int? page = null);
+
         /// <summary>
         /// The get exhibits report.
         /// </summary>

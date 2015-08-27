@@ -30,6 +30,9 @@
             this.Map(x => x.IsOriginal).Nullable();
             this.Map(x => x.AcMeetingUrl).Column("acMeetingUrl").Length(1000).Nullable();
 
+            this.Map(x => x.NumberOfPages).Nullable();
+            this.Map(x => x.UploadFileStatus).Not.Nullable().CustomType<UploadFileStatus>().Default("1");
+
             this.References(x => x.User).Column("userId").Nullable();
             this.References(x => x.Topic).Column("topicId").Nullable();
             this.References(x => x.Category).Column("categoryId").Nullable();

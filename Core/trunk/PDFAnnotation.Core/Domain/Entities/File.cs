@@ -94,6 +94,11 @@ namespace PDFAnnotation.Core.Domain.Entities
         public virtual string AcMeetingUrl { get; set; }
 
         /// <summary>
+        ///     Gets or sets the number of pages.
+        /// </summary>
+        public virtual int? NumberOfPages { get; set; }
+
+        /// <summary>
         ///     Gets or sets the name.
         /// </summary>
         [FullTextIndexed(0)]
@@ -130,6 +135,11 @@ namespace PDFAnnotation.Core.Domain.Entities
                 this.status = value;
             }
         }
+
+        /// <summary>
+        ///     Gets or sets the upload file status.
+        /// </summary>
+        public virtual UploadFileStatus UploadFileStatus { get; set; }
 
         /// <summary>
         /// Gets or sets the event.

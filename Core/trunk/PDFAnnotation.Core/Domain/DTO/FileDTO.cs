@@ -51,10 +51,18 @@
             this.userName = file.User.Return(x => x.FullName, null);
             this.topicVo = new TopicDTO(file.Topic);
             this.topicId = this.topicVo.Return(x => x.topicId, (int?)null);
-            this.fileStatus = (int)file.Status;
             this.isShared = file.IsShared.HasValue && file.IsShared.Value;
             this.isOriginal = file.IsOriginal.HasValue && file.IsOriginal.Value;
             this.acMeetingUrl = file.AcMeetingUrl;
+
+            if (file.Status != null)
+            {
+                this.fileStatus = (int)file.Status;
+            }
+
+            this.numberOfPages = file.NumberOfPages ?? 0;
+            this.uploadStatus = (int)file.UploadFileStatus;
+
         }
 
         #endregion
@@ -62,10 +70,22 @@
         #region Public Properties
 
         /// <summary>
+        ///     Gets or sets the fileStatus.
+        /// </summary>
+        [DataMember]
+        public int uploadStatus { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether is shared.
         /// </summary>
         [DataMember]
         public bool isOriginal { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the pages count.
+        /// </summary>
+        [DataMember]
+        public int numberOfPages { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is shared.

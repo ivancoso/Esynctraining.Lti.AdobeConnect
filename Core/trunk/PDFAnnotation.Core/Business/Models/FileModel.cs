@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Business.Models
+﻿using System.Text.RegularExpressions;
+
+namespace PDFAnnotation.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;
@@ -183,6 +185,86 @@
 
         #region Public Methods and Operators
 
+        /// <summary>
+        /// The get data.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <param name="pageIndex">
+        /// page index if requested
+        /// </param>
+        /// <returns>
+        /// The array of bytes.
+        /// </returns>
+        public bool ExistAndNotEmptySWFData(File file, int? pageIndex = null)
+        {
+            string fileName = this.PermanentSWFName(file, pageIndex);
+            return System.IO.File.Exists(fileName) && new FileInfo(fileName).Length > 0;
+        }
+
+        /// <summary>
+        /// The permanent file name.
+        /// </summary>
+        /// <param name="file">
+        /// The file.
+        /// </param>
+        /// <param name="settingz">
+        /// The settings.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static List<FileInfo> EnumerateSWFOriginalPages(File file, dynamic settingz)
+        {
+            return FileModel.EnumerateSWFOriginalPages(
+                file.Id,
+                (string)FileModel.FileStoragePhysicalPath(settingz),
+                (string)settingz.PermSWFPattern,
+                (string)settingz.PermSWFPagePattern);
+        }
+
+        /// <summary>
+        /// The permanent file name.
+        /// </summary>
+        /// <param name="fileId">
+        /// The file Id.
+        /// </param>
+        /// <param name="fileStoragePhysicalPath">
+        /// The file Storage Physical Path.
+        /// </param>
+        /// <param name="permSWFPattern">
+        /// The perm SWF Pattern.
+        /// </param>
+        /// <param name="permSWFPagePattern">
+        /// The perm SWF Page Pattern.
+        /// </param>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
+        public static List<FileInfo> EnumerateSWFOriginalPages(Guid fileId, string fileStoragePhysicalPath, string permSWFPattern, string permSWFPagePattern)
+        {
+            var regex = new Regex(@"^\d*\.swf", RegexOptions.Compiled);
+            string folder = fileStoragePhysicalPath;
+            if (!Directory.Exists(folder))
+            {
+                return new List<FileInfo>();
+            }
+
+            dynamic filePattern = permSWFPagePattern;
+            dynamic filePath = filePattern.Replace("{fileId}", fileId.ToString()).Replace("{pageIndex}", "*");
+            dynamic path = Path.Combine(folder, filePath);
+            var di = new DirectoryInfo(Path.GetDirectoryName(path) ?? folder);
+            if (!di.Exists)
+            {
+                return new List<FileInfo>();
+            }
+
+            string exceptFullSwfName = permSWFPattern.Replace("{fileId}", string.Empty).Trim("\\".ToCharArray());
+            var pages = di.EnumerateFiles("*.swf").Where(x => regex.Match(x.Name).Success && !string.Equals(x.Name, exceptFullSwfName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            return pages;
+        }
+
         public byte[] ReadAllBytes(string filePath)
         {
             byte[] oFileBytes = null;
@@ -343,34 +425,37 @@
         {
             bool isPdf = new FileInfo(file.FileName).Extension.ToLowerInvariant() == ".pdf";
             string permanentFileName = isPdf ? this.PermanentPdfName(file) : this.PermanentFileName(file);
-            using (FileStream fileStream = System.IO.File.OpenWrite(permanentFileName))
+            string webOrbFolderName = this.WebOrbFolderName(file);
+            string webOrbFile;
+            if (Directory.Exists(webOrbFolderName) && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
             {
-                string webOrbFolderName = this.WebOrbFolderName(file);
-                string webOrbFile;
-                if (Directory.Exists(webOrbFolderName)
-                    && (webOrbFile = Directory.GetFiles(webOrbFolderName).FirstOrDefault()) != null)
+                if (string.IsNullOrWhiteSpace(file.FileSize))
                 {
-                    byte[] content = ReadAllBytes(webOrbFile);
-                    if (isPdf)
-                    {
-                        content = this.FixContentForBlackSquares(content);
-                    }
-
-                    fileStream.Write(content, 0, content.Length);
-                    this.ClearDirectoryAndRemoveItSafely(webOrbFolderName);
-
-                    if (string.IsNullOrWhiteSpace(file.FileSize))
-                    {
-                        file.FileSize = content.Length.ToString(CultureInfo.CurrentCulture);
-                    }
-
-//                    file.Status = FileStatus.UploadCompleted;
-                    this.RegisterSave(file);
-                    return true;
+                    file.FileSize = new FileInfo(webOrbFile).Length.ToString(CultureInfo.CurrentCulture);
                 }
 
-                return false;
+                if (isPdf)
+                {
+                    file.NumberOfPages = this.pdfModel.GetNumberOfPages(webOrbFile);
+                    if (file.NumberOfPages == 0)
+                    {
+                        file.NumberOfPages = this.pdfModel.GetNumberOfPagesUsingStream(webOrbFile);
+                    }
+                }
+
+                if (System.IO.File.Exists(permanentFileName))
+                {
+                    System.IO.File.Delete(permanentFileName);
+                }
+
+                System.IO.File.Copy(webOrbFile, permanentFileName);
+                this.ClearDirectoryAndRemoveItSafely(webOrbFolderName);
+                file.UploadFileStatus = UploadFileStatus.Rendering;
+                this.RegisterSave(file, true);
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>
@@ -441,6 +526,7 @@
             file.Topic = topic;
             file.User = user;
             file.Status = FileStatus.Created;
+            file.UploadFileStatus = UploadFileStatus.Uploading;
 
             this.RegisterSave(file, true);
 
@@ -489,7 +575,9 @@
             var searchIds = new List<Guid>();
 
             QueryOver<File, File> queryOver =
-                new DefaultQueryOver<File, Guid>().GetQueryOver().WhereRestrictionOn(x => x.Category.Id).IsIn(casesId);
+                new DefaultQueryOver<File, Guid>().GetQueryOver()
+                .Where(x => (x.Status == FileStatus.UploadCompleted || x.Status == FileStatus.Saved) && (x.UploadFileStatus == UploadFileStatus.Converted || x.UploadFileStatus == UploadFileStatus.ConvertingPagesFailed))
+                .AndRestrictionOn(x => x.Category.Id).IsIn(casesId);
 
             if (start.HasValue && end.HasValue)
             {
@@ -669,6 +757,21 @@
         public IEnumerable<File> GetAllByStatuses(FileStatus[] fileStatuses)
         {
             QueryOver<File> queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().WhereRestrictionOn(x => x.Status).IsIn(fileStatuses);
+            return this.Repository.FindAll(queryOver);
+        }
+
+        /// <summary>
+        /// The get all by statuses to clear before date.
+        /// </summary>
+        /// <param name="fileStatuses">
+        /// The file statuses.
+        /// </param>
+        /// <returns>
+        /// The <see cref="IEnumerable{File}"/>.
+        /// </returns>
+        public IEnumerable<File> GetAllByUploadFileStatuses(UploadFileStatus[] fileStatuses)
+        {
+            QueryOver<File> queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().WhereRestrictionOn(x => x.UploadFileStatus).IsIn(fileStatuses);
             return this.Repository.FindAll(queryOver);
         }
 

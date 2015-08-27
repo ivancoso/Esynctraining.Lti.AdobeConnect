@@ -180,6 +180,7 @@
     <Compile Include="Domain\DTO\CompanyForCreationDTO.cs" />
     <Compile Include="Domain\DTO\CompanyContactDTO.cs" />
     <Compile Include="Domain\DTO\ConfigDTO.cs" />
+    <Compile Include="Domain\DTO\FileConvertationDTO.cs" />
     <Compile Include="Domain\DTO\FileTopicDTO.cs" />
     <Compile Include="Domain\DTO\TopicDTO.cs" />
     <Compile Include="Domain\DTO\IBaseMarkDTO.cs" />
