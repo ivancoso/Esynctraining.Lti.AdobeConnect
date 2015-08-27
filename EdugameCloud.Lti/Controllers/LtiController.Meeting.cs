@@ -17,6 +17,8 @@
         [DataMember]
         public string sco_id { get; set; }
 
+        [DataMember]
+        public bool mergeUsers { get; set; }
     }
 
     public partial class LtiController : Controller

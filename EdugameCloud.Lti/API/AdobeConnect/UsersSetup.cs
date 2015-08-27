@@ -1,66 +1,23 @@
-﻿using DotNetOpenAuth.Messaging.Reflection;
-using EdugameCloud.Lti.Core.Domain.Entities;
-
-namespace EdugameCloud.Lti.API.AdobeConnect
+﻿namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Web.Security;
-    using BbWsClient;
     using Castle.Core.Logging;
-    using EdugameCloud.Lti.API.BlackBoard;
-    using EdugameCloud.Lti.API.BrainHoney;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.API.Common;
-    using EdugameCloud.Lti.API.Desire2Learn;
-    using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Core.Business;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Domain.Entities;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
-    using EdugameCloud.Lti.OAuth.Desire2Learn;
-    using Esynctraining.AC.Provider;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-    using Newtonsoft.Json;
-
-    /// <summary>
-    /// The UsersSetup interface.
-    /// </summary>
-    public interface IUsersSetup
-    {
-        #region Public Methods and Operators
-
-        void SetLMSUserDefaultACPermissions(
-            IAdobeConnectProxy provider,
-            LmsCompany lmsCompany,
-            string meetingScoId, 
-            LmsUserDTO user, 
-            string principalId);
-
-        LmsUserDTO UpdateUser(
-            LmsCompany lmsCompany,
-            IAdobeConnectProxy provider, 
-            LtiParamDTO param, 
-            LmsUserDTO user, 
-            int meetingId, 
-            out string error, 
-            bool skipReturningUsers = false);
-
-        #endregion
-    }
-
-    /// <summary>
-    ///     The users setup.
-    /// </summary>
-    public class UsersSetup : IUsersSetup
+    
+    public sealed class UsersSetup : IUsersSetup
     {
         #region Inner Class: MeetingAttendees
 
@@ -84,16 +41,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion Inner Class: MeetingAttendees
 
         #region Fields
-
-        /// <summary>
-        /// The settings.
-        /// </summary>
+        
         private readonly dynamic settings;
-
         private readonly LmsFactory lmsFactory;
-
         private IAdobeConnectUserService acUserService;
-
         private ILogger logger;
 
         #endregion
@@ -115,27 +66,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Properties
-
-        /// <summary>
-        ///     Gets the canvas course meeting model.
-        /// </summary>
+        
         private LmsCourseMeetingModel LmsCourseMeetingModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCourseMeetingModel>();
-            }
+            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
         }
-
-        /// <summary>
-        ///     Gets the LMS user parameters.
-        /// </summary>
+        
         private LmsUserModel LmsUserModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserModel>();
-            }
+            get { return IoC.Resolve<LmsUserModel>(); }
         }
 
         #endregion
@@ -176,25 +115,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (principalIds.Any())
                 provider.AddToGroupByType(principalIds, "live-admins");
         }
-
-        /// <summary>
-        /// The get AC password.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lmsCompany.
-        /// </param>
-        /// <param name="userSettings">
-        /// The user settings.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="login">
-        /// The login.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetACPassword(LmsCompany lmsCompany, LmsUserSettingsDTO userSettings, string email, string login)
         {
             var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
@@ -212,34 +133,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
             }
         }
-
-        /// <summary>
-        /// The get lms users.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lmsCompany.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The lms user id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="extraData">
-        /// The extra data.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List"/>.
-        /// </returns>
+        
         public List<LmsUserDTO> GetLMSUsers(
             LmsCompany lmsCompany, 
             LmsCourseMeeting meeting, 
@@ -780,7 +674,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (principalIds.Any())
             {
                 // TRICK: do not delete participants if meeting is ReUsed
-                if (meeting.Reused.HasValue && meeting.Reused.Value)
+                // TRICK: do not delete participants if meeting is source for any ReUsed meeting
+                if ((meeting.Reused.HasValue && meeting.Reused.Value) 
+                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId()).Any(x => x.Id != meeting.Id))
                 {
                     provider.UpdateScoPermissionForPrincipal(
                         principalIds.Select(

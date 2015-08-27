@@ -109,9 +109,7 @@
                 .WhereRestrictionOn(() => lms.Id).IsIn(companyLicenses)
                 .And(() =>
                     ((x.ScoId != null) && (x.ScoId == scoId)) ||
-                     (x.OfficeHours != null && oh.ScoId == scoId))
-
-                .Take(1);
+                     (x.OfficeHours != null && oh.ScoId == scoId));
 
             return this.Repository.FindAll(defaultQuery);
         }

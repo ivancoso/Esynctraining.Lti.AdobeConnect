@@ -103,6 +103,13 @@
         [DataMember]
         public bool is_disabled_for_this_course { get; set; }
 
+        /// <summary>
+        /// SCO-ID of this meeting is used in several meetings. 
+        /// Current meeting is either created by re-using existed meeting either current meeting is reused as source for another meeting.
+        /// </summary>
+        [DataMember]
+        public bool reused { get; set; }
+
         #endregion
 
         public SpecialPermissionId GetPermissionId()

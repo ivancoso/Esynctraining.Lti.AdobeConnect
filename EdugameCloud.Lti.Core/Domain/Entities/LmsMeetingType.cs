@@ -18,6 +18,6 @@
         /// <summary>
         /// The study group.
         /// </summary>
-        StudyGroup = 3
+        StudyGroup = 3,
     }
 }

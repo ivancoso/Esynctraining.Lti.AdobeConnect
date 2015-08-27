@@ -105,10 +105,10 @@ namespace EdugameCloud.WCFService
                 {
                     lmsPassword = entity.AdminUser.Password;
                 }
-                else if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
-                {
-                    lmsPassword = resultDto.proxyToolPassword;
-                }
+            }
+            if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
+            {
+                lmsPassword = resultDto.proxyToolPassword;
             }
 
             ConnectionInfoDTO lmsConnectionTest = TestConnection(new ConnectionTestDTO

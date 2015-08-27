@@ -792,7 +792,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             string meetingFolder = this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal, useLmsUserEmailForSearch);     
              
-            SetMeetingUpateItemFields(
+            SetMeetingUpdateItemFields(
                 meetingDTO,
                 updateItem,
                 meetingFolder,
@@ -969,6 +969,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             this.LmsCourseMeetingModel.RegisterSave(meeting);
             this.LmsCourseMeetingModel.Flush();
+
+            if (!dto.mergeUsers)
+            {
+                // NOTE: Clean all existed AC meeting participants.
+                PermissionCollectionResult allMeetingEnrollments = provider.GetAllMeetingEnrollments(dto.sco_id);
+                
+                provider.UpdateScoPermissionForPrincipal(
+                    allMeetingEnrollments.Values.Select(
+                        enrollment =>
+                            new PermissionUpdateTrio
+                            {
+                                ScoId = dto.sco_id,
+                                PrincipalId = enrollment.PrincipalId,
+                                PermissionId = MeetingPermissionId.remove,
+                            }));
+            }
 
             this.UsersSetup.SetDefaultUsers(
                 credentials,
@@ -1694,9 +1710,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
+            bool scoIdReused = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId())
+                .Any(x => x.Id != lmsCourseMeeting.Id);
+
             var ret = new MeetingDTO
             {
-                //id = meetingSco.ScoId, 
                 id = lmsCourseMeeting.Id,
                 ac_room_url = meetingSco.UrlPath.Trim("/".ToCharArray()),
                 name = meetingName,
@@ -1710,7 +1728,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 can_join = canJoin,
                 is_editable = isEditable,
                 type = type,
-                office_hours = officeHoursString
+                office_hours = officeHoursString,
+                reused = scoIdReused,
             };
             return ret;
         }
@@ -1843,7 +1862,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return meeting;
         }
 
-        private static void SetMeetingUpateItemFields(
+        private static void SetMeetingUpdateItemFields(
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
