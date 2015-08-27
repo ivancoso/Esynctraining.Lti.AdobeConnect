@@ -21,7 +21,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (var sqlConn = CreateProfiledDbConnection())
             {
                 model.Log = sqlConn
-                    .Query<Log>("SELECT * FROM Log WHERE Id = @Id", new { Id = id })
+                    .Query<Log>(GetByIdSql(), new { Id = id })
                     .SingleOrDefault();
             }
 

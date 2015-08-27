@@ -9,7 +9,7 @@
         {
             @Html.AntiForgeryToken()
             <fieldset class="fieldset">
-                <legend>Change Database</legend>
+                <legend>Change Log Source</legend>
                 <div class="form-group">
                     @Html.DropDownListFor(m => m.SelectedLogDatabase, Model.LogDatabases, new { @class = "form-control" })
                     <button id="btn-change-database" class="btn btn-primary">Change</button>

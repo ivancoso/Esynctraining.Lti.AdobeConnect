@@ -28,7 +28,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (profiler.Step("Getting logs from database"))
             using (var sqlConn = CreateProfiledDbConnection())
             {
-                model.Logs.AddRange(sqlConn.Query<Log>("SELECT TOP 100 * FROM Log ORDER BY Id DESC"));
+                model.Logs.AddRange(sqlConn.Query<Log>(GetAllSql()));
             }
 
             model.SelectedLogDatabase = GetSelectedConnectionStringName();
@@ -76,7 +76,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (var sqlConn = CreateProfiledDbConnection())
             {
                 var searchTerm = "%" + model.SearchTerm.Replace("%", "[%]").Replace("[", "[[]").Replace("]", "[]]") + "%";
-                model.Logs.AddRange(sqlConn.Query<Log>("SELECT TOP 100 * FROM Log WHERE message LIKE @searchTerm OR exception LIKE @searchTerm ORDER BY Id DESC",
+                model.Logs.AddRange(sqlConn.Query<Log>(GetSearchSql(),
                     new { searchTerm }));
             }
 
@@ -99,7 +99,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (profiler.Step("Truncating logs in database"))
             using (var sqlConn = CreateProfiledDbConnection())
             {
-                sqlConn.Execute("TRUNCATE TABLE [Log]");
+                sqlConn.Execute(GetTruncateSql());
             }
 
             return RedirectToAction("Index", "Home");

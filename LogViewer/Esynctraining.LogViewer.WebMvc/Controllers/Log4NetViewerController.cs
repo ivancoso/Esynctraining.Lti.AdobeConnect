@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Esynctraining.LogViewer.MvcWeb.Models;
+using Esynctraining.LogViewer.MvcWeb.Extensions;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
 
@@ -37,7 +38,6 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         /// <summary>
         /// Creates a database connection that can be profiled by MiniProfiler.
         /// </summary>
-        /// <returns></returns>
         protected ProfiledDbConnection CreateProfiledDbConnection()
         {
             var connStrName = GetSelectedConnectionStringName();
@@ -52,8 +52,6 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         /// <summary>
         /// Checks to see if the given connection string name exists in Web.config.
         /// </summary>
-        /// <param name="connectionStringName"></param>
-        /// <returns></returns>
         protected bool IsConnectionStringInWebConfig(string connectionStringName)
         {
             var logDbConnectionStringNames = LogDatabaseConnectionStrings
@@ -66,7 +64,6 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         /// <summary>
         /// Stores the user's current choice of log database in a cookie.
         /// </summary>
-        /// <param name="logDbConnectionStringName"></param>
         protected void SetConnectionStringCookie(string logDbConnectionStringName)
         {
             if (string.IsNullOrWhiteSpace(logDbConnectionStringName))
@@ -88,7 +85,6 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         /// or if not in Web.config, it returns the first connection string's name. (First means listed
         /// first in the connection strings section.)
         /// </summary>
-        /// <returns></returns>
         protected string GetSelectedConnectionStringName()
         {
             if (LogDatabaseConnectionStrings.Count == 0)
@@ -107,15 +103,43 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             return connStrName;
         }
 
+        protected string GetAllSql()
+        {
+            string table = GetSelectedConnectionTableName();
+            return string.Format("SELECT TOP 100 * FROM {0} ORDER BY Id DESC", table);
+        }
+
+        protected string GetSearchSql()
+        {
+            string table = GetSelectedConnectionTableName();
+            return string.Format("SELECT TOP 100 * FROM {0} WHERE message LIKE @searchTerm OR exception LIKE @searchTerm ORDER BY Id DESC", table);
+        }
+
+        protected string GetByIdSql()
+        {
+            string table = GetSelectedConnectionTableName();
+            return string.Format("SELECT * FROM {0} WHERE Id = @Id", table);
+        }
+
+        protected string GetTruncateSql()
+        {
+            string table = GetSelectedConnectionTableName();
+            return string.Format("TRUNCATE TABLE {0}", table);
+        }
+
         #endregion
 
-
         #region Private Methods
+
+        private string GetSelectedConnectionTableName()
+        {
+            string logSource = GetSelectedConnectionStringName().ToFriendlyLogDatabaseName();
+            return ConfigurationManager.AppSettings["LogTableName-" + logSource];
+        }
 
         /// <summary>
         /// Attempts to read the user's selected log database connection string name from a cookie.
         /// </summary>
-        /// <returns></returns>
         private string GetConnectionStringNameFromCookie()
         {
             var cookie = Request.Cookies[LogDatabaseCookieName];
