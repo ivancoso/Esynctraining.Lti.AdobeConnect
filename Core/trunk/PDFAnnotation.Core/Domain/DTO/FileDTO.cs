@@ -45,7 +45,7 @@
             this.categoryId = file.Category.Return(x => x.Id, (int?)null);
             this.userId = file.User.Return(x => x.Id, (int?)null);
             this.displayName = file.DisplayName;
-            this.dateModified = file.DateModified;
+            this.dateModified = file.DateModified ?? file.DateCreated;
             this.fileNumber = file.FileNumber;
             this.categoryName = file.Category.With(c => c.CategoryName);
             this.userName = file.User.Return(x => x.FullName, null);

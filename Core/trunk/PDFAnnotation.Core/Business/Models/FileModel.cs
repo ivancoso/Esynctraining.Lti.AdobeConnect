@@ -44,6 +44,16 @@
         #region Fields
 
         /// <summary>
+        /// The dictionary locker.
+        /// </summary>
+        private static readonly object DictionaryLocker = new object();
+
+        /// <summary>
+        /// The object lockers.
+        /// </summary>
+        private static readonly Dictionary<string, object> ObjectLockers = new Dictionary<string, object>();
+
+        /// <summary>
         ///     The drawing model.
         /// </summary>
         private readonly DrawingModel drawingModel;
@@ -879,7 +889,16 @@
             try
             {
                 byte[] buffer = this.GetPDFData(file);
-                if (buffer != null)
+                if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
+{
+                    string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture); // based on date
+                    var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
+                    string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
+                    if (!System.IO.File.Exists(tmpPDF))
+                    {
+                        lock (GetDictionaryLocker(tmpPDF))
+                        {
+                            if (!System.IO.File.Exists(tmpPDF))
                 {
                     IEnumerable<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id);
                     IEnumerable<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id);
@@ -894,7 +913,24 @@
                         rotations, 
                         buffer);
 
+    using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
+                                {
+                                    fs.Write(resultBuffer, 0, resultBuffer.Length);
+                                }
+
                     return resultBuffer;
+                }
+            }
+ }
+                    else
+                    {
+                        return ReadAllBytes(tmpPDF);
+                    }
+                }
+
+                if (file != null && buffer != null)
+                {
+                    return buffer;
                 }
             }
             catch (Exception ex)
@@ -906,87 +942,295 @@
         }
 
         /// <summary>
-        /// The get updated SWF data.
+        /// Get file data as image.
         /// </summary>
         /// <param name="id">
-        /// The id.
+        /// The file id.
         /// </param>
         /// <returns>
-        /// The <see cref="byte"/>.
+        /// The <see cref="Stream"/>.
         /// </returns>
         public byte[] GetUpdatedSWFData(string id)
         {
             Guid fileId = Guid.Parse(id);
             File file = this.GetOneById(fileId).Value;
-            return this.GetUpdatedSWFData(file);
+            return this.GetUpdatedSWFDataWithStatus(file).With(x => x.Item2);
         }
 
         /// <summary>
         /// Get file data as image.
         /// </summary>
-        /// <param name="file">
-        /// The file.
+        /// <param name="id">
+        /// The file id.
         /// </param>
         /// <returns>
-        /// The <see cref="System.IO.Stream"/>.
+        /// The <see cref="Stream"/>.
         /// </returns>
         public byte[] GetUpdatedSWFData(File file)
         {
+            return this.GetUpdatedSWFDataWithStatus(file).With(x => x.Item2);
+        }
+
+        /// <summary>
+        /// Get file data as image.
+        /// </summary>
+        /// <param name="id">
+        /// The file id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stream"/>.
+        /// </returns>
+        public System.Tuple<int, byte[]> GetUpdatedSWFDataWithStatus(string id)
+        {
+            Guid fileId = Guid.Parse(id);
+            File file = this.GetOneById(fileId).Value;
+            return this.GetUpdatedSWFDataWithStatus(file);
+        }
+
+        /// <summary>
+        /// Get file data as image.
+        /// </summary>
+        /// <param name="id">
+        /// The file id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stream"/>.
+        /// </returns>
+        public System.Tuple<int, byte[]> GetUpdatedSWFDataWithStatus(File file)
+        {
             byte[] buffer = this.GetPDFData(file);
-            if (buffer != null)
+            if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
             {
-                List<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id).ToList();
-                drawings.Where(o => o.Mark.DateChanged > file.DateModified)
-                    .ToList()
-                    .ForEach(o => this.drawingModel.RegisterDelete(o));
-                drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                List<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id).ToList();
-                highlights.Where(o => o.Mark.DateChanged > file.DateModified)
-                    .ToList()
-                    .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
-                highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                List<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id).ToList();
-                shapes.Where(o => o.Mark.DateChanged > file.DateModified)
-                    .ToList()
-                    .ForEach(o => this.shapeModel.RegisterDelete(o));
-                shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                List<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id).ToList();
-                textItems.Where(o => o.Mark.DateChanged > file.DateModified)
-                    .ToList()
-                    .ForEach(o => this.textItemModel.RegisterDelete(o));
-                textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                List<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id).ToList();
-                rotations.Where(o => o.Mark.DateChanged > file.DateModified)
-                    .ToList()
-                    .ForEach(o => this.rotationModel.RegisterDelete(o));
-                rotations = rotations.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                byte[] pdfBuffer = this.pdfModel.DrawOnPDF(drawings, highlights, shapes, textItems, rotations, buffer);
-                string tmpName = Guid.NewGuid().ToString();
-                string tmpPDF = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
-                    tmpName + ".pdf");
-                string tmpSWF = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), 
-                    tmpName + ".swf");
-
-                using (var fs = new FileStream(tmpPDF, FileMode.CreateNew, FileAccess.Write))
+                string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture); // based on date
+                var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
+                string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
+                string tmpSwf = Path.Combine(baseDir, tmpName + ".swf");
+                string conversionFlag = Path.Combine(baseDir, tmpName + ".flag");
+                if (!System.IO.File.Exists(tmpPDF))
                 {
-                    fs.Write(pdfBuffer, 0, pdfBuffer.Length);
+                    lock (GetDictionaryLocker(tmpPDF))
+                    {
+                        if (!System.IO.File.Exists(tmpPDF))
+                        {
+                            List<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id).ToList();
+                            drawings.Where(o => o.Mark.DateChanged > file.DateModified)
+                                .ToList()
+                                .ForEach(o => this.drawingModel.RegisterDelete(o));
+                            drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                            List<ATHighlightStrikeOut> highlights =
+                                this.highlightStrikeOutModel.GetAllForFile(file.Id).ToList();
+                            highlights.Where(o => o.Mark.DateChanged > file.DateModified)
+                                .ToList()
+                                .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
+                            highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                            List<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id).ToList();
+                            shapes.Where(o => o.Mark.DateChanged > file.DateModified)
+                                .ToList()
+                                .ForEach(o => this.shapeModel.RegisterDelete(o));
+                            shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                            List<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id).ToList();
+                            textItems.Where(o => o.Mark.DateChanged > file.DateModified)
+                                .ToList()
+                                .ForEach(o => this.textItemModel.RegisterDelete(o));
+                            textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                            List<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id).ToList();
+                            rotations.Where(o => o.Mark.DateChanged > file.DateModified)
+                                .ToList()
+                                .ForEach(o => this.rotationModel.RegisterDelete(o));
+                            rotations = rotations.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                            byte[] pdfBuffer = this.pdfModel.DrawOnPDF(
+                                drawings,
+                                highlights,
+                                shapes,
+                                textItems,
+                                rotations,
+                                buffer);
+
+                            using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
+                            {
+                                fs.Write(pdfBuffer, 0, pdfBuffer.Length);
+                            }
+                        }
+                    }
                 }
 
-                IoC.Resolve<Pdf2SwfConverter>().Convert(tmpPDF, tmpSWF);
-                if (System.IO.File.Exists(tmpSWF))
+                if (!System.IO.File.Exists(conversionFlag))
                 {
-                    ReadAllBytes(tmpSWF);
+                    lock (GetDictionaryLocker(tmpSwf))
+                    {
+                        if (!System.IO.File.Exists(conversionFlag))
+                        {
+                            System.IO.File.Create(conversionFlag);
+                            this.RemoveFileSafely(tmpSwf);
+                            var converter = IoC.Resolve<Pdf2SwfConverter>();
+                            converter.Convert(tmpPDF, tmpSwf);
+                            this.RemoveFileSafely(conversionFlag);
+                        }
+                    }
+                }
+
+                if (System.IO.File.Exists(tmpSwf))
+                {
+                    var fi = new FileInfo(tmpSwf);
+                    if (fi.Length > 0)
+                    {
+                        return new Tuple<int, byte[]>(200, ReadAllBytes(tmpSwf));
+                    }
+
+                    return new Tuple<int, byte[]>(204, null);
+                }
+
+                if (System.IO.File.Exists(conversionFlag))
+                {
+                    return new Tuple<int, byte[]>(204, null);
+                }
+            }
+
+            if (file != null)
+            {
+                try
+                {
+                    var data = this.GetSWFData(file);
+                    return new Tuple<int, byte[]>(data != null ? 200 : 204, data);
+                }
+                catch (Exception)
+                {
+                    return null;
                 }
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Get file data as image.
+        /// </summary>
+        /// <param name="id">
+        /// The file id.
+        /// </param>
+        /// <param name="pageIndex">
+        /// The page Index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stream"/>.
+        /// </returns>
+        public byte[] GetUpdatedPagedSWFData(string id, int pageIndex)
+        {
+            Guid fileId = Guid.Parse(id);
+            File file = this.GetOneById(fileId).Value;
+            byte[] buffer = this.GetPDFData(file);
+            return this.GetUpdatedPagedSWFData(file, pageIndex, buffer);
+        }
+
+        /// <summary>
+        /// Get file data as image.
+        /// </summary>
+        /// <param name="id">
+        /// The file id.
+        /// </param>
+        /// <param name="pageIndex">
+        /// The page Index.
+        /// </param>
+        /// <returns>
+        /// The <see cref="Stream"/>.
+        /// </returns>
+        public byte[] GetUpdatedPagedSWFData(File file, int pageIndex, byte[] buffer)
+        {
+            if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
+            {
+                string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture); // based on date
+                var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
+                string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
+                string tmpSwfPaged = Path.Combine(baseDir, string.Format("{0}.{1}.swf", tmpName, pageIndex));
+                string tmpSwfPatternPaged = Path.Combine(baseDir, string.Format("{0}.%.swf", tmpName));
+
+                this.CheckAndCreateUpdatedPDFWithLock(tmpPDF, file.Id, file, buffer);
+
+                if (!System.IO.File.Exists(tmpSwfPaged))
+                {
+                    lock (GetDictionaryLocker(tmpSwfPatternPaged))
+                    {
+                        if (!System.IO.File.Exists(tmpSwfPaged))
+                        {
+                            var converter = IoC.Resolve<Pdf2SwfConverter>();
+                            converter.Convert(tmpPDF, tmpSwfPatternPaged);
+                        }
+                    }
+                }
+
+                if (System.IO.File.Exists(tmpSwfPaged))
+                {
+                    return System.IO.File.ReadAllBytes(tmpSwfPaged);
+                }
+            }
+
+            if (file != null)
+            {
+                try
+                {
+                    return this.GetSWFData(file, pageIndex);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        private void CheckAndCreateUpdatedPDFWithLock(string tmpPDF, Guid fileId, File file, byte[] buffer)
+        {
+            if (!System.IO.File.Exists(tmpPDF))
+            {
+                lock (GetDictionaryLocker(tmpPDF))
+                {
+                    if (!System.IO.File.Exists(tmpPDF))
+                    {
+                        List<ATDrawing> drawings = this.drawingModel.GetAllForFile(fileId).ToList();
+                        drawings.Where(o => o.Mark.DateChanged > file.DateModified)
+                            .ToList()
+                            .ForEach(o => this.drawingModel.RegisterDelete(o));
+                        drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                        List<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(fileId).ToList();
+                        highlights.Where(o => o.Mark.DateChanged > file.DateModified)
+                            .ToList()
+                            .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
+                        highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                        List<ATShape> shapes = this.shapeModel.GetAllForFile(fileId).ToList();
+                        shapes.Where(o => o.Mark.DateChanged > file.DateModified)
+                            .ToList()
+                            .ForEach(o => this.shapeModel.RegisterDelete(o));
+                        shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                        List<ATTextItem> textItems = this.textItemModel.GetAllForFile(fileId).ToList();
+                        textItems.Where(o => o.Mark.DateChanged > file.DateModified)
+                            .ToList()
+                            .ForEach(o => this.textItemModel.RegisterDelete(o));
+                        textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                        List<ATRotation> rotations = this.rotationModel.GetAllForFile(fileId).ToList();
+                        rotations.Where(o => o.Mark.DateChanged > file.DateModified)
+                            .ToList()
+                            .ForEach(o => this.rotationModel.RegisterDelete(o));
+                        rotations = rotations.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+
+                        byte[] pdfBuffer = this.pdfModel.DrawOnPDF(drawings, highlights, shapes, textItems, rotations, buffer);
+
+                        using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
+                        {
+                            fs.Write(pdfBuffer, 0, pdfBuffer.Length);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1178,17 +1422,25 @@
         public override void RegisterDelete(File file, bool flush)
         {
             string filePath = this.PermanentFileName(file);
-            if (System.IO.File.Exists(filePath))
+            try
             {
-                try
+                var fileInfo = new FileInfo(filePath);
+                // ReSharper disable once AssignNullToNotNullAttribute
+                // ReSharper disable once PossibleNullReferenceException
+                if (!string.IsNullOrWhiteSpace(fileInfo.DirectoryName) && Directory.Exists(fileInfo.DirectoryName) && !fileInfo.DirectoryName.Equals(this.FileStoragePhysicalPath(), StringComparison.InvariantCultureIgnoreCase))
                 {
-                    System.IO.File.Delete(filePath);
+                    this.ClearDirectoryAndRemoveItSafely(fileInfo.DirectoryName);
                 }
-                    
-                    // ReSharper disable once EmptyGeneralCatchClause
-                catch (Exception)
-                {
-                }
+            }
+            catch (Exception)
+            {
+                this.RemoveFileSafely(filePath);
+                var pdfName = this.PermanentPdfName(file);
+                this.RemoveFileSafely(pdfName);
+                var swfName = this.PermanentSWFName(file);
+                this.RemoveFileSafely(swfName);
+                this.RemoveFileAllFileTypeSafely(swfName);
+                this.RemoveFileAllFileTypeSafely(pdfName);
             }
 
             base.RegisterDelete(file, flush);
@@ -1286,6 +1538,32 @@
         #endregion
 
         #region Methods
+
+
+        /// <summary>
+        /// The get dictionary locker.
+        /// </summary>
+        /// <param name="key">
+        /// The key.
+        /// </param>
+        /// <returns>
+        /// The <see cref="object"/>.
+        /// </returns>
+        private static object GetDictionaryLocker(string key)
+        {
+            if (!ObjectLockers.ContainsKey(key))
+            {
+                lock (DictionaryLocker)
+                {
+                    if (!ObjectLockers.ContainsKey(key))
+                    {
+                        ObjectLockers.Add(key, new object());
+                    }
+                }
+            }
+
+            return ObjectLockers[key];
+        }
 
         /// <summary>
         /// The file storage physical path.

@@ -14,7 +14,7 @@ namespace PDFAnnotation.Core.Domain.Entities
     /// </summary>
     [Serializable]
     [FullTextEnabled]
-    public class File : EntityGuid
+    public class File : EntityGuid, IDatesContainer
     {
         #region Fields
 
@@ -86,7 +86,7 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// <summary>
         ///     Gets or sets the date.
         /// </summary>
-        public virtual DateTime DateModified { get; set; }
+        public virtual DateTime? DateModified { get; set; }
 
         /// <summary>
         ///     Gets or sets the name.
