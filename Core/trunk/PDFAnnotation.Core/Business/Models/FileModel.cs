@@ -1460,7 +1460,11 @@
         /// </param>
         public override void RegisterSave(File entity, bool flush, bool updateDateModified = true)
         {
-            entity.DateModified = DateTime.Now;
+            if (updateDateModified)
+            {
+                entity.DateModified = DateTime.Now.AddMinutes(1);
+            }
+
             base.RegisterSave(entity, flush, updateDateModified);
         }
 
