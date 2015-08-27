@@ -434,7 +434,7 @@ namespace EdugameCloud.Lti.Domain.Entities
 
             if ((LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
             {
-                domains.AddRange(AdditionalLmsDomains);
+                domains.AddRange(AdditionalLmsDomains.Select(x => x.RemoveHttpProtocolAndTrailingSlash()));
             }
 
             // NOTE: sakai sends :8080 in our environment- check other LMS
