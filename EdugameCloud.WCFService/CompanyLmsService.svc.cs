@@ -106,7 +106,8 @@ namespace EdugameCloud.WCFService
                     lmsPassword = entity.AdminUser.Password;
                 }
             }
-            if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
+
+            if ((this.LmsProviderModel.GetOneByName(resultDto.lmsProvider).Value.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
             {
                 lmsPassword = resultDto.proxyToolPassword;
             }
