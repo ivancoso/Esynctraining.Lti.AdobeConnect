@@ -39,14 +39,77 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!principalIds.Any())
                 throw new ArgumentException("Non empty principal id list required", "principalIds");
 
-            return Execute(() => _provider.AddToGroupByType(principalIds, typeName),
-                string.Join(";", principalIds), typeName);
+            //return Execute(() => _provider.AddToGroupByType(principalIds, typeName),
+            //    string.Join(";", principalIds), typeName);
+            StatusInfo result;
+            try
+            {
+                result = _provider.AddToGroupByType(principalIds, typeName);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "PrincipalIds:{0}.TypeName:{1}.", string.Join(";", principalIds), typeName);
+                throw;
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                //ACLTI-385
+                // ACU: User cannot be added to Meeting Hosts folder when User Meetings folder exists
+                if ((result.Code == StatusCodes.invalid)
+                    && (result.SubCode == StatusSubCodes.duplicate)
+                    && (result.InvalidField == "unknown")
+                    && (result.Type == "unavailable"))
+                    return result;
+
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalIds:{1}.TypeName:{2}.",
+                    result.GetErrorInfo(),
+                    string.Join(";", principalIds),
+                    typeName);
+                _logger.Error(msg);
+
+                throw new InvalidOperationException(msg);
+            }
+
+            return result;
         }
 
         public StatusInfo AddToGroupByType(string principalId, string typeName)
         {
-            return Execute(() => _provider.AddToGroupByType(principalId, typeName), 
-                principalId, typeName);
+            //return Execute(() => _provider.AddToGroupByType(principalId, typeName),
+            //    principalId, typeName);
+
+            StatusInfo result;
+            try
+            {
+                result = _provider.AddToGroupByType(principalId, typeName);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "PrincipalId:{0}.TypeName:{1}.", principalId, typeName);
+                throw;
+            }
+
+            if (result.Code != StatusCodes.ok)
+            {
+                //ACLTI-385
+                // ACU: User cannot be added to Meeting Hosts folder when User Meetings folder exists
+                if ((result.Code == StatusCodes.invalid) 
+                    && (result.SubCode == StatusSubCodes.duplicate) 
+                    && (result.InvalidField == "unknown") 
+                    && (result.Type == "unavailable"))
+                    return result;
+
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.TypeName:{2}.",
+                    result.GetErrorInfo(),
+                    principalId,
+                    typeName);
+                _logger.Error(msg);
+
+                throw new InvalidOperationException(msg);
+            }
+            
+            return result;
         }
 
         public CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId)

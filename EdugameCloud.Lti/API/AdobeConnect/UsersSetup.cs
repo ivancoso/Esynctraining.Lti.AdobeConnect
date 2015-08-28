@@ -683,7 +683,20 @@
                 bool skipSyncAcUsers = (meeting.Reused.HasValue && meeting.Reused.Value)
                     || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId()).Any(x => x.Id != meeting.Id);
 
-                if (!skipSyncAcUsers)
+                // NOTE: if it is reused meeting - skip delete principals from meeting in AC
+                // + return them to client side
+                if (skipSyncAcUsers)
+                {
+                    result.AddRange(principalIds.Select(
+                        principalId =>
+                            new LmsUserDTO
+                            {
+                                ac_id = principalId,
+                                name = enrollments.Single(x => x.PrincipalId == principalId).Name,
+                                ac_role = AcRole.GetRoleName(enrollments.Single(x => x.PrincipalId == principalId).PermissionId),
+                            }));
+                }
+                else
                 {
                     provider.UpdateScoPermissionForPrincipal(
                         principalIds.Select(
@@ -1041,6 +1054,39 @@
             return skipReturningUsers 
                 ? null 
                 : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
+        }
+
+        public void DeleteUserFromAcMeeting(
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider,
+            LtiParamDTO param,
+            LmsUserDTO user,
+            int meetingId,
+            out string error,
+            bool skipReturningUsers = false)
+        {
+            error = null;
+            LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(
+                lmsCompany.Id,
+                param.course_id,
+                meetingId);
+
+            if (meeting == null)
+            {
+                error = "Adobe Connect meeting not found.";
+                return;
+            }
+
+            if (user.ac_id == null)
+            {
+                error = "User does not exist in Adobe Connect.";
+                return;
+            }
+
+            provider.UpdateScoPermissionForPrincipal(
+                meeting.GetMeetingScoId(),
+                user.ac_id,
+                MeetingPermissionId.remove);            
         }
 
         public LmsUserDTO UpdateGuest(

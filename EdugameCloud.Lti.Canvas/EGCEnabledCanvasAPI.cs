@@ -131,6 +131,12 @@ namespace EdugameCloud.Lti.Canvas
 
                 IRestResponse<CanvasLmsUserDTO> response = client.Execute<CanvasLmsUserDTO>(request);
 
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // NOTE: user not longer exists in Canvas - return null;
+                    return null;
+                }
+
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     _logger.ErrorFormat("[EGCEnabledCanvasAPI.FetchCourseUser] API:{0}. UserToken:{1}. CourseId:{2}. UserId:{3}. {4}",
