@@ -96,14 +96,14 @@ namespace EdugameCloud.Lti.API
                                     logger.InfoFormat(
                                         "LmsUser ids to delete from meetingId={0}, courseId={1}: {2}",
                                         meeting.Id, meeting.CourseId,
-                                        String.Join(",", userRolesToDelete.Select(x => x.User.Id)));
+                                        String.Join(", ", userRolesToDelete.Select(x => x.User.Id)));
                                 }
                                 if (usersToAddToMeeting.Any())
                                 {
                                     logger.InfoFormat(
                                         "LmsUser ids to add to meetingId={0}, courseId={1}: {2}",
                                         meeting.Id, meeting.CourseId,
-                                        String.Join(",", usersToAddToMeeting.Select(x => x.UserId)));
+                                        String.Join(", ", usersToAddToMeeting.Select(x => x.UserId)));
                                 }
 
                                 userRolesToDelete.ForEach(x => meeting.MeetingRoles.Remove(x));
