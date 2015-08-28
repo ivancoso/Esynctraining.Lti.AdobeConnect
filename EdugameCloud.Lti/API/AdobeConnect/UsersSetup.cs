@@ -985,14 +985,14 @@
                     return null;
                 }
             }
-            var nonEditable = new HashSet<string>();
-
+            
             if (user.ac_role == null)
             {
                 throw new InvalidOperationException("AdobeConnect role is empty");
             }
             else
             {
+                var nonEditable = new HashSet<string>();
                 var attendees = GetMeetingAttendees(
                     provider,
                     meeting.GetMeetingScoId(),
@@ -1101,7 +1101,7 @@
 
             if (meeting == null)
             {
-                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, id);
+                logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, id);
                 error = "Meeting not found";
                 return null;
             }
@@ -1152,7 +1152,7 @@
 
             if (meeting == null)
             {
-                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, meetingId);
+                logger.ErrorFormat("Meeting not found. LmsCompanyId: {0}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, meetingId);
                 error = "Meeting not found";
                 return;
             }
