@@ -14,7 +14,7 @@
 	var EsyncLti = {};
 	EsyncLti.version = '@ViewBag.LtiVersion';
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
-	EsyncLti.acPassword = @if (ViewBag.RestoredACPassword == null) { @Html.Raw("null"); } else { @Html.Raw("'" + ViewBag.RestoredACPassword + "'"); };
+	EsyncLti.acPassword = @if (ViewBag.RestoredACPassword == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(ViewBag.RestoredACPassword) + "'"); };
 	EsyncLti.acUsesEmailAsLogin = @settings.ACUsesEmailAsLogin.ToString().ToLower();
 	EsyncLti.usesSyncUsers = @settings.UseSynchronizedUsers.ToString().ToLower();
 	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);
@@ -25,7 +25,7 @@
 	EsyncLti.maxMeetingNameLength  = 60;
 	EsyncLti.instructionText = @if (settings.SupportPageHtml == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(settings.SupportPageHtml.ToString()) + "'"); };
 	EsyncLti.labels = { "meeting": "@settings.LabelMeeting", "officehour": "@settings.LabelOfficeHour", "studygroup": "@settings.LabelStudyGroup"  };
-	EsyncLti.currentUserName = @if (ViewBag.CurrentUserFullName == null) { @Html.Raw("null"); } else { @Html.Raw("'" + ViewBag.CurrentUserFullName + "'"); };
+	EsyncLti.currentUserName = @if (ViewBag.CurrentUserFullName == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(ViewBag.CurrentUserFullName) + "'"); };
 
 	var Ext = Ext || {};
 	Ext.manifest = {
