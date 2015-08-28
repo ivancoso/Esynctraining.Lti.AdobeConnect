@@ -26,7 +26,8 @@
             routes.MapLowercaseRoute("scheduled", "scheduled-actions/{action}", new { controller = "LtiSchedule" });
             routes.MapLowercaseRoute("getusers", "Lti/User/GetAll", new { controller = "Lti", action = "GetUsers" });
             routes.MapLowercaseRoute("updateuser", "Lti/User/Update", new { controller = "Lti", action = "UpdateUser" });
-
+            routes.MapLowercaseRoute("removefromacmeeting", "lti/user/removefrommeeting", new { controller = "Lti", action = "RemoveFromAcMeeting" });
+            
             routes.MapLowercaseRoute("checkpass", "Lti/Settings/CheckPass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
             routes.MapLowercaseRoute("savesettings", "Lti/Settings/Save", new { controller = "Lti", action = "SaveSettings" });
             routes.MapLowercaseRoute("leavemeeting", "Lti/Meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });

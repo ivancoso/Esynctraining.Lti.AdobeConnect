@@ -989,10 +989,7 @@
 
             if (user.ac_role == null)
             {
-                provider.UpdateScoPermissionForPrincipal(
-                    meeting.GetMeetingScoId(),
-                    user.ac_id,
-                    MeetingPermissionId.remove);
+                throw new InvalidOperationException("AdobeConnect role is empty");
             }
             else
             {
@@ -1060,10 +1057,9 @@
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            LmsUserDTO user,
+            string principalId,
             int meetingId,
-            out string error,
-            bool skipReturningUsers = false)
+            out string error)
         {
             error = null;
             LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(
@@ -1077,7 +1073,7 @@
                 return;
             }
 
-            if (user.ac_id == null)
+            if (string.IsNullOrEmpty(principalId))
             {
                 error = "User does not exist in Adobe Connect.";
                 return;
@@ -1085,7 +1081,7 @@
 
             provider.UpdateScoPermissionForPrincipal(
                 meeting.GetMeetingScoId(),
-                user.ac_id,
+                principalId,
                 MeetingPermissionId.remove);            
         }
 
@@ -1112,48 +1108,71 @@
 
             if (user.ac_id == null)
             {
-                error = "Guest user should have Adobe Connect account";
+                error = "User does not exist in Adobe Connect.";
                 return null;
             }
 
             if (user.ac_role == null)
             {
-                provider.UpdateScoPermissionForPrincipal(
-                    meeting.GetMeetingScoId(),
-                    user.ac_id,
-                    MeetingPermissionId.remove);
-                LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.Id == user.guest_id);
-                if (guest != null)
-                {
-                    meeting.MeetingGuests.Remove(guest);
-                    LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
-                }
-
-                // TRICK: remove id to delete record on client-side
-                return new LmsUserDTO
-                {
-                    id = user.id,
-                };
+                throw new InvalidOperationException("AdobeConnect role is empty");
             }
-            else
+            
+            var permission = AcRole.GetByName(user.ac_role).MeetingPermissionId;
+            provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+
+            if (permission == MeetingPermissionId.host)
             {
-                var permission = AcRole.GetByName(user.ac_role).MeetingPermissionId;
-                provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
-
-                if (permission == MeetingPermissionId.host)
-                {
-                    AddUserToMeetingHostsGroup(provider, user.ac_id);
-                }
-
-                return new LmsUserDTO
-                {
-                    id = user.id,
-                    guest_id = user.guest_id,
-                    ac_id = user.ac_id,
-                    name = user.name,
-                    ac_role = user.ac_role,
-                };
+                AddUserToMeetingHostsGroup(provider, user.ac_id);
             }
+
+            return new LmsUserDTO
+            {
+                id = user.id,
+                guest_id = user.guest_id,
+                ac_id = user.ac_id,
+                name = user.name,
+                ac_role = user.ac_role,
+            };
+        }
+
+        public void DeleteGuestFromAcMeeting(
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider,
+            LtiParamDTO param,
+            string principalId,
+            int meetingId,
+            out string error)
+        {
+            error = null;
+            LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
+                lmsCompany.Id,
+                param.course_id,
+                meetingId);
+
+            if (meeting == null)
+            {
+                logger.ErrorFormat("Meeting not found. LmsCompanyId: {}, CourseId: {1}, ID: {2}.", lmsCompany.Id, param.course_id, meetingId);
+                error = "Meeting not found";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(principalId))
+            {
+                error = "User does not exist in Adobe Connect.";
+                return;
+            }
+            
+            provider.UpdateScoPermissionForPrincipal(
+                meeting.GetMeetingScoId(),
+                principalId,
+                MeetingPermissionId.remove);
+
+            LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.Id == user.guest_id);
+            if (guest != null)
+            {
+                meeting.MeetingGuests.Remove(guest);
+                LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+            }            
         }
 
         #endregion

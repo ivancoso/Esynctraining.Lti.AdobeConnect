@@ -794,56 +794,7 @@
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        [HttpPost]
-        public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO user, int meetingId)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
-                if (meetingId <= 0)
-                    throw new ArgumentOutOfRangeException("meetingId");
-
-                var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
-
-                string error;
-                LmsUserDTO updatedUser = null;
-                if (user.guest_id.HasValue)
-                {
-                    updatedUser = this.usersSetup.UpdateGuest(
-                        credentials,
-                        this.GetAdobeConnectProvider(credentials),
-                        session.LtiSession.LtiParam,
-                        user,
-                        meetingId,
-                        out error);
-                }
-                else
-                {
-                    updatedUser = this.usersSetup.UpdateUser(
-                        credentials,
-                        this.GetAdobeConnectProvider(credentials),
-                        session.LtiSession.LtiParam,
-                        user,
-                        meetingId,
-                        out error);
-                }
-
-                if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(new[] { updatedUser }));
-
-                return Json(OperationResult.Error(error));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("UpdateUser", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-
+        
         [HttpPost]
         public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, int meetingId)
         {
