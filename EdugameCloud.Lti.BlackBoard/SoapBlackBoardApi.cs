@@ -208,12 +208,14 @@ namespace EdugameCloud.Lti.BlackBoard
 
                         if (enrollments != null)
                         {
+                            var activeEnrollments = enrollments.Where(x => x.available.HasValue && x.available.Value);
+
                             CourseMembershipRoleVO[] roles = membership.loadRoles(null);
                             var userFilter = new UserFilter
                             {
                                 filterTypeSpecified = true,
                                 filterType = 2,
-                                id = enrollments.Select(x => x.userId).ToArray(),
+                                id = activeEnrollments.Select(x => x.userId).ToArray(),
                             };
                             UserWrapper userService = c.getUserWrapper();
                             if (userService != null)
@@ -225,7 +227,7 @@ namespace EdugameCloud.Lti.BlackBoard
                                     return new Tuple<List<LmsUserDTO>, string>(resultedList, errorDuringEnrollments);
                                 }
 
-                                resultedList = enrollments.Select(
+                                resultedList = activeEnrollments.Select(
                                     e =>
                                     {
                                         var user = users.FirstOrDefault(u => e.userId == u.id);
