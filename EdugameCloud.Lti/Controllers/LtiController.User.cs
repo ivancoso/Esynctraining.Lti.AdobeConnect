@@ -109,6 +109,7 @@
                         session.LtiSession.LtiParam,
                         ac_id,
                         meetingId,
+                        guest_id.Value,
                         out error);
                 }
                 else

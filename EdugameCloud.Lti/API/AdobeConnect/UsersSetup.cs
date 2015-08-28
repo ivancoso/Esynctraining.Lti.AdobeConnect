@@ -1141,6 +1141,7 @@
             LtiParamDTO param,
             string principalId,
             int meetingId,
+            int guestId,
             out string error)
         {
             error = null;
@@ -1167,7 +1168,7 @@
                 principalId,
                 MeetingPermissionId.remove);
 
-            LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.Id == user.guest_id);
+            LmsCourseMeetingGuest guest = meeting.MeetingGuests.FirstOrDefault(x => x.Id == guestId);
             if (guest != null)
             {
                 meeting.MeetingGuests.Remove(guest);
