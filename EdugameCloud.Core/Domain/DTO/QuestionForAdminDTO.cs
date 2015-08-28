@@ -13,6 +13,9 @@
     {
         #region Public Properties
 
+        [DataMember]
+        public int questionOrder { get; set; }
+
         /// <summary>
         /// Gets or sets the distractors.
         /// </summary>

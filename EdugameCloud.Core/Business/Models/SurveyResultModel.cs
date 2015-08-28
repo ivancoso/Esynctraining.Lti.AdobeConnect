@@ -95,7 +95,8 @@ namespace EdugameCloud.Core.Business.Models
                     .ToList()
                     .Select(x => new SurveyPlayerDTO(x))
                     .ToArray();
-
+            //saving the questions order
+            res.questions = res.questions.OrderBy(x => x.questionOrder).ToArray();
             var questionIds = res.questions.Select(q => q.questionId).ToList();
 
             var query = new DefaultQueryOver<SurveyQuestionResult, int>().GetQueryOver()

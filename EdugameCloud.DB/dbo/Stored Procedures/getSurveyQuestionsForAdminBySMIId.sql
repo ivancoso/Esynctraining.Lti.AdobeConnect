@@ -15,6 +15,7 @@ BEGIN
 SELECT   Q.questionId,
 		 Q.question,	
 		 Q.questionTypeId,
+		 Q.questionOrder,
 		 CASE 
 		    WHEN Q.questionTypeId = 12 THEN qr.restrictions 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.restrictions 
