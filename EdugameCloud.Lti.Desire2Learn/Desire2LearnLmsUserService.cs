@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Logging;
@@ -67,36 +68,36 @@ namespace EdugameCloud.Lti.Desire2Learn
                     courseId),
                 lmsCompany);
 
-            // get enrollments - this information contains user roles
-            var enrollmentsList = new List<OrgUnitUser>();
-            PagedResultSet<OrgUnitUser> enrollments = null;
-            do
-            {
-                enrollments = d2lApiService.GetApiObjects<PagedResultSet<OrgUnitUser>>(
-                    tokens[0],
-                    tokens[1],
-                    lmsCompany.LmsDomain,
-                    string.Format(
-                        d2lApiService.EnrollmentsUrlFormat,
-                        (string)this.settings.D2LApiVersion,
-                        courseId)
-                    + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
-                    lmsCompany);
-                if (enrollments == null || enrollments.Items == null)
-                {
-                    error = "Incorrect API call or returned data. Please contact site administrator";
-                    this.logger.Error("[D2L Enrollments]: Object returned from API has null value");
-                    return new List<LmsUserDTO>();
-                }
-
-                enrollmentsList.AddRange(enrollments.Items);
-            }
-            while (enrollments.PagingInfo.HasMoreItems);
-
             // mapping to LmsUserDTO
             var result = new List<LmsUserDTO>();
             if (classlistEnrollments != null)
             {
+                // get enrollments - this information contains user roles
+                var enrollmentsList = new List<OrgUnitUser>();
+                PagedResultSet<OrgUnitUser> enrollments = null;
+                do
+                {
+                    enrollments = d2lApiService.GetApiObjects<PagedResultSet<OrgUnitUser>>(
+                        tokens[0],
+                        tokens[1],
+                        lmsCompany.LmsDomain,
+                        string.Format(
+                            d2lApiService.EnrollmentsUrlFormat,
+                            (string) this.settings.D2LApiVersion,
+                            courseId)
+                        + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
+                        lmsCompany);
+                    if (enrollments == null || enrollments.Items == null)
+                    {
+                        error = "Incorrect API call or returned data. Please contact site administrator";
+                        this.logger.Error("[D2L Enrollments]: Object returned from API has null value");
+                        return new List<LmsUserDTO>();
+                    }
+
+                    enrollmentsList.AddRange(enrollments.Items);
+                } while (enrollments.PagingInfo.HasMoreItems && !String.IsNullOrEmpty(enrollments.PagingInfo.Bookmark));
+
+
                 // current is not enrolled to this course (user is admin) -> add him to user list
                 if (AllowAdminAdditionToCourse && classlistEnrollments.All(x => x.Identifier != lmsUserId))
                 {
@@ -110,14 +111,16 @@ namespace EdugameCloud.Lti.Desire2Learn
                             currentUserTokens[0],
                             currentUserTokens[1],
                             lmsCompany.LmsDomain,
-                            string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.D2LApiVersion),
+                            string.Format(d2lApiService.WhoAmIUrlFormat, (string) this.settings.D2LApiVersion),
                             lmsCompany);
 
                         if (currentUserInfo != null)
                         {
                             //
-                            var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1], lmsCompany.LmsDomain,
-                                string.Format(d2lApiService.GetUserUrlFormat, (string)this.settings.D2LApiVersion, currentUserInfo.Identifier), 
+                            var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1],
+                                lmsCompany.LmsDomain,
+                                string.Format(d2lApiService.GetUserUrlFormat, (string) this.settings.D2LApiVersion,
+                                    currentUserInfo.Identifier),
                                 lmsCompany);
 
                             classlistEnrollments.Add(
