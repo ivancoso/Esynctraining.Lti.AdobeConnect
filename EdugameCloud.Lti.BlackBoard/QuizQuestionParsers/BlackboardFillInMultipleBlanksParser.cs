@@ -34,7 +34,8 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             var dto = new AnswerDTO()
             {
                 id = blankId,
-                text = String.Join(BlackboardHelper.AnswersSeparator, typedAnswers.Select(a => a.text)),
+                text = String.Join(BlackboardHelper.AnswersSeparator, 
+                    typedAnswers.Where(x => !String.IsNullOrEmpty(x.text)).Select(a => a.text)), // BB sends empty answers sometimes, we ignore them
                 blank_id = blankName,
                 question_type = String.Join(BlackboardHelper.AnswersSeparator, typedAnswers.Select(a => a.subType)),
                 caseSensitive = typedAnswers.Any(x => x.caseSensitive)

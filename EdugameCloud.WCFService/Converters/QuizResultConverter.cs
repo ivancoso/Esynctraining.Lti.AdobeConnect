@@ -271,7 +271,7 @@
                                 string.Format("data//options[@id='{0}']//option[@name=/*/@searchName]", id, userText));
                         if (optionTag != null && optionTag.Attributes["lmsid"] != null)
                         {
-                            ret.Add(orderAsKey ? orderAsKey.ToString() : key, optionTag.Attributes["lmsid"].Value);
+                            ret.Add(orderAsKey ? order.ToString() : key, optionTag.Attributes["lmsid"].Value);
                             orderKey++;
                         }
                     }
