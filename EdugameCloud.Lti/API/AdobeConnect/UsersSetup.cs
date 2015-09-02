@@ -611,7 +611,7 @@
                         .FirstOrDefault(x => x.LmsRoleName.Equals(lmsUserDto.lms_role, StringComparison.OrdinalIgnoreCase));
                     if (mapping != null && mapping.AcRole == AcRole.None.Id) // LMS role is set to be not mapped to any AC role
                     {
-                        lmsUserDto.ac_role = null;
+                        lmsUserDto.ac_role = AcRole.None.Name;
                         meetingPermissions.Add(new PermissionUpdateTrio
                         {
                             ScoId = meetingSco,

@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Core.Business
                     if (!ignoreEmptyACRole)
                     {
                         permission = AcRole.None.MeetingPermissionId;
-                        u.ac_role = null;
+                        u.ac_role = AcRole.None.Name;
                     }
 
                     return permission;
