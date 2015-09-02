@@ -5,6 +5,7 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
 {
     public sealed class AcRole
     {
+        public static readonly AcRole None = new AcRole { Id = 0, Name = null, MeetingPermissionId = MeetingPermissionId.remove };
         public static readonly AcRole Host = new AcRole { Id = 1, Name = "Host", MeetingPermissionId = MeetingPermissionId.host };
         public static readonly AcRole Presenter = new AcRole { Id = 2, Name = "Presenter", MeetingPermissionId = MeetingPermissionId.mini_host };
         public static readonly AcRole Participant = new AcRole { Id = 3, Name = "Participant", MeetingPermissionId = MeetingPermissionId.view };
@@ -21,6 +22,7 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
         {
             switch (acRoleId)
             {
+                case 0: return None;
                 case 1: return Host;
                 case 2: return Presenter;
                 case 3: return Participant;

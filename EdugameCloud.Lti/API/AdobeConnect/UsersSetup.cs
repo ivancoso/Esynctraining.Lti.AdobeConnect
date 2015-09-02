@@ -198,10 +198,9 @@
             return ProcessACMeetingAttendees(new HashSet<string>(), provider, allValues, alreadyAdded);
         }
 
-        public void GetParamLoginAndEmail(LtiParamDTO param, LmsCompany lmsCompany, out string email, out string login)
+        public string GetParamLogin(LtiParamDTO param, LmsCompany lmsCompany)
         {
-            email = param.lis_person_contact_email_primary;
-            login = param.lms_user_login;
+            var login = param.lms_user_login;
             if (string.IsNullOrWhiteSpace(login))
             {
                 // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
@@ -222,6 +221,8 @@
                     login = user.login_id;
                 }
             }
+
+            return login;
         }
 
         public IList<LmsUserDTO> GetUsers(
@@ -606,7 +607,23 @@
 
                 if (enrollment != null)
                 {
-                    lmsUserDto.ac_role = AcRole.GetRoleName(enrollment.PermissionId);
+                    LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings
+                        .FirstOrDefault(x => x.LmsRoleName.Equals(lmsUserDto.lms_role, StringComparison.OrdinalIgnoreCase));
+                    if (mapping != null && mapping.AcRole == AcRole.None.Id) // LMS role is set to be not mapped to any AC role
+                    {
+                        lmsUserDto.ac_role = null;
+                        meetingPermissions.Add(new PermissionUpdateTrio
+                        {
+                            ScoId = meetingSco,
+                            PrincipalId = dbUser.PrincipalId,
+                            PermissionId = AcRole.None.MeetingPermissionId,
+                        });
+                    }
+                    else
+                    {
+                        lmsUserDto.ac_role = AcRole.GetRoleName(enrollment.PermissionId);
+                    }
+
                     principalIds.Remove(dbUser.PrincipalId);
                 }
                 else if (!string.IsNullOrEmpty(dbUser.PrincipalId))
@@ -1011,7 +1028,7 @@
                 }
                 else
                 {
-                    permission = new RoleMappingService().SetAcRole(lmsCompany, user);
+                    permission = new RoleMappingService().SetAcRole(lmsCompany, user, ignoreEmptyACRole: true);
                 }
 
                 try

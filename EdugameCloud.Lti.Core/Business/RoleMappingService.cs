@@ -9,7 +9,7 @@ namespace EdugameCloud.Lti.Core.Business
 {
     public sealed class RoleMappingService
     {
-        public MeetingPermissionId SetAcRole(LmsCompany lmsCompany, LmsUserDTO u)
+        public MeetingPermissionId SetAcRole(LmsCompany lmsCompany, LmsUserDTO u, bool ignoreEmptyACRole = false)
         {
             string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
 
@@ -18,15 +18,28 @@ namespace EdugameCloud.Lti.Core.Business
             if (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
             {
                 permission = MeetingPermissionId.remove;
-                u.ac_role = "Remove";
+                u.ac_role = "Remove"; // probably doesn't make sence, need to review and remove
             }
 
             LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings.FirstOrDefault(x => x.LmsRoleName.Equals(role, StringComparison.OrdinalIgnoreCase));
             if (mapping != null)
             {
-                AcRole acRole = AcRole.GetById(mapping.AcRole);
-                u.ac_role = acRole.Name;
-                return acRole.MeetingPermissionId;
+                if (mapping.AcRole == AcRole.None.Id)
+                {
+                    if (!ignoreEmptyACRole)
+                    {
+                        permission = AcRole.None.MeetingPermissionId;
+                        u.ac_role = null;
+                    }
+
+                    return permission;
+                }
+                else
+                {
+                    AcRole acRole = AcRole.GetById(mapping.AcRole);
+                    u.ac_role = acRole.Name;
+                    return acRole.MeetingPermissionId;
+                }
             }
 
             if (role.Contains("teacher") || role.Contains("instructor") || role.Contains("owner")
@@ -45,7 +58,5 @@ namespace EdugameCloud.Lti.Core.Business
 
             return permission;
         }
-
     }
-
 }

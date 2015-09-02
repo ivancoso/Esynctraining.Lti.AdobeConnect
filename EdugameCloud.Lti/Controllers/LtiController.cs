@@ -629,12 +629,9 @@
                 // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
-                string email;
-                string login;
-                this.usersSetup.GetParamLoginAndEmail(param, lmsCompany, out email, out login);
-                param.ext_user_username = login; // NOTE: is saved in session!
+                param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); ; // NOTE: is saved in session!
 
-                var lmsUser = this.lmsUserModel.GetOneByUserIdOrUserNameOrEmailAndCompanyLms(param.lms_user_id, param.lms_user_login, param.lis_person_contact_email_primary, lmsCompany.Id);
+                var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
                 LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
                 var key = session.Id.ToString();
