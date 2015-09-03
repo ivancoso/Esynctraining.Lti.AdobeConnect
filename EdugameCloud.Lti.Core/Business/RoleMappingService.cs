@@ -58,5 +58,15 @@ namespace EdugameCloud.Lti.Core.Business
 
             return permission;
         }
+
+        public void CheckAndSetNoneACMapping(LmsUserDTO user, LmsCompany lmsCompany)
+        {
+            LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings
+                        .FirstOrDefault(x => x.LmsRoleName.Equals(user.lms_role, StringComparison.OrdinalIgnoreCase));
+            if (mapping != null && mapping.AcRole == AcRole.None.Id) // LMS role is set to be not mapped to any AC role
+            {
+                user.ac_role = AcRole.None.Name;
+            }
+        }
     }
 }

@@ -345,6 +345,7 @@
 
                     if (string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
+                        new RoleMappingService().CheckAndSetNoneACMapping(user, lmsCompany);
                         continue;
                     }
 
@@ -365,6 +366,10 @@
                     {
                         user.ac_role = AcRole.Participant.Name;
                         attendees.Participants = attendees.Participants.Where(v => v.PrincipalId != user.ac_id).ToList();
+                    }
+                    else
+                    {
+                        new RoleMappingService().CheckAndSetNoneACMapping(user, lmsCompany);
                     }
                 }
 
@@ -607,16 +612,14 @@
 
                 if (enrollment != null)
                 {
-                    LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings
-                        .FirstOrDefault(x => x.LmsRoleName.Equals(lmsUserDto.lms_role, StringComparison.OrdinalIgnoreCase));
-                    if (mapping != null && mapping.AcRole == AcRole.None.Id) // LMS role is set to be not mapped to any AC role
+                    new RoleMappingService().CheckAndSetNoneACMapping(lmsUserDto, lmsCompany);
+                    if(lmsUserDto.ac_role == AcRole.None.Name)
                     {
-                        lmsUserDto.ac_role = AcRole.None.Name;
                         meetingPermissions.Add(new PermissionUpdateTrio
                         {
                             ScoId = meetingSco,
                             PrincipalId = dbUser.PrincipalId,
-                            PermissionId = AcRole.None.MeetingPermissionId,
+                            PermissionId = AcRole.None.MeetingPermissionId
                         });
                     }
                     else
