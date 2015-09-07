@@ -36,7 +36,7 @@
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
-            if (courseId <= 0)
+            if (courseId == 0)
                 throw new ArgumentOutOfRangeException("courseId");
             if (id <= 0)
                 throw new ArgumentOutOfRangeException("id");
@@ -207,7 +207,7 @@
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
-            if (courseId <= 0)
+            if (courseId == 0)
                 throw new ArgumentOutOfRangeException("courseId");
             if (type <= 0)
                 throw new ArgumentOutOfRangeException("type");
@@ -234,7 +234,7 @@
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");
-            if (courseId <= 0)
+            if (courseId == 0)
                 throw new ArgumentOutOfRangeException("courseId");
 
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()

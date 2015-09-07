@@ -15,6 +15,8 @@
     /// </summary>
     public sealed class CompanyLmsValidator : AbstractValidator<CompanyLmsDTO>
     {
+        public static readonly List<string> LmsProvidersWithoutAdmin =
+            new List<string> { LmsProviderNames.Canvas, LmsProviderNames.Brightspace, LmsProviderNames.Sakai };
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsValidator"/> class.
         /// </summary>
@@ -33,8 +35,7 @@
                 .WithError(Errors.CODE_ERRORTYPE_INVALID_OBJECT, "Invalid LMS Provider Name")
                 .Must(
                     (model, x) =>
-                    x.Equals(LmsProviderNames.Canvas, StringComparison.OrdinalIgnoreCase)
-                    || x.Equals(LmsProviderNames.Brightspace, StringComparison.OrdinalIgnoreCase)
+                    LmsProvidersWithoutAdmin.Contains(x.ToLower())
                     || model.enableProxyToolMode
                     || !string.IsNullOrWhiteSpace(model.lmsAdmin))
                 .WithError(
