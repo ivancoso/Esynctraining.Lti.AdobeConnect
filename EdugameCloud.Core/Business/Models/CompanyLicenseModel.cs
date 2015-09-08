@@ -1,16 +1,14 @@
-﻿namespace EdugameCloud.Core.Business.Models
+﻿using System;
+using System.Collections.Generic;
+using EdugameCloud.Core.Domain.Entities;
+using Esynctraining.Core.Business;
+using Esynctraining.Core.Business.Models;
+using Esynctraining.Core.Business.Queries;
+using NHibernate;
+using NHibernate.Transform;
+
+namespace EdugameCloud.Core.Business.Models
 {
-    using System.Collections.Generic;
-
-    using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
-    using NHibernate;
-    using NHibernate.Transform;
-
     /// <summary>
     ///     The company model.
     /// </summary>
@@ -45,9 +43,10 @@
         public IFutureValue<CompanyLicense> GetOneByCompanyId(int companyId)
         {
             var queryOver =
-                new DefaultQueryOver<CompanyLicense, int>().GetQueryOver()
-                                                           .JoinQueryOver(x => x.Company)
-                                                           .Where(c => c.Id == companyId);
+                new DefaultQueryOver<CompanyLicense, int>().GetQueryOver().Where(cl => cl.ExpiryDate > DateTime.UtcNow)
+                    .OrderBy(x => x.DateCreated).Desc    
+                    .JoinQueryOver(x => x.Company)
+                    .Where(c => c.Id == companyId);
             queryOver.TransformUsing(Transformers.DistinctRootEntity).Take(1);
             return this.Repository.FindOne(queryOver);
         }
