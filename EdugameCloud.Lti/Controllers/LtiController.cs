@@ -1282,6 +1282,13 @@
             var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value;
             session = session ?? new LmsUserSession { LmsCompany = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
             var sessionData = new LtiSessionDTO { LtiParam = param };
+            if (lmsUser != null && lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword 
+                && session.LtiSession != null)
+            {
+                var oldSessionData = session.LtiSession;
+                sessionData.ACPasswordData = oldSessionData.ACPasswordData;
+                sessionData.SharedKey = oldSessionData.SharedKey;
+            }
             session.SessionData = JsonConvert.SerializeObject(sessionData);
             this.userSessionModel.RegisterSave(session, flush: true);
 

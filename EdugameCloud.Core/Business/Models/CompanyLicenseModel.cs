@@ -44,7 +44,8 @@ namespace EdugameCloud.Core.Business.Models
         {
             var queryOver =
                 new DefaultQueryOver<CompanyLicense, int>().GetQueryOver().Where(cl => cl.ExpiryDate > DateTime.UtcNow)
-                    .OrderBy(x => x.DateCreated).Desc    
+                    .OrderBy(x => (int)x.LicenseStatus).Desc
+                    .OrderBy(x => x.DateCreated).Desc
                     .JoinQueryOver(x => x.Company)
                     .Where(c => c.Id == companyId);
             queryOver.TransformUsing(Transformers.DistinctRootEntity).Take(1);
