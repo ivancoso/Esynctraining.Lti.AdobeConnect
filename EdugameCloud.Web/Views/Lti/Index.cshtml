@@ -14,7 +14,6 @@
 	var EsyncLti = {};
 	EsyncLti.version = '@ViewBag.LtiVersion';
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
-	EsyncLti.acPassword = @if (ViewBag.RestoredACPassword == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(ViewBag.RestoredACPassword) + "'"); };
 	EsyncLti.acUsesEmailAsLogin = @settings.ACUsesEmailAsLogin.ToString().ToLower();
 	EsyncLti.usesSyncUsers = @settings.UseSynchronizedUsers.ToString().ToLower();
 	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);

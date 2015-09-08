@@ -359,7 +359,6 @@
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode)
         {
             var meetingsJson = TempData["meetings"] as string;
-            var password = TempData["RestoredACPassword"] as string;
             var policies = TempData["ACPasswordPolicies"] as string;
             var userFullName = TempData["CurrentUserFullName"] as string;
             LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
@@ -375,11 +374,6 @@
                     acProvider,
                     param);
 
-                if (string.IsNullOrWhiteSpace(password))
-                {
-                    password = session.LtiSession.RestoredACPassword;
-                }
-
                 meetingsJson = JsonConvert.SerializeObject(meetings);                
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
                 userFullName = param.lis_person_name_full;
@@ -390,7 +384,6 @@
             version = version.Substring(0, version.LastIndexOf('.'));
             ViewBag.LtiVersion = version;
             ViewBag.MeetingsJson = meetingsJson;
-            ViewBag.RestoredACPassword = password;
             ViewBag.ACPasswordPolicies = policies;
             // TRICK:
             // BB contains: lis_person_name_full:" Blackboard  Administrator"
@@ -1139,7 +1132,6 @@
                 param);
 
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
-            TempData["RestoredACPassword"] = session.LtiSession.RestoredACPassword;
             TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials);
             TempData["CurrentUserFullName"] = param.lis_person_name_full;
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider));
