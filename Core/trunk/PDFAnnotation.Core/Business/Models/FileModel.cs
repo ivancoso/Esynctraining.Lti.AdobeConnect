@@ -1168,8 +1168,10 @@ namespace PDFAnnotation.Core.Business.Models
                     {
                         if (!System.IO.File.Exists(conversionFlag))
                         {
-                            System.IO.File.Create(conversionFlag);
-                            this.RemoveFileSafely(tmpSwf);
+                            using (var st = System.IO.File.Create(conversionFlag))
+                            {
+                                this.RemoveFileSafely(tmpSwf);
+                            }
                             var converter = IoC.Resolve<Pdf2SwfConverter>();
                             converter.Convert(tmpPDF, tmpSwf);
                             this.RemoveFileSafely(conversionFlag);
@@ -1568,7 +1570,7 @@ namespace PDFAnnotation.Core.Business.Models
                 entity.DateModified = DateTime.Now.AddMinutes(1);
             }
 
-            base.RegisterSave(entity, flush, updateDateModified);
+            base.RegisterSave(entity, flush, false);
         }
 
         /// <summary>
@@ -1931,6 +1933,17 @@ namespace PDFAnnotation.Core.Business.Models
                 // ReSharper disable once EmptyGeneralCatchClause
             catch
             {
+                try
+                {
+                    //second try with removing readonly 
+                    System.IO.File.SetAttributes(fileName, FileAttributes.Normal);
+                    System.IO.File.Exists(fileName);
+                    System.IO.File.Delete(fileName);
+                }
+                catch (Exception)
+                {
+                    
+                }
             }
         }
 

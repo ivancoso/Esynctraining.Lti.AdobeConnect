@@ -19,17 +19,19 @@
         {
             this.Map(x => x.FileName).Length(255).Not.Nullable();
             this.Map(x => x.FileSize).Length(255).Nullable();
+
             this.Map(x => x.DateCreated).Not.Nullable();
+            this.Map(x => x.DateModified).Nullable();
+
             this.Map(x => x.Status).Nullable().CustomType<FileStatus>();
             this.Map(x => x.Description).Nullable();
             this.Map(x => x.TopicName).Column("topicName").Length(255).Nullable();
             this.Map(x => x.DisplayName).Length(255).Nullable();
-            this.Map(x => x.DateModified).Nullable();
+            
             this.Map(x => x.FileNumber).Nullable();
             this.Map(x => x.IsShared).Nullable();
             this.Map(x => x.IsOriginal).Nullable();
             this.Map(x => x.AcMeetingUrl).Column("acMeetingUrl").Length(1000).Nullable();
-
             this.Map(x => x.NumberOfPages).Nullable();
             this.Map(x => x.UploadFileStatus).Not.Nullable().CustomType<UploadFileStatus>().Default("1");
 

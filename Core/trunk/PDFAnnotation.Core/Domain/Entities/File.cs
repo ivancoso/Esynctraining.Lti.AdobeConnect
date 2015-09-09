@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Esynctraining.Core.Extensions;
 
 namespace PDFAnnotation.Core.Domain.Entities
 {
@@ -8,13 +9,12 @@ namespace PDFAnnotation.Core.Domain.Entities
     using Esynctraining.Core.FullText;
     using Iesi.Collections.Generic;
 
-
     /// <summary>
     ///     The file.
     /// </summary>
     [Serializable]
     [FullTextEnabled]
-    public class File : EntityGuid, IDatesContainer
+    public class File : EntityGuid
     {
         #region Fields
 
@@ -33,6 +33,8 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// </summary>
         private DateTime dateCreated;
 
+        private DateTime? dateModified;
+
         #endregion
 
         #region Constructors and Destructors
@@ -42,7 +44,7 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// </summary>
         public File()
         {
-            this.dateCreated = DateTime.Now;
+            this.dateCreated = DateTime.Now.AddSeconds(-30);
             this.status = FileStatus.Created;
         }
 
@@ -78,15 +80,24 @@ namespace PDFAnnotation.Core.Domain.Entities
 
             set
             {
-                this.dateCreated = value;
-                this.DateModified = value;
+                this.dateCreated = value.AdaptToSQL();
             }
         }
 
         /// <summary>
         ///     Gets or sets the date.
         /// </summary>
-        public virtual DateTime? DateModified { get; set; }
+        public virtual DateTime? DateModified
+        {
+            get
+            {
+                return this.dateModified;
+            }
+            set
+            {
+                this.dateModified = value.AdaptToSQL();
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the name.
