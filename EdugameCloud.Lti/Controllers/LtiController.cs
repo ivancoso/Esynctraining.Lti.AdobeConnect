@@ -532,7 +532,7 @@
             }
         }
 
-        public virtual ActionResult JoinMeetingMobile(string lmsProviderName, int meetingId)
+        public virtual ActionResult JoinMeetingMobile(string lmsProviderName)
         {
             LmsCompany lmsCompany = null;
             try
