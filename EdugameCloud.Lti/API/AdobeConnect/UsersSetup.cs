@@ -123,7 +123,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public bool SetACPassword(IAdobeConnectProxy provider, LmsCompany lmsCompany, 
-            LmsUser lmsUser, LtiParamDTO param, AcConnectionMode connectionMode, string adobeConnectPassword)
+            LmsUser lmsUser, LtiParamDTO param, string adobeConnectPassword)
         {
             if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
             {
@@ -139,8 +139,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (registeredUser != null)
                 {
-                    var loginResult = acAccountService.LoginIntoAC(lmsCompany, param, registeredUser, connectionMode,
-                        param.lis_person_contact_email_primary, param.lms_user_login, adobeConnectPassword, provider, updateAcUser: false);
+                    var loginResult = acAccountService.LoginIntoAC(lmsCompany, param, registeredUser, 
+                        adobeConnectPassword, provider, updateAcUser: false);
 
                     if (loginResult != null)
                     {

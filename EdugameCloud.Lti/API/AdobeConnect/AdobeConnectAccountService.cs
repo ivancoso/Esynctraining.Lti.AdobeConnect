@@ -148,15 +148,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             LtiParamDTO param,
             Principal registeredUser,
-            AcConnectionMode connectionMode,
-            string email,
-            string login,
             string password,
             IAdobeConnectProxy provider,
             bool updateAcUser = true)
         {
+            if(registeredUser == null)
+                throw new ArgumentNullException("registeredUser");
+
             string breezeToken = null;
-            
+
             if (updateAcUser)
             {
                 try
@@ -180,60 +180,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var userProvider = this.GetProvider(lmsCompany, false); // separate provider for user not to lose admin logging in
 
-            LoginResult resultByLogin = null;
-
-            //Maybe we should remove if statement : unable to use lms login instead of ac login, sometimes they are not matched
-            if (!string.IsNullOrEmpty(login))
-            {
-                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
-                if (!resultByLogin.Success)
-                {
-                    string msg = string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
-                        resultByLogin.Status.GetErrorInfo(),
-                        registeredUser.Login,
-                        password,
-                        param.user_id,
-                        param.oauth_consumer_key);
-                    _logger.Error(msg);
-                }
-            }
-            if (resultByLogin != null && resultByLogin.Success)
+            LoginResult resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
+            if (resultByLogin.Success)
             {
                 breezeToken = resultByLogin.Status.SessionInfo;
             }
             else
             {
-                var resultByEmail = userProvider.Login(new UserCredentials(email, password));
-                if (resultByEmail.Success)
-                {
-                    breezeToken = resultByEmail.Status.SessionInfo;
-                }
-                else
-                {
-                    string msg = string.Format("[LoginIntoAC Error] {0}. Email:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
-                        resultByEmail.Status.GetErrorInfo(),
-                        email,
-                        password,
-                        param.user_id,
-                        param.oauth_consumer_key);
-                    _logger.Error(msg);
-                }
-
-                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
-                if (!resultByLogin.Success)
-                {
-                    string msg = string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
+                string msg =
+                    string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
                         resultByLogin.Status.GetErrorInfo(),
                         registeredUser.Login,
                         password,
                         param.user_id,
                         param.oauth_consumer_key);
-                    _logger.Error(msg);
-                }
-                else
-                {
-                    breezeToken = resultByLogin.Status.SessionInfo;
-                }
+                _logger.Error(msg);
             }
 
             return breezeToken;

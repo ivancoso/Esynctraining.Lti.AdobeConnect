@@ -76,8 +76,8 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
-
-                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession);
+                var provider = GetAdobeConnectProvider(lmsCompany);
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, adobeConnectProvider:provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
@@ -115,8 +115,9 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
+                var provider = GetAdobeConnectProvider(lmsCompany);
 
-                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "edit");
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "edit", adobeConnectProvider: provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
@@ -135,8 +136,9 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
+                var provider = GetAdobeConnectProvider(lmsCompany);
 
-                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "offline");
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "offline", adobeConnectProvider: provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)

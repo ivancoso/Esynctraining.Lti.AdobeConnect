@@ -20,9 +20,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             LtiParamDTO param,
             Principal registeredUser,
-            AcConnectionMode connectionMode,
-            string email,
-            string login,
             string password,
             IAdobeConnectProxy provider,
             bool updateAcUser = true);

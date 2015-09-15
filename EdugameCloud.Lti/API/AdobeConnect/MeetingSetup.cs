@@ -523,14 +523,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Principal registeredUser, IAdobeConnectProxy provider)
         {
             string breezeToken = null;
-            string email = param.lis_person_contact_email_primary;
-            string login = param.lms_user_login;
             string generatedPassword = null;
             if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPasswordData))
             {
-                // todo: check that below is correct comparison. We should define what we use - email or login
-                if (lmsCompany.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
-                    || lmsCompany.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase))
+                if (lmsCompany.AcUsername.Equals(registeredUser.Login, StringComparison.OrdinalIgnoreCase))
                 {
                     generatedPassword = lmsCompany.AcPassword;
                     UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
@@ -552,13 +548,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsCompany,
                     param,
                     registeredUser,
-                    lmsUser.AcConnectionMode,
-                    param.lis_person_contact_email_primary,
-                    param.lis_person_contact_email_primary,
                     password,
                     provider);
-                if (breezeToken == null && generatedPassword == null &&
-                    lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
+                if (breezeToken == null && generatedPassword == null && lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
                 {
                     // trying to login with new generated password (in case, for example, when user changed his AC password manually)
                     generatedPassword = Membership.GeneratePassword(8, 2);
@@ -571,9 +563,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         lmsCompany,
                         param,
                         registeredUser,
-                        lmsUser.AcConnectionMode,
-                        email,
-                        login,
                         generatedPassword,
                         provider);
                 }

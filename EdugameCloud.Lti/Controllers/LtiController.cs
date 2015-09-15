@@ -283,7 +283,7 @@
                 if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {
                     var provider = GetAdobeConnectProvider(lmsCompany);
-                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, acConnectionMode, settings.password);
+                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, settings.password);
                     if (!couldSavePassword)
                     {
                         return Json(OperationResult.Error("The password you provided is incorrect. Please try again."));
