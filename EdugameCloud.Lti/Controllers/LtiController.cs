@@ -277,13 +277,13 @@
                     lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = lmsCompany, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
                 }
 
-                lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
+                var acConnectionMode = (AcConnectionMode)settings.acConnectionMode;
                 lmsUser.PrimaryColor = settings.primaryColor;
 
-                if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
+                if (acConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {
                     var provider = GetAdobeConnectProvider(lmsCompany);
-                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, settings.password);
+                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, acConnectionMode, settings.password);
                     if (!couldSavePassword)
                     {
                         return Json(OperationResult.Error("The password you provided is incorrect. Please try again."));
@@ -295,6 +295,7 @@
                     lmsUser.ACPasswordData = null;
                 }
 
+                lmsUser.AcConnectionMode = acConnectionMode;
                 this.lmsUserModel.RegisterSave(lmsUser);
                 return Json(OperationResult.Success(settings));
             }
