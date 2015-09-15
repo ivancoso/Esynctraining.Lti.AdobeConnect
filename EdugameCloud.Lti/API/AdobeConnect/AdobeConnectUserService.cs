@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.DTO;
-using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
@@ -21,13 +19,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string lastName, 
             LmsCompany lmsCompany)
         {
-            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
+            bool searchByEmail = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
             bool denyUserCreation = lmsCompany.DenyACUserCreation;
-            Principal principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
+            Principal principal = this.GetPrincipalByLoginOrEmail(provider, login, email, searchByEmail);
 
             if (principal == null && !denyUserCreation)
             {
-                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmailFirst);
+                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
 
             return principal;
@@ -42,23 +40,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IEnumerable<Principal> principalCache)
         {
-            bool searchByEmailFirst = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
+            bool searchByEmail = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault();
             bool denyUserCreation = lmsCompany.DenyACUserCreation;
 
             Principal principal = null;
             if (principalCache != null)
             {
-                principal = GetPrincipalByLoginOrEmail(principalCache, login, email, searchByEmailFirst);
+                principal = GetPrincipalByLoginOrEmail(principalCache, login, email, searchByEmail);
             }
 
             if (principal == null)
             {
-                principal = GetPrincipalByLoginOrEmail(provider, login, email, searchByEmailFirst);
+                principal = GetPrincipalByLoginOrEmail(provider, login, email, searchByEmail);
             }
 
             if (!denyUserCreation && (principal == null))
             {
-                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmailFirst);
+                principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
 
             return principal;
@@ -68,73 +66,26 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             string login,
             string email,
-            bool searchByEmailFirst)
+            bool searchByEmail)
         {
-            Principal principal = null;
-
-            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
-            {
-                PrincipalCollectionResult resultByEmail = provider.GetAllByEmail(email);
-                if (!resultByEmail.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            if (principal == null && !string.IsNullOrWhiteSpace(login))
-            {
-                PrincipalCollectionResult resultByLogin = provider.GetAllByLogin(login);
-                if (!resultByLogin.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByLogin.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            if (!searchByEmailFirst && principal == null && !string.IsNullOrWhiteSpace(email))
-            {
-                PrincipalCollectionResult resultByEmail = provider.GetAllByEmail(email);
-                if (!resultByEmail.Success)
-                {
-                    return null;
-                }
-
-                principal = resultByEmail.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
-            }
-
-            return principal;
+            PrincipalCollectionResult result = searchByEmail 
+                ? provider.GetAllByEmail(email) 
+                : provider.GetAllByLogin(login);
+            if (!result.Success)
+                return null;
+            
+            return result.Return(x => x.Values, Enumerable.Empty<Principal>()).FirstOrDefault();
         }
 
         private Principal GetPrincipalByLoginOrEmail(
-            IEnumerable<Principal> principalCache, 
-            string login, 
-            string email, 
-            bool searchByEmailFirst)
+            IEnumerable<Principal> principalCache,
+            string login,
+            string email,
+            bool searchByEmail)
         {
-            Principal principal = null;
-
-            if (searchByEmailFirst && !string.IsNullOrWhiteSpace(email))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if ((principal == null) && !string.IsNullOrWhiteSpace(login))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
-            }
-
-            if (!searchByEmailFirst && (principal == null) && !string.IsNullOrWhiteSpace(email))
-            {
-                principal = principalCache.FirstOrDefault(
-                    p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            }
-
-            return principal;
+            return searchByEmail
+                ? principalCache.FirstOrDefault(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase))
+                : principalCache.FirstOrDefault(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
         }
 
         private Principal CreatePrincipal(

@@ -598,9 +598,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
-            
-            string email = param.lis_person_contact_email_primary, login = param.lms_user_login;
 
+            string login = param.lms_user_login;
+            string email = param.lis_person_contact_email_primary;
+            
             Principal registeredUser = AcUserService.GetPrincipalByLoginOrEmail(provider, login, email, lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
 
             if (registeredUser != null)
