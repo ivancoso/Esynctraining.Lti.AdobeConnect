@@ -264,17 +264,17 @@
         [HttpPost]
         public virtual JsonResult SaveSettings(LmsUserSettingsDTO settings)
         {
-            LmsCompany companyLms = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var lmsProviderName = settings.lmsProviderName;
                 var session = this.GetSession(lmsProviderName);
-                companyLms = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, companyLms.Id).Value;
+                var lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
-                    lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = companyLms, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
+                    lmsUser = session.LmsUser ?? new LmsUser { LmsCompany = lmsCompany, UserId = param.lms_user_id, Username = GetUserNameOrEmail(param) };
                 }
 
                 lmsUser.AcConnectionMode = (AcConnectionMode)settings.acConnectionMode;
@@ -282,11 +282,17 @@
 
                 if (lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword)
                 {
-                    this.SetACPassword(session, param, settings.password);
+                    var provider = GetAdobeConnectProvider(lmsCompany);
+                    var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, settings.password);
+                    if (!couldSavePassword)
+                    {
+                        return Json(OperationResult.Error("The password you provided is incorrect. Please try again."));
+                    }
                 }
                 else
                 {
-                    this.RemoveACPassword(param, session);
+                    lmsUser.SharedKey = null;
+                    lmsUser.ACPasswordData = null;
                 }
 
                 this.lmsUserModel.RegisterSave(lmsUser);
@@ -294,7 +300,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("SaveSettings", companyLms, ex);
+                string errorMessage = GetOutputErrorMessage("SaveSettings", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -325,7 +331,7 @@
                     switch (mode)
                     {
                         case AcConnectionMode.DontOverwriteLocalPassword:
-                            isValid = !string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword));
+                            isValid = !string.IsNullOrWhiteSpace(lmsUser.ACPasswordData);
                             break;
                         default:
                             isValid = true;
@@ -505,10 +511,10 @@
                 var session = this.GetSession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 string breezeSession = null;
 
-                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, meetingId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+                string url = this.meetingSetup.JoinMeeting(credentials, param, meetingId,
+                    ref breezeSession, this.GetAdobeConnectProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
             catch (WarningMessageException ex)
@@ -528,16 +534,39 @@
 
         public virtual ActionResult JoinMeetingMobile(string lmsProviderName, int meetingId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
+                var provider = GetAdobeConnectProvider(lmsCompany);
+                var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                if (lmsUser == null)
+                {
+                    throw new WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+                }
+
+                var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
+                Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
                 string breezeSession = null;
 
-                string url = this.meetingSetup.JoinMeeting(credentials, param, userSettings, meetingId, ref breezeSession, this.GetAdobeConnectProvider(credentials));
+                if (registeredUser != null)
+                {
+                    breezeSession = MeetingSetup.ACLogin(
+                        lmsCompany,
+                        param,
+                        lmsUser,
+                        registeredUser,
+                        provider);
+                }
+                else
+                {
+                    var message = string.Format(
+                        "No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty);
+                    logger.Error(message);
+                    throw new WarningMessageException(message);
+                }
 
                 if (string.IsNullOrWhiteSpace(breezeSession))
                     return Json(OperationResult.Error("Can't get Adobe Connect BreezeSession"), JsonRequestBehavior.AllowGet);
@@ -546,7 +575,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("JoinMeeting", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("JoinMeeting", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
             }
         }
@@ -883,44 +912,6 @@
         private static string GetUserNameOrEmail(LtiParamDTO param)
         {
             return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
-        }
-
-        /// <summary>
-        /// The get LMS user settings for join.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS provider name.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The company LMS.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsUserSettingsDTO"/>.
-        /// </returns>
-        private LmsUserSettingsDTO GetLmsUserSettingsForJoin(string lmsProviderName, LmsCompany lmsCompany, LtiParamDTO param, LmsUserSession session)
-        {
-            int connectionMode = 0;
-            string primaryColor = null;
-            LmsUser lmsUser = this.lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-            if (lmsUser != null)
-            {
-                connectionMode = (int)lmsUser.AcConnectionMode;
-                primaryColor = lmsUser.PrimaryColor;
-            }
-
-            return new LmsUserSettingsDTO
-            {
-                acConnectionMode = connectionMode,
-                primaryColor = primaryColor,
-                lmsProviderName = lmsProviderName,
-                password = session.LtiSession.RestoredACPassword,
-            };
         }
 
         /// <summary>
@@ -1309,49 +1300,6 @@
             if (session != null)
             {
                 session.LmsUser = lmsUser;
-                this.userSessionModel.RegisterSave(session);
-            }
-        }
-
-        /// <summary>
-        /// Set AC password
-        /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="adobeConnectPassword">
-        /// Adobe Connect password
-        /// </param>
-        private void SetACPassword(LmsUserSession session, LtiParamDTO param, string adobeConnectPassword)
-        {
-            if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
-            {
-                var sharedKey = AESGCM.NewKey();
-                var sessionData = new LtiSessionDTO
-                {
-                    LtiParam = param,
-                    ACPasswordData = AESGCM.SimpleEncrypt(adobeConnectPassword, sharedKey),
-                    SharedKey = Convert.ToBase64String(sharedKey),
-                };
-                session.SessionData = JsonConvert.SerializeObject(sessionData);
-                this.userSessionModel.RegisterSave(session);
-            }
-        }
-
-        private void RemoveACPassword(LtiParamDTO param, LmsUserSession session)
-        {
-            if (!string.IsNullOrWhiteSpace(session.With(x => x.LtiSession).With(x => x.RestoredACPassword)))
-            {
-                var sessionData = new LtiSessionDTO
-                {
-                    LtiParam = param,
-                    ACPasswordData = null,
-                    SharedKey = null,
-                };
-                session.SessionData = JsonConvert.SerializeObject(sessionData);
                 this.userSessionModel.RegisterSave(session);
             }
         }

@@ -1,16 +1,16 @@
-﻿namespace EdugameCloud.Lti.Controllers
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Web.Mvc;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Core.DTO;
-    using EdugameCloud.Lti.Domain.Entities;
-    using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.Core.Extensions;
-    using EdugameCloud.Lti.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Extensions;
+using EdugameCloud.Lti.Extensions;
 
+namespace EdugameCloud.Lti.Controllers
+{
     public partial class LtiController
     {
         #region Public Methods and Operators
@@ -18,16 +18,16 @@
         [HttpPost]
         public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
                 OperationResult result = this.meetingSetup.RemoveRecording(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    lmsCompany,
+                    this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
                     id,
                     meetingId);
@@ -36,7 +36,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("DeleteRecording", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("DeleteRecording", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -44,16 +44,16 @@
         [HttpPost]
         public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;    
 
                 List<RecordingDTO> recordings = this.meetingSetup.GetRecordings(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    lmsCompany,
+                    this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
                     meetingId);
 
@@ -61,7 +61,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -69,40 +69,38 @@
         [HttpGet]
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
-                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
 
-                string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession);
-                return this.LoginToAC(url, breezeSession, credentials);
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession);
+                return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("JoinRecording", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
+                return RecordingsError("JoinRecording", lmsProviderName, ex);
             }
         }
         
         [HttpPost]
         public virtual ActionResult ShareRecording(string lmsProviderName, string recordingId, bool isPublic, string password)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var link = this.meetingSetup.UpdateRecording(credentials, this.GetAdobeConnectProvider(credentials), recordingId, isPublic, password);
+                lmsCompany = session.LmsCompany;
+                var link = this.meetingSetup.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
 
                 return Json(OperationResult.Success(link));
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ShareRecording", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("ShareRecording", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -110,57 +108,53 @@
         [HttpGet]
         public virtual ActionResult EditRecording(string lmsProviderName, string recordingUrl)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
-                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
 
-                string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "edit");
-                return this.LoginToAC(url, breezeSession, credentials);
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "edit");
+                return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("EditRecording", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
+                return RecordingsError("EditRecording", lmsProviderName, ex);
             }
         }
         
         [HttpGet]
         public virtual ActionResult GetRecordingFlv(string lmsProviderName, string recordingUrl)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
-                var userSettings = this.GetLmsUserSettingsForJoin(lmsProviderName, credentials, param, session);
                 var breezeSession = string.Empty;
 
-                string url = this.meetingSetup.JoinRecording(credentials, param, userSettings, recordingUrl, ref breezeSession, "offline");
-                return this.LoginToAC(url, breezeSession, credentials);
+                string url = this.meetingSetup.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "offline");
+                return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordingFlv", credentials, ex);
-                return Json(OperationResult.Error(errorMessage), JsonRequestBehavior.AllowGet);
+                return RecordingsError("GetRecordingFlv", lmsProviderName, ex);
             }
         }
 
         [HttpPost]
         public virtual JsonResult ConvertToMP4(string lmsProviderName, string recordingId, int meetingId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 if (adobeConnectProvider == null)
                 {   
                     throw new InvalidOperationException("Adobe connect provider");
@@ -177,20 +171,20 @@
                     return Json(this.GenerateErrorResult(recordingJob.Status));
                 }
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
                 var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (scheduledRecording == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
                 }
 
-                var recording = new RecordingDTO(scheduledRecording, credentials.AcServer);
+                var recording = new RecordingDTO(scheduledRecording, lmsCompany.AcServer);
 
                 return Json(OperationResult.Success(recording));
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ConvertToMP4", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("ConvertToMP4", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -198,19 +192,19 @@
         [HttpPost]
         public virtual JsonResult CancelMP4Converting(string lmsProviderName, string recordingId, int meetingId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(credentials);
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 if (adobeConnectProvider == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider");
                 }
 
-                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
                 var recording = this.GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (recording == null)
                 {
@@ -233,7 +227,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("GetRecordings", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("GetRecordings", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
@@ -269,6 +263,13 @@
             }
 
             return OperationResult.Error("Unexpected error");
+        }
+
+        private ActionResult RecordingsError(string method, string sessionId, Exception ex)
+        {
+            logger.ErrorFormat(ex, "{0} exception. sessionId:{1}.", method, sessionId);
+            this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+            return this.View("~/Views/Lti/LtiError.cshtml");
         }
 
         #endregion

@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Logging;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -16,10 +18,46 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private readonly ILogger _logger;
 
-
         public AdobeConnectAccountService(ILogger logger)
         {
             _logger = logger;
+        }
+
+        public IAdobeConnectProxy GetProvider(LmsCompany license, bool login = true)
+        {
+            var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
+            return GetProvider(license, credentials, login);
+        }
+
+        public IAdobeConnectProxy GetProvider(LmsCompany license, UserCredentials credentials, bool login)
+        {
+            string apiUrl = license.AcServer + "/api/xml";
+
+            var connectionDetails = new ConnectionDetails
+            {
+                ServiceUrl = apiUrl,
+                EventMaxParticipants = 10,
+                Proxy =
+                new ProxyCredentials
+                {
+                    Domain = string.Empty,
+                    Login = string.Empty,
+                    Password = string.Empty,
+                    Url = string.Empty,
+                },
+            };
+            var provider = new AdobeConnectProvider(connectionDetails);
+            if (login)
+            {
+                LoginResult result = provider.Login(credentials);
+                if (!result.Success)
+                {
+                    _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
+                    throw new InvalidOperationException("Login to Adobe Connect failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
+                }
+            }
+
+            return new AdobeConnectProxy(provider, IoC.Resolve<ILogger>(), apiUrl);
         }
 
 
@@ -106,6 +144,101 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result.AsReadOnly();
         }
 
+        public string LoginIntoAC(
+            LmsCompany lmsCompany,
+            LtiParamDTO param,
+            Principal registeredUser,
+            AcConnectionMode connectionMode,
+            string email,
+            string login,
+            string password,
+            IAdobeConnectProxy provider,
+            bool updateAcUser = true)
+        {
+            string breezeToken = null;
+            
+            if (updateAcUser)
+            {
+                try
+                {
+                    var principalUpdateResult = provider.PrincipalUpdate(
+                        new PrincipalSetup
+                        {
+                            PrincipalId = registeredUser.PrincipalId,
+                            FirstName = param.lis_person_name_given,
+                            LastName = param.lis_person_name_family,
+                        }, true);
+                }
+                catch
+                {
+                    throw new WarningMessageException(
+                        string.Format(
+                            "Error has occured trying to access \"{0} {1}\" account in Adobe Connect. Please check that account used to access has sufficient permissions."
+                            , param.lis_person_name_given
+                            , param.lis_person_name_family));
+                }
+            }
+            var userProvider = this.GetProvider(lmsCompany, false); // separate provider for user not to lose admin logging in
+
+            LoginResult resultByLogin = null;
+
+            //Maybe we should remove if statement : unable to use lms login instead of ac login, sometimes they are not matched
+            if (!string.IsNullOrEmpty(login))
+            {
+                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
+                if (!resultByLogin.Success)
+                {
+                    string msg = string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
+                        resultByLogin.Status.GetErrorInfo(),
+                        registeredUser.Login,
+                        password,
+                        param.user_id,
+                        param.oauth_consumer_key);
+                    _logger.Error(msg);
+                }
+            }
+            if (resultByLogin != null && resultByLogin.Success)
+            {
+                breezeToken = resultByLogin.Status.SessionInfo;
+            }
+            else
+            {
+                var resultByEmail = userProvider.Login(new UserCredentials(email, password));
+                if (resultByEmail.Success)
+                {
+                    breezeToken = resultByEmail.Status.SessionInfo;
+                }
+                else
+                {
+                    string msg = string.Format("[LoginIntoAC Error] {0}. Email:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
+                        resultByEmail.Status.GetErrorInfo(),
+                        email,
+                        password,
+                        param.user_id,
+                        param.oauth_consumer_key);
+                    _logger.Error(msg);
+                }
+
+                resultByLogin = userProvider.Login(new UserCredentials(registeredUser.Login, password));
+                if (!resultByLogin.Success)
+                {
+                    string msg = string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
+                        resultByLogin.Status.GetErrorInfo(),
+                        registeredUser.Login,
+                        password,
+                        param.user_id,
+                        param.oauth_consumer_key);
+                    _logger.Error(msg);
+                }
+                else
+                {
+                    breezeToken = resultByLogin.Status.SessionInfo;
+                }
+            }
+
+            return breezeToken;
+        }
+
         private static string GetField(FieldCollectionResult value, string fieldName)
         {
             Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
@@ -116,7 +249,5 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return field.Value;
         }
-
     }
-
 }

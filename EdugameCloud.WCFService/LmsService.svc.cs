@@ -324,7 +324,7 @@ namespace EdugameCloud.WCFService
                 IAdobeConnectProxy currentLicenseProvider = null;
                 try
                 {
-                    currentLicenseProvider = MeetingSetup.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
+                    currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
                 }
                 catch (InvalidOperationException)
                 {

@@ -25,6 +25,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.Name).Nullable().Length(100);
             this.Map(x => x.Email).Nullable().Length(100);
             this.Map(x => x.UserIdExtended).Nullable().Length(50);
+            this.Map(x => x.SharedKey).Nullable();
+            this.Map(x => x.ACPasswordData).Nullable();
 
             this.References(x => x.LmsCompany).Column("companyLmsId").Nullable();
 

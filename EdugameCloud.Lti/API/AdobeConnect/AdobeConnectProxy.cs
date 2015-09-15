@@ -308,7 +308,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("credentials");
 
             return Execute(() => { return _provider.Login(credentials); },
-                credentials.Login, credentials.Password);
+                credentials.Login, credentials.Password, skipAcResultProcessing: true);
         }
 
         public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)

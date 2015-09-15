@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EdugameCloud.Lti.Core.Domain.Entities;
+using EdugameCloud.Lti.Utils;
 using Esynctraining.Core.Domain.Entities;
 
 namespace EdugameCloud.Lti.Domain.Entities
@@ -60,6 +62,20 @@ namespace EdugameCloud.Lti.Domain.Entities
         // It would improve at least users search in API
         // Currently it's not implemented and not used, guid is stored in UserId parameter
         public virtual string UserIdExtended { get; set; }
+
+        public virtual string SharedKey { get; set; }
+
+        public virtual string ACPasswordData { get; set; }
+
+        public virtual string ACPassword
+        {
+            get
+            {
+                return string.IsNullOrWhiteSpace(this.ACPasswordData) || string.IsNullOrWhiteSpace(this.SharedKey)
+                           ? null
+                           : AESGCM.SimpleDecrypt(this.ACPasswordData, Convert.FromBase64String(this.SharedKey));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the LMS user parameters.

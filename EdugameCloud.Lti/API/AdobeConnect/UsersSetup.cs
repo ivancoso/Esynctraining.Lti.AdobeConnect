@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Lti.API.AdobeConnect
+﻿using EdugameCloud.Lti.Utils;
+using Newtonsoft.Json;
+
+namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
@@ -45,6 +48,7 @@
         private readonly dynamic settings;
         private readonly LmsFactory lmsFactory;
         private IAdobeConnectUserService acUserService;
+        private IAdobeConnectAccountService acAccountService;
         private ILogger logger;
 
         #endregion
@@ -55,11 +59,13 @@
             ApplicationSettingsProvider settings,
             LmsFactory lmsFactory,
             IAdobeConnectUserService acUserService,
+            IAdobeConnectAccountService acAccountService,
             ILogger logger)
         {
             this.settings = settings;
             this.lmsFactory = lmsFactory;
             this.acUserService = acUserService;
+            this.acAccountService = acAccountService;
             this.logger = logger;
         }
 
@@ -115,25 +121,49 @@
             if (principalIds.Any())
                 provider.AddToGroupByType(principalIds, "live-admins");
         }
-        
-        public string GetACPassword(LmsCompany lmsCompany, LmsUserSettingsDTO userSettings, string email, string login)
+
+        public bool SetACPassword(IAdobeConnectProxy provider, LmsCompany lmsCompany, 
+            LmsUser lmsUser, LtiParamDTO param, string adobeConnectPassword)
         {
-            var connectionMode = (AcConnectionMode)userSettings.acConnectionMode;
-            switch (connectionMode)
+            if (!string.IsNullOrWhiteSpace(adobeConnectPassword))
             {
-                case AcConnectionMode.Overwrite:
-                    string password = lmsCompany.AcUsername.Equals(email, StringComparison.OrdinalIgnoreCase)
-                                      || lmsCompany.AcUsername.Equals(login, StringComparison.OrdinalIgnoreCase)
-                                          ? lmsCompany.AcPassword
-                                          : Membership.GeneratePassword(8, 2);
-                    return password;
-                case AcConnectionMode.DontOverwriteLocalPassword:
-                    return userSettings.password;
-                default:
-                    return null;
+                Principal registeredUser = null;
+                if (lmsUser.PrincipalId != null)
+                {
+
+                    var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId)
+                        ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo
+                        : null;
+                    registeredUser = principalInfo != null ? principalInfo.Principal : null;
+                }
+
+                if (registeredUser != null)
+                {
+                    var loginResult = acAccountService.LoginIntoAC(lmsCompany, param, registeredUser, lmsUser.AcConnectionMode,
+                        param.lis_person_contact_email_primary, param.lms_user_login, adobeConnectPassword, provider, updateAcUser: false);
+
+                    if (loginResult != null)
+                    {
+                        ResetUserACPassword(lmsUser, adobeConnectPassword);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public void ResetUserACPassword(LmsUser lmsUser, string password)
+        {
+            if (!String.IsNullOrEmpty(password))
+            {
+                var sharedKey = AESGCM.NewKey();
+                lmsUser.SharedKey = Convert.ToBase64String(sharedKey);
+                lmsUser.ACPasswordData = AESGCM.SimpleEncrypt(password, sharedKey);
+                LmsUserModel.RegisterSave(lmsUser);
             }
         }
-        
+
         public List<LmsUserDTO> GetLMSUsers(
             LmsCompany lmsCompany, 
             LmsCourseMeeting meeting, 
