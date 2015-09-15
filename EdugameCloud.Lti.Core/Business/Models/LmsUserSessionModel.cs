@@ -31,27 +31,12 @@
         }
 
         #endregion
-
-        /// <summary>
-        /// The get one by company and user.
-        /// </summary>
-        /// <param name="companyId">
-        /// The company id.
-        /// </param>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="courseId">
-        /// The course id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{LmsUserSession}"/>.
-        /// </returns>
-        public IFutureValue<LmsUserSession> GetOneByCompanyAndUserAndCourse(int companyId, int userId, int courseId)
+        
+        public IFutureValue<LmsUserSession> GetOneByCompanyAndUserAndCourse(int userId, int courseId)
         {
             var queryOver =
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
-                    .Where(c => c.LmsUser.Id == userId && c.LmsCompany.Id == companyId && c.LmsCourseId == courseId);
+                    .Where(c => c.LmsUser.Id == userId && c.LmsCourseId == courseId);
             return this.Repository.FindOne(queryOver);
         }
 

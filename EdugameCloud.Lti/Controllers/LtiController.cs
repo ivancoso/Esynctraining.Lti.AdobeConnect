@@ -1193,12 +1193,6 @@
             return provider;
         }
 
-        /// <summary>
-        /// The redirect to error.
-        /// </summary>
-        /// <param name="errorText">
-        /// The error text.
-        /// </param>
         private void RedirectToError(string errorText)
         {
             this.Response.Clear();
@@ -1270,7 +1264,7 @@
 
         private LmsUserSession SaveSession(LmsCompany company, LtiParamDTO param, LmsUser lmsUser)
         {
-            var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(company.Id, lmsUser.Id, param.course_id).Value;
+            var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(lmsUser.Id, param.course_id).Value;
             session = session ?? new LmsUserSession { LmsCompany = company, LmsUser = lmsUser, LmsCourseId = param.course_id };
             var sessionData = new LtiSessionDTO { LtiParam = param };
             if (lmsUser != null && lmsUser.AcConnectionMode == AcConnectionMode.DontOverwriteLocalPassword 
