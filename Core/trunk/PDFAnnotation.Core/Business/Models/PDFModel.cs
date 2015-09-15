@@ -49,6 +49,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// </param>
         public PdfModel(Pdf2SwfConverter converter, ApplicationSettingsProvider settings)
         {
+            PdfReader.unethicalreading = true;
             this.converter = converter;
             this.settings = settings;
         }
@@ -67,7 +68,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// </returns>
         public bool ConvertIfNotExist(Domain.Entities.File file, byte[] ms = null)
         {
-            var failedFolder = (string)Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
+            var failedFolder = (string)System.IO.Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
             var connectionString = (string)this.settings.ConnectionString;
             return this.converter.ConvertIfNotExist(new FileDTO(file), failedFolder, connectionString, ms);
         }
@@ -129,7 +130,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// </returns>
         public bool ConvertIfNotExist(FileDTO fileDTO, byte[] ms = null)
         {
-            var failedFolder = (string)Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
+            var failedFolder = (string)System.IO.Path.Combine(FileModel.FileStoragePhysicalPath(this.settings), (string)this.settings.FailedPDFsFolder);
             var connectionString = (string)this.settings.ConnectionString;
             return this.converter.ConvertIfNotExist(fileDTO, failedFolder, connectionString, ms);
         }

@@ -1,8 +1,12 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using Esynctraining.Core.Enums;
 using Esynctraining.Core.Utils;
 using Esynctraining.PdfProcessor;
+using Esynctraining.PdfProcessor.Actions;
+using Esynctraining.PdfProcessor.Renders;
+using iTextSharp.text.pdf;
 
 namespace PDFAnnotation.Core.Utils
 {
@@ -80,7 +84,8 @@ namespace PDFAnnotation.Core.Utils
         {
             string args = ((string)this.settings.SWFToolsCommandPattern).Replace("{pdfFile}", pdfFilePath).Replace("{swfFile}", swfFilePath);
             bool renderAsBitmap = false;
-            this.Convert(args, ref renderAsBitmap, null, null);
+            bool overwriteSource = false;
+            this.Convert(args, pdfFilePath, ref renderAsBitmap, ref overwriteSource, null, null);
         }
 
         /// <summary>
@@ -179,7 +184,8 @@ namespace PDFAnnotation.Core.Utils
 
                         this.UpdateFileWithStatus(connectionString, fileId, UploadFileStatus.Converting, logger);
                         bool renderAsBitmap = false;
-                        bool bigPageSucceded = this.Convert(baseArgs.Replace("{swfFile}", swfFile), ref renderAsBitmap, () => System.IO.File.Exists(swfFile), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, fileId, logger, "_converting", UploadFileStatus.ConvertingFailed, fail));
+                        bool overWriteSource = false;
+                        bool bigPageSucceded = this.Convert(baseArgs.Replace("{swfFile}", swfFile), pdfFile, ref renderAsBitmap, ref overWriteSource, () => System.IO.File.Exists(swfFile), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, fileId, logger, "_converting", UploadFileStatus.ConvertingFailed, fail));
                         if (isDebugEnabled)
                         {
                             logger.DebugFormat("Convert SWF took {0}s", s.ElapsedMilliseconds / 1000.0);
@@ -191,7 +197,7 @@ namespace PDFAnnotation.Core.Utils
                             // convert page files
                             this.UpdateFileWithStatus(connectionString, fileId, UploadFileStatus.Converted, logger);
 
-                            this.Convert(baseArgs.Replace("{swfFile}", swfPagedFile), ref renderAsBitmap, () => this.CheckIfSwfPagedFilesExist(swfPagedFile, numberOfPages), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, fileId, logger, "_pages", UploadFileStatus.ConvertingPagesFailed, fail));
+                            this.Convert(baseArgs.Replace("{swfFile}", swfPagedFile), pdfFile, ref renderAsBitmap, ref overWriteSource, () => this.CheckIfSwfPagedFilesExist(swfPagedFile, numberOfPages), (fail) => this.CopyFileToFailedFolder(connectionString, failedFolder, pdfFile, fileId, logger, "_pages", UploadFileStatus.ConvertingPagesFailed, fail));
                             if (isDebugEnabled)
                             {
                                 logger.DebugFormat("Convert SWF pages took {0}s", s.ElapsedMilliseconds / 1000.0);
@@ -247,7 +253,13 @@ namespace PDFAnnotation.Core.Utils
                 {
                     this.UpdateFileWithStatus(connectionString, fileId, status.Value, log);
                 }
+
+                this.EnsureDirectoryExist(failedFolder);
+
+
                 System.IO.File.Copy(pdfFile, Path.Combine(failedFolder, fileId + (string.IsNullOrWhiteSpace(posfix) ? string.Empty : posfix) + ".pdf"));
+
+                
                 if (!string.IsNullOrWhiteSpace(failedMessage))
                 {
                     System.IO.File.WriteAllText(
@@ -313,12 +325,19 @@ namespace PDFAnnotation.Core.Utils
         /// <param name="args">
         /// The args.
         /// </param>
-        private bool Convert(string args, ref bool renderEverythingAsBitmap, Func<bool> checkSuccess = null, Action<string> copyToCarantineAndLog = null)
+        private bool Convert(string args, string filePath, ref bool renderEverythingAsBitmap, ref bool overwriteSource, Func<bool> checkSuccess = null, Action<string> copyToCarantineAndLog = null)
         {
             var initialArgs = args;
             if (renderEverythingAsBitmap)
             {
                 args = args + " -s poly2bitmap";
+            }
+            if (overwriteSource)
+            {
+                if (!TryToOverwriteProtection(filePath))
+                {
+                    return false;
+                }
             }
             var proc = new Process
             {
@@ -342,7 +361,17 @@ namespace PDFAnnotation.Core.Utils
                 if (!renderEverythingAsBitmap && result.Contains("This file is too complex to render- SWF only supports 65536 shapes at once"))
                 {
                     renderEverythingAsBitmap = true;
-                    this.Convert(initialArgs, ref renderEverythingAsBitmap);
+                    this.Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
+                }
+
+                if (!overwriteSource && result.Contains("PDF disallows copying"))
+                {
+                    overwriteSource = true;
+                    this.Convert(initialArgs, filePath, ref renderEverythingAsBitmap, ref overwriteSource);
+                }
+                else if (overwriteSource)
+                {
+                    overwriteSource = false;
                 }
 
                 if (checkSuccess != null && !checkSuccess.Invoke() && copyToCarantineAndLog != null)
@@ -353,6 +382,35 @@ namespace PDFAnnotation.Core.Utils
             }
 
             return true;
+        }
+
+        private bool TryToOverwriteProtection(string filePath)
+        {
+            try
+            {
+                byte[] outPdfBuffer;
+                var input = File.ReadAllBytes(filePath);
+                PdfReader.unethicalreading = true;
+                using (var reader = new PdfReader(input))
+                {
+                    using (var outPdfStream = new MemoryStream())
+                    {
+                        using (var stamper = new PdfStamper(reader, outPdfStream))
+                        {
+                            reader.RemoveUnusedObjects();
+                        }
+                        outPdfBuffer = outPdfStream.ToArray();
+                        File.WriteAllBytes(filePath, outPdfBuffer);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.logger.Info("TryToOverwriteProtection for source file:" + filePath, ex);
+                return false;
+            }
         }
 
         /// <summary>

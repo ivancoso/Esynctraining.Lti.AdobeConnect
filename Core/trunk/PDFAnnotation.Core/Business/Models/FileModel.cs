@@ -1532,7 +1532,9 @@ namespace PDFAnnotation.Core.Business.Models
                 var fileInfo = new FileInfo(filePath);
                 // ReSharper disable once AssignNullToNotNullAttribute
                 // ReSharper disable once PossibleNullReferenceException
-                if (!string.IsNullOrWhiteSpace(fileInfo.DirectoryName) && Directory.Exists(fileInfo.DirectoryName) && !fileInfo.DirectoryName.Equals(this.FileStoragePhysicalPath(), StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrWhiteSpace(fileInfo.DirectoryName) 
+                    && Directory.Exists(fileInfo.DirectoryName) 
+                    && !fileInfo.DirectoryName.Equals(this.FileStoragePhysicalPath(), StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.ClearDirectoryAndRemoveItSafely(fileInfo.DirectoryName);
                 }

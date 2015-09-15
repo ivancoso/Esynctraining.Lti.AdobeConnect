@@ -136,6 +136,7 @@
         public bool RenderSpecialCsPagesWithGsNet(byte[] inPdfBuffer, out byte[] outPdfBuffer, int resolution)
         {
             bool result = false;
+            PdfReader.unethicalreading = true;
             using (var reader = new PdfReader(inPdfBuffer))
                 {
                     // Check if document has scanned pages.

@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Business.Models
+﻿using PDFAnnotation.Core.Extensions;
+
+namespace PDFAnnotation.Core.Business.Models
 {
     using System;
     using System.Collections;
@@ -243,8 +245,20 @@
         /// </returns>
         public virtual IEnumerable<Contact> GetAllByEmails(List<string> emails)
         {
+            List<Contact> result = new List<Contact>();
+            var chunkedEmailsList = emails.ToArray().Split(2100);
+            foreach (var chunk in chunkedEmailsList)
+            {
+                result.AddRange(GetByEmails(chunk));   
+            }
+
+            return result;
+        }
+
+        private IEnumerable<Contact> GetByEmails(List<string> emails)
+        {
             var queryOver = new QueryOverContact().GetQueryOver();
-            var disjunction= new Disjunction();
+            var disjunction = new Disjunction();
             foreach (var email in emails)
             {
                 disjunction.Add(Restrictions.On<Contact>(x => x.Email).IsInsensitiveLike(email));
