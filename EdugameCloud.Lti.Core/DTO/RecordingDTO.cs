@@ -1,5 +1,6 @@
-﻿using Esynctraining.AC.Provider.Entities;
+﻿using System;
 using System.Runtime.Serialization;
+using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
@@ -24,7 +25,7 @@ namespace EdugameCloud.Lti.Core.DTO
             id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
-            duration = (recording.Duration * 1000).ToString();
+            duration = ConvertSecondsToTimeFormat(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
             job_id = string.Empty;
@@ -136,6 +137,15 @@ namespace EdugameCloud.Lti.Core.DTO
             return date;
         }
 
+        private static string ConvertSecondsToTimeFormat(int seconds)
+        {
+            TimeSpan t = TimeSpan.FromSeconds(seconds);
+
+            return string.Format("{0:D2}:{1:D2}:{2:D2}",
+                            t.Hours,
+                            t.Minutes,
+                            t.Seconds);
+        }
         #endregion
 
 

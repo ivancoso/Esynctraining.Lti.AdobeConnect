@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var meetingSco = meeting.GetMeetingScoId();
             var commonInfo = provider.GetCommonInfo().CommonInfo;
-            if (commonInfo.MajorVersion < 9 && commonInfo.MinorVersion < 1)
+            if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
             {
                 return GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, provider);
             }
