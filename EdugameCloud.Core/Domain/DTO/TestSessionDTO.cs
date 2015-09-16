@@ -26,7 +26,7 @@
         public TestSessionDTO(TestSessionFromStoredProcedureDTO dto)
         {
             this.passingScore = dto.passingScore;
-            this.TotalQuestion = dto.TotalQuestion;
+            //this.TotalQuestion = dto.TotalQuestion;
             this.TotalScore = dto.TotalScore;
             this.includeAcEmails = dto.includeAcEmails;
             this.avgScore = dto.avgScore;
@@ -39,7 +39,7 @@
             this.totalParticipants = dto.totalParticipants;
             this.testName = dto.testName;
             this.subModuleItemId = dto.subModuleItemId;
-            this.userId = dto.userId;
+            //this.userId = dto.userId;
         }
 
         #region Public Properties
@@ -49,17 +49,11 @@
         /// </summary>
         [DataMember]
         public decimal passingScore { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total question.
-        /// </summary>
-        [DataMember]
-        public int TotalQuestion { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the total score.
         /// </summary>
-        [DataMember]
+        // TRICK: do not used on client-side [DataMember]
         public int TotalScore { get; set; }
 
         /// <summary>
@@ -127,13 +121,7 @@
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        [DataMember]
-        public int userId { get; set; }
-
+        
         #endregion
     }
 }

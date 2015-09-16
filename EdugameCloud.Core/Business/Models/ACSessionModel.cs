@@ -203,7 +203,8 @@
         /// </returns>
         public IEnumerable<SurveySessionFromStoredProcedureDTO> GetSurveySessionsByUserId(int userId)
         {
-            return this.Repository.StoreProcedureForMany<SurveySessionFromStoredProcedureDTO>("getSurveySessionsByUserId", new StoreProcedureParam<int>("userId", userId));
+            return this.Repository.StoreProcedureForMany<SurveySessionFromStoredProcedureDTO>("getSurveySessionsByUserId",
+                new StoreProcedureParam<int>("userId", userId));
         }
 
         /// <summary>

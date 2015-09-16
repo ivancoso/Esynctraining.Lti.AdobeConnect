@@ -18,8 +18,6 @@
         /// </param>
         public SurveySessionDTO(SurveySessionFromStoredProcedureDTO dto)
         {
-            this.TotalQuestion = dto.TotalQuestion;
-            this.TotalScore = dto.TotalScore;
             this.acSessionId = dto.acSessionId;
             this.acUserModeId = dto.acUserModeId;
             this.activeParticipants = dto.activeParticipants;
@@ -29,23 +27,10 @@
             this.subModuleItemId = dto.subModuleItemId;
             this.surveyName = dto.surveyName;
             this.totalParticipants = dto.totalParticipants;
-            this.userId = dto.userId;
         }
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the total question.
-        /// </summary>
-        [DataMember]
-        public int TotalQuestion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total score.
-        /// </summary>
-        [DataMember]
-        public int TotalScore { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the ac session id.
         /// </summary>
@@ -93,13 +78,7 @@
         /// </summary>
         [DataMember]
         public string surveyName { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        [DataMember]
-        public int userId { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the date created.
         /// </summary>

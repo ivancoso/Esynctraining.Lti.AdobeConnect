@@ -79,7 +79,9 @@
         public QuizResultDataDTO GetQuizResultByACSessionId(int adobeConnectSessionId, int smiId)
         {
             var res = new QuizResultDataDTO();
-            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getQuizQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getQuizQuestionsForAdminBySMIId", 
+                new StoreProcedureParam<int>("smiId", smiId), 
+                new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
             res.players =
                 this.Repository.StoreProcedureForMany<QuizPlayerFromStoredProcedureDTO>(
                     "getQuizResultByACSessionId",
@@ -97,15 +99,15 @@
                 new DefaultQueryOver<Distractor, int>().GetQueryOver()
                     .WhereRestrictionOn(x => x.Question.Id)
                     .IsIn(questionIds);
-
-
+            
             var distractors = this.distractorRepository.FindAll(distractorsQuery).ToList();
-
-
-
+            
             foreach (var questionForAdminDTO in res.questions)
             {
-                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
+                questionForAdminDTO.distractors = distractors
+                    .Where(x => x.Question.Id == questionForAdminDTO.questionId)
+                    .Select(x => new DistractorDTO(x))
+                    .ToArray();
             }
 
             return res;

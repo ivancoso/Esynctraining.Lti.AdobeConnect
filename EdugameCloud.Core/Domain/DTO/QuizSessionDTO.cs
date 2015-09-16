@@ -24,8 +24,6 @@
         /// </param>
         public QuizSessionDTO(QuizSessionFromStoredProcedureDTO dto)
         {
-            this.TotalQuestion = dto.TotalQuestion;
-            this.TotalScore = dto.TotalScore;
             this.acSessionId = dto.acSessionId;
             this.includeAcEmails = dto.includeAcEmails;
             this.acUserModeId = dto.acUserModeId;
@@ -36,23 +34,10 @@
             this.totalParticipants = dto.totalParticipants;
             this.quizName = dto.quizName;
             this.subModuleItemId = dto.subModuleItemId;
-            this.userId = dto.userId;
         }
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets or sets the total question.
-        /// </summary>
-        [DataMember]
-        public int TotalQuestion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total score.
-        /// </summary>
-        [DataMember]
-        public int TotalScore { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the ac session id.
         /// </summary>
@@ -112,13 +97,7 @@
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        [DataMember]
-        public int userId { get; set; }
-
+        
         #endregion
     }
 }

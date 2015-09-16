@@ -1,4 +1,14 @@
-﻿
+USE [EduGameCloud.Dev]
+GO
+
+/****** Object:  StoredProcedure [dbo].[getTestSessionsByUserId]    Script Date: 16.Sep.15 5:33:12 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
 
 
 -- =============================================
@@ -8,14 +18,14 @@
 -- Description:	is used to get a list of test sessions 
 --              by userId for Admin Reporting
 -- =============================================
-CREATE PROCEDURE [dbo].[getTestSessionsByUserId]  
+ALTER PROCEDURE [dbo].[getTestSessionsByUserId]  
 	@userId int = null
 AS
 BEGIN
 
 SELECT LNG.[language], 	   
 	   TR.acSessionId, 	
-	   -- not in use: (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
+	   --(select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
 	   ACS.subModuleItemId, 
 	   ACS.dateCreated,
 	   ACS.includeAcEmails,
@@ -47,3 +57,7 @@ GROUP BY LNG.[language],  TR.acSessionId, ACS.subModuleItemId, ACS.dateCreated, 
 HAVING      ([User].userId = @userId)
 
 END
+
+GO
+
+

@@ -16,13 +16,7 @@
         /// </summary>
         [DataMember]
         public virtual decimal passingScore { get; set; }
-
-        /// <summary>
-        /// Gets or sets the total question.
-        /// </summary>
-        [DataMember]
-        public virtual int TotalQuestion { get; set; }
-
+        
         /// <summary>
         /// Gets or sets the total score.
         /// </summary>

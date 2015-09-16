@@ -35,7 +35,6 @@
             this.language = dto.language;
             this.subModuleItemId = dto.subModuleItemId;
             this.totalParticipants = dto.totalParticipants;
-            this.userId = dto.userId;
         }
 
         #region Public Properties
@@ -99,13 +98,7 @@
         /// </summary>
         [DataMember]
         public int totalParticipants { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user id.
-        /// </summary>
-        [DataMember]
-        public int userId { get; set; }
-
+        
         #endregion
     }
 }
