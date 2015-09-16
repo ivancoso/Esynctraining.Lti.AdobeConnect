@@ -433,7 +433,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             string breezeToken = null;
             string generatedPassword = null;
-            if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPasswordData))
+            if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPassword))
             {
                 if (lmsCompany.AcUsername.Equals(registeredUser.Login, StringComparison.OrdinalIgnoreCase))
                 {
