@@ -19,8 +19,20 @@ namespace EdugameCloud.Lti.Core.DTO
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
         }
 
-        public RecordingDTO() { }
+        public RecordingDTO(ScoContent recording, string accountUrl, bool isPublic)
+        {
+            id = recording.ScoId;
+            name = recording.Name;
+            begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
+            duration = (recording.Duration * 1000).ToString();
+            url = GenerateJoinLink(recording.UrlPath);
+            is_mp4 = recording.Icon == "mp4-archive";
+            job_id = string.Empty;
+            download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
+            is_public = isPublic;
+        }
 
+        public RecordingDTO() { }
 
         /// <summary>
         /// Gets or sets a recording url for download. Available only for mp4.

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -26,6 +27,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IAdobeConnectProxy GetProvider(LmsCompany credentials, bool login = true);
 
+        string ACLogin(LmsCompany lmsCompany, LtiParamDTO param, LmsUser lmsUser,
+            Principal registeredUser, IAdobeConnectProxy provider);
     }
 
 }

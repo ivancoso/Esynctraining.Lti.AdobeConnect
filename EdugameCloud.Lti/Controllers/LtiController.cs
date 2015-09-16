@@ -53,6 +53,7 @@
         private readonly IAdobeConnectUserService acUserService;
         private readonly LmsFactory lmsFactory;
         private readonly ISynchronizationUserService syncUsersService;
+        private readonly IRecordingsService recordingsService;
 
         #endregion
 
@@ -70,6 +71,7 @@
             IAdobeConnectUserService acUserService,
             LmsFactory lmsFactory,
             ISynchronizationUserService syncUsersService,
+            IRecordingsService recordingsService,
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
@@ -84,6 +86,7 @@
             this.acUserService = acUserService;
             this.lmsFactory = lmsFactory;
             this.syncUsersService = syncUsersService;
+            this.recordingsService = recordingsService;
         }
 
         #endregion
