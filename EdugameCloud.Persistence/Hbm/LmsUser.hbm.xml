@@ -17,6 +17,8 @@
       <return-property column="name" name="Name" />
       <return-property column="email" name="Email" />
       <return-property column="userIdExtended" name="UserIdExtended" />
+      <return-property column="sharedKey" name="SharedKey" />
+      <return-property column="acPasswordData" name="ACPasswordData" />
     </return>
     exec getUsersByLmsCompanyId @lmsCompanyId=:lmsCompanyId, @userFilter=:userFilter
   </sql-query>
