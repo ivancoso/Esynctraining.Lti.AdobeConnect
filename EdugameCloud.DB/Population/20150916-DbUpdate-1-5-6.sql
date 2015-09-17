@@ -60,4 +60,19 @@ END
 
 GO
 
+-- LmsUser AC Password schema update
+set xact_abort on;
+go
+
+begin transaction;
+go
+
+alter table LmsUser add
+  sharedKey nvarchar(max),
+  acPasswordData nvarchar(max);
+go
+
+commit;
+go
+--
 
