@@ -11,6 +11,8 @@
     [name]             NVARCHAR (100) NULL,
     [email]            NVARCHAR (100) NULL,
     [userIdExtended]   NVARCHAR (50)  NULL,
+    [sharedKey]        NVARCHAR (MAX) NULL,
+    [acPasswordData]   NVARCHAR (MAX) NULL,
     CONSTRAINT [PK_LmsUser] PRIMARY KEY CLUSTERED ([lmsUserId] ASC),
     CONSTRAINT [FK_LmsUser_CompanyLms] FOREIGN KEY ([companyLmsId]) REFERENCES [dbo].[CompanyLms] ([companyLmsId]) ON DELETE CASCADE
 );
@@ -28,4 +30,11 @@
 
 
 
+
+
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_LmsUser_companyLmsId_userId]
+    ON [dbo].[LmsUser]([companyLmsId] ASC, [userId] ASC);
 

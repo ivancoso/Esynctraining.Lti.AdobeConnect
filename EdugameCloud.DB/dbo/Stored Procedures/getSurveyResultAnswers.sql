@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[getSurveyResultAnswers]
+﻿CREATE PROCEDURE [dbo].[getSurveyResultAnswers]
 (
 	@surveyResultIds AS XML
 )
@@ -21,5 +20,3 @@ from SurveyQuestionResultAnswer sqra
 	inner join UserIdsCTE ON UserIdsCTE.Id = sqra.surveyQuestionResultId
 	left join SurveyQuestionResult sqr on sqra.surveyQuestionResultId = sqr.surveyQuestionResultId
 END
-
-select * from SurveyQuestionResultAnswer

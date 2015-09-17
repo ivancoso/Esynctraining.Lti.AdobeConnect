@@ -1,6 +1,7 @@
 ﻿
 
 
+
 -- =============================================
 -- Author:		Eugene Baranovsky
 -- Create date: 10.10.2014
@@ -15,7 +16,7 @@ BEGIN
 
 SELECT LNG.[language], 	   
 	   TR.acSessionId, 	
-	   -- not in use: (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
+	   --(select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
 	   ACS.subModuleItemId, 
 	   ACS.dateCreated,
 	   ACS.includeAcEmails,
