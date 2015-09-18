@@ -62,6 +62,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && (result.Type == "unavailable"))
                     return result;
 
+                if (result.SubCode == StatusSubCodes.no_quota
+                    && result.Type == "num-of-members-quota")
+                {
+                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                }
+
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalIds:{1}.TypeName:{2}.",
                     result.GetErrorInfo(),
                     string.Join(";", principalIds),
@@ -99,6 +105,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && (result.InvalidField == "unknown") 
                     && (result.Type == "unavailable"))
                     return result;
+                
+                if (result.SubCode == StatusSubCodes.no_quota
+                    && result.Type == "num-of-members-quota")
+                {
+                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                }
 
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.TypeName:{2}.",
                     result.GetErrorInfo(),
