@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\EdugameCloud.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -201,6 +202,7 @@
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
     <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />
     <Compile Include="Domain\DTO\OperationResultDto.cs" />
+    <Compile Include="Domain\DTO\AdobeConnectSessionDtoBase.cs" />
     <Compile Include="Domain\DTO\UploadedFileDTO.cs" />
     <Compile Include="Domain\DTO\QuizFromStoredProcedureExDTO.cs" />
     <Compile Include="Domain\DTO\QuizPlayerFromStoredProcedureDTO.cs" />
