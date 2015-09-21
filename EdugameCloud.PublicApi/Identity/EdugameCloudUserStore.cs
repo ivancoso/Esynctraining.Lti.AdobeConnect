@@ -62,7 +62,7 @@ namespace EdugameCloud.PublicApi.Identity
             {
                 user = null;
             }
-            else if (user.Company.IsActive())
+            else if (!user.Company.IsActive())
             {
                 user = null;
 
