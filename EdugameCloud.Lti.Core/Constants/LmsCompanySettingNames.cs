@@ -17,5 +17,6 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string UseMP4 = "UseMP4";
         public const string UseFLV = "UseFLV";
         public const string AdditionalLmsDomains = "AdditionalLmsDomains";
+        public const string HasPublicApi = "HasPublicApi";
     }
 }
