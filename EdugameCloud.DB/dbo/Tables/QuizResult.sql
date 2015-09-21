@@ -2,7 +2,7 @@
     [quizResultId]        INT            IDENTITY (1, 1) NOT NULL,
     [quizId]              INT            NOT NULL,
     [acSessionId]         INT            NOT NULL,
-    [participantName]     NCHAR (200)    NOT NULL,
+    [participantName]     NVARCHAR(200)  NOT NULL,
     [score]               INT            NOT NULL,
     [startTime]           DATETIME       NOT NULL,
     [endTime]             DATETIME       NOT NULL,

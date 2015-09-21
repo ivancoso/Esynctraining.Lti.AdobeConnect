@@ -4,7 +4,7 @@
     [userId]          INT           NOT NULL,
     [acUserModeId]    INT           NOT NULL,
     [accountId]       INT           NOT NULL,
-    [meetingURL]      NCHAR (500)   NOT NULL,
+    [meetingURL]      NVARCHAR(500) NOT NULL,
     [scoId]           INT           NOT NULL,
     [dateCreated]     SMALLDATETIME CONSTRAINT [DF_ACSession_dateCreated] DEFAULT (getdate()) NOT NULL,
     [languageId]      INT           CONSTRAINT [DF_ACSession_languageId] DEFAULT ((5)) NOT NULL,
