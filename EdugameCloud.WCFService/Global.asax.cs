@@ -5,7 +5,6 @@
     using Castle.Core.Logging;
     using Castle.Windsor;
 
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
 
     public class Global : HttpApplication

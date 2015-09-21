@@ -102,7 +102,7 @@
         /// The user id.
         /// </param>
         /// <returns>
-        /// The <see cref="QuizSessionFromStoredProcedureDTO"/>.
+        /// The <see cref="QuizSessionDTO"/>.
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -113,7 +113,7 @@
         /// The get survey sessions by user id.
         /// </summary>
         /// <returns>
-        /// The <see cref="SurveySessionFromStoredProcedureDTO"/>.
+        /// The <see cref="SurveySessionDTO"/>.
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -127,7 +127,7 @@
         /// The user id.
         /// </param>
         /// <returns>
-        /// The <see cref="SurveySessionFromStoredProcedureDTO"/>.
+        /// The <see cref="SurveySessionDTO"/>.
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -161,7 +161,7 @@
         /// The page size.
         /// </param>
         /// <returns>
-        /// The <see cref="RecentReportDTO"/>.
+        /// The <see cref="PagedRecentReportsDTO"/>.
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -209,7 +209,7 @@
         /// The page size.
         /// </param>
         /// <returns>
-        /// The <see cref="ReportDTO"/>.
+        /// The <see cref="PagedReportsDTO"/>.
         /// </returns>
         [OperationContract]
         [FaultContract(typeof(Error))]

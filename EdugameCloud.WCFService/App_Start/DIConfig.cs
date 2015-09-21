@@ -1,8 +1,4 @@
-﻿using EdugameCloud.Lti.API.Sakai;
-using EdugameCloud.Lti.Canvas;
-using EdugameCloud.Lti.Domain.Entities;
-
-namespace EdugameCloud.WCFService
+﻿namespace EdugameCloud.WCFService
 {
     using System;
     using System.Configuration;
@@ -20,9 +16,12 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Desire2Learn;
+    using EdugameCloud.Lti.API.Sakai;
     using EdugameCloud.Lti.BlackBoard;
     using EdugameCloud.Lti.BrainHoney;
+    using EdugameCloud.Lti.Canvas;
     using EdugameCloud.Lti.Desire2Learn;
+    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Moodle;
     using EdugameCloud.Persistence;
     using EdugameCloud.Persistence.Extensions;

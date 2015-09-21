@@ -16,71 +16,35 @@
     public class ReportingService : BaseService, IReportingService
     {
         #region Properties
-
-        /// <summary>
-        /// Gets the applet item model.
-        /// </summary>
+        
         private AppletItemModel AppletItemModel
         {
-            get
-            {
-                return IoC.Resolve<AppletItemModel>();
-            }
+            get { return IoC.Resolve<AppletItemModel>(); }
         }
-
-        /// <summary>
-        /// Gets the quiz result model.
-        /// </summary>
+        
         private QuizResultModel QuizResultModel
         {
-            get
-            {
-                return IoC.Resolve<QuizResultModel>();
-            }
+            get { return IoC.Resolve<QuizResultModel>(); }
         }
-
-        /// <summary>
-        /// Gets the test result model.
-        /// </summary>
+        
         private TestResultModel TestResultModel
         {
-            get
-            {
-                return IoC.Resolve<TestResultModel>();
-            }
+            get { return IoC.Resolve<TestResultModel>(); }
         }
-
-        /// <summary>
-        /// Gets the survey result model.
-        /// </summary>
+        
         private SurveyResultModel SurveyResultModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyResultModel>();
-            }
+            get { return IoC.Resolve<SurveyResultModel>(); }
         }
-
-        /// <summary>
-        /// Gets the SN group discussion model.
-        /// </summary>
+        
         private SNGroupDiscussionModel SNGroupDiscussionModel
         {
-            get
-            {
-                return IoC.Resolve<SNGroupDiscussionModel>();
-            }
+            get { return IoC.Resolve<SNGroupDiscussionModel>(); }
         }
-
-        /// <summary>
-        /// Gets the SN member model.
-        /// </summary>
+        
         private SNMemberModel SNMemberModel
         {
-            get
-            {
-                return IoC.Resolve<SNMemberModel>();
-            }
+            get { return IoC.Resolve<SNMemberModel>(); }
         }
 
         #endregion

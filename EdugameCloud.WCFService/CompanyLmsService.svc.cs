@@ -293,6 +293,8 @@ namespace EdugameCloud.WCFService
                 }
             }
 
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.HasPublicApi, dto.hasApi.ToString());
+
             ProcessRoleMapping(dto, instance);
 
             return instance;
