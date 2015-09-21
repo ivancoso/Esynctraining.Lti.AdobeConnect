@@ -88,6 +88,11 @@
         /// </summary>
         public virtual CompanyStatus Status { get; set; }
 
+        /// <summary>
+        /// Has access to REST Reporting API.
+        /// </summary>
+        public virtual bool HasApi { get; set; }
+
         #endregion
 
         public Company()

@@ -7,6 +7,7 @@
     [dateModified]     SMALLDATETIME    CONSTRAINT [DF_Company_dateModified] DEFAULT (getdate()) NOT NULL,
     [primaryContactId] INT              NULL,
     [companyThemeId]   UNIQUEIDENTIFIER NULL,
+	[hasApi]           BIT				NOT NULL,
     CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED ([companyId] ASC),
     CONSTRAINT [FK_Company_Address] FOREIGN KEY ([addressId]) REFERENCES [dbo].[Address] ([addressId]),
     CONSTRAINT [FK_Company_CompanyTheme] FOREIGN KEY ([companyThemeId]) REFERENCES [dbo].[CompanyTheme] ([companyThemeId]),

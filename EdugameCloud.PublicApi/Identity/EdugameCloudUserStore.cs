@@ -46,6 +46,47 @@ namespace EdugameCloud.PublicApi.Identity
         public Task<T> FindByNameAsync(string userName)
         {
             User user = UserModel.GetOneByEmail(userName).Value;
+
+            if (user.Status != UserStatus.Active)
+            {
+                user = null;
+                //var error =
+                //    new Error(
+                //        Errors.CODE_ERRORTYPE_USER_INACTIVE,
+                //        ErrorsTexts.AccessError_Subject,
+                //        ErrorsTexts.AccessError_UserIsInactive);
+                //this.LogError("User.Login", error);
+                //throw new FaultException<Error>(error, error.errorMessage);
+            }
+            else if (!user.IsAdministrator())
+            {
+                user = null;
+            }
+            else if (user.Company.IsActive())
+            {
+                user = null;
+
+                //var error =
+                //    new Error(
+                //        Errors.CODE_ERRORTYPE_USER_INACTIVE,
+                //        ErrorsTexts.AccessError_Subject,
+                //        ErrorsTexts.AccessError_CompanyIsInactive);
+                //this.LogError("User.Login", error);
+                //throw new FaultException<Error>(error, error.errorMessage);
+
+                //var error =
+                //    new Error(
+                //        Errors.CODE_ERRORTYPE_EXPIRED_LICENSE,
+                //        ErrorsTexts.AccessError_Subject,
+                //        ErrorsTexts.AccessError_CompanyLicenseIsExpired);
+                //this.LogError("User.Login", error);
+                //throw new FaultException<Error>(error, error.errorMessage);
+            }
+            else if (!user.Company.HasApi)
+            {
+                user = null;
+            }
+
             T result = null;
             if (user != null)
             {

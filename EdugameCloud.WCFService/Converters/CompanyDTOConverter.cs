@@ -82,6 +82,7 @@
 
             instance.CompanyName = companyDto.companyName;
             instance.Status = companyDto.isActive ? CompanyStatus.Active : CompanyStatus.Inactive;
+            instance.HasApi = companyDto.hasApi;
             instance.DateModified = DateTime.Now;
             if (companyDto.addressVO != null)
             {

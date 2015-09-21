@@ -90,8 +90,6 @@ namespace EdugameCloud.Lti.DTO
                 this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
                 this.enableMeetingReuse = instance.EnableMeetingReuse;
                 this.additionalLmsDomains = instance.AdditionalLmsDomains;
-
-                this.hasApi = instance.GetSetting<bool>(LmsCompanySettingNames.HasPublicApi);
             }
         }
 
@@ -358,9 +356,6 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public string[] additionalLmsDomains { get; set; }
-
-        [DataMember]
-        public bool hasApi { get; set; }
 
     }
 

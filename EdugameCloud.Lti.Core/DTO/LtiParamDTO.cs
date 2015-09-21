@@ -170,7 +170,7 @@
         }
 
         /// <summary>
-        ///     Gets the LMS user id.
+        /// Gets the LMS user id.
         /// </summary>
         public string lms_user_id
         {
@@ -183,7 +183,7 @@
         }
 
         /// <summary>
-        ///     Gets the LMS user login id.
+        /// Gets the LMS user login id.
         /// </summary>
         public string lms_user_login
         {
@@ -200,12 +200,12 @@
         }
 
         /// <summary>
-        ///     Gets or sets the OAUTH consumer key.
+        /// Gets or sets the OAUTH consumer key.
         /// </summary>
         public string oauth_consumer_key { get; set; }
 
         /// <summary>
-        ///     Gets or sets the referer.
+        /// Gets or sets the referer.
         /// </summary>
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", 
             Justification = "Reviewed. Suppression is OK here.")]
@@ -225,17 +225,17 @@
         }
 
         /// <summary>
-        ///     Gets or sets the roles.
+        /// Gets or sets the roles.
         /// </summary>
         public string roles { get; set; }
 
         /// <summary>
-        ///     Gets or sets the tool consumer info product family code.
+        /// Gets or sets the tool consumer info product family code.
         /// </summary>
         public string tool_consumer_info_product_family_code { get; set; }
 
         /// <summary>
-        ///     Gets or sets the custom brain honey domain.
+        /// Gets or sets the custom brain honey domain.
         /// </summary>
         public string tool_consumer_instance_guid { get; set; }
 
@@ -245,7 +245,7 @@
         public string lis_outcome_service_url { get; set; }
 
         /// <summary>
-        ///     Gets or sets the user id.
+        /// Gets or sets the user id.
         /// </summary>
         public string user_id { get; set; }
 

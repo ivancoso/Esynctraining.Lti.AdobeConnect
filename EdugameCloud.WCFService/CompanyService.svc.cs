@@ -1,6 +1,5 @@
 // ReSharper disable CheckNamespace
 
-using System.ServiceModel.Web;
 
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
@@ -19,7 +18,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.DTO;
     using Esynctraining.Core.Business.Models;
@@ -42,10 +40,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private CompanyModel CompanyModel
         {
-            get
-            {
-                return IoC.Resolve<CompanyModel>();
-            }
+            get { return IoC.Resolve<CompanyModel>(); }
         }
 
         /// <summary>
@@ -53,10 +48,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private LmsCompanyModel LmsCompanyModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyModel>(); }
         }
 
         /// <summary>
@@ -64,10 +56,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private LmsProviderModel LmsProviderModel
         {
-            get
-            {
-                return IoC.Resolve<LmsProviderModel>();
-            }
+            get { return IoC.Resolve<LmsProviderModel>(); }
         }
 
         /// <summary>
@@ -75,10 +64,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private LmsUserModel LmsUserModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserModel>();
-            }
+            get { return IoC.Resolve<LmsUserModel>(); }
         }
 
         /// <summary>
@@ -86,10 +72,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private CompanyThemeModel CompanyThemeModel
         {
-            get
-            {
-                return IoC.Resolve<CompanyThemeModel>();
-            }
+            get { return IoC.Resolve<CompanyThemeModel>(); }
         }
 
         /// <summary>
@@ -97,10 +80,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private CompanyLicenseModel CompanyLicenseModel
         {
-            get
-            {
-                return IoC.Resolve<CompanyLicenseModel>();
-            }
+            get { return IoC.Resolve<CompanyLicenseModel>(); }
         }
 
         /// <summary>
@@ -108,10 +88,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private TimeZoneModel TimeZoneModel
         {
-            get
-            {
-                return IoC.Resolve<TimeZoneModel>();
-            }
+            get { return IoC.Resolve<TimeZoneModel>(); }
         }
 
         /// <summary>
@@ -119,21 +96,15 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private LanguageModel LanguageModel
         {
-            get
-            {
-                return IoC.Resolve<LanguageModel>();
-            }
+            get { return IoC.Resolve<LanguageModel>(); }
         }
 
         /// <summary>
-        ///     Gets the UserRole model.
+        /// Gets the UserRole model.
         /// </summary>
         private UserRoleModel UserRoleModel
         {
-            get
-            {
-                return IoC.Resolve<UserRoleModel>();
-            }
+            get { return IoC.Resolve<UserRoleModel>(); }
         }
 
         #endregion

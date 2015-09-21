@@ -15,12 +15,10 @@ namespace EdugameCloud.PublicApi.Identity
         public override PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string providedPassword)
         {
             string hash = BitConverter.ToString(Cryptographer.GenerateHash(providedPassword)).Replace("-", string.Empty);
-
-            //Here we will place the code of password hashing that is there in our current solucion.This will take cleartext anad hash 
-            //Just for demonstration purpose I always return true.     
+   
             if (hashedPassword.Equals(hash, StringComparison.OrdinalIgnoreCase))
             {
-                return PasswordVerificationResult.SuccessRehashNeeded;
+                return PasswordVerificationResult.Success;
             }
             else
             {
