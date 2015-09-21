@@ -1,0 +1,161 @@
+@using System.Web.Http.Controllers
+@using System.Web.Http.Description
+@using System.Collections.ObjectModel
+@{
+    ViewBag.Title = "EdugameCloud API Test Page";
+}
+@section scripts {
+    <script src="//code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $('#um_get_access_token_btn').click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: $('#api_url').val() + 'Token',
+                    data: 'client_secret=secret&client_id=client&grant_type=password&username=' + encodeURIComponent($('#um_username_1').val()) + '&password=' + $('#um_password_1').val(),
+                    //contentType: "Content-Type: application/x-www-form-urlencoded",
+                    success: function (_d) { $('#um_access_token').val(_d.access_token); }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            });
+
+            $('#api_get_all_testsessions').click(function () {
+                GetList('reporting/testsessions/');
+            });
+
+            $('#api_get_one_testsession').click(function () {
+                GetDetails2('reporting/testsessions/', '#api_testsessions_acSessionId', '#api_testsessions_subModuleItemId');
+            });
+
+            $('#api_get_all_quizsessions').click(function () {
+                GetList('reporting/quizsessions/');
+            });
+
+            $('#api_get_one_quizsession').click(function () {
+                GetDetails2('reporting/quizsessions/', '#api_quizsessions_acSessionId', '#api_quizsessions_subModuleItemId');
+            });
+
+            $('#api_get_all_surveysessions').click(function () {
+                GetList('reporting/surveysessions/');
+            });
+
+            $('#api_get_one_surveysession').click(function () {
+                GetDetails2('reporting/surveysessions/', '#api_surveysessions_acSessionId', '#api_surveysessions_subModuleItemId');
+            });
+
+            $('#api_get_all_snsessions').click(function () {
+                GetList('reporting/snsessions/');
+            });
+
+            $('#api_get_one_snsession').click(function () {
+                GetDetails('reporting/snsessions/', '#api_snsessions_acSessionId');
+            });
+
+            $('#api_get_all_crosswordsessions').click(function () {
+                GetList('reporting/crosswordsessions/');
+            });
+
+            $('#api_get_one_crosswordsession').click(function () {
+                GetDetails('reporting/crosswordsessions/', '#api_crosswordsessions_acSessionId');
+            });
+
+            function GetList(relativeUrl)
+            {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d) { alert(JSON.stringify(_d)); }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetDetails(relativeUrl, sessionInputId) {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl + $(sessionInputId).val(),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d) { alert(JSON.stringify(_d)); }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+
+            function GetDetails2(relativeUrl, sessionInputId, subModuleItemInputId) {
+                $.ajax({
+                    type: "GET",
+                    url: $('#api_url').val() + relativeUrl + $(sessionInputId).val() + '/' + $(subModuleItemInputId).val(),
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
+                    },
+                    success: function (_d) { alert(JSON.stringify(_d)); }
+                }).fail(function (_d) { alert(JSON.stringify(_d)); });
+            }
+        });
+    </script>
+}
+<link type="text/css" href="~/Areas/HelpPage/HelpPage.css" rel="stylesheet" />
+<header class="help-page">
+    <div class="content-wrapper">
+        <div class="float-left">
+            <h1>@ViewBag.Title</h1>
+        </div>
+    </div>
+</header>
+<div id="body" class="help-page">
+    <section class="featured">
+        <div class="content-wrapper">
+            @*<h2>Introduction</h2>*@
+            <p>
+                @Html.ActionLink("Back to help", "Index", "Help")
+            </p>
+        </div>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+        Api Server Url:
+        <ul>
+            <li>Url: <input placeholder="e.g., http://dev.edugamecloud.com/api/" id='api_url' value="http://dev.edugamecloud.com/api/" /></li>
+        </ul>
+        User Management:
+        <ul>
+            <li>
+                Get Access Token: <input placeholder="Username" id="um_username_1" value="demo@esynctraining.com" />
+                <input type="password" placeholder="Password" id="um_password_1" value="" />
+                <input type="button" value="Get" id="um_get_access_token_btn" />
+                <input placeholder="Access Token" id="um_access_token" />
+            </li>
+        </ul>
+        API Endpoints:
+        <ul>
+            <li>
+                <p>Access Token: <input placeholder="Required for any api call" id="api_access_token" /></p>
+            </li>
+            <li>
+                <p><b>Tests</b></p>
+                <p><input type="button" value="Get Tests Sessions" id="api_get_all_testsessions" /></p>
+                <p><input type="button" value="Get Tests Session Details" id="api_get_one_testsession" /> : <input placeholder="acSessionId" id="api_testsessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_testsessions_subModuleItemId" /></p>
+            </li>
+            <li>
+                <p><b>Quizes</b></p>
+                <p><input type="button" value="Get Quiz Sessions" id="api_get_all_quizsessions" /></p>
+                <p><input type="button" value="Get Quiz Session Details" id="api_get_one_quizsession" /> : <input placeholder="acSessionId" id="api_quizsessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_quizsessions_subModuleItemId" /></p>
+            </li>
+            <li>
+                <p><b>Surveys</b></p>
+                <p><input type="button" value="Get Survey Sessions" id="api_get_all_surveysessions" /></p>
+                <p><input type="button" value="Get Survey Session Details" id="api_get_one_surveysession" /> : <input placeholder="acSessionId" id="api_surveysessions_acSessionId" /> <input placeholder="subModuleItemId" id="api_surveysessions_subModuleItemId" /></p>
+            </li>
+            <li>
+                <p><b>Collaboration Maps</b></p>
+                <p><input type="button" value="Get Collaboration Sessions" id="api_get_all_snsessions" /></p>
+                <p><input type="button" value="Get Collaboration Session Details" id="api_get_one_snsession" /> : <input placeholder="acSessionId" id="api_snsessions_acSessionId" /></p>
+            </li>
+            <li>
+                <p><b>Crosswords</b></p>
+                <p><input type="button" value="Get Crossword Sessions" id="api_get_all_crosswordsessions" /></p>
+                <p><input type="button" value="Get Crossword Session Details" id="api_get_one_crosswordsession" /> : <input placeholder="acSessionId" id="api_crosswordsessions_acSessionId" /></p>
+            </li>
+        </ul>
+    </section>
+</div>
