@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.API.Sakai
             int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             var paramDto = param as LtiParamDTO;
-            if (paramDto as LtiParamDTO != null)
+            if (paramDto != null)
             {
                 List<LmsUserDTO> users = this.lti2Api.GetUsersForCourse(
                     lmsCompany,

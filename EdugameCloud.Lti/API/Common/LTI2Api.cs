@@ -110,25 +110,7 @@
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The create signed request and get response.
-        /// </summary>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="serviceUrl">
-        /// The service url.
-        /// </param>
-        /// <param name="lis_result_sourcedid">
-        /// The LIS result sourced id.
-        /// </param>
-        /// <param name="ltiVersion">
-        /// The LTI version.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XElement"/>.
-        /// </returns>
+        
         private static XElement CreateSignedRequestAndGetResponse(
             LmsCompany company, 
             string serviceUrl, 
