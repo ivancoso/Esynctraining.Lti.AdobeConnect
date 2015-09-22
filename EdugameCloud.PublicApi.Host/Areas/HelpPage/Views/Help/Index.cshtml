@@ -1,8 +1,6 @@
-@using System.Web.Http
 @using System.Web.Http.Controllers
 @using System.Web.Http.Description
 @using System.Collections.ObjectModel
-@using EdugameCloud.PublicApi.Host.Areas.HelpPage.Models
 @model Collection<ApiDescription>
 
 @{
@@ -25,7 +23,7 @@
         <div class="content-wrapper">
             <h2>Introduction</h2>
             <p>
-                Provide a general description of your APIs here.
+                Reporting API provides information about Adobe Connect sessions and related quiz\survey\crossword\test results.
             </p>
             <p>
                 @Html.ActionLink("Click here", "Index", "ApiTest") to open page gives you ability to call sample requests to API.

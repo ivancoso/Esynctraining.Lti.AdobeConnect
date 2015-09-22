@@ -32,27 +32,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.AuthenticationType">
             <summary>
-                Gets the authentication type.
+            Gets the authentication type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.InternalId">
             <summary>
-                Gets or sets the internal id.
+            Gets or sets the internal id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.InternalEntity">
             <summary>
-                Gets or sets the internal id.
+            Gets or sets the internal id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.IsAuthenticated">
             <summary>
-                Gets a value indicating whether is authenticated.
+            Gets a value indicating whether is authenticated.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.Name">
             <summary>
-                Gets the name.
+            Gets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Authentication.EdugameCloudIdentity.Roles">
@@ -3355,7 +3355,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Converters.BaseConverter.BinderTypes">
             <summary>
-                Gets or sets the binder type.
+            Gets or sets the binder type.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Converters.AddressDTOConverter">
@@ -3625,7 +3625,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionFromStoredProcedureDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionFromStoredProcedureDTO.appletResultId">
@@ -3635,22 +3635,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionFromStoredProcedureDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionFromStoredProcedureDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionFromStoredProcedureDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.CrosswordSessionDTO">
             <summary>
-            The crossword session from stored procedure DTO.
+            The crossword session DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.CrosswordSessionDTO.#ctor">
@@ -3698,7 +3698,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AdobeConnectSessionDtoBase.dateCreated">
             <summary>
-            Gets or sets the date created.
+            Gets or sets the date created. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AdobeConnectSessionDtoBase.language">
@@ -3733,22 +3733,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UploadedFileDTO.dateCreated">
             <summary>
-                Gets or sets the date.
+            Gets or sets the date.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UploadedFileDTO.content">
             <summary>
-                Gets or sets the content.
+            Gets or sets the content.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UploadedFileDTO.fileId">
             <summary>
-                Gets or sets the id.
+            Gets or sets the id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UploadedFileDTO.fileName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizFromStoredProcedureExDTO">
@@ -3808,7 +3808,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFromStoredProcedureExDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFromStoredProcedureExDTO.subModuleItemId">
@@ -3878,7 +3878,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizSessionDTO">
             <summary>
-                The quiz session DTO.
+            The quiz session DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.QuizSessionDTO.#ctor">
@@ -3991,7 +3991,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SMICategoriesFromStoredProcedureExDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SMICategoriesFromStoredProcedureExDTO.subModuleId">
@@ -4031,7 +4031,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileExtraFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileExtraFromStoredProcedureDTO.subModuleItemId">
@@ -4076,37 +4076,37 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.acSessionId">
             <summary>
-                Gets or sets the AC session id.
+            Gets or sets the AC session id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.acUserModeId">
             <summary>
-                Gets or sets the AC user mode id.
+            Gets or sets the AC user mode id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.categoryName">
             <summary>
-                Gets or sets the category name.
+            Gets or sets the category name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.snGroupDiscussionId">
             <summary>
-                Gets or sets the group discussion id.
+            Gets or sets the group discussion id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.groupDiscussionTitle">
             <summary>
-                Gets or sets the group discussion name.
+            Gets or sets the group discussion name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.language">
             <summary>
-                Gets or sets the language.
+            Gets or sets the language.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.activeParticipants">
@@ -4121,7 +4121,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.profileName">
             <summary>
-                Gets or sets the SN profile name.
+            Gets or sets the SN profile name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.snProfileId">
@@ -4131,12 +4131,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionFromStoredProcedureDTO.userId">
             <summary>
-                Gets or sets the user id.
+            Gets or sets the user id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO">
@@ -4151,22 +4151,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.modifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module category.
+            Gets or sets the sub module category.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.subModuleId">
@@ -4176,7 +4176,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryFromStoredProcedureDTO.userId">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO">
@@ -4186,27 +4186,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.themeId">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.isShared">
@@ -4216,12 +4216,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.modifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module category.
+            Gets or sets the sub module category.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemFromStoredProcedureDTO.subModuleItemId">
@@ -4296,7 +4296,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyFromStoredProcedureExDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyFromStoredProcedureExDTO.subModuleItemId">
@@ -4464,7 +4464,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureExDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureExDTO.subModuleItemId">
@@ -4815,12 +4815,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyThemeDTO.companyThemeId">
             <summary>
-                Gets or sets the company theme Id.
+            Gets or sets the company theme Id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyThemeDTO.companyId">
             <summary>
-                Gets or sets the company.
+            Gets or sets the company.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyThemeDTO.gridHeaderBackgroundColor">
@@ -4850,7 +4850,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyThemeDTO.logoId">
             <summary>
-                Gets or sets the logo image id.
+            Gets or sets the logo image id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.EmailHistoryDTO">
@@ -4953,12 +4953,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FilesUploadedResultDTO.savedIds">
             <summary>
-                Gets or sets saved url list
+            Gets or sets saved url list
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FilesUploadedResultDTO.failedFiles">
             <summary>
-                Gets or sets the failed.
+            Gets or sets the failed.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.NewsletterSubscriptionDTO">
@@ -5189,22 +5189,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SocialUserTokensDTO.key">
             <summary>
-                Gets or sets the key.
+            Gets or sets the key.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SocialUserTokensDTO.provider">
             <summary>
-                Gets or sets the provider.
+            Gets or sets the provider.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SocialUserTokensDTO.secret">
             <summary>
-                Gets or sets the secret.
+            Gets or sets the secret.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SocialUserTokensDTO.token">
             <summary>
-                Gets or sets the token.
+            Gets or sets the token.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO">
@@ -5237,42 +5237,42 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.correctColor">
             <summary>
-                Gets or sets the correct color.
+            Gets or sets the correct color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.hintColor">
             <summary>
-                Gets or sets the hint color.
+            Gets or sets the hint color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.incorrectColor">
             <summary>
-                Gets or sets the incorrect color.
+            Gets or sets the incorrect color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.instructionColor">
             <summary>
-                Gets or sets the instruction color.
+            Gets or sets the instruction color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.questionColor">
             <summary>
-                Gets or sets the question color.
+            Gets or sets the question color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.selectionColor">
             <summary>
-                Gets or sets the selection color.
+            Gets or sets the selection color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemThemeDTO.titleColor">
             <summary>
-                Gets or sets the title color.
+            Gets or sets the title color.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SessionDTO">
@@ -5491,17 +5491,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateSumDTO.itemsCount">
             <summary>
-                Gets or sets the count.
+            Gets or sets the count.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateSumDTO.latestTime">
             <summary>
-                Gets or sets the object type.
+            Gets or sets the object type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateSumDTO.object_id">
             <summary>
-                Gets or sets the object id.
+            Gets or sets the object id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO">
@@ -5524,27 +5524,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.changed_aspect">
             <summary>
-                Gets or sets the changed aspect.
+            Gets or sets the changed aspect.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.object">
             <summary>
-                Gets or sets the object type.
+            Gets or sets the object type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.object_id">
             <summary>
-                Gets or sets the object id.
+            Gets or sets the object id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.subscription_id">
             <summary>
-                Gets or sets the subscription id.
+            Gets or sets the subscription id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.time">
             <summary>
-                Gets or sets the time.
+            Gets or sets the time.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.SubscriptionUpdateDTO.ToString">
@@ -5662,7 +5662,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestWithSmiDTO.SmiVO">
             <summary>
-                Gets or sets the SMI.
+            Gets or sets the SMI.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.UserLastLoginFromStoredProcedureDTO">
@@ -5790,7 +5790,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.latitude">
@@ -5805,17 +5805,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.stateCode">
             <summary>
-                Gets or sets the state code.
+            Gets or sets the state code.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.stateId">
             <summary>
-                Gets or sets the state id.
+            Gets or sets the state id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.stateName">
             <summary>
-                Gets or sets the state name.
+            Gets or sets the state name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoStateDTO.zoomLevel">
@@ -5893,7 +5893,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.acEmail">
             <summary>
-            Gets or sets the AC email.
+            Gets or sets the Adobe Connect email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.email">
@@ -5908,27 +5908,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.acSessionId">
             <summary>
-                Gets or sets the applet name.
+            Gets or sets the applet name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.testId">
             <summary>
-                Gets or sets the quiz id.
+            Gets or sets the quiz id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.companyId">
             <summary>
-                Gets or sets the company id.
+            Gets or sets the company id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.testResultId">
@@ -5938,17 +5938,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestResultDTO.isCompleted">
@@ -6006,12 +6006,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestSMIWrapperDTO.SmiDTO">
             <summary>
-                Gets or sets the SMI DTO.
+            Gets or sets the SMI DTO.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestSMIWrapperDTO.TestDTO">
             <summary>
-                Gets or sets the test DTO.
+            Gets or sets the test DTO.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.TestQuestionResultDTO">
@@ -6097,7 +6097,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.endTime">
             <summary>
-            Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.participantName">
@@ -6107,7 +6107,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.acEmail">
             <summary>
-            Gets or sets the AC email.
+            Gets or sets the Adobe Connect email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.position">
@@ -6127,7 +6127,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.startTime">
             <summary>
-            Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestPlayerDTO.timeLimit">
@@ -6165,92 +6165,92 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.categoryName">
             <summary>
-                Gets or sets the category name.
+            Gets or sets the category name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.createdByLastName">
             <summary>
-                Gets or sets the created by last name.
+            Gets or sets the created by last name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.createdByName">
             <summary>
-                Gets or sets the created by name.
+            Gets or sets the created by name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.description">
             <summary>
-                Gets or sets the description.
+            Gets or sets the description.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.firstName">
             <summary>
-                Gets or sets the first name.
+            Gets or sets the first name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.instructionDescription">
             <summary>
-                Gets or sets the instruction details.
+            Gets or sets the instruction details.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.instructionTitle">
             <summary>
-                Gets or sets the instruction title.
+            Gets or sets the instruction title.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.lastName">
             <summary>
-                Gets or sets the last name.
+            Gets or sets the last name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.passingScore">
             <summary>
-                Gets or sets the passing score.
+            Gets or sets the passing score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.scoreFormat">
             <summary>
-                Gets or sets the score format.
+            Gets or sets the score format.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.testId">
             <summary>
-                Gets or sets the test id.
+            Gets or sets the test id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.testName">
             <summary>
-                Gets or sets the test name.
+            Gets or sets the test name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.timeLimit">
             <summary>
-                Gets or sets the time limit.
+            Gets or sets the time limit.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestFromStoredProcedureDTO.userId">
             <summary>
-                Gets or sets the user id.
+            Gets or sets the user id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.TestDataDTO">
@@ -6323,17 +6323,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestDTO.testName">
             <summary>
-                Gets or sets the test name.
+            Gets or sets the test name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestDTO.scoreTypeId">
             <summary>
-                Gets or sets the score type.
+            Gets or sets the score type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TestDTO.testId">
@@ -6577,17 +6577,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyDTO.surveyGroupingTypeId">
             <summary>
-                Gets or sets the quiz format.
+            Gets or sets the quiz format.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyDTO.surveyName">
             <summary>
-                Gets or sets the quiz name.
+            Gets or sets the quiz name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyDTO.surveyId">
@@ -6657,7 +6657,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyFromStoredProcedureDTO.subModuleItemId">
@@ -6682,7 +6682,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO">
             <summary>
-                The survey player DTO.
+            The survey player DTO.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.answers">
@@ -6697,7 +6697,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.endTime">
             <summary>
-            Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.participantName">
@@ -6722,7 +6722,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.startTime">
             <summary>
-            Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SurveyQuestionResultDTO">
@@ -6836,27 +6836,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.acSessionId">
             <summary>
-                Gets or sets the applet name.
+            Gets or sets the applet name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.surveyId">
             <summary>
-                Gets or sets the quiz id.
+            Gets or sets the quiz id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.companyId">
             <summary>
-                Gets or sets the company id.
+            Gets or sets the company id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.surveyResultId">
@@ -6866,17 +6866,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyResultDTO.lmsUserParametersId">
@@ -6942,7 +6942,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UserLoginHistoryDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UserLoginHistoryDTO.fromIP">
@@ -7203,7 +7203,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.AppletResultDTO">
             <summary>
-                The applet result DTO.
+            The applet result DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.AppletResultDTO.#ctor">
@@ -7231,22 +7231,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.acSessionId">
             <summary>
-                Gets or sets the applet name.
+            Gets or sets the AdobeConnect session ID.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.appletItemId">
             <summary>
-                Gets or sets the document xml.
+            Gets or sets the document xml.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.appletResultId">
@@ -7261,17 +7261,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletResultDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.AppletItemDTO">
@@ -7299,12 +7299,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletItemDTO.documentXML">
             <summary>
-                Gets or sets the document xml.
+            Gets or sets the document xml.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletItemDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.AppletItemDTO.appletItemId">
@@ -7377,7 +7377,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ACSessionDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ACSessionDTO.acSessionId">
@@ -7405,57 +7405,57 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.buildNumber">
             <summary>
-                Gets or sets the build number.
+            Gets or sets the build number.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.buildVersionId">
             <summary>
-                Gets or sets the version id.
+            Gets or sets the version id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.buildVersionType">
             <summary>
-                Gets or sets the type name.
+            Gets or sets the type name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.buildVersionTypeId">
             <summary>
-                Gets or sets the type id.
+            Gets or sets the type id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.descriptionHTML">
             <summary>
-                Gets or sets the description html.
+            Gets or sets the description html.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.descriptionSmall">
             <summary>
-                Gets or sets the description small.
+            Gets or sets the description small.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.fileId">
             <summary>
-                Gets or sets the file id.
+            Gets or sets the file id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.fileName">
             <summary>
-                Gets or sets the file name.
+            Gets or sets the file name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.BuildVersionDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO">
@@ -7508,7 +7508,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO.startDate">
@@ -7518,7 +7518,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO.domain">
@@ -7621,32 +7621,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.city">
             <summary>
-                Gets or sets the city
+            Gets or sets the city
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.country">
             <summary>
-                Gets or sets the   Country
+            Gets or sets the   Country
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.postalcode">
             <summary>
-                Gets or sets the   Postal code
+            Gets or sets the   Postal code
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.query">
             <summary>
-                Gets or sets the query string to search for
+            Gets or sets the query string to search for
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.state">
             <summary>
-                Gets or sets the state
+            Gets or sets the state
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.GeoDTO.street">
             <summary>
-                Gets or sets the street
+            Gets or sets the street
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.GeoDTO.Equals(EdugameCloud.Core.Domain.DTO.GeoDTO)">
@@ -7730,17 +7730,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionDTO.snGroupDiscussionId">
             <summary>
-                Gets or sets the group discussion id.
+            Gets or sets the group discussion id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionDTO.groupDiscussionTitle">
             <summary>
-                Gets or sets the group discussion name.
+            Gets or sets the group discussion name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionDTO.profileName">
             <summary>
-                Gets or sets the SN profile name.
+            Gets or sets the SN profile name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNSessionDTO.snProfileId">
@@ -7826,7 +7826,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileExtraDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileExtraDTO.subModuleItemId">
@@ -7922,32 +7922,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ReportDTO.acSessionId">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ReportDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ReportDTO.name">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ReportDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub Module Item Id.
+            Gets or sets the sub Module Item Id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ReportDTO.type">
             <summary>
-                Gets or sets the type.
+            Gets or sets the type.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO">
             <summary>
-                The question for admin DTO.
+            The question for admin DTO.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO.distractors">
@@ -7975,7 +7975,7 @@
             Gets or sets the question type id.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO.CorrectAnswerCount">
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO.сorrectAnswerCount">
             <summary>
             Gets or sets the correct answer count.
             </summary>
@@ -8022,7 +8022,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO">
             <summary>
-                The quiz player DTO.
+            The quiz player DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.#ctor">
@@ -8040,47 +8040,47 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.TotalQuestion">
             <summary>
-                Gets or sets the total question.
+            Gets or sets the total question.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.acEmail">
             <summary>
-                Gets or sets the AC email.
+            Gets or sets the AdobeConnect email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.isCompleted">
             <summary>
-                Gets or sets a value indicating whether is completed.
+            Gets or sets a value indicating whether is completed.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.participantName">
             <summary>
-                Gets or sets the participant name.
+            Gets or sets the participant name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.position">
             <summary>
-                Gets or sets the position.
+            Gets or sets the position.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.quizResultId">
             <summary>
-                Gets or sets the quiz result id.
+            Gets or sets the quiz result id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizResultDataDTO">
@@ -8100,7 +8100,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO">
             <summary>
-                The crossword result DTO.
+            The crossword result DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.#ctor">
@@ -8128,7 +8128,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.appletResultId">
@@ -8138,17 +8138,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordResultByAcSessionDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizSessionFromStoredProcedureDTO">
@@ -8238,7 +8238,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordSessionFromStoredProcedureDTO.activeParticipants">
             <summary>
-                Gets or sets the participants.
+            Gets or sets the participants.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordSessionFromStoredProcedureDTO.appletItemId">
@@ -8273,7 +8273,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordSessionFromStoredProcedureDTO.totalParticipants">
             <summary>
-                Gets or sets the participants.
+            Gets or sets the participants.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordSessionFromStoredProcedureDTO.userId">
@@ -8301,27 +8301,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.RecentReportDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.RecentReportDTO.name">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.RecentReportDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module category id.
+            Gets or sets the sub module category id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.RecentReportDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.RecentReportDTO.type">
             <summary>
-                Gets or sets the type.
+            Gets or sets the type.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO">
@@ -8354,22 +8354,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.dateCreated">
             <summary>
-            Gets or sets the date created.
+            Gets or sets the date created. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.dateModified">
             <summary>
-            Gets or sets the date modified.
+            Gets or sets the date modified. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.groupDiscussionTitle">
             <summary>
-                Gets or sets the title.
+            Gets or sets the title.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.groupDiscussionData">
             <summary>
-                Gets or sets the data.
+            Gets or sets the data.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.isActive">
@@ -8379,7 +8379,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNGroupDiscussionDTO.acSessionId">
             <summary>
-                Gets or sets the AC session.
+            Gets or sets the AC session.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SNLinkDTO">
@@ -8407,7 +8407,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNLinkDTO.snProfileId">
             <summary>
-                Gets or sets the SN profile id.
+            Gets or sets the SN profile id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNLinkDTO.snLinkId">
@@ -8468,12 +8468,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMapSettingsDTO.countryId">
             <summary>
-                Gets or sets the country.
+            Gets or sets the country.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMapSettingsDTO.snMapProviderId">
             <summary>
-                Gets or sets the map provider.
+            Gets or sets the map provider.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMapSettingsDTO.snMapSettingsId">
@@ -8483,7 +8483,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMapSettingsDTO.zoomLevel">
             <summary>
-                Gets or sets a zoom level.
+            Gets or sets a zoom level.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SNProfileDTO">
@@ -8526,32 +8526,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.about">
             <summary>
-                Gets or sets the about.
+            Gets or sets the about.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.addressVO">
             <summary>
-                Gets or sets the address.
+            Gets or sets the address.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.email">
             <summary>
-                Gets or sets the email.
+            Gets or sets the email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.links">
             <summary>
-                Gets or sets the links.
+            Gets or sets the links.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.profileName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.jobTitle">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.userName">
@@ -8561,17 +8561,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.phone">
             <summary>
-                Gets or sets the phone.
+            Gets or sets the phone.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.services">
             <summary>
-                Gets or sets the services.
+            Gets or sets the services.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileDTO.snProfileId">
             <summary>
-                Gets or sets the SN profile id.
+            Gets or sets the SN profile id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SNProfileSNServiceDTO">
@@ -8599,12 +8599,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileSNServiceDTO.snProfileId">
             <summary>
-                Gets or sets the SN profile.
+            Gets or sets the SN profile.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileSNServiceDTO.snServiceId">
             <summary>
-                Gets or sets the SN service.
+            Gets or sets the SN service.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNProfileSNServiceDTO.serviceUrl">
@@ -8637,12 +8637,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNServiceDTO.snServiceId">
             <summary>
-                Gets or sets the SN service id.
+            Gets or sets the SN service id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNServiceDTO.socialService">
             <summary>
-                Gets or sets the social service.
+            Gets or sets the social service.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SNMemberDTO">
@@ -8690,7 +8690,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMemberDTO.dateCreated">
             <summary>
-            Gets or sets the date created.
+            Gets or sets the date created. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SNMemberDTO.isBlocked">
@@ -8756,17 +8756,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.isActive">
@@ -8781,7 +8781,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.themeId">
             <summary>
-                Gets or sets the theme id.
+            Gets or sets the theme id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ThemeDTO.themeName">
@@ -8791,7 +8791,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.DistractorDTO">
             <summary>
-                The distractor DTO.
+            The distractor DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.DistractorDTO.#ctor">
@@ -8809,12 +8809,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.distractorType">
             <summary>
-                Gets or sets the distractor type.
+            Gets or sets the distractor type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.imageVO">
@@ -8824,12 +8824,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.distractor">
@@ -8905,137 +8905,137 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.allowOther">
             <summary>
-                Gets or sets a value indicating whether allow other.
+            Gets or sets a value indicating whether allow other.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.answerOptionType">
             <summary>
-                Gets or sets the answer option type.
+            Gets or sets the answer option type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.correctMessage">
             <summary>
-                Gets or sets the correct message.
+            Gets or sets the correct message.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.correctReference">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.distractors">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.hint">
             <summary>
-                Gets or sets the hint.
+            Gets or sets the hint.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.imageId">
             <summary>
-                Gets or sets the File id.
+            Gets or sets the File id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.imageVO">
             <summary>
-                Gets or sets the image vo.
+            Gets or sets the image vo.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.incorrectMessage">
             <summary>
-                Gets or sets the incorrect message.
+            Gets or sets the incorrect message.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.instruction">
             <summary>
-                Gets or sets the instruction.
+            Gets or sets the instruction.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.isActive">
             <summary>
-                Gets or sets the is active.
+            Gets or sets the is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.isMandatory">
             <summary>
-                Gets or sets a value indicating whether question is mandatory.
+            Gets or sets a value indicating whether question is mandatory.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.modifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.pageNumber">
             <summary>
-                Gets or sets the room number.
+            Gets or sets the room number.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.question">
             <summary>
-                Gets or sets the question.
+            Gets or sets the question.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.questionId">
             <summary>
-                Gets or sets the question id.
+            Gets or sets the question id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.questionOrder">
             <summary>
-                Gets or sets the question order.
+            Gets or sets the question order.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.questionTypeId">
             <summary>
-                Gets or sets the question type id.
+            Gets or sets the question type id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.restrictions">
             <summary>
-                Gets or sets the restrictions.
+            Gets or sets the restrictions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.scoreValue">
             <summary>
-                Gets or sets the score value.
+            Gets or sets the score value.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item id.
+            Gets or sets the sub module item id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.totalWeightBucket">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.weightBucketType">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.randomizeAnswers">
             <summary>
-                Gets or sets the value indicating whether randomize answers.
+            Gets or sets the value indicating whether randomize answers.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.QuestionDTO.FillCustomProperties(EdugameCloud.Core.Domain.Entities.QuestionFor)">
@@ -9079,22 +9079,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.modifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module category.
+            Gets or sets the sub module category.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.subModuleId">
@@ -9104,7 +9104,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleCategoryDTO.userId">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.LanguageDTO">
@@ -9175,7 +9175,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionTypeDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionTypeDTO.questionTypeDescription">
@@ -9190,7 +9190,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionTypeDTO.type">
             <summary>
-                Gets or sets the type.
+            Gets or sets the type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionTypeDTO.questionTypeId">
@@ -9223,7 +9223,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TimeZoneDTO.timeZone">
             <summary>
-                Gets or sets the time zone.
+            Gets or sets the time zone.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.TimeZoneDTO.timeZoneId">
@@ -9549,7 +9549,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SMICategoriesFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SMICategoriesFromStoredProcedureDTO.subModuleId">
@@ -9632,7 +9632,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFromStoredProcedureDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFromStoredProcedureDTO.subModuleItemId">
@@ -9707,7 +9707,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.CrosswordDTO.subModuleItemId">
@@ -9748,27 +9748,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.themeId">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.createdBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.dateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.isShared">
@@ -9778,12 +9778,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.modifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.subModuleCategoryId">
             <summary>
-                Gets or sets the sub module category.
+            Gets or sets the sub module category.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SubModuleItemDTO.subModuleItemId">
@@ -9821,32 +9821,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.defaultValue">
             <summary>
-                Gets or sets the default value.
+            Gets or sets the default value.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.prefix">
             <summary>
-                Gets or sets the prefix.
+            Gets or sets the prefix.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.scoreTypeId">
             <summary>
-                Gets or sets the id.
+            Gets or sets the id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.ScoreTypeDTO.scoreTypeName">
             <summary>
-                Gets or sets the description.
+            Gets or sets the description.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizFormatDTO">
@@ -9874,12 +9874,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFormatDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFormatDTO.isActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizFormatDTO.quizFormatId">
@@ -9912,22 +9912,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.quizFormatId">
             <summary>
-                Gets or sets the quiz format.
+            Gets or sets the quiz format.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.quizName">
             <summary>
-                Gets or sets the quiz name.
+            Gets or sets the quiz name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.scoreTypeId">
             <summary>
-                Gets or sets the score type.
+            Gets or sets the score type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.subModuleItemId">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizDTO.quizId">
@@ -9942,7 +9942,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizResultDTO">
             <summary>
-                The quiz result DTO.
+            The quiz result DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.QuizResultDTO.#ctor">
@@ -9965,32 +9965,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.acEmail">
             <summary>
-            Gets or sets the AC email.
+            Gets or sets the Adobe Connect email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.acSessionId">
             <summary>
-                Gets or sets the applet name.
+            Gets or sets the applet name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.quizId">
             <summary>
-                Gets or sets the quiz id.
+            Gets or sets the quiz id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.companyId">
             <summary>
-                Gets or sets the company id.
+            Gets or sets the company id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.dateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.endTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.quizResultId">
@@ -10000,17 +10000,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.participantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.startTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.isArchive">
@@ -10053,37 +10053,37 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.dateCreated">
             <summary>
-                Gets or sets the date.
+            Gets or sets the date.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.height">
             <summary>
-                Gets or sets the height.
+            Gets or sets the height.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.fileId">
             <summary>
-                Gets or sets the id.
+            Gets or sets the id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.fileName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.width">
             <summary>
-                Gets or sets the width.
+            Gets or sets the width.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.x">
             <summary>
-                Gets or sets the x.
+            Gets or sets the x.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.y">
             <summary>
-                Gets or sets the y.
+            Gets or sets the y.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.FileDTO.createdBy">
@@ -10151,7 +10151,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UserDTO.companyId">
             <summary>
-                Gets or sets the age of a user.
+            Gets or sets the age of a user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.UserDTO.createdBy">
@@ -10304,7 +10304,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyTheme.ButtonColor">
             <summary>
-                Gets or sets the button color.
+            Gets or sets the button color.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyTheme.ButtonTextColor">
@@ -10454,27 +10454,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SocialUserTokens.Provider">
             <summary>
-                Gets or sets the provider.
+            Gets or sets the provider.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SocialUserTokens.Key">
             <summary>
-                Gets or sets the token.
+            Gets or sets the token.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SocialUserTokens.Token">
             <summary>
-                Gets or sets the token.
+            Gets or sets the token.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SocialUserTokens.Secret">
             <summary>
-                Gets or sets the secret.
+            Gets or sets the secret.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SocialUserTokens.User">
             <summary>
-                Gets or sets the user.
+            Gets or sets the user.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.SubModuleItemTheme">
@@ -10560,12 +10560,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionFor.Question">
             <summary>
-                Gets or sets the correct message.
+            Gets or sets the correct message.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionFor.QuestionTypes">
             <summary>
-                Gets or sets the questionType.
+            Gets or sets the questionType.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionFor.IsMandatory">
@@ -10575,7 +10575,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionFor.PageNumber">
             <summary>
-                Gets or sets the room number.
+            Gets or sets the room number.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionForTrueFalse">
@@ -10600,17 +10600,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket.TotalWeightBucket">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket.WeightBucketType">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket.AllowOther">
             <summary>
-                Gets or sets the allow other.
+            Gets or sets the allow other.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer">
@@ -10625,7 +10625,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer.Restrictions">
             <summary>
-                Gets or sets the restrictions.
+            Gets or sets the restrictions.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionForRate">
@@ -10640,12 +10640,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForRate.Restrictions">
             <summary>
-                Gets or sets the restrictions.
+            Gets or sets the restrictions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForRate.AllowOther">
             <summary>
-                Gets or sets the allow other.
+            Gets or sets the allow other.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForRate.IsAlwaysRateDropdown">
@@ -10665,7 +10665,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForLikert.AllowOther">
             <summary>
-                Gets or sets the allow other.
+            Gets or sets the allow other.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice">
@@ -10680,12 +10680,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice.AllowOther">
             <summary>
-                Gets or sets the allow other.
+            Gets or sets the allow other.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice.Restrictions">
             <summary>
-                Gets or sets the restrictions.
+            Gets or sets the restrictions.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionTypeEnum">
@@ -10825,32 +10825,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.Changed_aspect">
             <summary>
-                Gets or sets the changed aspect.
+            Gets or sets the changed aspect.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.CreatedDate">
             <summary>
-                Gets or sets the created date.
+            Gets or sets the created date.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.ObjectType">
             <summary>
-                Gets or sets the object type.
+            Gets or sets the object type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.Object_id">
             <summary>
-                Gets or sets the object id.
+            Gets or sets the object id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.Subscription_id">
             <summary>
-                Gets or sets the subscription id.
+            Gets or sets the subscription id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubscriptionUpdate.Time">
             <summary>
-                Gets or sets the time.
+            Gets or sets the time.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.TestQuestionResult">
@@ -10895,27 +10895,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.ACSessionId">
             <summary>
-                Gets or sets the ac session.
+            Gets or sets the ac session.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.EndTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.ParticipantName">
             <summary>
-                Gets or sets the participant name.
+            Gets or sets the participant name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.Test">
             <summary>
-                Gets or sets the quiz.
+            Gets or sets the quiz.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.Results">
@@ -10935,17 +10935,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.Score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.StartTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestResult.IsCompleted">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.SurveyQuestionResultAnswer">
@@ -11015,22 +11015,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.ACSessionId">
             <summary>
-                Gets or sets the ac session.
+            Gets or sets the ac session.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.EndTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.ParticipantName">
             <summary>
-                Gets or sets the participant name.
+            Gets or sets the participant name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.Results">
@@ -11040,17 +11040,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.Score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.StartTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.Survey">
             <summary>
-                Gets or sets the survey.
+            Gets or sets the survey.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SurveyResult.IsArchive">
@@ -11085,17 +11085,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.Description">
             <summary>
-                Gets or sets the description.
+            Gets or sets the description.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.SurveyGroupingType">
             <summary>
-                Gets or sets the survey grouping type.
+            Gets or sets the survey grouping type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.SurveyName">
             <summary>
-                Gets or sets the survey name.
+            Gets or sets the survey name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.Results">
@@ -11105,12 +11105,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.SubModuleItem">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Survey.LmsSurveyId">
             <summary>
-                Gets or sets the lms id.
+            Gets or sets the lms id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.UserLoginHistory">
@@ -11120,7 +11120,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.UserLoginHistory.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.UserLoginHistory.FromIP">
@@ -11230,12 +11230,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletItem.AppletName">
             <summary>
-                Gets or sets the applet name.
+            Gets or sets the applet name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletItem.DocumentXML">
             <summary>
-                Gets or sets the document xml.
+            Gets or sets the document xml.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletItem.Results">
@@ -11245,7 +11245,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletItem.SubModuleItem">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.AppletResult">
@@ -11255,12 +11255,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletResult.ACSessionId">
             <summary>
-                Gets or sets the AC session.
+            Gets or sets the AC session.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletResult.AppletItem">
             <summary>
-                Gets or sets the document xml.
+            Gets or sets the document xml.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletResult.DateCreated">
@@ -11275,7 +11275,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletResult.ParticipantName">
             <summary>
-                Gets or sets the participant name
+            Gets or sets the participant name
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.AppletResult.Score">
@@ -11335,12 +11335,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.CurrentLicense">
             <summary>
-                Gets or sets the age of a user.
+            Gets or sets the age of a user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.FutureActiveLicense">
             <summary>
-                Gets or sets the age of a user.
+            Gets or sets the age of a user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.Users">
@@ -11356,6 +11356,11 @@
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.Status">
             <summary>
             Gets or sets a value indicating whether is active.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.Company.HasApi">
+            <summary>
+            Has access to REST Reporting API.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.ACUserMode">
@@ -11380,7 +11385,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.Address1">
             <summary>
-                Gets or sets the address 1.
+            Gets or sets the address 1.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.Zip">
@@ -11390,12 +11395,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.Address2">
             <summary>
-                Gets or sets the address 2.
+            Gets or sets the address 2.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.City">
             <summary>
-                Gets or sets the city.
+            Gets or sets the city.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.Latitude">
@@ -11415,22 +11420,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.Country">
             <summary>
-                Gets or sets the country.
+            Gets or sets the country.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Address.State">
             <summary>
-                Gets or sets the state.
+            Gets or sets the state.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.CompanyLicense">
@@ -11450,17 +11455,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.DateStart">
             <summary>
-                Gets or sets the date start.
+            Gets or sets the date start.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.Domain">
@@ -11505,17 +11510,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.BuildNumber">
             <summary>
-                Gets or sets the build number.
+            Gets or sets the build number.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.DescriptionHTML">
@@ -11535,7 +11540,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.BuildVersion.Type">
@@ -11605,12 +11610,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfileSNService.Profile">
             <summary>
-                Gets or sets the SN profile.
+            Gets or sets the SN profile.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfileSNService.Service">
             <summary>
-                Gets or sets the SN service.
+            Gets or sets the SN service.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfileSNService.ServiceUrl">
@@ -11660,7 +11665,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNLink.Profile">
             <summary>
-                Gets or sets the profile.
+            Gets or sets the profile.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNLink.LinkValue">
@@ -11685,12 +11690,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNGroupDiscussion.GroupDiscussionTitle">
             <summary>
-                Gets or sets the title.
+            Gets or sets the title.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNGroupDiscussion.GroupDiscussionData">
             <summary>
-                Gets or sets the data.
+            Gets or sets the data.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNGroupDiscussion.IsActive">
@@ -11700,7 +11705,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNGroupDiscussion.ACSessionId">
             <summary>
-                Gets or sets the session.
+            Gets or sets the session.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.SNProfile">
@@ -11715,7 +11720,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.Address">
             <summary>
-                Gets or sets the address.
+            Gets or sets the address.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.Email">
@@ -11725,17 +11730,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.ProfileName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.UserName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.JobTitle">
             <summary>
-                Gets or sets the job title.
+            Gets or sets the job title.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.Phone">
@@ -11745,7 +11750,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.Links">
             <summary>
-                Gets or sets the links.
+            Gets or sets the links.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.MapSettings">
@@ -11760,7 +11765,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SNProfile.Services">
             <summary>
-                Gets or sets the services.
+            Gets or sets the services.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.ImageStatus">
@@ -11825,7 +11830,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.State.StateName">
             <summary>
-                Gets or sets the state name.
+            Gets or sets the state name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.State.StateCode">
@@ -11920,17 +11925,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.CreatedBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.DistractorTextColor">
@@ -11940,12 +11945,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.QuestionHintColor">
@@ -11980,7 +11985,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.Theme">
             <summary>
-                Gets or sets the theme .
+            Gets or sets the theme .
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ThemeAttribute.ThemeOrder">
@@ -12000,32 +12005,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.CreatedBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.ThemeName">
             <summary>
-                Gets or sets the theme name.
+            Gets or sets the theme name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Theme.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Test">
@@ -12035,27 +12040,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.Description">
             <summary>
-                Gets or sets the description.
+            Gets or sets the description.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.InstructionDescription">
             <summary>
-                Gets or sets the instruction description.
+            Gets or sets the instruction description.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.InstructionTitle">
             <summary>
-                Gets or sets the instruction title.
+            Gets or sets the instruction title.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.TimeLimit">
             <summary>
-                Gets or sets the time limit.
+            Gets or sets the time limit.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.PassingScore">
             <summary>
-                Gets or sets the passing score.
+            Gets or sets the passing score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.Results">
@@ -12065,22 +12070,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.ScoreFormat">
             <summary>
-                Gets or sets the score format.
+            Gets or sets the score format.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.ScoreType">
             <summary>
-                Gets or sets the score type.
+            Gets or sets the score type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.SubModuleItem">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Test.TestName">
             <summary>
-                Gets or sets the test name.
+            Gets or sets the test name.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.SubModuleCategory">
@@ -12090,27 +12095,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.CategoryName">
             <summary>
-                Gets or sets the category name.
+            Gets or sets the category name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.SubModule">
             <summary>
-                Gets or sets the sub module.
+            Gets or sets the sub module.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.SubModuleItems">
@@ -12120,7 +12125,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.User">
             <summary>
-                Gets or sets the user.
+            Gets or sets the user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleCategory.LmsCourseId">
@@ -12140,12 +12145,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.ACSessions">
             <summary>
-                Gets or sets the ac sessions.
+            Gets or sets the ac sessions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.Themes">
             <summary>
-                Gets or sets the ac sessions.
+            Gets or sets the ac sessions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.AppletItems">
@@ -12155,32 +12160,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.CreatedBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.IsShared">
             <summary>
-                Gets or sets a value indicating whether is shared.
+            Gets or sets a value indicating whether is shared.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.Questions">
@@ -12200,7 +12205,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.SubModuleCategory">
             <summary>
-                Gets or sets the sub module category.
+            Gets or sets the sub module category.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModuleItem.Tests">
@@ -12220,17 +12225,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModule.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModule.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModule.Module">
             <summary>
-                Gets or sets the module.
+            Gets or sets the module.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModule.SubModuleCategories">
@@ -12240,7 +12245,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.SubModule.SubModuleName">
             <summary>
-                Gets or sets the sub module name.
+            Gets or sets the sub module name.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.ScoreType">
@@ -12250,7 +12255,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ScoreType.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ScoreType.IsActive">
@@ -12295,27 +12300,27 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.ACSessionId">
             <summary>
-                Gets or sets the ac session.
+            Gets or sets the ac session.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.EndTime">
             <summary>
-                Gets or sets the end time.
+            Gets or sets the end time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.ParticipantName">
             <summary>
-                Gets or sets the participant name.
+            Gets or sets the participant name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.Quiz">
             <summary>
-                Gets or sets the quiz.
+            Gets or sets the quiz.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.Results">
@@ -12325,22 +12330,22 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.Score">
             <summary>
-                Gets or sets the score.
+            Gets or sets the score.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.StartTime">
             <summary>
-                Gets or sets the start time.
+            Gets or sets the start time.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.LmsId">
             <summary>
-                Gets or sets the LMS id.
+            Gets or sets the LMS id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.isCompleted">
             <summary>
-                Gets or sets the LMS id.
+            Gets or sets the LMS id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizResult.LmsUserParametersId">
@@ -12390,12 +12395,12 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizFormat.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizFormat.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Quiz">
@@ -12405,17 +12410,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.Description">
             <summary>
-                Gets or sets the description.
+            Gets or sets the description.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.QuizFormat">
             <summary>
-                Gets or sets the quiz format.
+            Gets or sets the quiz format.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.QuizName">
             <summary>
-                Gets or sets the quiz name.
+            Gets or sets the quiz name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.Results">
@@ -12425,17 +12430,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.ScoreType">
             <summary>
-                Gets or sets the score type.
+            Gets or sets the score type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.SubModuleItem">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Quiz.LmsQuizId">
             <summary>
-                Gets or sets the lms id.
+            Gets or sets the lms id.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.QuestionType">
@@ -12465,7 +12470,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionType.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionType.QuestionTypeDescription">
@@ -12480,7 +12485,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuestionType.Type">
             <summary>
-                Gets or sets the type.
+            Gets or sets the type.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Question">
@@ -12490,72 +12495,72 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.CorrectMessage">
             <summary>
-                Gets or sets the correct message.
+            Gets or sets the correct message.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.CorrectReference">
             <summary>
-                Gets or sets the correct reference.
+            Gets or sets the correct reference.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.CreatedBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.Hint">
             <summary>
-                Gets or sets the hint.
+            Gets or sets the hint.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.Image">
             <summary>
-                Gets or sets the File.
+            Gets or sets the File.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.IncorrectMessage">
             <summary>
-                Gets or sets the incorrect message.
+            Gets or sets the incorrect message.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.Instruction">
             <summary>
-                Gets or sets the instruction.
+            Gets or sets the instruction.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionName">
             <summary>
-                Gets or sets the question name.
+            Gets or sets the question name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionOrder">
             <summary>
-                Gets or sets the question order.
+            Gets or sets the question order.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionType">
             <summary>
-                Gets or sets the question type.
+            Gets or sets the question type.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.ScoreValue">
@@ -12630,7 +12635,7 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.SubModuleItem">
             <summary>
-                Gets or sets the sub module item.
+            Gets or sets the sub module item.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Module">
@@ -12640,17 +12645,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Module.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Module.IsActive">
             <summary>
-                Gets or sets a value indicating whether is active.
+            Gets or sets a value indicating whether is active.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Module.ModuleName">
             <summary>
-                Gets or sets the module name.
+            Gets or sets the module name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Module.SubModules">
@@ -12820,42 +12825,42 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.CreatedBy">
             <summary>
-                Gets or sets the owner.
+            Gets or sets the owner.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.DateCreated">
             <summary>
-                Gets or sets the date.
+            Gets or sets the date.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.Height">
             <summary>
-                Gets or sets the height.
+            Gets or sets the height.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.FileName">
             <summary>
-                Gets or sets the name.
+            Gets or sets the name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.Status">
             <summary>
-                Gets or sets the state.
+            Gets or sets the state.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.Width">
             <summary>
-                Gets or sets the width.
+            Gets or sets the width.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.X">
             <summary>
-                Gets or sets the x.
+            Gets or sets the x.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.File.Y">
             <summary>
-                Gets or sets the y.
+            Gets or sets the y.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.User">
@@ -12865,32 +12870,32 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.ACSessions">
             <summary>
-                Gets or sets the ac sessions.
+            Gets or sets the ac sessions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Activations">
             <summary>
-                Gets or sets the activations.
+            Gets or sets the activations.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Company">
             <summary>
-                Gets or sets the age of a user.
+            Gets or sets the age of a user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.CreatedBy">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.DateCreated">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.DateModified">
             <summary>
-                Gets or sets the date modified.
+            Gets or sets the date modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.DistractorsCreated">
@@ -12905,77 +12910,77 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Email">
             <summary>
-                Gets or sets the email.
+            Gets or sets the email.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Files">
             <summary>
-                Gets or sets the ac sessions.
+            Gets or sets the ac sessions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.FirstName">
             <summary>
-                Gets or sets the first name.
+            Gets or sets the first name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.FullName">
             <summary>
-                Gets the full name.
+            Gets the full name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Language">
             <summary>
-                Gets or sets the language id.
+            Gets or sets the language id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.LastName">
             <summary>
-                Gets or sets the last name.
+            Gets or sets the last name.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.LoginHistory">
             <summary>
-                Gets or sets the ac sessions.
+            Gets or sets the ac sessions.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Logo">
             <summary>
-                Gets or sets the created by.
+            Gets or sets the created by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.ModifiedBy">
             <summary>
-                Gets or sets the modified by.
+            Gets or sets the modified by.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Password">
             <summary>
-                Gets or sets the password.
+            Gets or sets the password.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.SessionToken">
             <summary>
-                Gets or sets the session
+            Gets or sets the session
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.SessionTokenExpirationDate">
             <summary>
-                Gets or sets the date created.
+            Gets or sets the date created.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.Status">
             <summary>
-                Gets or sets a status.
+            Gets or sets a status.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.SubModuleCategories">
             <summary>
-                Gets or sets the sub module categories.
+            Gets or sets the sub module categories.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.SubModuleCategoriesModified">
             <summary>
-                Gets or sets the sub module categories modified.
+            Gets or sets the sub module categories modified.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.ThemeAttributesCreated">
@@ -12990,17 +12995,17 @@
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.TimeZone">
             <summary>
-                Gets or sets the time zone id.
+            Gets or sets the time zone id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.UserRole">
             <summary>
-                Gets or sets the user role id.
+            Gets or sets the user role id.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.IsUnsubscribed">
             <summary>
-                Gets or sets the unsibscribed.
+            Gets or sets the unsibscribed.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.Entities.User.GenerateCookieValue">

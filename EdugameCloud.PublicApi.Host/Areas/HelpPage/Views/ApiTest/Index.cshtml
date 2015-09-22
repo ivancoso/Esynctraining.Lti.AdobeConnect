@@ -1,6 +1,3 @@
-@using System.Web.Http.Controllers
-@using System.Web.Http.Description
-@using System.Collections.ObjectModel
 @{
     ViewBag.Title = "EdugameCloud API Test Page";
 }
@@ -67,7 +64,13 @@
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
                     },
-                    success: function (_d) { alert(JSON.stringify(_d)); }
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");                        
+                        PR.prettyPrint()
+                        alert(JSON.stringify(_d));
+                    }
                 }).fail(function (_d) { alert(JSON.stringify(_d)); });
             }
 
@@ -78,7 +81,13 @@
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
                     },
-                    success: function (_d) { alert(JSON.stringify(_d)); }
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");
+                        PR.prettyPrint()
+                        alert(JSON.stringify(_d));
+                    }
                 }).fail(function (_d) { alert(JSON.stringify(_d)); });
             }
 
@@ -89,11 +98,18 @@
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("Authorization", 'Bearer ' + $('#api_access_token').val());
                     },
-                    success: function (_d) { alert(JSON.stringify(_d)); }
+                    success: function (_d)
+                    {
+                        $('#result').html(JSON.stringify(_d, null, 4));
+                        $('#result').removeClass("prettyprinted");
+                        PR.prettyPrint()
+                        alert(JSON.stringify(_d));
+                    }
                 }).fail(function (_d) { alert(JSON.stringify(_d)); });
             }
         });
     </script>
+    <script src="//cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 }
 <link type="text/css" href="~/Areas/HelpPage/HelpPage.css" rel="stylesheet" />
 <header class="help-page">
@@ -115,13 +131,13 @@
     <section class="content-wrapper main-content clear-fix">
         Api Server Url:
         <ul>
-            <li>Url: <input placeholder="e.g., http://dev.edugamecloud.com/api/" id='api_url' value="http://dev.edugamecloud.com/api/" /></li>
+            <li>Url: <input placeholder="e.g., https://dev.edugamecloud.com/api/" id='api_url' value="http://localhost/api/" /></li>
         </ul>
         User Management:
         <ul>
             <li>
-                Get Access Token: <input placeholder="Username" id="um_username_1" value="demo@esynctraining.com" />
-                <input type="password" placeholder="Password" id="um_password_1" value="" />
+                Get Access Token: <input placeholder="Username" id="um_username_1" value="vadim+ecornell@esynctraining.com" />
+                <input type="password" placeholder="Password" id="um_password_1" value="e$ync123" />
                 <input type="button" value="Get" id="um_get_access_token_btn" />
                 <input placeholder="Access Token" id="um_access_token" />
             </li>
@@ -157,5 +173,9 @@
                 <p><input type="button" value="Get Crossword Session Details" id="api_get_one_crosswordsession" /> : <input placeholder="acSessionId" id="api_crosswordsessions_acSessionId" /></p>
             </li>
         </ul>
+    </section>
+    <section class="content-wrapper main-content clear-fix">
+        API Request Result:
+        <pre id="result" class="prettyprint lang-js">{ 'data' : 'empty' }</pre>
     </section>
 </div>
