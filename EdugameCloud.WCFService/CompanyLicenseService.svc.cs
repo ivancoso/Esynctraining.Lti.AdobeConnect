@@ -220,7 +220,8 @@ namespace EdugameCloud.WCFService
             instance.DateModified = DateTime.Now;
             instance.ModifiedBy = this.UserModel.GetOneById(licenseDto.modifiedBy).Value;
             instance.LicenseStatus = this.GetLicenseStatus(licenseDto);
-            
+            instance.HasApi = licenseDto.hasApi;
+
             return instance;
         }
 

@@ -1,12 +1,12 @@
-ALTER TABLE Company
+ALTER TABLE CompanyLicense
     ADD hasApi BIT NULL
 GO
 
-UPDATE Company
+UPDATE CompanyLicense
 SET hasApi = 0
 GO
 
-ALTER TABLE Company
+ALTER TABLE CompanyLicense
     ALTER COLUMN hasApi BIT NOT NULL
 GO
 

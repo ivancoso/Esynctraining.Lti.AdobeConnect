@@ -9,7 +9,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The company DTO.
+    /// The company DTO.
     /// </summary>
     [DataContract]
     [KnownType(typeof(UserDTO))]
@@ -46,7 +46,6 @@
             var license = c.CurrentLicense ?? c.FutureActiveLicense;
             this.themeVO = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise, false) ? c.Theme.Return(x => new CompanyThemeDTO(c.Id, x), null) : null;
             this.licenseVO = license.Return(x => new CompanyLicenseDTO(x), null);
-            this.hasApi = c.HasApi;
         }
 
         #endregion
@@ -118,10 +117,9 @@
         /// </summary>
         [DataMember]
         public CompanyLmsDTO lmsVO { get; set; }
-
-        [DataMember]
-        public bool hasApi { get; set; }
-
+        
         #endregion
+
     }
+
 }

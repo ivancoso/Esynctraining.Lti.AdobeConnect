@@ -28,6 +28,7 @@
             this.References(x => x.Company).Nullable();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<CompanyLicense>(x => x.CreatedBy)));
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<CompanyLicense>(x => x.ModifiedBy)));
+            this.Map(x => x.HasApi).Not.Nullable();
         }
 
         #endregion

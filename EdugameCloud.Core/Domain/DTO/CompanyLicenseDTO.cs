@@ -1,6 +1,5 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
@@ -8,7 +7,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The company license DTO.
+    /// The company license DTO.
     /// </summary>
     [DataContract]
     public class CompanyLicenseDTO 
@@ -43,6 +42,7 @@
             this.isTrial = l.LicenseStatus == CompanyLicenseStatus.Trial;
             this.isPro = l.LicenseStatus == CompanyLicenseStatus.Pro;
             this.isEnterprise = l.LicenseStatus == CompanyLicenseStatus.Enterprise;
+            this.hasApi = l.HasApi;
         }
 
         #region Public Properties
@@ -137,6 +137,11 @@
         [DataMember]
         public int totalParticipantsCount { get; set; }
 
+        [DataMember]
+        public bool hasApi { get; set; }
+
         #endregion
+
     }
+
 }

@@ -87,12 +87,7 @@
         /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual CompanyStatus Status { get; set; }
-
-        /// <summary>
-        /// Has access to REST Reporting API.
-        /// </summary>
-        public virtual bool HasApi { get; set; }
-
+        
         #endregion
 
         public Company()

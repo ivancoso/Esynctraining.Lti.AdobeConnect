@@ -17,7 +17,6 @@
         public CompanyMap()
         {
             this.Map(x => x.CompanyName).Length(50).Not.Nullable();
-            this.Map(x => x.HasApi).Not.Nullable();
             this.Map(x => x.Status).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();

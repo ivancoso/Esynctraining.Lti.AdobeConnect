@@ -5,7 +5,7 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The company license.
+    /// The company license.
     /// </summary>
     public class CompanyLicense : Entity
     {
@@ -71,6 +71,13 @@
         /// </summary>
         public virtual CompanyLicenseStatus LicenseStatus { get; set; }
 
+        /// <summary>
+        /// Has access to REST Reporting API.
+        /// </summary>
+        public virtual bool HasApi { get; set; }
+
         #endregion
+
     }
+
 }
