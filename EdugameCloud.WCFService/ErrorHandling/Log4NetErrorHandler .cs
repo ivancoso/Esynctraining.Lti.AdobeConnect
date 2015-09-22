@@ -30,31 +30,31 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the error code.
+        /// Gets or sets the error code.
         /// </summary>
         [DataMember]
         public int ErrorCode { get; set; }
 
         /// <summary>
-        ///     Gets or sets the full exception.
+        /// Gets or sets the full exception.
         /// </summary>
         [DataMember]
         public string FullException { get; set; }
 
         /// <summary>
-        ///     Gets or sets the message.
+        /// Gets or sets the message.
         /// </summary>
         [DataMember]
         public string Message { get; set; }
 
         /// <summary>
-        ///     Gets or sets the stack trace.
+        /// Gets or sets the stack trace.
         /// </summary>
         [DataMember]
         public string StackTrace { get; set; }
 
         /// <summary>
-        ///     Gets or sets the title.
+        /// Gets or sets the title.
         /// </summary>
         [DataMember]
         public string Title { get; set; }
@@ -79,7 +79,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets a value indicating whether is development environment.
+        /// Gets a value indicating whether is development environment.
         /// </summary>
         public bool IsDev
         {

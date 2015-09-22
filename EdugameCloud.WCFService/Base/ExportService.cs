@@ -33,7 +33,7 @@
         #region Properties
 
         /// <summary>
-        ///     Gets the distractor model.
+        /// Gets the distractor model.
         /// </summary>
         protected DistractorModel DistractorModel
         {
@@ -44,7 +44,7 @@
         }
 
         /// <summary>
-        ///     Gets the export path.
+        /// Gets the export path.
         /// </summary>
         protected string ExportPath
         {
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        ///     Gets the import path.
+        /// Gets the import path.
         /// </summary>
         protected string ImportPath
         {
@@ -66,7 +66,7 @@
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionForLikertModel QuestionForLikertModel
         {
@@ -77,7 +77,7 @@
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
 protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         {
@@ -88,7 +88,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionForOpenAnswerModel QuestionForOpenAnswerModel
         {
@@ -99,7 +99,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionForRateModel QuestionForRateModel
         {
@@ -110,7 +110,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionForSingleMultipleChoiceModel QuestionForSingleMultipleChoiceModel
         {
@@ -121,7 +121,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionForWeightBucketModel QuestionForWeightBucketModel
         {
@@ -132,7 +132,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         protected QuestionModel QuestionModel
         {
@@ -143,7 +143,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the question type model.
+        /// Gets the question type model.
         /// </summary>
         protected QuestionTypeModel QuestionTypeModel
         {
@@ -154,7 +154,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the schemas path.
+        /// Gets the schemas path.
         /// </summary>
         protected string SchemasPath
         {
@@ -165,7 +165,7 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         }
 
         /// <summary>
-        ///     Gets the storage path.
+        /// Gets the storage path.
         /// </summary>
         protected string StoragePath
         {

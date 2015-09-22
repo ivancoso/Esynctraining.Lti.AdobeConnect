@@ -33,7 +33,7 @@
         #region Properties
 
         /// <summary>
-        ///     Gets the user login history model.
+        /// Gets the user login history model.
         /// </summary>
         private UserLoginHistoryModel UserLoginHistoryModel
         {
@@ -44,7 +44,7 @@
         }
 
         /// <summary>
-        ///     Gets the language model.
+        /// Gets the language model.
         /// </summary>
         private LanguageModel LanguageModel
         {
@@ -55,7 +55,7 @@
         }
 
         /// <summary>
-        ///     Gets the time zone model.
+        /// Gets the time zone model.
         /// </summary>
         private TimeZoneModel TimeZoneModel
         {
@@ -66,7 +66,7 @@
         }
 
         /// <summary>
-        ///     Gets the UserRole model.
+        /// Gets the UserRole model.
         /// </summary>
         private UserRoleModel UserRoleModel
         {
@@ -77,7 +77,7 @@
         }
 
         /// <summary>
-        ///     Gets the CompanyLicense model.
+        /// Gets the CompanyLicense model.
         /// </summary>
         private CompanyLicenseModel CompanyLicenseModel
         {
@@ -88,7 +88,7 @@
         }
 
         /// <summary>
-        ///     Gets the company model.
+        /// Gets the company model.
         /// </summary>
         private CompanyModel CompanyModel
         {
@@ -118,7 +118,7 @@
         }
 
         /// <summary>
-        ///     Gets the social user tokens
+        /// Gets the social user tokens
         /// </summary>
         private SocialUserTokensModel SocialUserTokensModel
         {

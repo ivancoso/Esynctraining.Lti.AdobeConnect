@@ -69,18 +69,18 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the companies.
+        /// Gets or sets the companies.
         /// </summary>
         public IEnumerable<SelectListItem> Companies { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company id.
+        /// Gets or sets the company id.
         /// </summary>
         [LocalizedDisplayName("Company", ResourceName = "ImportUsers")]
         public int CompanyId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the xml profile.
+        /// Gets or sets the xml profile.
         /// </summary>
         [LocalizedDisplayName("Users", ResourceName = "ImportUsers")]
         public HttpPostedFileBase ProfilesFile { get; set; }

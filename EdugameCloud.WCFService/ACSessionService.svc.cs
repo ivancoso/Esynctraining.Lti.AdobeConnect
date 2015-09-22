@@ -28,7 +28,7 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
-        ///     Gets the ac user mode model.
+        /// Gets the ac user mode model.
         /// </summary>
         private ACUserModeModel ACUserModeModel
         {
@@ -39,7 +39,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the language model.
+        /// Gets the language model.
         /// </summary>
         private LanguageModel LanguageModel
         {

@@ -120,7 +120,7 @@ namespace EdugameCloud.MVC.Controllers
         private readonly AuthenticationModel authenticationModel;
 
         /// <summary>
-        ///     Gets the VCF model.
+        /// Gets the VCF model.
         /// </summary>
         private readonly VCFModel vcfModel;
 
@@ -1537,7 +1537,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.CorrectAnswerCount,
+                                        totalCorrect = q.сorrectAnswerCount,
                                         totalQuestions = acSession.TotalQuestion
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
@@ -1690,7 +1690,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.CorrectAnswerCount,
+                                        totalCorrect = q.сorrectAnswerCount,
                                         totalQuestions = acSession.TotalQuestion
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
@@ -1931,7 +1931,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.CorrectAnswerCount,
+                                        totalCorrect = q.сorrectAnswerCount,
                                         q.restrictions,
                                         totalQuestions = preQuestions.Length
                                     }).ToList();

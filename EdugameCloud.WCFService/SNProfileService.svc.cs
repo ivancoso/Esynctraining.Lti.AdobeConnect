@@ -54,7 +54,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the SN profile Model.
+        /// Gets the SN profile Model.
         /// </summary>
         private SNProfileModel SNProfileModel
         {
@@ -65,7 +65,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the SN service model.
+        /// Gets the SN service model.
         /// </summary>
         private SNServiceModel SNServiceModel
         {
@@ -76,7 +76,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the SN profile SN service model.
+        /// Gets the SN profile SN service model.
         /// </summary>
         private SNProfileSNServiceModel SNProfileSNServiceModel
         {
@@ -87,7 +87,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the SN link model.
+        /// Gets the SN link model.
         /// </summary>
         private SNLinkModel SNLinkModel
         {

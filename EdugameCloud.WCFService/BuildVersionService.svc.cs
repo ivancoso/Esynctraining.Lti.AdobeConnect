@@ -29,7 +29,7 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
-        ///     Gets the build version Model.
+        /// Gets the build version Model.
         /// </summary>
         private BuildVersionModel BuildVersionModel
         {
@@ -40,7 +40,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the build version type model.
+        /// Gets the build version type model.
         /// </summary>
         private BuildVersionTypeModel BuildVersionTypeModel
         {
@@ -84,7 +84,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets all build versions.
+        /// Gets all build versions.
         /// </summary>
         /// <returns>
         ///     The <see cref="BuildVersionDTO" />.

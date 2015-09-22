@@ -15,7 +15,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the behavior type.
+        /// Gets the behavior type.
         /// </summary>
         public override Type BehaviorType
         {

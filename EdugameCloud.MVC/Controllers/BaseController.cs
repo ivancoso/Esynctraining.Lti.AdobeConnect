@@ -34,7 +34,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the action name.
+        /// Gets the action name.
         /// </summary>
         public virtual string ActionName
         {
@@ -45,7 +45,7 @@
         }
 
         /// <summary>
-        ///     Gets the controller name.
+        /// Gets the controller name.
         /// </summary>
         public virtual string ControllerName
         {

@@ -28,7 +28,7 @@
         #region Properties
 
         /// <summary>
-        ///     Gets the SNGroupDiscussion Model.
+        /// Gets the SNGroupDiscussion Model.
         /// </summary>
         private SNGroupDiscussionModel SNGroupDiscussionModel
         {

@@ -108,7 +108,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the settings.
+        /// Gets the settings.
         /// </summary>
         public dynamic Settings { get; private set; }
 

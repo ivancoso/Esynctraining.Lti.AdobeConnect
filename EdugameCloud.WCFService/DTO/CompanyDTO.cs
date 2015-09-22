@@ -84,7 +84,7 @@
         public int? primaryContactId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company id.
+        /// Gets or sets the company id.
         /// </summary>
         [DataMember]
         public int companyId { get; set; }

@@ -75,7 +75,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the content.
+        /// Gets or sets the content.
         /// </summary>
         /// <returns>
         ///     The content.
@@ -83,7 +83,7 @@
         public string Content { get; set; }
 
         /// <summary>
-        ///     Gets or sets the content encoding.
+        /// Gets or sets the content encoding.
         /// </summary>
         /// <returns>
         ///     The content encoding.
@@ -91,7 +91,7 @@
         public Encoding ContentEncoding { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type of the content.
+        /// Gets or sets the type of the content.
         /// </summary>
         /// <returns>
         ///     The type of the content.
@@ -99,7 +99,7 @@
         public string ContentType { get; set; }
 
         /// <summary>
-        ///     Gets the HTTP status code.
+        /// Gets the HTTP status code.
         /// </summary>
         /// <returns>
         ///     The HTTP status code.
@@ -107,7 +107,7 @@
         public int StatusCode { get; private set; }
 
         /// <summary>
-        ///     Gets the HTTP status description.
+        /// Gets the HTTP status description.
         /// </summary>
         /// <returns>
         ///     the HTTP status description.

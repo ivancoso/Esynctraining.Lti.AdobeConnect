@@ -46,7 +46,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the xml profile.
+        /// Gets or sets the xml profile.
         /// </summary>
         public string XmlProfile { get; set; }
 

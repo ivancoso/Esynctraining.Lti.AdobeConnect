@@ -35,7 +35,7 @@ namespace EdugameCloud.WCFService.Mail.Models
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the company name.
+        /// Gets or sets the company name.
         /// </summary>
         public string CompanyName { get; set; }
 

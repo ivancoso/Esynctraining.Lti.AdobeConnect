@@ -27,7 +27,7 @@ namespace EdugameCloud.WCFService
         #region Properties
 
         /// <summary>
-        ///     Gets the question model.
+        /// Gets the question model.
         /// </summary>
         private QuestionModel QuestionModel
         {
@@ -38,7 +38,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the question type model.
+        /// Gets the question type model.
         /// </summary>
         private QuestionTypeModel QuestionTypeModel
         {
@@ -49,7 +49,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the quiz question result model.
+        /// Gets the quiz question result model.
         /// </summary>
         private QuizQuestionResultModel QuizQuestionResultModel
         {
@@ -60,7 +60,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets the quiz result model.
+        /// Gets the quiz result model.
         /// </summary>
         private QuizResultModel QuizResultModel
         {
@@ -118,7 +118,7 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
-        ///     Gets all quiz questions results.
+        /// Gets all quiz questions results.
         /// </summary>
         /// <returns>
         ///     The <see cref="QuizQuestionResultDTO" />.

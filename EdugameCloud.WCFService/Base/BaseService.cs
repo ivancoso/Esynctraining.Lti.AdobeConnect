@@ -58,7 +58,7 @@
         #region Properties
 
         /// <summary>
-        ///     Gets the authentication header name.
+        /// Gets the authentication header name.
         /// </summary>
         protected string AuthHeaderName
         {
@@ -70,7 +70,7 @@
         }
 
         /// <summary>
-        ///     Gets the current request.
+        /// Gets the current request.
         /// </summary>
         protected HttpRequestMessageProperty CurrentRequest
         {
@@ -88,7 +88,7 @@
         }
 
         /// <summary>
-        ///     Gets the current user.
+        /// Gets the current user.
         /// </summary>
         protected Guid CurrentUserToken
         {
@@ -133,7 +133,7 @@
         }
 
         /// <summary>
-        ///     Gets the current user.
+        /// Gets the current user.
         /// </summary>
         protected User CurrentUser
         {
@@ -155,7 +155,7 @@
         }
 
         /// <summary>
-        ///     Gets the mail model.
+        /// Gets the mail model.
         /// </summary>
         protected MailModel MailModel
         {
@@ -166,7 +166,7 @@
         }
 
         /// <summary>
-        ///     Gets the Logger.
+        /// Gets the Logger.
         /// </summary>
         protected ILogger Logger
         {
@@ -177,7 +177,7 @@
         }
 
         /// <summary>
-        ///     Gets the settings.
+        /// Gets the settings.
         /// </summary>
         protected dynamic Settings
         {
@@ -188,7 +188,7 @@
         }
 
         /// <summary>
-        ///     Gets the user model.
+        /// Gets the user model.
         /// </summary>
         protected UserModel UserModel
         {
@@ -199,7 +199,7 @@
         }
 
         /// <summary>
-        ///     Gets the logger.
+        /// Gets the logger.
         /// </summary>
         protected ILogger logger
         {
@@ -210,7 +210,7 @@
         }
 
         /// <summary>
-        ///     Gets the UserActivation model.
+        /// Gets the UserActivation model.
         /// </summary>
         protected UserActivationModel UserActivationModel
         {
@@ -221,7 +221,7 @@
         }
 
         /// <summary>
-        ///     Gets the SubModuleItem model.
+        /// Gets the SubModuleItem model.
         /// </summary>
         protected SubModuleItemModel SubModuleItemModel
         {
@@ -232,7 +232,7 @@
         }
 
         /// <summary>
-        ///     Gets the ACSession model.
+        /// Gets the ACSession model.
         /// </summary>
         protected ACSessionModel ACSessionModel
         {
@@ -243,7 +243,7 @@
         }
 
         /// <summary>
-        ///     Gets the ACSession model.
+        /// Gets the ACSession model.
         /// </summary>
         protected ITemplateProvider TemplateProvider
         {
@@ -254,7 +254,7 @@
         }
 
         /// <summary>
-        ///     Gets the ACSession model.
+        /// Gets the ACSession model.
         /// </summary>
         protected EmailHistoryModel EmailHistoryModel
         {

@@ -29,7 +29,7 @@ namespace EdugameCloud.ASMXService
         #region Properties
 
         /// <summary>
-        ///     Gets the user parameters model.
+        /// Gets the user parameters model.
         /// </summary>
         private LmsUserParametersModel LmsUserParametersModel
         {
@@ -40,7 +40,7 @@ namespace EdugameCloud.ASMXService
         }
 
         /// <summary>
-        ///     Gets the user model.
+        /// Gets the user model.
         /// </summary>
         private LmsUserModel LmsUserModel
         {
@@ -51,7 +51,7 @@ namespace EdugameCloud.ASMXService
         }
 
         /// <summary>
-        ///     Gets the logger.
+        /// Gets the logger.
         /// </summary>
         private ILogger Logger
         {
