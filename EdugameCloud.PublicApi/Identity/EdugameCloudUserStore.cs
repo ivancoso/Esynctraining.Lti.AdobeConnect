@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Castle.Core.Logging;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
 using Esynctraining.Core.Utils;
@@ -11,10 +12,12 @@ namespace EdugameCloud.PublicApi.Identity
     {
         private UserModel UserModel
         {
-            get
-            {
-                return IoC.Resolve<UserModel>();
-            }
+            get { return IoC.Resolve<UserModel>(); }
+        }
+
+        private ILogger Logger
+        {
+            get { return IoC.Resolve<ILogger>(); }
         }
 
         void IDisposable.Dispose()
@@ -46,44 +49,31 @@ namespace EdugameCloud.PublicApi.Identity
         public Task<T> FindByNameAsync(string userName)
         {
             User user = UserModel.GetOneByEmail(userName).Value;
-
-            if (user.Status != UserStatus.Active)
+            
+            if (user == null)
+            {
+                // NOTE: do nothing, just to skip user=null situation
+            }
+            else if (user.Status != UserStatus.Active)
             {
                 user = null;
-                //var error =
-                //    new Error(
-                //        Errors.CODE_ERRORTYPE_USER_INACTIVE,
-                //        ErrorsTexts.AccessError_Subject,
-                //        ErrorsTexts.AccessError_UserIsInactive);
-                //this.LogError("User.Login", error);
+                Logger.ErrorFormat("API: user {0} has {1} status.", userName, user.Status);
+                
                 //throw new FaultException<Error>(error, error.errorMessage);
             }
             else if (!user.IsAdministrator())
             {
+                Logger.ErrorFormat("API: user {0} is not Administrator.", userName);
                 user = null;
             }
             else if (!user.Company.IsActive())
             {
+                Logger.ErrorFormat("API: User {0} has its company not active.", userName);
                 user = null;
-
-                //var error =
-                //    new Error(
-                //        Errors.CODE_ERRORTYPE_USER_INACTIVE,
-                //        ErrorsTexts.AccessError_Subject,
-                //        ErrorsTexts.AccessError_CompanyIsInactive);
-                //this.LogError("User.Login", error);
-                //throw new FaultException<Error>(error, error.errorMessage);
-
-                //var error =
-                //    new Error(
-                //        Errors.CODE_ERRORTYPE_EXPIRED_LICENSE,
-                //        ErrorsTexts.AccessError_Subject,
-                //        ErrorsTexts.AccessError_CompanyLicenseIsExpired);
-                //this.LogError("User.Login", error);
-                //throw new FaultException<Error>(error, error.errorMessage);
             }
-            else if (!user.Company.HasApi)
+            else if (!user.Company.CurrentLicense.HasApi)
             {
+                Logger.ErrorFormat("API: Company.CurrentLicense.HasApi==false. User {0}. CurrentLicense ID: {1}.", userName, user.Company.CurrentLicense.Id);
                 user = null;
             }
 

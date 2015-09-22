@@ -9,10 +9,11 @@ using Microsoft.Owin.Security.OAuth;
 
 namespace EdugameCloud.PublicApi.Security.OAuth
 {
-    public class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
+    public sealed class ApplicationOAuthProvider : OAuthAuthorizationServerProvider
     {
         private readonly string _publicClientId;
         private readonly Func<EdugameCloudUserManager> _userManagerFactory;
+
 
         public ApplicationOAuthProvider(string publicClientId, Func<EdugameCloudUserManager> userManagerFactory)
         {
@@ -29,6 +30,7 @@ namespace EdugameCloud.PublicApi.Security.OAuth
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;
         }
+
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {

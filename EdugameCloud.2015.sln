@@ -59,6 +59,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{55BBA0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.ConnectionTest", "EdugameCloud.Lti.ConnectionTest\EdugameCloud.Lti.ConnectionTest.csproj", "{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi", "EdugameCloud.PublicApi\EdugameCloud.PublicApi.csproj", "{4D411912-AC32-4C34-B44B-5A75B2A76CE4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi.Host", "EdugameCloud.PublicApi.Host\EdugameCloud.PublicApi.Host.csproj", "{27AE88C3-F844-47AD-9D70-8312884579AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +161,14 @@ Global
 		{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D411912-AC32-4C34-B44B-5A75B2A76CE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D411912-AC32-4C34-B44B-5A75B2A76CE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D411912-AC32-4C34-B44B-5A75B2A76CE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D411912-AC32-4C34-B44B-5A75B2A76CE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27AE88C3-F844-47AD-9D70-8312884579AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27AE88C3-F844-47AD-9D70-8312884579AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27AE88C3-F844-47AD-9D70-8312884579AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27AE88C3-F844-47AD-9D70-8312884579AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
