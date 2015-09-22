@@ -10,27 +10,27 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the provider.
+        /// Gets or sets the provider.
         /// </summary>
         public virtual string Provider { get; set; }
 
         /// <summary>
-        ///     Gets or sets the token.
+        /// Gets or sets the token.
         /// </summary>
         public virtual string Key { get; set; }
 
         /// <summary>
-        ///     Gets or sets the token.
+        /// Gets or sets the token.
         /// </summary>
         public virtual string Token { get; set; }
 
         /// <summary>
-        ///     Gets or sets the secret.
+        /// Gets or sets the secret.
         /// </summary>
         public virtual string Secret { get; set; }
 
         /// <summary>
-        ///     Gets or sets the user.
+        /// Gets or sets the user.
         /// </summary>
         public virtual User User { get; set; }
 

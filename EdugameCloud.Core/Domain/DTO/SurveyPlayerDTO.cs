@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The survey player DTO.
+    /// The survey player DTO.
     /// </summary>
     [DataContract]
     public class SurveyPlayerDTO
@@ -41,7 +41,7 @@
         public int TotalQuestion { get; set; }
 
         /// <summary>
-        /// Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
@@ -71,7 +71,7 @@
         public int score { get; set; }
 
         /// <summary>
-        /// Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }

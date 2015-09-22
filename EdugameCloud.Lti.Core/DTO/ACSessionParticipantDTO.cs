@@ -13,67 +13,67 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the sco id.
+        /// Gets or sets the sco id.
         /// </summary>
         [DataMember]
         public string scoId  { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name.
+        /// Gets or sets the participant name.
         /// </summary>
         [DataMember]
         public string participantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sco name.
+        /// Gets or sets the sco name.
         /// </summary>
         [DataMember]
         public string scoName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the session name.
+        /// Gets or sets the session name.
         /// </summary>
         [DataMember]
         public string sessionName{ get; set; }
 
         /// <summary>
-        ///     Gets or sets the principal id.
+        /// Gets or sets the principal id.
         /// </summary>
         [DataMember]
         public string principalId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the asset id.
+        /// Gets or sets the asset id.
         /// </summary>
         [DataMember]
         public string assetId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date entered.
+        /// Gets or sets the date entered.
         /// </summary>
         [DataMember]
         public DateTime dateTimeEntered { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date left.
+        /// Gets or sets the date left.
         /// </summary>
         [DataMember]
         public DateTime? dateTimeLeft { get; set; }
 
         /// <summary>
-        ///     Gets or sets the ac session participant id.
+        /// Gets or sets the ac session participant id.
         /// </summary>
         [DataMember]
         public float durationInHours { get; set; }
 
         /// <summary>
-        ///     Gets or sets the email.
+        /// Gets or sets the email.
         /// </summary>
         [DataMember]
         public string login { get; set; }
 
         /// <summary>
-        ///     Gets login of full name.
+        /// Gets login of full name.
         /// </summary>
         public string loginOrFullName
         {
@@ -95,13 +95,13 @@
         }
 
         /// <summary>
-        ///     Gets or sets the first name.
+        /// Gets or sets the first name.
         /// </summary>
         [DataMember]
         public string firstName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the last name.
+        /// Gets or sets the last name.
         /// </summary>
         [DataMember]
         public string lastName { get; set; }

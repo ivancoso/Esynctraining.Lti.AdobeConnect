@@ -47,19 +47,19 @@
         public virtual string description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz format.
+        /// Gets or sets the quiz format.
         /// </summary>
         [DataMember]
         public virtual int surveyGroupingTypeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz name.
+        /// Gets or sets the quiz name.
         /// </summary>
         [DataMember]
         public virtual string surveyName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public virtual int? subModuleItemId { get; set; }

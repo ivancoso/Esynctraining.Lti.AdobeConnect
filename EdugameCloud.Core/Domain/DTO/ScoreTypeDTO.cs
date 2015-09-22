@@ -44,37 +44,37 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the default value.
+        /// Gets or sets the default value.
         /// </summary>
         [DataMember]
         public int defaultValue { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
         public bool? isActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the prefix.
+        /// Gets or sets the prefix.
         /// </summary>
         [DataMember]
         public string prefix { get; set; }
 
         /// <summary>
-        ///     Gets or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         [DataMember]
         public int scoreTypeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the description.
+        /// Gets or sets the description.
         /// </summary>
         [DataMember]
         public string scoreTypeName { get; set; }

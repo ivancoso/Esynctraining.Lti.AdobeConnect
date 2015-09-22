@@ -21,12 +21,12 @@
         public virtual DateTime? DateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the title.
+        /// Gets or sets the title.
         /// </summary>
         public virtual string GroupDiscussionTitle { get; set; }
 
         /// <summary>
-        ///     Gets or sets the data.
+        /// Gets or sets the data.
         /// </summary>
         public virtual string GroupDiscussionData { get; set; }
 
@@ -36,7 +36,7 @@
         public virtual bool IsActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the session.
+        /// Gets or sets the session.
         /// </summary>
         public virtual int ACSessionId { get; set; }
 

@@ -49,25 +49,25 @@
         public string description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz format.
+        /// Gets or sets the quiz format.
         /// </summary>
         [DataMember]
         public int? quizFormatId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz name.
+        /// Gets or sets the quiz name.
         /// </summary>
         [DataMember]
         public string quizName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score type.
+        /// Gets or sets the score type.
         /// </summary>
         [DataMember]
         public int? scoreTypeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int? subModuleItemId { get; set; }

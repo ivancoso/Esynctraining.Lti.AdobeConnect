@@ -41,30 +41,30 @@
         public virtual IList<Question> Questions { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the owner.
+        /// Gets or sets the owner.
         /// </summary>
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date.
+        /// Gets or sets the date.
         /// </summary>
         [DataMember(IsRequired = false)]
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the height.
+        /// Gets or sets the height.
         /// </summary>
         [DataMember]
         public virtual int? Height { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         [DataMember]
         public virtual string FileName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state.
+        /// Gets or sets the state.
         /// </summary>
         public virtual ImageStatus? Status
         {
@@ -80,19 +80,19 @@
         }
 
         /// <summary>
-        ///     Gets or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         [DataMember]
         public virtual int? Width { get; set; }
 
         /// <summary>
-        ///     Gets or sets the x.
+        /// Gets or sets the x.
         /// </summary>
         [DataMember]
         public virtual int? X { get; set; }
 
         /// <summary>
-        ///     Gets or sets the y.
+        /// Gets or sets the y.
         /// </summary>
         [DataMember]
         public virtual int? Y { get; set; }

@@ -30,7 +30,7 @@
         public virtual string Instruction { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool? IsActive { get; set; }
 
@@ -45,7 +45,7 @@
         public virtual int? QuestionTypeOrder { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         public virtual string Type { get; set; }
 

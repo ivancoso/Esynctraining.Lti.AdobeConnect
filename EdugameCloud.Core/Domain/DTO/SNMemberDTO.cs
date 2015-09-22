@@ -71,7 +71,7 @@
         public string participantProfile { get; set; }
 
         /// <summary>
-        /// Gets or sets the date created.
+        /// Gets or sets the date created. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }

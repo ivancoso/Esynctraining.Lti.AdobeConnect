@@ -28,27 +28,27 @@
         public virtual bool? IsArchive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the ac session.
+        /// Gets or sets the ac session.
         /// </summary>
         public virtual int ACSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the end time.
+        /// Gets or sets the end time.
         /// </summary>
         public virtual DateTime EndTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name.
+        /// Gets or sets the participant name.
         /// </summary>
         public virtual string ParticipantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz.
+        /// Gets or sets the quiz.
         /// </summary>
         public virtual Quiz Quiz { get; set; }
 
@@ -58,22 +58,22 @@
         public virtual IList<QuizQuestionResult> Results { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the score.
+        /// Gets or sets the score.
         /// </summary>
         public virtual int Score { get; set; }
 
         /// <summary>
-        ///     Gets or sets the start time.
+        /// Gets or sets the start time.
         /// </summary>
         public virtual DateTime StartTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LMS id.
+        /// Gets or sets the LMS id.
         /// </summary>
         public virtual int LmsId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LMS id.
+        /// Gets or sets the LMS id.
         /// </summary>
         public virtual bool? isCompleted { get; set; }
 

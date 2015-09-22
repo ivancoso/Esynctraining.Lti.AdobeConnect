@@ -19,12 +19,12 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the restrictions.
+        /// Gets or sets the restrictions.
         /// </summary>
         public virtual string Restrictions { get; set; }
 
         /// <summary>
-        ///     Gets or sets the allow other.
+        /// Gets or sets the allow other.
         /// </summary>
         public virtual bool? AllowOther { get; set; }
 

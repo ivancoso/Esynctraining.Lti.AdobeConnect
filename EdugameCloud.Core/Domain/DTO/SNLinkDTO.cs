@@ -40,7 +40,7 @@
         public string linkName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN profile id.
+        /// Gets or sets the SN profile id.
         /// </summary>
         [DataMember]
         public int snProfileId { get; set; }

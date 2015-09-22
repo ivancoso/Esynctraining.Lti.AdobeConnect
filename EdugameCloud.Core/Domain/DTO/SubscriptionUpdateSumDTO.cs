@@ -48,19 +48,19 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the count.
+        /// Gets or sets the count.
         /// </summary>
         [DataMember]
         public long itemsCount { get; set; }
 
         /// <summary>
-        ///     Gets or sets the object type.
+        /// Gets or sets the object type.
         /// </summary>
         [DataMember]
         public long latestTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets the object id.
+        /// Gets or sets the object id.
         /// </summary>
         [DataMember]
         public string object_id { get; set; }

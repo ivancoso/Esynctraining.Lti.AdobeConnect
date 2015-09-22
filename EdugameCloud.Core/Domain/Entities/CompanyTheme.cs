@@ -10,7 +10,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the button color.
+        /// Gets or sets the button color.
         /// </summary>
         public virtual string ButtonColor { get; set; }
 

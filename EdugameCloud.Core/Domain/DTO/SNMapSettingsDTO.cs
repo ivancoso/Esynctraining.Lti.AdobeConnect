@@ -44,13 +44,13 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the country.
+        /// Gets or sets the country.
         /// </summary>
         [DataMember]
         public int? countryId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the map provider.
+        /// Gets or sets the map provider.
         /// </summary>
         [DataMember]
         public int? snMapProviderId { get; set; }
@@ -62,7 +62,7 @@
         public int snMapSettingsId { get; set; }
 
         /// <summary>
-        ///     Gets or sets a zoom level.
+        /// Gets or sets a zoom level.
         /// </summary>
         [DataMember]
         public int? zoomLevel { get; set; }

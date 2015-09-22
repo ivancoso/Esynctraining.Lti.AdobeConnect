@@ -84,7 +84,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the binder type.
+        /// Gets or sets the binder type.
         /// </summary>
         public IList<Type> BinderTypes { get; set; }
 

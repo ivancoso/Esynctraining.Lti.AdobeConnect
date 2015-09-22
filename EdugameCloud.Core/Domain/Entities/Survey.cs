@@ -12,17 +12,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the description.
+        /// Gets or sets the description.
         /// </summary>
         public virtual string Description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the survey grouping type.
+        /// Gets or sets the survey grouping type.
         /// </summary>
         public virtual SurveyGroupingType SurveyGroupingType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the survey name.
+        /// Gets or sets the survey name.
         /// </summary>
         public virtual string SurveyName { get; set; }
 
@@ -32,12 +32,12 @@
         public virtual IList<SurveyResult> Results { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         /// <summary>
-        ///     Gets or sets the lms id.
+        /// Gets or sets the lms id.
         /// </summary>
         public virtual int? LmsSurveyId { get; set; }
 

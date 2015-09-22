@@ -71,49 +71,49 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets a value indicating whether allow other.
+        /// Gets or sets a value indicating whether allow other.
         /// </summary>
         [DataMember]
         public bool allowOther { get; set; }
 
         /// <summary>
-        ///     Gets or sets the answer option type.
+        /// Gets or sets the answer option type.
         /// </summary>
         [DataMember]
         public int? answerOptionType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct message.
+        /// Gets or sets the correct message.
         /// </summary>
         [DataMember]
         public string correctMessage { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct reference.
+        /// Gets or sets the correct reference.
         /// </summary>
         [DataMember]
         public string correctReference { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int? createdBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item id.
+        /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
         public DistractorDTO[] distractors
@@ -130,115 +130,115 @@
         }
 
         /// <summary>
-        ///     Gets or sets the hint.
+        /// Gets or sets the hint.
         /// </summary>
         [DataMember]
         public string hint { get; set; }
 
         /// <summary>
-        ///     Gets or sets the File id.
+        /// Gets or sets the File id.
         /// </summary>
         [DataMember]
         public Guid? imageId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the image vo.
+        /// Gets or sets the image vo.
         /// </summary>
         [DataMember]
         public FileDTO imageVO { get; set; }
 
         /// <summary>
-        ///     Gets or sets the incorrect message.
+        /// Gets or sets the incorrect message.
         /// </summary>
         [DataMember]
         public string incorrectMessage { get; set; }
 
         /// <summary>
-        ///     Gets or sets the instruction.
+        /// Gets or sets the instruction.
         /// </summary>
         [DataMember]
         public string instruction { get; set; }
 
         /// <summary>
-        ///     Gets or sets the is active.
+        /// Gets or sets the is active.
         /// </summary>
         [DataMember]
         public bool? isActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether question is mandatory.
+        /// Gets or sets a value indicating whether question is mandatory.
         /// </summary>
         [DataMember]
         public bool isMandatory { get; set; }
 
         /// <summary>
-        ///     Gets or sets the modified by.
+        /// Gets or sets the modified by.
         /// </summary>
         [DataMember]
         public int? modifiedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the room number.
+        /// Gets or sets the room number.
         /// </summary>
         [DataMember]
         public int? pageNumber { get; set; }
 
         /// <summary>
-        ///     Gets or sets the question.
+        /// Gets or sets the question.
         /// </summary>
         [DataMember]
         public string question { get; set; }
 
         /// <summary>
-        ///     Gets or sets the question id.
+        /// Gets or sets the question id.
         /// </summary>
         [DataMember]
         public int questionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the question order.
+        /// Gets or sets the question order.
         /// </summary>
         [DataMember]
         public int questionOrder { get; set; }
 
         /// <summary>
-        ///     Gets or sets the question type id.
+        /// Gets or sets the question type id.
         /// </summary>
         [DataMember]
         public int questionTypeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the restrictions.
+        /// Gets or sets the restrictions.
         /// </summary>
         [DataMember]
         public string restrictions { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score value.
+        /// Gets or sets the score value.
         /// </summary>
         [DataMember]
         public int scoreValue { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item id.
+        /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
         public int? subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct reference.
+        /// Gets or sets the correct reference.
         /// </summary>
         [DataMember]
         public decimal? totalWeightBucket { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct reference.
+        /// Gets or sets the correct reference.
         /// </summary>
         [DataMember]
         public int? weightBucketType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the value indicating whether randomize answers.
+        /// Gets or sets the value indicating whether randomize answers.
         /// </summary>
         [DataMember]
         public bool? randomizeAnswers { get; set; }

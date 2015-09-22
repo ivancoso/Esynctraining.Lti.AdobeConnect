@@ -44,13 +44,13 @@
         public string quizFormatName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
         public bool? isActive { get; set; }

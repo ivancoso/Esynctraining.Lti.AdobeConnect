@@ -15,12 +15,12 @@
         public virtual bool IsEnabled { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN profile.
+        /// Gets or sets the SN profile.
         /// </summary>
         public virtual SNProfile Profile { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN service.
+        /// Gets or sets the SN service.
         /// </summary>
         public virtual SNService Service { get; set; }
 

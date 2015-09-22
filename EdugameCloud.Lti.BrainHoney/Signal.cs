@@ -33,17 +33,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the entity id.
+        /// Gets or sets the entity id.
         /// </summary>
         public int EntityId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the signal id.
+        /// Gets or sets the signal id.
         /// </summary>
         public long SignalId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         public string Type { get; set; }
 

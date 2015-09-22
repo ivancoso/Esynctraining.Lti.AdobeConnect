@@ -13,13 +13,13 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the SMI DTO.
+        /// Gets or sets the SMI DTO.
         /// </summary>
         [DataMember]
         public SubModuleItemDTO SmiDTO { get; set; }
 
         /// <summary>
-        ///     Gets or sets the test DTO.
+        /// Gets or sets the test DTO.
         /// </summary>
         [DataMember]
         public TestDTO TestDTO { get; set; }

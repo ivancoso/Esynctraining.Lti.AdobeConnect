@@ -13,17 +13,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool IsActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the module name.
+        /// Gets or sets the module name.
         /// </summary>
         public virtual string ModuleName { get; set; }
 

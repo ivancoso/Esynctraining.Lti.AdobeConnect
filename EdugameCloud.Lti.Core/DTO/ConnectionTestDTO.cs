@@ -8,7 +8,7 @@ namespace EdugameCloud.Lti.Core.DTO
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the status.
+        /// Gets or sets the status.
         /// </summary>
         [DataMember]
         public string domain { get; set; }
@@ -20,19 +20,19 @@ namespace EdugameCloud.Lti.Core.DTO
         public bool enableProxyToolMode { get; set; }
 
         /// <summary>
-        ///     Gets or sets the info.
+        /// Gets or sets the info.
         /// </summary>
         [DataMember]
         public string login { get; set; }
 
         /// <summary>
-        ///     Gets or sets the password.
+        /// Gets or sets the password.
         /// </summary>
         [DataMember]
         public string password { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         [DataMember]
         public string type { get; set; }

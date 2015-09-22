@@ -66,7 +66,7 @@
         public int userLoginHistoryId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }

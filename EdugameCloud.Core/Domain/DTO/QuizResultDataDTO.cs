@@ -6,7 +6,7 @@
     /// The quiz result data DTO.
     /// </summary>
     [DataContract]
-    public class QuizResultDataDTO
+    public sealed class QuizResultDataDTO
     {
         #region Public Properties
 

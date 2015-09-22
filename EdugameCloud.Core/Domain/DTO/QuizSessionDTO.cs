@@ -4,7 +4,7 @@
     using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The quiz session DTO.
+    /// The quiz session DTO.
     /// </summary>
     [DataContract]
     public sealed class QuizSessionDTO : AdobeConnectSessionDtoBase
@@ -44,5 +44,7 @@
         public string quizName { get; set; }
                 
         #endregion
+
     }
+
 }

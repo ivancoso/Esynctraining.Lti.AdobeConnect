@@ -8,7 +8,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The applet result DTO.
+    /// The applet result DTO.
     /// </summary>
     [DataContract]
     public class AppletResultDTO
@@ -59,25 +59,25 @@
         public bool isArchive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the applet name.
+        /// Gets or sets the AdobeConnect session ID.
         /// </summary>
         [DataMember(IsRequired = true)]
         public int acSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the document xml.
+        /// Gets or sets the document xml.
         /// </summary>
         [DataMember(IsRequired = true)]
         public int appletItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
@@ -95,19 +95,19 @@
         public int companyId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name
+        /// Gets or sets the participant name
         /// </summary>
         [DataMember]
         public string participantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score.
+        /// Gets or sets the score.
         /// </summary>
         [DataMember]
         public int score { get; set; }
 
         /// <summary>
-        ///     Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }

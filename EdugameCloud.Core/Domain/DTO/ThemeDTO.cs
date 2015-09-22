@@ -44,19 +44,19 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int? createdBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }
@@ -74,7 +74,7 @@
         public int? modifiedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the theme id.
+        /// Gets or sets the theme id.
         /// </summary>
         [DataMember]
         public int themeId { get; set; }

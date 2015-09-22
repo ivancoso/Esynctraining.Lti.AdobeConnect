@@ -19,17 +19,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the correct reference.
+        /// Gets or sets the correct reference.
         /// </summary>
         public virtual decimal? TotalWeightBucket { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct reference.
+        /// Gets or sets the correct reference.
         /// </summary>
         public virtual int? WeightBucketType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the allow other.
+        /// Gets or sets the allow other.
         /// </summary>
         public virtual bool? AllowOther { get; set; }
 

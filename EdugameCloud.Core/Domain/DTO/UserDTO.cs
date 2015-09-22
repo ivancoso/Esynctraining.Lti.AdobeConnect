@@ -91,7 +91,7 @@
         public int userId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the age of a user.
+        /// Gets or sets the age of a user.
         /// </summary>
         [DataMember]
         public int companyId { get; set; }

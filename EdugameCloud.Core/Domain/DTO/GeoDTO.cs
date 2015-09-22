@@ -15,37 +15,37 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the city
+        /// Gets or sets the city
         /// </summary>
         [DataMember]
         public string city { get; set; }
 
         /// <summary>
-        ///     Gets or sets the   Country
+        /// Gets or sets the   Country
         /// </summary>
         [DataMember]
         public string country { get; set; }
 
         /// <summary>
-        ///     Gets or sets the   Postal code
+        /// Gets or sets the   Postal code
         /// </summary>
         [DataMember]
         public string postalcode { get; set; }
 
         /// <summary>
-        ///     Gets or sets the query string to search for
+        /// Gets or sets the query string to search for
         /// </summary>
         [DataMember]
         public string query { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state
+        /// Gets or sets the state
         /// </summary>
         [DataMember]
         public string state { get; set; }
 
         /// <summary>
-        ///     Gets or sets the street
+        /// Gets or sets the street
         /// </summary>
         [DataMember]
         public string street { get; set; }

@@ -10,7 +10,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the state name.
+        /// Gets or sets the state name.
         /// </summary>
         public virtual string StateName { get; set; }
 

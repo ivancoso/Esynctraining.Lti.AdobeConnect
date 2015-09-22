@@ -76,31 +76,31 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int? themeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int? createdBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
         public bool? isActive { get; set; }
@@ -112,13 +112,13 @@
         public bool? isShared { get; set; }
 
         /// <summary>
-        ///     Gets or sets the modified by.
+        /// Gets or sets the modified by.
         /// </summary>
         [DataMember]
         public int? modifiedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module category.
+        /// Gets or sets the sub module category.
         /// </summary>
         [DataMember]
         public int subModuleCategoryId { get; set; }

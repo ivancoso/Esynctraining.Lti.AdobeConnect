@@ -29,22 +29,22 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the new role.
+        /// Gets or sets the new role.
         /// </summary>
         public string NewRole { get; set; }
 
         /// <summary>
-        ///     Gets or sets the new status.
+        /// Gets or sets the new status.
         /// </summary>
         public int NewStatus { get; set; }
 
         /// <summary>
-        ///     Gets or sets the old role.
+        /// Gets or sets the old role.
         /// </summary>
         public string OldRole { get; set; }
 
         /// <summary>
-        ///     Gets or sets the old status.
+        /// Gets or sets the old status.
         /// </summary>
         public int OldStatus { get; set; }
 

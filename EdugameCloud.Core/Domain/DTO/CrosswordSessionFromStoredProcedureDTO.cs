@@ -24,7 +24,7 @@
         public int acUserModeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participants.
+        /// Gets or sets the participants.
         /// </summary>
         [DataMember]
         public int activeParticipants { get; set; }
@@ -66,7 +66,7 @@
         public int subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participants.
+        /// Gets or sets the participants.
         /// </summary>
         [DataMember]
         public int totalParticipants { get; set; }

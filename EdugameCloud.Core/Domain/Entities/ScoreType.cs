@@ -12,7 +12,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 

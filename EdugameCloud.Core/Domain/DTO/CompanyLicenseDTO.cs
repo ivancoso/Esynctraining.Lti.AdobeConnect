@@ -84,7 +84,7 @@
         public bool isEnterprise { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
@@ -96,7 +96,7 @@
         public double startDate { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }

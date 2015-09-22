@@ -80,19 +80,19 @@
         public string description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the test name.
+        /// Gets or sets the test name.
         /// </summary>
         [DataMember]
         public string testName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score type.
+        /// Gets or sets the score type.
         /// </summary>
         [DataMember]
         public int? scoreTypeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int? subModuleItemId { get; set; }

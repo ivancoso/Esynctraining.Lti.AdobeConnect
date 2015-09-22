@@ -12,43 +12,43 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the AC session id.
+        /// Gets or sets the AC session id.
         /// </summary>
         [DataMember]
         public int acSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the AC user mode id.
+        /// Gets or sets the AC user mode id.
         /// </summary>
         [DataMember]
         public int acUserModeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the category name.
+        /// Gets or sets the category name.
         /// </summary>
         [DataMember]
         public string categoryName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public DateTime dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the group discussion id.
+        /// Gets or sets the group discussion id.
         /// </summary>
         [DataMember]
         public int snGroupDiscussionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the group discussion name.
+        /// Gets or sets the group discussion name.
         /// </summary>
         [DataMember]
         public string groupDiscussionTitle { get; set; }
 
         /// <summary>
-        ///     Gets or sets the language.
+        /// Gets or sets the language.
         /// </summary>
         [DataMember]
         public string language { get; set; }
@@ -66,7 +66,7 @@
         public virtual int totalParticipants { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN profile name.
+        /// Gets or sets the SN profile name.
         /// </summary>
         [DataMember]
         public string profileName { get; set; }
@@ -78,13 +78,13 @@
         public int snProfileId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item id.
+        /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the user id.
+        /// Gets or sets the user id.
         /// </summary>
         [DataMember]
         public int userId { get; set; }

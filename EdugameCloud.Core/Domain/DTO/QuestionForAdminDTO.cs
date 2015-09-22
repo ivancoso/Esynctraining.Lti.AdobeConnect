@@ -6,10 +6,10 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The question for admin DTO.
+    /// The question for admin DTO.
     /// </summary>
     [DataContract]
-    public class QuestionForAdminDTO
+    public sealed class QuestionForAdminDTO
     {
         #region Public Properties
 
@@ -50,7 +50,7 @@
         /// Gets or sets the correct answer count.
         /// </summary>
         [DataMember]
-        public int CorrectAnswerCount { get; set; }
+        public int сorrectAnswerCount { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.

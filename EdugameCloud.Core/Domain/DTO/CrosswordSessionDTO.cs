@@ -5,7 +5,7 @@
     using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    /// The crossword session from stored procedure DTO.
+    /// The crossword session DTO.
     /// </summary>
     [DataContract]
     public sealed class CrosswordSessionDTO : AdobeConnectSessionDtoBase

@@ -41,7 +41,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
         public bool isActive { get; set; }
@@ -59,19 +59,19 @@
         public decimal longitude { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state code.
+        /// Gets or sets the state code.
         /// </summary>
         [DataMember]
         public string stateCode { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state id.
+        /// Gets or sets the state id.
         /// </summary>
         [DataMember]
         public int stateId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state name.
+        /// Gets or sets the state name.
         /// </summary>
         [DataMember]
         public string stateName { get; set; }

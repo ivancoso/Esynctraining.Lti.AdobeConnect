@@ -39,31 +39,31 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the changed aspect.
+        /// Gets or sets the changed aspect.
         /// </summary>
         [DataMember]
         public string changed_aspect { get; set; }
 
         /// <summary>
-        ///     Gets or sets the object type.
+        /// Gets or sets the object type.
         /// </summary>
         [DataMember]
         public string @object { get; set; }
 
         /// <summary>
-        ///     Gets or sets the object id.
+        /// Gets or sets the object id.
         /// </summary>
         [DataMember]
         public string object_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the subscription id.
+        /// Gets or sets the subscription id.
         /// </summary>
         [DataMember]
         public int subscription_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the time.
+        /// Gets or sets the time.
         /// </summary>
         [DataMember]
         public string time { get; set; }

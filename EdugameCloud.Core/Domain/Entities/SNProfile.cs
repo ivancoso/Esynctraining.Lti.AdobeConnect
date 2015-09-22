@@ -17,7 +17,7 @@
         public virtual string About { get; set; }
 
         /// <summary>
-        ///     Gets or sets the address.
+        /// Gets or sets the address.
         /// </summary>
         public virtual Address Address { get; set; }
 
@@ -27,17 +27,17 @@
         public virtual string Email { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         public virtual string ProfileName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         public virtual string UserName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the job title.
+        /// Gets or sets the job title.
         /// </summary>
         public virtual string JobTitle { get; set; }
 
@@ -47,7 +47,7 @@
         public virtual string Phone { get; set; }
 
         /// <summary>
-        ///     Gets or sets the links.
+        /// Gets or sets the links.
         /// </summary>
         public virtual IList<SNLink> Links { get; protected set; }
 
@@ -62,7 +62,7 @@
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         /// <summary>
-        ///     Gets or sets the services.
+        /// Gets or sets the services.
         /// </summary>
         public virtual IList<SNProfileSNService> Services { get; protected set; }
 

@@ -17,12 +17,12 @@
         public virtual string QuizFormatName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool? IsActive { get; set; }
 

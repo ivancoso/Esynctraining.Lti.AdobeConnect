@@ -18,7 +18,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the restrictions.
+        /// Gets or sets the restrictions.
         /// </summary>
         public virtual string Restrictions { get; set; }
 

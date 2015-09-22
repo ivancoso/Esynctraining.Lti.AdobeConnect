@@ -101,7 +101,7 @@
         public int userId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }

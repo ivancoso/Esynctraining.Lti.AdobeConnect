@@ -42,7 +42,7 @@
         public virtual float? timeZoneGMTDiff { get; set; }
 
         /// <summary>
-        ///     Gets or sets the time zone.
+        /// Gets or sets the time zone.
         /// </summary>
         [DataMember]
         public virtual string timeZone { get; set; }

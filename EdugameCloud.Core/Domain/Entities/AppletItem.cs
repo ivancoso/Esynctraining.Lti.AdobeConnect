@@ -12,12 +12,12 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the applet name.
+        /// Gets or sets the applet name.
         /// </summary>
         public virtual string AppletName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the document xml.
+        /// Gets or sets the document xml.
         /// </summary>
         public virtual string DocumentXML { get; set; }
 
@@ -27,7 +27,7 @@
         public virtual IList<AppletResult> Results { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         public virtual SubModuleItem SubModuleItem { get; set; }
 

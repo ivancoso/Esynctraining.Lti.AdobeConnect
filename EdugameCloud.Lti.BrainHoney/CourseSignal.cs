@@ -29,12 +29,12 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the entity type.
+        /// Gets or sets the entity type.
         /// </summary>
         public string EntityType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the item id.
+        /// Gets or sets the item id.
         /// </summary>
         public string ItemId { get; set; }
 

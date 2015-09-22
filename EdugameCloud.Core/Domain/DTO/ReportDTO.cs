@@ -48,31 +48,31 @@ namespace EdugameCloud.Core.Domain.DTO
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the sub module item id.
+        /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
         public int acSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         [DataMember]
         public string name { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub Module Item Id.
+        /// Gets or sets the sub Module Item Id.
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         [DataMember]
         public int? type { get; set; }

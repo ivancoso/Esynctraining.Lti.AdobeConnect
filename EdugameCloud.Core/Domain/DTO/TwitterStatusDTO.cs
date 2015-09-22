@@ -42,7 +42,7 @@
 //        #region Public Properties
 
 //        /// <summary>
-//        ///     Gets or sets the author.
+//        /// Gets or sets the author.
 //        /// </summary>
 //        [DataMember]
 //        public TwitterProfileDTO author { get; set; }
@@ -54,7 +54,7 @@
 //        public double createdDate { get; set; }
 
 //        /// <summary>
-//        ///     Gets or sets the twitter id.
+//        /// Gets or sets the twitter id.
 //        /// </summary>
 //        [DataMember]
 //        public long statusId { get; set; }

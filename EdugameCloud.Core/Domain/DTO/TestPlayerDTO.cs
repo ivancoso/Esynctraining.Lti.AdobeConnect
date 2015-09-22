@@ -57,11 +57,11 @@
         /// <summary>
         /// Gets or sets the total question.
         /// </summary>
-        [DataMember]
+        // NOTE: not in use on client-side [DataMember]
         public long TotalQuestion { get; set; }
 
         /// <summary>
-        /// Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
@@ -73,7 +73,7 @@
         public string participantName { get; set; }
 
         /// <summary>
-        /// Gets or sets the AC email.
+        /// Gets or sets the Adobe Connect email.
         /// </summary>
         [DataMember]
         public string acEmail { get; set; }
@@ -97,7 +97,7 @@
         public int score { get; set; }
 
         /// <summary>
-        /// Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }

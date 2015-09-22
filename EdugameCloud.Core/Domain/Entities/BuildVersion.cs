@@ -12,17 +12,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the build number.
+        /// Gets or sets the build number.
         /// </summary>
         public virtual string BuildNumber { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 
@@ -42,7 +42,7 @@
         public virtual File File { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool IsActive { get; set; }
 

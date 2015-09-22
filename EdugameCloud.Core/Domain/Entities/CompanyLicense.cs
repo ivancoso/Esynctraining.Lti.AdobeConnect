@@ -22,17 +22,17 @@
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date start.
+        /// Gets or sets the date start.
         /// </summary>
         public virtual DateTime DateStart { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 

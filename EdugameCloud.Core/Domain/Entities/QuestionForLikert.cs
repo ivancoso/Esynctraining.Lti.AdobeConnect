@@ -20,7 +20,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the allow other.
+        /// Gets or sets the allow other.
         /// </summary>
         public virtual bool? AllowOther { get; set; }
 

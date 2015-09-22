@@ -5,10 +5,10 @@
     using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The crossword result DTO.
+    /// The crossword result DTO.
     /// </summary>
     [DataContract]
-    public class CrosswordResultByAcSessionDTO
+    public sealed class CrosswordResultByAcSessionDTO
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CrosswordResultByAcSessionDTO"/> class.
@@ -50,7 +50,7 @@
         public long position { get; set; }
 
         /// <summary>
-        ///     Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
@@ -62,19 +62,19 @@
         public int appletResultId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name
+        /// Gets or sets the participant name
         /// </summary>
         [DataMember]
         public string participantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score.
+        /// Gets or sets the score.
         /// </summary>
         [DataMember]
         public int score { get; set; }
 
         /// <summary>
-        ///     Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }

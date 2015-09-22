@@ -36,7 +36,7 @@
         public DateTime dateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int subModuleCategoryId { get; set; }

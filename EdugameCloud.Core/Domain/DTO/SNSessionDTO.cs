@@ -35,19 +35,19 @@
         #region Public Properties
       
         /// <summary>
-        ///     Gets or sets the group discussion id.
+        /// Gets or sets the group discussion id.
         /// </summary>
         [DataMember]
         public int snGroupDiscussionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the group discussion name.
+        /// Gets or sets the group discussion name.
         /// </summary>
         [DataMember]
         public string groupDiscussionTitle { get; set; }
         
         /// <summary>
-        ///     Gets or sets the SN profile name.
+        /// Gets or sets the SN profile name.
         /// </summary>
         [DataMember]
         public string profileName { get; set; }

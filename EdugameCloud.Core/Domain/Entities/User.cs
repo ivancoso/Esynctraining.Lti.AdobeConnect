@@ -19,32 +19,32 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the ac sessions.
+        /// Gets or sets the ac sessions.
         /// </summary>
         public virtual IList<ACSession> ACSessions { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the activations.
+        /// Gets or sets the activations.
         /// </summary>
         public virtual IList<UserActivation> Activations { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the age of a user.
+        /// Gets or sets the age of a user.
         /// </summary>
         public virtual Company Company { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 
@@ -59,22 +59,22 @@
         public virtual IList<Distractor> DistractorsModified { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the email.
+        /// Gets or sets the email.
         /// </summary>
         public virtual string Email { get; set; }
 
         /// <summary>
-        ///     Gets or sets the ac sessions.
+        /// Gets or sets the ac sessions.
         /// </summary>
         public virtual IList<File> Files { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the first name.
+        /// Gets or sets the first name.
         /// </summary>
         public virtual string FirstName { get; set; }
 
         /// <summary>
-        ///     Gets the full name.
+        /// Gets the full name.
         /// </summary>
         public virtual string FullName
         {
@@ -85,57 +85,57 @@
         }
 
         /// <summary>
-        ///     Gets or sets the language id.
+        /// Gets or sets the language id.
         /// </summary>
         public virtual Language Language { get; set; }
 
         /// <summary>
-        ///     Gets or sets the last name.
+        /// Gets or sets the last name.
         /// </summary>
         public virtual string LastName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the ac sessions.
+        /// Gets or sets the ac sessions.
         /// </summary>
         public virtual IList<UserLoginHistory> LoginHistory { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         public virtual File Logo { get; set; }
 
         /// <summary>
-        ///     Gets or sets the modified by.
+        /// Gets or sets the modified by.
         /// </summary>
         public virtual User ModifiedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the password.
+        /// Gets or sets the password.
         /// </summary>
         public virtual string Password { get; set; }
 
         /// <summary>
-        ///     Gets or sets the session
+        /// Gets or sets the session
         /// </summary>
         public virtual string SessionToken { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime? SessionTokenExpirationDate { get; set; }
 
         /// <summary>
-        ///     Gets or sets a status.
+        /// Gets or sets a status.
         /// </summary>
         public virtual UserStatus Status { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module categories.
+        /// Gets or sets the sub module categories.
         /// </summary>
         public virtual IList<SubModuleCategory> SubModuleCategories { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the sub module categories modified.
+        /// Gets or sets the sub module categories modified.
         /// </summary>
         public virtual IList<SubModuleCategory> SubModuleCategoriesModified { get; protected set; }
 
@@ -150,17 +150,17 @@
         public virtual IList<ThemeAttribute> ThemeAttributesModified { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the time zone id.
+        /// Gets or sets the time zone id.
         /// </summary>
         public virtual TimeZone TimeZone { get; set; }
 
         /// <summary>
-        ///     Gets or sets the user role id.
+        /// Gets or sets the user role id.
         /// </summary>
         public virtual UserRole UserRole { get; set; }
 
         /// <summary>
-        ///     Gets or sets the unsibscribed.
+        /// Gets or sets the unsibscribed.
         /// </summary>
         public virtual bool IsUnsubscribed { get; set; }
 

@@ -12,17 +12,17 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the description.
+        /// Gets or sets the description.
         /// </summary>
         public virtual string Description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz format.
+        /// Gets or sets the quiz format.
         /// </summary>
         public virtual QuizFormat QuizFormat { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz name.
+        /// Gets or sets the quiz name.
         /// </summary>
         public virtual string QuizName { get; set; }
 
@@ -32,17 +32,17 @@
         public virtual IList<QuizResult> Results { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the score type.
+        /// Gets or sets the score type.
         /// </summary>
         public virtual ScoreType ScoreType { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         public virtual SubModuleItem SubModuleItem { get; set; }
 
         /// <summary>
-        ///     Gets or sets the lms id.
+        /// Gets or sets the lms id.
         /// </summary>
         public virtual int? LmsQuizId { get; set; }
 

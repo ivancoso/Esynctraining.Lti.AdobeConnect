@@ -12,12 +12,12 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the AC session.
+        /// Gets or sets the AC session.
         /// </summary>
         public virtual int ACSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the document xml.
+        /// Gets or sets the document xml.
         /// </summary>
         public virtual AppletItem AppletItem { get; set; }
 
@@ -32,7 +32,7 @@
         public virtual DateTime EndTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name
+        /// Gets or sets the participant name
         /// </summary>
         public virtual string ParticipantName { get; set; }
 

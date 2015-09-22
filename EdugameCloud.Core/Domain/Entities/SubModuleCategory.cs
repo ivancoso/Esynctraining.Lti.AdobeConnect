@@ -13,27 +13,27 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the category name.
+        /// Gets or sets the category name.
         /// </summary>
         public virtual string CategoryName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool? IsActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the modified by.
+        /// Gets or sets the modified by.
         /// </summary>
         public virtual User ModifiedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module.
+        /// Gets or sets the sub module.
         /// </summary>
         public virtual SubModule SubModule { get; set; }
 
@@ -43,7 +43,7 @@
         public virtual IList<SubModuleItem> SubModuleItems { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the user.
+        /// Gets or sets the user.
         /// </summary>
         public virtual User User { get; set; }
 

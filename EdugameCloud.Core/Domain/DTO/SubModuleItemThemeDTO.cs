@@ -58,49 +58,49 @@
         public Guid? bgImageId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the correct color.
+        /// Gets or sets the correct color.
         /// </summary>
         [DataMember]
         public string correctColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the hint color.
+        /// Gets or sets the hint color.
         /// </summary>
         [DataMember]
         public string hintColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the incorrect color.
+        /// Gets or sets the incorrect color.
         /// </summary>
         [DataMember]
         public string incorrectColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the instruction color.
+        /// Gets or sets the instruction color.
         /// </summary>
         [DataMember]
         public string instructionColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the question color.
+        /// Gets or sets the question color.
         /// </summary>
         [DataMember]
         public string questionColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the selection color.
+        /// Gets or sets the selection color.
         /// </summary>
         [DataMember]
         public string selectionColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the title color.
+        /// Gets or sets the title color.
         /// </summary>
         [DataMember]
         public string titleColor { get; set; }

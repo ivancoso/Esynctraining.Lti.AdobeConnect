@@ -22,17 +22,17 @@
         public virtual string CategoryColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         public virtual User CreatedBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 
@@ -42,12 +42,12 @@
         public virtual string DistractorTextColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         public virtual bool IsActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the modified by.
+        /// Gets or sets the modified by.
         /// </summary>
         public virtual User ModifiedBy { get; set; }
 
@@ -82,7 +82,7 @@
         public virtual string SelectionColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the theme .
+        /// Gets or sets the theme .
         /// </summary>
         public virtual Theme Theme { get; set; }
 

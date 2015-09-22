@@ -27,27 +27,27 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the context id.
+        /// Gets or sets the context id.
         /// </summary>
         public string context_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the membership url.
+        /// Gets or sets the membership url.
         /// </summary>
         public string ext_ims_lis_memberships_url { get; set; }
 
         /// <summary>
-        ///     Gets or sets the context label.
+        /// Gets or sets the context label.
         /// </summary>
         public string context_label { get; set; }
 
         /// <summary>
-        ///     Gets or sets the context title.
+        /// Gets or sets the context title.
         /// </summary>
         public string context_title { get; set; }
 
         /// <summary>
-        ///     Gets the course id.
+        /// Gets the course id.
         /// </summary>
         public int course_id
         {
@@ -70,64 +70,64 @@
         }
 
         /// <summary>
-        ///     Gets or sets the custom canvas API domain.
+        /// Gets or sets the custom canvas API domain.
         /// </summary>
         public string custom_canvas_api_domain { get; set; }
 
         /// <summary>
-        ///     Gets or sets the custom canvas course id.
+        /// Gets or sets the custom canvas course id.
         /// </summary>
         public int custom_canvas_course_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the custom canvas user id.
+        /// Gets or sets the custom canvas user id.
         /// </summary>
         public string custom_canvas_user_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the custom canvas user login id.
+        /// Gets or sets the custom canvas user login id.
         /// </summary>
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the extended IMS LIST memberships id.
+        /// Gets or sets the extended IMS LIST memberships id.
         /// </summary>
         public string ext_ims_lis_memberships_id { get; set; }
 
         /// <summary>
-        ///     Gets or sets the extended IMS LTI tool setting url.
+        /// Gets or sets the extended IMS LTI tool setting url.
         /// </summary>
         public string ext_ims_lti_tool_setting_url { get; set; }
 
         public string ext_user_username { get; set; }
 
         /// <summary>
-        ///     Gets or sets the launch presentation return url.
+        /// Gets or sets the launch presentation return url.
         /// </summary>
         public string launch_presentation_return_url { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LIS person contact email primary.
+        /// Gets or sets the LIS person contact email primary.
         /// </summary>
         public string lis_person_contact_email_primary { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LIS person name family.
+        /// Gets or sets the LIS person name family.
         /// </summary>
         public string lis_person_name_family { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LIS person name full.
+        /// Gets or sets the LIS person name full.
         /// </summary>
         public string lis_person_name_full { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LIS person name given.
+        /// Gets or sets the LIS person name given.
         /// </summary>
         public string lis_person_name_given { get; set; }
 
         /// <summary>
-        ///     Gets or sets the LIS person source ID.
+        /// Gets or sets the LIS person source ID.
         /// </summary>
         public string lis_person_sourcedid { get; set; }
 
@@ -148,7 +148,7 @@
         }
 
         /// <summary>
-        ///     Gets the LMS domain.
+        /// Gets the LMS domain.
         /// </summary>
         public string lms_domain
         {

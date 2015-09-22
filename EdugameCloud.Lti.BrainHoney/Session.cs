@@ -52,29 +52,29 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the user agent for this application
+        /// Gets the user agent for this application
         ///     You should set this to identify the calling application for logging
         /// </summary>
         public string Agent { get; private set; }
 
         /// <summary>
-        ///     Gets or sets the domain id.
+        /// Gets or sets the domain id.
         /// </summary>
         public string DomainId { get; set; }
 
         /// <summary>
-        ///     Gets the URL to the DLAP server
+        /// Gets the URL to the DLAP server
         /// </summary>
         public string Server { get; private set; }
 
         /// <summary>
-        ///     Gets or sets request timeout in milliseconds
+        /// Gets or sets request timeout in milliseconds
         ///     Defaults to 30000 (30 seconds)
         /// </summary>
         public int Timeout { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether session is verbose or not
+        /// Gets or sets a value indicating whether session is verbose or not
         /// </summary>
         public bool Verbose { get; set; }
 

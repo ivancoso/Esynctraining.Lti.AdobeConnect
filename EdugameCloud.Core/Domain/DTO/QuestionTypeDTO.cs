@@ -68,7 +68,7 @@
         public string instruction { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is active.
+        /// Gets or sets a value indicating whether is active.
         /// </summary>
         [DataMember]
         public bool? isActive { get; set; }
@@ -86,7 +86,7 @@
         public int? questionTypeOrder { get; set; }
 
         /// <summary>
-        ///     Gets or sets the type.
+        /// Gets or sets the type.
         /// </summary>
         [DataMember]
         public string type { get; set; }

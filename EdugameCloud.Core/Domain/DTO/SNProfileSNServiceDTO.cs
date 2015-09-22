@@ -44,13 +44,13 @@
         public bool isEnabled { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN profile.
+        /// Gets or sets the SN profile.
         /// </summary>
         [DataMember]
         public int snProfileId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the SN service.
+        /// Gets or sets the SN service.
         /// </summary>
         [DataMember]
         public int snServiceId { get; set; }

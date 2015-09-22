@@ -46,43 +46,43 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the date.
+        /// Gets or sets the date.
         /// </summary>
         [DataMember(IsRequired = false)]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the height.
+        /// Gets or sets the height.
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? height { get; set; }
 
         /// <summary>
-        ///     Gets or sets the id.
+        /// Gets or sets the id.
         /// </summary>
         [DataMember(IsRequired = false)]
         public Guid fileId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         [DataMember(IsRequired = true)]
         public string fileName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the width.
+        /// Gets or sets the width.
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? width { get; set; }
 
         /// <summary>
-        ///     Gets or sets the x.
+        /// Gets or sets the x.
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? x { get; set; }
 
         /// <summary>
-        ///     Gets or sets the y.
+        /// Gets or sets the y.
         /// </summary>
         [DataMember(IsRequired = false)]
         public int? y { get; set; }

@@ -8,7 +8,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The quiz result DTO.
+    /// The quiz result DTO.
     /// </summary>
     [DataContract]
     public class QuizResultDTO
@@ -57,37 +57,37 @@
         public string email { get; set; }
 
         /// <summary>
-        /// Gets or sets the AC email.
+        /// Gets or sets the Adobe Connect email.
         /// </summary>
         [DataMember]
         public string acEmail { get; set; }
 
         /// <summary>
-        ///     Gets or sets the applet name.
+        /// Gets or sets the applet name.
         /// </summary>
         [DataMember(IsRequired = true)]
         public int acSessionId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz id.
+        /// Gets or sets the quiz id.
         /// </summary>
         [DataMember(IsRequired = true)]
         public int quizId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company id.
+        /// Gets or sets the company id.
         /// </summary>
         [DataMember(IsRequired = true)]
         public int companyId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
@@ -99,19 +99,19 @@
         public int quizResultId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name
+        /// Gets or sets the participant name
         /// </summary>
         [DataMember]
         public string participantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score.
+        /// Gets or sets the score.
         /// </summary>
         [DataMember]
         public int score { get; set; }
 
         /// <summary>
-        ///     Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }

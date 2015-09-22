@@ -9,11 +9,11 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The distractor DTO.
+    /// The distractor DTO.
     /// </summary>
     [DataContract]
     [KnownType(typeof(FileDTO))]
-    public class DistractorDTO
+    public sealed class DistractorDTO
     {
         #region Constructors and Destructors
 
@@ -53,13 +53,13 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int? createdBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the distractor type.
+        /// Gets or sets the distractor type.
         /// </summary>
         [DataMember]
         public int? distractorType { get; set; }
@@ -71,13 +71,13 @@
         public FileDTO imageVO { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }

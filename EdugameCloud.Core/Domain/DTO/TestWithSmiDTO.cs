@@ -27,7 +27,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the SMI.
+        /// Gets or sets the SMI.
         /// </summary>
         [DataMember]
         public SubModuleItemDTO SmiVO { get; set; }

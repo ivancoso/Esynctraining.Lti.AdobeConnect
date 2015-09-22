@@ -76,25 +76,25 @@
         public SNMapSettingsDTO mapSettingsVO { get; set; }
 
         /// <summary>
-        ///     Gets or sets the about.
+        /// Gets or sets the about.
         /// </summary>
         [DataMember]
         public string about { get; set; }
 
         /// <summary>
-        ///     Gets or sets the address.
+        /// Gets or sets the address.
         /// </summary>
         [DataMember]
         public AddressDTO addressVO { get; set; }
 
         /// <summary>
-        ///     Gets or sets the email.
+        /// Gets or sets the email.
         /// </summary>
         [DataMember]
         public string email { get; set; }
 
         /// <summary>
-        ///     Gets or sets the links.
+        /// Gets or sets the links.
         /// </summary>
         [DataMember]
         public SNLinkDTO[] links
@@ -110,13 +110,13 @@
         }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         [DataMember]
         public string profileName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name.
+        /// Gets or sets the name.
         /// </summary>
         [DataMember]
         public string jobTitle { get; set; }
@@ -128,13 +128,13 @@
         public string userName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the phone.
+        /// Gets or sets the phone.
         /// </summary>
         [DataMember]
         public string phone { get; set; }
 
         /// <summary>
-        ///     Gets or sets the services.
+        /// Gets or sets the services.
         /// </summary>
         [DataMember]
         public SNProfileSNServiceDTO[] services
@@ -150,7 +150,7 @@
         }
 
         /// <summary>
-        ///     Gets or sets the SN profile id.
+        /// Gets or sets the SN profile id.
         /// </summary>
         [DataMember]
         public int snProfileId { get; set; }

@@ -38,25 +38,25 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the key.
+        /// Gets or sets the key.
         /// </summary>
         [DataMember]
         public string key { get; set; }
 
         /// <summary>
-        ///     Gets or sets the provider.
+        /// Gets or sets the provider.
         /// </summary>
         [DataMember]
         public string provider { get; set; }
 
         /// <summary>
-        ///     Gets or sets the secret.
+        /// Gets or sets the secret.
         /// </summary>
         [DataMember]
         public string secret { get; set; }
 
         /// <summary>
-        ///     Gets or sets the token.
+        /// Gets or sets the token.
         /// </summary>
         [DataMember]
         public string token { get; set; }

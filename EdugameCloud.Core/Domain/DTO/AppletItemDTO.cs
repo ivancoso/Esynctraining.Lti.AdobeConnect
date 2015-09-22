@@ -46,13 +46,13 @@
         public string appletName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the document xml.
+        /// Gets or sets the document xml.
         /// </summary>
         [DataMember]
         public string documentXML { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int? subModuleItemId { get; set; }

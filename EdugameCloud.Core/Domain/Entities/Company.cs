@@ -44,7 +44,7 @@
         public virtual User PrimaryContact { get; set; }
 
         /// <summary>
-        ///     Gets or sets the age of a user.
+        /// Gets or sets the age of a user.
         /// </summary>
         public virtual CompanyLicense CurrentLicense
         {
@@ -59,7 +59,7 @@
         }
 
         /// <summary>
-        ///     Gets or sets the age of a user.
+        /// Gets or sets the age of a user.
         /// </summary>
         public virtual CompanyLicense FutureActiveLicense
         {

@@ -13,7 +13,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the address 1.
+        /// Gets or sets the address 1.
         /// </summary>
         public virtual string Address1 { get; set; }
 
@@ -23,12 +23,12 @@
         public virtual string Zip { get; set; }
 
         /// <summary>
-        ///     Gets or sets the address 2.
+        /// Gets or sets the address 2.
         /// </summary>
         public virtual string Address2 { get; set; }
 
         /// <summary>
-        ///     Gets or sets the city.
+        /// Gets or sets the city.
         /// </summary>
         public virtual string City { get; set; }
 
@@ -48,22 +48,22 @@
         public virtual IList<Company> Companies { get; protected set; }
 
         /// <summary>
-        ///     Gets or sets the country.
+        /// Gets or sets the country.
         /// </summary>
         public virtual Country Country { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date created.
+        /// Gets or sets the date created.
         /// </summary>
         public virtual DateTime DateCreated { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         public virtual DateTime DateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state.
+        /// Gets or sets the state.
         /// </summary>
         public virtual State State { get; set; }
 

@@ -39,13 +39,13 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the SN service id.
+        /// Gets or sets the SN service id.
         /// </summary>
         [DataMember]
         public int snServiceId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the social service.
+        /// Gets or sets the social service.
         /// </summary>
         [DataMember]
         public string socialService { get; set; }

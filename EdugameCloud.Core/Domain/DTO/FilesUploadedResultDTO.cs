@@ -12,13 +12,13 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets saved url list
+        /// Gets or sets saved url list
         /// </summary>
         [DataMember]
         public Guid[] savedIds { get; set; }
 
         /// <summary>
-        ///     Gets or sets the failed.
+        /// Gets or sets the failed.
         /// </summary>
         [DataMember]
         public FailedFileDTO[] failedFiles { get; set; }

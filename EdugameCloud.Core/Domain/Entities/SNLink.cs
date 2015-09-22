@@ -15,7 +15,7 @@
         public virtual string LinkName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the profile.
+        /// Gets or sets the profile.
         /// </summary>
         public virtual SNProfile Profile { get; set; }
 

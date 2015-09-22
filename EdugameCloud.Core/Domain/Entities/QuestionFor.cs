@@ -47,12 +47,12 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the correct message.
+        /// Gets or sets the correct message.
         /// </summary>
         public virtual Question Question { get; set; }
 
         /// <summary>
-        ///     Gets or sets the questionType.
+        /// Gets or sets the questionType.
         /// </summary>
         public virtual IEnumerable<QuestionTypeEnum> QuestionTypes
         {
@@ -73,7 +73,7 @@
         public virtual bool IsMandatory { get; set; }
 
         /// <summary>
-        ///     Gets or sets the room number.
+        /// Gets or sets the room number.
         /// </summary>
         public virtual int? PageNumber { get; set; }
         

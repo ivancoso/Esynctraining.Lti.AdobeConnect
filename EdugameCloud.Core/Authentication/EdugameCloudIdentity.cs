@@ -52,7 +52,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the authentication type.
+        /// Gets the authentication type.
         /// </summary>
         public string AuthenticationType
         {
@@ -63,17 +63,17 @@
         }
 
         /// <summary>
-        ///     Gets or sets the internal id.
+        /// Gets or sets the internal id.
         /// </summary>
         public int? InternalId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the internal id.
+        /// Gets or sets the internal id.
         /// </summary>
         public User InternalEntity { get; set; }
 
         /// <summary>
-        ///     Gets a value indicating whether is authenticated.
+        /// Gets a value indicating whether is authenticated.
         /// </summary>
         public bool IsAuthenticated
         {
@@ -84,7 +84,7 @@
         }
 
         /// <summary>
-        ///     Gets the name.
+        /// Gets the name.
         /// </summary>
         public string Name { get; private set; }
 

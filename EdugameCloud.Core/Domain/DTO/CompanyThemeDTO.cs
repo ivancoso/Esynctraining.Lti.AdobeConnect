@@ -98,13 +98,13 @@
         public string buttonTextColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company theme Id.
+        /// Gets or sets the company theme Id.
         /// </summary>
         [DataMember]
         public Guid companyThemeId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the company.
+        /// Gets or sets the company.
         /// </summary>
         [DataMember]
         public int companyId { get; set; }
@@ -140,7 +140,7 @@
         public string loginHeaderTextColor { get; set; }
 
         /// <summary>
-        ///     Gets or sets the logo image id.
+        /// Gets or sets the logo image id.
         /// </summary>
         [DataMember]
         public Guid? logoId { get; set; }

@@ -5,10 +5,10 @@
     using EdugameCloud.Core.Extensions;
 
     /// <summary>
-    ///     The quiz player DTO.
+    /// The quiz player DTO.
     /// </summary>
     [DataContract]
-    public class QuizPlayerDTO
+    public sealed class QuizPlayerDTO
     {
         #region Constructors and Destructors
 
@@ -43,59 +43,61 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the total question.
+        /// Gets or sets the total question.
         /// </summary>
-        [DataMember]
+        // NOTE: not in use on client side [DataMember]
         public int TotalQuestion { get; set; }
 
         /// <summary>
-        ///     Gets or sets the AC email.
+        /// Gets or sets the AdobeConnect email.
         /// </summary>
         [DataMember]
         public string acEmail { get; set; }
 
         /// <summary>
-        ///     Gets or sets the end time.
+        /// Gets or sets the end time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double endTime { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether is completed.
+        /// Gets or sets a value indicating whether is completed.
         /// </summary>
         [DataMember]
         public bool isCompleted { get; set; }
 
         /// <summary>
-        ///     Gets or sets the participant name.
+        /// Gets or sets the participant name.
         /// </summary>
         [DataMember]
         public string participantName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the position.
+        /// Gets or sets the position.
         /// </summary>
         [DataMember]
         public long position { get; set; }
 
         /// <summary>
-        ///     Gets or sets the quiz result id.
+        /// Gets or sets the quiz result id.
         /// </summary>
         [DataMember]
         public int quizResultId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score.
+        /// Gets or sets the score.
         /// </summary>
         [DataMember]
         public int score { get; set; }
 
         /// <summary>
-        ///     Gets or sets the start time.
+        /// Gets or sets the start time. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double startTime { get; set; }
 
         #endregion
+
     }
+
 }

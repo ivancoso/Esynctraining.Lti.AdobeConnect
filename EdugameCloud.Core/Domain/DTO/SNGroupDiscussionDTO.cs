@@ -56,25 +56,25 @@
         public int companyId { get; set; }
 
         /// <summary>
-        /// Gets or sets the date created.
+        /// Gets or sets the date created. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double dateCreated { get; set; }
 
         /// <summary>
-        /// Gets or sets the date modified.
+        /// Gets or sets the date modified. (Unix Timestamp value)
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the title.
+        /// Gets or sets the title.
         /// </summary>
         [DataMember]
         public string groupDiscussionTitle { get; set; }
 
         /// <summary>
-        ///     Gets or sets the data.
+        /// Gets or sets the data.
         /// </summary>
         [DataMember]
         public string groupDiscussionData { get; set; }
@@ -86,7 +86,7 @@
         public bool isActive { get; set; }
 
         /// <summary>
-        ///     Gets or sets the AC session.
+        /// Gets or sets the AC session.
         /// </summary>
         [DataMember]
         public int acSessionId { get; set; }

@@ -102,7 +102,7 @@
         public virtual string instructionTitle { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public virtual int subModuleCategoryId { get; set; }

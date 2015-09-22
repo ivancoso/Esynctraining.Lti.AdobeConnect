@@ -52,109 +52,109 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets or sets the category name.
+        /// Gets or sets the category name.
         /// </summary>
         [DataMember]
         public string categoryName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by.
+        /// Gets or sets the created by.
         /// </summary>
         [DataMember]
         public int createdBy { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by last name.
+        /// Gets or sets the created by last name.
         /// </summary>
         [DataMember]
         public string createdByLastName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the created by name.
+        /// Gets or sets the created by name.
         /// </summary>
         [DataMember]
         public string createdByName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the date modified.
+        /// Gets or sets the date modified.
         /// </summary>
         [DataMember]
         public double dateModified { get; set; }
 
         /// <summary>
-        ///     Gets or sets the description.
+        /// Gets or sets the description.
         /// </summary>
         [DataMember]
         public string description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the first name.
+        /// Gets or sets the first name.
         /// </summary>
         [DataMember]
         public string firstName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the instruction details.
+        /// Gets or sets the instruction details.
         /// </summary>
         [DataMember]
         public string instructionDescription { get; set; }
 
         /// <summary>
-        ///     Gets or sets the instruction title.
+        /// Gets or sets the instruction title.
         /// </summary>
         [DataMember]
         public string instructionTitle { get; set; }
 
         /// <summary>
-        ///     Gets or sets the last name.
+        /// Gets or sets the last name.
         /// </summary>
         [DataMember]
         public string lastName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the passing score.
+        /// Gets or sets the passing score.
         /// </summary>
         [DataMember]
         public decimal? passingScore { get; set; }
 
         /// <summary>
-        ///     Gets or sets the score format.
+        /// Gets or sets the score format.
         /// </summary>
         [DataMember]
         public string scoreFormat { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item.
+        /// Gets or sets the sub module item.
         /// </summary>
         [DataMember]
         public int subModuleCategoryId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the sub module item id.
+        /// Gets or sets the sub module item id.
         /// </summary>
         [DataMember]
         public int subModuleItemId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the test id.
+        /// Gets or sets the test id.
         /// </summary>
         [DataMember]
         public int testId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the test name.
+        /// Gets or sets the test name.
         /// </summary>
         [DataMember]
         public string testName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the time limit.
+        /// Gets or sets the time limit.
         /// </summary>
         [DataMember]
         public int? timeLimit { get; set; }
 
         /// <summary>
-        ///     Gets or sets the user id.
+        /// Gets or sets the user id.
         /// </summary>
         [DataMember]
         public int userId { get; set; }
