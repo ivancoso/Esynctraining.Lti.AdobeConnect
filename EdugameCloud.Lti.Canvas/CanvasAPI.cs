@@ -1,16 +1,14 @@
 ﻿namespace EdugameCloud.Lti.Canvas
 {
+    using System;
     using System.Collections.Generic;
     using System.Net;
-    using System.Linq;
+    using Castle.Core.Logging;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Core.Constants;
-    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using RestSharp;
-    using Castle.Core.Logging;
-    using System;
 
     // ReSharper disable once InconsistentNaming
     public class CanvasAPI : ILmsAPI, ICanvasAPI

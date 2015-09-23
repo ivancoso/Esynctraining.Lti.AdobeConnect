@@ -11358,11 +11358,6 @@
             Gets or sets a value indicating whether is active.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.Entities.Company.HasApi">
-            <summary>
-            Has access to REST Reporting API.
-            </summary>
-        </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.ACUserMode">
             <summary>
                 AC User Mode

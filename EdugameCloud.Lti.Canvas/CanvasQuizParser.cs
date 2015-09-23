@@ -7,7 +7,6 @@
     using System.Xml;
 
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
 
     using Esynctraining.Core.Extensions;
 
