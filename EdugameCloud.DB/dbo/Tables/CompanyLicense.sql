@@ -12,6 +12,7 @@
     [licenseStatus]          INT           NOT NULL,
     [dateStart]              DATETIME      NOT NULL,
     [totalParticipantsCount] INT           CONSTRAINT [DF_CompanyLicense_totalParticipantsCount] DEFAULT ((100)) NOT NULL,
+    [hasApi]                 BIT           NOT NULL,
     CONSTRAINT [PK_CompanyLicense] PRIMARY KEY CLUSTERED ([companyLicenseId] ASC),
     CONSTRAINT [FK_CompanyLicense_Company] FOREIGN KEY ([companyId]) REFERENCES [dbo].[Company] ([companyId]),
     CONSTRAINT [FK_CompanyLicense_CreatedBy] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]),
