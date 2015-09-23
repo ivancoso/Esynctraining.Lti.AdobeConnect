@@ -51,7 +51,7 @@ FROM     SurveyResult SR
          LEFT join  SurveyQuestionResult QT on QT.surveyResultId = SR.surveyResultId
          LefT join Question que on que.questionId = qt.questionId
 
-WHERE    SR.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as CorrectAnswerCount
+WHERE    SR.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as correctAnswerCount
 		   
 FROM     Question Q 
 		 left outer join QuestionForLikert ql on ql.questionId = q.questionId

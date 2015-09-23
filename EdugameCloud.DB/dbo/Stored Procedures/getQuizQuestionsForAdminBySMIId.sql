@@ -24,7 +24,7 @@ FROM     QuizResult QR
          LEFT join  QuizQuestionResult QT on QT.quizResultId = qr.quizResultId
          LefT join Question que on que.questionId = qt.questionId
 
-WHERE    QR.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as CorrectAnswerCount
+WHERE    QR.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as correctAnswerCount
 		   
 FROM     Question Q INNER JOIN
          SubModuleItem SMI ON Q.subModuleItemId = SMI.subModuleItemId INNER JOIN

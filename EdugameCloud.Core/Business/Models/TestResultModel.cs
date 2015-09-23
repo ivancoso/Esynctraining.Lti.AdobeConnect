@@ -123,10 +123,10 @@ namespace EdugameCloud.Core.Business.Models
 			        res1.SelectGroup(() => q.Id)
 				        .WithAlias(() => dto.questionId)
 				        .Select(Projections.Sum(Projections.Cast(NHibernateUtil.Int32, Projections.Property(() => tqr.IsCorrect))))
-				        .WithAlias(() => dto.сorrectAnswerCount))
+				        .WithAlias(() => dto.correctAnswerCount))
 		        .TransformUsing(Transformers.AliasToBean<QuestionForAdminDTO>());
 			var questionqsWithCorrectAnswerCount = Repository.FindAll<QuestionForAdminDTO>(queryOver1).ToList();
-			questionqs.ForEach(x => x.сorrectAnswerCount = (questionqsWithCorrectAnswerCount.Any(t => t.questionId == x.questionId)? questionqsWithCorrectAnswerCount.First(t => t.questionId == x.questionId).сorrectAnswerCount: 0));
+			questionqs.ForEach(x => x.correctAnswerCount = (questionqsWithCorrectAnswerCount.Any(t => t.questionId == x.questionId)? questionqsWithCorrectAnswerCount.First(t => t.questionId == x.questionId).correctAnswerCount: 0));
             res.questions = questionqs.ToArray();
             res.players =
                 this.Repository.StoreProcedureForMany<TestPlayerFromStoredProcedureDTO>(

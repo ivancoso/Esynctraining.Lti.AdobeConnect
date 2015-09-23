@@ -50,7 +50,7 @@
         /// Gets or sets the correct answer count.
         /// </summary>
         [DataMember]
-        public int сorrectAnswerCount { get; set; }
+        public int correctAnswerCount { get; set; }
 
         /// <summary>
         /// Gets or sets the sub module item id.

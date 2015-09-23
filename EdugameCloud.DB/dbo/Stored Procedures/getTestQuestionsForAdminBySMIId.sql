@@ -22,7 +22,7 @@ FROM     TestResult tr
          LEFT join  TestQuestionResult tqr on tqr.testResultId = tr.testResultId
          LefT join Question que on que.questionId = tqr.questionId
 
-WHERE    tr.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as CorrectAnswerCount
+WHERE    tr.acSessionId = @acSessionID and que.questionId = Q.questionID group by que.questionId) as correctAnswerCount
 		   
 FROM     Question Q INNER JOIN
          SubModuleItem SMI ON Q.subModuleItemId = SMI.subModuleItemId INNER JOIN

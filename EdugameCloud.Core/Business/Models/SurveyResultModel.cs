@@ -86,7 +86,11 @@ namespace EdugameCloud.Core.Business.Models
         public SurveyResultDataDTO GetSurveyResultByACSessionId(int adobeConnectSessionId, int smiId)
         {
             var res = new SurveyResultDataDTO();
-            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getSurveyQuestionsForAdminBySMIId", new StoreProcedureParam<int>("smiId", smiId), new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getSurveyQuestionsForAdminBySMIId",
+                new StoreProcedureParam<int>("smiId", smiId), 
+                new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+
             res.players =
                 this.Repository.StoreProcedureForMany<SurveyPlayerFromStoredProcedureDTO>(
                     "getSurveyResultByACSessionId",

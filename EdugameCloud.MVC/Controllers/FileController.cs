@@ -1537,7 +1537,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.сorrectAnswerCount,
+                                        totalCorrect = q.correctAnswerCount,
                                         totalQuestions = acSession.TotalQuestion
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
@@ -1690,7 +1690,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.сorrectAnswerCount,
+                                        totalCorrect = q.correctAnswerCount,
                                         totalQuestions = acSession.TotalQuestion
                                     }).ToList();
                         args.DataSources.Add(new ReportDataSource("ItemDataSet", questions));
@@ -1931,7 +1931,7 @@ namespace EdugameCloud.MVC.Controllers
                                         q.question,
                                         questionType = q.questionTypeName,
                                         q.isMandatory,
-                                        totalCorrect = q.сorrectAnswerCount,
+                                        totalCorrect = q.correctAnswerCount,
                                         q.restrictions,
                                         totalQuestions = preQuestions.Length
                                     }).ToList();
