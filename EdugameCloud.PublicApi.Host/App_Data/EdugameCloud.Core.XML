@@ -7460,7 +7460,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO">
             <summary>
-                The company license DTO.
+            The company license DTO.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.CompanyLicenseDTO.#ctor">
@@ -11435,7 +11435,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.CompanyLicense">
             <summary>
-                The company license.
+            The company license.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.Company">
@@ -11496,6 +11496,11 @@
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.LicenseStatus">
             <summary>
             Gets or sets the is license status.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.CompanyLicense.HasApi">
+            <summary>
+            Has access to REST Reporting API.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.BuildVersion">
