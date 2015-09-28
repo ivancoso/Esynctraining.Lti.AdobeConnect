@@ -92,6 +92,8 @@
     <Compile Include="Entities\FolderUpdateItem.cs" />
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
+    <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\PrincipalPredefinedFields.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\PermissionUpdateTrio.cs" />
     <Compile Include="Entities\Recording.cs" />

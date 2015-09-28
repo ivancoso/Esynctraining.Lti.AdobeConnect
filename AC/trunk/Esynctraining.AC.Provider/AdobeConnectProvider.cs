@@ -1624,6 +1624,27 @@
             return status;
         }
 
+        public StatusInfo UpdateAclField(IEnumerable<AclFieldUpdateTrio> values)
+        {
+            // act: "acl-field-update"
+            StatusInfo status;
+
+            var trios = new List<string>(values.Count());
+            var paramBuilder = new StringBuilder();
+            foreach (AclFieldUpdateTrio trio in values)
+            {
+                paramBuilder.Length = 0;
+                // "acl-id={0}&field-id={1}&value={2}"
+                paramBuilder.AppendFormat(CommandParams.Features.FieldUpdate, trio.AclId, trio.FieldId, trio.Value);
+                trios.Add(paramBuilder.ToString());
+            }
+
+            this.requestProcessor.Process(Commands.Sco.FieldUpdate, string.Join("&", trios), out status);
+
+            return status;
+        }
+
+
         /// <summary>
         /// The update meeting permission for user or a group.
         /// </summary>
