@@ -12,7 +12,8 @@
         public static readonly string MiddleInitial = "x-middle-initial";
         public static readonly string MobilePhoneKey = "x-mobile-phone-key";
         public static readonly string Department = "x-department";
-
+        public static readonly string JobTitle = "x-job-title";
+        public static readonly string Organization = "x-organization";
     }
 
 }
