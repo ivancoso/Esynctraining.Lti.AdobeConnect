@@ -76,7 +76,7 @@
 			<conversionPattern value="%d{HH:mm:ss.fff} [%t] %-5p %c - %m%n"  />
 		</layout>
 	</appender>
-  -<appender name="Application" type="log4net.Appender.RollingFileAppender, log4net" >
+  <appender name="Application" type="log4net.Appender.RollingFileAppender, log4net" >
     <param name="File" value="Logs/Application/Application.txt"/> 
     <param name="AppendToFile" value="true"/> 
     <param name="RollingStyle" value="Date"/> 

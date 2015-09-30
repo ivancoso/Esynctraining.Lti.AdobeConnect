@@ -792,31 +792,6 @@
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
-
-        [HttpPost]
-        public virtual JsonResult UpdateMeetingAndReturnLmsUsers(string lmsProviderName, MeetingDTO meeting)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = this.GetSession(lmsProviderName);
-                credentials = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                var ret = this.meetingSetup.SaveMeeting(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
-                    param,
-                    meeting,
-                    true);
-
-                return Json(ret);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("UpdateMeetingAndReturnLmsUsers", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
         
         [HttpPost]
         public virtual JsonResult SetDefaultRolesForNonParticipants(string lmsProviderName, int meetingId)
