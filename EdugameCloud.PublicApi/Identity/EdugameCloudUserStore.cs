@@ -61,7 +61,7 @@ namespace EdugameCloud.PublicApi.Identity
                 
                 //throw new FaultException<Error>(error, error.errorMessage);
             }
-            else if (!user.IsAdministrator())
+            else if (!(user.IsAdministrator() || user.IsSuperAdmin()))
             {
                 Logger.ErrorFormat("API: user {0} is not Administrator.", userName);
                 user = null;

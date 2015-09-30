@@ -201,6 +201,11 @@
             return ((UserRoleEnum)this.UserRole.Id) == UserRoleEnum.Admin;
         }
 
+        public virtual bool IsSuperAdmin()
+        {
+            return ((UserRoleEnum)this.UserRole.Id) == UserRoleEnum.SuperAdmin;
+        }
+
         /// <summary>
         /// The is in any role.
         /// </summary>
