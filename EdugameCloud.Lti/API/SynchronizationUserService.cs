@@ -50,8 +50,7 @@ namespace EdugameCloud.Lti.API
             var acProvider = meetingSetup.GetProvider(lmsCompany);
             var groupedMeetings = lmsCompany.LmsCourseMeetings
                 .Where(x =>
-                    x.LmsMeetingType != (int) LmsMeetingType.OfficeHours
-                    && (meetingIds == null || meetingIds.Any(m => m == x.Id))
+                    (meetingIds == null || meetingIds.Any(m => m == x.Id))
                     && acProvider.GetScoInfo(x.GetMeetingScoId()).Status.Code == StatusCodes.ok)
                 .GroupBy(y => y.CourseId);
             foreach (var courseGroup in groupedMeetings)
@@ -120,7 +119,7 @@ namespace EdugameCloud.Lti.API
                                 List<PermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
                                 var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
-                                if (syncACUsers && 
+                                if (syncACUsers && meeting.LmsMeetingType == (int)LmsMeetingType.Meeting &&
                                     (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
                                     || dbPrincipalIds.Count != acPrincipalIds.Count
                                     || dbPrincipalIds.Any(x => acPrincipalIds.All(p => p != x))))

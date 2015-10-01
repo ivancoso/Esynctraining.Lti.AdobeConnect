@@ -462,8 +462,7 @@
                 if (forceUpdate && lmsCompany.UseSynchronizedUsers
                     && service != null
                     && service.CanRetrieveUsersFromApiForCompany(lmsCompany)
-                    && lmsCompany.LmsCourseMeetings != null
-                    && lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int)LmsMeetingType.OfficeHours))
+                    && lmsCompany.LmsCourseMeetings != null)
                 {
                     syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
                 }
