@@ -566,11 +566,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public bool IsTeacher(LtiParamDTO param)
         {
             return param.roles != null
-                   && (param.roles.Contains("Instructor") 
-                   || param.roles.Contains("Administrator")
-                   || param.roles.Contains("Course Director")
-                   || param.roles.Contains("CourseDirector")
-                   || param.roles.Contains("Lecture"));
+                && settings.TeacherRoles != null
+                && ((string)settings.TeacherRoles).Split(',').Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
         }
 
         /// <summary>
