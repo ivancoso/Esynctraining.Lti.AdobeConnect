@@ -10,7 +10,7 @@
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
-
+    using Castle.Core.Logging;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
@@ -36,6 +36,14 @@
         private const string OAuthVersion = "1.0";
 
         #endregion
+
+        protected readonly ILogger _logger;
+
+
+        public LTI2Api(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         #region Public Methods and Operators
 
@@ -76,6 +84,26 @@
                     servicePattern, 
                     lis_result_sourcedid, 
                     ltiVersion);
+                
+                bool isSuccess = response.XPathSelectElement("/statusinfo/codemajor").With(x => x.Value) == "Success";
+                if (!isSuccess)
+                {
+                    /*
+                        <codemajor>Fail</codemajor>
+                        <description>Unable to validate message: 95D8A271-C3B0-44E5-99D1-051849737B12</description>
+                        <severity>Error</severity>
+                    */
+                    error = string.Format("Error from Moodle. codemajor: {0}. description : {1}. severity : {2}.",
+                        response.XPathSelectElement("/statusinfo/codemajor").With(x => x.Value),
+                        response.XPathSelectElement("/statusinfo/description").With(x => x.Value),
+                        response.XPathSelectElement("/statusinfo/severity").With(x => x.Value)
+                        );
+
+                    _logger.ErrorFormat("{0}. Service: {1}. LmsCompanyId: {2}.", error, servicePattern, company.Id);
+
+                    return new List<LmsUserDTO>();
+                }
+
                 IEnumerable<XElement> members = response.XPathSelectElements("/members/member");
                 foreach (XElement member in members)
                 {
