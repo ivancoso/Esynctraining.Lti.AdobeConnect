@@ -861,7 +861,7 @@
             }
             else
             {
-                logger.ErrorFormat("Adobe Connect integration is not set up. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param));
                 return string.Format("Your Adobe Connect integration is not set up.");
             }
 
