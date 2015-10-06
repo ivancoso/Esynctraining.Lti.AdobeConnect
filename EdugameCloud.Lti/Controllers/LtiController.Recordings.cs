@@ -8,13 +8,19 @@ using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
 using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
     public partial class LtiController
     {
+        private IRecordingsService RecordingsService
+        {
+            get { return IoC.Resolve<IRecordingsService>(); }
+        }
+
         #region Public Methods and Operators
-        
+
         [HttpPost]
         public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
         {
@@ -25,7 +31,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
-                OperationResult result = recordingsService.RemoveRecording(
+                OperationResult result = RecordingsService.RemoveRecording(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
@@ -51,7 +57,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;    
 
-                List<RecordingDTO> recordings = recordingsService.GetRecordings(
+                List<RecordingDTO> recordings = RecordingsService.GetRecordings(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
@@ -77,7 +83,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
                 var provider = GetAdobeConnectProvider(lmsCompany);
-                string url = recordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, adobeConnectProvider:provider);
+                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, adobeConnectProvider:provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
@@ -94,7 +100,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = this.GetSession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
-                var link = recordingsService.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
+                var link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
 
                 return Json(OperationResult.Success(link));
             }
@@ -117,7 +123,7 @@ namespace EdugameCloud.Lti.Controllers
                 var breezeSession = string.Empty;
                 var provider = GetAdobeConnectProvider(lmsCompany);
 
-                string url = recordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "edit", adobeConnectProvider: provider);
+                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "edit", adobeConnectProvider: provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)
@@ -138,7 +144,7 @@ namespace EdugameCloud.Lti.Controllers
                 var breezeSession = string.Empty;
                 var provider = GetAdobeConnectProvider(lmsCompany);
 
-                string url = recordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "offline", adobeConnectProvider: provider);
+                string url = RecordingsService.JoinRecording(lmsCompany, param, recordingUrl, ref breezeSession, "offline", adobeConnectProvider: provider);
                 return this.LoginToAC(url, breezeSession, lmsCompany);
             }
             catch (Exception ex)

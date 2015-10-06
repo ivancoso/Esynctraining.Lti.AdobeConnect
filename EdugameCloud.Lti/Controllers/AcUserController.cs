@@ -33,18 +33,26 @@ namespace EdugameCloud.Lti.Controllers
                 return IoC.Resolve<LmsCourseMeetingModel>();
             }
         }
-        
+
+        private MeetingSetup MeetingSetup
+        {
+            get
+            {
+                return IoC.Resolve<MeetingSetup>();
+            }
+        }
+
         #region Constructors and Destructors
 
         public AcUserController(
             LmsUserSessionModel userSessionModel,
-            LmsUserModel lmsUserModel, 
-            MeetingSetup meetingSetup, 
+            LmsUserModel lmsUserModel,
+            IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
             IAdobeConnectUserService acUserService,
             ILogger logger)
-            : base(userSessionModel, meetingSetup, settings, logger)
+            : base(userSessionModel, acAccountService, settings, logger)
         {
             this.lmsUserModel = lmsUserModel;
             this.usersSetup = usersSetup;
@@ -83,7 +91,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
-                LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
+                LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
                 PermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());

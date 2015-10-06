@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
-using Esynctraining.AC.Provider;
 using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.Controllers
@@ -33,7 +29,7 @@ namespace EdugameCloud.Lti.Controllers
 
         protected ILogger logger { get; private set; }
 
-        protected MeetingSetup meetingSetup { get; private set; }
+        protected IAdobeConnectAccountService acAccountService { get; private set; }
 
         protected bool IsDebug
         {
@@ -54,12 +50,12 @@ namespace EdugameCloud.Lti.Controllers
 
         public BaseController(
             LmsUserSessionModel userSessionModel,
-            MeetingSetup meetingSetup, 
+            IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings, 
             ILogger logger)
         {
             this.userSessionModel = userSessionModel;
-            this.meetingSetup = meetingSetup;
+            this.acAccountService = acAccountService;
             this.Settings = settings;
             this.logger = logger;
         }
@@ -93,7 +89,7 @@ namespace EdugameCloud.Lti.Controllers
                 provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 if (provider == null)
                 {
-                    provider = this.meetingSetup.GetProvider(lmsCompany);
+                    provider = acAccountService.GetProvider(lmsCompany);
                     this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
                 }
             }

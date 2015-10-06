@@ -18,13 +18,15 @@ namespace EdugameCloud.Lti.BrainHoney
         private readonly IMeetingSetup _meetingSetup;
         private readonly IUsersSetup _usersSetup;
         private readonly LmsCompanyModel _lmsCompanyModel;
+        private IAdobeConnectAccountService _acAccountService;
 
-        public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel)
+        public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel, IAdobeConnectAccountService acAccountService)
         {
             _dlapApi = dlapApi;
             _meetingSetup = meetingSetup;
             _usersSetup = usersSetup;
             _lmsCompanyModel = lmsCompanyModel;
+            _acAccountService = acAccountService;
         }
 
 
@@ -145,9 +147,9 @@ namespace EdugameCloud.Lti.BrainHoney
                         continue;
                     }
 
-                    IAdobeConnectProxy adobeConnectProvider = this._meetingSetup.GetProvider(brainHoneyCompany);
+                    IAdobeConnectProxy adobeConnectProvider = _acAccountService.GetProvider(brainHoneyCompany);
                     this._meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
-                    List<TemplateDTO> templates = this._meetingSetup.GetTemplates(
+                    IEnumerable<TemplateDTO> templates = _acAccountService.GetTemplates(
                         adobeConnectProvider,
                         brainHoneyCompany.ACTemplateScoId);
                     if (!templates.Any())

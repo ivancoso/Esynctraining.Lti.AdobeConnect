@@ -21,11 +21,11 @@ namespace EdugameCloud.Lti.Controllers
 
         public AcMeetingController(
             LmsUserSessionModel userSessionModel,
-             MeetingSetup meetingSetup, 
+            IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings,
             IAdobeConnectUserService acUserService,
             ILogger logger)
-            : base(userSessionModel, meetingSetup, settings, logger)
+            : base(userSessionModel, acAccountService, settings, logger)
         {
             this.acUserService = acUserService;
         }

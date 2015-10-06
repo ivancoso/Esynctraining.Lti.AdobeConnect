@@ -10,11 +10,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface IAdobeConnectAccountService
     {
         IAdobeConnectProxy GetProvider(LmsCompany license, bool login = true);
+
         IAdobeConnectProxy GetProvider(LmsCompany license, UserCredentials credentials, bool login);
 
         ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider);
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
+
+        IEnumerable<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder);
 
         string LoginIntoAC(
             LmsCompany lmsCompany,

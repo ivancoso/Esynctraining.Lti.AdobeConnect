@@ -16,18 +16,18 @@ namespace EdugameCloud.Lti.API
     public class SynchronizationUserService : ISynchronizationUserService
     {
         private readonly LmsFactory lmsFactory;
-        private readonly IMeetingSetup meetingSetup;
+        private readonly IAdobeConnectAccountService acAccountService;
         private readonly UsersSetup usersSetup;
         private readonly LmsUserModel lmsUserModel;
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
         private readonly IAdobeConnectUserService acUserService;
         private readonly ILogger logger;
 
-        public SynchronizationUserService(LmsFactory lmsFactory, IMeetingSetup meetingSetup, UsersSetup usersSetup,
+        public SynchronizationUserService(LmsFactory lmsFactory, IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
             LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
         {
             this.lmsFactory = lmsFactory;
-            this.meetingSetup = meetingSetup;
+            this.acAccountService = acAccountService;
             this.usersSetup = usersSetup;
             this.lmsUserModel = lmsUserModel;
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
@@ -47,7 +47,7 @@ namespace EdugameCloud.Lti.API
                 service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
             }
 
-            var acProvider = meetingSetup.GetProvider(lmsCompany);
+            var acProvider = acAccountService.GetProvider(lmsCompany);
             var groupedMeetings = lmsCompany.LmsCourseMeetings
                 .Where(x =>
                     (meetingIds == null || meetingIds.Any(m => m == x.Id))

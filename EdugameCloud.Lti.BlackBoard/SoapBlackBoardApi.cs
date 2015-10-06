@@ -16,7 +16,6 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Providers;
-using RestSharp;
 
 namespace EdugameCloud.Lti.BlackBoard
 {

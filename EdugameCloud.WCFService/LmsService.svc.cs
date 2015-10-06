@@ -307,7 +307,7 @@ namespace EdugameCloud.WCFService
         {
             LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
 
-            IAdobeConnectProxy provider = MeetingSetup.GetProvider(licence, login: true);
+            IAdobeConnectProxy provider = AdobeConnectAccountService.GetProvider(licence);
 
             return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
         }

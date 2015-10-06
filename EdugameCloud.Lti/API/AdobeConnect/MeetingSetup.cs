@@ -233,94 +233,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     : string.Format("/content/lti-instructions/{0}.pdf", credentials.LmsProvider.ShortName),
             };
         }
-
-        // todo: replace usages of MeetingSetup.GetProvider by AcAccountService.GetProvider
-        public IAdobeConnectProxy GetProvider(LmsCompany license, bool login = true)
-        {
-            var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
-            return AcAccountService.GetProvider(license, credentials, login);
-        }
-
-
-
-        /// <summary>
-        /// The get templates.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="templateFolder">
-        /// The template folder.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{TemplateDTO}"/>.
-        /// </returns>
-        public List<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder)
-        {
-            ScoContentCollectionResult result = provider.GetContentsByScoId(templateFolder);
-            if (result.Values == null)
-            {
-                return new List<TemplateDTO>();
-            }
-
-            return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
-        }
-
-        /// <summary>
-        /// The get users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
+        
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
         public List<ACSessionDTO> GetSessionsReport(IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
             return GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
-
-        /// <summary>
-        /// The get users.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{LmsUserDTO}"/>.
-        /// </returns>
+        
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation",
             Justification = "Reviewed. Suppression is OK here.")]
         public List<ACSessionParticipantDTO> GetAttendanceReport(IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
@@ -340,7 +260,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
-            IAdobeConnectProxy provider = adobeConnectProvider ?? this.GetProvider(lmsCompany);
+            IAdobeConnectProxy provider = adobeConnectProvider ?? AcAccountService.GetProvider(lmsCompany, true);
             var meetingUrl = string.Empty;
 
             if (!string.IsNullOrEmpty(currentMeetingScoId))
@@ -1052,11 +972,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 // TODO: is it OK to use the setting here? if (lmsCompany.EnableMeetingReuse)
-                var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId());
+                var thisScoMeetings = LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id);
                 
                 // NOTE: it's reused meeting or source for any reused meeting
                 //if (!string.IsNullOrEmpty(nameInfo.reusedMeetingName) || meeting.Reused.GetValueOrDefault())
-                if (thisScoMeetings.Any(x => x.Id != meeting.Id))
+                if (thisScoMeetings.Any())
                 {
                     //MeetingNameInfo nameInfo = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
                     //nameInfo.reusedMeetingName = meetingDTO.name;
@@ -1072,6 +992,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         m.MeetingNameJson = JsonConvert.SerializeObject(name);
                         LmsCourseMeetingModel.RegisterSave(m);
                     }
+                    MeetingNameInfo currentMeetingName = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                    currentMeetingName.reusedMeetingName = meetingDTO.name;
+                    meeting.MeetingNameJson = JsonConvert.SerializeObject(currentMeetingName);
+                    LmsCourseMeetingModel.RegisterSave(meeting);
                 }
                 else
                 {
@@ -1521,7 +1445,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             bool scoIdReused = (lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value) 
-                || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId()).Any(x => x.Id != lmsCourseMeeting.Id);
+                || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId(), lmsCourseMeeting.Id).Any();
 
             var ret = new MeetingDTO
             {

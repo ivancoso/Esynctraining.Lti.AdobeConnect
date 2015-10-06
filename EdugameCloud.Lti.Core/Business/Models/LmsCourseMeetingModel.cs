@@ -84,7 +84,7 @@
             return this.Repository.FindOne(defaultQuery).Value != null;
         }
 
-        public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
+        public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
@@ -106,7 +106,8 @@
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 //.Clone()
                 .JoinAlias(() => x.LmsCompany, () => lms, JoinType.InnerJoin)
-                .WhereRestrictionOn(() => lms.Id).IsIn(companyLicenses)
+                .Where(() => x.Id != excludedLmsCourseMeetingId)
+                .AndRestrictionOn(() => lms.Id).IsIn(companyLicenses)
                 .And(() =>
                     ((x.ScoId != null) && (x.ScoId == scoId)) ||
                      (x.OfficeHours != null && oh.ScoId == scoId));

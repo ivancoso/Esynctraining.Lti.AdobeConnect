@@ -373,7 +373,7 @@ namespace EdugameCloud.MVC.Controllers
 
             var lmsCompanyName = licence.LmsProvider.LmsProviderName;
 
-            var provider = meetingSetup.GetProvider(licence, login: true);
+            var provider = adobeConnectAccountService.GetProvider(licence);
 
             var meetingHosts =  adobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
 
@@ -2739,7 +2739,7 @@ namespace EdugameCloud.MVC.Controllers
                 provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 if (provider == null)
                 {
-                    provider = this.meetingSetup.GetProvider(lmsCompany);
+                    provider = adobeConnectAccountService.GetProvider(lmsCompany);
                     this.SetAdobeConnectProvider(lmsCompany.Id, provider);
                 }
             }

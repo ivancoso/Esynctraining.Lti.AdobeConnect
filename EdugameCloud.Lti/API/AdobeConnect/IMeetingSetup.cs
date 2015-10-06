@@ -22,11 +22,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             int id,
             out string error);
-
-        List<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder);
-
-        IAdobeConnectProxy GetProvider(LmsCompany credentials, bool login = true);
-
+        
         string ACLogin(LmsCompany lmsCompany, LtiParamDTO param, LmsUser lmsUser,
             Principal registeredUser, IAdobeConnectProxy provider);
     }

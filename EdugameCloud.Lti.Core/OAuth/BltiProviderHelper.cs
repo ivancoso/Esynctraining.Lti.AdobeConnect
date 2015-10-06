@@ -58,8 +58,36 @@
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
+            if (HttpContext.Current == null)
+            {
+                logger.Warn("[BltiProviderHelper] HttpContext.Current == null");
+                return false;
+            }
             var request = HttpContext.Current.Request;
+            if (request == null)
+            {
+                logger.Warn("[BltiProviderHelper] HttpContext.Current.Request == null");
+                return false;
+            }
+            if (request.Unvalidated() == null)
+            {
+                logger.Warn("[BltiProviderHelper] request.Unvalidated() == null");
+                return false;
+            }
+            if (request.Unvalidated().Form == null)
+            {
+                logger.Warn("[BltiProviderHelper] request.Unvalidated().Form == null");
+                return false;
+            }
+
             FormCollection form = new FormCollection(request.Unvalidated().Form);
+
+            if (form["oauth_nonce"] == null)
+            {
+                logger.Warn("[BltiProviderHelper] form[oauth_nonce] == null");
+                return false;
+            }
+
             // First check the nonce to make sure it has not been used
             var nonce = new NonceData(form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
@@ -91,6 +119,11 @@
                 return false;
             }
 
+            if (request.GetScheme() == null)
+            {
+                logger.Warn("[BltiProviderHelper] request.GetScheme() == null");
+                return false;
+            }
             string schema = request.GetScheme();
             
             // Generate the normalized URL
@@ -120,12 +153,29 @@
             parameters.Sort(new QueryParameterComparer());
             string normalizedRequestParameters = parameters.NormalizeRequestParameters();
 
+            if (normalizedUrl.OAuthUrlEncode() == null)
+            {
+                logger.Warn("[BltiProviderHelper] normalizedUrl.OAuthUrlEncode() == null");
+                return false;
+            }
+            if (normalizedRequestParameters.OAuthUrlEncode() == null)
+            {
+                logger.Warn("[BltiProviderHelper] normalizedRequestParameters.OAuthUrlEncode() == null");
+                return false;
+            }
+
             // Create the signature base
             var signatureBase = new StringBuilder();
             signatureBase.AppendFormat("{0}&{1}&{2}", 
                 request.HttpMethod.ToUpper()
                 ,normalizedUrl.OAuthUrlEncode().Replace("%3a80", string.Empty)
                 ,normalizedRequestParameters.OAuthUrlEncode());
+            
+            if (request["oauth_consumer_key"] == null)
+            {
+                logger.Warn("[BltiProviderHelper] request[oauth_consumer_key] == null");
+                return false;
+            }
 
             // Look up the secret using oauth_consumer_key
             string secret = RetrieveSecretForKey(request["oauth_consumer_key"], credentials);

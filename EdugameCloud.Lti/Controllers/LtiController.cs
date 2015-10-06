@@ -43,50 +43,60 @@
         private static bool? isDebug;
 
         private readonly LmsCompanyModel lmsCompanyModel;
-        private readonly CompanyModel companyModel;
         private readonly LmsUserSessionModel userSessionModel;
         private readonly LmsUserModel lmsUserModel;
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
         private readonly ILogger logger;
-        private readonly ICanvasAPI canvasApi;
         private readonly IAdobeConnectUserService acUserService;
-        private readonly LmsFactory lmsFactory;
-        private readonly ISynchronizationUserService syncUsersService;
-        private readonly IRecordingsService recordingsService;
 
         #endregion
 
+        private ICanvasAPI CanvasApi
+        {
+            get { return IoC.Resolve<ICanvasAPI>(); }
+        }
+
+        private ISynchronizationUserService SynchronizationUserService
+        {
+            get { return IoC.Resolve<ISynchronizationUserService>(); }
+        }
+
+        private LmsFactory LmsFactory
+        {
+            get { return IoC.Resolve<LmsFactory>(); }
+        }
+
+        private CompanyModel CompanyModel
+        {
+            get { return IoC.Resolve<CompanyModel>(); }
+        }
+
+        private IAdobeConnectAccountService AdobeConnectAccountService
+        {
+            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
+        }
+        
         #region Constructors and Destructors
 
         public LtiController(
             LmsCompanyModel lmsCompanyModel,
-            CompanyModel companyModel,
             LmsUserSessionModel userSessionModel,
             LmsUserModel lmsUserModel, 
             MeetingSetup meetingSetup, 
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
-            ICanvasAPI canvasApi,
             IAdobeConnectUserService acUserService,
-            LmsFactory lmsFactory,
-            ISynchronizationUserService syncUsersService,
-            IRecordingsService recordingsService,
             ILogger logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
-            this.companyModel = companyModel;
             this.userSessionModel = userSessionModel;
             this.lmsUserModel = lmsUserModel;
             this.meetingSetup = meetingSetup;
             this.Settings = settings;
             this.usersSetup = usersSetup;
-            this.canvasApi = canvasApi;
             this.logger = logger;
             this.acUserService = acUserService;
-            this.lmsFactory = lmsFactory;
-            this.syncUsersService = syncUsersService;
-            this.recordingsService = recordingsService;
         }
 
         #endregion
@@ -419,7 +429,7 @@
             {
                 var session = this.GetSession(lmsProviderName);
                 credentials = session.LmsCompany;
-                List<TemplateDTO> templates = this.meetingSetup.GetTemplates(
+                IEnumerable<TemplateDTO> templates = AdobeConnectAccountService.GetTemplates(
                     this.GetAdobeConnectProvider(session.LmsCompany),
                     session.LmsCompany.ACTemplateScoId);
 
@@ -457,14 +467,14 @@
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 string error;
-                var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+                var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
 
                 if (forceUpdate && lmsCompany.UseSynchronizedUsers
                     && service != null
                     && service.CanRetrieveUsersFromApiForCompany(lmsCompany)
                     && lmsCompany.LmsCourseMeetings != null)
                 {
-                    syncUsersService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
+                    SynchronizationUserService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
                 }
 
                 var users = this.usersSetup.GetUsers(
@@ -529,7 +539,7 @@
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}.", meetingId);
+                logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}. SessionID: {1}.", meetingId, lmsProviderName);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -670,7 +680,7 @@
                     switch (lmsProvider.ToLower())
                     {
                         case LmsProviderNames.Canvas:
-                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || canvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                             {
                                 this.StartOAuth2Authentication(provider, key, param);
                                 return null;
@@ -842,7 +852,7 @@
                     return "LMS License is not active. Please contact administrator.";
                 }
 
-                var company = companyModel.GetOneById(lmsCompany.CompanyId).Value;
+                var company = CompanyModel.GetOneById(lmsCompany.CompanyId).Value;
                 if ((company == null) || !company.IsActive())
                 {
                     logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
@@ -972,7 +982,7 @@
                 if (string.IsNullOrWhiteSpace(username) && (providerKey.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
                 {
                     logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
-                    LmsUserDTO user = canvasApi.GetUser(company.LmsDomain, token, userId);
+                    LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
                     if (user != null)
                         userName = user.login_id;
                 }
@@ -1126,30 +1136,16 @@
 
             return param.roles.Contains("Administrator");
         }
-
-        /// <summary>
-        /// Gets the credentials.
-        /// </summary>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsCompany"/>.
-        /// </returns>
+        
         private LmsUserSession GetSession(string key)
         {
             Guid uid;
             var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
-
-            if (this.IsDebug && session == null)
-            {
-                session = this.userSessionModel.GetByIdWithRelated(Guid.Empty).Value;
-            }
-
+            
             if (session == null)
             {
-                this.RedirectToError("Session timed out. Please refresh the page.");
-                return null;
+                logger.WarnFormat("LmsUserSession not found. Key: {1}.", key);
+                throw new WarningMessageException("Session timed out. Please refresh the page.");
             }
 
             return session;
@@ -1163,21 +1159,14 @@
                 provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 if (provider == null)
                 {
-                    provider = this.meetingSetup.GetProvider(lmsCompany);
+                    provider = AdobeConnectAccountService.GetProvider(lmsCompany);
                     this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
                 }
             }
 
             return provider;
         }
-
-        private void RedirectToError(string errorText)
-        {
-            this.Response.Clear();
-            this.Response.Write(string.Format("{{ \"isSuccess\": \"false\", \"message\": \"{0}\" }}", errorText));
-            this.Response.End();
-        }
-
+        
         /// <summary>
         ///     The regenerate id.
         /// </summary>

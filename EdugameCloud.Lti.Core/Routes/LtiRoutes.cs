@@ -56,6 +56,8 @@
 
             routes.MapLowercaseRoute("searchExistingMeeting", "lti/acSearchMeeting", new { controller = "AcMeeting", action = "SearchExistingMeeting" });
             routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "lti/useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
+            
+            routes.MapLowercaseRoute("register-proxy-tool", "lti/register-proxy-tool", new { controller = "LtiProxyTool", action = "register-proxy-tool" });
 
             routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });            
         }

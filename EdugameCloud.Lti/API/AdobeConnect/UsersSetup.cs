@@ -728,7 +728,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // TRICK: do not delete participants if meeting is ReUsed
                 // TRICK: do not delete participants if meeting is source for any ReUsed meeting
                 bool skipSyncAcUsers = (meeting.Reused.HasValue && meeting.Reused.Value)
-                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId()).Any(x => x.Id != meeting.Id);
+                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id).Any();
 
                 // NOTE: if it is reused meeting - skip delete principals from meeting in AC
                 // + return them to client side

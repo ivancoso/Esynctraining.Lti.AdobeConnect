@@ -7,15 +7,32 @@
     using System.Web.Mvc;
     using System.Xml.Linq;
     using System.Xml.XPath;
+    using Castle.Core.Logging;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Models;
+    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
-    public partial class LtiController : Controller
+    public partial class LtiProxyToolController : Controller
     {
-        #region Public Methods and Operators
+        private readonly ILogger logger;
+        private readonly dynamic settings;
         
+        #region Constructors and Destructors
+
+        public LtiProxyToolController(
+            ApplicationSettingsProvider settings,
+            ILogger logger)
+        {
+            this.settings = settings;
+            this.logger = logger;
+        }
+
+        #endregion
+
+        #region Public Methods and Operators
+
         [ActionName("register-proxy-tool")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         [HttpGet]
@@ -74,7 +91,7 @@
         /// </returns>
         private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
         {
-            var pass = (string)this.Settings.InitialBBPassword;
+            var pass = (string)settings.InitialBBPassword;
             var soapApi = IoC.Resolve<IBlackBoardApi>();
             return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
         }

@@ -200,6 +200,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return breezeToken;
         }
 
+        /// <summary>
+        /// The get templates.
+        /// </summary>
+        /// <param name="provider">
+        /// The provider.
+        /// </param>
+        /// <param name="templateFolder">
+        /// The template folder.
+        /// </param>
+        /// <returns>
+        /// The <see cref="List{TemplateDTO}"/>.
+        /// </returns>
+        public IEnumerable<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder)
+        {
+            ScoContentCollectionResult result = provider.GetContentsByScoId(templateFolder);
+            if (result.Values == null)
+            {
+                return new List<TemplateDTO>();
+            }
+
+            return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
+        }
+
         private static string GetField(FieldCollectionResult value, string fieldName)
         {
             Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
@@ -210,5 +233,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return field.Value;
         }
+
     }
+
 }
