@@ -5,8 +5,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace EdugameCloud.Sakai.TestClient.Models
 {
@@ -118,8 +122,67 @@ namespace EdugameCloud.Sakai.TestClient.Models
             return Tuple.Create(builder.Uri.Query.TrimStart("?".ToCharArray()), resp);
         }
 
+        public static List<LmsUserDTO> GetUsersForCourse(
+            SakaiParameters parameters, out string error)
+        {
+            var result = new List<LmsUserDTO>();
+            error = null;
+            try
+            {
+                var resp = CreateSignedRequestAndGetResponse(
+                    parameters).Item2;
+
+                XElement response = XElement.Parse(resp);
+
+                bool isSuccess = response.XPathSelectElement("/statusinfo/codemajor").Value == "Success";
+                if (!isSuccess)
+                {
+                    /*
+                        <codemajor>Fail</codemajor>
+                        <description>Unable to validate message: 95D8A271-C3B0-44E5-99D1-051849737B12</description>
+                        <severity>Error</severity>
+                    */
+                    error = string.Format("Error from Moodle. codemajor: {0}. description : {1}. severity : {2}.",
+                        response.XPathSelectElement("/statusinfo/codemajor").Value,
+                        response.XPathSelectElement("/statusinfo/description").Value,
+                        response.XPathSelectElement("/statusinfo/severity").Value
+                        );
+
+                    throw new InvalidOperationException(error);
+                }
+
+                IEnumerable<XElement> members = response.XPathSelectElements("/members/member");
+                foreach (XElement member in members)
+                {
+                    string email = member.XPathSelectElement("person_contact_email_primary").Value;
+                    string role = member.XPathSelectElement("role").Value;
+                    string userName = member.XPathSelectElement("person_sourcedid").Value;
+                    string firstName = member.XPathSelectElement("person_name_given").Value;
+                    string lastName = member.XPathSelectElement("person_name_family").Value;
+                    string fullName = member.XPathSelectElement("person_name_full").Value;
+                    string userId = member.XPathSelectElement("user_id").Value;
+                    result.Add(
+                        new LmsUserDTO
+                        {
+                            lms_role = role,
+                            primary_email = email,
+                            login_id = userName,
+                            id = userId,
+                            name = fullName,
+                        });
+                }
+            }
+            catch (Exception ex)
+            {
+                //Esynctraining.Core.Utils.IoC.Resolve<Castle.Core.Logging.ILogger>().Error("LTI2Api.GetUsersForCourse", ex);
+                error = ex.Message;
+            }
+
+            return result;
+        }
+
         #endregion
-        
+
     }
 
     public static class UriBuilderExtensions
@@ -265,5 +328,133 @@ namespace EdugameCloud.Sakai.TestClient.Models
         }
 
         #endregion
+    }
+
+    [DataContract]
+    public class LmsUserDTO
+    {
+        private string _name;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LmsUserDTO"/> class.
+        /// </summary>
+        public LmsUserDTO()
+        {
+            this.is_editable = true;
+        }
+
+        #region Public Properties
+
+        [DataMember]
+        public string ac_id { get; set; }
+
+        [DataMember]
+        public string ac_role { get; set; }
+
+        [DataMember]
+        public string lms_role { get; set; }
+
+        [DataMember]
+        public string id { get; set; }
+
+        [DataMember]
+        //[ScriptIgnore]
+        public string login_id { get; set; }
+
+        [DataMember]
+        public string name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _name = null;
+                else
+                    _name = value.Trim();
+            }
+        }
+
+        [DataMember]
+        //[ScriptIgnore]
+        public string primary_email { get; set; }
+
+        [DataMember]
+        public bool is_editable { get; set; }
+
+        [DataMember]
+        //[ScriptIgnore]
+        public string lti_id { get; set; }
+
+        public string email { get; set; }
+
+        [DataMember]
+        public int? guest_id { get; set; }
+
+        #endregion
+
+        #region Methods
+
+        public string GetLogin()
+        {
+            return this.login_id ?? this.name;
+        }
+
+        public string GetEmail()
+        {
+            if (this.primary_email != null)
+            {
+                return this.primary_email;
+            }
+
+            try
+            {
+                // ReSharper disable once ObjectCreationAsStatement
+                new MailAddress(this.GetLogin());
+                return this.GetLogin();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public string GetFirstName()
+        {
+            if (this.name == null)
+            {
+                return "no";
+            }
+
+            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            if (index < 0)
+            {
+                return this.name;
+            }
+
+            return this.name.Substring(0, index);
+        }
+
+        public string GetLastName()
+        {
+            if (this.name == null)
+            {
+                return "name";
+            }
+
+            int index = this.name.IndexOf(" ", StringComparison.Ordinal);
+            if (index < 0)
+            {
+                return this.lms_role;
+            }
+
+            return this.name.Substring(index + 1);
+        }
+
+        #endregion
+
     }
 }
