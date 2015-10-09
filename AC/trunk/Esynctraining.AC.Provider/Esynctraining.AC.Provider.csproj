@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Principal.cs" />
     <Compile Include="AdobeConnectProvider.Guest.cs" />
     <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
     <Compile Include="Attributes\SkipDuringUpdateAttribute.cs" />
