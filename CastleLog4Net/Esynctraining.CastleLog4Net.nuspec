@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.CastleLog4Net</id>
+        <version>1.0.0.1</version>
+        <title>Esynctraining.CastleLog4Net</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides logging functionality for eSyncTraining projects.</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright © 2015 eSyncTraining.com</copyright>
+        <tags>core</tags>
+        <dependencies>
+            <dependency id="Castle.Windsor" version="3.3.0" />
+            <dependency id="Castle.LoggingFacility" version="3.3.0" />
+            <dependency id="log4net" version="2.0.3" />
+        </dependencies>
+        <references>
+            <reference file="Esynctraining.CastleLog4Net.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.CastleLog4Net.dll" target="lib\net45" />
+    </files>
+</package>
