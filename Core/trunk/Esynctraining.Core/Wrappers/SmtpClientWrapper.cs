@@ -8,7 +8,7 @@
     /// <summary>
     /// The simple mail transfer protocol client wrapper.
     /// </summary>
-    public class SmtpClientWrapper : IDisposable
+    internal class SmtpClientWrapper : IDisposable
     {
         #region Fields
 

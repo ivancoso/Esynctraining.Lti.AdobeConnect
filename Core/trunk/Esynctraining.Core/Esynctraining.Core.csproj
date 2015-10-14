@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Esynctraining.Core</RootNamespace>
     <AssemblyName>Esynctraining.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,47 +30,32 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net40-client\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Facilities.Logging">
-      <HintPath>..\packages\Castle.LoggingFacility.3.3.0\lib\net40\Castle.Facilities.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Facilities.WcfIntegration">
-      <HintPath>..\packages\Castle.WcfIntegrationFacility.3.3.0\lib\net40\Castle.Facilities.WcfIntegration.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Services.Logging.Log4netIntegration, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Castle.Core-log4net.3.3.3\lib\net40\Castle.Services.Logging.Log4netIntegration.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net40\Castle.Windsor.dll</HintPath>
-    </Reference>
-    <Reference Include="FluentValidation, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\FluentValidation.5.1.0.0\lib\Net40\FluentValidation.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    <Reference Include="Castle.Windsor, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="FluentValidation, Version=5.6.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.5.6.2.0\lib\Net45\FluentValidation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Lucene.Net">
-      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate">
-      <HintPath>..\packages\NHibernate.4.0.3.4000\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine">
-      <HintPath>..\packages\RazorEngine.3.6.3\lib\net40\RazorEngine.dll</HintPath>
+    <Reference Include="RazorEngine, Version=3.7.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.7.3\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -76,6 +63,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Services" />
     <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
@@ -83,47 +71,31 @@
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="WcfRestContrib">
-      <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\WebOrbRestrictedAccess.cs" />
-    <Compile Include="Authentication\IWebOrbIdentity.cs" />
-    <Compile Include="Authentication\WebOrbPrincipal.cs" />
-    <Compile Include="Authentication\IAuthenticationValidator.cs" />
-    <Compile Include="Authentication\WCFAuthenticationHandler.cs" />
     <Compile Include="Business\IRepository.cs" />
     <Compile Include="Business\Models\AuthenticationModel.cs" />
     <Compile Include="Business\Models\BaseModel.cs" />
-    <Compile Include="Business\Models\FullTextModel.cs" />
     <Compile Include="Business\Models\MailModel.cs" />
     <Compile Include="Business\Queries\DefaultQueryOver.cs" />
     <Compile Include="Business\Queries\QueryOverIDeletable.cs" />
     <Compile Include="Business\StoreProcedureParam.cs" />
+    <Compile Include="Caching\CacheUtility.cs" />
+    <Compile Include="Caching\ICache.cs" />
+    <Compile Include="Caching\MemoryCacheWrapper.cs" />
     <Compile Include="Comparers\BuildVersionComparer.cs" />
     <Compile Include="Domain\Contracts\ServiceResponse.cs" />
     <Compile Include="Domain\Entities\EntityGuid.cs" />
-    <Compile Include="Domain\Entities\DateTimeWithZone.cs" />
     <Compile Include="Domain\Entities\Entity.cs" />
     <Compile Include="Domain\Entities\Error.cs" />
     <Compile Include="Domain\Entities\IDatesContainer.cs" />
     <Compile Include="Domain\Entities\IDeletable.cs" />
     <Compile Include="Domain\Entities\IEntity.cs" />
-    <Compile Include="Enums\UploadFileStatus.cs" />
     <Compile Include="Enums\Errors.cs" />
-    <Compile Include="Enums\FileStatus.cs" />
-    <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
-    <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
-    <Compile Include="ErrorHandling\Log4NetErrorHandler .cs" />
     <Compile Include="Extensions\BuildVersionExtensions.cs" />
     <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Extensions\SerializeExtensions.cs" />
@@ -135,10 +107,8 @@
     <Compile Include="Extensions\NameValueCollectionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TExtensions.cs" />
-    <Compile Include="FullText\FullTextEnabledAttribute.cs" />
-    <Compile Include="FullText\FullTextIndexedAttribute.cs" />
-    <Compile Include="FullText\LuceneFTIndexEventListener.cs" />
     <Compile Include="LifeStyle\EsyncWcfOperationScopeAccessor.cs" />
+    <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationSettingsProvider.cs" />
     <Compile Include="Providers\FlexSettingsProvider.cs" />
@@ -161,12 +131,7 @@
     <Compile Include="Utils\Local.cs" />
     <Compile Include="Utils\Xml.cs" />
     <Compile Include="Utils\XsdValidator.cs" />
-    <Compile Include="Wrappers\CacheBase.cs" />
-    <Compile Include="Wrappers\CacheWrapper.cs" />
-    <Compile Include="Wrappers\CultureInfoWrapper.cs" />
-    <Compile Include="Wrappers\SerializableXmlDocument.cs" />
     <Compile Include="Wrappers\SmtpClientWrapper.cs" />
-    <Compile Include="Wrappers\XDocumentWrapper.cs" />
     <Compile Include="Wrappers\ZipArchive.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +148,10 @@
     <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
     <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
     <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ErrorHandling\" />
+    <Folder Include="FullText\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />

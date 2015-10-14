@@ -1,4 +1,5 @@
 ﻿using RazorEngine;
+
 namespace Esynctraining.Core.Providers.Mailer
 {
     /// <summary>

@@ -108,8 +108,10 @@
         /// </returns>
         public virtual IFutureValue<T> GetOneById(TId id)
         {
-            QueryOver<T, T> queryOver = new DefaultQueryOver<T, TId>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsLike(id);
-            return this.Repository.FindOne(queryOver);
+            IFutureValue<T> result = this.Repository.Session.CreateCriteria(typeof(T))
+            .Add(Restrictions.IdEq(id))
+            .FutureValue<T>();
+            return result;
         }
 
         /// <summary>
@@ -123,8 +125,10 @@
         /// </returns>
         public virtual bool Exists(TId id)
         {
-            QueryOver<T, T> queryOver = new DefaultQueryOver<T, TId>().GetQueryOver().WhereRestrictionOn(x => x.Id).IsLike(id);
-            return !(this.Repository.FindOne(queryOver).Value == null);
+            IFutureValue<T> result = this.Repository.Session.CreateCriteria(typeof(T))
+                .Add(Restrictions.IdEq(id))
+                .FutureValue<T>();
+            return !(result.Value == null);
         }
 
         /// <summary>

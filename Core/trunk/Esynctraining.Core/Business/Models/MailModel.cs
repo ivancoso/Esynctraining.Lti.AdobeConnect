@@ -5,14 +5,11 @@
     using System.ComponentModel;
     using System.Linq;
     using System.Net.Mail;
-
-    using Castle.Core.Logging;
-
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
     using Esynctraining.Core.Wrappers;
-
     using MailMessage = System.Net.Mail.MailMessage;
 
     /// <summary>
@@ -177,7 +174,7 @@
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public virtual bool SendEmail(
+        internal virtual bool SendEmail(
             SmtpClientWrapper smtpClientWrapper, 
             IEnumerable<string> toName, 
             IEnumerable<string> toEmail, 
