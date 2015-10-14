@@ -1,51 +1,57 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Lti.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
-
-    using NHibernate;
-    using NHibernate.Criterion;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
     /// The LMS provider model.
     /// </summary>
     public sealed class LmsProviderModel : BaseModel<LmsProvider, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LmsProviderModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public LmsProviderModel(IRepository<LmsProvider, int> repository)
+        #region Constructors and Destructors
+        
+        public LmsProviderModel(IRepository<LmsProvider, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
         #endregion
 
-        /// <summary>
-        /// The get all active.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LmsProvider"/>.
-        /// </returns>
-        public IFutureValue<LmsProvider> GetOneByName(string name)
+        // TRICK: uses cache!
+        public LmsProvider GetByName(string name)
         {
-            var query = new DefaultQueryOver<LmsProvider, int>()
-                .GetQueryOver()
-                .WhereRestrictionOn(x => x.ShortName)
-                .IsInsensitiveLike(name, MatchMode.Exact);
-            return this.Repository.FindOne(query);
+            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, "all", () =>
+            {
+                var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
+                return Repository.FindAll(queryOver).ToList();
+            });
+
+            return all.SingleOrDefault(x => x.ShortName.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
+
+        // TRICK: uses cache!
+        public LmsProvider GetById(int lmsProviderId)
+        {
+            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, "all", () =>
+            {
+                var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
+                return Repository.FindAll(queryOver).ToList();
+            });
+
+            return all.SingleOrDefault(x => x.Id == lmsProviderId);
+        }
+
     }
+
 
 }

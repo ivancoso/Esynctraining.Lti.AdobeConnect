@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-
+    using System.Data;
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
@@ -46,12 +46,28 @@
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
                 .Fetch(x => x.LmsCompany).Eager
                 .Fetch(x => x.LmsCompany.AdminUser).Eager
-                .Fetch(x => x.LtiSession).Eager
-                .Fetch(x => x.LtiSession.LtiParam).Eager
                 .Where(c => c.Id == sessionId)
                 .TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindOne(queryOver);
+        }
+
+        public LmsUserSession GetReadOnlyByIdWithRelated(Guid sessionId)
+        {
+            using (var txn = this.Repository.Session.BeginTransaction(IsolationLevel.ReadUncommitted))
+            {
+                var queryOver =
+                    new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
+                    .Fetch(x => x.LmsCompany).Eager
+                    .Fetch(x => x.LmsCompany.AdminUser).Eager
+                    .Where(c => c.Id == sessionId)
+                    .TransformUsing(Transformers.DistinctRootEntity);
+
+                //return this.Repository.FindOne(queryOver).Value;
+                LmsUserSession result = this.Repository.FindOne(queryOver).Value;// queryOver.GetExecutableQueryOver(session).FutureValue<LmsUserSession>().Value;
+                txn.Rollback();
+                return result;
+            }
         }
 
         /// <summary>

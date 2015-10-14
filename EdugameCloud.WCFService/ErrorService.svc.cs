@@ -60,7 +60,7 @@ namespace EdugameCloud.WCFService
         /// </param>
         public void LogError(string message, string details)
         {
-            this.logger.Error(
+            this.Logger.Error(
                     string.Format(
                         "LogError from Client: Error Message: {0}, Error Details: {1}, Client: {2}",
                         message,

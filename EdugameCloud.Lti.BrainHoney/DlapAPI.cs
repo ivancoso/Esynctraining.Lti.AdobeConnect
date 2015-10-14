@@ -9,10 +9,8 @@
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-    using RestSharp;
 
     // ReSharper disable once InconsistentNaming
     public sealed partial class DlapAPI : ILmsAPI, IBrainHoneyApi

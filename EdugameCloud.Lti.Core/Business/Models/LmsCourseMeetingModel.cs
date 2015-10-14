@@ -11,6 +11,7 @@
     using NHibernate;
     using NHibernate.Linq;
     using NHibernate.SqlCommand;
+    using NHibernate.Transform;
 
     /// <summary>
     /// The LMS course meeting model.
@@ -46,13 +47,13 @@
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 //.JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                .Where(() => x.Id == id && x.LmsCompany.Id == companyLmsId && x.CourseId == courseId)
+                .Where(() => x.Id == id && x.LmsCompanyId == companyLmsId && x.CourseId == courseId)
                 .Take(1);
 
             return this.Repository.FindOne(defaultQuery).Value;
         }
 
-        public bool ContainsByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
+        public bool ContainsByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
@@ -68,17 +69,16 @@
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
-            LmsCompany lms = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 //.Clone()
-                .JoinAlias(() => x.LmsCompany, () => lms, JoinType.InnerJoin)
-                .WhereRestrictionOn(() => lms.Id).IsIn(companyLicenses)
+                .WhereRestrictionOn(() => x.Id).IsIn(companyLicenses)
+                .And(() => x.Id != excludedLmsCourseMeetingId)
                 .And(() => 
                     ((x.ScoId != null) && (x.ScoId == scoId)) ||
                      (x.OfficeHours != null && oh.ScoId == scoId))
-                  
+                .SelectList(res => res.Select(() => x.Id))
                 .Take(1);
 
             return this.Repository.FindOne(defaultQuery).Value != null;
@@ -100,17 +100,15 @@
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
-            LmsCompany lms = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                //.Clone()
-                .JoinAlias(() => x.LmsCompany, () => lms, JoinType.InnerJoin)
-                .Where(() => x.Id != excludedLmsCourseMeetingId)
-                .AndRestrictionOn(() => lms.Id).IsIn(companyLicenses)
+                .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
+                .And(() => x.Id != excludedLmsCourseMeetingId)
                 .And(() =>
                     ((x.ScoId != null) && (x.ScoId == scoId)) ||
-                     (x.OfficeHours != null && oh.ScoId == scoId));
+                     (x.OfficeHours != null && oh.ScoId == scoId))
+                .TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindAll(defaultQuery);
         }
@@ -133,13 +131,11 @@
             // NOTE: return only not-reused meeting - created from LTI
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
-            LmsCompany lms = null;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 //.Clone()
-                .JoinAlias(() => x.LmsCompany, () => lms, JoinType.InnerJoin)
-                .WhereRestrictionOn(() => lms.Id).IsIn(companyLicenses)
+                .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
                 .Where(() =>
                     (x.Reused == null || x.Reused == false)
                     &&
@@ -182,7 +178,7 @@
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.InnerJoin)
                 .JoinAlias(() => oh.LmsUser, () => u, JoinType.InnerJoin)
-                .Where(() => x.LmsCompany.Id == companyLmsId 
+                .Where(() => x.LmsCompanyId == companyLmsId 
                     && x.LmsMeetingType == typeValue 
                     && (x.OfficeHours != null && u.UserId == userId))
                 .Take(1);
@@ -215,7 +211,7 @@
 
             int typeValue = (int)type;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == typeValue).Take(1);
+                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == typeValue).Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
 
@@ -239,7 +235,7 @@
                 throw new ArgumentOutOfRangeException("courseId");
 
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompany.Id == companyLmsId && x.CourseId == courseId);
+                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId);
             return this.Repository.FindAll(defaultQuery);
         }
         

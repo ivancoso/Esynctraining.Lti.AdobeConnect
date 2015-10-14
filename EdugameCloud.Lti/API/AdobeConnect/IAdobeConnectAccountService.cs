@@ -4,16 +4,17 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IAdobeConnectAccountService
     {
-        IAdobeConnectProxy GetProvider(LmsCompany license, bool login = true);
+        IAdobeConnectProxy GetProvider(ILmsLicense license, bool login = true);
 
-        IAdobeConnectProxy GetProvider(LmsCompany license, UserCredentials credentials, bool login);
+        IAdobeConnectProxy GetProvider(ILmsLicense license, UserCredentials credentials, bool login);
 
-        ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider);
+        ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider, ICache cache);
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
 

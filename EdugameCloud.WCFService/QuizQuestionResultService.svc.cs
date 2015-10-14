@@ -261,7 +261,7 @@ namespace EdugameCloud.WCFService
                     continue;
                 }
 
-                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id);
+                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
                 
                 converter.ConvertAndSendQuizResultToLms(results, quizResult, lmsUserParameters);
             }

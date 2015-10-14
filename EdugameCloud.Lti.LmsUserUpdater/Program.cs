@@ -48,7 +48,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     }
 
                     companies = companies.Where(x => x.IsActive && !LicenseExpired(x)).ToList();
-                    var groupedByCompany = companies.GroupBy(x => x.LmsProvider.Id);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
+                    var groupedByCompany = companies.GroupBy(x => x.LmsProviderId);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible
                     foreach (var group in groupedByCompany)
@@ -61,8 +61,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                                 if (lmsCompany.UseSynchronizedUsers &&
                                     service.CanRetrieveUsersFromApiForCompany(lmsCompany)
                                     && lmsCompany.LmsCourseMeetings != null &&
-                                    lmsCompany.LmsCourseMeetings.Any(
-                                        x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
+                                    lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
                                 {
                                     try
                                     {

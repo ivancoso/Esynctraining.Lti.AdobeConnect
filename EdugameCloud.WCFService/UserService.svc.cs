@@ -37,10 +37,7 @@
         /// </summary>
         private UserLoginHistoryModel UserLoginHistoryModel
         {
-            get
-            {
-                return IoC.Resolve<UserLoginHistoryModel>();
-            }
+            get { return IoC.Resolve<UserLoginHistoryModel>(); }
         }
 
         /// <summary>
@@ -48,10 +45,7 @@
         /// </summary>
         private LanguageModel LanguageModel
         {
-            get
-            {
-                return IoC.Resolve<LanguageModel>();
-            }
+            get { return IoC.Resolve<LanguageModel>(); }
         }
 
         /// <summary>
@@ -59,10 +53,7 @@
         /// </summary>
         private TimeZoneModel TimeZoneModel
         {
-            get
-            {
-                return IoC.Resolve<TimeZoneModel>();
-            }
+            get { return IoC.Resolve<TimeZoneModel>(); }
         }
 
         /// <summary>
@@ -70,10 +61,7 @@
         /// </summary>
         private UserRoleModel UserRoleModel
         {
-            get
-            {
-                return IoC.Resolve<UserRoleModel>();
-            }
+            get { return IoC.Resolve<UserRoleModel>(); }
         }
 
         /// <summary>
@@ -81,10 +69,7 @@
         /// </summary>
         private CompanyLicenseModel CompanyLicenseModel
         {
-            get
-            {
-                return IoC.Resolve<CompanyLicenseModel>();
-            }
+            get { return IoC.Resolve<CompanyLicenseModel>(); }
         }
 
         /// <summary>
@@ -92,10 +77,7 @@
         /// </summary>
         private CompanyModel CompanyModel
         {
-            get
-            {
-                return IoC.Resolve<CompanyModel>();
-            }
+            get { return IoC.Resolve<CompanyModel>(); }
         }
 
         /// <summary>
@@ -103,18 +85,12 @@
         /// </summary>
         private LmsCompanyModel LmsCompanyModel
         {
-            get
-            {
-                return IoC.Resolve<LmsCompanyModel>();
-            }
+            get { return IoC.Resolve<LmsCompanyModel>(); }
         }
 
         private LmsUserParametersModel LmsUserParametersModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
+            get { return IoC.Resolve<LmsUserParametersModel>(); }
         }
 
         /// <summary>
@@ -122,10 +98,12 @@
         /// </summary>
         private SocialUserTokensModel SocialUserTokensModel
         {
-            get
-            {
-                return IoC.Resolve<SocialUserTokensModel>();
-            }
+            get { return IoC.Resolve<SocialUserTokensModel>(); }
+        }
+
+        private LmsProviderModel LmsProviderModel
+        {
+            get { return IoC.Resolve<LmsProviderModel>(); }
         }
 
         #endregion
@@ -667,7 +645,7 @@
                 };
             }
 
-            result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c)).ToArray();
+            result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c, LmsProviderModel.GetById(c.LmsProviderId))).ToArray();
 
             return result;
         }

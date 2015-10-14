@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
@@ -53,7 +53,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;    
 
@@ -78,7 +78,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
@@ -98,7 +98,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var link = RecordingsService.UpdateRecording(lmsCompany, this.GetAdobeConnectProvider(lmsCompany), recordingId, isPublic, password);
 
@@ -117,7 +117,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
@@ -138,7 +138,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var breezeSession = string.Empty;
@@ -159,7 +159,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
@@ -176,11 +176,11 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (!recordingJob.Success)
                 {
-                    return Json(this.GenerateErrorResult(recordingJob.Status));
+                    return Json(GenerateErrorResult(recordingJob.Status));
                 }
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var scheduledRecording = this.GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
+                var scheduledRecording = GetScheduledRecording(recordingJob.RecordingJob.ScoId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (scheduledRecording == null)
                 {
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
@@ -203,7 +203,7 @@ namespace EdugameCloud.Lti.Controllers
             LmsCompany lmsCompany = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
@@ -213,7 +213,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
-                var recording = this.GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
+                var recording = GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (recording == null)
                 {
                     return Json(OperationResult.Error("MP4 recording doesn't exist."));
@@ -244,7 +244,7 @@ namespace EdugameCloud.Lti.Controllers
         
         #region methods
 
-        private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
+        private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         {
             var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
             if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )
@@ -255,7 +255,7 @@ namespace EdugameCloud.Lti.Controllers
             return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         }
 
-        private OperationResult GenerateErrorResult(StatusInfo status)
+        private static OperationResult GenerateErrorResult(StatusInfo status)
         {
             if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
             {

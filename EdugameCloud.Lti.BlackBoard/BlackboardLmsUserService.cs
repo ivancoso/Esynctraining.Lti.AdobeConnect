@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.BlackBoard
             this.soapApi = soapApi; 
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             Guid guid;
             return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate)

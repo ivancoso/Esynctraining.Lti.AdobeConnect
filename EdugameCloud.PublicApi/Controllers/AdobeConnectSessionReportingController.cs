@@ -78,7 +78,6 @@ namespace EdugameCloud.PublicApi.Controllers
         /// <summary>
         /// Returns quiz sessions for the user.
         /// </summary>
-        /// <param name="userId">ID of the user.</param>
         /// <returns>Array of session entries.</returns>
         [HttpGet]
         [Route("quizsessions")]
@@ -121,7 +120,6 @@ namespace EdugameCloud.PublicApi.Controllers
         /// <summary>
         /// Returns survey sessions for the user.
         /// </summary>
-        /// <param name="userId">ID of the user.</param>
         /// <returns>Array of session entries.</returns>
         [HttpGet]
         [Route("surveysessions")]
@@ -142,7 +140,6 @@ namespace EdugameCloud.PublicApi.Controllers
         /// <summary>
         /// Returns test sessions for the user.
         /// </summary>
-        /// <param name="userId">ID of the user.</param>
         /// <returns>Array of session entries.</returns>
         [HttpGet]
         [Route("testsessions")]

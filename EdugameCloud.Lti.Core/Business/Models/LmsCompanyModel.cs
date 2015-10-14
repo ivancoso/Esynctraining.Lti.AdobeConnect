@@ -53,21 +53,21 @@ namespace EdugameCloud.Lti.Core.Business.Models
             return this.Repository.FindAll(queryOver);
         }
 
-        /// <summary>
-        /// Gets one by domain
-        /// </summary>
-        /// <param name="domain">
-        /// The domain
-        /// </param>
-        /// <returns>
-        /// The canvas ac meeting
-        /// </returns>
-        public IFutureValue<LmsCompany> GetOneByDomain(string domain)
-        {
-            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
-                .Where(x => x.LmsDomain == domain).Take(1);
-            return this.Repository.FindOne(defaultQuery);
-        }
+        ///// <summary>
+        ///// Gets one by domain
+        ///// </summary>
+        ///// <param name="domain">
+        ///// The domain
+        ///// </param>
+        ///// <returns>
+        ///// The canvas ac meeting
+        ///// </returns>
+        //public IFutureValue<LmsCompany> GetOneByDomain(string domain)
+        //{
+        //    var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
+        //        .Where(x => x.LmsDomain == domain).Take(1);
+        //    return this.Repository.FindOne(defaultQuery);
+        //}
 
         /// <summary>
         /// The get one by ac domain.
@@ -77,24 +77,24 @@ namespace EdugameCloud.Lti.Core.Business.Models
         /// </param>
         /// <returns>
         /// The <see cref="IFutureValue{LmsCompany}"/>.
-        /// </returns>
-        public IFutureValue<LmsCompany> GetOneByAcDomain(string adobeConnectDomain)
-        {
-            if (adobeConnectDomain.EndsWith("/"))
-            {
-                adobeConnectDomain = adobeConnectDomain.Remove(adobeConnectDomain.Length - 1);
-            }
-            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
-                .WhereRestrictionOn(x => x.AcServer).IsInsensitiveLike(adobeConnectDomain, MatchMode.Start)
-                .Take(1);
-            return this.Repository.FindOne(defaultQuery);
-        }
+        ///// </returns>
+        //public IFutureValue<LmsCompany> GetOneByAcDomain(string adobeConnectDomain)
+        //{
+        //    if (adobeConnectDomain.EndsWith("/"))
+        //    {
+        //        adobeConnectDomain = adobeConnectDomain.Remove(adobeConnectDomain.Length - 1);
+        //    }
+        //    var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
+        //        .WhereRestrictionOn(x => x.AcServer).IsInsensitiveLike(adobeConnectDomain, MatchMode.Start)
+        //        .Take(1);
+        //    return this.Repository.FindOne(defaultQuery);
+        //}
 
         /// <summary>
         /// The get one by provider and domain or consumer key.
         /// </summary>
-        /// <param name="providerName">
-        /// The provider Name.
+        /// <param name="lmsProviderId">
+        /// The provider ID.
         /// </param>
         /// <param name="consumerKey">
         /// The consumer key
@@ -102,11 +102,11 @@ namespace EdugameCloud.Lti.Core.Business.Models
         /// <returns>
         /// The canvas AC meeting
         /// </returns>
-        public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(string providerName, string consumerKey)
+        public IFutureValue<LmsCompany> GetOneByProviderAndConsumerKey(int lmsProviderId, string consumerKey)
         {
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
-                .Where(x => (x.ConsumerKey != null && x.ConsumerKey == consumerKey))
-                .JoinQueryOver(x => x.LmsProvider).WhereRestrictionOn(x => x.ShortName).IsInsensitiveLike(providerName)
+                .Fetch(x => x.Settings).Eager
+                .Where(x => (x.ConsumerKey == consumerKey && x.LmsProviderId == lmsProviderId))
                 .Take(1);
             return this.Repository.FindOne(defaultQuery);
         }
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
 
         public IEnumerable<LmsCompany> GetAllByProviderId(int providerId)
         {
-            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver().Where(x => x.LmsProvider.Id == providerId);
+            var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver().Where(x => x.LmsProviderId == providerId);
             return this.Repository.FindAll(defaultQuery);
         }
 
@@ -161,9 +161,9 @@ namespace EdugameCloud.Lti.Core.Business.Models
 
         public void ProcessLmsAdmin(LmsCompany entity, CompanyLmsDTO resultDto, LmsUserModel lmsUserModel, LmsCompanyModel lmsCompanyModel)
         {
-            if (entity.LmsProvider.Id == (int)LmsProviderEnum.Canvas)
+            if (entity.LmsProviderId == (int)LmsProviderEnum.Canvas)
                 return;
-            if (entity.LmsProvider.Id == (int)LmsProviderEnum.Desire2Learn)
+            if (entity.LmsProviderId == (int)LmsProviderEnum.Desire2Learn)
                 return;
 
             if (!resultDto.enableProxyToolMode)

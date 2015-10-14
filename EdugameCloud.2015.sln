@@ -63,6 +63,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi.Host", "EdugameCloud.PublicApi.Host\EdugameCloud.PublicApi.Host.csproj", "{27AE88C3-F844-47AD-9D70-8312884579AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Sakai.TestClient", "EdugameCloud.Sakai.TestClient\EdugameCloud.Sakai.TestClient.csproj", "{9D4D4840-9409-4B91-B994-9D17FE970AAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{2A856007-FFAB-4D1D-B8D5-510451BF8B79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -169,6 +173,14 @@ Global
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,5 +189,6 @@ Global
 		{8570C710-B289-4EF8-96D9-73BB338A0044} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
+		{9D4D4840-9409-4B91-B994-9D17FE970AAD} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 	EndGlobalSection
 EndGlobal

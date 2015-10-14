@@ -181,6 +181,11 @@ namespace EdugameCloud.MVC.Controllers
             }
         }
 
+        private LmsProviderModel LmsProviderModel
+        {
+            get { return IoC.Resolve<LmsProviderModel>(); }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -371,7 +376,7 @@ namespace EdugameCloud.MVC.Controllers
                return this.HttpNotFound();
             }
 
-            var lmsCompanyName = licence.LmsProvider.LmsProviderName;
+            var lmsCompanyName = LmsProviderModel.GetById(licence.LmsProviderId).LmsProviderName;
 
             var provider = adobeConnectAccountService.GetProvider(licence);
 
@@ -1096,7 +1101,7 @@ namespace EdugameCloud.MVC.Controllers
                     return this.File(buffer, file.FileName.GetContentTypeByExtension(), file.FileName);
                 }
             }
-
+            
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
         }
 
@@ -2731,7 +2736,8 @@ namespace EdugameCloud.MVC.Controllers
             this.Response.Write(string.Format("<h1>{0}</h1>", errorText));
             this.Response.End();
         }
-        private IAdobeConnectProxy GetAdobeConnectProvider(LmsCompany lmsCompany)
+
+        private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
         {
             IAdobeConnectProxy provider = null;
             if (lmsCompany != null)

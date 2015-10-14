@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Text;
+    using System.Web;
     using System.Xml;
 
     using EdugameCloud.Lti.DTO;
@@ -11,8 +12,6 @@
     using Esynctraining.Core.Extensions;
 
     using HtmlAgilityPack;
-
-    using RestSharp.Contrib;
 
     /// <summary>
     /// The canvas quiz parser.

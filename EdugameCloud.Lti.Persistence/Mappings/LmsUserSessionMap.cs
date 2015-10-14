@@ -1,4 +1,5 @@
 ﻿using Esynctraining.Persistence.Mappings;
+using Esynctraining.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Persistence.Mappings

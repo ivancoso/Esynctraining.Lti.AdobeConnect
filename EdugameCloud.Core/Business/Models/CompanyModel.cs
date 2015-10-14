@@ -9,12 +9,25 @@
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;
 
     public class CompanyModel : BaseModel<Company, int>
     {
+        public sealed class CompanyCacheItem
+        {
+            public int CompanyId { get; set; }
+
+            public bool IsActive { get; set; }
+
+            public DateTime? CurrentLicenseExpiryDateUtc { get; set; }
+
+        }
+
+        private readonly ICache _cache;
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -23,9 +36,10 @@
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public CompanyModel(IRepository<Company, int> repository)
+        public CompanyModel(IRepository<Company, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
         #endregion
@@ -56,6 +70,32 @@
                 .TransformUsing(Transformers.DistinctRootEntity);
 
             return this.Repository.FindOne(queryOver).Value;
+        }
+
+        // TRICK: use from LTI ONLY!!
+        public bool IsActive(int companyId)
+        {
+            var item = CacheUtility.GetCachedItem<CompanyCacheItem>(_cache, companyId.ToString(), () =>
+            {
+                var company = GetOneById(companyId).Value;
+                var status = company.Status;
+                DateTime? expiryDate = null;
+                if (company.CurrentLicense != null)
+                    expiryDate = company.CurrentLicense.ExpiryDate.ToUniversalTime();
+
+                var result = new CompanyCacheItem
+                {
+                    CompanyId = company.Id,
+                    IsActive = company.Status == CompanyStatus.Active,
+                    CurrentLicenseExpiryDateUtc = expiryDate,
+                };
+
+                return result;
+            });
+
+            return item.IsActive
+                && item.CurrentLicenseExpiryDateUtc.HasValue
+                && item.CurrentLicenseExpiryDateUtc.Value > DateTime.UtcNow;
         }
 
         public IEnumerable<Company> GetAllWithRelated()

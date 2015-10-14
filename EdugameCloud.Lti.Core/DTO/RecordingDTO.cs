@@ -142,9 +142,9 @@ namespace EdugameCloud.Lti.Core.DTO
             TimeSpan t = TimeSpan.FromSeconds(seconds);
 
             return string.Format("{0:D2}:{1:D2}:{2:D2}",
-                            t.Hours,
-                            t.Minutes,
-                            t.Seconds);
+                t.Hours,
+                t.Minutes,
+                t.Seconds);
         }
         #endregion
 

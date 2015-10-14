@@ -5,6 +5,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
     using System.Web.Security;
     using Castle.Core.Logging;
@@ -19,7 +20,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-    
+
     public sealed class UsersSetup : IUsersSetup
     {
         #region Inner Class: MeetingAttendees
@@ -193,7 +194,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return userDtos.ToList();
                 }
             }
-            var service = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
+            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
             if (serviceResult.isSuccess)
@@ -235,11 +236,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
-                var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-
-                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProvider.Id);
+                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
                 LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
-                    currentUser,
                     param.lms_user_id,
                     param.course_id,
                     out error,
@@ -465,11 +463,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             out string error,
             bool forceUpdate = false, string lmsUserId = null)
         {
-            var currentUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-
-            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             //todo: not param for BrainHoney
-            var lmsUser = service.GetUser(lmsCompany, currentUser, lmsUserId, param.course_id, out error, param, forceUpdate);
+            var lmsUser = service.GetUser(lmsCompany, lmsUserId, param.course_id, out error, param, forceUpdate);
 
             if (meeting == null)
             {
@@ -727,8 +723,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // TRICK: do not delete participants if meeting is ReUsed
                 // TRICK: do not delete participants if meeting is source for any ReUsed meeting
-                bool skipSyncAcUsers = (meeting.Reused.HasValue && meeting.Reused.Value)
-                    || LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id).Any();
+                bool skipSyncAcUsers = lmsCompany.EnableMeetingReuse && 
+                    ((meeting.Reused.HasValue && meeting.Reused.Value)
+                        || LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id));
 
                 // NOTE: if it is reused meeting - skip delete principals from meeting in AC
                 // + return them to client side
@@ -892,10 +889,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
+                var sw = Stopwatch.StartNew();
                 lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
+
+                sw.Stop();
+                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: SetDefaultUsers.GetByCompanyLms: time: {0}.", sw.Elapsed.ToString());
             }
 
+            var sw2 = Stopwatch.StartNew();
+
             this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true);
+
+            sw2.Stop();
+            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
         }
 
         /// <summary>
@@ -1584,29 +1590,54 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 try
                 {
-                    PrincipalCollectionResult result = provider.GetAllPrincipal();
-                    if (result.Success)
-                    {
-                        return result.Values;
-                    }
-                    else
-                    {
-                        // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
-                        bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
-                        if (!tooBigPrincipalCount)
-                        {
-                            if (result.Status.UnderlyingExceptionInfo != null)
-                            {
-                                throw new InvalidOperationException(
-                                    "UsersSetup.GetAllPrincipals.CONNECT error", 
-                                    result.Status.UnderlyingExceptionInfo);
-                            }
+                    var result = new List<Principal>();
 
+                    foreach (var chunk in Chunk(users, 150))
+                    {
+                        PrincipalCollectionResult acResult = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
+                        ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()))
+                        : provider.GetAllByLogin(chunk.Select(x => x.GetLogin()));
+
+                        if (acResult.Success)
+                        {
+                            result.AddRange(acResult.Values);
+                        }
+                        else
+                        {
+                            // TODO: PROCESS!!
                             throw new InvalidOperationException("UsersSetup.GetAllPrincipals.CONNECT error");
                         }
-
-                        return null;
                     }
+
+                    return result;
+
+                    //PrincipalCollectionResult result = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
+                    //    ? provider.GetAllByEmail(users.Select(x => x.GetEmail()))
+                    //    : provider.GetAllByLogin(users.Select(x => x.GetLogin()));
+
+                    //PrincipalCollectionResult result = provider.GetAllPrincipal();
+                    //if (result.Success)
+                    //{
+                    //    return result.Values;
+                    //}
+                    //else
+                    //{
+                    //    // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
+                    //    bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
+                    //    if (!tooBigPrincipalCount)
+                    //    {
+                    //        if (result.Status.UnderlyingExceptionInfo != null)
+                    //        {
+                    //            throw new InvalidOperationException(
+                    //                "UsersSetup.GetAllPrincipals.CONNECT error", 
+                    //                result.Status.UnderlyingExceptionInfo);
+                    //        }
+
+                    //        throw new InvalidOperationException("UsersSetup.GetAllPrincipals.CONNECT error");
+                    //    }
+
+                    //    return null;
+                    //}
                 }
                 catch (Exception ex)
                 {
@@ -1630,11 +1661,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var meetingPermissions = new List<PermissionUpdateTrio>();
             var hostPrincipals = new List<string>();
+
             foreach (LmsUserDTO u in users)
             {
                 string email = u.GetEmail();
                 string login = u.GetLogin();
-
+                
                 // TODO: do we need this FORCE?
                 // YES: !principal.PrincipalId.Equals(lmsUser.PrincipalId) - we use it to refresh PrincipalId
                 Principal principal = acUserService.GetOrCreatePrincipal2(
@@ -1645,7 +1677,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     u.GetLastName(), 
                     lmsCompany, 
                     principalCache);
-
+                
                 if (principal != null)
                 {
                     // TRICK: we can filter by 'UserId' - cause we sync it in 'getUsersByLmsCompanyId' SP
@@ -1668,7 +1700,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         lmsUser.PrincipalId = principal.PrincipalId;
                         this.LmsUserModel.RegisterSave(lmsUser);
                     }
-
+                    
                     // TODO: see http://help.adobe.com/en_US/connect/9.0/webservices/WS5b3ccc516d4fbf351e63e3d11a171ddf77-7fcb_SP1.html
                     this.SetLMSUserDefaultACPermissions2(
                         lmsCompany,
@@ -1679,6 +1711,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         hostPrincipals);
                 }
             }
+            var sw3 = Stopwatch.StartNew();
 
             // TRICK: do not move down to chunk part!
             this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);

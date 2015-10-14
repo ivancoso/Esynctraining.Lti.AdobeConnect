@@ -81,7 +81,7 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(LmsCompany lmsCompany)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
         {
             IAdobeConnectProxy provider = null;
             if (lmsCompany != null)

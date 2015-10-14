@@ -4,15 +4,10 @@
     using System.Collections.Generic;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Castle.Core.Logging;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-    using RestSharp;
 
     /// <summary>
     ///     The course API.

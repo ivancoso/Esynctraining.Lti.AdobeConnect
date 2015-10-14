@@ -13,7 +13,7 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
@@ -38,7 +38,7 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 
                 LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);

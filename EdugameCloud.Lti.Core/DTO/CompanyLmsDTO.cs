@@ -31,66 +31,71 @@ namespace EdugameCloud.Lti.DTO
         /// <param name="instance">
         /// The instance.
         /// </param>
-        public CompanyLmsDTO(LmsCompany instance)
+        public CompanyLmsDTO(LmsCompany instance, LmsProvider provider)
         {
-            if (instance != null)
-            {
-                this.id = instance.Id;
-                this.useFLV = instance.UseFLV;
-                this.useMP4 = instance.UseMP4;
-                this.enableMultipleMeetings = instance.EnableMultipleMeetings;
-                this.acServer = instance.AcServer;
-                this.acUsername = instance.AcUsername;
-                this.companyId = instance.CompanyId.Return(x => x, 0);
-                this.consumerKey = instance.ConsumerKey;
-                this.createdBy = instance.CreatedBy.Return(x => x, 0);
-                this.modifiedBy = instance.ModifiedBy.Return(x => x.Value, 0);
-                this.dateCreated = instance.DateCreated.ConvertToUnixTimestamp();
-                this.dateModified = instance.DateModified.ConvertToUnixTimestamp();
-                this.lmsProvider = instance.LmsProvider.Return(x => x.ShortName, string.Empty);
-                this.sharedSecret = instance.SharedSecret;
-                this.lmsAdmin = instance.AdminUser.With(x => x.Username);
-                this.lmsAdminToken = instance.AdminUser.With(x => x.Token);
-                this.lmsDomain = instance.LmsDomain.AddHttpProtocol(instance.UseSSL.GetValueOrDefault());
-                this.primaryColor = instance.PrimaryColor;
-                this.title = instance.Title;
-                this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
-                this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
-                this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
-                this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
-                this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
-                this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
-                this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
-                this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
-                this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
-                this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
-                this.userFolderName = instance.UserFolderName;
-                this.setupUrl = instance.LmsProvider != null ? 
-                    (!string.IsNullOrWhiteSpace(instance.LmsProvider.ConfigurationUrl) ? instance.LmsProvider.ConfigurationUrl
-                    : instance.LmsProvider.ShortName != null ? string.Format("/Content/lti-config/{0}.xml", instance.LmsProvider.ShortName) : null)
-                    : null;
-                this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
-                this.proxyToolPassword = instance.ProxyToolSharedPassword;
+            if (instance == null)
+                throw new ArgumentNullException("instance");
+            if (provider == null)
+                throw new ArgumentNullException("provider");
 
-                this.allowUserCreation = !instance.DenyACUserCreation;
-                this.showAuthToken = !instance.LoginUsingCookie.GetValueOrDefault();
-                this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
-                this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
-                this.useSynchronizedUsers = instance.UseSynchronizedUsers;
-                this.meetingNameFormatterId = instance.MeetingNameFormatterId;
-                this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
-                this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsD2LSandbox);
-                this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
-                this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
-                this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
-                this.isActive = instance.IsActive;
+            this.id = instance.Id;
+            this.useFLV = instance.UseFLV;
+            this.useMP4 = instance.UseMP4;
+            this.enableMultipleMeetings = instance.EnableMultipleMeetings;
+            this.acServer = instance.AcServer;
+            this.acUsername = instance.AcUsername;
+            this.companyId = instance.CompanyId.Return(x => x, 0);
+            this.consumerKey = instance.ConsumerKey;
+            this.createdBy = instance.CreatedBy.Return(x => x, 0);
+            this.modifiedBy = instance.ModifiedBy.Return(x => x.Value, 0);
+            this.dateCreated = instance.DateCreated.ConvertToUnixTimestamp();
+            this.dateModified = instance.DateModified.ConvertToUnixTimestamp();
 
-                this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
-                this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
-                this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
-                this.enableMeetingReuse = instance.EnableMeetingReuse;
-                this.additionalLmsDomains = instance.AdditionalLmsDomains;
-            }
+            this.lmsProvider = provider.Return(x => x.ShortName, string.Empty);
+            this.sharedSecret = instance.SharedSecret;
+            this.lmsAdmin = instance.AdminUser.With(x => x.Username);
+            this.lmsAdminToken = instance.AdminUser.With(x => x.Token);
+            this.lmsDomain = instance.LmsDomain.AddHttpProtocol(instance.UseSSL.GetValueOrDefault());
+            this.primaryColor = instance.PrimaryColor;
+            this.title = instance.Title;
+            this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
+            this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
+            this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
+            this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
+            this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
+            this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
+            this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
+            this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
+            this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
+            this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
+            this.userFolderName = instance.UserFolderName;
+
+            this.setupUrl = provider != null ?
+                (!string.IsNullOrWhiteSpace(provider.ConfigurationUrl) ? provider.ConfigurationUrl
+                : provider.ShortName != null ? string.Format("/Content/lti-config/{0}.xml", provider.ShortName) : null)
+                : null;
+
+            this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
+            this.proxyToolPassword = instance.ProxyToolSharedPassword;
+
+            this.allowUserCreation = !instance.DenyACUserCreation;
+            this.showAuthToken = !instance.LoginUsingCookie.GetValueOrDefault();
+            this.acUsesEmailAsLogin = instance.ACUsesEmailAsLogin.GetValueOrDefault();
+            this.enableAnnouncements = instance.ShowAnnouncements.GetValueOrDefault();
+            this.useSynchronizedUsers = instance.UseSynchronizedUsers;
+            this.meetingNameFormatterId = instance.MeetingNameFormatterId;
+            this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
+            this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsD2LSandbox);
+            this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
+            this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
+            this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
+            this.isActive = instance.IsActive;
+
+            this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
+            this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
+            this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
+            this.enableMeetingReuse = instance.EnableMeetingReuse;
+            this.additionalLmsDomains = instance.AdditionalLmsDomains;
         }
 
         /// <summary>

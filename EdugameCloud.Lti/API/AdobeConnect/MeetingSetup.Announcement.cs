@@ -55,9 +55,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 param.context_title);
             string announcementMessage = GetAnnouncementMessage(meetingType, meetingDto, param.referer);
 
-            switch (lmsCompany.LmsProvider.ShortName.ToLowerInvariant())
+            switch (lmsCompany.LmsProviderId)
             {
-                case LmsProviderNames.Canvas:
+                case (int)LmsProviderEnum.Canvas:
                     var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                     var token = UsersSetup.IsTeacher(param) && !String.IsNullOrEmpty(lmsUser.Token)
                         ? lmsUser.Token
@@ -70,10 +70,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         announcementTitle,
                         announcementMessage);
                     break;
-                case LmsProviderNames.Blackboard:
+                case (int)LmsProviderEnum.Blackboard:
                     BlackboardApi.CreateAnnouncement(param.course_id, param.user_id, lmsCompany, announcementTitle, announcementMessage);
                     break;
-                case LmsProviderNames.BrainHoney:
+                case (int)LmsProviderEnum.BrainHoney:
                     // string error;
 //                    this.dlapApi.CreateAnnouncement(
 //                        credentials,

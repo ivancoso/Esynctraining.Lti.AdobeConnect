@@ -53,12 +53,12 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var provider = this.GetAdobeConnectProvider(credentials);
 
-                OperationResult result = MeetingSetup.ReuseExistedAdobeConnectMeeting(credentials,
+                OperationResult result = MeetingSetup.ReuseExistedAdobeConnectMeeting(credentials, session.LmsUser,
                     provider,
                     param,
                     dto,
@@ -79,7 +79,7 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 OperationResult ret = this.meetingSetup.SaveMeeting(
@@ -103,7 +103,7 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var ret = this.meetingSetup.SaveMeeting(
@@ -128,7 +128,7 @@
             LmsCompany credentials = null;
             try
             {
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 OperationResult result = this.meetingSetup.DeleteMeeting(

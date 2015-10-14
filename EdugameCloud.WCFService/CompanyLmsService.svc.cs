@@ -100,14 +100,14 @@ namespace EdugameCloud.WCFService
             string lmsPassword = resultDto.lmsAdminPassword;
             if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
             {
-                if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Moodle)
-                || ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
+                if ((entity.LmsProviderId == (int)LmsProviderEnum.Moodle)
+                || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
                 {
                     lmsPassword = entity.AdminUser.Password;
                 }
             }
 
-            if ((this.LmsProviderModel.GetOneByName(resultDto.lmsProvider).Value.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
+            if ((this.LmsProviderModel.GetByName(resultDto.lmsProvider).Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
             {
                 lmsPassword = resultDto.proxyToolPassword;
             }
@@ -144,7 +144,7 @@ namespace EdugameCloud.WCFService
                 if (lmsConnectionTest.status != OkMessage)
                 {
                     message.AppendFormat("{0} connection failed. ({1}) \r\n",
-                        this.LmsProviderModel.GetOneByName(resultDto.lmsProvider).Value.LmsProviderName,
+                        this.LmsProviderModel.GetByName(resultDto.lmsProvider).LmsProviderName,
                         lmsConnectionTest.info);
                 }
 
@@ -172,9 +172,10 @@ namespace EdugameCloud.WCFService
             this.LmsCompanyModel.RegisterSave(entity);
             this.LmsCompanyModel.ProcessLmsAdmin(entity, resultDto, LmsUserModel, LmsCompanyModel);
 
-            return new CompanyLmsOperationDTO 
-            { 
-                companyLmsVO = new CompanyLmsDTO(entity),
+            LmsProvider lmsProvider = LmsProviderModel.GetById(entity.LmsProviderId);
+            return new CompanyLmsOperationDTO
+            {
+                companyLmsVO = new CompanyLmsDTO(entity, lmsProvider),
                 message = licenseTestResultMessage,
             };
         }
@@ -229,8 +230,8 @@ namespace EdugameCloud.WCFService
             }
 
             instance.DateModified = DateTime.Now;
-            var lmsProvider = this.LmsProviderModel.GetOneByName(dto.lmsProvider).Value;
-            instance.LmsProvider = lmsProvider;
+            var lmsProvider = this.LmsProviderModel.GetByName(dto.lmsProvider);
+            instance.LmsProviderId = lmsProvider.Id;
             instance.ModifiedBy = this.UserModel.GetOneById(dto.modifiedBy).Value.Return(x => x.Id, dto.createdBy);
             instance.SharedSecret = dto.sharedSecret;
             instance.PrimaryColor = dto.primaryColor;

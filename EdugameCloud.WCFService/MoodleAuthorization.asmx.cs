@@ -27,38 +27,25 @@ namespace EdugameCloud.ASMXService
     public class MoodleAuthorization : WebService
     {
         #region Properties
-
-        /// <summary>
-        /// Gets the user parameters model.
-        /// </summary>
+        
         private LmsUserParametersModel LmsUserParametersModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserParametersModel>();
-            }
+            get { return IoC.Resolve<LmsUserParametersModel>(); }
         }
-
-        /// <summary>
-        /// Gets the user model.
-        /// </summary>
+        
         private LmsUserModel LmsUserModel
         {
-            get
-            {
-                return IoC.Resolve<LmsUserModel>();
-            }
+            get { return IoC.Resolve<LmsUserModel>(); }
         }
 
-        /// <summary>
-        /// Gets the logger.
-        /// </summary>
+        private LmsProviderModel LmsProviderModel
+        {
+            get { return IoC.Resolve<LmsProviderModel>(); }
+        }
+
         private ILogger Logger
         {
-            get
-            {
-                return IoC.Resolve<ILogger>();
-            }
+            get { return IoC.Resolve<ILogger>(); }
         }
 
         #endregion
@@ -88,13 +75,13 @@ namespace EdugameCloud.ASMXService
         public LmsUserParametersDTO Save(string acId, int course, string domain, string provider, string wstoken)
         {
             var dto = new LmsUserParametersDTO
-                      {
-                          acId = acId,
-                          course = course,
-                          domain = domain,
-                          provider = provider,
-                          wstoken = wstoken
-                      };
+            {
+                acId = acId,
+                course = course,
+                domain = domain,
+                provider = provider,
+                wstoken = wstoken,
+            };
             var result = new ServiceResponse<LmsUserParametersDTO>();
             ValidationResult validationResult;
             if (this.IsValid(dto, out validationResult))
@@ -102,7 +89,9 @@ namespace EdugameCloud.ASMXService
                 var param = this.LmsUserParametersModel.GetOneByAcId(dto.acId).Value;
                 param = this.ConvertDto(dto, param);
                 this.LmsUserParametersModel.RegisterSave(param, true);
-                return new LmsUserParametersDTO(param);
+
+                var lmsProvider = LmsProviderModel.GetById(param.CompanyLms.LmsProviderId);
+                return new LmsUserParametersDTO(param, lmsProvider);
             }
 
             result = this.UpdateResult(result, validationResult);

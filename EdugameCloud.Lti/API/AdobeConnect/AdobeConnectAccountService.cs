@@ -10,6 +10,7 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -23,13 +24,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             _logger = logger;
         }
 
-        public IAdobeConnectProxy GetProvider(LmsCompany license, bool login = true)
+        public IAdobeConnectProxy GetProvider(ILmsLicense license, bool login = true)
         {
             var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
             return GetProvider(license, credentials, login);
         }
 
-        public IAdobeConnectProxy GetProvider(LmsCompany license, UserCredentials credentials, bool login)
+        public IAdobeConnectProxy GetProvider(ILmsLicense license, UserCredentials credentials, bool login)
         {
             string apiUrl = license.AcServer + "/api/xml";
 
@@ -61,50 +62,58 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider)
+        public ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
-
-            StatusInfo status;
-            UserInfo usr = provider.GetUserInfo(out status);
-
-            if (status.Code != StatusCodes.ok)
+            if (cache == null)
+                throw new ArgumentNullException("cache");
+            
+            var item = CacheUtility.GetCachedItem<ACPasswordPoliciesDTO>(cache, provider.ApiUrl, () =>
             {
-                _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. Code:{0}.SubCode:{1}.", status.Code, status.SubCode);
-                return null;
-            }
+                StatusInfo status;
+                UserInfo usr = provider.GetUserInfo(out status);
 
-            if (usr.AccountId.HasValue)
-            {
-                FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
-
-                if (fields.Status.Code != StatusCodes.ok)
+                if (status.Code != StatusCodes.ok)
                 {
-                    _logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
+                    _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. Code:{0}.SubCode:{1}.", status.Code, status.SubCode);
                     return null;
                 }
 
-                //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
-                string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
-
-                int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
-                int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
-
-                return new ACPasswordPoliciesDTO 
+                if (usr.AccountId.HasValue)
                 {
-                    passwordRequiresDigit = passwordRequiresDigit,
-                    passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
-                    passwordRequiresSpecialChars = passwordRequiresSpecialChars,
-                    passwordMinLength = passwordMinLength,
-                    passwordMaxLength = passwordMaxLength,
-                };
-            }
+                    FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
 
-            _logger.Error("GetPasswordPolicies. Account is NULL");
-            return null;
+                    if (fields.Status.Code != StatusCodes.ok)
+                    {
+                        _logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
+                        return null;
+                    }
+
+                    //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
+                    bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
+                    bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
+                    string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
+
+                    int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
+                    int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
+
+                    return new ACPasswordPoliciesDTO
+                    {
+                        passwordRequiresDigit = passwordRequiresDigit,
+                        passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
+                        passwordRequiresSpecialChars = passwordRequiresSpecialChars,
+                        passwordMinLength = passwordMinLength,
+                        passwordMaxLength = passwordMaxLength,
+                    };
+                }
+
+                _logger.Error("GetPasswordPolicies. Account is NULL");
+                return null;
+
+            });
+
+            return item;
         }
 
         public IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider)

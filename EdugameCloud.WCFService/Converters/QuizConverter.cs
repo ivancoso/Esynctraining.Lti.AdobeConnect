@@ -285,7 +285,7 @@
         private void ProcessQuizQuestions(LmsQuizDTO quiz, User user, SubModuleItem submodule, bool isSurvey, int companyLmsId)
         {
             var companyLms = this.LmsCompanyModel.GetOneById(companyLmsId).Value;
-            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(companyLms.LmsProvider.Id).ToList();
+            var qtypes = this.LmsQuestionTypeModel.GetAllByProvider(companyLms.LmsProviderId).ToList();
 
             int subModuleId = isSurvey ? (int)SubModuleItemType.Survey : (int)SubModuleItemType.Quiz;
 
@@ -315,12 +315,12 @@
                 if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
                 {
-                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProvider.Id);
+                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
                 }
                 else if (questionType.QuestionTypeId == (int)QuestionTypeEnum.Calculated
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.CalculatedMultichoice)
                 {
-                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProvider.Id);
+                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
                 }
 
                 question.QuestionName = questionText;
@@ -375,7 +375,7 @@
                     }
                 }
 
-                this.ProcessDistractors(user, companyLms, questionType.QuestionTypeId, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProvider.Id);
+                this.ProcessDistractors(user, companyLms, questionType.QuestionTypeId, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProviderId);
             }
         }
 

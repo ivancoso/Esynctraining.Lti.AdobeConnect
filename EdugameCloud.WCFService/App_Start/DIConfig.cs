@@ -5,41 +5,36 @@
     using System.Reflection;
     using System.Web;
     using System.Web.Configuration;
-    using Castle.Facilities.Logging;
     using Castle.Facilities.TypedFactory;
     using Castle.Facilities.WcfIntegration;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
+    using Lti;
     using EdugameCloud.Lti.AdobeConnect.Caching;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.Desire2Learn;
-    using EdugameCloud.Lti.API.Sakai;
+    using EdugameCloud.Lti.Sakai;
     using EdugameCloud.Lti.BlackBoard;
     using EdugameCloud.Lti.BrainHoney;
     using EdugameCloud.Lti.Canvas;
     using EdugameCloud.Lti.Desire2Learn;
-    using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Moodle;
     using EdugameCloud.Persistence;
-    using EdugameCloud.Persistence.Extensions;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
-    using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Providers.Mailer;
     using FluentValidation;
-    using NHibernate;
-    using Configuration = NHibernate.Cfg.Configuration;
+    using Core;
+    using Esynctraining.CastleLog4Net;
+    using Esynctraining.Core.Wcf;
 
     /// <summary>
-    ///     The DI config.
+    /// The DI config.
     /// </summary>
     // ReSharper disable once InconsistentNaming
-    public class DIConfig
+    public static class DIConfig
     {
         #region Public Methods and Operators
 
@@ -51,6 +46,13 @@
         /// </param>
         public static void RegisterComponents(IWindsorContainer container)
         {
+            container.Install(new CoreWindsorInstaller());
+            container.Install(new NHibernateWindsorInstaller());
+            container.Install(new MailWindsorInstaller());
+
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
+
+
             Type egcCoremodelsType = typeof(ACSessionModel);
             Assembly egcCoreAssembly = egcCoremodelsType.Assembly;
 
@@ -82,14 +84,7 @@
             container.Register(Component.For<ConverterFactory>().ImplementedBy<ConverterFactory>());
 
             container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWcfOperation());
-
-            container.Register(Component.For<FluentConfiguration>().LifeStyle.Singleton);
-            container.Register(Component.For<Configuration>().LifeStyle.Singleton.Activator<NHibernateConfigurationActivator>());
-            container.Register(Component.For<ISessionFactory>().LifeStyle.Singleton.Activator<NHibernateSessionFactoryActivator>());
-            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
-            container.Register(Component.For(typeof(IRepository<,>)).ImplementedBy(typeof(Repository<,>)).LifeStyle.Transient);
-            container.Register(Component.For(typeof(RealTimeNotificationModel)).ImplementedBy(typeof(RealTimeNotificationModel)).LifeStyle.Transient);
-
+            
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
                     .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
                     .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
@@ -97,10 +92,7 @@
             container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>()
                     .DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server))
                     .LifeStyle.Transient);
-
-            container.Register(Component.For<ITemplateProvider>().ImplementedBy<TemplateProvider>().LifeStyle.Transient);
-            container.Register(Component.For<IAttachmentsProvider>().ImplementedBy<AttachmentsProvider>().LifeStyle.Transient);
-
+            
             container.Register(Classes.FromAssembly(egcCoreAssembly).Pick()
                     .If(Component.IsInNamespace(egcCoremodelsType.Namespace))
                     .WithService.Self()
@@ -111,9 +103,7 @@
                     .WithService.Base()
                     .LifestyleTransient());
 
-            container.Register(Component.For<MailModel>().ImplementedBy<MailModel>().LifeStyle.Transient);
-
-            container.AddFacility(new LoggingFacility(LoggerImplementation.Log4net, "log4net.cfg.xml"));
+            container.Install(new LoggerWindsorInstaller());
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
             
             RegisterLtiComponents(container);
@@ -131,53 +121,21 @@
         /// </param>
         private static void RegisterLtiComponents(IWindsorContainer container)
         {
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Core").Pick()
-                .If(Component.IsInNamespace("EdugameCloud.Lti.Core.Business.Models")).WithService.Self().Configure(c => c.LifestyleTransient()));
-
-            // TODO: every LMS
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BrainHoney").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Canvas").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Moodle").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.BlackBoard").BasedOn(typeof(ILmsAPI)).WithServiceSelf().LifestyleTransient());
-
-            container.Register(Component.For<IMeetingSetup>().ImplementedBy<MeetingSetup>().Named("IMeetingSetup"));
-            container.Register(Component.For<MeetingSetup>().ImplementedBy<MeetingSetup>());
-            container.Register(Component.For<IUsersSetup>().ImplementedBy<UsersSetup>().Named("IUsersSetup"));
-            container.Register(Component.For<UsersSetup>().ImplementedBy<UsersSetup>());
-            
-            container.Register(Component.For<IDesire2LearnApiService>().ImplementedBy<Desire2LearnApiService>().LifestyleTransient());
-
-            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling>().ImplementedBy<ShedulingHelper>());
-            container.Register(Component.For<EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi>().ImplementedBy<DlapAPI>().Named("IBrainHoneyApi"));
-
-            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.ICanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.CanvasAPI>().Named("ICanvasAPI"));
-            container.Register(Component.For<EdugameCloud.Lti.API.Canvas.IEGCEnabledCanvasAPI>().ImplementedBy<EdugameCloud.Lti.Canvas.EGCEnabledCanvasAPI>().Named("IEGCEnabledCanvasAPI"));
-
-            container.Register(Component.For<EdugameCloud.Lti.API.Moodle.IMoodleApi>().ImplementedBy<MoodleApi>().Named("IMoodleAPI"));
-            container.Register(Component.For<EdugameCloud.Lti.API.Moodle.IEGCEnabledMoodleApi>().ImplementedBy<EGCEnabledMoodleApi>().Named("IEGCEnabledMoodleAPI"));
-
-            container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IBlackBoardApi>().ImplementedBy<SoapBlackBoardApi>().Named("IBlackBoardAPI"));
-            container.Register(Component.For<EdugameCloud.Lti.API.BlackBoard.IEGCEnabledBlackBoardApi>().ImplementedBy<EGCEnabledBlackboardApi>().Named("IEGCEnabledBlackBoardAPI"));
+            container.Install(new MoodleWindsorInstaller());
+            container.Install(new Desire2LearnWindsorInstaller());
+            container.Install(new CanvasWindsorInstaller());
+            container.Install(new BrainHoneyWindsorInstaller());
+            container.Install(new BlackboardWindsorInstaller());
+            container.Install(new SakaiWindsorInstaller());
+            container.Install(new LtiWindsorInstaller());
 
             container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
-
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BlackboardLmsUserService>().Named(LmsProviderEnum.Blackboard.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<BrainHoneyLmsUserService>().Named(LmsProviderEnum.BrainHoney.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<CanvasLmsUserService>().Named(LmsProviderEnum.Canvas.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<Desire2LearnLmsUserService>().Named(LmsProviderEnum.Desire2Learn.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<MoodleLmsUserService>().Named(LmsProviderEnum.Moodle.ToString()));
-            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<SakaiLmsUserService>().Named(LmsProviderEnum.Sakai.ToString()));
             
-            container.Register(Component.For<LmsFactory>().ImplementedBy<LmsFactory>());
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
-            container.Register(Component.For<IAdobeConnectUserService>().ImplementedBy<AdobeConnectUserService>());
-            container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
-            container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
-
-            container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
         }
 
         #endregion
+
     }
+
 }

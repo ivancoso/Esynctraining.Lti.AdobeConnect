@@ -8,6 +8,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IAdobeConnectProxy
     {
+        string ApiUrl { get; }
+
         //StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);
         StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName);
@@ -18,11 +20,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //FieldResult GetAclField(string aclId, AclFieldId fieldId);
         FieldCollectionResult GetAclFields(int aclId);
         PrincipalCollectionResult GetAllByEmail(string email);
+        PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails);
         PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm);
         PrincipalCollectionResult GetAllByLogin(string login);
+        PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins);
         PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind);
         //ScoContentCollectionResult GetAllEvents();
         PermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
+        PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         //ScoContentCollectionResult GetAllMeetings();
         PrincipalCollectionResult GetAllPrincipal();
         PrincipalCollectionResult GetAllPrincipals();

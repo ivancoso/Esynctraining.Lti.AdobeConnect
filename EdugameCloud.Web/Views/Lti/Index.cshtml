@@ -8,8 +8,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>eSyncTraining</title>
-	<link rel="stylesheet" href="resources/preloader.css" />
-
+	@*<link rel="stylesheet" href="resources/preloader.css" />*@
+    <style type="text/css">#loading{position:absolute;margin:auto;top:0;left:0;right:0;bottom:0;border-radius:10px;box-shadow:0 5px 10px #ccc;z-index:2;width:400px;height:200px;font-family:Verdana;background-color:#f0f0f0}#loading #loading-bbar{width:380px;background-color:#5c6c78;padding:10px;color:#fff;font-size:12px;bottom:0;position:absolute;border-bottom-left-radius:10px;border-bottom-right-radius:10px}#loading #loading-tbar{width:100%;text-align:center}#loading #loading-title{color:#5c6c78;font-size:24px;line-height:24px}#loading #loading-preloader{margin:15px;width:70px;height:70px}#loading #loading-version{float:left}#loading #loading-copyright{float:right}#loading #loading-link{color:#FFF;text-decoration:underline;cursor:pointer}</style>
 	<script type="text/javascript">
 	var EsyncLti = {};
 	EsyncLti.version = '@ViewBag.LtiVersion';
@@ -29,7 +29,11 @@
 	var Ext = Ext || {};
 	Ext.manifest = {
 		"js": [{ "path": "app.js" }],
-		"css": [{ "path": "resources/MeetingSetup-all.css" }]
+		"css": [{ "path": "resources/MeetingSetup-all.css" }],
+		"loader": {
+		    "cache": "@ViewBag.LtiVersion",
+		    "cacheParam": "_dc"
+		}
 	};
 </script>
 	<script type="text/javascript" src="resources/date.js"></script>

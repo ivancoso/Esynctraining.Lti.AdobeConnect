@@ -21,7 +21,8 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.Reused).Nullable();
             this.Map(x => x.SourceCourseMeetingId).Nullable();
 
-            this.References(x => x.LmsCompany).Column("companyLmsId").Not.Nullable();
+            this.Map(x => x.LmsCompanyId).Column("companyLmsId").Not.Nullable();
+            
             this.References(x => x.OfficeHours).Nullable();
             this.References(x => x.Owner).Column("ownerId").Nullable();
             HasMany(x => x.MeetingRoles).KeyColumn("lmsCourseMeetingId").Cascade.AllDeleteOrphan().Inverse();

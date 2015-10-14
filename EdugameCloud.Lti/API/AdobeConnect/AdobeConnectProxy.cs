@@ -14,8 +14,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private readonly AdobeConnectProvider _provider;
         private readonly ILogger _logger;
-        // TRICK: for logging only
-        private readonly string _apiUrl;
+
+
+        public string ApiUrl { get; private set; }
 
 
         public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl)
@@ -27,7 +28,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             _provider = provider;
             _logger = logger;
-            _apiUrl = apiUrl;
+            ApiUrl = apiUrl;
         }
 
 
@@ -158,6 +159,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 email);
         }
 
+        public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
+        {
+            return Execute(() => { return _provider.GetAllByEmail(emails); },
+                string.Join(", ", emails));
+        }
+
         public PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm)
         {
             return Execute(() => { return _provider.GetAllByFieldLike(fieldName, searchTerm); },
@@ -168,6 +175,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             return Execute(() => { return _provider.GetAllByLogin(login); },
                 login);
+        }
+
+        public PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins)
+        {
+            return Execute(() => { return _provider.GetAllByLogin(logins); },
+                string.Join(", ", logins));
         }
 
         public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
@@ -183,6 +196,49 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             return Execute(() => { return _provider.GetAllMeetingEnrollments(meetingId); },
                 meetingId);
+        }
+
+        public PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC)
+        {
+            meetingExistsInAC = true;
+            PermissionCollectionResult result;
+            try
+            {
+                result = _provider.GetMeetingPermissions(meetingId, principalIds);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "meetingId:{0}.principalIds:{1}.", meetingId, string.Join(",", principalIds));
+                throw;
+            }
+            
+            if (!result.Success)
+            {
+                // TRICK: means No AC Meeting exists
+                if (result.Status.Code == StatusCodes.no_access && result.Status.SubCode == StatusSubCodes.denied)
+                {
+                    string msg = string.Format("[AdobeConnectProxy Error] {0}. Meeting not found. meetingId:{1}. AC: {2}.",
+                        result.Status.GetErrorInfo(),
+                        meetingId,
+                        ApiUrl);
+                    _logger.Warn(msg);
+                    meetingExistsInAC = false;
+                }
+                else if (result.Status.Code != StatusCodes.no_data)
+                {
+                    string msg = string.Format("[AdobeConnectProxy Error] {0}. meetingId:{1}. principalIds: {2}.",
+                        result.Status.GetErrorInfo(),
+                        meetingId, 
+                        string.Join(",", principalIds));
+                    _logger.Error(msg);
+                    throw new InvalidOperationException(msg);
+                }
+            }
+
+            return result;
+
+            //return Execute(() => { return _provider.GetMeetingPermissions(meetingId, principalIds); },
+            //    meetingId, string.Join(",", principalIds));
         }
 
         public PrincipalCollectionResult GetAllPrincipal()
@@ -284,7 +340,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
         {
             return Execute(() => { return _provider.GetScoPublicAccessPermissions(scoId); },
-                    scoId);
+                scoId);
         }
 
         public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)

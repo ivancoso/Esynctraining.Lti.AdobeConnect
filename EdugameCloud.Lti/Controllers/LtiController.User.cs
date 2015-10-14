@@ -1,37 +1,9 @@
 ﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using System.Web;
     using System.Web.Mvc;
-    using Castle.Core.Logging;
-    using DotNetOpenAuth.AspNet;
-    using EdugameCloud.Core.Business.Models;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.API.Canvas;
-    using EdugameCloud.Lti.API.Desire2Learn;
-    using EdugameCloud.Lti.Constants;
-    using EdugameCloud.Lti.Core;
-    using EdugameCloud.Lti.Core.Business.Models;
-    using EdugameCloud.Lti.Core.Constants;
-    using EdugameCloud.Lti.Core.OAuth;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-    using EdugameCloud.Lti.OAuth;
-    using EdugameCloud.Lti.OAuth.Canvas;
-    using EdugameCloud.Lti.OAuth.Desire2Learn;
-    using EdugameCloud.Lti.Utils;
-    using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Utils;
-    using Microsoft.Web.WebPages.OAuth;
-    using Newtonsoft.Json;
 
     public partial class LtiController : Controller
     {
@@ -46,7 +18,7 @@
                 if (meetingId <= 0)
                     throw new ArgumentOutOfRangeException("meetingId");
 
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
                 string error;
@@ -97,7 +69,7 @@
                 if (meetingId <= 0)
                     throw new ArgumentOutOfRangeException("meetingId");
 
-                var session = this.GetSession(lmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
                 string error = null;

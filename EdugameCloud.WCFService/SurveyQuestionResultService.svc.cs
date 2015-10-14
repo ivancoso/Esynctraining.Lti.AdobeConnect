@@ -318,7 +318,7 @@ namespace EdugameCloud.WCFService
                     }
                     catch (Exception ex)
                     {
-                        logger.ErrorFormat("Saving answers:" + ex);
+                        Logger.ErrorFormat("Saving answers:" + ex);
                     }
                     finally
                     {
@@ -353,7 +353,7 @@ namespace EdugameCloud.WCFService
                     continue;
                 }
 
-                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id);
+                var converter = this.ConverterFactory.GetResultConverter((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId);
 
                 converter.ConvertAndSendSurveyResultToLms(results, surveyResult, lmsUserParameters);
 

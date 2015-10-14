@@ -38,13 +38,13 @@ namespace EdugameCloud.Lti.API
         public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {
             LmsUserServiceBase service = null;
-            if ((LmsProviderEnum)lmsCompany.LmsProvider.Id == LmsProviderEnum.Desire2Learn)
+            if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Desire2Learn)
             {
                 service = IoC.Container.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
             }
             else
             {
-                service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProvider.Id);
+                service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             }
 
             var acProvider = acAccountService.GetProvider(lmsCompany);
@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.API
             foreach (var courseGroup in groupedMeetings)
             {
                 logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}; MeetingIds:{3}",
-                    lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProvider.Id, courseGroup.Key, String.Join(",", courseGroup.Select(x=>x.Id)));
+                    lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProviderId, courseGroup.Key, String.Join(",", courseGroup.Select(x=>x.Id)));
                 try
                 {
                     //todo: set extra data param
@@ -67,7 +67,7 @@ namespace EdugameCloud.Lti.API
                         {
                             //todo: take all users (meeting.Users) and make foreach trying to retrieve
                             logger.WarnFormat("Couldn't retrieve users from API for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}",
-                                lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProvider.Id, courseGroup.Key);
+                                lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProviderId, courseGroup.Key);
                         }
                         else
                         {

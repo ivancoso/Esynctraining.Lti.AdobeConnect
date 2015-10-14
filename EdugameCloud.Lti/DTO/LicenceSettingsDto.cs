@@ -1,6 +1,7 @@
 ﻿using System;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -29,26 +30,31 @@ namespace EdugameCloud.Lti.DTO
         public string LabelStudyGroup { get; set; }
 
 
-        public static LicenceSettingsDto Build(LmsCompany value)
+        public static LicenceSettingsDto Build(LmsCompany value, ICache cache)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
+            if (cache == null)
+                throw new ArgumentNullException("cache");
 
-            return new LicenceSettingsDto
+            return CacheUtility.GetCachedItem<LicenceSettingsDto>(cache, value.Id.ToString(), () =>
             {
-                //RestoredACPassword = session.LtiSession.RestoredACPassword,
-                ACUsesEmailAsLogin = value.ACUsesEmailAsLogin ?? false,
-                UseSynchronizedUsers = value.UseSynchronizedUsers,
-                UseFLV = value.UseFLV,
-                UseMP4 = value.UseMP4,
-                EnableMultipleMeetings = value.EnableMultipleMeetings,
-                SupportPageHtml = value.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml),
+                return new LicenceSettingsDto
+                {
+                    //RestoredACPassword = session.LtiSession.RestoredACPassword,
+                    ACUsesEmailAsLogin = value.ACUsesEmailAsLogin ?? false,
+                    UseSynchronizedUsers = value.UseSynchronizedUsers,
+                    UseFLV = value.UseFLV,
+                    UseMP4 = value.UseMP4,
+                    EnableMultipleMeetings = value.EnableMultipleMeetings,
+                    SupportPageHtml = value.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml),
 
-                LabelMeeting = value.GetSetting<string>(LmsCompanySettingNames.LabelMeeting) ?? "Course Meetings",
-                LabelOfficeHour = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
-                LabelStudyGroup = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
-                EnableMeetingReuse = value.EnableMeetingReuse,
-            };
+                    LabelMeeting = value.GetSetting<string>(LmsCompanySettingNames.LabelMeeting) ?? "Course Meetings",
+                    LabelOfficeHour = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
+                    LabelStudyGroup = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
+                    EnableMeetingReuse = value.EnableMeetingReuse,
+                };
+            });            
         }
 
     }

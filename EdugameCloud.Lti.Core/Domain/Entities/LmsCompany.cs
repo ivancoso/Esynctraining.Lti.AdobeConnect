@@ -14,7 +14,7 @@ namespace EdugameCloud.Lti.Domain.Entities
     /// <summary>
     /// The company LMS.
     /// </summary>
-    public class LmsCompany : Entity
+    public class LmsCompany : Entity, ILmsLicense
     {
         /// <summary>
         /// The LMS domain.
@@ -121,7 +121,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
-        public virtual LmsProvider LmsProvider { get; set; }
+        public virtual int LmsProviderId { get; set; }
 
         /// <summary>
         /// Gets or sets the modified by.
@@ -432,7 +432,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             var domains = new List<string>();
             domains.Add(CleanDomain(LmsDomain));
 
-            if ((LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
+            if ((LmsProviderId == (int)LmsProviderEnum.Blackboard) && EnableProxyToolMode.GetValueOrDefault())
             {
                 domains.AddRange(AdditionalLmsDomains.Select(x => x.RemoveHttpProtocolAndTrailingSlash()));
             }

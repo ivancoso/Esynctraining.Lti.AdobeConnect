@@ -1,7 +1,6 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Drawing;
     using System.Drawing.Drawing2D;
@@ -24,21 +23,18 @@
     using Esynctraining.Core.Utils;
 
     using NHibernate;
-    using NHibernate.Linq;
 
     using File = EdugameCloud.Core.Domain.Entities.File;
 
     /// <summary>
-    ///     The file model.
+    /// The file model.
     /// </summary>
     public class FileModel : BaseModel<File, Guid>
     {
         #region Fields
-
-        /// <summary>
-        ///     The settings.
-        /// </summary>
+        
         private readonly dynamic settings;
+        private readonly ILogger _logger;
 
         #endregion
 
@@ -62,10 +58,11 @@
         /// <param name="settings">
         /// The settings.
         /// </param>
-        public FileModel(IRepository<File, Guid> repository, ApplicationSettingsProvider settings)
+        public FileModel(IRepository<File, Guid> repository, ApplicationSettingsProvider settings, ILogger logger)
             : base(repository)
         {
             this.settings = settings;
+            _logger = logger;
         }
 
         #endregion
@@ -123,40 +120,7 @@
 
             Directory.Delete(target_dir, false);
         }
-
-        /// <summary>
-        /// The read stream fully.
-        /// </summary>
-        /// <param name="input">
-        /// The input.
-        /// </param>
-        /// <returns>
-        /// The array of byte.
-        /// </returns>
-        public byte[] ReadStreamFully(Stream input)
-        {
-            var buffer = new byte[16 * 1024];
-            using (var ms = new MemoryStream())
-            {
-                int read;
-                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
-                {
-                    ms.Write(buffer, 0, read);
-                }
-
-                return ms.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// The get one by web orb id.
-        /// </summary>
-        /// <param name="id">
-        /// The id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{File}"/>.
-        /// </returns>
+                
         public virtual IFutureValue<File> GetOneByWebOrbId(Guid id)
         {
             var queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.Id == id).Take(1);
@@ -257,34 +221,7 @@
 
             base.RegisterDelete(file, flush);
         }
-
-        /// <summary>
-        /// The create file.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <param name="date">
-        /// The date.
-        /// </param>
-        /// <param name="width">
-        /// The width.
-        /// </param>
-        /// <param name="height">
-        /// The height.
-        /// </param>
-        /// <param name="x">
-        /// The x.
-        /// </param>
-        /// <param name="y">
-        /// The y.
-        /// </param>
-        /// <returns>
-        /// The <see cref="File"/>.
-        /// </returns>
+        
         public File CreateFile(User user, string name, DateTime date, int? width, int? height, int? x, int? y)
         {
             var image = new File { CreatedBy = user, FileName = name, Height = height, Width = width, X = x, Y = y };
@@ -300,30 +237,7 @@
             this.RegisterSave(image, true);
             return image;
         }
-
-        /// <summary>
-        /// The get all by user.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{File}"/>.
-        /// </returns>
-        public virtual IEnumerable<File> GetAllByUser(User user)
-        {
-            return this.Repository.Session.Query<File>().Where(x => x.CreatedBy.Id == user.Id);
-        }
-
-        /// <summary>
-        /// The get data.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The array of bytes.
-        /// </returns>
+        
         public byte[] GetData(File file)
         {
             var fileName = this.PermanentFileName(file);
@@ -332,21 +246,10 @@
                 return System.IO.File.ReadAllBytes(fileName);    
             }
 
+            _logger.WarnFormat("File not found. ID: {0}. FileName: {1}.", file.Id, fileName);
             return null;
         }
-
-        /// <summary>
-        /// The set data.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <param name="data">
-        /// The file data.
-        /// </param>
-        /// <returns>
-        /// The file object.
-        /// </returns>
+        
         public File SetData(File file, byte[] data)
         {
             var fileName = this.PermanentFileName(file);
@@ -354,64 +257,6 @@
             return file;
         }
 
-        /// <summary>
-        /// The get one by name.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IFutureValue{File}"/>.
-        /// </returns>
-        public virtual IFutureValue<File> GetOneByName(string name)
-        {
-            return this.Repository.Session.Query<File>().Where(x => x.FileName == name.ToLower()).ToFutureValue();
-        }
-
-        /// <summary>
-        /// The get permanent url.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/> url.
-        /// </returns>
-        public virtual string GetPermanentUrl(File file)
-        {
-            if (file != null)
-            {
-                var companyId = file.CreatedBy.With(x => x.Company).With(x => x.Id.ToString(CultureInfo.InvariantCulture));
-                return this.settings.FileStorage + "/" + companyId + "/" + this.settings.PermFilePattern.Replace("{fileId}", file.Id.ToString());
-            }
-
-            return string.Empty;
-        }
-
-        /// <summary>
-        /// The get all by ids.
-        /// </summary>
-        /// <param name="ids">
-        /// The ids.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable{File}"/>.
-        /// </returns>
-        public IEnumerable<File> GetAllByGuids(List<Guid> ids)
-        {
-            var queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().AndRestrictionOn(x => x.Id).IsIn(ids);
-            return this.Repository.FindAll(queryOver);
-        }
-
-        /// <summary>
-        /// The permanent file name.
-        /// </summary>
-        /// <param name="file">
-        /// The file.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         public string PermanentFileName(File file)
         {
             var companyId = file.CreatedBy.With(x => x.Company).With(x => x.Id.ToString(CultureInfo.InvariantCulture));

@@ -409,7 +409,7 @@ namespace EdugameCloud.WCFService
 
                 string errorString;
                 var quizzesForCourse =
-                    LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProvider.Id)
+                    LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)lmsUserParameters.CompanyLms.LmsProviderId)
                         .GetItemsInfoForUser(lmsUserParameters, isSurvey, out errorString)
                         .ToList();
                 if (string.IsNullOrWhiteSpace(errorString))
@@ -500,7 +500,7 @@ namespace EdugameCloud.WCFService
                     var companyLms = lmsUserParameters.CompanyLms;
 
                     string error;
-                    IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProvider.Id)
+                    IEnumerable<LmsQuizDTO> quizzes = LmsFactory.GetEGCEnabledLmsAPI((LmsProviderEnum)companyLms.LmsProviderId)
                         .GetItemsForUser(
                             lmsUserParameters,
                             isSurvey,

@@ -21,13 +21,11 @@ namespace EdugameCloud.Lti.Canvas
         }
 
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, LmsUser currentUser, 
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany,
             string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
-            if (currentUser == null)
-                throw new ArgumentNullException("currentUser");
 
             if (lmsCompany.AdminUser == null)
             {

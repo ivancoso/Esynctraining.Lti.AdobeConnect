@@ -53,9 +53,10 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.CreatedBy).Not.Nullable().Column("createdBy");
             this.Map(x => x.ModifiedBy).Nullable().Column("modifiedBy");
             this.Map(x => x.CompanyId).Not.Nullable().Column("companyId");
+            this.Map(x => x.LmsProviderId).Not.Nullable().Column("lmsProviderId");
 
-            this.References(x => x.LmsProvider).Not.Nullable().Column("lmsProviderId");
-            this.References(x => x.AdminUser).Column("adminUserId").Not.LazyLoad().Nullable();
+            // TRICK: .Not.LazyLoad() removed for LTI !!
+            this.References(x => x.AdminUser).Column("adminUserId").Nullable();
             this.HasMany(x => x.LmsUsers).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.LmsCourseMeetings).KeyColumn("companyLmsId").Cascade.Delete().Inverse();
             this.HasMany(x => x.Settings).KeyColumn("lmsCompanyId").Cascade.All().Inverse();

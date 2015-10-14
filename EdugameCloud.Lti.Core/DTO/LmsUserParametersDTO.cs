@@ -27,13 +27,13 @@
         /// <param name="param">
         /// The parameter.
         /// </param>
-        public LmsUserParametersDTO(LmsUserParameters param)
+        public LmsUserParametersDTO(LmsUserParameters param, LmsProvider lmsProvider)
         {
             this.lmsUserParametersId = param.Id;
             this.acId = param.AcId;
             this.course = param.Course;
             this.domain = param.CompanyLms.LmsDomain;
-            this.provider = param.CompanyLms.LmsProvider.ShortName;
+            this.provider = lmsProvider.ShortName;
             this.wstoken = param.Wstoken;
             this.lmsUserId = param.LmsUser.Return(x => x.Id, (int?)null);
             this.courseName = param.CourseName;

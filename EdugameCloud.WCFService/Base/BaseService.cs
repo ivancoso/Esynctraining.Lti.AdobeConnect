@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Linq.Expressions;
@@ -13,8 +12,6 @@
     using System.Web;
     using Castle.Core.Logging;
     using Castle.MicroKernel;
-    using DotAmf.Data;
-    using DotAmf.ServiceModel.Messaging;
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
@@ -22,10 +19,8 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
-    using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Comparers;
-    using Esynctraining.Core.Domain.Contracts;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
@@ -37,30 +32,22 @@
     using Resources;
 
     /// <summary>
-    ///     The base service.
+    /// The base service.
     /// </summary>
     public abstract class BaseService
     {
         #region Fields
-
-        /// <summary>
-        ///     The error message title.
-        /// </summary>
+        
         private const string ACErrorMessageTitle = "Adobe Connect Error";
 
-        /// <summary>
-        ///     The authentication header name.
-        /// </summary>
+
         private string authHeaderName;
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the authentication header name.
-        /// </summary>
-        protected string AuthHeaderName
+        
+        private string AuthHeaderName
         {
             get
             {
@@ -69,10 +56,7 @@
             }
         }
 
-        /// <summary>
-        /// Gets the current request.
-        /// </summary>
-        protected HttpRequestMessageProperty CurrentRequest
+        private HttpRequestMessageProperty CurrentRequest
         {
             get
             {
@@ -87,54 +71,51 @@
             }
         }
 
-        /// <summary>
-        /// Gets the current user.
-        /// </summary>
-        protected Guid CurrentUserToken
-        {
-            get
-            {
-                Guid token;
-                foreach (
-                    object value in
-                        OperationContext.Current.With(x => x.IncomingMessageProperties)
-                            .Return(x => x.Values, new List<object>()))
-                {
-                    if (value is AmfMessage)
-                    {
-                        var message = (AmfMessage)value;
-                        object data = message.With(x => x.Data);
-                        if (data is AbstractMessage)
-                        {
-                            var abstractMessage = (AbstractMessage)data;
-                            IDictionary<string, object> headers = abstractMessage.With(x => x.Headers);
+        ///// <summary>
+        ///// Gets the current user.
+        ///// </summary>
+        //protected Guid CurrentUserToken
+        //{
+        //    get
+        //    {
+        //        Guid token;
+        //        foreach (
+        //            object value in
+        //                OperationContext.Current.With(x => x.IncomingMessageProperties)
+        //                    .Return(x => x.Values, new List<object>()))
+        //        {
+        //            if (value is AmfMessage)
+        //            {
+        //                var message = (AmfMessage)value;
+        //                object data = message.With(x => x.Data);
+        //                if (data is AbstractMessage)
+        //                {
+        //                    var abstractMessage = (AbstractMessage)data;
+        //                    IDictionary<string, object> headers = abstractMessage.With(x => x.Headers);
 
-                            if (headers != null && headers.ContainsKey("DSEndpoint") && headers["DSEndpoint"] != null
-                                && Guid.TryParse(headers["DSEndpoint"].ToString(), out token))
-                            {
-                                return token;
-                            }
-                        }
-                    }
-                }
+        //                    if (headers != null && headers.ContainsKey("DSEndpoint") && headers["DSEndpoint"] != null
+        //                        && Guid.TryParse(headers["DSEndpoint"].ToString(), out token))
+        //                    {
+        //                        return token;
+        //                    }
+        //                }
+        //            }
+        //        }
 
-                var authHeader = this.AuthHeaderName;
-                if (this.CurrentRequest != null
-                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                    && this.CurrentRequest.Headers != null
-                    && this.CurrentRequest.Headers.HasKey(authHeader)
-                    && Guid.TryParse(this.CurrentRequest.Headers[authHeader], out token))
-                {
-                    return token;
-                }
+        //        var authHeader = this.AuthHeaderName;
+        //        if (this.CurrentRequest != null
+        //            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        //            && this.CurrentRequest.Headers != null
+        //            && this.CurrentRequest.Headers.HasKey(authHeader)
+        //            && Guid.TryParse(this.CurrentRequest.Headers[authHeader], out token))
+        //        {
+        //            return token;
+        //        }
 
-                return Guid.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Gets the current user.
-        /// </summary>
+        //        return Guid.Empty;
+        //    }
+        //}
+        
         protected User CurrentUser
         {
             get
@@ -142,144 +123,61 @@
                 return HttpContext.Current.With(x => x.User).If(x => x.Identity is EdugameCloudIdentity, x => ((EdugameCloudIdentity)x.Identity).With(y => y.InternalEntity));
             }
         }
-
-        /// <summary>
-        /// Gets the file model.
-        /// </summary>
+        
         protected FileModel FileModel
         {
-            get
-            {
-                return IoC.Resolve<FileModel>();
-            }
+            get { return IoC.Resolve<FileModel>(); }
         }
-
-        /// <summary>
-        /// Gets the mail model.
-        /// </summary>
+        
         protected MailModel MailModel
         {
-            get
-            {
-                return IoC.Resolve<MailModel>();
-            }
+            get { return IoC.Resolve<MailModel>(); }
         }
-
-        /// <summary>
-        /// Gets the Logger.
-        /// </summary>
+        
         protected ILogger Logger
         {
-            get
-            {
-                return IoC.Resolve<ILogger>();
-            }
+            get { return IoC.Resolve<ILogger>(); }
         }
-
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
+        
         protected dynamic Settings
         {
-            get
-            {
-                return IoC.Resolve<ApplicationSettingsProvider>();
-            }
+            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
         }
-
-        /// <summary>
-        /// Gets the user model.
-        /// </summary>
+        
         protected UserModel UserModel
         {
-            get
-            {
-                return IoC.Resolve<UserModel>();
-            }
+            get { return IoC.Resolve<UserModel>(); }
         }
-
-        /// <summary>
-        /// Gets the logger.
-        /// </summary>
-        protected ILogger logger
-        {
-            get
-            {
-                return IoC.Resolve<ILogger>();
-            }
-        }
-
-        /// <summary>
-        /// Gets the UserActivation model.
-        /// </summary>
+        
         protected UserActivationModel UserActivationModel
         {
-            get
-            {
-                return IoC.Resolve<UserActivationModel>();
-            }
+            get { return IoC.Resolve<UserActivationModel>(); }
         }
-
-        /// <summary>
-        /// Gets the SubModuleItem model.
-        /// </summary>
+        
         protected SubModuleItemModel SubModuleItemModel
         {
-            get
-            {
-                return IoC.Resolve<SubModuleItemModel>();
-            }
+            get { return IoC.Resolve<SubModuleItemModel>(); }
         }
-
-        /// <summary>
-        /// Gets the ACSession model.
-        /// </summary>
+        
         protected ACSessionModel ACSessionModel
         {
-            get
-            {
-                return IoC.Resolve<ACSessionModel>();
-            }
+            get { return IoC.Resolve<ACSessionModel>(); }
         }
-
-        /// <summary>
-        /// Gets the ACSession model.
-        /// </summary>
-        protected ITemplateProvider TemplateProvider
+        
+        private ITemplateProvider TemplateProvider
         {
-            get
-            {
-                return IoC.Resolve<ITemplateProvider>();
-            }
+            get { return IoC.Resolve<ITemplateProvider>(); }
         }
-
-        /// <summary>
-        /// Gets the ACSession model.
-        /// </summary>
+        
         protected EmailHistoryModel EmailHistoryModel
         {
-            get
-            {
-                return IoC.Resolve<EmailHistoryModel>();
-            }
+            get { return IoC.Resolve<EmailHistoryModel>(); }
         }
 
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The process version.
-        /// </summary>
-        /// <param name="swfFolder">
-        /// The SWF folder.
-        /// </param>
-        /// <param name="buildSelector">
-        /// The build Selector.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         protected Version ProcessVersion(string swfFolder, string buildSelector)
         {
             if (Directory.Exists(swfFolder))
@@ -356,39 +254,7 @@
         {
             return IoC.Resolve<BaseConverter<TDataTransferObject, TObjectInstance>>().Convert(transferObject, instance, flush);
         }
-
-        ///// <summary>
-        ///// The update cache.
-        ///// </summary>
-        ///// <param name="method">
-        ///// The method.
-        ///// </param>
-        ///// <param name="args">
-        ///// The args.
-        ///// </param>
-        //protected void UpdateCache(MethodInfo method, params object[] args)
-        //{
-        //}
-
-        ///// <summary>
-        ///// The update cache.
-        ///// </summary>
-        ///// <typeparam name="T">
-        ///// Type of entity
-        ///// </typeparam>
-        ///// <param name="target">
-        ///// The target.
-        ///// </param>
-        ///// <param name="methodName">
-        ///// The method Name.
-        ///// </param>
-        ///// <param name="args">
-        ///// The args.
-        ///// </param>
-        //protected void UpdateCache<T>(T target, string methodName, params object[] args)
-        //{
-        //}
-
+        
         /// <summary>
         /// The update cache.
         /// </summary>
@@ -404,13 +270,7 @@
         protected void UpdateCache<T>(Expression<Action<T>> expression, params object[] args)
         {
         }
-
-        /// <summary>
-        /// The send activation.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
+        
         protected void SendActivation(User user)
         {
             UserActivationModel model = this.UserActivationModel;
@@ -426,43 +286,28 @@
 
             this.SendActivationEmail(user.FirstName, user.Email, user.Company,  userActivation.ActivationCode, bcced);
         }
-
-        /// <summary>
-        /// The send trial email.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="activationCode">
-        /// The activation Code.
-        /// </param>
-        /// <param name="company">
-        /// The company.
-        /// </param>
+        
         protected void SendEnterpriseEmail(User user, string activationCode, Company company)
         {
             var license = company.Licenses.FirstOrDefault();
             var days = (int)Math.Round(license.Return(x => x.ExpiryDate.Subtract(DateTime.Today), new TimeSpan(45, 0, 0, 0)).TotalDays);
 
             var model = new EnterpriseModel(this.Settings)
-                        {
-                            CompanyName = company.CompanyName,
-                            MailSubject = Emails.TrialSubject,
-                            TrialContactEmail = (string)this.Settings.TrialContactEmail,
-                            TrialDays = days,
-                            UserName = user.Email,
-                            FirstName = user.FirstName,
-                            ActivationCode = activationCode,
-                            ExpirationDate =
-                                license.Return(
-                                    x => x.ExpiryDate.ToShortDateString(),
-                                    string.Empty)
-                        };
+            {
+                CompanyName = company.CompanyName,
+                MailSubject = Emails.TrialSubject,
+                TrialContactEmail = (string)this.Settings.TrialContactEmail,
+                TrialDays = days,
+                UserName = user.Email,
+                FirstName = user.FirstName,
+                ActivationCode = activationCode,
+                ExpirationDate = license.Return(x => x.ExpiryDate.ToShortDateString(), string.Empty),
+            };
             var bcced = new List<MailAddress>
-                        {
-                            new MailAddress(this.Settings.TrialContactEmail),
-                            new MailAddress(Common.JacquieEmail, Common.JacquieName)
-                        };
+            {
+                new MailAddress(this.Settings.TrialContactEmail),
+                new MailAddress(Common.JacquieEmail, Common.JacquieName)
+            };
 
             bool sentSuccessfully = this.MailModel.SendEmailSync(
                 user.FirstName,
@@ -483,16 +328,7 @@
                 Common.AppEmail,
                 bcced: bcced);
         }
-
-        /// <summary>
-        /// The get license status.
-        /// </summary>
-        /// <param name="licenseVo">
-        /// The license vo.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CompanyLicenseStatus"/>.
-        /// </returns>
+        
         protected CompanyLicenseStatus GetLicenseStatus(CompanyLicenseDTO licenseVo)
         {
             if (licenseVo.isTrial)
@@ -507,19 +343,7 @@
 
             return CompanyLicenseStatus.Pro;
         }
-
-        /// <summary>
-        /// The send trial email.
-        /// </summary>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="activationCode">
-        /// The activation Code.
-        /// </param>
-        /// <param name="company">
-        /// The company.
-        /// </param>
+        
         protected void SendTrialEmail(User user, string activationCode, Company company)
         {
             var license = company.Licenses.FirstOrDefault();
@@ -560,22 +384,7 @@
                 Common.AppEmail,
                 bcced: bcced);
         }
-
-        /// <summary>
-        /// The get base recent splash screen reports.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
+        
         protected PagedRecentReportsDTO GetBaseRecentSplashScreenReports(int userId, int pageIndex, int pageSize)
         {
             int totalCount;
@@ -585,22 +394,7 @@
                 totalCount = totalCount
             };
         }
-
-        /// <summary>
-        /// The get base splash screen reports.
-        /// </summary>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
-        /// <param name="pageIndex">
-        /// The page index.
-        /// </param>
-        /// <param name="pageSize">
-        /// The page size.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
+        
         protected PagedReportsDTO GetBaseSplashScreenReports(int userId, int pageIndex, int pageSize)
         {
             int totalCount;
@@ -621,22 +415,15 @@
         {
             var license = company.Licenses.FirstOrDefault();
             var model = new LicenseUpgradeModel(this.Settings)
-                        {
-                            CompanyName = company.CompanyName,
-                            MailSubject = Emails.LicenseUpgradeRequested,
-                            PrimaryEmail =
-                                company.PrimaryContact.With(x => x.Email),
-                            PrimaryName =
-                                company.PrimaryContact.With(x => x.FullName),
-                            SeatsCount = license.With(x => x.TotalLicensesCount),
-                            IsTrial =
-                                license.Return(
-                                    x =>
-                                x.LicenseStatus == CompanyLicenseStatus.Trial,
-                                    false),
-                            ExpirationDate =
-                                license.With(x => x.ExpiryDate.ToEst() + " EST")
-                        };
+            {
+                CompanyName = company.CompanyName,
+                MailSubject = Emails.LicenseUpgradeRequested,
+                PrimaryEmail = company.PrimaryContact.With(x => x.Email),
+                PrimaryName = company.PrimaryContact.With(x => x.FullName),
+                SeatsCount = license.With(x => x.TotalLicensesCount),
+                IsTrial = license.Return(x => x.LicenseStatus == CompanyLicenseStatus.Trial, false),
+                ExpirationDate = license.With(x => x.ExpiryDate.ToEst() + " EST"),
+            };
 
             bool sentSuccessfully = this.MailModel.SendEmailSync(
                 "License Admin",
@@ -655,27 +442,15 @@
                 Common.AppEmailName,
                 Common.AppEmail);
         }
-
-        /// <summary>
-        /// The send password email.
-        /// </summary>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="password">
-        /// The password.
-        /// </param>
+        
         protected void SendPasswordEmail(string firstName, string email, string password)
         {
             var model = new ChangePasswordModel(this.Settings)
-                        {
-                            FirstName = firstName,
-                            Password = password,
-                            TrialContactEmail = this.Settings.TrialContactEmail
-                        };
+            {
+                FirstName = firstName,
+                Password = password,
+                TrialContactEmail = this.Settings.TrialContactEmail,
+            };
 
             bool sentSuccessfully = this.MailModel.SendEmailSync(
                 firstName,
@@ -694,19 +469,7 @@
                 Common.AppEmailName,
                 Common.AppEmail);
         }
-
-        /// <summary>
-        /// The send password email.
-        /// </summary>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="activationCode">
-        /// The activation Code.
-        /// </param>
+        
         protected void SendActivationLinkEmail(string firstName, string email, string activationCode)
         {
             var model = new ActivationLinkModel(this.Settings)
@@ -733,25 +496,7 @@
                 Common.AppEmailName,
                 Common.AppEmail);
         }
-
-        /// <summary>
-        /// The send activation email.
-        /// </summary>
-        /// <param name="firstName">
-        /// The first name.
-        /// </param>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <param name="activationCode">
-        /// The activation code.
-        /// </param>
-        /// <param name="bcced">
-        /// The BCCED.
-        /// </param>
+        
         protected void SendActivationEmail(string firstName, string email, Company company, string activationCode, List<MailAddress> bcced = null)
         {
             var cced = GetCCed(email, company);
@@ -802,22 +547,10 @@
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The log error.
-        /// </summary>
-        /// <param name="methodName">
-        /// The method name.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="userName">
-        /// The user Name.
-        /// </param>
+        
         protected void LogError(string methodName, Error error, string userName = null)
         {
-            this.logger.Error(
+            this.Logger.Error(
                 string.Format(
                     "{4}. Error result for user: {0}, Error code: {1}, Error Message: {2}, Error Details: {3}",
                     userName ?? "Anonymous",
@@ -826,80 +559,7 @@
                     error.errorDetail,
                     methodName));
         }
-
-        ///// <summary>
-        ///// The log error.
-        ///// </summary>
-        ///// <param name="methodName">
-        ///// The method name.
-        ///// </param>
-        ///// <param name="result">
-        ///// The result.
-        ///// </param>
-        ///// <param name="currentUser">
-        ///// The current user.
-        ///// </param>
-        //protected void LogError(string methodName, ServiceResponse result, User currentUser = null)
-        //{
-        //    this.LogError(methodName, result, currentUser.With(x => x.FullName));
-        //}
-
-        ///// <summary>
-        ///// The log error.
-        ///// </summary>
-        ///// <param name="methodName">
-        ///// The method name.
-        ///// </param>
-        ///// <param name="result">
-        ///// The result.
-        ///// </param>
-        ///// <param name="userName">
-        ///// The user name.
-        ///// </param>
-        //private void LogError(string methodName, ServiceResponse result, string userName = null)
-        //{
-        //    if (result != null && result.error != null)
-        //    {
-        //        this.LogError(methodName, result.error, userName);
-        //    }
-        //}
-
-        ///// <summary>
-        ///// The update result.
-        ///// </summary>
-        ///// <typeparam name="T">
-        ///// The service response
-        ///// </typeparam>
-        ///// <param name="result">
-        ///// The result.
-        ///// </param>
-        ///// <param name="validationResult">
-        ///// The validation result.
-        ///// </param>
-        ///// <returns>
-        ///// The <see cref="ServiceResponse"/>.
-        ///// </returns>
-        //protected T UpdateResult<T>(T result, ValidationResult validationResult) where T : ServiceResponse
-        //{
-        //    var error = this.GenerateValidationError(validationResult);
-        //    if (error != null)
-        //    {
-        //        result.status = Errors.CODE_RESULTTYPE_ERROR;
-        //        result.error = error;
-        //    }
-
-        //    return result;
-        //}
-
-        /// <summary>
-        /// The generate error.
-        /// </summary>
-        /// <param name="validationResult">
-        /// The validation result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ServiceResponse"/>.
-        /// </returns>
+        
         protected Error GenerateValidationError(ValidationResult validationResult)
         {
             if (validationResult != null)
@@ -924,16 +584,7 @@
 
             return new Error { errorCode = Errors.CODE_ERRORTYPE_GENERIC_ERROR, errorMessage = "There were validation errors." };
         }
-
-        /// <summary>
-        /// The update result to string.
-        /// </summary>
-        /// <param name="validationResult">
-        /// The validation result.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{String}"/>.
-        /// </returns>
+        
         protected List<string> UpdateResultToString(ValidationResult validationResult)
         {
             var list = new List<string>();
@@ -944,37 +595,7 @@
 
             return list;
         }
-
-        /// <summary>
-        /// The save history.
-        /// </summary>
-        /// <param name="toName">
-        /// The to name.
-        /// </param>
-        /// <param name="toEmail">
-        /// The to email.
-        /// </param>
-        /// <param name="subject">
-        /// The subject.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="fromName">
-        /// The from name.
-        /// </param>
-        /// <param name="fromEmail">
-        /// The from email.
-        /// </param>
-        /// <param name="cced">
-        /// The CCED.
-        /// </param>
-        /// <param name="bcced">
-        /// The BCCED.
-        /// </param>
-        /// <typeparam name="TModel">
-        /// Mail Model 
-        /// </typeparam>
+        
         private void SaveHistory<TModel>(
             bool mailWasSentSuccessfully,
             string toName, string toEmail, 
@@ -1030,19 +651,7 @@
                 throw new FaultException<Error>(error, error.errorMessage);
             }
         }
-
-        /// <summary>
-        /// The get CCED.
-        /// </summary>
-        /// <param name="email">
-        /// The email.
-        /// </param>
-        /// <param name="company">
-        /// The company.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{MailAddress}"/>.
-        /// </returns>
+        
         private static List<MailAddress> GetCCed(string email, Company company)
         {
             if (company != null && company.PrimaryContact != null && !email.Equals(company.PrimaryContact.Email, StringComparison.InvariantCultureIgnoreCase))
@@ -1055,16 +664,7 @@
 
             return null;
         }
-
-        /// <summary>
-        /// The get BBCED.
-        /// </summary>
-        /// <param name="emails">
-        /// The emails.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{MailAddress}"/>.
-        /// </returns>
+        
         private static List<MailAddress> GetBCCed(string emails)
         {
             if (string.IsNullOrEmpty(emails))
