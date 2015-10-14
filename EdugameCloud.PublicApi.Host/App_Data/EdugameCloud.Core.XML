@@ -73,7 +73,7 @@
             The repository.
             </param>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CompanyModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Company,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.CompanyModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Company,System.Int32},Esynctraining.Core.Caching.ICache)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.CompanyModel"/> class. 
             </summary>
@@ -2708,12 +2708,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.FileModel">
             <summary>
-                The file model.
-            </summary>
-        </member>
-        <member name="F:EdugameCloud.Core.Business.Models.FileModel.settings">
-            <summary>
-                The settings.
+            The file model.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.FileModel.#cctor">
@@ -2721,7 +2716,7 @@
                 Initializes static members of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel" /> class.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.File,System.Guid},Esynctraining.Core.Providers.ApplicationSettingsProvider)">
+        <member name="M:EdugameCloud.Core.Business.Models.FileModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.File,System.Guid},Esynctraining.Core.Providers.ApplicationSettingsProvider,Castle.Core.Logging.ILogger)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel"/> class.
             </summary>
@@ -2754,28 +2749,6 @@
             The target directory.
             </param>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.ReadStreamFully(System.IO.Stream)">
-            <summary>
-            The read stream fully.
-            </summary>
-            <param name="input">
-            The input.
-            </param>
-            <returns>
-            The array of byte.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetOneByWebOrbId(System.Guid)">
-            <summary>
-            The get one by web orb id.
-            </summary>
-            <param name="id">
-            The id.
-            </param>
-            <returns>
-            The <see cref="T:NHibernate.IFutureValue`1"/>.
-            </returns>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.FileModel.CompleteFile(EdugameCloud.Core.Domain.Entities.File)">
             <summary>
             The complete file.
@@ -2805,115 +2778,6 @@
             <param name="flush">
             The flush.
             </param>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.CreateFile(EdugameCloud.Core.Domain.Entities.User,System.String,System.DateTime,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
-            <summary>
-            The create file.
-            </summary>
-            <param name="user">
-            The user.
-            </param>
-            <param name="name">
-            The name.
-            </param>
-            <param name="date">
-            The date.
-            </param>
-            <param name="width">
-            The width.
-            </param>
-            <param name="height">
-            The height.
-            </param>
-            <param name="x">
-            The x.
-            </param>
-            <param name="y">
-            The y.
-            </param>
-            <returns>
-            The <see cref="T:EdugameCloud.Core.Domain.Entities.File"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetAllByUser(EdugameCloud.Core.Domain.Entities.User)">
-            <summary>
-            The get all by user.
-            </summary>
-            <param name="user">
-            The user.
-            </param>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetData(EdugameCloud.Core.Domain.Entities.File)">
-            <summary>
-            The get data.
-            </summary>
-            <param name="file">
-            The file.
-            </param>
-            <returns>
-            The array of bytes.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.SetData(EdugameCloud.Core.Domain.Entities.File,System.Byte[])">
-            <summary>
-            The set data.
-            </summary>
-            <param name="file">
-            The file.
-            </param>
-            <param name="data">
-            The file data.
-            </param>
-            <returns>
-            The file object.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetOneByName(System.String)">
-            <summary>
-            The get one by name.
-            </summary>
-            <param name="name">
-            The name.
-            </param>
-            <returns>
-            The <see cref="T:NHibernate.IFutureValue`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetPermanentUrl(EdugameCloud.Core.Domain.Entities.File)">
-            <summary>
-            The get permanent url.
-            </summary>
-            <param name="file">
-            The file.
-            </param>
-            <returns>
-            The <see cref="T:System.String"/> url.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.GetAllByGuids(System.Collections.Generic.List{System.Guid})">
-            <summary>
-            The get all by ids.
-            </summary>
-            <param name="ids">
-            The ids.
-            </param>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.PermanentFileName(EdugameCloud.Core.Domain.Entities.File)">
-            <summary>
-            The permanent file name.
-            </summary>
-            <param name="file">
-            The file.
-            </param>
-            <returns>
-            The <see cref="T:System.String"/>.
-            </returns>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.FileModel.SaveWeborbFile(EdugameCloud.Core.Domain.DTO.UploadedFileDTO)">
             <summary>
@@ -7975,7 +7839,7 @@
             Gets or sets the question type id.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO.сorrectAnswerCount">
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionForAdminDTO.correctAnswerCount">
             <summary>
             Gets or sets the correct answer count.
             </summary>
