@@ -762,8 +762,8 @@
                 throw new ArgumentException("Meeting SCO can't be empty", "meetingId");
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
-
-            var filter = new StringBuilder(CommandParams.Permissions.Filter.PermissionId.All);
+            
+            var filter = new StringBuilder(23 * principalIds.Count());
             foreach (string principalId in principalIds)
                 filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, HttpUtility.UrlEncode(principalId));
 
