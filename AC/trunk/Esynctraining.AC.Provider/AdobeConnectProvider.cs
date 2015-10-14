@@ -756,6 +756,20 @@
             return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.All);
         }
 
+        public PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds)
+        {
+            if (string.IsNullOrWhiteSpace(meetingId))
+                throw new ArgumentException("Meeting SCO can't be empty", "meetingId");
+            if (principalIds == null)
+                throw new ArgumentNullException("principalIds");
+
+            var filter = new StringBuilder(CommandParams.Permissions.Filter.PermissionId.All);
+            foreach (string principalId in principalIds)
+                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, HttpUtility.UrlEncode(principalId));
+
+            return this.GetPermissionsInfo(meetingId, null, filter.ToString());
+        }
+
         /// <summary>
         /// Gets Group by name.
         /// </summary>
