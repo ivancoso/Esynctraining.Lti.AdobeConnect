@@ -6,13 +6,12 @@
     using System.Linq;
 
     using Castle.Core.Logging;
-    using Castle.Facilities.Logging;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Persistence;
-
+    using Esynctraining.CastleLog4Net;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
@@ -110,7 +109,7 @@
                     .WithService.Self()
                     .Configure(c => c.LifestyleTransient()));
 
-            container.AddFacility(new LoggingFacility(LoggerImplementation.Log4net, "log4net.cfg.xml"));
+            container.Install(new LoggerWindsorInstaller());
         }
 
         /// <summary>
@@ -141,40 +140,47 @@
         private static void Main()
         {
             InitializeContainer();
-            dynamic settings = IoC.Resolve<ApplicationSettingsProvider>();
-            int hoursWithoutQuery = int.Parse(settings.HoursWithoutQuery) * -1;
-            var callbackUrl = (string)settings.CallbackUrl;
-            var logger = IoC.Resolve<ILogger>();
-            var model = IoC.Resolve<SubscriptionHistoryLogModel>();
-            var historyLog = model.GetAll().ToList();
-            var webProxy = IoC.Resolve<WebProxyModel>();
-            var subscriptions = webProxy.ListSubscriptions();
-            if (subscriptions.data != null)
+            try
             {
-                LogMessage(logger, "Found " + subscriptions.data.Length + " subscriptions");
-                foreach (var s in subscriptions.data)
+                dynamic settings = IoC.Resolve<ApplicationSettingsProvider>();
+                int hoursWithoutQuery = int.Parse(settings.HoursWithoutQuery) * -1;
+                var callbackUrl = (string)settings.CallbackUrl;
+                var logger = IoC.Resolve<ILogger>();
+                var model = IoC.Resolve<SubscriptionHistoryLogModel>();
+                var historyLog = model.GetAll().ToList();
+                var webProxy = IoC.Resolve<WebProxyModel>();
+                var subscriptions = webProxy.ListSubscriptions();
+                if (subscriptions.data != null)
                 {
-                    if (s.callback_url.Equals(callbackUrl, StringComparison.InvariantCultureIgnoreCase))
+                    LogMessage(logger, "Found " + subscriptions.data.Length + " subscriptions");
+                    foreach (var s in subscriptions.data)
                     {
-                        var inactiveHistoryLogItem =
-                            historyLog.FirstOrDefault(x => (x.SubscriptionId == s.id || x.SubscriptionTag.Equals(s.object_id, StringComparison.InvariantCultureIgnoreCase))
-                                && (!x.LastQueryTime.HasValue || x.LastQueryTime.Value <= DateTime.Now.AddHours(hoursWithoutQuery)));
-                        if (inactiveHistoryLogItem != null)
+                        if (s.callback_url.Equals(callbackUrl, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            var result = webProxy.DeleteInstagramSubscription(s.id);
-                            if (result.meta.With(x => x.code == 200))
+                            var inactiveHistoryLogItem =
+                                historyLog.FirstOrDefault(x => (x.SubscriptionId == s.id || x.SubscriptionTag.Equals(s.object_id, StringComparison.InvariantCultureIgnoreCase))
+                                    && (!x.LastQueryTime.HasValue || x.LastQueryTime.Value <= DateTime.Now.AddHours(hoursWithoutQuery)));
+                            if (inactiveHistoryLogItem != null)
                             {
-                                var deleted = FullClean((string)settings.ConnectionString, s.id, logger);
-                                model.RegisterDelete(inactiveHistoryLogItem, true);
-                                LogMessage(logger, "Subscription for tag " + s.object_id + " suspended; items deleted count = " + deleted);
+                                var result = webProxy.DeleteInstagramSubscription(s.id);
+                                if (result.meta.With(x => x.code == 200))
+                                {
+                                    var deleted = FullClean((string)settings.ConnectionString, s.id, logger);
+                                    model.RegisterDelete(inactiveHistoryLogItem, true);
+                                    LogMessage(logger, "Subscription for tag " + s.object_id + " suspended; items deleted count = " + deleted);
+                                }
                             }
-                        }
-                        else
-                        {
-                            LogMessage(logger, "Subscription for tag " + s.object_id + " is still active");
+                            else
+                            {
+                                LogMessage(logger, "Subscription for tag " + s.object_id + " is still active");
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                IoC.Resolve<ILogger>().Error("Error occured", ex);
             }
         }
 
