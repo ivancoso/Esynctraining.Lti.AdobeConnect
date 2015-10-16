@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Logging;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
@@ -69,7 +70,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (cache == null)
                 throw new ArgumentNullException("cache");
             
-            var item = CacheUtility.GetCachedItem<ACPasswordPoliciesDTO>(cache, provider.ApiUrl, () =>
+            var item = CacheUtility.GetCachedItem<ACPasswordPoliciesDTO>(cache, CachePolicies.Keys.PasswordPolicies(provider.ApiUrl), () =>
             {
                 StatusInfo status;
                 UserInfo usr = provider.GetUserInfo(out status);

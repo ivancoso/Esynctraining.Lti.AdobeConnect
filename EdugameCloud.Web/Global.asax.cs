@@ -29,6 +29,7 @@ using Esynctraining.Core.Utils;
 using FluentValidation.Mvc;
 using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
 using Esynctraining.CastleLog4Net;
+using EdugameCloud.Core.Business;
 
 namespace EdugameCloud.Web
 {
@@ -114,6 +115,9 @@ namespace EdugameCloud.Web
             string pathPropertiesPath = this.GetPathPropertiesPath();
             container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
             AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
+
+            // TRICK: remove all files on start
+            CachePolicies.InvalidateCache();
         }
 
         /// <summary>

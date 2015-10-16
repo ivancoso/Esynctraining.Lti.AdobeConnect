@@ -6,6 +6,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System;
     using System.Collections.Generic;
+    using EdugameCloud.Core.Business;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Business;
@@ -189,6 +190,36 @@ namespace EdugameCloud.Lti.Core.Business.Models
             var query = this.Repository.Session.GetNamedQuery("deleteLmsCompanyWithDependencies");
             query.SetInt32("lmsCompanyId", lmsCompanyId);
             query.UniqueResult();
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.CompanyLmsSettings(lmsCompanyId));
+        }
+
+        public override void RegisterDelete(LmsCompany entity, bool flush)
+        {
+            base.RegisterDelete(entity, flush);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.CompanyLmsSettings(entity.Id));
+        }
+
+        public override void RegisterDelete(LmsCompany entity)
+        {
+            base.RegisterDelete(entity);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.CompanyLmsSettings(entity.Id));
+        }
+
+        public override void RegisterSave(LmsCompany entity, bool flush, bool updateDateModified = true)
+        {
+            base.RegisterSave(entity, flush, updateDateModified);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.CompanyLmsSettings(entity.Id));
+        }
+
+        public override void RegisterSave(LmsCompany entity)
+        {
+            base.RegisterSave(entity);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.CompanyLmsSettings(entity.Id));
         }
 
         #endregion

@@ -399,7 +399,8 @@
                     credentials,
                     session.LmsUser,
                     acProvider,
-                    param);
+                    param,
+                    new StringBuilder());
 
                 meetingsJson = JsonConvert.SerializeObject(meetings);                
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider, _cache));
@@ -671,54 +672,47 @@
                 }
 
                 sw.Stop();
-                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
 
                 sw.Stop();
-                trace.AppendFormat("GetAdobeConnectProvider: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
                 param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); ; // NOTE: is saved in session!
 
                 sw.Stop();
-                trace.AppendFormat("GetParamLogin: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("GetParamLogin: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
 
                 sw.Stop();
-                trace.AppendFormat("GetOneByUserIdAndCompanyLms: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("GetOneByUserIdAndCompanyLms: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
                 var key = session.Id.ToString();
 
                 sw.Stop();
-                trace.AppendFormat("SaveSession: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("SaveSession: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
 
                 sw.Stop();
-                trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.", sw.Elapsed.ToString());
-                trace.AppendLine();
+                trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, logger, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
                 {
 
                     sw.Stop();
-                    trace.AppendFormat("VerifyBltiRequest: time: {0}.", sw.Elapsed.ToString());
-                    trace.AppendLine();
+                    trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
                     sw = Stopwatch.StartNew();
 
                     Principal acPrincipal = null;
@@ -736,8 +730,7 @@
                             }
 
                             sw.Stop();
-                            trace.AppendFormat("CanvasApi.IsTokenExpired: time: {0}.", sw.Elapsed.ToString());
-                            trace.AppendLine();
+                            trace.AppendFormat("CanvasApi.IsTokenExpired: time: {0}.\r\n", sw.Elapsed.ToString());
                             sw = Stopwatch.StartNew();
 
                             if (lmsCompany.AdminUser == null)
@@ -748,8 +741,7 @@
                             }
 
                             sw.Stop();
-                            trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.", sw.Elapsed.ToString());
-                            trace.AppendLine();
+                            trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.\r\n", sw.Elapsed.ToString());
                             sw = Stopwatch.StartNew();
 
                             acPrincipal = acUserService.GetOrCreatePrincipal(
@@ -761,8 +753,7 @@
                                 lmsCompany);
 
                             sw.Stop();
-                            trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.", sw.Elapsed.ToString());
-                            trace.AppendLine();
+                            trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n", sw.Elapsed.ToString());
                             sw = Stopwatch.StartNew();
 
                             break;
@@ -842,7 +833,7 @@
                         throw new WarningMessageException("Sorry, Adobe Connect account does not exist for you. Please contact administrator.");
                     }
                     
-                    return this.RedirectToExtJs(session, lmsUser, key);
+                    return this.RedirectToExtJs(session, lmsUser, key, trace);
                 }
 
                 logger.ErrorFormat("Invalid LTI request. oauth_consumer_key:{0}.", param.oauth_consumer_key);
@@ -1165,7 +1156,7 @@
         /// <returns>
         /// The <see cref="ActionResult"/>.
         /// </returns>
-        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName)
+        private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
             var sw = Stopwatch.StartNew();
 
@@ -1177,31 +1168,32 @@
             var acProvider = this.GetAdobeConnectProvider(credentials);
 
             sw.Stop();
-            logger.DebugFormat("GetAdobeConnectProvider: time: {0}.", sw.Elapsed.ToString());
+            if (trace != null)
+                trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             var meetings = this.meetingSetup.GetMeetings(
                 credentials,
                 lmsUser,
                 acProvider,
-                param);
+                param,
+                trace);
 
             sw.Stop();
-            logger.DebugFormat("GetMeetings SUMMARY: time: {0}.", sw.Elapsed.ToString());
+            if (trace != null)
+                trace.AppendFormat("GetMeetings SUMMARY: time: {0}.\r\n", sw.Elapsed.ToString());
 
             sw = Stopwatch.StartNew();
             var pwdPolicies = IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider, _cache);
             sw.Stop();
-            logger.DebugFormat("AC - GetPasswordPolicies: time: {0}.", sw.Elapsed.ToString());
+            if (trace != null)
+                trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
 
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, _cache);
             TempData["CurrentUserFullName"] = param.lis_person_name_full;
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(pwdPolicies);
-
             
-
-
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode, disableCacheBuster = true });
         }
 

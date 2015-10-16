@@ -1,15 +1,15 @@
 ﻿namespace EdugameCloud.Core.Authentication
 {
     using System.Collections.Generic;
-
+    using System.Security.Principal;
     using EdugameCloud.Core.Domain.Entities;
 
-    using Esynctraining.Core.Authentication;
+    //using Esynctraining.Core.Authentication;
 
     /// <summary>
     ///     The Edugame cloud identity.
     /// </summary>
-    public sealed class EdugameCloudIdentity : IWebOrbIdentity
+    public sealed class EdugameCloudIdentity : IIdentity //: IWebOrbIdentity
     {
         #region Fields
 

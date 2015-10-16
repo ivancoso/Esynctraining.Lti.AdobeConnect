@@ -1,4 +1,5 @@
 ﻿using System;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Caching;
@@ -37,7 +38,10 @@ namespace EdugameCloud.Lti.DTO
             if (cache == null)
                 throw new ArgumentNullException("cache");
 
-            return CacheUtility.GetCachedItem<LicenceSettingsDto>(cache, value.Id.ToString(), () =>
+            return CacheUtility.GetCachedItem<LicenceSettingsDto>(cache,
+                CachePolicies.Keys.CompanyLmsSettings(value.Id),
+                CachePolicies.Dependencies.CompanyLmsSettings(value.Id),
+                () =>
             {
                 return new LicenceSettingsDto
                 {

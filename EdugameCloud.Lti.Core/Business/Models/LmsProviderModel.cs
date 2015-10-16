@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using EdugameCloud.Core.Business;
     using EdugameCloud.Lti.Domain.Entities;
 
     using Esynctraining.Core.Business;
@@ -30,7 +31,7 @@
         // TRICK: uses cache!
         public LmsProvider GetByName(string name)
         {
-            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, "all", () =>
+            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
             {
                 var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
                 return Repository.FindAll(queryOver).ToList();
@@ -42,7 +43,7 @@
         // TRICK: uses cache!
         public LmsProvider GetById(int lmsProviderId)
         {
-            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, "all", () =>
+            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
             {
                 var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
                 return Repository.FindAll(queryOver).ToList();
@@ -52,6 +53,5 @@
         }
 
     }
-
 
 }

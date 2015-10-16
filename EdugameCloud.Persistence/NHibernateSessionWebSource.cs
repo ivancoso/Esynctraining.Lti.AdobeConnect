@@ -1,15 +1,14 @@
 ﻿namespace EdugameCloud.Persistence
 {
     using System.Runtime.Remoting.Contexts;
-    using System.Web;
 
     using NHibernate;
 
     /// <summary>
-    ///     The hibernate session web source.
+    /// The hibernate session web source.
     /// </summary>
     [Synchronization]
-    public class NHibernateSessionWebSource : NHibernateSessionSource
+    public sealed class NHibernateSessionWebSource : NHibernateSessionSource
     {
         #region Static Fields
 
@@ -31,7 +30,7 @@
         public NHibernateSessionWebSource(ISessionFactory sessionFactory)
             : base(sessionFactory)
         {
-            //this.Session.BeginTransaction();
+           //this.Session.BeginTransaction();
         }
 
         #endregion
@@ -47,21 +46,21 @@
         //    {
         //        try
         //        {
-        //            //ITransaction transaction = this.Session.Transaction;
-        //            //if (transaction.IsActive)
-        //            //{
-        //            //    using (transaction)
-        //            //    {
-        //            //        if (HttpContext.Current.Server.GetLastError() == null)
-        //            //        {
-        //            //            transaction.Commit();
-        //            //        }
-        //            //        else
-        //            //        {
-        //            //            transaction.Rollback();
-        //            //        }
-        //            //    }
-        //            //}
+        //            ITransaction transaction = this.Session.Transaction;
+        //            if (transaction.IsActive)
+        //            {
+        //                using (transaction)
+        //                {
+        //                    if (HttpContext.Current.Server.GetLastError() == null)
+        //                    {
+        //                        transaction.Commit();
+        //                    }
+        //                    else
+        //                    {
+        //                        transaction.Rollback();
+        //                    }
+        //                }
+        //            }
         //        }
         //        finally
         //        {

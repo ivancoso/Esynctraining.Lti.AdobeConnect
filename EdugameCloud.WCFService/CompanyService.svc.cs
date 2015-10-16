@@ -541,8 +541,17 @@ namespace EdugameCloud.WCFService
             IoC.Resolve<RealTimeNotificationModel>().NotifyClientsAboutChangesInTable<Company>(NotificationType.Update, instance.Id, instance.Id);
             var dtoResult = new CompanyDTO(instance);
             var lmses = isTransient ? LmsCompanyModel.GetAllByCompanyId(instance.Id).ToList() : new List<LmsCompany>();
-            LmsProvider lmsProvider = LmsProviderModel.GetById(lmses.FirstOrDefault().LmsProviderId);
-            dtoResult.lmsVO = new CompanyLmsDTO(lmses.FirstOrDefault(), lmsProvider);
+
+            var lms = lmses.FirstOrDefault();
+            if (lms == null)
+            {
+                dtoResult.lmsVO = new CompanyLmsDTO();
+            }
+            else
+            {
+                LmsProvider lmsProvider = LmsProviderModel.GetById(lms.LmsProviderId);
+                dtoResult.lmsVO = new CompanyLmsDTO(lms, lmsProvider);
+            }
             return dtoResult;
         }
 

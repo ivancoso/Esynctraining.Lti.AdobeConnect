@@ -75,7 +75,7 @@
         // TRICK: use from LTI ONLY!!
         public bool IsActive(int companyId)
         {
-            var item = CacheUtility.GetCachedItem<CompanyCacheItem>(_cache, companyId.ToString(), () =>
+            var item = CacheUtility.GetCachedItem<CompanyCacheItem>(_cache, CachePolicies.Keys.IsActiveCompany(companyId), CachePolicies.Dependencies.IsActiveCompany(companyId), () =>
             {
                 var company = GetOneById(companyId).Value;
                 var status = company.Status;
@@ -179,5 +179,35 @@
             var defaultQuery = new QueryOverCompany().GetQueryOver().Where(x => x.Theme != null && x.Theme.Id == id);
             return this.Repository.FindAll(defaultQuery);
         }
+
+        public override void RegisterDelete(Company entity, bool flush)
+        {
+            base.RegisterDelete(entity, flush);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.IsActiveCompany(entity.Id));
+        }
+
+        public override void RegisterDelete(Company entity)
+        {
+            base.RegisterDelete(entity);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.IsActiveCompany(entity.Id));
+        }
+
+        public override void RegisterSave(Company entity, bool flush, bool updateDateModified = true)
+        {
+            base.RegisterSave(entity, flush, updateDateModified);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.IsActiveCompany(entity.Id));
+        }
+
+        public override void RegisterSave(Company entity)
+        {
+            base.RegisterSave(entity);
+
+            CachePolicies.InvalidateCache(CachePolicies.Dependencies.IsActiveCompany(entity.Id));
+        }
+
     }
+
 }
