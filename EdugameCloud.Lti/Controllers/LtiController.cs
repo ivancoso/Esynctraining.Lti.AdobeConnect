@@ -80,7 +80,7 @@
         {
             get { return IoC.Resolve<IAdobeConnectAccountService>(); }
         }
-        
+
         #region Constructors and Destructors
 
         public LtiController(
@@ -1159,7 +1159,7 @@
         private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
             var sw = Stopwatch.StartNew();
-
+            
             var credentials = session.LmsCompany;
             var primaryColor = lmsUser.PrimaryColor;
             primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty);

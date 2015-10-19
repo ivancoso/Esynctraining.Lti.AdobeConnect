@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Providers;
@@ -67,15 +68,10 @@ namespace EdugameCloud.Lti.Controllers
             Guid uid;
             var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
 
-            if (this.IsDebug && session == null)
-            {
-                session = this.userSessionModel.GetByIdWithRelated(Guid.Empty).Value;
-            }
-
             if (session == null)
             {
-                this.RedirectToError("Session timed out. Please refresh the page.");
-                return null;
+                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                throw new WarningMessageException("Session timed out. Please refresh the page.");
             }
 
             return session;

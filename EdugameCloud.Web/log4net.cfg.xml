@@ -9,6 +9,11 @@
     <appender-ref ref="DebugAppender" />
   </root>
 
+  <logger name="Default">
+    <level value="WARN" />
+    <appender-ref ref="Application" />
+  </logger>
+
   <logger name="NHibernate" additivity="false">
     <level value="ERROR"/>
     <appender-ref ref="NHibernateLog"/>
@@ -17,11 +22,6 @@
   <logger name="Pushable.Data" additivity="false">
     <level value="ERROR"/>
     <appender-ref ref="DataLog"/>
-  </logger>
-  
-  <logger name="Default">
-    <level value="WARN" />
-    <appender-ref ref="Application" />
   </logger>
 
   <appender name="DebugAppender" type="log4net.Appender.DebugAppender">
@@ -53,7 +53,7 @@
     <bufferSize value="10" />
     <connectionString value="Server=192.168.10.151;Database=EduGameCloud.Logging;User ID=sa;password=`12345tgB;Connection Timeout=180;" />
     <connectionType value="System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <commandText value="INSERT INTO LogStage ([Date],[Thread],[Level],[Logger],[Message], [Exception]) VALUES (@log_date, @thread, @log_level, @logger, @message, @exception)" />
+    <commandText value="INSERT INTO LogStage ([Date], [Thread], [Level], [Logger], [Message], [Exception]) VALUES (@log_date, @thread, @log_level, @logger, @message, @exception)" />
     <parameter>
       <parameterName value="@log_date" />
       <dbType value="DateTime" />

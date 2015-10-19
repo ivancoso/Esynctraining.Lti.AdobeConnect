@@ -6,14 +6,16 @@ using EdugameCloud.Lti.DTO;
 
 namespace EdugameCloud.Lti.Sakai
 {
-    public class SakaiLmsUserService : LmsUserServiceBase
+    internal sealed class SakaiLmsUserService : LmsUserServiceBase
     {
         private readonly LTI2Api lti2Api;
+
 
         public SakaiLmsUserService(ILogger logger, LTI2Api lti2Api) : base(logger)
         {
             this.lti2Api = lti2Api;
         }
+
 
         public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
@@ -39,7 +41,8 @@ namespace EdugameCloud.Lti.Sakai
 
             error = "extra data is not set";
             return new List<LmsUserDTO>();
-
         }
+
     }
+
 }
