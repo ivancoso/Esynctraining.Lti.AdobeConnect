@@ -96,6 +96,10 @@ namespace EdugameCloud.Lti.DTO
             this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
             this.enableMeetingReuse = instance.EnableMeetingReuse;
             this.additionalLmsDomains = instance.AdditionalLmsDomains;
+
+            this.showSummary = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary);
+            this.showTime = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime);
+            this.showDuration = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration);
         }
 
         /// <summary>
@@ -361,6 +365,15 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public string[] additionalLmsDomains { get; set; }
+
+        [DataMember]
+        public bool showSummary { get; set; }
+
+        [DataMember]
+        public bool showTime { get; set; }
+
+        [DataMember]
+        public bool showDuration { get; set; }
 
     }
 

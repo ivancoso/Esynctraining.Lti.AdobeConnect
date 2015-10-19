@@ -448,7 +448,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         public virtual T GetSetting<T>(string settingName)
         {
             LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, true) == 0);
-            return setting == null || String.IsNullOrWhiteSpace(setting.Value)
+            return setting == null || string.IsNullOrWhiteSpace(setting.Value)
                 ? default(T)
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }

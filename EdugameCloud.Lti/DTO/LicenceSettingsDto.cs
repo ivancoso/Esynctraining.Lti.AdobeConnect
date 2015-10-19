@@ -30,6 +30,12 @@ namespace EdugameCloud.Lti.DTO
 
         public string LabelStudyGroup { get; set; }
 
+        public bool ShowMeetingSummary { get; set; }
+        
+        public bool ShowMeetingTime { get; set; }
+        
+        public bool ShowMeetingDuration { get; set; }
+
 
         public static LicenceSettingsDto Build(LmsCompany value, ICache cache)
         {
@@ -57,6 +63,10 @@ namespace EdugameCloud.Lti.DTO
                     LabelOfficeHour = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
                     LabelStudyGroup = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
                     EnableMeetingReuse = value.EnableMeetingReuse,
+
+                    ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
+                    ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),
+                    ShowMeetingDuration = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration),
                 };
             });            
         }

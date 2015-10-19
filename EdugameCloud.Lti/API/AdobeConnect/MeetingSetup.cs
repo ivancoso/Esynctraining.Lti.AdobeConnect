@@ -172,40 +172,50 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             t1.Stop();
             trace.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", t1.Elapsed.ToString());
 
-            var tasks = new List<Task<MeetingDTO>>();
-
+            //var tasks = new List<Task<MeetingDTO>>();
             // TRICK: not to lazy load within Parallel.ForEach
-            var sett = credentials.Settings.ToList();
+            //var sett = credentials.Settings.ToList();
+            //var resultCollection = new List<MeetingDTO>();
+            //object localLockObject = new object();
+            //Parallel.ForEach<LmsCourseMeeting, List<MeetingDTO>>(
+            //      meetings,
+            //      () => 
+            //      {
+            //          return new List<MeetingDTO>();
+            //      },
+            //      (meeting, state, localList) =>
+            //      {
+            //          MeetingDTO dto = this.GetMeetingDTOByScoInfo(
+            //            provider,
+            //            lmsUser,
+            //            param,
+            //            credentials,
+            //            meeting,
+            //            null); // trace
+            //          localList.Add(dto);
+            //          return localList;
+            //      },
+            //      (finalResult) => 
+            //      {
+            //          lock (localLockObject) 
+            //              resultCollection.AddRange(finalResult);
+            //      }
+            //);            
+            //ret.AddRange(resultCollection.Where(x => x != null));
 
-            var resultCollection = new List<MeetingDTO>();
-            object localLockObject = new object();
-
-            Parallel.ForEach<LmsCourseMeeting, List<MeetingDTO>>(
-                  meetings,
-                  () => 
-                  {
-                      return new List<MeetingDTO>();
-                  },
-                  (meeting, state, localList) =>
-                  {
-                      MeetingDTO dto = this.GetMeetingDTOByScoInfo(
+            foreach (var meeting in meetings)
+            {
+                MeetingDTO dto = this.GetMeetingDTOByScoInfo(
                         provider,
                         lmsUser,
                         param,
                         credentials,
                         meeting,
-                        null); // trace
-                      localList.Add(dto);
-                      return localList;
-                  },
-                  (finalResult) => 
-                  {
-                      lock (localLockObject) 
-                          resultCollection.AddRange(finalResult);
-                  }
-            );
-            
-            ret.AddRange(resultCollection.Where(x => x != null));
+                        trace);
+
+                if (dto != null)
+                    ret.Add(dto);
+            }
 
             var t2 = Stopwatch.StartNew();
             if (credentials.EnableOfficeHours.GetValueOrDefault() && !ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
