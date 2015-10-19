@@ -22,7 +22,7 @@ namespace EdugameCloud.Lti.API
         {
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
-            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate)
+            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate, extraData)
                 .FirstOrDefault(u => u.id == lmsUserId);
         }
 
