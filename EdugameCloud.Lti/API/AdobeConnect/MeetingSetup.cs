@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Security;
 using Castle.Core.Logging;
 using EdugameCloud.Lti.Controllers;
@@ -170,34 +172,40 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             t1.Stop();
             trace.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", t1.Elapsed.ToString());
 
-            foreach (var meeting in meetings)
-            {
-                var psw = Stopwatch.StartNew();
+            var tasks = new List<Task<MeetingDTO>>();
 
-                ScoInfoResult result = provider.GetScoInfo(meeting.GetMeetingScoId());
+            // TRICK: not to lazy load within Parallel.ForEach
+            var sett = credentials.Settings.ToList();
 
-                psw.Stop();
-                trace.AppendFormat("\t GetMeetings - AC GetScoInfo time: {0}. MeetingSCO-ID: {1}\r\n", psw.Elapsed.ToString(), meeting.GetMeetingScoId());
+            var resultCollection = new List<MeetingDTO>();
+            object localLockObject = new object();
 
-
-                if (!result.Success || result.ScoInfo == null)
-                {
-                    Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", meeting.GetMeetingScoId(), credentials.Id);
-                    continue;
-                }
-
-                MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
-                    provider,
-                    lmsUser,
-                    param,
-                    credentials,
-                    result.ScoInfo,
-                    meeting,
-                    trace);
-
-                if (meetingDTO != null)
-                    ret.Add(meetingDTO);
-            }
+            Parallel.ForEach<LmsCourseMeeting, List<MeetingDTO>>(
+                  meetings,
+                  () => 
+                  {
+                      return new List<MeetingDTO>();
+                  },
+                  (meeting, state, localList) =>
+                  {
+                      MeetingDTO dto = this.GetMeetingDTOByScoInfo(
+                        provider,
+                        lmsUser,
+                        param,
+                        credentials,
+                        meeting,
+                        null); // trace
+                      localList.Add(dto);
+                      return localList;
+                  },
+                  (finalResult) => 
+                  {
+                      lock (localLockObject) 
+                          resultCollection.AddRange(finalResult);
+                  }
+            );
+            
+            ret.AddRange(resultCollection.Where(x => x != null));
 
             var t2 = Stopwatch.StartNew();
             if (credentials.EnableOfficeHours.GetValueOrDefault() && !ret.Any(m => m.type == (int)LmsMeetingType.OfficeHours))
@@ -222,22 +230,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (officeHoursMeetings != null)
                 {
-                    ScoInfoResult result = provider.GetScoInfo(officeHoursMeetings.GetMeetingScoId());
-                    if (result.Success && result.ScoInfo != null)
+                    MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
+                        provider,
+                        lmsUser,
+                        param,
+                        credentials,
+                        officeHoursMeetings);
+                    if (meetingDTO != null)
                     {
-                        MeetingDTO meetingDTO = this.GetMeetingDTOByScoInfo(
-                            provider,
-                            lmsUser,
-                            param,
-                            credentials,
-                            result.ScoInfo,
-                            officeHoursMeetings);
-                        if (meetingDTO != null)
-                        {
-                            meetingDTO.is_disabled_for_this_course = true;
-                            ret.Add(meetingDTO);
-                        }
+                        meetingDTO.is_disabled_for_this_course = true;
+                        ret.Add(meetingDTO);
                     }
+
                 }
             }
             t1.Stop();
@@ -1465,6 +1469,35 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     attendee.durationInHours = attendance.Value.Sum(p => p.durationInHours);
                 }
             }
+        }
+
+        private MeetingDTO GetMeetingDTOByScoInfo(IAdobeConnectProxy provider,
+            LmsUser lmsUser,
+            LtiParamDTO param,
+            LmsCompany lmsCompany,
+            LmsCourseMeeting lmsCourseMeeting,
+            StringBuilder trace = null)
+        {
+            var psw = Stopwatch.StartNew();
+            ScoInfoResult result = provider.GetScoInfo(lmsCourseMeeting.GetMeetingScoId());
+            psw.Stop();
+            if (trace != null)
+                trace.AppendFormat("\t GetMeetings - AC GetScoInfo time: {0}. MeetingSCO-ID: {1}\r\n", psw.Elapsed.ToString(), lmsCourseMeeting.GetMeetingScoId());
+            
+            if (!result.Success || result.ScoInfo == null)
+            {
+                Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", lmsCourseMeeting.GetMeetingScoId(), lmsCompany.Id);
+                return null;
+            }
+
+            return GetMeetingDTOByScoInfo(
+                provider,
+                lmsUser,
+                param,
+                lmsCompany,
+                result.ScoInfo,
+                lmsCourseMeeting,
+                trace);
         }
 
         private MeetingDTO GetMeetingDTOByScoInfo(
