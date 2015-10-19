@@ -45,6 +45,7 @@
             var queryOver =
                 new DefaultQueryOver<LmsUserSession, Guid>().GetQueryOver()
                 .Fetch(x => x.LmsCompany).Eager
+                .Fetch(x => x.LmsCompany.Settings).Eager
                 .Fetch(x => x.LmsCompany.AdminUser).Eager
                 .Where(c => c.Id == sessionId)
                 .TransformUsing(Transformers.DistinctRootEntity);

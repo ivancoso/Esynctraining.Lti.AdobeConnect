@@ -107,8 +107,7 @@ namespace EdugameCloud.Lti.Core.Business.Models
         {
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>().GetQueryOver()
                 .Fetch(x => x.Settings).Eager
-                .Where(x => (x.ConsumerKey == consumerKey && x.LmsProviderId == lmsProviderId))
-                .Take(1);
+                .Where(x => (x.ConsumerKey == consumerKey && x.LmsProviderId == lmsProviderId));
             return this.Repository.FindOne(defaultQuery);
         }
 
