@@ -9,7 +9,7 @@
     using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Mvc;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Lti.API;
@@ -675,7 +675,7 @@
                 trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);
                 // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
 
                 sw.Stop();
@@ -1244,19 +1244,16 @@
             return session;
         }
 
-        private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
         {
             IAdobeConnectProxy provider = null;
-            if (lmsCompany != null)
+            if (forceReCreate ||
+                ((provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy) == null))
             {
-                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                if (provider == null)
-                {
-                    provider = AdobeConnectAccountService.GetProvider(lmsCompany);
-                    this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-                }
+                provider = AdobeConnectAccountService.GetProvider(lmsCompany);
+                this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
             }
-
+            
             return provider;
         }
         
