@@ -21,7 +21,7 @@ namespace EdugameCloud.MVC.Controllers
     using System.Web.Mvc;
     using System.Web.UI;
     using System.Xml.Linq;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;

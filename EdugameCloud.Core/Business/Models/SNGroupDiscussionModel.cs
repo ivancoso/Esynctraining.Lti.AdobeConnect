@@ -1,4 +1,4 @@
-﻿using Castle.Core.Logging;
+﻿using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Core.Business.Models

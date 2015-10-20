@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BbWsClient;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Domain.Entities;

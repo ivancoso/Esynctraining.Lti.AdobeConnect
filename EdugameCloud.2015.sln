@@ -67,6 +67,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Sakai.TestClie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{2A856007-FFAB-4D1D-B8D5-510451BF8B79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.SocialSubscriptionHandler", "EdugameCloud.SocialSubscriptionHandler\EdugameCloud.SocialSubscriptionHandler.csproj", "{5650F53A-90F2-4585-929C-6B372464397C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{2C718C51-FA6E-47DF-8260-E1F085B3BC48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,6 +185,14 @@ Global
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5650F53A-90F2-4585-929C-6B372464397C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

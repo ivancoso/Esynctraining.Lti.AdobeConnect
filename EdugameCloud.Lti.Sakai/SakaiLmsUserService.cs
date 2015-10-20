@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;

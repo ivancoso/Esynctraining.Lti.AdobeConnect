@@ -8,7 +8,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using System.Diagnostics;
     using System.Linq;
     using System.Web.Security;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.Core.Business;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Domain.Entities;

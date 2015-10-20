@@ -5,7 +5,7 @@
     using System.Collections.Specialized;
     using System.Globalization;
     using System.Linq;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Domain.Entities;

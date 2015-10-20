@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core;

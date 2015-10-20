@@ -10,7 +10,7 @@
     using System.ServiceModel.Channels;
     using System.Text.RegularExpressions;
     using System.Web;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using Castle.MicroKernel;
     using EdugameCloud.Core.Authentication;
     using EdugameCloud.Core.Business.Models;

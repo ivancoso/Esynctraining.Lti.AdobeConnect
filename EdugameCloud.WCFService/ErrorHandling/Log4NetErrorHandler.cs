@@ -10,7 +10,7 @@
     using System.ServiceModel.Web;
     using System.Web;
 
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using DotAmf.ServiceModel.Dispatcher;
 

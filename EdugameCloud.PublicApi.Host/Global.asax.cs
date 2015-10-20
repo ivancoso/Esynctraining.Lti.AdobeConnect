@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using Castle.Windsor;
 using Esynctraining.Core.Utils;
 

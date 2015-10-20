@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Core.Domain.DTO;

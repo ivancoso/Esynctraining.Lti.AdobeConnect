@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.API;

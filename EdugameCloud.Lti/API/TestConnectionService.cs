@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BbWsClient;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.BrainHoney;

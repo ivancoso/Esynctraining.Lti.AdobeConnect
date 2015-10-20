@@ -9,7 +9,7 @@
     using System.Web.Security;
     using System.Web.UI;
 
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.Entities;

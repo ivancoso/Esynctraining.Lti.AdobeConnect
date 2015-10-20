@@ -1,5 +1,5 @@
 ﻿using System;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.AdobeConnect.Caching

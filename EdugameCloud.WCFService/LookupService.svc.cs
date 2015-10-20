@@ -232,10 +232,10 @@ namespace EdugameCloud.WCFService
             var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
             var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
             return new EGCVersionsDTO
-                       {
-                           adminVersion = admin.Return(x => new VersionDTO(admin), null),
-                           publicVersion = @public.Return(x => new VersionDTO(@public), null)
-                       };
+            {
+                adminVersion = admin.Return(x => new VersionDTO(admin), null),
+                publicVersion = @public.Return(x => new VersionDTO(@public), null),
+            };
         }
 
         /// <summary>

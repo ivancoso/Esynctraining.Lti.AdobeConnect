@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Net;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.Core.Constants;

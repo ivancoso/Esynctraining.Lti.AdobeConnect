@@ -141,6 +141,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj">
+      <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
+      <Name>EdugameCloud.Core.Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Lti.AdobeConnect\EdugameCloud.Lti.AdobeConnect.csproj">
       <Project>{b3b413fe-25f6-465b-ac0e-8f8fa020482b}</Project>
       <Name>EdugameCloud.Lti.AdobeConnect</Name>

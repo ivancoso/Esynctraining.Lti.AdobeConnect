@@ -40,6 +40,7 @@ namespace EdugameCloud.PublicApi
                     .Configure(c => c.LifestyleTransient()));
             
             container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
         }
 
     }

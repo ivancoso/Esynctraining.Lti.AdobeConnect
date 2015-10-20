@@ -9,7 +9,7 @@
     using System.Text;
     using System.Web.Script.Serialization;
     using System.Xml;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Domain.Entities;

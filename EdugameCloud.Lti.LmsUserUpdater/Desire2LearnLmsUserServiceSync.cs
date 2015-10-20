@@ -1,4 +1,4 @@
-﻿using Castle.Core.Logging;
+﻿using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Desire2Learn;

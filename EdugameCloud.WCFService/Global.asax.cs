@@ -2,7 +2,7 @@
 {
     using System;
     using System.Web;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using Castle.Windsor;
 
     using Esynctraining.Core.Utils;

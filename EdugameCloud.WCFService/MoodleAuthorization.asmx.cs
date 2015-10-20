@@ -4,7 +4,7 @@ namespace EdugameCloud.ASMXService
     using System;
     using System.Linq;
     using System.Web.Services;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using Castle.MicroKernel;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;

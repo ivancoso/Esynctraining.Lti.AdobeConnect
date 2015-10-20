@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
 using EdugameCloud.Lti.API.Desire2Learn;

@@ -1,6 +1,6 @@
 ﻿using System;
 using BbWsClient;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.BlackBoard
 {

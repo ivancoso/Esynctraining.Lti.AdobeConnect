@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Domain.DTO;
 
 using Esynctraining.Core.Providers;

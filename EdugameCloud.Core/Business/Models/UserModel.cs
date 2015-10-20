@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using ClosedXML.Excel;
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;

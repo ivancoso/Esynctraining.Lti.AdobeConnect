@@ -10,7 +10,7 @@
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using API;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;

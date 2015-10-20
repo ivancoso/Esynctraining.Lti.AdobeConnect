@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
 using Esynctraining.Core.Utils;

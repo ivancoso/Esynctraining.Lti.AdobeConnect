@@ -5,7 +5,7 @@
     using System.Data.SqlClient;
     using System.Linq;
 
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
 
@@ -110,6 +110,7 @@
                     .Configure(c => c.LifestyleTransient()));
 
             container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
         }
 
         /// <summary>

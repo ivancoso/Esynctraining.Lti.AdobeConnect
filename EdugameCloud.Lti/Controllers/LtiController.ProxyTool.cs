@@ -7,7 +7,7 @@
     using System.Web.Mvc;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.API.BlackBoard;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Models;

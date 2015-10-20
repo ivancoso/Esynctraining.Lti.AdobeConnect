@@ -8,7 +8,7 @@
     using System.Threading.Tasks;
     using System.Web.Mvc;
 
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;

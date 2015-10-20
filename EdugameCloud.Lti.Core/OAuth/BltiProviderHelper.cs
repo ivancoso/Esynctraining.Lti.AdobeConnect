@@ -7,7 +7,7 @@
     using System.Web;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using System.Web.Helpers;
     using System.Web.Mvc;
 

@@ -8,7 +8,7 @@
     using System.Linq;
     using System.Net;
     using System.Web;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Domain.DTO;
     using Esynctraining.Core.Providers;

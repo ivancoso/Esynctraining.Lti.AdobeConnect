@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
             IoC.Initialize(container);
             container.RegisterComponents(console: true);
             container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             RegisterLtiComponents(container);
 
             container.Register(Component.For<ILog>().ImplementedBy<ConsoleLog>());

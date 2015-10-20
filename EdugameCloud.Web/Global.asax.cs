@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using EdugameCloud.Core.Business.Models;
@@ -87,6 +87,7 @@ namespace EdugameCloud.Web
             IoC.Initialize(container);
             container.RegisterComponents(web: true);
             container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             RegisterLtiComponents(container);
             RegisterLocalComponents(container);
 

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Security;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;

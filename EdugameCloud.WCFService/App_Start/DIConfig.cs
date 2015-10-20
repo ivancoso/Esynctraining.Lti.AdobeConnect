@@ -104,6 +104,7 @@
                     .LifestyleTransient());
 
             container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
             
             RegisterLtiComponents(container);

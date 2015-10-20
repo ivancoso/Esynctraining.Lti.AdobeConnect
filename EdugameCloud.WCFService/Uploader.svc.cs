@@ -7,7 +7,7 @@
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Channels;
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;

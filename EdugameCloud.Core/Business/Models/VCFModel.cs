@@ -6,7 +6,7 @@
     using System.IO;
     using System.Linq;
 
-    using Castle.Core.Logging;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using Thought.vCards;
@@ -150,8 +150,7 @@
                                                         if (!string.IsNullOrWhiteSpace(address.Country))
                                                         {
                                                             object attributes = new { };
-                                                            var countryEntity =
-                                                                countryModel.GetOneByName(address.Country).Value;
+                                                            var countryEntity = countryModel.GetOneByName(address.Country);
                                                             if (countryEntity != null)
                                                             {
                                                                 attributes = new { countryId = countryEntity.Id, countryCode3 = countryEntity.CountryCode3 };

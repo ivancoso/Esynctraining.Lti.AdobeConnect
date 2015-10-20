@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.DTO;

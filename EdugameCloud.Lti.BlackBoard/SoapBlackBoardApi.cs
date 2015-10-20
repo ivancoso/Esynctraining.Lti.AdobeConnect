@@ -7,7 +7,7 @@ using BbWsClient;
 using BbWsClient.Announcements;
 using BbWsClient.CourseMembership;
 using BbWsClient.User;
-using Castle.Core.Logging;
+using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Core.Constants;
