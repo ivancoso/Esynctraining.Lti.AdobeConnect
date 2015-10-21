@@ -211,7 +211,38 @@ namespace Esynctraining.AC.Provider
             // act: "principal-list"
             StatusInfo status;
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.IsNullOrWhiteSpace(groupId) ? null : string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId), out status);
+            var principals = this.requestProcessor.Process(Commands.Principal.List, 
+                string.IsNullOrWhiteSpace(groupId) ? null : string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId), out status);
+
+            return ResponseIsOk(principals, status)
+                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
+                : new PrincipalCollectionResult(status);
+        }
+
+        /// <summary>
+        /// Gets user with passed principal Id when this principal is member of the specified Group.
+        /// </summary>
+        /// <param name="groupId">
+        /// The group id.
+        /// </param>
+        /// <param name="principalId">
+        /// The principal id.
+        /// </param>
+        /// <returns>
+        /// The <see cref="PrincipalCollectionResult"/>.
+        /// </returns>
+        public PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId)
+        {
+            if (string.IsNullOrWhiteSpace(groupId))
+                throw new ArgumentException("Group ID can't be empty", "groupId");
+            if (string.IsNullOrWhiteSpace(groupId))
+                throw new ArgumentException("Principal ID can't be empty", "principalId");
+
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List,
+                string.Format(CommandParams.PrincipalGroupIdPrincipalIdUsersOnly, groupId, principalId), out status);
 
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))

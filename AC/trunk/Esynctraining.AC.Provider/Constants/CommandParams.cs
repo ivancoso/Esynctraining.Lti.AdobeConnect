@@ -75,8 +75,10 @@
         /// <summary>
         /// The principal group id users only
         /// </summary>
-        public const string PrincipalGroupIdUsersOnly = "group-id={0}&filter-type=user&sort-name=asc";
+        public const string PrincipalGroupIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true";
 
+        public const string PrincipalGroupIdPrincipalIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true&filter-principal-id={1}";
+        
         /// <summary>
         /// The principal by email
         /// </summary>

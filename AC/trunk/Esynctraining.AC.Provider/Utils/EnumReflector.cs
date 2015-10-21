@@ -24,6 +24,11 @@
         /// </returns>
         public static T ReflectEnum<T>(string enumFieldName, T defaultValue)
         {
+            if (string.IsNullOrWhiteSpace(enumFieldName))
+            {
+                TraceTool.TraceMessage("ReflectEnum: enumFieldName parameter IsNullOrWhiteSpace");
+            }
+
             try
             {
                 enumFieldName = enumFieldName.Replace('-', '_');

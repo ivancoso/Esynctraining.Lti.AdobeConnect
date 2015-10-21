@@ -925,6 +925,20 @@
             return new Tuple<StatusInfo, IEnumerable<Principal>>(status, new List<Principal>());
         }
 
+        public Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type)
+        {
+            // act: "principal-list"
+            StatusInfo status;
+
+            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-is-primary=true&filter-type=" + type, out status);
+            if (ResponseIsOk(principals, status))
+            {
+                return new Tuple<StatusInfo, IEnumerable<Principal>>(status, PrincipalCollectionParser.Parse(principals));
+            }
+
+            return new Tuple<StatusInfo, IEnumerable<Principal>>(status, new List<Principal>());
+        }
+
         /// <summary>
         /// The report meeting transactions.
         /// </summary>
