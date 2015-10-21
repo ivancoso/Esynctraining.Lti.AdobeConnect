@@ -1,27 +1,36 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
-    ///     The SN Service model.
+    /// The SN Service model.
     /// </summary>
     public class SNServiceModel : BaseModel<SNService, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SNServiceModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public SNServiceModel(IRepository<SNService, int> repository)
+
+        public SNServiceModel(IRepository<SNService, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
-        #endregion
+
+        public override IEnumerable<SNService> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<SNService>>(_cache, CachePolicies.Keys.SNServices(), () =>
+            {
+                var query = new DefaultQueryOver<SNService, int>().GetQueryOver().OrderBy(x => x.SocialService).Asc;
+                return this.Repository.FindAll(query);
+            });
+        }
+
     }
+
 }

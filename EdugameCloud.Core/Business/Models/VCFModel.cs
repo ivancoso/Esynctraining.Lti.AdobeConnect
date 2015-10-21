@@ -166,7 +166,7 @@
                                                         if (!string.IsNullOrWhiteSpace(address.Region))
                                                         {
                                                             object attributes = new { };
-                                                            var stateEntity = stateModel.GetOneByName(address.Region).Value ?? stateModel.GetOneByCode(address.Region).Value;
+                                                            var stateEntity = stateModel.GetOneByName(address.Region) ?? stateModel.GetOneByCode(address.Region);
                                                             if (stateEntity != null)
                                                             {
                                                                 attributes = new { stateId = stateEntity.Id, stateCode = stateEntity.StateCode };

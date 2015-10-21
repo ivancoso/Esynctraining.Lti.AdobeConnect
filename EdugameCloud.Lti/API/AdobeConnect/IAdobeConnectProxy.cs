@@ -40,8 +40,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //CurriculumContentCollectionResult GetCurriculumContentsByScoId(string scoId);
         //ScoContentCollectionResult GetCurriculumsByFolder(string folderScoId);
         //PrincipalResult GetGroupByName(string groupName);
-        //PrincipalCollectionResult GetGroupPrincipalUsers(string groupId);
+        // PrincipalCollectionResult GetGroupPrincipalUsers(string groupId);
+        PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId);
         Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type);
+        Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type);
         PrincipalCollectionResult GetGroupUsers(string groupId);
         //PermissionCollectionResult GetMeetingHosts(string meetingId);
         //PermissionCollectionResult GetMeetingParticipants(string meetingId);

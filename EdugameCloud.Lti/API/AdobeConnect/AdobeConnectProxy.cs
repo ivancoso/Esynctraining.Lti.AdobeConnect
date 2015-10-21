@@ -10,7 +10,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    public class AdobeConnectProxy : IAdobeConnectProxy
+    internal sealed class AdobeConnectProxy : IAdobeConnectProxy
     {
         private readonly AdobeConnectProvider _provider;
         private readonly ILogger _logger;
@@ -268,9 +268,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 type);
         }
 
+        public PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId)
+        {
+            return Execute(() => { return _provider.GetGroupPrincipalUsers(groupId, principalId); },
+                groupId, principalId);
+        }
+
         public Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type)
         {
             return Execute(() => { return _provider.GetGroupsByType(type); },
+                type);
+        }
+
+        public Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type)
+        {
+            return Execute(() => { return _provider.GetPrimaryGroupsByType(type); },
                 type);
         }
 

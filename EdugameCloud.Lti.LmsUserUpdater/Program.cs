@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.LmsUserUpdater

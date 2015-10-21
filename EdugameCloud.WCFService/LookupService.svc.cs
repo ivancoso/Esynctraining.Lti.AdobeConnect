@@ -27,148 +27,70 @@ namespace EdugameCloud.WCFService
     public class LookupService : BaseService, ILookupService
     {
         #region Properties
-
-        /// <summary>
-        /// Gets the language model.
-        /// </summary>
+        
         private LanguageModel LanguageModel
         {
-            get
-            {
-                return IoC.Resolve<LanguageModel>();
-            }
+            get { return IoC.Resolve<LanguageModel>(); }
         }
-
-        /// <summary>
-        /// Gets the question type model.
-        /// </summary>
+        
         private QuestionTypeModel QuestionTypeModel
         {
-            get
-            {
-                return IoC.Resolve<QuestionTypeModel>();
-            }
+            get { return IoC.Resolve<QuestionTypeModel>(); }
         }
-
-        /// <summary>
-        /// Gets the geo model.
-        /// </summary>
+        
         private GeoModel GeoModel
         {
-            get
-            {
-                return IoC.Resolve<GeoModel>();
-            }
+            get { return IoC.Resolve<GeoModel>(); }
         }
-
-        /// <summary>
-        /// Gets the quiz format model.
-        /// </summary>
+        
         private QuizFormatModel QuizFormatModel
         {
-            get
-            {
-                return IoC.Resolve<QuizFormatModel>();
-            }
+            get { return IoC.Resolve<QuizFormatModel>(); }
         }
-
-        /// <summary>
-        /// Gets the survey grouping type model.
-        /// </summary>
+        
         private SurveyGroupingTypeModel SurveyGroupingTypeModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyGroupingTypeModel>();
-            }
+            get { return IoC.Resolve<SurveyGroupingTypeModel>(); }
         }
-
-        /// <summary>
-        /// Gets the user role model.
-        /// </summary>
+        
         private UserRoleModel UserRoleModel
         {
-            get
-            {
-                return IoC.Resolve<UserRoleModel>();
-            }
+            get { return IoC.Resolve<UserRoleModel>(); }
         }
-
-        /// <summary>
-        /// Gets the score type model.
-        /// </summary>
+        
         private ScoreTypeModel ScoreTypeModel
         {
-            get
-            {
-                return IoC.Resolve<ScoreTypeModel>();
-            }
+            get { return IoC.Resolve<ScoreTypeModel>(); }
         }
-
-        /// <summary>
-        /// Gets the time zone model.
-        /// </summary>
+        
         private TimeZoneModel TimeZoneModel
         {
-            get
-            {
-                return IoC.Resolve<TimeZoneModel>();
-            }
+            get { return IoC.Resolve<TimeZoneModel>(); }
         }
-
-        /// <summary>
-        /// Gets the build version type model.
-        /// </summary>
+        
         private BuildVersionTypeModel BuildVersionTypeModel
         {
-            get
-            {
-                return IoC.Resolve<BuildVersionTypeModel>();
-            }
+            get { return IoC.Resolve<BuildVersionTypeModel>(); }
         }
-
-        /// <summary>
-        /// Gets the state model
-        /// </summary>
+        
         private StateModel StateModel
         {
-            get
-            {
-                return IoC.Resolve<StateModel>();
-            }
+            get { return IoC.Resolve<StateModel>(); }
         }
-
-        /// <summary>
-        /// Gets the country model
-        /// </summary>
+        
         private CountryModel CountryModel
         {
-            get
-            {
-                return IoC.Resolve<CountryModel>();
-            }
+            get { return IoC.Resolve<CountryModel>(); }
         }
-
-        /// <summary>
-        /// Gets the SN service model.
-        /// </summary>
+        
         private SNServiceModel SNServiceModel
         {
-            get
-            {
-                return IoC.Resolve<SNServiceModel>();
-            }
+            get { return IoC.Resolve<SNServiceModel>(); }
         }
-
-        /// <summary>
-        /// Gets the SN map provider.
-        /// </summary>
+        
         private SNMapProviderModel SNMapProviderModel
         {
-            get
-            {
-                return IoC.Resolve<SNMapProviderModel>();
-            }
+            get { return IoC.Resolve<SNMapProviderModel>(); }
         }
 
         ///// <summary>
@@ -181,16 +103,10 @@ namespace EdugameCloud.WCFService
         //        return IoC.Resolve<GoogleSearchAPIModel>();
         //    }
         //}
-
-        /// <summary>
-        /// Gets the VCF model.
-        /// </summary>
+        
         private VCFModel VCFModel
         {
-            get
-            {
-                return IoC.Resolve<VCFModel>();
-            }
+            get { return IoC.Resolve<VCFModel>(); }
         }
 
         ///// <summary>
@@ -478,20 +394,20 @@ namespace EdugameCloud.WCFService
         public LookupAllDTO GetAll()
         {
             return new LookupAllDTO
-                       {
-                           buildVersionTypes = this.GetBuildVersionTypes(),
-                           countries = this.GetCountries(),
-                           languages = this.GetLanguages(),
-                           mapProviders = this.GetMapProviders(),
-                           questionTypes = this.GetQuestionTypes(),
-                           quizFormats = this.GetQuizFormats(),
-                           scoreTypes = this.GetScoreTypes(),
-                           services = this.GetServices(),
-                           states = this.GetStates(),
-                           surveyGroupingTypes = this.GetSurveyGroupingTypes(),
-                           timeZones = this.GetTimeZones(),
-                           userRoles = this.GetUserRoles(),
-                       };
+            {
+                buildVersionTypes = this.GetBuildVersionTypes(),
+                countries = this.GetCountries(),
+                languages = this.GetLanguages(),
+                mapProviders = this.GetMapProviders(),
+                questionTypes = this.GetQuestionTypes(),
+                quizFormats = this.GetQuizFormats(),
+                scoreTypes = this.GetScoreTypes(),
+                services = this.GetServices(),
+                states = this.GetStates(),
+                surveyGroupingTypes = this.GetSurveyGroupingTypes(),
+                timeZones = this.GetTimeZones(),
+                userRoles = this.GetUserRoles(),
+            };
         }
 
         /// <summary>
@@ -526,63 +442,7 @@ namespace EdugameCloud.WCFService
         {
             return this.SurveyGroupingTypeModel.GetAll().Select(x => new SurveyGroupingTypeDTO(x)).ToArray();
         }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="countryDTO">
-        /// The country DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GeoCountryDTO"/>.
-        /// </returns>
-        public GeoCountryDTO SaveCountry(GeoCountryDTO countryDTO)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(countryDTO, out validationResult))
-            {
-                var countryModel = this.CountryModel;
-                var country = countryModel.GetOneById(countryDTO.countryId).Value;
-                country = this.ConvertDto(countryDTO, country);
-                countryModel.RegisterSave(country);
-                this.UpdateCache<LookupService>(x => x.GetCountries());
-                this.UpdateCache<LookupService>(x => x.GetAll());
-                return new GeoCountryDTO(country);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Lookup.SaveCountry", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
-        /// <summary>
-        /// The save update.
-        /// </summary>
-        /// <param name="stateDTO">
-        /// The state DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GeoStateDTO"/>.
-        /// </returns>
-        public GeoStateDTO SaveState(GeoStateDTO stateDTO)
-        {
-            ValidationResult validationResult;
-            if (this.IsValid(stateDTO, out validationResult))
-            {
-                var stateModel = this.StateModel;
-                var state = stateModel.GetOneById(stateDTO.stateId).Value;
-                state = this.ConvertDto(stateDTO, state);
-                stateModel.RegisterSave(state);
-                this.UpdateCache<LookupService>(x => x.GetStates());
-                this.UpdateCache<LookupService>(x => x.GetAll());
-                return new GeoStateDTO(state);
-            }
-
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("Lookup.SaveState", error);
-            throw new FaultException<Error>(error, error.errorMessage);
-        }
-
+        
         /// <summary>
         /// The convert DTO.
         /// </summary>

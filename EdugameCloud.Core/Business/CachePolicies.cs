@@ -25,9 +25,54 @@ namespace EdugameCloud.Core.Business
                 return "Countries";
             }
 
+            public static string States()
+            {
+                return "States";
+            }
+            
             public static string Languages()
             {
                 return "Languages";
+            }
+
+            public static string TimeZones()
+            {
+                return "TimeZones";
+            }
+
+            public static string ScoreTypes()
+            {
+                return "ScoreTypes";
+            }
+
+            public static string UserRoles()
+            {
+                return "UserRoles";
+            }
+
+            public static string QuizFormats()
+            {
+                return "QuizFormats";
+            }
+
+            public static string QuestionTypes()
+            {
+                return "QuestionTypes";
+            }
+
+            public static string SurveyGroupingTypes()
+            {
+                return "SurveyGroupingTypes";
+            }
+
+            public static string SNServices()
+            {
+                return "SNServices";
+            }
+
+            public static string SNMapProviders()
+            {
+                return "SNMapProviders";
             }
             
             public static string PasswordPolicies(string apiUrl)

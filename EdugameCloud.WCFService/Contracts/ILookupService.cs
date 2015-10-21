@@ -6,32 +6,17 @@
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Domain.Entities;
-
-    /// <summary>
-    ///     The Company Service interface.
-    /// </summary>
+    
     [ServiceContract]
     public interface ILookupService
     {
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The get languages.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="LookupAllDTO"/>.
-        /// </returns>
+        
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetAll", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         LookupAllDTO GetAll();
-
-        /// <summary>
-        /// The get languages.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EGCVersionsDTO"/>.
-        /// </returns>
+        
         [OperationContract]
         [FaultContract(typeof(Error))]
         [WebGet(UriTemplate = "GetVersionInfo", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
@@ -255,37 +240,9 @@
         //[FaultContract(typeof(Error))]
         //[WebGet(UriTemplate = "GetTweets?name={name}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         //TwitterStatusDTO[] GetTweets(string name);
-
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="countryDTO">
-        /// The country DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GeoCountryDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebInvoke(UriTemplate = "SaveCountry", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare)]
-        GeoCountryDTO SaveCountry(GeoCountryDTO countryDTO);
-
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="stateDTO">
-        /// The state DTO.
-        /// </param>
-        /// <returns>
-        /// The <see cref="GeoStateDTO"/>.
-        /// </returns>
-        [OperationContract]
-        [FaultContract(typeof(Error))]
-        [WebInvoke(UriTemplate = "SaveState", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Bare)]
-        GeoStateDTO SaveState(GeoStateDTO stateDTO);
-
+        
         #endregion
+
     }
+
 }

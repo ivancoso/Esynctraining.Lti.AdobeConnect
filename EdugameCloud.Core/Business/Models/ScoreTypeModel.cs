@@ -1,28 +1,36 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
-    ///     The ScoreType model.
+    /// The ScoreType model.
     /// </summary>
-    public class ScoreTypeModel : BaseModel<ScoreType, int>
+    public sealed class ScoreTypeModel : BaseModel<ScoreType, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ScoreTypeModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public ScoreTypeModel(IRepository<ScoreType, int> repository)
+
+        public ScoreTypeModel(IRepository<ScoreType, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
-        #endregion
+        public override IEnumerable<ScoreType> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<ScoreType>>(_cache, CachePolicies.Keys.ScoreTypes(), () =>
+            {
+                var query = new DefaultQueryOver<ScoreType, int>().GetQueryOver().OrderBy(x => x.ScoreTypeName).Asc;
+                return this.Repository.FindAll(query);
+            });
+        }
+
     }
+
 }

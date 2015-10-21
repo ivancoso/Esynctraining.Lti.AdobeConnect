@@ -463,26 +463,22 @@ namespace EdugameCloud.MVC.Controllers
                 var filePath = Path.Combine(storagePath, exportSubPath, fileName);
                 if (!System.IO.File.Exists(filePath))
                 {
+                    logger.WarnFormat("ExportQuestions error. File doesn't exist. Path: {0}.", filePath);
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                 }
-
-                var isSuccess = true;
-                var dataArray = new byte[0];
+                
+                byte[] dataArray;
                 try
                 {
                     dataArray = System.IO.File.ReadAllBytes(filePath);
                     System.IO.File.Delete(filePath);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    isSuccess = false;
-                }
-
-                if (!isSuccess)
-                {
+                    logger.WarnFormat(ex, "ExportQuestions error. File Path: {0}.", filePath);
                     return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
                 }
-
+                
                 return new FileContentResult(dataArray, MediaTypeNames.Text.Xml);
             }
 
@@ -517,25 +513,19 @@ namespace EdugameCloud.MVC.Controllers
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.NotFound);
                 }
-
-                var isSuccess = true;
-
+                
                 var dataArray = model.XmlToImport;
                 var filePath = Path.Combine(storagePath, importSubPath, fileName);
                 try
                 {
                     System.IO.File.WriteAllText(filePath, dataArray);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    isSuccess = false;
-                }
-
-                if (!isSuccess)
-                {
+                    logger.WarnFormat(ex, "import-questions-from-xml error. File Path: {0}.", filePath);
                     return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
                 }
-
+                
                 return new ContentResultWithStatusCode(HttpStatusCode.OK) { Content = id };
             }
 
@@ -567,7 +557,6 @@ namespace EdugameCloud.MVC.Controllers
             if (Request.Files.Any())
             {
                 var filePath = Path.Combine(storagePath, importSubPath, fileName);
-                var isSuccess = false;
                 try
                 {
                     foreach (string file in Request.Files)
@@ -582,20 +571,15 @@ namespace EdugameCloud.MVC.Controllers
                             }
 
                             hpf.SaveAs(filePath);
-                            isSuccess = true;
                             break;
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                   isSuccess = false;
-                }
-
-                if (!isSuccess)
-                {
+                    logger.WarnFormat(ex, "import-questions error. File Path: {0}.", filePath);
                     return new HttpStatusCodeResult(HttpStatusCode.InternalServerError);
-                }
+                }                
             }
             
             return new ContentResultWithStatusCode(HttpStatusCode.OK) { Content = id };

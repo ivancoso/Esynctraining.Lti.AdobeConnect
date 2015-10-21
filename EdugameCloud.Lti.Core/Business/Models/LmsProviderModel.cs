@@ -31,25 +31,23 @@
         // TRICK: uses cache!
         public LmsProvider GetByName(string name)
         {
-            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
-            {
-                var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
-                return Repository.FindAll(queryOver).ToList();
-            });
-
-            return all.SingleOrDefault(x => x.ShortName.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return GetAll().SingleOrDefault(x => x.ShortName.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
         // TRICK: uses cache!
         public LmsProvider GetById(int lmsProviderId)
         {
-            var all = CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
+            return GetAll().SingleOrDefault(x => x.Id == lmsProviderId);
+        }
+
+        // TRICK: uses cache!
+        public override IEnumerable<LmsProvider> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
             {
                 var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
                 return Repository.FindAll(queryOver).ToList();
             });
-
-            return all.SingleOrDefault(x => x.Id == lmsProviderId);
         }
 
     }

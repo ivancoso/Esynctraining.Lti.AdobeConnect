@@ -150,6 +150,7 @@
         /// <returns>
         /// The <see cref="PagedQuestionTypeDTO"/>.
         /// </returns>
+        // TODO: do we use it??
         public PagedQuestionTypeDTO GetPaged(int pageIndex, int pageSize)
         {
             int totalCount;

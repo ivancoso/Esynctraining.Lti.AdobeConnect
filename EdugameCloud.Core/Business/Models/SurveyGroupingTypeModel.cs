@@ -1,28 +1,37 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
-    ///     The SurveyGroupingType model.
+    /// The SurveyGroupingType model.
     /// </summary>
     public class SurveyGroupingTypeModel : BaseModel<SurveyGroupingType, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SurveyGroupingTypeModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public SurveyGroupingTypeModel(IRepository<SurveyGroupingType, int> repository)
+
+        public SurveyGroupingTypeModel(IRepository<SurveyGroupingType, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
-        #endregion
+
+        public override IEnumerable<SurveyGroupingType> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<SurveyGroupingType>>(_cache, CachePolicies.Keys.SurveyGroupingTypes(), () =>
+            {
+                var query = new DefaultQueryOver<SurveyGroupingType, int>().GetQueryOver().OrderBy(x => x.SurveyGroupingTypeName).Asc;
+                return this.Repository.FindAll(query);
+            });
+        }
+
     }
+
 }

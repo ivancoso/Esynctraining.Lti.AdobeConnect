@@ -1,28 +1,37 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System.Collections.Generic;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
+    using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
-    ///     The TimeZone model.
+    /// The TimeZone model.
     /// </summary>
-    public class TimeZoneModel : BaseModel<TimeZone, int>
+    public sealed class TimeZoneModel : BaseModel<TimeZone, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
+        
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TimeZoneModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public TimeZoneModel(IRepository<TimeZone, int> repository)
+        public TimeZoneModel(IRepository<TimeZone, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
-        #endregion
+
+        public override IEnumerable<TimeZone> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<TimeZone>>(_cache, CachePolicies.Keys.TimeZones(), () =>
+            {
+                var query = new DefaultQueryOver<TimeZone, int>().GetQueryOver().OrderBy(x => x.TimeZoneName).Asc;
+                return this.Repository.FindAll(query);
+            });
+        }
+
     }
+
 }

@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Persistence
 {
     using System.Runtime.Remoting.Contexts;
-
+    using System.Web;
     using NHibernate;
 
     /// <summary>
@@ -11,10 +11,7 @@
     public sealed class NHibernateSessionWebSource : NHibernateSessionSource
     {
         #region Static Fields
-
-        /// <summary>
-        ///     The locking object.
-        /// </summary>
+        
         private static readonly object lockObj = new object();
 
         #endregion
@@ -30,52 +27,49 @@
         public NHibernateSessionWebSource(ISessionFactory sessionFactory)
             : base(sessionFactory)
         {
-           //this.Session.BeginTransaction();
+           this.Session.BeginTransaction();
         }
 
         #endregion
 
         #region Public Methods and Operators
+        
+        public override void Dispose()
+        {
+            if (this.Session != null)
+            {
+                try
+                {
+                    ITransaction transaction = this.Session.Transaction;
+                    if (transaction.IsActive)
+                    {
+                        using (transaction)
+                        {
+                            if (HttpContext.Current.Server.GetLastError() == null)
+                            {
+                                transaction.Commit();
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    lock (lockObj)
+                    {
+                        if (this.Session != null)
+                        {
+                            this.Session.Dispose();
 
-        /// <summary>
-        ///     The dispose.
-        /// </summary>
-        //public override void Dispose()
-        //{
-        //    if (this.Session != null)
-        //    {
-        //        try
-        //        {
-        //            ITransaction transaction = this.Session.Transaction;
-        //            if (transaction.IsActive)
-        //            {
-        //                using (transaction)
-        //                {
-        //                    if (HttpContext.Current.Server.GetLastError() == null)
-        //                    {
-        //                        transaction.Commit();
-        //                    }
-        //                    else
-        //                    {
-        //                        transaction.Rollback();
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        finally
-        //        {
-        //            lock (lockObj)
-        //            {
-        //                if (this.Session != null)
-        //                {
-        //                    this.Session.Dispose();
-
-        //                    // Local.Data[NHibernateHashtableKey] = null;
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+                            // Local.Data[NHibernateHashtableKey] = null;
+                        }
+                    }
+                }
+            }
+        }
 
         #endregion
     }

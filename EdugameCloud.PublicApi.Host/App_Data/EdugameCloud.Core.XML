@@ -901,16 +901,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SurveyGroupingTypeModel">
             <summary>
-                The SurveyGroupingType model.
+            The SurveyGroupingType model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SurveyGroupingTypeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyGroupingType,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SurveyGroupingTypeModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SurveyModel">
             <summary>
@@ -1242,16 +1234,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNMapProviderModel">
             <summary>
-                The SN Map provider model.
+            The SN Map provider model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNMapProviderModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNMapProvider,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNMapProviderModel"/> class.
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNMemberModel">
             <summary>
@@ -1290,16 +1274,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNServiceModel">
             <summary>
-                The SN Service model.
+            The SN Service model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNServiceModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNService,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNServiceModel"/> class.
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNProfileSNServiceModel">
             <summary>
@@ -1755,22 +1731,6 @@
                 The QuestionType model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionTypeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionType,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionTypeModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionTypeModel.GetAllActive">
-            <summary>
-            The get all active.
-            </summary>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.QuestionTypeModel.GetAllPaged(System.Int32,System.Int32,System.Int32@)">
             <summary>
             The get all paged.
@@ -1915,29 +1875,13 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.ScoreTypeModel">
             <summary>
-                The ScoreType model.
+            The ScoreType model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.ScoreTypeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.ScoreType,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.ScoreTypeModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuizFormatModel">
             <summary>
-                The QuizFormat model.
+            The QuizFormat model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizFormatModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuizFormat,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizFormatModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuizModel">
             <summary>
@@ -2374,35 +2318,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.CountryModel">
             <summary>
-                The country model.
+            The country model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CountryModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Country,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.CountryModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CountryModel.GetOneByName(System.String)">
-            <summary>
-            The get one by name.
-            </summary>
-            <param name="country">
-            The country.
-            </param>
-            <returns>
-            The <see cref="T:NHibernate.IFutureValue`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CountryModel.GetAll">
-            <summary>
-            The get all.
-            </summary>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.RealTimeNotificationModel">
             <summary>
@@ -2419,7 +2336,7 @@
                 The settings.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.RealTimeNotificationModel.#ctor(Castle.Core.Logging.ILogger,Esynctraining.Core.Providers.ApplicationSettingsProvider)">
+        <member name="M:EdugameCloud.Core.Business.Models.RealTimeNotificationModel.#ctor(Esynctraining.Core.Logging.ILogger,Esynctraining.Core.Providers.ApplicationSettingsProvider)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.RealTimeNotificationModel"/> class.
             </summary>
@@ -2493,53 +2410,15 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.StateModel">
             <summary>
-                The state model.
+            The state model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.StateModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.State,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.StateModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.StateModel.GetOneByName(System.String)">
-            <summary>
-            The get one by name.
-            </summary>
-            <param name="stateName">
-            The state Name.
-            </param>
-            <returns>
-            The <see cref="T:NHibernate.IFutureValue`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.StateModel.GetAll">
-            <summary>
-            The get all.
-            </summary>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.StateModel.GetOneByCode(System.String)">
-            <summary>
-            The get one by name.
-            </summary>
-            <param name="stateCode">
-            The state Code.
-            </param>
-            <returns>
-            The <see cref="T:NHibernate.IFutureValue`1"/>.
-            </returns>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.LanguageModel">
             <summary>
-                The language model.
+            The language model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.LanguageModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Language,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.LanguageModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Language,System.Int32},Esynctraining.Core.Caching.ICache)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.LanguageModel"/> class. 
             </summary>
@@ -2549,16 +2428,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.TimeZoneModel">
             <summary>
-                The TimeZone model.
+            The TimeZone model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.TimeZoneModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.TimeZone,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.TimeZoneModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.UserActivationModel">
             <summary>
@@ -2676,35 +2547,8 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.UserRoleModel">
             <summary>
-                The user role model.
+            The user role model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserRoleModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.UserRole,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.UserRoleModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserRoleModel.GetAllByName(System.String)">
-            <summary>
-            The get all by name.
-            </summary>
-            <param name="name">
-            The name.
-            </param>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserRoleModel.GetAllNames">
-            <summary>
-            The get all names.
-            </summary>
-            <returns>
-            The <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
-            </returns>
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.FileModel">
             <summary>
@@ -2716,7 +2560,7 @@
                 Initializes static members of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel" /> class.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.File,System.Guid},Esynctraining.Core.Providers.ApplicationSettingsProvider,Castle.Core.Logging.ILogger)">
+        <member name="M:EdugameCloud.Core.Business.Models.FileModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.File,System.Guid},Esynctraining.Core.Providers.ApplicationSettingsProvider,Esynctraining.Core.Logging.ILogger)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel"/> class.
             </summary>
@@ -3094,7 +2938,7 @@
             The state model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.VCFModel.#ctor(Castle.Core.Logging.ILogger,EdugameCloud.Core.Business.Models.CountryModel,EdugameCloud.Core.Business.Models.StateModel)">
+        <member name="M:EdugameCloud.Core.Business.Models.VCFModel.#ctor(Esynctraining.Core.Logging.ILogger,EdugameCloud.Core.Business.Models.CountryModel,EdugameCloud.Core.Business.Models.StateModel)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.VCFModel"/> class.
             </summary>

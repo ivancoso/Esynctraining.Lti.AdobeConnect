@@ -1,44 +1,45 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Business;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.Caching;
 
     /// <summary>
     ///     The QuestionType model.
     /// </summary>
     public class QuestionTypeModel : BaseModel<QuestionType, int>
     {
-        #region Constructors and Destructors
+        private readonly ICache _cache;
+        
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="QuestionTypeModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        public QuestionTypeModel(IRepository<QuestionType, int> repository)
+
+        public QuestionTypeModel(IRepository<QuestionType, int> repository, ICache cache)
             : base(repository)
         {
+            _cache = cache;
         }
 
-        #endregion
 
-        /// <summary>
-        /// The get all active.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="IEnumerable{QuestionType}"/>.
-        /// </returns>
         public IEnumerable<QuestionType> GetAllActive()
         {
-            var query = new DefaultQueryOver<QuestionType, int>().GetQueryOver().Where(x => x.IsActive == true);
-            return this.Repository.FindAll(query);
+            return GetAll().Where(x => x.IsActive == true);
         }
+
+        public override IEnumerable<QuestionType> GetAll()
+        {
+            return CacheUtility.GetCachedItem<IEnumerable<QuestionType>>(_cache, CachePolicies.Keys.QuestionTypes(), () =>
+            {
+                var query = new DefaultQueryOver<QuestionType, int>().GetQueryOver().OrderBy(x => x.Type).Asc;
+                return this.Repository.FindAll(query);
+            });
+        }
+
 
         /// <summary>
         /// The get all paged.

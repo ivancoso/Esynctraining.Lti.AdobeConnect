@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.Controllers
@@ -48,13 +47,20 @@ namespace EdugameCloud.Lti.Controllers
                 var result = new List<MeetingItem>();
                 MeetingItemCollectionResult foundByNameMeetings = provider.ReportMeetingsByName(searchTerm);
 
-                foreach (var meeting in foundByNameMeetings.Values)
+                if (IsCurrentUserAcAdministrator(provider, session.LmsUser.PrincipalId))
                 {
-                    PermissionCollectionResult prm = provider.GetScoPermissions(meeting.ScoId, session.LmsUser.PrincipalId);// CommandParams.Permissions.Filter.PermissionId.Host);
-                    if ((prm.Status.Code == StatusCodes.ok) 
-                        && (prm.Values.First().PermissionId == PermissionId.host))
+                    result.AddRange(foundByNameMeetings.Values);
+                }
+                else
+                {
+                    foreach (var meeting in foundByNameMeetings.Values)
                     {
-                        result.Add(meeting);
+                        PermissionCollectionResult prm = provider.GetScoPermissions(meeting.ScoId, session.LmsUser.PrincipalId);// CommandParams.Permissions.Filter.PermissionId.Host);
+                        if ((prm.Status.Code == StatusCodes.ok)
+                            && (prm.Values.First().PermissionId == PermissionId.host))
+                        {
+                            result.Add(meeting);
+                        }
                     }
                 }
 
@@ -65,6 +71,25 @@ namespace EdugameCloud.Lti.Controllers
                 string errorMessage = GetOutputErrorMessage("AcMeetingController.SearchExistingMeeting", ex);
                 return Json(OperationResult.Error(errorMessage));
             }
+        }
+
+        private bool IsCurrentUserAcAdministrator(IAdobeConnectProxy ac, string principalId)
+        {
+            var grp = ac.GetPrimaryGroupsByType("admins");
+            if (grp.Item1.Code != StatusCodes.ok)
+            {
+                return false;
+            }
+
+            string groupPrincipalId = grp.Item2.First().PrincipalId;
+
+            PrincipalCollectionResult principalInfo = ac.GetGroupPrincipalUsers(groupPrincipalId, principalId);
+            if (!principalInfo.Success)
+            {
+                return false;
+            }
+
+            return principalInfo.Values.Any() && principalInfo.Values.All(x => x.PrincipalId == principalId);
         }
 
     }
