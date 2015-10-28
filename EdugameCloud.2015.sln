@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.SocialSubscrip
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{2C718C51-FA6E-47DF-8260-E1F085B3BC48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.BuildManager", "EdugameCloud.BuildManager\EdugameCloud.BuildManager.csproj", "{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,10 +165,6 @@ Global
 		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C718C51-FA6E-47DF-8260-E1F085B3BC48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +174,5 @@ Global
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{E67157CC-59DF-4E1E-ADE9-F4CD2272FD7A} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{9D4D4840-9409-4B91-B994-9D17FE970AAD} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 	EndGlobalSection
 EndGlobal
