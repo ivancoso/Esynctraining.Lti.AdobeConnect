@@ -696,7 +696,6 @@
     <Content Include="Content\swf\playerProductInstall.swf" />
     <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="crossdomain.xml" />
-    <Content Include="extjs\app.js" />
     <Content Include="Global.asax" />
     <Content Include="Mail\Attachments\svn.ignore" />
     <Content Include="Content\swf\config\paths.properties" />
@@ -786,6 +785,7 @@
     <Content Include="Views\Lti\LtiError.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="extjs\" />
     <Folder Include="Mail\Models\" />
   </ItemGroup>
   <ItemGroup>
