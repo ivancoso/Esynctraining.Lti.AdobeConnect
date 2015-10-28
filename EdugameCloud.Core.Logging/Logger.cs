@@ -63,8 +63,6 @@ namespace EdugameCloud.Core.Logging
         public void Error(string message, Exception exception)
         {
             _castleLogger.Error(message, exception);
-
-            NewRelic.Api.Agent.NewRelic.NoticeError(exception);
         }
 
         public void ErrorFormat(string format, params object[] args)
