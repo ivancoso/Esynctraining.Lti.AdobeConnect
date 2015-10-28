@@ -48,16 +48,7 @@
         static FileModel()
         {
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FileModel"/> class.
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
+        
         public FileModel(IRepository<File, Guid> repository, ApplicationSettingsProvider settings, ILogger logger)
             : base(repository)
         {

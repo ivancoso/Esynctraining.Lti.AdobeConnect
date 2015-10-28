@@ -288,16 +288,7 @@
                         }));
             return x.ToString(true);
         }
-
-        /// <summary>
-        /// The convert to VCF.
-        /// </summary>
-        /// <param name="xml">
-        /// The XML.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public byte[] ConvertToVCF(string xml, out string fileName, out string exception)
         {
             fileName = null;

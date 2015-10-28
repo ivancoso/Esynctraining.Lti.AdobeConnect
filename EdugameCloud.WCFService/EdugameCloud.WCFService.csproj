@@ -62,11 +62,9 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DotAmf">
-      <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.dll</HintPath>
-    </Reference>
-    <Reference Include="DotAmf.Wcf">
-      <HintPath>..\packages\DotAmf.Wcf.1.0.0.11\lib\net40\DotAmf.Wcf.dll</HintPath>
+    <Reference Include="DotAmf.Wcf, Version=1.0.0.12, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.0.12\lib\net45\DotAmf.Wcf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.29, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.29\lib\net45\Esynctraining.AC.Provider.dll</HintPath>

@@ -42,19 +42,7 @@ namespace EdugameCloud.Core.Business.Models
 		#endregion
 
 		#region Constructors and Destructors
-
-		/// <summary>
-	    /// Initializes a new instance of the <see cref="SurveyModel"/> class. 
-	    /// </summary>
-	    /// <param name="fileModel">
-	    /// The file Model.
-	    /// </param>
-	    /// <param name="userRepository">
-	    /// The user repository.
-	    /// </param>
-	    /// <param name="repository">
-	    /// The repository.
-	    /// </param>
+        
 		[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1027:TabsMustNotBeUsed", Justification = "Reviewed. Suppression is OK here.")]
 		public SurveyModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Survey, int> repository)
             : base(repository)

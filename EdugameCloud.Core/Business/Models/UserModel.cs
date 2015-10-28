@@ -64,25 +64,7 @@
         #endregion
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserModel"/> class.
-        /// </summary>
-        /// <param name="userRoleModel">
-        /// The user Role Model.
-        /// </param>
-        /// <param name="languageModel">
-        /// The language Model.
-        /// </param>
-        /// <param name="timeZoneModel">
-        /// The time Zone Model.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
+        
         public UserModel(
             UserRoleModel userRoleModel, 
             LanguageModel languageModel, 

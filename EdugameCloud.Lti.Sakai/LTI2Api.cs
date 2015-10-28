@@ -38,7 +38,7 @@
 
         #endregion
 
-        protected readonly ILogger _logger;
+        private readonly ILogger _logger;
 
 
         public LTI2Api(ILogger logger)

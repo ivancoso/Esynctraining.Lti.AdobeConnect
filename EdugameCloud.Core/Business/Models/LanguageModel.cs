@@ -16,13 +16,7 @@
         private readonly ICache _cache;
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LanguageModel"/> class. 
-        /// </summary>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
+        
         public LanguageModel(IRepository<Language, int> repository, ICache cache)
             : base(repository)
         {

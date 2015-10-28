@@ -27,22 +27,7 @@
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The convert.
-        /// </summary>
-        /// <param name="dto">
-        /// The dto.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <param name="flushUpdates">
-        /// The flush updates.
-        /// </param>
-        /// <returns>
-        /// The <see cref="T2"/>.
-        /// </returns>
+        
         public abstract T2 Convert(T dto, T2 instance, bool flushUpdates = false);
 
         #endregion

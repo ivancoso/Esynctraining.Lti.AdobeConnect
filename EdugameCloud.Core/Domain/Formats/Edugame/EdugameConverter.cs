@@ -104,12 +104,7 @@
 
             return result;
         }
-
-        /// <summary>
-        /// Converts question to DTO.
-        /// </summary>
-        /// <param name="value">The question.</param>
-        /// <returns>Question DTO.</returns>
+        
         public static Question Convert(EdugameQuestion value, IEnumerable<QuestionType> questionTypes)
         {
             if (value == null)

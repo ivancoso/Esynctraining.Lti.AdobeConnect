@@ -33,16 +33,7 @@ namespace EdugameCloud.Core.Business.Models
         private readonly IRepository<Question, int> questionRepository;
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestResultModel"/> class. 
-        /// </summary>
-        /// <param name="distractorRepository">
-        /// The distractor Repository.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
+        
         public TestResultModel(IRepository<Distractor, int> distractorRepository, IRepository<Test, int> testRepository, IRepository<Question, int> questionRepository, IRepository<TestResult, int> repository)
             : base(repository)
         {

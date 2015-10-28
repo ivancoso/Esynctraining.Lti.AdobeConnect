@@ -41,16 +41,7 @@ namespace EdugameCloud.Core.Business.Models
 		#endregion
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TestModel"/> class.
-        /// </summary>
-        /// <param name="fileModel">
-        /// The file Model.
-        /// </param>
-        /// <param name="repository">
-        /// The repository.
-        /// </param>
+        
 		public TestModel(FileModel fileModel, DistractorModel distractorModel, IRepository<User, int> userRepository, IRepository<Test, int> repository)
             : base(repository)
         {
