@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core", "Edugam
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Persistence", "EdugameCloud.Persistence\EdugameCloud.Persistence.csproj", "{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EdugameCloud.DB", "EdugameCloud.DB\EdugameCloud.DB.sqlproj", "{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Web", "EdugameCloud.Web\EdugameCloud.Web.csproj", "{B149C2F2-4E11-4667-A83F-59D6D00401E4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1758C513-FDF1-47FA-842F-9C332DA85C17} = {1758C513-FDF1-47FA-842F-9C332DA85C17}
@@ -85,12 +83,6 @@ Global
 		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B149C2F2-4E11-4667-A83F-59D6D00401E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
