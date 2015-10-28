@@ -1311,7 +1311,7 @@ namespace EdugameCloud.MVC.Controllers
                         catch (Exception ex)
                         {
                             IoC.Resolve<ILogger>().Error("EnsureServicePathConfigExists. Error during config writing.", ex);
-                            throw;
+                            throw new InvalidOperationException("An error occurred, please try again later.");
                         }
                     }
                 }

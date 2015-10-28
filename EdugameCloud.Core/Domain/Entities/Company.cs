@@ -4,10 +4,9 @@
     using System.Collections.Generic;
     using System.Linq;
     using Esynctraining.Core.Domain.Entities;
-    using Iesi.Collections.Generic;
 
     /// <summary>
-    ///     The company.
+    /// The company.
     /// </summary>
     public class Company : Entity
     {
@@ -18,9 +17,6 @@
         /// </summary>
         public virtual Address Address { get; set; }
 
-        /// <summary>
-        /// Gets or sets the address.
-        /// </summary>
         public virtual CompanyTheme Theme { get; set; }
 
         /// <summary>
@@ -43,9 +39,6 @@
         /// </summary>
         public virtual User PrimaryContact { get; set; }
 
-        /// <summary>
-        /// Gets or sets the age of a user.
-        /// </summary>
         public virtual CompanyLicense CurrentLicense
         {
             get
@@ -58,9 +51,6 @@
             }
         }
 
-        /// <summary>
-        /// Gets or sets the age of a user.
-        /// </summary>
         public virtual CompanyLicense FutureActiveLicense
         {
             get

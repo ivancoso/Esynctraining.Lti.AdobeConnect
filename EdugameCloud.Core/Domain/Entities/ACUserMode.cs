@@ -3,7 +3,7 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     AC User Mode
+    /// AC User Mode
     /// </summary>
     public class ACUserMode : Entity
     {

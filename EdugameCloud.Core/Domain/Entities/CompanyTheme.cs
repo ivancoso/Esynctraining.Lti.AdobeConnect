@@ -2,9 +2,6 @@
 {
     using Esynctraining.Core.Domain.Entities;
 
-    /// <summary>
-    ///     The sub module item theme.
-    /// </summary>
     public class CompanyTheme : EntityGuid
     {
         #region Public Properties

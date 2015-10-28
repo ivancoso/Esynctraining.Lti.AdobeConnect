@@ -18,6 +18,8 @@
         /// <summary>
         /// The deleted.
         /// </summary>
-        Deleted = 2
+        Deleted = 2,
+
     }
+
 }

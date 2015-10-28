@@ -81,7 +81,11 @@
             }
 
             FormCollection form = new FormCollection(request.Unvalidated().Form);
-
+            if (form == null)
+            {
+                logger.Warn("[BltiProviderHelper] form == null");
+                return false;
+            }
             if (form["oauth_nonce"] == null)
             {
                 logger.Warn("[BltiProviderHelper] form[oauth_nonce] == null");

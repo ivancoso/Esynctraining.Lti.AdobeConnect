@@ -1521,12 +1521,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (lmsCourseMeeting == null)
                 throw new ArgumentNullException("lmsCourseMeeting");
-
-            IEnumerable<PermissionInfo> permission = null;
+            
             var psw = Stopwatch.StartNew();
 
             bool meetingExistsInAC;
-            permission = provider.GetMeetingPermissions(lmsCourseMeeting.GetMeetingScoId(),
+            IEnumerable<PermissionInfo> permission = provider.GetMeetingPermissions(lmsCourseMeeting.GetMeetingScoId(),
                 new List<string> { "public-access", lmsUser.PrincipalId }, 
                 out meetingExistsInAC).Values;
             
