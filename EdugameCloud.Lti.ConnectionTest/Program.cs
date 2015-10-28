@@ -14,12 +14,17 @@ namespace EdugameCloud.Lti.ConnectionTest
         private const string OkMessage = "Connected successfully";
 
         private static TestConnectionService _testConnectionService;
-
+        private static LmsProviderModel _lmsProviderModel;
 
         private static TestConnectionService TestConnectionService
         {
             get { return _testConnectionService; }
         }
+        private static LmsProviderModel LmsProviderModel
+        {
+            get { return _lmsProviderModel; }
+        }
+
 
 
         static void Main(string[] args)
@@ -27,6 +32,7 @@ namespace EdugameCloud.Lti.ConnectionTest
             IoCStart.Init();
 
             _testConnectionService = IoC.Resolve<TestConnectionService>();
+            _lmsProviderModel = IoC.Resolve<LmsProviderModel>();
             ILogger logger = IoC.Resolve<ILogger>();
             try
             {
@@ -38,7 +44,8 @@ namespace EdugameCloud.Lti.ConnectionTest
                 {
                     try
                     {
-                        var dto = new CompanyLmsDTO(lmsCompany);
+                        LmsProvider lmsProvider = LmsProviderModel.GetById(lmsCompany.LmsProviderId);
+                        var dto = new CompanyLmsDTO(lmsCompany, lmsProvider);
                         Test(lmsCompany, dto);
                         lmsCompanyModel.RegisterSave(lmsCompany);
                     }
@@ -67,12 +74,12 @@ namespace EdugameCloud.Lti.ConnectionTest
             string lmsPassword = resultDto.lmsAdminPassword;
             if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
             {
-                if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Moodle)
-                || ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
+                if ((entity.LmsProviderId == (int)LmsProviderEnum.Moodle)
+                || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
                 {
                     lmsPassword = entity.AdminUser.Password;
                 }
-                else if ((entity.LmsProvider.Id == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
+                else if ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && resultDto.enableProxyToolMode)
                 {
                     lmsPassword = resultDto.proxyToolPassword;
                 }

@@ -10005,11 +10005,6 @@
             The enterprise.
             </summary>
         </member>
-        <member name="T:EdugameCloud.Core.Domain.Entities.CompanyTheme">
-            <summary>
-                The sub module item theme.
-            </summary>
-        </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.CompanyTheme.ButtonColor">
             <summary>
             Gets or sets the button color.
@@ -11008,15 +11003,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Company">
             <summary>
-                The company.
+            The company.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.Address">
-            <summary>
-            Gets or sets the address.
-            </summary>
-        </member>
-        <member name="P:EdugameCloud.Core.Domain.Entities.Company.Theme">
             <summary>
             Gets or sets the address.
             </summary>
@@ -11041,16 +11031,6 @@
             Gets or sets the primary contact.
             </summary>
         </member>
-        <member name="P:EdugameCloud.Core.Domain.Entities.Company.CurrentLicense">
-            <summary>
-            Gets or sets the age of a user.
-            </summary>
-        </member>
-        <member name="P:EdugameCloud.Core.Domain.Entities.Company.FutureActiveLicense">
-            <summary>
-            Gets or sets the age of a user.
-            </summary>
-        </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Company.Users">
             <summary>
             Gets or sets the users.
@@ -11068,7 +11048,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.ACUserMode">
             <summary>
-                AC User Mode
+            AC User Mode
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.ACUserMode.Image">
