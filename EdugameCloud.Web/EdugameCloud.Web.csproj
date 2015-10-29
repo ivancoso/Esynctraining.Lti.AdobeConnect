@@ -785,7 +785,6 @@
     <Content Include="Views\Lti\LtiError.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="extjs\" />
     <Folder Include="Mail\Models\" />
   </ItemGroup>
   <ItemGroup>
