@@ -205,6 +205,9 @@
         ServiceResponse RotatePage(Guid fileId, int pageIndex, int rotation);
 
         [OperationContract]
+        ServiceResponse AddNewPage(Guid fileId);
+
+        [OperationContract]
         ServiceResponse ClearUnsavedMarks(Guid fileId);
         #endregion
     }

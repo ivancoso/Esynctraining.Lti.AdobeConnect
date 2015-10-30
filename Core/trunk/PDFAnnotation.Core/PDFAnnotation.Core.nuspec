@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PDFAnnotation.Core</id>
-    <version>1.0.1.14</version>
+    <version>1.0.1.22</version>
     <title>PDFAnnotation.Core</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -10,7 +10,7 @@
     <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Provides core functionality for pdf annotations projects</description>
-    <copyright>Copyright © 2013-2014 eSyncTraining.com</copyright>
+    <copyright>Copyright © 2013-2015 eSyncTraining.com</copyright>
     <tags>pdf annotation</tags>
     <releaseNotes>Provides core functionality for pdf annotations projects</releaseNotes>
     <dependencies>

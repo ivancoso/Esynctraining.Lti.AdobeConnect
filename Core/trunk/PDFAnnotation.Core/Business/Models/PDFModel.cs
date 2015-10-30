@@ -193,6 +193,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         {
             try
             {
+                var shapesList = shapes.ToList();
                 var pageRotations = rotations.ToList();
                 if (pageRotations.Any())
                 {
@@ -215,6 +216,24 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                     }
                 }
 
+                var pageRules = shapesList.FirstOrDefault(x => x.Mark != null && x.Mark.Type == EntityTypes.PageRules);
+
+                if (pageRules != null)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        var reader = new PdfReader(buffer);
+                        using (var stamper = new PdfStamper(reader, ms))
+                        {
+                            this.ProcessRules(pageRules, stamper, reader);
+                            shapesList.Remove(pageRules);
+                            stamper.Close();
+                        }
+                        ms.Flush();
+                        buffer = ms.ToArray();
+                    }
+                }
+
                 using (var ms = new MemoryStream())
                 {
                     var reader = new PdfReader(buffer);
@@ -222,7 +241,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                     {
                         this.ProcessDrawings(drawings, stamper, reader);
                         this.ProcessHighlights(highlights, stamper, reader);
-                        this.ProcessShapes(shapes, stamper, reader);
+                        this.ProcessShapes(shapesList, stamper, reader);
                         textItems.ToList().ForEach(item => this.ProcessText(item, stamper, reader));
                         stamper.Close();
                     }
@@ -340,6 +359,8 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
             {
                 switch (dr.Mark.Type)
                 {
+                    case EntityTypes.PageRules:
+                        continue;
                     case EntityTypes.Confidential:
                     case EntityTypes.ConfidentialAttorney:
                     case EntityTypes.HighlyConfidential:
@@ -801,6 +822,77 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
             cb.RestoreState();
         }
 
+        public byte[] AddNewPage(byte[] buffer)
+        {
+            using (var ms = new MemoryStream())
+            {
+                var reader = new PdfReader(buffer);
+                PdfWriter writer = null;
+                Document document = new Document();
+                try
+                {
+                    //Step 2: we create a writer that listens to the document
+                    writer = PdfWriter.GetInstance(document, ms);
+
+
+                    //Step 3: Open the document
+                    document.Open();
+
+                    PdfContentByte cb = writer.DirectContent;
+
+                    for (int pageNumber = 1; pageNumber < reader.NumberOfPages + 1; pageNumber++)
+                    {
+                        document.SetPageSize(reader.GetPageSizeWithRotation(1));
+                        document.NewPage();
+
+                        //Insert to Destination on the first page
+                        if (pageNumber == 1)
+                        {
+                            Chunk fileRef = new Chunk(" ");
+                            document.Add(fileRef);
+                        }
+
+                        PdfImportedPage page = writer.GetImportedPage(reader, pageNumber);
+                        int rotation = reader.GetPageRotation(pageNumber);
+                        if (rotation == 90 || rotation == 270)
+                        {
+                            cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pageNumber).Height);
+                        }
+                        else
+                        {
+                            cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
+                        }
+                    }
+
+                    // Add a new page to the pdf file
+                    document.NewPage();
+                    Paragraph paragraph = new Paragraph();
+                    Chunk titleChunk = new Chunk(" ");
+                    paragraph.Add(titleChunk);
+                    document.Add(paragraph);
+                }
+                finally
+                {
+                    document.Close();
+                }
+
+                ms.Flush();
+                buffer = ms.ToArray();
+
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+
+                if (writer != null)
+                {
+                    writer.Close();
+                }
+            }
+
+            return buffer;
+        }
+
         /// <summary>
         /// The process ellipse.
         /// </summary>
@@ -835,10 +927,69 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         {
             var pageHeight = pdfReader.GetPageSizeWithRotation(dr.Mark.PageIndex).Height;
 
-            Action<PdfContentByte, ATShape> drawAction =
-                (cb, s) => cb.Rectangle(s.PositionX, pageHeight - (s.PositionY + s.Height), s.Width, s.Height);
+            Action<PdfContentByte, ATShape> drawAction = (cb, s) => cb.Rectangle(s.PositionX, pageHeight - (s.PositionY + s.Height), s.Width, s.Height);
 
             this.ProcessShape(dr, drawAction, stamper);
+        }
+
+        /// <summary>
+        /// The process rectangle.
+        /// </summary>
+        /// <param name="dr">
+        /// The dr.
+        /// </param>
+        /// <param name="stamper">
+        /// The stamper.
+        /// </param>
+        /// <param name="pdfReader">The reader</param>
+        private void ProcessRules(ATShape dr, PdfStamper stamper, PdfReader pdfReader)
+        {
+            for (int i = 1; i <= pdfReader.NumberOfPages; i++)
+            {
+                var page = pdfReader.GetPageSizeWithRotation(i);
+                var pageWidth = page.Width;
+                var pageHeight = page.Height;
+                var columnsCount = Math.Max(1, (int)dr.Width);
+                int rowsCount = 0;
+                var cellWidth = pageWidth / columnsCount;
+                var cellHeight = 0f;
+
+                if (dr.Style == "1") // square cells
+                {
+                    cellHeight = cellWidth;
+                    rowsCount = (int)Math.Floor(pageHeight / cellHeight) + 1;
+                }
+                else
+                {
+                    rowsCount = Math.Max(1, (int)dr.Height);
+                    cellHeight = pageHeight / rowsCount;
+                }
+
+                var cb = stamper.GetOverContent(i);
+                var bc = GetColor(dr.Color);
+
+                cb.SaveState();
+
+                for (int column = 1; column < columnsCount; column++)
+                {
+                    cb.SetColorStroke(bc);
+                    cb.SetLineWidth(dr.StrokeWidth);
+                    cb.MoveTo(column * cellWidth, pageHeight);
+                    cb.LineTo(column * cellWidth, 0);
+                    cb.ClosePathStroke();
+                }
+
+                for (int row = 1; row < rowsCount; row++)
+                {
+                    cb.SetColorStroke(bc);
+                    cb.SetLineWidth(dr.StrokeWidth);
+                    cb.MoveTo(0, row * cellHeight);
+                    cb.LineTo(pageWidth, row * cellHeight);
+                    cb.ClosePathStroke();
+                }
+
+                cb.RestoreState();
+            }
         }
 
         /// <summary>

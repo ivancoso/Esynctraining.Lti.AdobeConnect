@@ -92,6 +92,11 @@
         public const string ArrowBoth = "arrowboth";
 
         /// <summary>
+        /// The arrow to both.
+        /// </summary>
+        public const string Arrow = "arrow";
+
+        /// <summary>
         /// The arrow to right.
         /// </summary>
         public const string ArrowRight = "arrowright";
@@ -120,6 +125,11 @@
         /// The stamp.
         /// </summary>
         public const string Stamp = "stamp";
+
+        /// <summary>
+        /// Page rules (grid in WTS)
+        /// </summary>
+        public const string PageRules = "pageRules";
 
         #endregion
 

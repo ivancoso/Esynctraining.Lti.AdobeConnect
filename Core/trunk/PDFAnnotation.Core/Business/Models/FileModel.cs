@@ -1889,7 +1889,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// The file name.
         /// </param>
         // ReSharper disable once UnusedMember.Local
-        private void RemoveFileAllFileTypeSafely(string fileName)
+        public void RemoveFileAllFileTypeSafely(string fileName)
         {
             try
             {
@@ -1921,7 +1921,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// <param name="fileName">
         /// The file name.
         /// </param>
-        private void RemoveFileSafely(string fileName)
+        public void RemoveFileSafely(string fileName)
         {
             try
             {

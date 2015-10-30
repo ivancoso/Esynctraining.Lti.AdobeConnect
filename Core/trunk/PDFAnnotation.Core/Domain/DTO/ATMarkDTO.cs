@@ -1,4 +1,6 @@
-﻿namespace PDFAnnotation.Core.Domain.DTO
+﻿using Weborb.Data.Management;
+
+namespace PDFAnnotation.Core.Domain.DTO
 {
     using System;
     using System.Runtime.Serialization;
@@ -47,38 +49,38 @@
         /// <param name="drawing">
         /// The ATDrawing.
         /// </param>
-        public ATMarkDTO(ATDrawing atDrawing) : this(atDrawing.Mark)
+        public ATMarkDTO(ATDrawing drawing) : this(drawing.Mark)
         {
-            this.color = atDrawing.Color;
-            this.points = atDrawing.Points;
+            this.color = drawing.Color;
+            this.points = drawing.Points;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
         /// </summary>
-        /// <param name="note">
-        /// The note.
+        /// <param name="shape">
+        /// The shape.
         /// </param>
-        public ATMarkDTO(ATShape note) : this(note.Mark)
+        public ATMarkDTO(ATShape shape) : this(shape.Mark)
         {
-            this.color = note.Color;
-            this.positionX = note.PositionX;
-            this.positionY = note.PositionY;
-            this.width = note.Width;
-            this.height = note.Height;
-            this.points = note.Points;
-            this.fillColor = note.FillColor;
-            this.fillOpacity = note.FillOpacity;
-            this.strokeOpacity = note.StrokeOpacity;
-            this.strokeWidth = note.StrokeWidth;
+            this.color = shape.Color;
+            this.positionX = shape.PositionX;
+            this.positionY = shape.PositionY;
+            this.width = shape.Width;
+            this.height = shape.Height;
+            this.points = shape.Points;
+            this.fillColor = shape.FillColor;
+            this.fillOpacity = shape.FillOpacity;
+            this.strokeOpacity = shape.StrokeOpacity;
+            this.strokeWidth = shape.StrokeWidth;
 
-            this.labelText = note.LabelText;
-            this.labelTextColor = note.LabelTextColor;
-            this.numberingTextColor = note.NumberingTextColor;
-            this.stampColor = note.StampColor;
-            this.style = note.Style;
+            this.labelText = shape.LabelText;
+            this.labelTextColor = shape.LabelTextColor;
+            this.numberingTextColor = shape.NumberingTextColor;
+            this.stampColor = shape.StampColor;
+            this.style = shape.Style;
 
-            this.text = note.Text;
+            this.text = shape.Text;
         }
 
         /// <summary>
@@ -96,6 +98,7 @@
             this.positionY = (float)item.PositionY;
             this.width = (float)item.Width;
             this.height = (float)item.Height;
+            this.fontSize = item.FontSize;
         }
 
         /// <summary>
