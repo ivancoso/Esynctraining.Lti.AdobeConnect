@@ -1,16 +1,8 @@
-USE [EduGameCloud.Dev]
-GO
-
-/****** Object:  StoredProcedure [dbo].[getTestSessionsByUserId]    Script Date: 16.Sep.15 5:33:12 PM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
-
-
-
 -- =============================================
 -- Author:		Eugene Baranovsky
 -- Create date: 10.10.2014

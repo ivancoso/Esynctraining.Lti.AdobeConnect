@@ -184,6 +184,13 @@
     <Build Include="dbo\Tables\LmsCourseMeetingGuest.sql" />
     <Build Include="dbo\Stored Procedures\getSurveyResultAnswers.sql" />
     <Build Include="dbo\Stored Procedures\deleteLmsCompanyWithDependencies.sql" />
+    <Build Include="dbo\Stored Procedures\getCrosswordSessionsByUserIdMeetingUrl.sql" />
+    <Build Include="dbo\Stored Procedures\getQuizSessionsByUserIdMeetingUrl.sql" />
+    <Build Include="dbo\Stored Procedures\getSurveySessionsByUserIdMeetingUrl.sql" />
+    <Build Include="dbo\Stored Procedures\getTestSessionsByUserIdMeetingUrl.sql" />
+    <Build Include="dbo\Stored Procedures\getQuizResultByACSessionIdAcEmail.sql" />
+    <Build Include="dbo\Stored Procedures\getSurveyResultByACSessionIdAcEmail.sql" />
+    <Build Include="dbo\Stored Procedures\getTestResultByACSessionIdAcEmail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
