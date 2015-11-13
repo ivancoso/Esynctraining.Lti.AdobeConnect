@@ -113,6 +113,44 @@
             return res;
         }
 
+        public QuizResultDataDTO GetQuizResultByACSessionIdAcEmail(int adobeConnectSessionId, int smiId, string acEmail)
+        {
+            var res = new QuizResultDataDTO();
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getQuizQuestionsForAdminBySMIId",
+                new StoreProcedureParam<int>("smiId", smiId),
+                new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+            res.players =
+                this.Repository.StoreProcedureForMany<QuizPlayerFromStoredProcedureDTO>(
+                    "getQuizResultByACSessionIdAcEmail",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId),
+                    new StoreProcedureParam<string>("acEmail", acEmail))
+                    .ToList()
+                    .Select(x => new QuizPlayerDTO(x))
+                    .ToArray();
+
+            Array.ForEach(res.questions, q => q.question = Regex.Replace(q.question ?? string.Empty, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "));
+
+            var questionIds = res.questions.Select(q => q.questionId).ToList();
+
+            var distractorsQuery =
+                new DefaultQueryOver<Distractor, int>().GetQueryOver()
+                    .WhereRestrictionOn(x => x.Question.Id)
+                    .IsIn(questionIds);
+
+            var distractors = this.distractorRepository.FindAll(distractorsQuery).ToList();
+
+            foreach (var questionForAdminDTO in res.questions)
+            {
+                questionForAdminDTO.distractors = distractors
+                    .Where(x => x.Question.Id == questionForAdminDTO.questionId)
+                    .Select(x => new DistractorDTO(x))
+                    .ToArray();
+            }
+
+            return res;
+        }
+
         /// <summary>
         /// The get quiz results by quiz ids.
         /// </summary>

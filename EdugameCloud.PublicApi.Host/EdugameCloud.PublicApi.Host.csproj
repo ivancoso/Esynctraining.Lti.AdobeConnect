@@ -202,6 +202,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\EdugameCloud.Core.XML" />
+    <Content Include="App_Data\EdugameCloud.PublicApi.XML" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>

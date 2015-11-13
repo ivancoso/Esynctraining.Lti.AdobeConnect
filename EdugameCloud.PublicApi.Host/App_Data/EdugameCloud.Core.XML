@@ -73,14 +73,6 @@
             The repository.
             </param>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CompanyModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Company,System.Int32},Esynctraining.Core.Caching.ICache)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.CompanyModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.CompanyModel.GetOneByPrimaryContact(System.Int32)">
             <summary>
             The get all by users.
@@ -285,7 +277,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.AppletItemModel">
             <summary>
-                The AppletItem model.
+            The AppletItem model.
             </summary>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.AppletItemModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.AppletItem,System.Int32})">
@@ -711,17 +703,6 @@
             The distractor repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.TestResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Test,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Question,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.TestResult,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.TestResultModel"/> class. 
-            </summary>
-            <param name="distractorRepository">
-            The distractor Repository.
-            </param>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.TestResultModel.GetOneByACSessionIdAndEmail(System.Int32,System.String)">
             <summary>
             The get one by ac session id and email.
@@ -769,17 +750,6 @@
             <summary>
             The distractor model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.TestModel.#ctor(EdugameCloud.Core.Business.Models.FileModel,EdugameCloud.Core.Business.Models.DistractorModel,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Test,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.TestModel"/> class.
-            </summary>
-            <param name="fileModel">
-            The file Model.
-            </param>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.TestModel.GetAllPaged(System.Int32,System.Int32,System.Int32@)">
             <summary>
@@ -923,20 +893,6 @@
             <summary>
             The distractor model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SurveyModel.#ctor(EdugameCloud.Core.Business.Models.FileModel,EdugameCloud.Core.Business.Models.DistractorModel,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Survey,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SurveyModel"/> class. 
-            </summary>
-            <param name="fileModel">
-            The file Model.
-            </param>
-            <param name="userRepository">
-            The user repository.
-            </param>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.SurveyModel.GetAllPaged(System.Int32,System.Int32,System.Int32@)">
             <summary>
@@ -1112,14 +1068,6 @@
             <summary>
             The answer repository.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SurveyResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResult,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResultAnswer,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyResult,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SurveyResultModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.SurveyResultModel.GetOneByACSessionIdAndEmail(System.Int32,System.String)">
             <summary>
@@ -2418,14 +2366,6 @@
             The language model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.LanguageModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Language,System.Int32},Esynctraining.Core.Caching.ICache)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.LanguageModel"/> class. 
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-        </member>
         <member name="T:EdugameCloud.Core.Business.Models.TimeZoneModel">
             <summary>
             The TimeZone model.
@@ -2559,17 +2499,6 @@
             <summary>
                 Initializes static members of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel" /> class.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.FileModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.File,System.Guid},Esynctraining.Core.Providers.ApplicationSettingsProvider,Esynctraining.Core.Logging.ILogger)">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.FileModel"/> class.
-            </summary>
-            <param name="repository">
-            The repository.
-            </param>
-            <param name="settings">
-            The settings.
-            </param>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.FileModel.TryParseImage(System.Byte[],System.Drawing.Image@)">
             <summary>
@@ -2721,26 +2650,6 @@
             <summary>
             The user role model.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserModel.#ctor(EdugameCloud.Core.Business.Models.UserRoleModel,EdugameCloud.Core.Business.Models.LanguageModel,EdugameCloud.Core.Business.Models.TimeZoneModel,EdugameCloud.Core.Business.Models.FileModel,Esynctraining.Core.Providers.ApplicationSettingsProvider,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32})">
-            <summary>
-            Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.UserModel"/> class.
-            </summary>
-            <param name="userRoleModel">
-            The user Role Model.
-            </param>
-            <param name="languageModel">
-            The language Model.
-            </param>
-            <param name="timeZoneModel">
-            The time Zone Model.
-            </param>
-            <param name="settings">
-            The settings.
-            </param>
-            <param name="repository">
-            The repository.
-            </param>
         </member>
         <member name="M:EdugameCloud.Core.Business.Models.UserModel.GetAll">
             <summary>
@@ -2963,17 +2872,6 @@
             The <see cref="T:System.String"/>.
             </returns>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.VCFModel.ConvertToVCF(System.String,System.String@,System.String@)">
-            <summary>
-            The convert to VCF.
-            </summary>
-            <param name="xml">
-            The XML.
-            </param>
-            <returns>
-            The <see cref="T:System.String"/>.
-            </returns>
-        </member>
         <member name="M:EdugameCloud.Core.Business.Models.VCFModel.CheckSocial(System.String)">
             <summary>
             The check social.
@@ -3022,23 +2920,6 @@
             <summary>
                 Initializes a new instance of the <see cref="T:EdugameCloud.Core.Converters.BaseConverter`2" /> class.
             </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Converters.BaseConverter`2.Convert(`0,`1,System.Boolean)">
-            <summary>
-            The convert.
-            </summary>
-            <param name="dto">
-            The dto.
-            </param>
-            <param name="instance">
-            The instance.
-            </param>
-            <param name="flushUpdates">
-            The flush updates.
-            </param>
-            <returns>
-            The <see cref="!:T2"/>.
-            </returns>
         </member>
         <member name="T:EdugameCloud.Core.Converters.BaseConverter">
             <summary>
@@ -12844,13 +12725,6 @@
             <param name="getImageFunc">Function that retrieves image content as base64 string.</param>
             <param name="getImageNameFunc">Function that retrieves image name.</param>
             <returns>The distractor.</returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Domain.Formats.Edugame.EdugameConverter.Convert(EdugameCloud.Core.Domain.Formats.Edugame.EdugameQuestion,System.Collections.Generic.IEnumerable{EdugameCloud.Core.Domain.Entities.QuestionType})">
-            <summary>
-            Converts question to DTO.
-            </summary>
-            <param name="value">The question.</param>
-            <returns>Question DTO.</returns>
         </member>
         <member name="M:EdugameCloud.Core.Domain.Formats.Edugame.EdugameConverter.Convert(EdugameCloud.Core.Domain.Formats.Edugame.EdugameDistractor,EdugameCloud.Core.Domain.Entities.Question)">
             <summary>

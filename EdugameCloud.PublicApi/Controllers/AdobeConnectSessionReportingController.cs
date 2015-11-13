@@ -68,6 +68,14 @@ namespace EdugameCloud.PublicApi.Controllers
             return AppletItemModel.GetCrosswordSessionsByUserId(userId).Select(x => new CrosswordSessionDTO(x));
         }
 
+        //[HttpGet]
+        //[Route("crosswordsessions/by-meeting")]
+        //public IEnumerable<CrosswordSessionDTO> GetCrosswordSessionsByUserId(string meetingUrl)
+        //{
+        //    var userId = int.Parse(User.Identity.GetUserId());
+        //    return AppletItemModel.GetCrosswordSessionsByUserIdMeetingUrl(userId, meetingUrl).Select(x => new CrosswordSessionDTO(x));
+        //}
+
         [HttpGet]
         [Route("crosswordsessions/{acSessionId:int:min(1)}")]
         public IEnumerable<CrosswordResultByAcSessionDTO> GetCrosswordResultByACSessionId(int acSessionId)
@@ -88,12 +96,27 @@ namespace EdugameCloud.PublicApi.Controllers
         }
 
         [HttpGet]
+        [Route("quizsessions/by-meeting")]
+        public IEnumerable<QuizSessionDTO> GetQuizSessionsByMeetingUrl(string meetingUrl)
+        {
+            var userId = int.Parse(User.Identity.GetUserId());
+            return ACSessionModel.GetQuizSessionsByUserIdMeetingUrl(userId, meetingUrl).Select(x => new QuizSessionDTO(x));
+        }
+
+        [HttpGet]
         [Route("quizsessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}")]
         public QuizResultDataDTO GetQuizResultByACSessionId(int acSessionId, int subModuleItemId)
         {
             return QuizResultModel.GetQuizResultByACSessionId(acSessionId, subModuleItemId);
         }
 
+        [HttpGet]
+        [Route("quizsessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}/{adobeConnectEmail}")]
+        public QuizResultDataDTO GetQuizResultByACSessionIdAcEmail(int acSessionId, int subModuleItemId, string adobeConnectEmail)
+        {
+            return QuizResultModel.GetQuizResultByACSessionIdAcEmail(acSessionId, subModuleItemId, adobeConnectEmail);
+        }
+        
         [HttpGet]
         [Route("snsessions")]
         public IEnumerable<SNSessionDTO> GetSNSessionsByUserId()
@@ -130,10 +153,25 @@ namespace EdugameCloud.PublicApi.Controllers
         }
 
         [HttpGet]
+        [Route("surveysessions/by-meeting")]
+        public IEnumerable<SurveySessionDTO> GetSurveySessionsByMeetingUrl(string meetingUrl)
+        {
+            var userId = int.Parse(User.Identity.GetUserId());
+            return ACSessionModel.GetSurveySessionsByUserIdMeetingUrl(userId, meetingUrl).Select(x => new SurveySessionDTO(x));
+        }
+
+        [HttpGet]
         [Route("surveysessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}")]
         public SurveyResultDataDTO GetSurveyResultByACSessionId(int acSessionId, int subModuleItemId)
         {
-            return this.SurveyResultModel.GetSurveyResultByACSessionId(acSessionId, subModuleItemId);
+            return SurveyResultModel.GetSurveyResultByACSessionId(acSessionId, subModuleItemId);
+        }
+
+        [HttpGet]
+        [Route("surveysessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}/{adobeConnectEmail}")]
+        public SurveyResultDataDTO GetSurveyResultByACSessionIdAcEmail(int acSessionId, int subModuleItemId, string adobeConnectEmail)
+        {
+            return SurveyResultModel.GetSurveyResultByACSessionIdAcEmail(acSessionId, subModuleItemId, adobeConnectEmail);
         }
 
 
@@ -150,12 +188,27 @@ namespace EdugameCloud.PublicApi.Controllers
         }
 
         [HttpGet]
+        [Route("testsessions/by-meeting")]
+        public IEnumerable<TestSessionDTO> GetTestSessionsByMeetingUrl(string meetingUrl)
+        {
+            var userId = int.Parse(User.Identity.GetUserId());
+            return ACSessionModel.GetTestSessionsByUserIdMeetingUrl(userId, meetingUrl);
+        }
+
+        [HttpGet]
         [Route("testsessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}")]
         public TestResultDataDTO GetTestResultByACSessionId(int acSessionId, int subModuleItemId)
         {
-            return this.TestResultModel.GetTestResultByACSessionId(acSessionId, subModuleItemId);
+            return TestResultModel.GetTestResultByACSessionId(acSessionId, subModuleItemId);
         }
-        
+
+        [HttpGet]
+        [Route("testsessions/{acSessionId:int:min(1)}/{subModuleItemId:int:min(1)}/{adobeConnectEmail}")]
+        public TestResultDataDTO GetTestResultByACSessionIdAcEmail(int acSessionId, int subModuleItemId, string adobeConnectEmail)
+        {
+            return TestResultModel.GetTestResultByACSessionIdAcEmail(acSessionId, subModuleItemId, adobeConnectEmail);
+        }
+
     }
 
 }

@@ -17,7 +17,7 @@
     using NHibernate.Transform;
 
     /// <summary>
-    ///     The AppletItem model.
+    /// The AppletItem model.
     /// </summary>
     public class AppletItemModel : BaseModel<AppletItem, int>
     {
@@ -117,6 +117,14 @@
                 new StoreProcedureParam<int>("userId", userId));
         }
 
+        public IEnumerable<CrosswordSessionFromStoredProcedureDTO> GetCrosswordSessionsByUserIdMeetingUrl(int userId, string meetingUrl)
+        {
+            return this.Repository.StoreProcedureForMany<CrosswordSessionFromStoredProcedureDTO>(
+                "getCrosswordSessionsByUserIdMeetingUrl",
+                new StoreProcedureParam<int>("userId", userId),
+                new StoreProcedureParam<string>("meetingUrl", meetingUrl));
+        }
+        
         /// <summary>
         /// The get crosswords.
         /// </summary>

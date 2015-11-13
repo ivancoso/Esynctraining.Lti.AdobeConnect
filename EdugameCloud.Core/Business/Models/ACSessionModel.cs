@@ -166,6 +166,14 @@
                 new StoreProcedureParam<int>("userId", userId));
         }
 
+        public IEnumerable<QuizSessionFromStoredProcedureDTO> GetQuizSessionsByUserIdMeetingUrl(int userId, string meetingUrl)
+        {
+            return this.Repository.StoreProcedureForMany<QuizSessionFromStoredProcedureDTO>(
+                "getQuizSessionsByUserIdMeetingUrl",
+                new StoreProcedureParam<int>("userId", userId),
+                new StoreProcedureParam<string>("meetingUrl", meetingUrl));
+        }
+
         /// <summary>
         /// The get quiz sessions by user id.
         /// </summary>
@@ -183,6 +191,16 @@
                     new StoreProcedureParam<int>("userId", userId)).ToList().Select(x => new TestSessionDTO(x));
         }
 
+        public IEnumerable<TestSessionDTO> GetTestSessionsByUserIdMeetingUrl(int userId, string meetingUrl)
+        {
+            return
+                this.Repository.StoreProcedureForMany<TestSessionFromStoredProcedureDTO>(
+                    "getTestSessionsByUserIdMeetingUrl",
+                    new StoreProcedureParam<int>("userId", userId),
+                    new StoreProcedureParam<string>("meetingUrl", meetingUrl)
+                    ).ToList().Select(x => new TestSessionDTO(x));
+        }
+
         /// <summary>
         /// The get quiz sessions by user id.
         /// </summary>
@@ -196,6 +214,13 @@
         {
             return this.Repository.StoreProcedureForMany<SurveySessionFromStoredProcedureDTO>("getSurveySessionsByUserId",
                 new StoreProcedureParam<int>("userId", userId));
+        }
+
+        public IEnumerable<SurveySessionFromStoredProcedureDTO> GetSurveySessionsByUserIdMeetingUrl(int userId, string meetingUrl)
+        {
+            return this.Repository.StoreProcedureForMany<SurveySessionFromStoredProcedureDTO>("getSurveySessionsByUserIdMeetingUrl",
+                new StoreProcedureParam<int>("userId", userId),
+                new StoreProcedureParam<string>("meetingUrl", meetingUrl));
         }
 
         /// <summary>

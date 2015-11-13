@@ -127,5 +127,59 @@ namespace EdugameCloud.Core.Business.Models
 
             return res;
         }
+
+        public SurveyResultDataDTO GetSurveyResultByACSessionIdAcEmail(int adobeConnectSessionId, int smiId, string adobeConnectEmail)
+        {
+            var res = new SurveyResultDataDTO();
+
+            res.questions = this.Repository.StoreProcedureForMany<QuestionForAdminDTO>("getSurveyQuestionsForAdminBySMIId",
+                new StoreProcedureParam<int>("smiId", smiId),
+                new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId)).ToArray();
+
+            res.players =
+                this.Repository.StoreProcedureForMany<SurveyPlayerFromStoredProcedureDTO>(
+                    "getSurveyResultByACSessionIdAcEmail",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId),
+                    new StoreProcedureParam<string>("acEmail", adobeConnectEmail))
+                    .ToList()
+                    .Select(x => new SurveyPlayerDTO(x))
+                    .ToArray();
+            //saving the questions order
+            res.questions = res.questions.OrderBy(x => x.questionOrder).ToArray();
+            var questionIds = res.questions.Select(q => q.questionId).ToList();
+
+            var query = new DefaultQueryOver<SurveyQuestionResult, int>().GetQueryOver()
+                .WhereRestrictionOn(x => x.QuestionRef.Id).IsIn(questionIds)
+                .AndRestrictionOn(x => x.SurveyResult.Id).IsIn(res.players.Select(q => q.surveyResultId).ToList());
+
+            var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().WhereRestrictionOn(x => x.Question.Id).IsIn(questionIds);
+
+            var surveyQuestionResults = this.surveyQuestionResultRepository.FindAll(query).ToList();
+
+            var distractors = this.distractorRepository.FindAll(distractorsQuery).ToList();
+
+            var xmlSurveyResultIds = new XElement("Ids", surveyQuestionResults.Select(q => new XElement("Id", q.Id)));
+            var answersQuery = this.Repository.Session.GetNamedQuery("getSurveyResultAnswers");
+            answersQuery.SetParameter("surveyResultIds", xmlSurveyResultIds.ToString(), NHibernateUtil.StringClob);
+            answersQuery = answersQuery.SetResultTransformer(new AliasToBeanResultTransformer(typeof(SurveyQuestionResultAnswerDTO)));
+            var answers = answersQuery.List<SurveyQuestionResultAnswerDTO>();
+
+            foreach (var questionForAdminDTO in res.questions)
+            {
+                questionForAdminDTO.questionResultIds = surveyQuestionResults.Where(x => x.QuestionRef.Id == questionForAdminDTO.questionId).Select(x => x.Id).ToArray();
+                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
+            }
+
+            foreach (var surveyPlayerDTO in res.players)
+            {
+                var playerSurveyQuestionResultIds = surveyQuestionResults.Where(x => x.SurveyResult.Id == surveyPlayerDTO.surveyResultId).Select(x => x.Id).ToList();
+                surveyPlayerDTO.answers = answers.Where(x => playerSurveyQuestionResultIds.Contains(x.surveyQuestionResultId)).ToArray();
+            }
+
+            return res;
+        }
+
     }
+
 }

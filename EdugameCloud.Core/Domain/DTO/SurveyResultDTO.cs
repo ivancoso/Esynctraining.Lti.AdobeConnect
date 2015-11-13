@@ -30,17 +30,18 @@
         /// </param>
         public SurveyResultDTO(SurveyResult result)
         {
-            this.surveyResultId = result.Id;
-            this.acSessionId = result.ACSessionId;
-            this.surveyId = result.Survey.With(x => x.Id);
-            this.dateCreated = result.DateCreated.ConvertToUnixTimestamp();
-            this.endTime = result.EndTime.ConvertToUnixTimestamp();
-            this.participantName = result.ParticipantName;
-            this.score = result.Score;
-            this.startTime = result.StartTime.ConvertToUnixTimestamp();
-            this.isArchive = result.IsArchive ?? false;
-            this.email = result.Email;
-            this.lmsUserParametersId = result.LmsUserParametersId ?? 0;
+            surveyResultId = result.Id;
+            acSessionId = result.ACSessionId;
+            surveyId = result.Survey.With(x => x.Id);
+            dateCreated = result.DateCreated.ConvertToUnixTimestamp();
+            endTime = result.EndTime.ConvertToUnixTimestamp();
+            participantName = result.ParticipantName;
+            score = result.Score;
+            startTime = result.StartTime.ConvertToUnixTimestamp();
+            isArchive = result.IsArchive ?? false;
+            email = result.Email;
+            lmsUserParametersId = result.LmsUserParametersId ?? 0;
+            acEmail = result.ACEmail;
         }
 
         #endregion
@@ -118,6 +119,9 @@
         /// </summary>
         [DataMember]
         public int lmsUserParametersId { get; set; }
+
+        [DataMember]
+        public string acEmail { get; set; }
 
         #endregion
     }

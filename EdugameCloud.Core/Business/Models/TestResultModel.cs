@@ -156,5 +156,86 @@ namespace EdugameCloud.Core.Business.Models
 
             return res;
         }
+
+        public TestResultDataDTO GetTestResultByACSessionIdAcEmail(int adobeConnectSessionId, int smiId, string adobeConnectEmail)
+        {
+            var test = this.testRepository.FindOne(new DefaultQueryOver<Test, int>().GetQueryOver().Where(x => x.SubModuleItem.Id == smiId).Take(1)).Value;
+            var res = new TestResultDataDTO();
+            Question q = null;
+            SubModuleItem smi = null;
+            QuestionType qt = null;
+            QuestionForAdminDTO dto = null;
+            var queryOver = new DefaultQueryOver<Question, int>().GetQueryOver(() => q)
+                .JoinQueryOver(x => x.SubModuleItem, () => smi, JoinType.InnerJoin)
+                .JoinQueryOver(() => q.QuestionType, () => qt, JoinType.InnerJoin)
+                .Where(() => q.SubModuleItem.Id == smiId && q.IsActive == true)
+                .SelectList(result =>
+                    result.Select(() => q.Id)
+                        .WithAlias(() => dto.questionId)
+                        .Select(() => q.QuestionName)
+                        .WithAlias(() => dto.question)
+                        .Select(() => q.QuestionType.Id)
+                        .WithAlias(() => dto.questionTypeId)
+                        .Select(() => qt.Type)
+                        .WithAlias(() => dto.questionTypeName)
+                ).TransformUsing(Transformers.AliasToBean<QuestionForAdminDTO>());
+            var questionqs = questionRepository.FindAll<QuestionForAdminDTO>(queryOver).ToList();
+
+            TestResult tr = null;
+            TestQuestionResult tqr = null;
+            q = null;
+            var queryOver1 = new DefaultQueryOver<TestResult, int>().GetQueryOver(() => tr)
+                .JoinQueryOver(x => x.Results, () => tqr, JoinType.LeftOuterJoin)
+                .JoinQueryOver(() => tqr.QuestionRef, () => q, JoinType.LeftOuterJoin)
+                .Where(() => tr.ACSessionId == adobeConnectSessionId)
+                .SelectList(res1 =>
+                    res1.SelectGroup(() => q.Id)
+                        .WithAlias(() => dto.questionId)
+                        .Select(Projections.Sum(Projections.Cast(NHibernateUtil.Int32, Projections.Property(() => tqr.IsCorrect))))
+                        .WithAlias(() => dto.correctAnswerCount))
+                .TransformUsing(Transformers.AliasToBean<QuestionForAdminDTO>());
+            var questionqsWithCorrectAnswerCount = Repository.FindAll<QuestionForAdminDTO>(queryOver1).ToList();
+            questionqs.ForEach(x => x.correctAnswerCount = (questionqsWithCorrectAnswerCount.Any(t => t.questionId == x.questionId) ? questionqsWithCorrectAnswerCount.First(t => t.questionId == x.questionId).correctAnswerCount : 0));
+            res.questions = questionqs.ToArray();
+            res.players =
+                this.Repository.StoreProcedureForMany<TestPlayerFromStoredProcedureDTO>(
+                    "getTestResultByACSessionIdAcEmail",
+                    new StoreProcedureParam<int>("acSessionId", adobeConnectSessionId),
+                    new StoreProcedureParam<int>("subModuleItemId", smiId),
+                    new StoreProcedureParam<string>("acEmail", adobeConnectEmail))
+                    .ToList()
+                    .Select(x => new TestPlayerDTO(x))
+                    .ToArray();
+
+            if (res.players != null && res.players.Any())
+            {
+                foreach (var player in res.players)
+                {
+                    long duration = (player.endTime.ConvertFromUnixTimeStamp() - player.startTime.ConvertFromUnixTimeStamp()).Ticks;
+                    var passingScore = test.PassingScore.HasValue ? (res.questions.Length * (test.PassingScore.Value / 100)) : 0;
+                    bool scorePassed = !test.PassingScore.HasValue ? player.score > 0 : test.PassingScore == 0 || passingScore <= player.score;
+                    bool timePassed = !test.TimeLimit.HasValue || test.TimeLimit == 0 || test.TimeLimit > TimeSpan.FromTicks(duration).TotalMinutes;
+                    player.passingScore = passingScore;
+                    player.timeLimit = test.TimeLimit;
+                    player.scorePassed = scorePassed;
+                    player.timePassed = timePassed;
+                }
+            }
+
+            var questionIds = res.questions.Select(question => question.questionId).ToList();
+
+            var distractorsQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().WhereRestrictionOn(x => x.Question.Id).IsIn(questionIds);
+
+            var distractors = this.distractorRepository.FindAll(distractorsQuery).ToList();
+
+            foreach (var questionForAdminDTO in res.questions)
+            {
+                questionForAdminDTO.distractors = distractors.Where(x => x.Question.Id == questionForAdminDTO.questionId).Select(x => new DistractorDTO(x)).ToArray();
+            }
+
+            return res;
+        }
+
     }
+
 }

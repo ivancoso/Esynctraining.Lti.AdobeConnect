@@ -67,6 +67,8 @@
         /// </summary>
         public virtual int? LmsUserParametersId { get; set; }
 
+        public virtual string ACEmail { get; set; }
+
         #endregion
 
         public SurveyResult()
