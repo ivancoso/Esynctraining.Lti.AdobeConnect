@@ -22,6 +22,11 @@
 		<query-param name="userId" type="System.Int32"/>
 		exec getQuizSessionsByUserId @userId=:userId
 	</sql-query>
+  <sql-query name="getQuizSessionsByUserIdMeetingUrl">
+    <query-param name="userId" type="System.Int32"/>
+    <query-param name="meetingUrl" type="System.String"/>
+    exec getQuizSessionsByUserIdMeetingUrl @userId=:userId,  @meetingURL=:meetingUrl
+  </sql-query>
 	<sql-query name="getQuizQuestionsForAdminBySMIId">
 		<query-param name="smiId" type="System.Int32"/>
 		<query-param name="acSessionId" type="System.Int32"/>
@@ -32,4 +37,10 @@
 		<query-param name="subModuleItemId" type="System.Int32"/>
 		exec getQuizResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
 	</sql-query>
+  <sql-query name="getQuizResultByACSessionIdAcEmail">
+    <query-param name="acSessionId" type="System.Int32"/>
+    <query-param name="subModuleItemId" type="System.Int32"/>
+    <query-param name="acEmail" type="System.String"/>
+    exec getQuizResultByACSessionIdAcEmail @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId, @acEmail=:acEmail
+  </sql-query>
 </hibernate-mapping>

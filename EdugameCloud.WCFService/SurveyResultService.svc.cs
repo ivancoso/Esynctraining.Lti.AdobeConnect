@@ -36,10 +36,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private SurveyResultModel SurveyResultModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyResultModel>();
-            }
+            get { return IoC.Resolve<SurveyResultModel>(); }
         }
 
         /// <summary>
@@ -47,10 +44,7 @@ namespace EdugameCloud.WCFService
         /// </summary>
         private SurveyModel SurveyModel
         {
-            get
-            {
-                return IoC.Resolve<SurveyModel>();
-            }
+            get { return IoC.Resolve<SurveyModel>(); }
         }
 
         #endregion
@@ -233,9 +227,12 @@ namespace EdugameCloud.WCFService
             instance.Survey = this.SurveyModel.GetOneById(resultDTO.surveyId).Value;
             instance.ACSessionId = this.ACSessionModel.GetOneById(resultDTO.acSessionId).Value.With(x => x.Id);
             instance.LmsUserParametersId = resultDTO.lmsUserParametersId > 0 ? new int?(resultDTO.lmsUserParametersId) : null;
+            instance.ACEmail = resultDTO.acEmail.With(x => x.Trim());
             return instance;
         }
 
         #endregion
+
     }
+
 }

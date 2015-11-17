@@ -12,7 +12,11 @@
     <query-param name="userId" type="System.Int32"/>
     exec getCrosswordSessionsByUserId @userId=:userId
   </sql-query>
-  
+  <sql-query name="getCrosswordSessionsByUserIdMeetingUrl">
+    <query-param name="userId" type="System.Int32"/>
+    <query-param name="meetingUrl" type="System.String"/>
+    exec getCrosswordSessionsByUserIdMeetingUrl @userId=:userId,  @meetingURL=:meetingUrl
+  </sql-query>
   <sql-query name="getCrosswordResultByACSessionId">
     <query-param name="acSessionId" type="System.Int32"/>
     exec getCrosswordResultByACSessionId @acSessionId=:acSessionId

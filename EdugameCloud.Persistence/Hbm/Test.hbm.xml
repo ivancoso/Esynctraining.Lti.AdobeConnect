@@ -12,7 +12,12 @@
 		<query-param name="userId" type="System.Int32"/>
 		exec getTestSessionsByUserId @userId=:userId
 	</sql-query>
-	<sql-query name="getTestQuestionsForAdminBySMIId">
+  <sql-query name="getTestSessionsByUserIdMeetingUrl">
+    <query-param name="userId" type="System.Int32"/>
+    <query-param name="meetingUrl" type="System.String"/>
+    exec getTestSessionsByUserIdMeetingUrl @userId=:userId, @meetingURL=:meetingUrl
+  </sql-query>
+  <sql-query name="getTestQuestionsForAdminBySMIId">
 		<query-param name="smiId" type="System.Int32"/>
 		<query-param name="acSessionId" type="System.Int32"/>
 		exec getTestQuestionsForAdminBySMIId @subModuleItemId=:smiId, @acSessionId=:acSessionId
@@ -22,4 +27,10 @@
 		<query-param name="subModuleItemId" type="System.Int32"/>
 		exec getTestResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
 	</sql-query>
+  <sql-query name="getTestResultByACSessionIdAcEmail">
+    <query-param name="acSessionId" type="System.Int32"/>
+    <query-param name="subModuleItemId" type="System.Int32"/>
+    <query-param name="acEmail" type="System.String"/>
+    exec getTestResultByACSessionIdAcEmail @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId, @acEmail=:acEmail
+  </sql-query>
 </hibernate-mapping>

@@ -14,6 +14,11 @@
 		<query-param name="userId" type="System.Int32"/>
 		exec getSurveySessionsByUserId @userId=:userId
 	</sql-query>
+  <sql-query name="getSurveySessionsByUserIdMeetingUrl">
+    <query-param name="userId" type="System.Int32"/>
+    <query-param name="meetingUrl" type="System.Int32"/>
+    exec getSurveySessionsByUserIdMeetingUrl @userId=:userId, @meetingURL=:meetingUrl
+  </sql-query>
 	<sql-query name="getSurveyQuestionsForAdminBySMIId">
 		<query-param name="smiId" type="System.Int32"/>
 		<query-param name="acSessionId" type="System.Int32"/>
@@ -24,6 +29,12 @@
 		<query-param name="subModuleItemId" type="System.Int32"/>
 		exec getSurveyResultByACSessionId @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId
 	</sql-query>
+  <sql-query name="getSurveyResultByACSessionIdAcEmail">
+    <query-param name="acSessionId" type="System.Int32"/>
+    <query-param name="subModuleItemId" type="System.Int32"/>
+    <query-param name="acEmail" type="System.String"/>
+    exec getSurveyResultByACSessionIdAcEmail @acSessionId=:acSessionId, @subModuleItemId=:subModuleItemId, @acEmail=:acEmail
+  </sql-query>
 	<sql-query name="getSurveyResultAnswers">
 		<query-param name="surveyResultIds" type="System.String"/>
 		exec getSurveyResultAnswers @surveyResultIds=:surveyResultIds
