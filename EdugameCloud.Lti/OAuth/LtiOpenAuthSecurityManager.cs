@@ -254,7 +254,11 @@
             // the public URL:
             if (serverVariables["HTTP_HOST"] != null)
             {
-                string scheme = serverVariables["HTTP_X_FORWARDED_PROTO"] ?? request.Url.Scheme;
+                var protoHeader = serverVariables["HTTP_X_FORWARDED_PROTO"];
+                bool isHttps = (protoHeader != null) && protoHeader.IndexOf("https", StringComparison.OrdinalIgnoreCase) != -1;
+
+                string scheme = protoHeader != null ? (isHttps ? "https" : "http") : request.Url.Scheme;
+                
                 var hostAndPort = new Uri(scheme + Uri.SchemeDelimiter + serverVariables["HTTP_HOST"]);
                 var publicRequestUri = new UriBuilder(request.Url);
                 publicRequestUri.Scheme = scheme;

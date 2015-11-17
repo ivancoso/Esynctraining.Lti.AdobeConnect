@@ -40,5 +40,7 @@
         public virtual bool IsActive { get; set; }
 
         #endregion
+
     }
+
 }

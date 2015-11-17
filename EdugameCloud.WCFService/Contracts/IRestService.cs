@@ -29,7 +29,7 @@
         string Activate(string activationCode);
 
         /// <summary>
-        /// The activate.
+        /// NOTE: used by esynctraining.com website!!
         /// </summary>
         /// <returns>
         /// The <see cref="CountryDTO"/>.
@@ -40,7 +40,7 @@
         CountryDTO[] GetCountries();
 
         /// <summary>
-        /// The activate.
+        /// NOTE: used by esynctraining.com website!!
         /// </summary>
         /// <returns>
         /// The <see cref="StateDTO"/>.
@@ -51,5 +51,7 @@
         StateDTO[] GetStates();
 
         #endregion
+
     }
+
 }

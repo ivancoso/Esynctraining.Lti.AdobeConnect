@@ -709,10 +709,10 @@
       <Link>Views\Lti\Error.cshtml</Link>
     </Content>
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolPassword.cshtml">
-      <Link>Views\Lti\ProxyToolPassword.cshtml</Link>
+      <Link>Views\LtiProxyTool\ProxyToolPassword.cshtml</Link>
     </Content>
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolRegistrationSucceeded.cshtml">
-      <Link>Views\Lti\ProxyToolRegistrationSucceeded.cshtml</Link>
+      <Link>Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml</Link>
     </Content>
     <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Redirect.cshtml">
       <Link>Views\Lti\Redirect.cshtml</Link>
@@ -750,7 +750,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\swfobject.js" />
-    <None Include="T4MVC.tt.settings.xml" />
+    <None Include="T4MVC.tt.settings.xml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -759,6 +761,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\_references.js" />
     <Content Include="Views\_ViewStart.cshtml" />
