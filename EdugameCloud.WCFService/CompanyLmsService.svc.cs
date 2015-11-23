@@ -274,6 +274,8 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingTime, dto.showTime);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingDuration, dto.showDuration);
 
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanRemoveRecordings, dto.canRemoveRecordings);
+            
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
             //D2L only options

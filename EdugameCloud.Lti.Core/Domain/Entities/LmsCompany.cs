@@ -418,6 +418,15 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        public virtual bool CanRemoveRecordings
+        {
+            get
+            {
+                return GetSetting<bool>(LmsCompanySettingNames.CanRemoveRecordings, true);
+            }
+        }
+
+
         #endregion
 
         public LmsCompany()
@@ -447,9 +456,17 @@ namespace EdugameCloud.Lti.Domain.Entities
 
         public virtual T GetSetting<T>(string settingName)
         {
-            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, true) == 0);
+            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
             return setting == null || string.IsNullOrWhiteSpace(setting.Value)
                 ? default(T)
+                : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
+        }
+
+        public virtual T GetSetting<T>(string settingName, T defaultValue)
+        {
+            LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, settingName, StringComparison.OrdinalIgnoreCase) == 0);
+            return setting == null || string.IsNullOrWhiteSpace(setting.Value)
+                ? defaultValue
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.DTO;
@@ -12,6 +11,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Caching;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect

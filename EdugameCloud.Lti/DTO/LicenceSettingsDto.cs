@@ -36,6 +36,8 @@ namespace EdugameCloud.Lti.DTO
         
         public bool ShowMeetingDuration { get; set; }
 
+        public bool CanRemoveRecordings { get; set; }
+
 
         public static LicenceSettingsDto Build(LmsCompany value, ICache cache)
         {
@@ -67,6 +69,8 @@ namespace EdugameCloud.Lti.DTO
                     ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
                     ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),
                     ShowMeetingDuration = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration),
+
+                    CanRemoveRecordings = value.CanRemoveRecordings,
                 };
             });            
         }

@@ -100,6 +100,8 @@ namespace EdugameCloud.Lti.DTO
             this.showSummary = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary);
             this.showTime = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime);
             this.showDuration = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration);
+
+            this.canRemoveRecordings = instance.CanRemoveRecordings;
         }
 
         /// <summary>
@@ -374,6 +376,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool showDuration { get; set; }
+
+        [DataMember]
+        public bool canRemoveRecordings { get; set; }
 
     }
 

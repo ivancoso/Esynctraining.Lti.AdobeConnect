@@ -166,6 +166,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public object GetMeetings(LmsCompany credentials, LmsUser lmsUser, IAdobeConnectProxy provider, LtiParamDTO param, StringBuilder trace)
         {
+            if (credentials == null)
+                throw new ArgumentNullException("credentials");
+            if (lmsUser == null)
+                throw new ArgumentNullException("lmsUser");
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+            if (param == null)
+                throw new ArgumentNullException("param");
+            if (trace == null)
+                throw new ArgumentNullException("trace");
+
             var ret = new List<MeetingDTO>();
             var t1 = Stopwatch.StartNew();          
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(credentials.Id, param.course_id);
@@ -312,15 +323,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
             IAdobeConnectProxy provider = adobeConnectProvider ?? AcAccountService.GetProvider(lmsCompany, true);
             var meetingUrl = string.Empty;
-
+            
             if (!string.IsNullOrEmpty(currentMeetingScoId))
             {
                 ScoContent currentMeetingSco = provider.GetScoContent(currentMeetingScoId).ScoContent;
                 if (currentMeetingSco != null)
                 {
-                    meetingUrl = (lmsCompany.AcServer.EndsWith("/")
-                        ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
-                        : lmsCompany.AcServer) + currentMeetingSco.UrlPath;
+                    meetingUrl = string.Concat(lmsCompany.AcServer.TrimEnd('/'), currentMeetingSco.UrlPath);
                 }
             }
 
@@ -390,9 +399,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             breezeSession = breezeToken ?? string.Empty;
-            return lmsCompany.LoginUsingCookie.GetValueOrDefault() 
-                ? meetingUrl 
-                : string.Format("{0}{1}", meetingUrl, breezeToken != null ? "?session=" + breezeToken : string.Empty);
+            bool isTeacher = this.UsersSetup.IsTeacher(param);
+            if (lmsCompany.LoginUsingCookie.GetValueOrDefault())
+            {
+                return string.Concat(
+                    meetingUrl,
+                    isTeacher ? "?lightning=true" : string.Empty);
+            }
+            else
+            {
+                return string.Concat(
+                    meetingUrl,
+                    isTeacher ? "?lightning=true&" : "?",
+                    "session=" + breezeToken);
+            }
         }
 
         public string ACLogin(LmsCompany lmsCompany, LtiParamDTO param, LmsUser lmsUser,
