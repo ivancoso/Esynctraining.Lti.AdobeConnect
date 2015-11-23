@@ -19,12 +19,24 @@ namespace EdugameCloud.PublicApi.Host
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             //RouteConfig.RegisterRoutes(RouteTable.Routes);
-            //BundleConfig.RegisterBundles(BundleTable.Bundles);            
+            //BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            MvcHandler.DisableMvcResponseHeader = true;
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
             IoC.Resolve<ILogger>().Error("Unhandled exception: ", this.Server.GetLastError());
+        }
+
+        // source : http://stackoverflow.com/questions/1178831/remove-server-response-header-iis7
+        protected void Application_PreSendRequestHeaders(object sender, EventArgs e)
+        {
+            // Remove the "Server" HTTP Header from response
+            if (null != Response)
+            {
+                Response.Headers.Remove("Server");
+            }
         }
 
     }

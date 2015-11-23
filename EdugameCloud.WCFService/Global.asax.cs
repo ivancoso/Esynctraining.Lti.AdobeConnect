@@ -42,6 +42,18 @@
             DIConfig.RegisterComponents(container);
         }
 
+        // source : http://stackoverflow.com/questions/1178831/remove-server-response-header-iis7
+        protected void Application_PreSendRequestHeaders(object sender, EventArgs e)
+        {
+            // Remove the "Server" HTTP Header from response
+            if (null != Response)
+            {
+                Response.Headers.Remove("Server");
+            }
+        }
+
         #endregion
+
     }
+
 }
