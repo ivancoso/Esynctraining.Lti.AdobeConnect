@@ -11,6 +11,8 @@ namespace Esynctraining.LogViewer.MvcWeb.Models
 
         public string SelectedLogDatabase { get; set; }
 
+        public int OutputRowCount { get; set; }
+
         [Required]
         [StringLength(100, MinimumLength = 3)]
         public string SearchTerm { get; set; }

@@ -16,6 +16,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
     public class Log4NetViewerController : Controller
     {
         private const string LogDatabaseCookieName = "ldbcn";
+        private const string LogTopCookieName = "ldbtop";
 
         private List<ConnectionStringSettings> _logDatabaseConnectionStrings;
 
@@ -80,6 +81,22 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             Response.Cookies.Add(cookie);
         }
 
+        protected void SetTopCookie(int topRecords)
+        {
+            if (topRecords <= 100)
+            {
+                topRecords = 100;
+            }
+
+            var cookie = new HttpCookie(LogTopCookieName, topRecords.ToString())
+            {
+                Expires = DateTime.Now.AddDays(30.0),
+                HttpOnly = true
+            };
+
+            Response.Cookies.Add(cookie);
+        }
+
         /// <summary>
         /// Attempts to retrieve the selected database connection string name from a cookie. If not found,
         /// or if not in Web.config, it returns the first connection string's name. (First means listed
@@ -103,16 +120,26 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             return connStrName;
         }
 
-        protected string GetAllSql()
+        protected int GetTopValue()
         {
-            string table = GetSelectedConnectionTableName();
-            return string.Format("SELECT TOP 100 * FROM {0} ORDER BY Id DESC", table);
+            int top = GetTopFromCookie();
+
+            if (top <= 100)
+                return 100;
+
+            return top;
         }
 
-        protected string GetSearchSql()
+        protected string GetAllSql(int top)
         {
             string table = GetSelectedConnectionTableName();
-            return string.Format("SELECT TOP 100 * FROM {0} WHERE message LIKE @searchTerm OR exception LIKE @searchTerm ORDER BY Id DESC", table);
+            return string.Format("SELECT TOP {1} * FROM {0} WHERE Level <> 'INFO' ORDER BY Id DESC", table, top.ToString());
+        }
+
+        protected string GetSearchSql(int top)
+        {
+            string table = GetSelectedConnectionTableName();
+            return string.Format("SELECT TOP {1} * FROM {0} WHERE Level <> 'INFO' AND message LIKE @searchTerm OR exception LIKE @searchTerm ORDER BY Id DESC", table, top.ToString());
         }
 
         protected string GetByIdSql()
@@ -155,6 +182,23 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             }
 
             return cookie.Value;
+        }
+
+        private int GetTopFromCookie()
+        {
+            var cookie = Request.Cookies[LogTopCookieName];
+
+            if (cookie == null)
+            {
+                return 100;
+            }
+
+            if (string.IsNullOrWhiteSpace(cookie.Value))
+            {
+                return 100;
+            }
+
+            return int.Parse(cookie.Value);
         }
 
         #endregion

@@ -9,11 +9,16 @@
         {
             @Html.AntiForgeryToken()
             <fieldset class="fieldset">
-                <legend>Change Log Source</legend>
+                <legend>Log Source</legend>
                 <div class="form-group">
+                    @Html.LabelFor(m => m.SelectedLogDatabase, "DB")
                     @Html.DropDownListFor(m => m.SelectedLogDatabase, Model.LogDatabases, new { @class = "form-control" })
-                    <button id="btn-change-database" class="btn btn-primary">Change</button>
                 </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.OutputRowCount, "Row Count")
+                    @Html.TextBoxFor(m => m.OutputRowCount, new { @class = "form-control" })
+                </div>
+                <button id="btn-change-database" class="btn btn-primary">Change</button>
             </fieldset>
         }
     </div>
@@ -63,7 +68,7 @@
                     <th>Date</th>
                     <th>Level</th>
                     <th>Logger</th>
-                    <th>Message</th>
+                    <th style="max-width: 600px;">Message</th>
                     <th>Exception</th>
                 </tr>
             </thead>
@@ -75,7 +80,7 @@
                         <td class="log-date text-nowrap">@log.Date</td>
                         <td class="log-level">@log.Level</td>
                         <td title="@log.Logger">@log.ShortenedLogger</td>
-                        <td>@log.Message</td>
+                        <td style="max-width: 600px;">@Html.Raw(log.Message.Replace("\r\n", "<br />").Replace("\t", "&nbsp;&nbsp;&nbsp;&nbsp;"))</td>
                         <td>@log.Exception</td>
                     </tr>
                 }

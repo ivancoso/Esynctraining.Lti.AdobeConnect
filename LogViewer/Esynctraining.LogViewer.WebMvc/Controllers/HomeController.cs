@@ -28,10 +28,11 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (profiler.Step("Getting logs from database"))
             using (var sqlConn = CreateProfiledDbConnection())
             {
-                model.Logs.AddRange(sqlConn.Query<Log>(GetAllSql()));
+                model.Logs.AddRange(sqlConn.Query<Log>(GetAllSql(GetTopValue())));
             }
 
             model.SelectedLogDatabase = GetSelectedConnectionStringName();
+            model.OutputRowCount = GetTopValue();
             model.LogDatabases.AddRange(LogDatabaseConnectionStrings.Select(css => new SelectListItem
             {
                 Text = css.Name.Replace(LogDatabase.ConnectionStringPrefix, string.Empty),
@@ -48,6 +49,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             if (IsConnectionStringInWebConfig(model.SelectedLogDatabase))
             {
                 SetConnectionStringCookie(model.SelectedLogDatabase);
+                SetTopCookie(model.OutputRowCount);
                 return RedirectToAction("Index");
             }
 
@@ -61,6 +63,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             if (!ModelState.IsValid)
             {
                 model.SelectedLogDatabase = GetSelectedConnectionStringName();
+                model.OutputRowCount = GetTopValue();
                 model.LogDatabases.AddRange(LogDatabaseConnectionStrings.Select(css => new SelectListItem
                 {
                     Text = css.Name.Replace(LogDatabase.ConnectionStringPrefix, string.Empty),
@@ -76,11 +79,12 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
             using (var sqlConn = CreateProfiledDbConnection())
             {
                 var searchTerm = "%" + model.SearchTerm.Replace("%", "[%]").Replace("[", "[[]").Replace("]", "[]]") + "%";
-                model.Logs.AddRange(sqlConn.Query<Log>(GetSearchSql(),
+                model.Logs.AddRange(sqlConn.Query<Log>(GetSearchSql(GetTopValue()),
                     new { searchTerm }));
             }
 
             model.SelectedLogDatabase = GetSelectedConnectionStringName();
+            model.OutputRowCount = GetTopValue();
             model.LogDatabases.AddRange(LogDatabaseConnectionStrings.Select(css => new SelectListItem
             {
                 Text = css.Name.Replace(LogDatabase.ConnectionStringPrefix, string.Empty),
