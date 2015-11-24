@@ -36,6 +36,9 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlAttribute("folder-id")]
         public string FolderId { get; set; }
 
+        [XmlAttribute("icon")]
+        public string Icon { get; set; }
+
         /// <summary>
         /// Gets or sets the source SCO id.
         /// </summary>

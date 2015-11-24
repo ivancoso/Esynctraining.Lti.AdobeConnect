@@ -57,6 +57,9 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlAttribute("is-folder")]
         public bool IsFolder { get; set; }
 
+        [XmlElement("byte-count")]
+        public int ByteCount { get; set; }
+
         /// <summary>
         /// Gets or sets a value indicating whether is folder.
         /// </summary>

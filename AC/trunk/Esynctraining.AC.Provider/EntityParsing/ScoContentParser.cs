@@ -34,6 +34,7 @@
                                DisplaySequence = xml.ParseAttributeInt("display-seq"),
                                Duration = xml.ParseAttributeInt("duration"),
                                IsFolder = xml.ParseAttributeInt("is-folder") != 0,
+                               ByteCount = xml.ParseAttributeInt("byte-count"),
                                Name = xml.SelectSingleNodeValue("name/text()"),
                                Description = xml.SelectSingleNodeValue("description/text()"),
                                UrlPath = xml.SelectSingleNodeValue("url-path/text()"),

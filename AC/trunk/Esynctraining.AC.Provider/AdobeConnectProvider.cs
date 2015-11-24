@@ -512,7 +512,22 @@
         {
             StatusInfo status;
 
-            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.ScoId, scoId), out status);
+            // TRICK: http://www.connectusers.com/forums/topic/8827/adobe-connect-8-web-services-bytecount-missing-scocontents/
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.ScoId + "&counters=true", scoId), out status);
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
+                : new ScoContentCollectionResult(status);
+        }
+
+        public ScoContentCollectionResult GetContentsByScoId(string scoId, string filterName, string filterType)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents,
+                string.Format(CommandParams.ScoNameAndType, scoId, HttpUtility.UrlEncode(filterName), HttpUtility.UrlEncode(filterType)),
+                //string.Format(CommandParams.ScoId, scoId), 
+                out status);
 
             return ResponseIsOk(scos, status)
                 ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
@@ -628,6 +643,18 @@
         {
             var downloadName = urlPath.Trim('/');
             return this.requestProcessor.DownloadData(downloadName, format, out error);
+        }
+
+        public byte[] GetContentByUrlPath2(string urlPath, string fileName, out string error)
+        {
+            var downloadName = urlPath.Trim('/');
+            return this.requestProcessor.DownloadData2(downloadName, fileName, out error);
+        }
+
+        public byte[] GetSourceContentByUrlPath(string urlPath, string fileName, out string error)
+        {
+            var downloadName = urlPath.Trim('/');
+            return this.requestProcessor.DownloadSourceData(downloadName, fileName, out error);
         }
 
         /// <summary>
@@ -1449,6 +1476,17 @@
             StatusInfo status;
 
             var result = this.requestProcessor.Process(Commands.Sco.FieldInfo, string.Format(CommandParams.Features.FieldInfo, aclId, fieldId.ToXmlString()), out status);
+
+            return ResponseIsOk(result, status)
+                ? new FieldResult(status, FieldValueParser.Parse(result))
+                : new FieldResult(status);
+        }
+
+        public FieldResult GetAclField(string aclId, string fieldId)
+        {
+            StatusInfo status;
+
+            var result = this.requestProcessor.Process(Commands.Sco.FieldInfo, string.Format(CommandParams.Features.FieldInfo, aclId, fieldId), out status);
 
             return ResponseIsOk(result, status)
                 ? new FieldResult(status, FieldValueParser.Parse(result))

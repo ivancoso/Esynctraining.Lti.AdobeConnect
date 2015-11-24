@@ -124,6 +124,37 @@
                 this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'), 
                 downloadName, 
                 format);
+           
+              return DownloadData(url, out error);
+        }
+
+        public byte[] DownloadData2(string urlPath, string fileName, out string error)
+        {
+            error = null;
+            string url = string.Format(
+                "{0}/{1}/output/{2}?download={2}",
+                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                urlPath,
+                fileName);
+
+            return DownloadData(url, out error);
+        }
+
+        public byte[] DownloadSourceData(string urlPath, string fileName, out string error)
+        {
+            error = null;
+            string url = string.Format(
+                "{0}/{1}/source/{2}?download={2}",
+                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                urlPath,
+                fileName);
+
+            return DownloadData(url, out error);
+        }
+
+        private byte[] DownloadData(string url, out string error)
+        {
+            error = null;            
             var request = WebRequest.Create(url) as HttpWebRequest;
             request = this.ProcessRequest(request);
             if (request != null)
