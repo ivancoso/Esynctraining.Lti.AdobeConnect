@@ -321,16 +321,16 @@
             return this.Password.ToLower()
                    == BitConverter.ToString(Cryptographer.GenerateHash(password)).Replace("-", string.Empty).ToLower();
         }
-        
-        //public virtual bool ValidatePasswordHash(string passwordHash)
-        //{
-        //    if (string.IsNullOrWhiteSpace(passwordHash))
-        //    {
-        //        return false;
-        //    }
 
-        //    return this.Password.ToLower() == passwordHash.ToLower();
-        //}
+        public virtual bool ValidatePasswordHash(string passwordHash)
+        {
+            if (string.IsNullOrWhiteSpace(passwordHash))
+            {
+                return false;
+            }
+
+            return this.Password.ToLower() == passwordHash.ToLower();
+        }
 
         #endregion
 
