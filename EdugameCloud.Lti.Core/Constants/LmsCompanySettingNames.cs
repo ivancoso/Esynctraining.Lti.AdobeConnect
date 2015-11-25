@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string ShowMeetingTime = "ShowMeetingTime";
         public const string ShowMeetingDuration = "ShowMeetingDuration";
         public const string CanRemoveRecordings = "CanRemoveRecordings";
+        public const string ForcedAddInInstallation = "ForcedAddInInstallation";
     }
 
 }

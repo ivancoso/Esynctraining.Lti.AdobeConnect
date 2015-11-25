@@ -23,6 +23,7 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
+using EdugameCloud.Lti.Core.Constants;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -400,17 +401,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             breezeSession = breezeToken ?? string.Empty;
             bool isTeacher = this.UsersSetup.IsTeacher(param);
+            bool forcedAddInInstallation = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
             if (lmsCompany.LoginUsingCookie.GetValueOrDefault())
             {
                 return string.Concat(
                     meetingUrl,
-                    isTeacher ? "?lightning=true" : string.Empty);
+                    isTeacher && forcedAddInInstallation ? "?lightning=true" : string.Empty);
             }
             else
             {
                 return string.Concat(
                     meetingUrl,
-                    isTeacher ? "?lightning=true&" : "?",
+                    isTeacher && forcedAddInInstallation ? "?lightning=true&" : "?",
                     "session=" + breezeToken);
             }
         }
