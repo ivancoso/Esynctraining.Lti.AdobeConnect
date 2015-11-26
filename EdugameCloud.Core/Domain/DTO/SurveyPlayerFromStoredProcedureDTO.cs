@@ -54,6 +54,12 @@
         public virtual int score { get; set; }
 
         /// <summary>
+        /// Gets or sets the AdobeConnect email.
+        /// </summary>
+        [DataMember]
+        public virtual string acEmail { get; set; }
+
+        /// <summary>
         /// Gets or sets the start time.
         /// </summary>
         [DataMember]

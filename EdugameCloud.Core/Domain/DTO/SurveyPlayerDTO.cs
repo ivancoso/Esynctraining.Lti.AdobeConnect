@@ -19,6 +19,7 @@
         public SurveyPlayerDTO(SurveyPlayerFromStoredProcedureDTO dto)
         {
             this.answers = dto.answers;
+            this.acEmail = dto.acEmail;
             this.TotalQuestion = dto.TotalQuestion;
             this.endTime = dto.endTime.ConvertToUnixTimestamp();
             this.participantName = dto.participantName;
@@ -76,6 +77,14 @@
         [DataMember]
         public double startTime { get; set; }
 
+        /// <summary>
+        /// Gets or sets the AdobeConnect email.
+        /// </summary>
+        [DataMember]
+        public string acEmail { get; set; }
+
         #endregion
+
     }
+
 }

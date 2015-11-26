@@ -1,14 +1,8 @@
-﻿
-
--- =============================================
--- Author:		Eugene Baranovsky
--- Create date: 08.30.2013
--- Usage:		Admin
--- Description:	is used to get a list of quiz results 
---				by acSessionId
--- =============================================
-CREATE PROCEDURE [dbo].[getSurveyResultByACSessionId] 
-	@acSessionId int = null,@subModuleItemID int = null
+﻿CREATE PROCEDURE getSurveyResultByACSessionId
+(
+	@acSessionId		INT,
+	@subModuleItemId	INT
+)
 AS
 BEGIN
 
@@ -18,6 +12,7 @@ SELECT   SR.surveyResultId,
 		 (select Count(Q.questionid) from Question Q where Q.subModuleItemId=@subModuleItemID) as TotalQuestion,
 	 	 SR.startTime,
 		 SR.endTime,
+		 SR.acEmail,
 		 ROW_NUMBER() OVER (ORDER BY SR.score DESC) AS position
 		    
 FROM     Survey S INNER JOIN

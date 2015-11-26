@@ -13,6 +13,7 @@ SELECT   SR.surveyResultId,
 		 (SELECT COUNT(Q.questionid) FROM Question Q WHERE Q.subModuleItemId = @subModuleItemID) AS TotalQuestion,
 	 	 SR.startTime,
 		 SR.endTime,
+		 SR.acEmail,
 		 ROW_NUMBER() OVER (ORDER BY SR.score DESC) AS position
 		    
 FROM     Survey S 
