@@ -143,9 +143,9 @@
                 "OpenOnFile", 
                 BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             return new ZipArchive
-                       {
-                           external = meth.Invoke(null, new object[] { path, mode, access, share, streaming })
-                       };
+            {
+                external = meth.Invoke(null, new object[] { path, mode, access, share, streaming })
+            };
         }
 
         /// <summary>
