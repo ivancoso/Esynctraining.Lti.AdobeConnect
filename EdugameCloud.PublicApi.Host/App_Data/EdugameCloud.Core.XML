@@ -3948,6 +3948,11 @@
             Gets or sets the score.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerFromStoredProcedureDTO.acEmail">
+            <summary>
+            Gets or sets the AdobeConnect email.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerFromStoredProcedureDTO.startTime">
             <summary>
             Gets or sets the start time.
@@ -6312,6 +6317,11 @@
         <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.startTime">
             <summary>
             Gets or sets the start time. (Unix Timestamp value)
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.SurveyPlayerDTO.acEmail">
+            <summary>
+            Gets or sets the AdobeConnect email.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.SurveyQuestionResultDTO">
@@ -12678,17 +12688,6 @@
             </summary>
             <param name="password">
             The password.
-            </param>
-            <returns>
-            The <see cref="T:System.Boolean"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Domain.Entities.User.ValidatePasswordHash(System.String)">
-            <summary>
-            The validate password.
-            </summary>
-            <param name="passwordHash">
-            The password Hash.
             </param>
             <returns>
             The <see cref="T:System.Boolean"/>.
