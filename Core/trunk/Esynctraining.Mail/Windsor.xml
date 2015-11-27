@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <!--lets you reference types from that assembly by specifying just their name, instead of assembly qualified full name.-->
+  <using assembly="Esynctraining.Mail" />
+
+  <components>
+    <component
+      service="Esynctraining.Mail.ITemplateProvider, Esynctraining.Mail"
+      type="Esynctraining.Mail.TemplateProvider, Esynctraining.Mail"
+      lifestyle="transient"></component>
+    <component
+      service="Esynctraining.Mail.IAttachmentsProvider, Esynctraining.Mail"
+      type="Esynctraining.Mail.AttachmentsProvider, Esynctraining.Mail"
+      lifestyle="transient"></component>
+    <component
+    service="Esynctraining.Mail.ISmtpClientEngine, Esynctraining.Mail"
+    type="Esynctraining.Mail.SmtpClientEngine, Esynctraining.Mail"
+    lifestyle="transient"></component>
+  </components>
+</configuration>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>DotAmf.Wcf</id>
-    <version>1.0.0.11</version>
+    <version>1.0.0.12</version>
     <title>DotAmf.Wcf</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,7 @@
     <description>WCF service extensions for full AMF/AMFX support.</description>
     <copyright>Copyright © 2014-2015 eSyncTraining.com</copyright>
     <tags>amf, wcf</tags>
-    <releaseNotes>WCF service extensions for full AMF/AMFX support.</releaseNotes>
+    <releaseNotes>Update for .NET 4.5.</releaseNotes>
     <dependencies>
     </dependencies>
     <references>
@@ -21,7 +21,7 @@
     </references>
   </metadata>
   <files>
-     <file src="bin\$configuration$\DotAmf.dll" target="lib\net40" />
-     <file src="bin\$configuration$\DotAmf.Wcf.dll" target="lib\net40" />
+     <file src="bin\$configuration$\DotAmf.dll" target="lib\net45" />
+     <file src="bin\$configuration$\DotAmf.Wcf.dll" target="lib\net45" />
    </files>
 </package>

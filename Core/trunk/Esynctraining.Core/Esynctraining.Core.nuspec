@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Core.Only</id>
-        <version>1.0.0.20</version>
+        <version>1.0.0.21</version>
         <title>Esynctraining.Core.Only</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -10,14 +10,10 @@
         <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides core functionality for eSyncTraining projects. Core library only</description>
-        <releaseNotes>Fixed GetOneById method</releaseNotes>
+        <releaseNotes>Extract SMTP \ FluentValidation \ NHibernate \ Windsor to separate packets</releaseNotes>
         <copyright>Copyright © 2013-2015 eSyncTraining.com</copyright>
         <tags>core</tags>
         <dependencies>
-            <dependency id="Castle.Windsor" version="3.3.0" />
-            <dependency id="RazorEngine" version="3.7.3" />
-            <dependency id="NHibernate" version="4.0.4.4000" />
-            <dependency id="FluentValidation" version="5.6.2.0" />
         </dependencies>
         <references>
             <reference file="Esynctraining.Core.dll" />

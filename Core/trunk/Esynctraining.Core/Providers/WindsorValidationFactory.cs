@@ -3,23 +3,17 @@
     using System;
     using System.Linq;
 
-    using Castle.Windsor;
-
+    using Utils;
     using FluentValidation;
+    using Logging;
 
     /// <summary>
     /// The windsor validator factory.
     /// </summary>
     public class WindsorValidatorFactory : ValidatorFactoryBase
     {
-        #region Fields
-
-        /// <summary>
-        /// The container.
-        /// </summary>
-        private readonly IWindsorContainer container;
-
-        #endregion
+        private readonly IServiceLocator container;
+        private readonly ILogger logger;
 
         #region Constructors and Destructors
 
@@ -29,9 +23,15 @@
         /// <param name="container">
         /// The container.
         /// </param>
-        public WindsorValidatorFactory(IWindsorContainer container)
+        public WindsorValidatorFactory(IServiceLocator container, ILogger logger)
         {
+            if (container == null)
+                throw new ArgumentNullException("container");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
             this.container = container;
+            this.logger = logger;
         }
 
         #endregion
@@ -56,13 +56,15 @@
                     var genericArgType = validatorType.GetGenericArguments().FirstOrDefault();
                     if (genericArgType != null && genericArgType.IsClass && genericArgType != typeof(string) && genericArgType.Name != "BaseViewModel")
                     {
-                        return this.container.Resolve(validatorType) as IValidator;
+                        return this.container.GetInstance(validatorType) as IValidator;
                     }
                 }
                 return null;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+
+
                 return null;
             }
         }
