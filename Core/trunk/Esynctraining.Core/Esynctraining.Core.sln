@@ -15,8 +15,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.FluentValidat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Wcf", "..\Esynctraining.Core.Wcf\Esynctraining.Core.Wcf.csproj", "{FB054AF9-5332-4A82-9311-13B8AB09193D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "..\Test\Test.csproj", "{A7BCA694-7095-4238-AC83-DEA8EBFEAF0A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +45,6 @@ Global
 		{FB054AF9-5332-4A82-9311-13B8AB09193D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB054AF9-5332-4A82-9311-13B8AB09193D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB054AF9-5332-4A82-9311-13B8AB09193D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7BCA694-7095-4238-AC83-DEA8EBFEAF0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7BCA694-7095-4238-AC83-DEA8EBFEAF0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7BCA694-7095-4238-AC83-DEA8EBFEAF0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7BCA694-7095-4238-AC83-DEA8EBFEAF0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
