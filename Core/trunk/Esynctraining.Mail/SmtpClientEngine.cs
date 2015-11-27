@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Mail;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Utils;
 using MailMessage = System.Net.Mail.MailMessage;
 
 namespace Esynctraining.Mail
@@ -16,16 +15,10 @@ namespace Esynctraining.Mail
     public class SmtpClientEngine : ISmtpClientEngine
     {
         #region Fields
-
-        /// <summary>
-        /// The template provider.
-        /// </summary>
+        
         private readonly ITemplateProvider templateProvider;
-
-        /// <summary>
-        /// The attachments provider.
-        /// </summary>
         private readonly IAttachmentsProvider attachmentsProvider;
+        private readonly ILogger logger;
 
         #endregion
 
@@ -40,10 +33,14 @@ namespace Esynctraining.Mail
         /// <param name="attachmentsProvider">
         /// The attachments Provider.
         /// </param>
-        public SmtpClientEngine(ITemplateProvider templateProvider, IAttachmentsProvider attachmentsProvider)
+        /// <param name="logger">
+        /// Logger.
+        /// </param>
+        public SmtpClientEngine(ITemplateProvider templateProvider, IAttachmentsProvider attachmentsProvider, ILogger logger)
         {
             this.templateProvider = templateProvider;
             this.attachmentsProvider = attachmentsProvider;
+            this.logger = logger;
         }
 
         #endregion
@@ -123,9 +120,9 @@ namespace Esynctraining.Mail
             string fromName,
             string fromEmail,
             IEnumerable<Attachment> attachments,
-            List<MailAddress> cced = null,
-            List<MailAddress> bcced = null,
-            List<LinkedResource> linkedResources = null)
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             using (var smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
             {
@@ -172,7 +169,7 @@ namespace Esynctraining.Mail
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        private virtual bool SendEmail(
+        private bool SendEmail(
             SmtpClientWrapper smtpClientWrapper,
             IEnumerable<string> toName,
             IEnumerable<string> toEmail,
@@ -181,9 +178,9 @@ namespace Esynctraining.Mail
             string fromName,
             string fromEmail,
             IEnumerable<Attachment> attachments,
-            List<MailAddress> cced = null,
-            List<MailAddress> bcced = null,
-            List<LinkedResource> linkedResources = null,
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<LinkedResource> linkedResources = null,
             bool useSsl = false)
         {
             try
@@ -263,13 +260,16 @@ namespace Esynctraining.Mail
             catch (Exception ex)
             {
                 this.LastError = ex;
-                var logger = IoC.Resolve<ILogger>();
                 logger.Error("Error, while sending email", ex);
                 return false;
             }
         }
 
-        public bool SendEmailSync(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, IEnumerable<Attachment> attachments, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<LinkedResource> linkedResources = null)
+        public bool SendEmailSync(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, 
+            IEnumerable<Attachment> attachments,
+            IEnumerable<MailAddress> cced = null, 
+            IEnumerable<MailAddress> bcced = null, 
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             bool flag;
             using (SmtpClientWrapper smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
@@ -279,7 +279,11 @@ namespace Esynctraining.Mail
             return flag;
         }
 
-        public bool SendEmailSync<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        public bool SendEmailSync<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null,
+            IEnumerable<MailAddress> cced = null, 
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<Attachment> attachments = null,
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             string str = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
             IEnumerable<string> strs = toName;
@@ -296,7 +300,11 @@ namespace Esynctraining.Mail
             return this.SendEmailSync(strs, strs1, str1, str2, str3, str4, (IEnumerable<Attachment>)obj, cced, bcced, linkedResources);
         }
 
-        public bool SendEmailSync<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        public bool SendEmailSync<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, 
+            IEnumerable<MailAddress> cced = null, 
+            IEnumerable<MailAddress> bcced = null, 
+            IEnumerable<Attachment> attachments = null, 
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             string[] strArrays = new string[] { toName };
             string[] strArrays1 = new string[] { toEmail };
@@ -343,7 +351,11 @@ namespace Esynctraining.Mail
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        public bool SendEmail<TModel>(IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, TModel model, string fromName = null, string fromEmail = null,
+            IEnumerable<MailAddress> cced = null, 
+            IEnumerable<MailAddress> bcced = null, 
+            IEnumerable<Attachment> attachments = null,
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             var message = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
             return this.SendEmail(toName, toEmail, subject, message, fromName, fromEmail, attachments ?? this.attachmentsProvider.GetAttachments<TModel>(), cced, bcced, linkedResources);
@@ -388,7 +400,11 @@ namespace Esynctraining.Mail
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<Attachment> attachments = null, List<LinkedResource> linkedResources = null)
+        public bool SendEmail<TModel>(string toName, string toEmail, string subject, TModel model, string fromName = null, string fromEmail = null, 
+            IEnumerable<MailAddress> cced = null, 
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<Attachment> attachments = null,
+            IEnumerable<LinkedResource> linkedResources = null)
         {
             return this.SendEmail(new[] { toName }, new[] { toEmail }, subject, model, fromName, fromEmail, cced, bcced, attachments, linkedResources);
         }
@@ -406,7 +422,6 @@ namespace Esynctraining.Mail
         {
             try
             {
-                var logger = IoC.Resolve<ILogger>();
                 if (e.Error != null)
                 {
                     logger.Error("Error, while sending email to: " + e.UserState, e.Error);
@@ -422,7 +437,12 @@ namespace Esynctraining.Mail
             }
         }
 
-        private bool SendEmailSync(SmtpClientWrapper smtpClientWrapper, IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, IEnumerable<Attachment> attachments, List<MailAddress> cced = null, List<MailAddress> bcced = null, List<LinkedResource> linkedResources = null, bool useSsl = false)
+        private bool SendEmailSync(SmtpClientWrapper smtpClientWrapper, IEnumerable<string> toName, IEnumerable<string> toEmail, string subject, string body, string fromName, string fromEmail, 
+            IEnumerable<Attachment> attachments,
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<LinkedResource> linkedResources = null, 
+            bool useSsl = false)
         {
             bool flag;
             try
@@ -491,7 +511,7 @@ namespace Esynctraining.Mail
             {
                 Exception exception = exception1;
                 this.LastError = exception;
-                IoC.Resolve<ILogger>().Error("Error, while sending email. " + exception.Message, exception);
+                logger.Error("Error, while sending email. " + exception.Message, exception);
                 flag = false;
             }
             return flag;
