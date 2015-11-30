@@ -426,6 +426,14 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        public virtual int LanguageId
+        {
+            get
+            {
+                return GetSetting<int>(LmsCompanySettingNames.LanguageId, 5); // 5 = English - default value
+            }
+        }
+
 
         #endregion
 

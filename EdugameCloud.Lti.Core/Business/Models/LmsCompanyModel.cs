@@ -1,20 +1,16 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.NHibernate;
+using Esynctraining.NHibernate.Queries;
+using NHibernate;
 using NHibernate.SqlCommand;
 
 namespace EdugameCloud.Lti.Core.Business.Models
 {
-    using System;
-    using System.Collections.Generic;
-    using EdugameCloud.Core.Business;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-    using NHibernate;
-    using NHibernate.Criterion;
-
     /// <summary>
     /// The company LMS model.
     /// </summary>

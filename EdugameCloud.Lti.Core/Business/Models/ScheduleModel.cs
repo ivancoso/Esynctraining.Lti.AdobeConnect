@@ -1,12 +1,11 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
     using System;
-using System.Collections.Generic;
-using EdugameCloud.Lti.Domain.Entities;
-using Esynctraining.Core.Business;
-using Esynctraining.Core.Business.Models;
-using NHibernate;
-using NHibernate.Criterion;
+    using System.Collections.Generic;
+    using EdugameCloud.Lti.Domain.Entities;
+    using Esynctraining.NHibernate;
+    using NHibernate;
+    using NHibernate.Criterion;
 
     /// <summary>
     /// The schedule model.

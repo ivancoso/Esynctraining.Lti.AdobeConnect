@@ -2,8 +2,7 @@
 using System.Linq;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Business;
-using Esynctraining.Core.Business.Models;
+using Esynctraining.NHibernate;
 using NHibernate.Linq;
 
 namespace EdugameCloud.Lti.Core.Business.Models

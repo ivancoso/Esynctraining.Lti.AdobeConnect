@@ -4,10 +4,8 @@
     using System.Collections.Generic;
     using System.Data;
     using EdugameCloud.Lti.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;

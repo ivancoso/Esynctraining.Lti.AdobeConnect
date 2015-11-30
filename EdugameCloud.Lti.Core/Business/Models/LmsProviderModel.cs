@@ -5,11 +5,9 @@
     using System.Linq;
     using EdugameCloud.Core.Business;
     using EdugameCloud.Lti.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Caching;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
 
     /// <summary>
     /// The LMS provider model.

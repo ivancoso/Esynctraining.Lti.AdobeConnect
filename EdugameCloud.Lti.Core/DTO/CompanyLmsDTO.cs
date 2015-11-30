@@ -103,6 +103,8 @@ namespace EdugameCloud.Lti.DTO
 
             this.canRemoveRecordings = instance.CanRemoveRecordings;
             this.forcedAddInInstallation = instance.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
+
+            this.languageId = instance.LanguageId;
         }
 
         /// <summary>
@@ -383,6 +385,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool forcedAddInInstallation { get; set; }
+
+        [DataMember]
+        public int languageId { get; set; }
 
     }
 

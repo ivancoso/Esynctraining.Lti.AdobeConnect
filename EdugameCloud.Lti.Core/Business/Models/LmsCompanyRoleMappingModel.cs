@@ -6,7 +6,7 @@
     using System.Linq;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    using Esynctraining.Core.Business.Models;
+    using Esynctraining.NHibernate;
     using Newtonsoft.Json;
 
     public sealed class LmsCompanyRoleMappingModel : BaseModel<LmsCompanyRoleMapping, int>
