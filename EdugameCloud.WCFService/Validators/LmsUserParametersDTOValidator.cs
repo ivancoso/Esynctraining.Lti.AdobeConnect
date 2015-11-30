@@ -3,7 +3,7 @@
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
+    using Esynctraining.FluentValidation;
     using FluentValidation;
 
     /// <summary>

@@ -5,6 +5,7 @@
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.Core.Enums;
+    using Esynctraining.FluentValidation;
     using Esynctraining.Core.Extensions;
 
     using FluentValidation;

@@ -8,7 +8,7 @@
     using EdugameCloud.WCFService.DTO;
 
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
+    using Esynctraining.FluentValidation;
 
     using FluentValidation;
     using FluentValidation.Results;

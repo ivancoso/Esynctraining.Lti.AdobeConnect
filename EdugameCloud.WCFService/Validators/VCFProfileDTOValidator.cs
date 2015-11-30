@@ -7,7 +7,7 @@
     using EdugameCloud.Core.Domain.DTO;
 
     using Esynctraining.Core.Enums;
-    using Esynctraining.Core.Extensions;
+    using Esynctraining.FluentValidation;
     using Esynctraining.Core.Providers;
 
     using FluentValidation;
