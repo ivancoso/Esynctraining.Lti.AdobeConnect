@@ -6,6 +6,7 @@
     using Castle.Windsor;
 
     using Esynctraining.Core.Utils;
+    using Esynctraining.Windsor;
 
     public class Global : HttpApplication
     {
@@ -38,7 +39,7 @@
         protected void Application_Start(object sender, EventArgs e)
         {
             var container = new WindsorContainer();
-            IoC.Initialize(container);
+            WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
         }
 

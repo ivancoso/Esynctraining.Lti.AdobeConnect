@@ -78,7 +78,7 @@ namespace EdugameCloud.Lti.API
 
         public LmsUserServiceBase GetUserService(LmsProviderEnum lmsProvider)
         {
-            return IoC.Container.Resolve<LmsUserServiceBase>(lmsProvider.ToString());
+            return IoC.Resolve<LmsUserServiceBase>(lmsProvider.ToString());
         }
 
         #endregion

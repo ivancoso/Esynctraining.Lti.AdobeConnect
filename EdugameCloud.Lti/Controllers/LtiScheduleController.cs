@@ -2,17 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
-    using System.Linq;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using Esynctraining.AC.Provider;
-    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
 
     /// <summary>

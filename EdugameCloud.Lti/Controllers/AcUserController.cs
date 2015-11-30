@@ -106,7 +106,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 if (meetingEnrollments.Values.Any(x => x.PrincipalId == principal.PrincipalId))
                 {
-                    return Json(OperationResult.Error("This Adobe Connect user is already a participant of the meeting."));
+                    return Json(OperationResult.Error(Resources.Messages.UserIsAlreadyParticipant));
                 }
 
                 AcRole role = AcRole.GetByName(user.meetingRole);
@@ -216,22 +216,22 @@ namespace EdugameCloud.Lti.Controllers
             {
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.duplicate)
                 {
-                    throw new WarningMessageException(string.Format("User '{0}' already exists in Adobe Connect.", login ?? user.email));
+                    throw new WarningMessageException(string.Format(Resources.Messages.PrincipalValidateAlreadyInAc, login ?? user.email));
                 }
 
                 if (pu.Status.InvalidField == "name" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException("The combined length of First and Last name must be between 1 and 60 characters.");
+                    throw new WarningMessageException(Resources.Messages.PrincipalValidateNameLength);
                 }
 
                 if (pu.Status.InvalidField == "email" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException("E-mail must be between 1 and 60 characters long.");
+                    throw new WarningMessageException(Resources.Messages.PrincipalValidateEmailLength);
                 }
 
                 if (pu.Status.InvalidField == "login" && pu.Status.SubCode == StatusSubCodes.range)
                 {
-                    throw new WarningMessageException("Login must be between 1 and 60 characters long.");
+                    throw new WarningMessageException(Resources.Messages.PrincipalValidateLoginLength);
                 }
 
                 string additionalData = string.Format("firstName: {0}, lastName: {1}, login: {2}, email: {3}", user.firstName, user.lastName, user.login, user.email);

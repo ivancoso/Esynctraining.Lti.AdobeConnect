@@ -65,7 +65,7 @@
                 The ACUserMode model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.ACUserModeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.ACUserMode,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.ACUserModeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.ACUserMode,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.ACUserModeModel"/> class. 
             </summary>
@@ -147,7 +147,7 @@
             The social profile model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.ACSessionModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.ACSession,System.Int32},EdugameCloud.Core.Business.Models.AppletItemModel,EdugameCloud.Core.Business.Models.QuizModel,EdugameCloud.Core.Business.Models.SurveyModel,EdugameCloud.Core.Business.Models.SNProfileModel,EdugameCloud.Core.Business.Models.TestModel)">
+        <member name="M:EdugameCloud.Core.Business.Models.ACSessionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.ACSession,System.Int32},EdugameCloud.Core.Business.Models.AppletItemModel,EdugameCloud.Core.Business.Models.QuizModel,EdugameCloud.Core.Business.Models.SurveyModel,EdugameCloud.Core.Business.Models.SNProfileModel,EdugameCloud.Core.Business.Models.TestModel)">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.ACSessionModel"/> class. 
             </summary>
@@ -253,7 +253,7 @@
                 The AppletResult model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.AppletResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.AppletResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.AppletResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.AppletResult,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.AppletResultModel"/> class. 
             </summary>
@@ -280,7 +280,7 @@
             The AppletItem model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.AppletItemModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.AppletItem,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.AppletItemModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.AppletItem,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.AppletItemModel"/> class.
             </summary>
@@ -373,10 +373,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.CompanyLicenseModel">
             <summary>
-                The company model.
+            The company model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CompanyLicenseModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.CompanyLicense,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.CompanyLicenseModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.CompanyLicense,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.CompanyLicenseModel"/> class.
             </summary>
@@ -419,7 +419,7 @@
                 The address model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.AddressModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Address,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.AddressModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Address,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.AddressModel"/> class. 
             </summary>
@@ -429,10 +429,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.BuildVersionModel">
             <summary>
-                The BuildVersion model.
+            The BuildVersion model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.BuildVersionModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.BuildVersion,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.BuildVersionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.BuildVersion,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.BuildVersionModel"/> class. 
             </summary>
@@ -445,7 +445,7 @@
                 The BuildVersionType model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.BuildVersionTypeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.BuildVersionType,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.BuildVersionTypeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.BuildVersionType,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.BuildVersionTypeModel"/> class. 
             </summary>
@@ -455,10 +455,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.CompanyThemeModel">
             <summary>
-                The Company Theme model.
+            The Company Theme model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.CompanyThemeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.CompanyTheme,System.Guid})">
+        <member name="M:EdugameCloud.Core.Business.Models.CompanyThemeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.CompanyTheme,System.Guid})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.CompanyThemeModel"/> class. 
             </summary>
@@ -466,7 +466,7 @@
             The repository.
             </param>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.EmailHistoryModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.EmailHistory,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.EmailHistoryModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.EmailHistory,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.EmailHistoryModel"/> class. 
             </summary>
@@ -493,7 +493,7 @@
             The <see cref="T:NHibernate.IFutureValue`1"/>.
             </returns>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.NewsletterSubscriptionModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.NewsletterSubscription,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.NewsletterSubscriptionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.NewsletterSubscription,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.NewsletterSubscriptionModel"/> class. 
             </summary>
@@ -525,7 +525,7 @@
                 The SubscriptionUpdate model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubscriptionHistoryLogModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubscriptionHistoryLog,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubscriptionHistoryLogModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubscriptionHistoryLog,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubscriptionHistoryLogModel"/> class. 
             </summary>
@@ -557,7 +557,7 @@
                 The SubscriptionUpdate model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubscriptionUpdateModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubscriptionUpdate,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubscriptionUpdateModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubscriptionUpdate,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubscriptionUpdateModel"/> class. 
             </summary>
@@ -570,7 +570,7 @@
                 The SubModuleCategory model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SocialUserTokensModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SocialUserTokens,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SocialUserTokensModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SocialUserTokens,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SocialUserTokensModel"/> class.
             </summary>
@@ -594,7 +594,7 @@
                 The SubModule Item Theme model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubModuleItemThemeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItemTheme,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubModuleItemThemeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItemTheme,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubModuleItemThemeModel"/> class. 
             </summary>
@@ -604,10 +604,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuestionForRateModel">
             <summary>
-                The QuestionForLikert model.
+            The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForRateModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForRate,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForRateModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForRate,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForRateModel"/> class. 
             </summary>
@@ -617,10 +617,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuestionForSingleMultipleChoiceModel">
             <summary>
-                The QuestionForLikert model.
+            The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForSingleMultipleChoiceModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForSingleMultipleChoiceModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForSingleMultipleChoiceModel"/> class. 
             </summary>
@@ -633,7 +633,7 @@
                 The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForTrueFalseModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForTrueFalse,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForTrueFalseModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForTrueFalse,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForTrueFalseModel"/> class. 
             </summary>
@@ -646,7 +646,7 @@
                 The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForWeightBucketModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForWeightBucketModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForWeightBucketModel"/> class. 
             </summary>
@@ -656,10 +656,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuestionForOpenAnswerModel">
             <summary>
-                The QuestionForLikert model.
+            The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForOpenAnswerModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForOpenAnswerModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForOpenAnswerModel"/> class. 
             </summary>
@@ -669,10 +669,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuestionForLikertModel">
             <summary>
-                The QuestionForLikert model.
+            The QuestionForLikert model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionForLikertModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForLikert,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionForLikertModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForLikert,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionForLikertModel"/> class. 
             </summary>
@@ -685,7 +685,7 @@
                 The TestQuestionResult model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.TestQuestionResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.TestQuestionResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.TestQuestionResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.TestQuestionResult,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.TestQuestionResultModel"/> class. 
             </summary>
@@ -861,7 +861,7 @@
                 The SurveyQuestionResultAnswer model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SurveyQuestionResultAnswerModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResultAnswer,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SurveyQuestionResultAnswerModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResultAnswer,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SurveyQuestionResultAnswerModel"/> class. 
             </summary>
@@ -1041,7 +1041,7 @@
                 The SurveyQuestionResult model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SurveyQuestionResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SurveyQuestionResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SurveyQuestionResult,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SurveyQuestionResultModel"/> class. 
             </summary>
@@ -1156,10 +1156,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNMapSettingsModel">
             <summary>
-                The SN Map settings model.
+            The SN Map settings model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNMapSettingsModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNMapSettings,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNMapSettingsModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNMapSettings,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNMapSettingsModel"/> class.
             </summary>
@@ -1172,7 +1172,7 @@
                 The SN link model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNLinkModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNLink,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNLinkModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNLink,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNLinkModel"/> class.
             </summary>
@@ -1190,7 +1190,7 @@
                 The SN Session member model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNMemberModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNMember,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNMemberModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNMember,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNMemberModel"/> class.
             </summary>
@@ -1230,7 +1230,7 @@
                 The SN Profile SN Service model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNProfileSNServiceModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNProfileSNService,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNProfileSNServiceModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNProfileSNService,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNProfileSNServiceModel"/> class.
             </summary>
@@ -1240,10 +1240,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.SNGroupDiscussionModel">
             <summary>
-                The SN GroupDiscussion model.
+            The SN GroupDiscussion model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNGroupDiscussionModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNGroupDiscussion,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNGroupDiscussionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNGroupDiscussion,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNGroupDiscussionModel"/> class.
             </summary>
@@ -1291,7 +1291,7 @@
             The user model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SNProfileModel.#ctor(EdugameCloud.Core.Business.Models.UserModel,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SNProfile,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SNProfileModel.#ctor(EdugameCloud.Core.Business.Models.UserModel,Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SNProfile,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SNProfileModel"/> class.
             </summary>
@@ -1351,7 +1351,7 @@
                 The theme model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.ThemeModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Theme,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.ThemeModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Theme,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.ThemeModel"/> class. 
             </summary>
@@ -1378,10 +1378,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.DistractorModel">
             <summary>
-                The distractor model.
+            The distractor model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.DistractorModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.DistractorModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.DistractorModel"/> class. 
             </summary>
@@ -1491,10 +1491,10 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.QuizQuestionResultModel">
             <summary>
-                The QuizQuestionResult model.
+            The QuizQuestionResult model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizQuestionResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuizQuestionResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuizQuestionResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuizQuestionResult,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizQuestionResultModel"/> class. 
             </summary>
@@ -1537,7 +1537,7 @@
             The choice repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuestionModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Question,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForLikert,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForRate,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForTrueFalse,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuestionModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Question,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForLikert,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForOpenAnswer,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForRate,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForTrueFalse,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForWeightBucket,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuestionForSingleMultipleChoice,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuestionModel"/> class. 
             </summary>
@@ -1701,7 +1701,7 @@
                 The Module model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.ModuleModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Module,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.ModuleModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Module,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.ModuleModel"/> class. 
             </summary>
@@ -1714,7 +1714,7 @@
                 The SubModule model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubModuleModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubModule,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubModuleModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubModule,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubModuleModel"/> class. 
             </summary>
@@ -1727,7 +1727,7 @@
                 The SubModuleCategory model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubModuleCategoryModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleCategory,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubModuleCategoryModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleCategory,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubModuleCategoryModel"/> class.
             </summary>
@@ -1851,7 +1851,7 @@
                 The user repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizModel.#ctor(EdugameCloud.Core.Business.Models.FileModel,EdugameCloud.Core.Business.Models.DistractorModel,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Quiz,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuizModel.#ctor(EdugameCloud.Core.Business.Models.FileModel,EdugameCloud.Core.Business.Models.DistractorModel,Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Quiz,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizModel"/> class.
             </summary>
@@ -2050,7 +2050,7 @@
                 The user repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.SubModuleItemModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItem,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItemTheme,System.Int32},EdugameCloud.Core.Business.Models.AppletItemModel,EdugameCloud.Core.Business.Models.QuizModel,EdugameCloud.Core.Business.Models.SurveyModel,EdugameCloud.Core.Business.Models.SNProfileModel,EdugameCloud.Core.Business.Models.TestModel,Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.SubModuleItemModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItem,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.SubModuleItemTheme,System.Int32},EdugameCloud.Core.Business.Models.AppletItemModel,EdugameCloud.Core.Business.Models.QuizModel,EdugameCloud.Core.Business.Models.SurveyModel,EdugameCloud.Core.Business.Models.SNProfileModel,EdugameCloud.Core.Business.Models.TestModel,Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.User,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.SubModuleItemModel"/> class.
             </summary>
@@ -2214,7 +2214,7 @@
             The distractor repository.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.QuizResult,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.QuizResultModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.Distractor,System.Int32},Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.QuizResult,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.QuizResultModel"/> class. 
             </summary>
@@ -2271,7 +2271,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Business.Models.RealTimeNotificationModel">
             <summary>
-                The real time Notification model.
+            The real time Notification model.
             </summary>
         </member>
         <member name="F:EdugameCloud.Core.Business.Models.RealTimeNotificationModel.logger">
@@ -2376,7 +2376,7 @@
                 The user model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserActivationModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.UserActivation,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.UserActivationModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.UserActivation,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.UserActivationModel"/> class.
             </summary>
@@ -2430,7 +2430,7 @@
                 The ContactLoginHistory model.
             </summary>
         </member>
-        <member name="M:EdugameCloud.Core.Business.Models.UserLoginHistoryModel.#ctor(Esynctraining.Core.Business.IRepository{EdugameCloud.Core.Domain.Entities.UserLoginHistory,System.Int32})">
+        <member name="M:EdugameCloud.Core.Business.Models.UserLoginHistoryModel.#ctor(Esynctraining.NHibernate.IRepository{EdugameCloud.Core.Domain.Entities.UserLoginHistory,System.Int32})">
             <summary>
             Initializes a new instance of the <see cref="T:EdugameCloud.Core.Business.Models.UserLoginHistoryModel"/> class. 
             </summary>
@@ -12250,6 +12250,11 @@
         <member name="P:EdugameCloud.Core.Domain.Entities.Language.LanguageName">
             <summary>
             Gets or sets the language name.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.Language.TwoLetterCode">
+            <summary>
+            ISO 639-1 two-letter language code.
             </summary>
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.Distractor">

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="IBrainHoneyApi"
+      service="EdugameCloud.Lti.API.BrainHoney.IBrainHoneyApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BrainHoney.DlapAPI, EdugameCloud.Lti.BrainHoney"></component>
+    <component
+      service="EdugameCloud.Lti.API.BrainHoney.IBrainHoneyScheduling, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BrainHoney.ShedulingHelper, EdugameCloud.Lti.BrainHoney"></component>
+    <component
+      id="BrainHoney"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.BrainHoney.BrainHoneyLmsUserService, EdugameCloud.Lti.BrainHoney"></component>
+  </components>
+</configuration>

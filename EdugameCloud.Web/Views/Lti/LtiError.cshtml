@@ -6,15 +6,15 @@
     if (string.IsNullOrWhiteSpace(ViewBag.Message))
     {
         errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
-            ? "An exception is occured. Try again later or contact your administrator."
-            : "Error occured. " + ViewBag.DebugError;
+            ? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
+            : EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
     }
     else
     {
         errorMessage = ViewBag.Message;
     }
 
-	string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
+    string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
 }
 <!DOCTYPE html>
 <html class="x-viewport">

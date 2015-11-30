@@ -12,9 +12,6 @@ namespace EdugameCloud.Lti.Controllers
 {
     public class BaseController : Controller
     {
-        protected const string ExceptionMessage = "An exception is occured. Try again later or contact your administrator.";
-
-
         #region Fields
 
         private static bool? isDebug;
@@ -97,16 +94,16 @@ namespace EdugameCloud.Lti.Controllers
         {
             logger.Error(methodName, ex);
             return IsDebug
-                ? "An exception is occured. " + ex.ToString()
-                : ExceptionMessage;
+                ? Resources.Messages.ExceptionOccured + ex.ToString()
+                : Resources.Messages.ExceptionMessage;
         }
 
         protected string GetOutputErrorMessage(string originalErrorMessage)
         {
             logger.Error(originalErrorMessage);
             return IsDebug
-                ? "An exception is occured. " + originalErrorMessage
-                : ExceptionMessage;
+                ? Resources.Messages.ExceptionOccured + originalErrorMessage
+                : Resources.Messages.ExceptionMessage;
         }
 
         // TODO: check!!

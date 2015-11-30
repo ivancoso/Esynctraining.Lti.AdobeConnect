@@ -1,5 +1,6 @@
 ﻿using System;
 using EdugameCloud.Core.Business;
+using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Caching;
@@ -38,8 +39,10 @@ namespace EdugameCloud.Lti.DTO
 
         public bool CanRemoveRecordings { get; set; }
 
+        public string Language { get; set; }
 
-        public static LicenceSettingsDto Build(LmsCompany value, ICache cache)
+
+        public static LicenceSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
             if (value == null)
                 throw new ArgumentNullException("value");
@@ -71,6 +74,7 @@ namespace EdugameCloud.Lti.DTO
                     ShowMeetingDuration = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration),
 
                     CanRemoveRecordings = value.CanRemoveRecordings,
+                    Language = lmsLicenseLanguage.TwoLetterCode,
                 };
             });            
         }

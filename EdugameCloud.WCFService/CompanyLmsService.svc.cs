@@ -276,6 +276,7 @@ namespace EdugameCloud.WCFService
 
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanRemoveRecordings, dto.canRemoveRecordings);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ForcedAddInInstallation, dto.forcedAddInInstallation);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LanguageId, dto.languageId);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());

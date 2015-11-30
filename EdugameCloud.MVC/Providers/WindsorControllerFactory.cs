@@ -5,8 +5,8 @@
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Routing;
-
-    using Castle.Windsor;
+    
+    using Esynctraining.Core.Utils;
 
     /// <summary>
     /// The windsor controller factory.
@@ -18,7 +18,7 @@
         /// <summary>
         /// The container.
         /// </summary>
-        private readonly IWindsorContainer container;
+        private readonly IServiceLocator container;
 
         #endregion
 
@@ -30,7 +30,7 @@
         /// <param name="container">
         /// The container.
         /// </param>
-        public WindsorControllerFactory(IWindsorContainer container)
+        public WindsorControllerFactory(IServiceLocator container)
         {
             this.container = container;
         }
@@ -84,7 +84,7 @@
 
             try
             {
-                controller = (IController)this.container.Resolve(controllerType);
+                controller = (IController)this.container.GetInstance(controllerType);
             }
             catch (Exception exception)
             {

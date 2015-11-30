@@ -19,17 +19,16 @@
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Providers.Mailer.Models;
     using EdugameCloud.WCFService.Mail.Models;
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Comparers;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Providers.Mailer;
     using Esynctraining.Core.Utils;
     using FluentValidation;
     using FluentValidation.Results;
     using Resources;
+    using Esynctraining.Mail;
 
     /// <summary>
     /// The base service.
@@ -129,9 +128,9 @@
             get { return IoC.Resolve<FileModel>(); }
         }
         
-        protected MailModel MailModel
+        protected ISmtpClientEngine MailModel
         {
-            get { return IoC.Resolve<MailModel>(); }
+            get { return IoC.Resolve<SmtpClientEngine>(); }
         }
         
         protected ILogger Logger

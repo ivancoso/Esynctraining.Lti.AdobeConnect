@@ -15,6 +15,7 @@
         public LanguageMap()
         {
             this.Map(x => x.LanguageName).Length(100).Not.Nullable();
+            this.Map(x => x.TwoLetterCode).Length(2).Not.Nullable();
         }
 
         #endregion

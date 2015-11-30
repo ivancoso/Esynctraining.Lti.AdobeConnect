@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <components>
+    <component
+      id="IMoodleAPI"
+      service="EdugameCloud.Lti.API.Moodle.IMoodleApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Moodle.MoodleApi, EdugameCloud.Lti.Moodle"></component>
+    <component
+      id="IEGCEnabledMoodleAPI"
+      service="EdugameCloud.Lti.API.Moodle.IEGCEnabledMoodleApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Moodle.EGCEnabledMoodleApi, EdugameCloud.Lti.Moodle"></component>
+    <component
+      id="Moodle"
+      service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Moodle.MoodleLmsUserService, EdugameCloud.Lti.Moodle"></component>
+  </components>
+</configuration>

@@ -38,7 +38,6 @@
 
     public partial class LtiController : Controller
     {
-        private const string ExceptionMessage = "An exception is occured. Try again later or contact your administrator.";
         private const string ProviderKeyCookieName = "providerKey";
 
         #region Fields
@@ -69,6 +68,11 @@
         private LmsFactory LmsFactory
         {
             get { return IoC.Resolve<LmsFactory>(); }
+        }
+
+        private LanguageModel LanguageModel
+        {
+            get { return IoC.Resolve<LanguageModel>(); }
         }
 
         private CompanyModel CompanyModel
@@ -154,7 +158,7 @@
                 if (string.IsNullOrEmpty(__provider__))
                 {
                     logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
-                    this.ViewBag.Error = "Could not find LMS information. Please, contact system administrator.";
+                    this.ViewBag.Error = Resources.Messages.NoLmsInformation;
                     return this.View("Error");
                 }
                 __provider__ = FixExtraDataIssue(__provider__);
@@ -167,7 +171,7 @@
                     else
                     {
                         logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
-                        this.ViewBag.Error = "Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.";
+                        this.ViewBag.Error = Resources.Messages.NoSessionInformation;
                         return this.View("Error");
                     }
                 }
@@ -211,7 +215,7 @@
                     else
                     {
                         logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
-                        this.ViewBag.Error = "Could not save user information in database. Please contact system administrator.";
+                        this.ViewBag.Error = Resources.Messages.CanSaveToDb;
                         return this.View("Error");
                     }
 
@@ -305,7 +309,7 @@
                     var couldSavePassword = UsersSetup.SetACPassword(provider, lmsCompany, lmsUser, param, settings.password);
                     if (!couldSavePassword)
                     {
-                        return Json(OperationResult.Error("The password you provided is incorrect. Please try again."));
+                        return Json(OperationResult.Error(Resources.Messages.IncorrectAcPassword));
                     }
                 }
                 else
@@ -405,7 +409,7 @@
                 meetingsJson = JsonConvert.SerializeObject(meetings);                
                 policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider, _cache));
                 userFullName = param.lis_person_name_full;
-                settings = LicenceSettingsDto.Build(credentials, _cache);
+                settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             }
 
             string version = typeof(LtiController).Assembly.GetName().Version.ToString();
@@ -565,7 +569,7 @@
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
-                    throw new WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+                    throw new WarningMessageException(string.Format(Resources.Messages.NoUserFound, param.lms_user_id));
                 }
 
                 var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
@@ -584,13 +588,13 @@
                 else
                 {
                     var message = string.Format(
-                        "No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty);
+                        Resources.Messages.NoUserByPrincipalIdFound, lmsUser.PrincipalId ?? string.Empty);
                     logger.Error(message);
                     throw new WarningMessageException(message);
                 }
 
                 if (string.IsNullOrWhiteSpace(breezeSession))
-                    return Json(OperationResult.Error("Can't get Adobe Connect BreezeSession"), JsonRequestBehavior.AllowGet);
+                    return Json(OperationResult.Error(Resources.Messages.CanNotGetBreezeSession), JsonRequestBehavior.AllowGet);
 
                 return Json(OperationResult.Success(breezeSession), JsonRequestBehavior.AllowGet);
             }
@@ -641,12 +645,15 @@
             var trace = new StringBuilder();
             try
             {
+                //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("es");
+                //throw new InvalidOperationException("trick test");
+
                 string lmsProvider = param.GetLtiProviderName(provider);
                 LmsProvider providerInstance = IoC.Resolve<LmsProviderModel>().GetByName(lmsProvider);
                 if (providerInstance == null)
                 {
                     logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.", lmsProvider, param.oauth_consumer_key);
-                    this.ViewBag.Error = "Review LTI integration. Possible you have invalid External Tool URL.";
+                    this.ViewBag.Error = Resources.Messages.LtiExternalToolUrl;
                     return this.View("Error");
                 }
 
@@ -673,6 +680,10 @@
 
                 sw.Stop();
                 trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
+
+
+                System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode);
+
                 sw = Stopwatch.StartNew();
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);
@@ -736,7 +747,7 @@
                             if (lmsCompany.AdminUser == null)
                             {
                                 this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
-                                this.ViewBag.Message = "Sorry, LMS Admin is not set for current license. Please contact administrator.";
+                                this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
                                 return this.View("~/Views/Lti/LtiError.cshtml");
                             }
 
@@ -779,7 +790,7 @@
                             if (lmsCompany.AdminUser == null)
                             {
                                 this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
-                                this.ViewBag.Message = "Sorry, LMS Admin is not set for current license. Please contact administrator.";
+                                this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
                                 return this.View("~/Views/Lti/LtiError.cshtml");
                             }
 
@@ -830,14 +841,14 @@
                     if (acPrincipal == null)
                     {
                         this.logger.ErrorFormat("[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", lmsCompany.Id, lmsUser.Id, param.lms_user_login);
-                        throw new WarningMessageException("Sorry, Adobe Connect account does not exist for you. Please contact administrator.");
+                        throw new WarningMessageException(Resources.Messages.LtiNoAcAccount);
                     }
                     
                     return this.RedirectToExtJs(session, lmsUser, key, trace);
                 }
 
                 logger.ErrorFormat("Invalid LTI request. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                this.ViewBag.Error = "Invalid LTI request";
+                this.ViewBag.Error = Resources.Messages.LtiInvalidRequest;
                 return this.View("Error");
             }
             catch (WarningMessageException ex)
@@ -903,25 +914,25 @@
                 if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
                 {
                     logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-                    return "This LTI integration is already set for different domain";
+                    return Resources.Messages.LtiValidationDifferentDomain;
                 }
 
                 if (!lmsCompany.IsActive)
                 {
                     logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
-                    return "LMS License is not active. Please contact administrator.";
+                    return Resources.Messages.LtiValidationInactiveLmsLicense;
                 }
                 
                 if (!CompanyModel.IsActive(lmsCompany.CompanyId))
                 {
                     logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                    return "Sorry, your company doesn't have any active license. Please contact administrator.";
+                    return Resources.Messages.LtiValidationInactiveCompanyLicense;
                 }
             }
             else
             {
                 logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
-                return string.Format("Your Adobe Connect integration is not set up.");
+                return string.Format(Resources.Messages.LtiValidationNoSetup);
             }
 
             return null;
@@ -1076,7 +1087,7 @@
                 if (acPrincipal == null)
                 {
                     this.logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
-                    throw new WarningMessageException("Sorry, Adobe Connect account does not exist for you. Please contact administrator.");
+                    throw new WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
             }
 
@@ -1130,7 +1141,7 @@
                     else
                     {
                         this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
-                        throw new WarningMessageException("Sorry, LMS Admin is not set for current license. Please contact administrator.");
+                        throw new WarningMessageException(Resources.Messages.LtiNoLmsAdmin);
                     }
                 }
                 
@@ -1190,7 +1201,7 @@
                 trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
 
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
-            TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, _cache);
+            TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             TempData["CurrentUserFullName"] = param.lis_person_name_full;
             TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(pwdPolicies);
             
@@ -1224,8 +1235,10 @@
             if (session == null)
             {
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException("Session timed out. Please refresh the page.");
+                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
+
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
 
             return session;
         }
@@ -1238,8 +1251,10 @@
             if (session == null)
             {
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException("Session timed out. Please refresh the page.");
+                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
+
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
 
             return session;
         }
@@ -1375,8 +1390,8 @@
                 return forcePassMessage.Message;
 
             return IsDebug
-                ? "An exception is occured. " + ex.ToString()
-                : ExceptionMessage;
+                ? Resources.Messages.ExceptionOccured + ex.ToString()
+                : Resources.Messages.ExceptionMessage;
         }
 
         #endregion

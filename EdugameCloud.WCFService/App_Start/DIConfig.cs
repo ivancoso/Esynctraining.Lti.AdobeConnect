@@ -13,22 +13,17 @@
     using EdugameCloud.Core.Converters;
     using Lti;
     using EdugameCloud.Lti.AdobeConnect.Caching;
-    using EdugameCloud.Lti.Sakai;
-    using EdugameCloud.Lti.BlackBoard;
-    using EdugameCloud.Lti.BrainHoney;
-    using EdugameCloud.Lti.Canvas;
-    using EdugameCloud.Lti.Desire2Learn;
-    using EdugameCloud.Lti.Moodle;
     using EdugameCloud.Persistence;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Core.Providers.Mailer;
     using FluentValidation;
     using Core;
     using Esynctraining.CastleLog4Net;
     using Esynctraining.Core.Wcf;
+    using Castle.Core.Resource;
+    using Esynctraining.Mail;
 
     /// <summary>
     /// The DI config.
@@ -46,9 +41,18 @@
         /// </param>
         public static void RegisterComponents(IWindsorContainer container)
         {
-            container.Install(new CoreWindsorInstaller());
+            container.Install(new LoggerWindsorInstaller());
+            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
+
+            container.Install(
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Mail/Esynctraining.Mail.Windsor.xml"))
+            );
+
+            // HACK:
+            // DONE: container.Install(new CoreWindsorInstaller());
             container.Install(new NHibernateWindsorInstaller());
-            container.Install(new MailWindsorInstaller());
+            // DONE: container.Install(new MailWindsorInstaller());
 
             container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
 
@@ -89,9 +93,9 @@
                     .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
                     .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
 
-            container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>()
-                    .DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server))
-                    .LifeStyle.Transient);
+            //container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>()
+            //        .DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server))
+            //        .LifeStyle.Transient);
             
             container.Register(Classes.FromAssembly(egcCoreAssembly).Pick()
                     .If(Component.IsInNamespace(egcCoremodelsType.Namespace))
@@ -103,8 +107,8 @@
                     .WithService.Base()
                     .LifestyleTransient());
 
-            container.Install(new LoggerWindsorInstaller());
-            container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
+            // see before container.Install(new LoggerWindsorInstaller());
+            // see before container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
             
             RegisterLtiComponents(container);
@@ -122,12 +126,22 @@
         /// </param>
         private static void RegisterLtiComponents(IWindsorContainer container)
         {
-            container.Install(new MoodleWindsorInstaller());
-            container.Install(new Desire2LearnWindsorInstaller());
-            container.Install(new CanvasWindsorInstaller());
-            container.Install(new BrainHoneyWindsorInstaller());
-            container.Install(new BlackboardWindsorInstaller());
-            container.Install(new SakaiWindsorInstaller());
+            container.Install(
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Moodle/EdugameCloud.Lti.Moodle.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Desire2Learn/EdugameCloud.Lti.Desire2Learn.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Canvas/EdugameCloud.Lti.Canvas.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.BrainHoney/EdugameCloud.Lti.BrainHoney.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Blackboard/EdugameCloud.Lti.BlackBoard.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Sakai/EdugameCloud.Lti.Sakai.Windsor.xml"))
+            );
+            // HACK:
+            //==container.Install(new MoodleWindsorInstaller());
+            //container.Install(new Desire2LearnWindsorInstaller());
+            //container.Install(new CanvasWindsorInstaller());
+            //container.Install(new BrainHoneyWindsorInstaller());
+            //container.Install(new BlackboardWindsorInstaller());
+            //container.Install(new SakaiWindsorInstaller());
+
             container.Install(new LtiWindsorInstaller());
 
             container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());

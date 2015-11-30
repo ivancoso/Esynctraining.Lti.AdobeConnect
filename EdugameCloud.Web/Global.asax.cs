@@ -1,35 +1,37 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
-using Esynctraining.Core.Logging;
+using Castle.Core.Resource;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Core.Converters;
 using EdugameCloud.Lti;
 using EdugameCloud.Lti.AdobeConnect.Caching;
-using EdugameCloud.Lti.Sakai;
-using EdugameCloud.Lti.BlackBoard;
-using EdugameCloud.Lti.BrainHoney;
-using EdugameCloud.Lti.Canvas;
-using EdugameCloud.Lti.Desire2Learn;
-using EdugameCloud.Lti.Moodle;
 using EdugameCloud.MVC.ModelBinders;
 using EdugameCloud.MVC.Providers;
 using EdugameCloud.Persistence;
 using EdugameCloud.Web.Providers;
+using Esynctraining.CastleLog4Net;
+using Esynctraining.Core.Business.Models;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.FluentValidation;
+using Esynctraining.Windsor;
+using FluentValidation;
 using FluentValidation.Mvc;
 using IResourceProvider = Esynctraining.Core.Providers.IResourceProvider;
-using Esynctraining.CastleLog4Net;
-using EdugameCloud.Core.Business;
 
 namespace EdugameCloud.Web
 {
@@ -72,7 +74,7 @@ namespace EdugameCloud.Web
         /// </summary>
         protected void Application_End()
         {
-            IoC.Container.Dispose();
+            // HACK: IoC.Container.Dispose();
         }
 
         /// <summary>
@@ -84,8 +86,10 @@ namespace EdugameCloud.Web
             ViewEngines.Engines.Remove(webformVE);
 
             var container = new WindsorContainer();
-            IoC.Initialize(container);
-            container.RegisterComponents(web: true);
+            WindsorIoC.Initialize(container);
+
+            container.RegisterComponents();
+            RegisterComponentsWeb(container);
             container.Install(new LoggerWindsorInstaller());
             container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
             RegisterLtiComponents(container);
@@ -107,7 +111,7 @@ namespace EdugameCloud.Web
             }
 
             DataAnnotationsModelValidatorProvider.AddImplicitRequiredAttributeForValueTypes = false;
-            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(container)));
+            ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(new WindsorServiceLocator(container), IoC.Resolve<ILogger>())));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
@@ -122,6 +126,23 @@ namespace EdugameCloud.Web
             CachePolicies.InvalidateCache();
         }
 
+        public static void RegisterComponentsWeb(IWindsorContainer container)
+        {
+            container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
+
+            container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
+                .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
+                .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
+
+
+            container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWebRequest);
+            // not in use container.Register(Component.For<XDocumentWrapper>().LifeStyle.Transient);
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").Pick().If(Component.IsInNamespace("EdugameCloud.MVC.Controllers")).WithService.Self().LifestyleTransient());
+
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Web").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
+        }
+
         /// <summary>
         /// The register LTI components.
         /// </summary>
@@ -130,14 +151,24 @@ namespace EdugameCloud.Web
         /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
-            container.Install(new MoodleWindsorInstaller());
-            container.Install(new BrainHoneyWindsorInstaller());            
-            container.Install(new CanvasWindsorInstaller());
-            container.Install(new BlackboardWindsorInstaller());
-            container.Install(new Desire2LearnWindsorInstaller());
-            container.Install(new SakaiWindsorInstaller());
+            // HACK:
+            //container.Install(new MoodleWindsorInstaller());
+            //container.Install(new BrainHoneyWindsorInstaller());            
+            //container.Install(new CanvasWindsorInstaller());
+            //container.Install(new BlackboardWindsorInstaller());
+            //container.Install(new Desire2LearnWindsorInstaller());
+            //container.Install(new SakaiWindsorInstaller());
+            container.Install(
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Moodle/EdugameCloud.Lti.Moodle.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Desire2Learn/EdugameCloud.Lti.Desire2Learn.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Canvas/EdugameCloud.Lti.Canvas.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.BrainHoney/EdugameCloud.Lti.BrainHoney.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Blackboard/EdugameCloud.Lti.BlackBoard.Windsor.xml")),
+                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Sakai/EdugameCloud.Lti.Sakai.Windsor.xml"))
+            );
+
             container.Install(new LtiWindsorInstaller());
-            
+
             container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
         }
 
@@ -180,7 +211,7 @@ namespace EdugameCloud.Web
         /// </param>
         private static void SetControllerFactory(IWindsorContainer container)
         {
-            var controllerFactory = new WindsorControllerFactory(container);
+            var controllerFactory = new WindsorControllerFactory(new WindsorServiceLocator(container));
             ControllerBuilder.Current.SetControllerFactory(controllerFactory);
         }
 

@@ -129,7 +129,7 @@
             }
             catch (Exception ex)
             {
-                Esynctraining.Core.Utils.IoC.Resolve<Castle.Core.Logging.ILogger>().Error("LTI2Api.GetUsersForCourse", ex);
+                _logger.Error("LTI2Api.GetUsersForCourse", ex);
                 error = ex.Message;
             }
 

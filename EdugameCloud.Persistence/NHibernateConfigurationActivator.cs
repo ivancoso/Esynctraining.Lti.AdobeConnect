@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NHibernateConfigurationActivator.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   The n hibernate configuration activator.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace EdugameCloud.Persistence
+﻿namespace EdugameCloud.Persistence
 {
     using System;
     using System.IO;

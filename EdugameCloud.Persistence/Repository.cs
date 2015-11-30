@@ -2,11 +2,9 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Domain.Entities;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;

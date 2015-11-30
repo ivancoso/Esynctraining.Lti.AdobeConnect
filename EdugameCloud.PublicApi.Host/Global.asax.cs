@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using Esynctraining.Core.Logging;
 using Castle.Windsor;
 using Esynctraining.Core.Utils;
+using Esynctraining.Windsor;
 
 namespace EdugameCloud.PublicApi.Host
 {
@@ -12,7 +13,7 @@ namespace EdugameCloud.PublicApi.Host
         protected void Application_Start(object sender, EventArgs e)
         {
             var container = new WindsorContainer();
-            IoC.Initialize(container);
+            WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
 
             AreaRegistration.RegisterAllAreas();

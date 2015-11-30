@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.API
             LmsUserServiceBase service = null;
             if ((LmsProviderEnum)lmsCompany.LmsProviderId == LmsProviderEnum.Desire2Learn)
             {
-                service = IoC.Container.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
+                service = IoC.Resolve<LmsUserServiceBase>(LmsProviderEnum.Desire2Learn.ToString() + "_Sync");
             }
             else
             {
