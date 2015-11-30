@@ -199,6 +199,9 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Prod\create-with-users-data.js" />
+    <Content Include="App_Data\Prod\login-data.js" />
+    <Content Include="App_Data\Dev\recordings.config" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -214,6 +217,23 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="App_Data\Dev\login.config" />
+    <Content Include="App_Data\Dev\reports-attendance.config" />
+    <Content Include="App_Data\Dev\reports-sessions.config" />
+    <Content Include="App_Data\Dev\users.config" />
+    <Content Include="App_Data\Dev\templates.config" />
+    <Content Include="App_Data\Dev\create-with-users.config" />
+    <Content Include="App_Data\Prod\meeting-delete.cfg" />
+    <Content Include="App_Data\Prod\login.cfg" />
+    <Content Include="App_Data\Prod\recordings.cfg" />
+    <Content Include="App_Data\Prod\reports-attendance.cfg" />
+    <Content Include="App_Data\Prod\reports-sessions.cfg" />
+    <Content Include="App_Data\Prod\templates.cfg" />
+    <Content Include="App_Data\Prod\users.cfg" />
+    <Content Include="App_Data\Prod\create-with-users.cfg" />
+    <Content Include="App_Data\Prod\users-sync.cfg" />
+    <Content Include="App_Data\Prod\users-update.cfg" />
+    <Content Include="App_Data\Prod\users-removefrommeeting.cfg" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -245,20 +265,24 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
+    <Content Include="Views\Home\CheckLti.cshtml" />
     <Content Include="Views\Home\Population.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdugameCloud.Lti.Tests.FrontEnd\EdugameCloud.Lti.Tests.FrontEnd.csproj">
+      <Project>{0bb2ce25-5e74-4fb9-8782-07e10f83bf2f}</Project>
+      <Name>EdugameCloud.Lti.Tests.FrontEnd</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

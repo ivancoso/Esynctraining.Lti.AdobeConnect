@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 using System.Web.Mvc;
-using Dapper;
+using EdugameCloud.Lti.Tests.FrontEnd;
 
 namespace EdugameCloud.BuildManager.Controllers
 {
@@ -14,11 +13,22 @@ namespace EdugameCloud.BuildManager.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult CheckLti()
         {
-            ViewBag.Message = "Your application description page.";
+            try
+            {
+                string exePath = ConfigurationManager.AppSettings["curlExePath"];
+                string configs = Server.MapPath("~/App_Data/Prod/");
 
-            return View();
+                var messages = new CanvasLtiChecker(exePath, configs).DoCheckRequests();
+                ViewBag.Message = "Your application description page.";
+
+                return View(messages);
+            }
+            catch (Exception ex)
+            {
+                return View(new List<string> { ex.Message, ex.StackTrace });
+            }
         }
 
         [Authorize]
