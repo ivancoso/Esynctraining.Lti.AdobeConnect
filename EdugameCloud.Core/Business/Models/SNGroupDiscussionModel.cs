@@ -6,19 +6,15 @@ namespace EdugameCloud.Core.Business.Models
     using System;
     using System.Collections.Generic;
     using System.IO;
-
     using ClosedXML.Excel;
-
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Extensions;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
 
     /// <summary>
-    ///     The SN GroupDiscussion model.
+    /// The SN GroupDiscussion model.
     /// </summary>
     public class SNGroupDiscussionModel : BaseModel<SNGroupDiscussion, int>
     {

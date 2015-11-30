@@ -6,10 +6,9 @@
     using EdugameCloud.Core.Business.Queries;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Caching;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;

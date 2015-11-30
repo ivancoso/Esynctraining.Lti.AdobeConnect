@@ -1,11 +1,10 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
+    using Esynctraining.NHibernate;
 
     /// <summary>
-    ///     The SN Map settings model.
+    /// The SN Map settings model.
     /// </summary>
     public class SNMapSettingsModel : BaseModel<SNMapSettings, int>
     {

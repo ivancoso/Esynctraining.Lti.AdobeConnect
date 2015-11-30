@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using EdugameCloud.Core.Domain.Entities;
-using Esynctraining.Core.Business;
-using Esynctraining.Core.Business.Models;
-using Esynctraining.Core.Business.Queries;
+using Esynctraining.NHibernate;
+using Esynctraining.NHibernate.Queries;
 using NHibernate;
 using NHibernate.Transform;
 
 namespace EdugameCloud.Core.Business.Models
 {
     /// <summary>
-    ///     The company model.
+    /// The company model.
     /// </summary>
     public class CompanyLicenseModel : BaseModel<CompanyLicense, int>
     {

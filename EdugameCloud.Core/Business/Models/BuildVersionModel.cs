@@ -1,11 +1,10 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
+    using Esynctraining.NHibernate;
 
     /// <summary>
-    ///     The BuildVersion model.
+    /// The BuildVersion model.
     /// </summary>
     public class BuildVersionModel : BaseModel<BuildVersion, int>
     {

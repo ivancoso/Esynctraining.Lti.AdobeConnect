@@ -1,12 +1,12 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Caching;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
 
     /// <summary>
     /// The language model.
@@ -32,6 +32,14 @@
                 var query = new DefaultQueryOver<Language, int>().GetQueryOver().OrderBy(x => x.LanguageName).Asc;
                 return this.Repository.FindAll(query);
             });
+        }
+
+        public Language GetById(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentOutOfRangeException("id");
+
+            return GetAll().Single(x => x.Id == id);
         }
 
     }

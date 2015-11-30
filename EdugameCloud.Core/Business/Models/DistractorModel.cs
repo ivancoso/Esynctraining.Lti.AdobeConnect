@@ -9,15 +9,12 @@ namespace EdugameCloud.Core.Business.Models
     using System.Collections.Generic;
 
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
 
     /// <summary>
-    ///     The distractor model.
+    /// The distractor model.
     /// </summary>
     public class DistractorModel : BaseModel<Distractor, int>
     {

@@ -1,9 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Queries
 {
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business.Queries;
-
+    using Esynctraining.NHibernate.Queries;
     using NHibernate.Criterion;
 
     public class QueryOverCompany : DefaultQueryOver<Company, int>

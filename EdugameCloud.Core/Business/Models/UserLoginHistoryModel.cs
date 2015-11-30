@@ -4,10 +4,8 @@
 
     using EdugameCloud.Core.Domain.Entities;
 
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate.Criterion;
 
     /// <summary>

@@ -12,10 +12,8 @@ namespace EdugameCloud.Core.Business.Models
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.Extensions;
 
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
 
     /// <summary>

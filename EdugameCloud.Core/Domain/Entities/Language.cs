@@ -7,13 +7,17 @@
     /// </summary>
     public class Language : Entity
     {
-        #region Public Properties
-
         /// <summary>
         /// Gets or sets the language name.
         /// </summary>
         public virtual string LanguageName { get; set; }
 
-        #endregion
+
+        /// <summary>
+        /// ISO 639-1 two-letter language code.
+        /// </summary>
+        public virtual string TwoLetterCode { get; set; }
+ 
     }
+
 }

@@ -2,8 +2,7 @@
 {
     using EdugameCloud.Core.Domain.Entities;
 
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
+    using Esynctraining.NHibernate;
 
     /// <summary>
     ///     The SurveyQuestionResult model.

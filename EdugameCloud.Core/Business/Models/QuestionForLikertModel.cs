@@ -2,11 +2,10 @@
 {
     using System.Diagnostics.CodeAnalysis;
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
+    using Esynctraining.NHibernate;
 
     /// <summary>
-    ///     The QuestionForLikert model.
+    /// The QuestionForLikert model.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     public class QuestionForLikertModel : BaseModel<QuestionForLikert, int>

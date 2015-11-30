@@ -1,21 +1,20 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System;
-    using System.Collections.Generic;
     using Esynctraining.Core.Logging;
 
     using EdugameCloud.Core.Converters;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.Core.RTMP;
 
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Providers;
+    using Esynctraining.NHibernate;
 
     using Newtonsoft.Json;
 
     /// <summary>
-    ///     The real time Notification model.
+    /// The real time Notification model.
     /// </summary>
     public class RealTimeNotificationModel : IDisposable
     {

@@ -9,21 +9,15 @@
     using System.IO;
     using System.Linq;
     using System.Web;
-
-    using Esynctraining.Core.Logging;
-
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-    using Esynctraining.Core.Business.Queries;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
-
     using File = EdugameCloud.Core.Domain.Entities.File;
 
     /// <summary>
