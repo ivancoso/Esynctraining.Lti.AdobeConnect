@@ -165,7 +165,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                return OperationResult.Error("No meeting found");
+                return OperationResult.Error(Resources.Messages.MeetingNotFound);
             }
 
             ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.GetMeetingScoId() }, lmsCompany.UseMP4);
@@ -174,7 +174,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (recording == null)
             {
-                return OperationResult.Error("No recording found");
+                return OperationResult.Error(Resources.Messages.RecordingNotFound);
             }
 
             /*if (recording.Icon == "mp4-archive")

@@ -117,11 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdobeConnectMeetingHostQuota" xml:space="preserve">
+    <value>SPAIN: You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.</value>
+  </data>
   <data name="CanNotGetBreezeSession" xml:space="preserve">
     <value>SPAIN: Can't get Adobe Connect BreezeSession</value>
   </data>
   <data name="CanSaveToDb" xml:space="preserve">
     <value>SPAIN: Could not save user information in database. Please contact system administrator.</value>
+  </data>
+  <data name="CantRetrieveLmsUsers" xml:space="preserve">
+    <value>SPAIN: Unable retrieve information about LMS users.</value>
+    <comment>b</comment>
   </data>
   <data name="ErrorOccured" xml:space="preserve">
     <value>SPAIN: Error occured. </value>
@@ -159,6 +166,34 @@
   <data name="LtiValidationNoSetup" xml:space="preserve">
     <value>SPAIN: Your Adobe Connect integration is not set up.</value>
   </data>
+  <data name="MeetingCantFindPrincipal" xml:space="preserve">
+    <value>SPAIN: Cannot find Adobe Connect user with email {0} or login {1}</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingDeletionDisabled" xml:space="preserve">
+    <value>SPAIN: Meeting deletion is disabled</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotFound" xml:space="preserve">
+    <value>SPAIN: Meeting not found</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotFoundInAC" xml:space="preserve">
+    <value>SPAIN: Meeting not found in Adobe Connect</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotStudyGroup" xml:space="preserve">
+    <value>SPAIN: The meeting is not a study group, you can only leave study groups.</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotUniqueName" xml:space="preserve">
+    <value>SPAIN: There is already another item with this name. Please try again.</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotUniqueUrlPath" xml:space="preserve">
+    <value>SPAIN: URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
+    <comment>b</comment>
+  </data>
   <data name="NoLmsInformation" xml:space="preserve">
     <value>SPAIN: Could not find LMS information. Please, contact system administrator.</value>
   </data>
@@ -182,6 +217,30 @@
   </data>
   <data name="PrincipalValidateNameLength" xml:space="preserve">
     <value>SPAIN: The combined length of First and Last name must be between 1 and 60 characters.</value>
+  </data>
+  <data name="RecordingAlreadyHasMP4" xml:space="preserve">
+    <value>SPAIN: Recording is already been converted to MP4.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingCantDeleteMP4Progress" xml:space="preserve">
+    <value>SPAIN: Cannot delete. MP4 is already in progress.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingDisabledMP4" xml:space="preserve">
+    <value>SPAIN: MP4 functionality is not enabled in Adobe Connect.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingDuplicateMP4" xml:space="preserve">
+    <value>SPAIN: Trying to create MP4 duplicate recording.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingMissedMP4" xml:space="preserve">
+    <value>SPAIN: MP4 recording doesn't exist.</value>
+    <comment>b</comment>
+  </data>
+  <data name="RecordingNotFound" xml:space="preserve">
+    <value>SPAIN: No recording found</value>
+    <comment>b</comment>
   </data>
   <data name="SessionTimeOut" xml:space="preserve">
     <value>SPAIN: Session timed out. Please refresh the page.</value>

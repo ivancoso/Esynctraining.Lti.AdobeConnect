@@ -61,6 +61,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive..
+        /// </summary>
+        public static string AdobeConnectMeetingHostQuota {
+            get {
+                return ResourceManager.GetString("AdobeConnectMeetingHostQuota", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t get Adobe Connect BreezeSession.
         /// </summary>
         public static string CanNotGetBreezeSession {
@@ -75,6 +84,15 @@ namespace EdugameCloud.Lti.Resources {
         public static string CanSaveToDb {
             get {
                 return ResourceManager.GetString("CanSaveToDb", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable retrieve information about LMS users..
+        /// </summary>
+        public static string CantRetrieveLmsUsers {
+            get {
+                return ResourceManager.GetString("CantRetrieveLmsUsers", resourceCulture);
             }
         }
         
@@ -187,6 +205,69 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find Adobe Connect user with email {0} or login {1}.
+        /// </summary>
+        public static string MeetingCantFindPrincipal {
+            get {
+                return ResourceManager.GetString("MeetingCantFindPrincipal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meeting deletion is disabled.
+        /// </summary>
+        public static string MeetingDeletionDisabled {
+            get {
+                return ResourceManager.GetString("MeetingDeletionDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meeting not found.
+        /// </summary>
+        public static string MeetingNotFound {
+            get {
+                return ResourceManager.GetString("MeetingNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meeting not found in Adobe Connect.
+        /// </summary>
+        public static string MeetingNotFoundInAC {
+            get {
+                return ResourceManager.GetString("MeetingNotFoundInAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The meeting is not a study group, you can only leave study groups..
+        /// </summary>
+        public static string MeetingNotStudyGroup {
+            get {
+                return ResourceManager.GetString("MeetingNotStudyGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is already another item with this name. Please try again..
+        /// </summary>
+        public static string MeetingNotUniqueName {
+            get {
+                return ResourceManager.GetString("MeetingNotUniqueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator..
+        /// </summary>
+        public static string MeetingNotUniqueUrlPath {
+            get {
+                return ResourceManager.GetString("MeetingNotUniqueUrlPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not find LMS information. Please, contact system administrator..
         /// </summary>
         public static string NoLmsInformation {
@@ -255,6 +336,60 @@ namespace EdugameCloud.Lti.Resources {
         public static string PrincipalValidateNameLength {
             get {
                 return ResourceManager.GetString("PrincipalValidateNameLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording is already been converted to MP4..
+        /// </summary>
+        public static string RecordingAlreadyHasMP4 {
+            get {
+                return ResourceManager.GetString("RecordingAlreadyHasMP4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete. MP4 is already in progress..
+        /// </summary>
+        public static string RecordingCantDeleteMP4Progress {
+            get {
+                return ResourceManager.GetString("RecordingCantDeleteMP4Progress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MP4 functionality is not enabled in Adobe Connect..
+        /// </summary>
+        public static string RecordingDisabledMP4 {
+            get {
+                return ResourceManager.GetString("RecordingDisabledMP4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trying to create MP4 duplicate recording..
+        /// </summary>
+        public static string RecordingDuplicateMP4 {
+            get {
+                return ResourceManager.GetString("RecordingDuplicateMP4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MP4 recording doesn&apos;t exist..
+        /// </summary>
+        public static string RecordingMissedMP4 {
+            get {
+                return ResourceManager.GetString("RecordingMissedMP4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No recording found.
+        /// </summary>
+        public static string RecordingNotFound {
+            get {
+                return ResourceManager.GetString("RecordingNotFound", resourceCulture);
             }
         }
         

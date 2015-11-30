@@ -5,9 +5,9 @@ using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
-using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
@@ -216,7 +216,7 @@ namespace EdugameCloud.Lti.Controllers
                 var recording = GetScheduledRecording(recordingId, meeting.GetMeetingScoId(), adobeConnectProvider);
                 if (recording == null)
                 {
-                    return Json(OperationResult.Error("MP4 recording doesn't exist."));
+                    return Json(OperationResult.Error(Resources.Messages.RecordingMissedMP4));
                 }
 
                 if (recording.JobStatus == "job-queued")
@@ -230,7 +230,7 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Success());                    
                 }
 
-                return Json(OperationResult.Error("Cannot delete. MP4 is already in progress."));
+                return Json(OperationResult.Error(Resources.Messages.RecordingCantDeleteMP4Progress));
 
             }
             catch (Exception ex)
@@ -259,15 +259,15 @@ namespace EdugameCloud.Lti.Controllers
         {
             if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.invalid_recording_job_in_progress)
             {
-                return OperationResult.Error("Recording is already been converted to MP4.");
+                return OperationResult.Error(Resources.Messages.RecordingAlreadyHasMP4);
             }
             if (status.Code == StatusCodes.no_access && status.SubCode == StatusSubCodes.denied)
             {
-                return OperationResult.Error("MP4 functionality is not enabled in Adobe Connect.");
+                return OperationResult.Error(Resources.Messages.RecordingDisabledMP4);
             }
             if (status.Code == StatusCodes.invalid && status.SubCode == StatusSubCodes.duplicate)
             {
-                return OperationResult.Error("Trying to create MP4 duplicate recording.");
+                return OperationResult.Error(Resources.Messages.RecordingDuplicateMP4);
             }
 
             return OperationResult.Error("Unexpected error");

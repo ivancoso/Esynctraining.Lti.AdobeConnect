@@ -66,7 +66,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (result.SubCode == StatusSubCodes.no_quota
                     && result.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
                 }
 
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalIds:{1}.TypeName:{2}.",
@@ -110,7 +110,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (result.SubCode == StatusSubCodes.no_quota
                     && result.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
                 }
 
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.TypeName:{2}.",
@@ -661,7 +661,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && status.SubCode == StatusSubCodes.no_quota
                     && status.Type == "num-of-members-quota")
                 {
-                    throw new WarningMessageException("You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.");
+                    throw new WarningMessageException(Resources.Messages.AdobeConnectMeetingHostQuota);
                 }
 
                 if (status.Code != StatusCodes.ok)

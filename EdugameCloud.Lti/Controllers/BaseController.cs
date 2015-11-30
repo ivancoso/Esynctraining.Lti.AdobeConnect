@@ -68,7 +68,7 @@ namespace EdugameCloud.Lti.Controllers
             if (session == null)
             {
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException("Session timed out. Please refresh the page.");
+                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
             return session;

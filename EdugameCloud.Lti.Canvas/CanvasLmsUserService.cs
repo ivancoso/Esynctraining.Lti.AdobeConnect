@@ -30,14 +30,14 @@ namespace EdugameCloud.Lti.Canvas
             if (lmsCompany.AdminUser == null)
             {
                 logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}.", lmsCompany.Id);
-                throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
+                throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
             var token = lmsCompany.AdminUser.Token;
             if (string.IsNullOrWhiteSpace(token))
             {
                 logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
-                throw new WarningMessageException("There is no admin user set for the LMS license. Please check integration guides.");
+                throw new WarningMessageException(Resources.Messages.NoLicenseAdmin);
             }
 
             var user = canvasApi.GetCourseUser(
