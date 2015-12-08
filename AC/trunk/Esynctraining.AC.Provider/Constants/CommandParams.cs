@@ -82,12 +82,12 @@
         /// <summary>
         /// The principal by email
         /// </summary>
-        public const string PrincipalByEmail = "filter-email={0}";
+        public const string PrincipalByEmail = "filter-email={0}&filter-is-primary=false";
 
         /// <summary>
         /// The principal by email
         /// </summary>
-        public const string PrincipalByLogin = "filter-login={0}";
+        public const string PrincipalByLogin = "filter-login={0}&filter-is-primary=false";
 
         public const string PrincipalByFieldLike = "filter-like-{0}={1}";
 
