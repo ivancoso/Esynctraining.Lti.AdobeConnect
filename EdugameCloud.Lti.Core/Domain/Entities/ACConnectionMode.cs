@@ -8,16 +8,18 @@
         /// <summary>
         /// The overwrite.
         /// </summary>
-        Overwrite = 0, 
+        Overwrite = 0,
 
         /// <summary>
         /// The don't overwrite ac password.
         /// </summary>
-        DontOverwriteACPassword = 1, 
+        DontOverwriteACPassword = 1,
 
         /// <summary>
         /// The don't overwrite local password.
         /// </summary>
-        DontOverwriteLocalPassword = 2, 
+        DontOverwriteLocalPassword = 2,
+
     }
+
 }

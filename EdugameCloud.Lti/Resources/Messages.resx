@@ -120,6 +120,9 @@
   <data name="AdobeConnectMeetingHostQuota" xml:space="preserve">
     <value>You have exceeded the number of meeting hosts for your Adobe Connect account.  Please consider adding additional meeting hosts or remove meeting hosts that are inactive.</value>
   </data>
+  <data name="BlackboardDomainMissing" xml:space="preserve">
+    <value>Blackboard LMS domain is missing.</value>
+  </data>
   <data name="CanNotGetBreezeSession" xml:space="preserve">
     <value>Can't get Adobe Connect BreezeSession</value>
   </data>
@@ -129,6 +132,9 @@
   <data name="CantRetrieveLmsUsers" xml:space="preserve">
     <value>Unable retrieve information about LMS users.</value>
     <comment>b</comment>
+  </data>
+  <data name="CreateAcPrincipalManually" xml:space="preserve">
+    <value>User does not exist in AC database. You must create AC accounts manually.</value>
   </data>
   <data name="ErrorOccured" xml:space="preserve">
     <value>Error occured. </value>
@@ -173,6 +179,9 @@
   <data name="MeetingDeletionDisabled" xml:space="preserve">
     <value>Meeting deletion is disabled</value>
     <comment>b</comment>
+  </data>
+  <data name="MeetingNotAssociatedToCourse" xml:space="preserve">
+    <value>This meeting is not associated to any course.</value>
   </data>
   <data name="MeetingNotFound" xml:space="preserve">
     <value>Meeting not found</value>
@@ -247,5 +256,20 @@
   </data>
   <data name="UserIsAlreadyParticipant" xml:space="preserve">
     <value>This Adobe Connect user is already a participant of the meeting.</value>
+  </data>
+  <data name="UserNotInAdobeConnect" xml:space="preserve">
+    <value>User does not exist in Adobe Connect.</value>
+  </data>
+  <data name="UsersCannotBeSync" xml:space="preserve">
+    <value>Some of the users cannot be synchronized due to:</value>
+    <comment>c</comment>
+  </data>
+  <data name="UsersDuplicateEmail" xml:space="preserve">
+    <value>users with duplicate email exist,</value>
+    <comment>c</comment>
+  </data>
+  <data name="UsersEmptyEmail" xml:space="preserve">
+    <value>users with empty email exist,</value>
+    <comment>c</comment>
   </data>
 </root>

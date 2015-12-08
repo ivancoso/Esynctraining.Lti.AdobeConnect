@@ -130,7 +130,7 @@
         
         protected ISmtpClientEngine MailModel
         {
-            get { return IoC.Resolve<SmtpClientEngine>(); }
+            get { return IoC.Resolve<ISmtpClientEngine>(); }
         }
         
         protected ILogger Logger
@@ -179,6 +179,11 @@
         
         protected Version ProcessVersion(string swfFolder, string buildSelector)
         {
+            if (string.IsNullOrWhiteSpace(swfFolder))
+                throw new ArgumentNullException("swfFolder");
+            if (string.IsNullOrWhiteSpace(buildSelector))
+                throw new ArgumentNullException("buildSelector");
+
             if (Directory.Exists(swfFolder))
             {
                 var versions = new List<KeyValuePair<Version, string>>();

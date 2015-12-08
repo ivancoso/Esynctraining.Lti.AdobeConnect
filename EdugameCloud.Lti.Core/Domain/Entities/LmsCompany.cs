@@ -426,6 +426,14 @@ namespace EdugameCloud.Lti.Domain.Entities
             }
         }
 
+        public virtual bool AutoPublishRecordings
+        {
+            get
+            {
+                return GetSetting<bool>(LmsCompanySettingNames.AutoPublishRecordings, true);
+            }
+        }
+        
         public virtual int LanguageId
         {
             get

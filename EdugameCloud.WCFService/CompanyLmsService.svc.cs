@@ -275,6 +275,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingDuration, dto.showDuration);
 
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanRemoveRecordings, dto.canRemoveRecordings);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AutoPublishRecordings, dto.autoPublishRecordings);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ForcedAddInInstallation, dto.forcedAddInInstallation);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LanguageId, dto.languageId);
 

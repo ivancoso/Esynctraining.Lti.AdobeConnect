@@ -8,18 +8,14 @@
 }
 
 @section HeadContent {
-    <meta name="google" value="notranslate" /> 
-    <style type="text/css" media="screen"> 
-        html, body  { height:100%; }
-        body { margin:0; padding:0; overflow:auto; text-align:center; background-color: #ffffff; }   
-        object:focus { outline:none; }
-        #flashContent { display:none; }
-        #safari_rememberDiv { visibility: hidden; display: none; }
-    </style>
-@*<!-- Enable Browser History by replacing useBrowserHistory tokens with two hyphens -->
-	<!-- BEGIN Browser History required section -->*@
-	<script type="text/javascript" src="@Scripts.history_js"></script>
-@*<!-- END Browser History required section -->  *@
+	<meta name="google" value="notranslate" /> 
+	<style type="text/css" media="screen"> 
+		html, body  { height:100%; }
+		body { margin:0; padding:0; overflow:auto; text-align:center; background-color: #ffffff; }   
+		object:focus { outline:none; }
+		#flashContent { display:none; }
+		#safari_rememberDiv { visibility: hidden; display: none; }
+	</style>
 	<script type="text/javascript" src="@Scripts.swfobject_js"></script>
 	<script type="text/javascript" language="javascript">
 		var EsyncEgc = {};
@@ -44,7 +40,6 @@
 		// JavaScript enabled so display the flashContent div in case it is not replaced with a swf object.
 		swfobject.createCSS("#flashContent", "display:block;text-align:left;");
 	</script>
-
 }
 @*        <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
              JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show

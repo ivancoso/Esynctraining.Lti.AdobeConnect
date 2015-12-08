@@ -898,7 +898,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meeting == null)
             {
-                error = "Meeting not found";
+                error = Resources.Messages.MeetingNotFound;
                 return new List<string>();
             }
 
@@ -1037,7 +1037,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!serverCourseMeetings.Any())
             {
-                error = "This meeting is not associated to any course";
+                error =  Resources.Messages.MeetingNotAssociatedToCourse;
                 return null;
             }
 
@@ -1621,6 +1621,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 name = meetingName,
                 summary = meetingSco.Description,
                 template = meetingSco.SourceScoId,
+                // HACK: localization
                 start_date = meetingSco.BeginDate.ToString("yyyy-MM-dd"),
                 start_time = meetingSco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),

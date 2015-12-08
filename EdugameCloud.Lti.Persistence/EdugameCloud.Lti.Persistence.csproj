@@ -74,6 +74,7 @@
     <Compile Include="Mappings\LmsCompanyRoleMappingMap.cs" />
     <Compile Include="Mappings\LmsCompanySetting.cs" />
     <Compile Include="Mappings\LmsCourseMeetingGuestMap.cs" />
+    <Compile Include="Mappings\LmsCourseMeetingRecordingMap.cs" />
     <Compile Include="Mappings\LmsCourseMeetingMap.cs" />
     <Compile Include="Mappings\LmsProviderMap.cs" />
     <Compile Include="Mappings\LmsQuestionTypeMap.cs" />

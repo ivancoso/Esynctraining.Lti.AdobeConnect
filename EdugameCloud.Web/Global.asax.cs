@@ -74,7 +74,7 @@ namespace EdugameCloud.Web
         /// </summary>
         protected void Application_End()
         {
-            // HACK: IoC.Container.Dispose();
+            WindsorIoC.Container.Dispose();
         }
 
         /// <summary>
@@ -151,13 +151,6 @@ namespace EdugameCloud.Web
         /// </param>
         private static void RegisterLtiComponents(WindsorContainer container)
         {
-            // HACK:
-            //container.Install(new MoodleWindsorInstaller());
-            //container.Install(new BrainHoneyWindsorInstaller());            
-            //container.Install(new CanvasWindsorInstaller());
-            //container.Install(new BlackboardWindsorInstaller());
-            //container.Install(new Desire2LearnWindsorInstaller());
-            //container.Install(new SakaiWindsorInstaller());
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Moodle/EdugameCloud.Lti.Moodle.Windsor.xml")),
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Desire2Learn/EdugameCloud.Lti.Desire2Learn.Windsor.xml")),

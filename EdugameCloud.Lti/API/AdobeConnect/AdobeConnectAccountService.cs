@@ -12,7 +12,6 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
-using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -20,10 +19,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private readonly ILogger _logger;
 
+
         public AdobeConnectAccountService(ILogger logger)
         {
             _logger = logger;
         }
+
 
         public IAdobeConnectProxy GetProvider(ILmsLicense license, bool login = true)
         {
@@ -59,7 +60,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            return new AdobeConnectProxy(provider, IoC.Resolve<ILogger>(), apiUrl);
+            return new AdobeConnectProxy(provider, _logger, apiUrl);
         }
 
 

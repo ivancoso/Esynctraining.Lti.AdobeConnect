@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Caching;
     using Esynctraining.NHibernate;
@@ -23,10 +24,10 @@
 
         public override IEnumerable<QuizFormat> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<QuizFormat>>(_cache, CachePolicies.Keys.QuizFormats(), () =>
+            return CacheUtility.GetCachedItem<List<QuizFormat>>(_cache, CachePolicies.Keys.QuizFormats(), () =>
             {
                 var query = new DefaultQueryOver<QuizFormat, int>().GetQueryOver().OrderBy(x => x.QuizFormatName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

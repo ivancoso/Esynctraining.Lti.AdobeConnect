@@ -86,9 +86,7 @@ namespace EdugameCloud.MVC.Links
         public static readonly string _references_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/_references.min.js") ? Url("_references.min.js") : Url("_references.js");
                       
         public static readonly string core_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/core.min.js") ? Url("core.min.js") : Url("core.js");
-                      
-        public static readonly string history_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/history.min.js") ? Url("history.min.js") : Url("history.js");
-                      
+                                            
         public static readonly string jquery_1_8_2_intellisense_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.8.2.intellisense.min.js") ? Url("jquery-1.8.2.intellisense.min.js") : Url("jquery-1.8.2.intellisense.js");
                       
         public static readonly string jquery_1_8_2_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.8.2.min.js") ? Url("jquery-1.8.2.min.js") : Url("jquery-1.8.2.js");

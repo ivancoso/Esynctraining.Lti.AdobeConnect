@@ -36,10 +36,10 @@
 
         public override IEnumerable<State> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<State>>(_cache, CachePolicies.Keys.States(), () =>
+            return CacheUtility.GetCachedItem<List<State>>(_cache, CachePolicies.Keys.States(), () =>
             {
                 var query = new DefaultQueryOver<State, int>().GetQueryOver().OrderBy(x => x.StateName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

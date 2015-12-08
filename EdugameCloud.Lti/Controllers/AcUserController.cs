@@ -109,7 +109,7 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error(Resources.Messages.UserIsAlreadyParticipant));
                 }
 
-                AcRole role = AcRole.GetByName(user.meetingRole);
+                AcRole role = AcRole.GetById(user.meetingRole);
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), principal.PrincipalId, role.MeetingPermissionId);
 
                 // Add user as guest to DB

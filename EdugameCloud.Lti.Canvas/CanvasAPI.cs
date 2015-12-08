@@ -108,41 +108,7 @@
 
             return response.Data;
         }
-
-        public void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission)
-        {
-            IRestResponse response = null;
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/quiz_submissions/{0}/questions", submission.id),
-                    Method.POST,
-                    userToken);
-                request.RequestFormat = DataFormat.Json;
-                request.AddBody(submission);
-
-                response = client.Execute(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.AnswerQuestionsForQuiz] API:{0}. UserToken:{1}. SubmissionId:{2}.",
-                    api, userToken, submission.id);
-                throw;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.ErrorFormat("[CanvasAPI.AnswerQuestionsForQuiz] API:{0}. UserToken:{1}. SubmissionId:{2}. {3}",
-                    api, userToken, submission.id, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.AnswerQuestionsForQuiz] Canvas returns '{0}'", response.StatusDescription));
-            }
-        }
-
+        
         public AnnouncementDTO CreateAnnouncement(
             string api,
             string userToken,
@@ -185,103 +151,7 @@
         #endregion
 
         #region Methods
-
-        protected List<CanvasQuestionDTO> GetQuestionsForQuiz(string api, string userToken, int courseId, int quizId)
-        {
-            IRestResponse<List<CanvasQuestionDTO>> response;
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/courses/{0}/quizzes/{1}/questions", courseId, quizId),
-                    Method.GET,
-                    userToken);
-                request.AddParameter("per_page", 1000);
-                response = client.Execute<List<CanvasQuestionDTO>>(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.GetQuestionsForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}.", api, userToken, courseId, quizId);
-                throw;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.ErrorFormat("[CanvasAPI.GetQuestionsForQuiz] API:{0}. UserToken:{1}. CourseId:{2}. QuizId:{3}. {4}",
-                    api, userToken, courseId, quizId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.GetQuestionsForQuiz] Canvas returns '{0}'", response.StatusDescription));
-            }
-            return response.Data;
-        }
-
-        protected LmsCourseDTO GetCourse(string api, string userToken, int courseId)
-        {
-            IRestResponse<LmsCourseDTO> response;
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/courses/{0}", courseId),
-                    Method.GET,
-                    userToken);
-
-                response = client.Execute<LmsCourseDTO>(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.GetCourse] API:{0}. UserToken:{1}. CourseId:{2}.", api, userToken, courseId);
-                throw;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.ErrorFormat("[CanvasAPI.GetCourse] API:{0}. UserToken:{1}. CourseId:{2}. {3}",
-                    api, userToken, courseId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.GetCourse] Canvas returns '{0}'", response.StatusDescription));
-            }
-            return response.Data;
-        }
-
-        protected CanvasFileDTO GetFile(string api, string userToken, string fileId)
-        {
-            IRestResponse<CanvasFileDTO> response;
-            try
-            {
-                Validate(api, userToken);
-
-                var client = CreateRestClient(api);
-
-                RestRequest request = CreateRequest(
-                    api,
-                    string.Format("/api/v1/files/{0}", fileId),
-                    Method.GET,
-                    userToken);
-
-                response = client.Execute<CanvasFileDTO>(request);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "[CanvasAPI.GetFile] API:{0}. UserToken:{1}. FileId:{2}.", api, userToken, fileId);
-                throw;
-            }
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                _logger.ErrorFormat("[CanvasAPI.GetFile] API:{0}. UserToken:{1}. FileId:{2}. {3}",
-                    api, userToken, fileId, BuildInformation(response));
-                throw new InvalidOperationException(string.Format("[CanvasAPI.GetFile] Canvas returns '{0}'", response.StatusDescription));
-            }
-            return response.Data;
-        }
-
+   
         protected static void Validate(string api, string userToken)
         {
             if (string.IsNullOrWhiteSpace(api))

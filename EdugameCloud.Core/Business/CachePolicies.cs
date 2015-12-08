@@ -74,7 +74,13 @@ namespace EdugameCloud.Core.Business
             {
                 return "SNMapProviders";
             }
-            
+
+            public static string VersionInfo()
+            {
+                return "VersionInfo";
+            }
+
+
             public static string PasswordPolicies(string apiUrl)
             {
                 return apiUrl;

@@ -3,20 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public partial class LtiController
+    public partial class LtiRecordingController : BaseController
     {
         private IRecordingsService RecordingsService
         {
             get { return IoC.Resolve<IRecordingsService>(); }
+        }
+
+        private LmsCourseMeetingModel LmsCourseMeetingModel
+        {
+            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+        }
+
+        private UsersSetup UsersSetup
+        {
+            get { return IoC.Resolve<UsersSetup>(); }
+        }
+
+        public LtiRecordingController(
+            LmsUserSessionModel userSessionModel,
+            IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger)
+            : base(userSessionModel, acAccountService, settings, logger)
+        {
         }
 
         #region Public Methods and Operators
@@ -30,6 +53,9 @@ namespace EdugameCloud.Lti.Controllers
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+
+                if (!lmsCompany.CanRemoveRecordings)
+                    throw new WarningMessageException("Recording deletion is not enabled for the LMS license");
 
                 OperationResult result = RecordingsService.RemoveRecording(
                     lmsCompany,
@@ -57,11 +83,16 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;    
 
-                List<RecordingDTO> recordings = RecordingsService.GetRecordings(
+                IEnumerable<RecordingDTO> recordings = RecordingsService.GetRecordings(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
                     meetingId);
+
+                if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
+                {
+                    recordings = recordings.Where(x => x.published);
+                }
 
                 return Json(OperationResult.Success(recordings));
             }
@@ -71,7 +102,66 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-        
+
+        [HttpPost]
+        public virtual JsonResult PublishRecording(string lmsProviderName, string recordingId, int meetingId)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+
+                if (lmsCompany.AutoPublishRecordings)
+                    throw new WarningMessageException("Publishing is not allowed by LMS license settings");
+                
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                var recording = new LmsCourseMeetingRecording
+                {
+                    LmsCourseMeeting = meeting,
+                    ScoId = recordingId,
+                };
+                meeting.MeetingRecordings.Add(recording);
+                LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+
+                return Json(OperationResult.Success());
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+        public virtual JsonResult UnpublishRecording(string lmsProviderName, string recordingId, int meetingId)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+
+                if (lmsCompany.AutoPublishRecordings)
+                    throw new WarningMessageException("UnPublishing is not allowed by LMS license settings");
+
+                LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == recordingId);
+                if (recording != null)
+                {
+                    meeting.MeetingRecordings.Remove(recording);
+                    LmsCourseMeetingModel.RegisterSave(meeting, flush: true);
+                }
+                
+                return Json(OperationResult.Success());
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("PublishRecording", lmsCompany, ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+
         [HttpGet]
         public virtual ActionResult JoinRecording(string lmsProviderName, string recordingUrl)
         {
@@ -241,8 +331,22 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         #endregion
-        
+
         #region methods
+
+        private ActionResult LoginToAC(string realUrl, string breezeSession, LmsCompany credentials)
+        {
+            if (!credentials.LoginUsingCookie.GetValueOrDefault())
+            {
+                return this.Redirect(realUrl);
+            }
+
+            this.ViewBag.MeetingUrl = realUrl;
+            this.ViewBag.BreezeSession = breezeSession;
+            this.ViewBag.AcServer = credentials.AcServer + "/";
+
+            return this.View("~/Views/Lti/LoginToAC.cshtml");
+        }
 
         private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         {

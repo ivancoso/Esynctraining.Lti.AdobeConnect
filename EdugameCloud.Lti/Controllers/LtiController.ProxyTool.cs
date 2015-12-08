@@ -40,7 +40,7 @@
         {
             if (string.IsNullOrWhiteSpace(lmsDomain))
             {
-                this.ViewBag.Error = "Blackboard LMS domain is missing";
+                this.ViewBag.Error = Resources.Messages.BlackboardDomainMissing;
                 return this.View("Error");
             }
 

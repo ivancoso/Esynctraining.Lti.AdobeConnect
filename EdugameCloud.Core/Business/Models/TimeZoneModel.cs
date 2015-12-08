@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.NHibernate;
@@ -24,10 +25,10 @@
 
         public override IEnumerable<TimeZone> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<TimeZone>>(_cache, CachePolicies.Keys.TimeZones(), () =>
+            return CacheUtility.GetCachedItem<List<TimeZone>>(_cache, CachePolicies.Keys.TimeZones(), () =>
             {
                 var query = new DefaultQueryOver<TimeZone, int>().GetQueryOver().OrderBy(x => x.TimeZoneName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

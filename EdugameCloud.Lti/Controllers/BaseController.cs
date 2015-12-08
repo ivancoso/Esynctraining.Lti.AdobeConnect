@@ -7,6 +7,8 @@ using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Providers;
+using EdugameCloud.Core.Business.Models;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -44,6 +46,11 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
+        private LanguageModel LanguageModel
+        {
+            get { return IoC.Resolve<LanguageModel>(); }
+        }
+
         #region Constructors and Destructors
 
         public BaseController(
@@ -70,6 +77,22 @@ namespace EdugameCloud.Lti.Controllers
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
+
+            return session;
+        }
+
+        protected LmsUserSession GetReadOnlySession(string key)
+        {
+            Guid uid;
+            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
+
+            if (session == null)
+            {
+                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+            }
+
+            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
 
             return session;
         }
@@ -103,6 +126,23 @@ namespace EdugameCloud.Lti.Controllers
             logger.Error(originalErrorMessage);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + originalErrorMessage
+                : Resources.Messages.ExceptionMessage;
+        }
+
+        protected string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
+        {
+            string lmsInfo = (credentials != null)
+                ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
+                : string.Empty;
+
+            logger.Error(methodName + lmsInfo, ex);
+
+            var forcePassMessage = ex as WarningMessageException;
+            if (forcePassMessage != null)
+                return forcePassMessage.Message;
+
+            return IsDebug
+                ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
         }
 

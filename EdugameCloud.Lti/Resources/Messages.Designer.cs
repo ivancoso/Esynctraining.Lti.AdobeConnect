@@ -70,6 +70,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blackboard LMS domain is missing..
+        /// </summary>
+        public static string BlackboardDomainMissing {
+            get {
+                return ResourceManager.GetString("BlackboardDomainMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t get Adobe Connect BreezeSession.
         /// </summary>
         public static string CanNotGetBreezeSession {
@@ -93,6 +102,15 @@ namespace EdugameCloud.Lti.Resources {
         public static string CantRetrieveLmsUsers {
             get {
                 return ResourceManager.GetString("CantRetrieveLmsUsers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User does not exist in AC database. You must create AC accounts manually..
+        /// </summary>
+        public static string CreateAcPrincipalManually {
+            get {
+                return ResourceManager.GetString("CreateAcPrincipalManually", resourceCulture);
             }
         }
         
@@ -219,6 +237,15 @@ namespace EdugameCloud.Lti.Resources {
         public static string MeetingDeletionDisabled {
             get {
                 return ResourceManager.GetString("MeetingDeletionDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This meeting is not associated to any course..
+        /// </summary>
+        public static string MeetingNotAssociatedToCourse {
+            get {
+                return ResourceManager.GetString("MeetingNotAssociatedToCourse", resourceCulture);
             }
         }
         
@@ -408,6 +435,42 @@ namespace EdugameCloud.Lti.Resources {
         public static string UserIsAlreadyParticipant {
             get {
                 return ResourceManager.GetString("UserIsAlreadyParticipant", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User does not exist in Adobe Connect..
+        /// </summary>
+        public static string UserNotInAdobeConnect {
+            get {
+                return ResourceManager.GetString("UserNotInAdobeConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some of the users cannot be synchronized due to:.
+        /// </summary>
+        public static string UsersCannotBeSync {
+            get {
+                return ResourceManager.GetString("UsersCannotBeSync", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to users with duplicate email exist,.
+        /// </summary>
+        public static string UsersDuplicateEmail {
+            get {
+                return ResourceManager.GetString("UsersDuplicateEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to users with empty email exist,.
+        /// </summary>
+        public static string UsersEmptyEmail {
+            get {
+                return ResourceManager.GetString("UsersEmptyEmail", resourceCulture);
             }
         }
     }

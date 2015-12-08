@@ -16,6 +16,8 @@ namespace EdugameCloud.Lti.API.Canvas
             int courseid,
             int quizid);
 
+        void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission);
+
         void CompleteQuizSubmission(
             string api,
             string userToken,

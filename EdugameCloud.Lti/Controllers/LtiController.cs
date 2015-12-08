@@ -35,7 +35,7 @@
     using Esynctraining.Core.Utils;
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
-
+    using Core.Domain.Entities;
     public partial class LtiController : Controller
     {
         private const string ProviderKeyCookieName = "providerKey";
@@ -421,6 +421,7 @@
             // BB contains: lis_person_name_full:" Blackboard  Administrator"
             ViewBag.CurrentUserFullName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline);
             ViewBag.LmsLicenceSettings = settings;
+            ViewBag.AcRolesJson = JsonConvert.SerializeObject(new AcRole[] { AcRole.Host, AcRole.Presenter, AcRole.Participant });
             return View("Index");
         }
 

@@ -102,6 +102,7 @@ namespace EdugameCloud.Lti.DTO
             this.showDuration = instance.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration);
 
             this.canRemoveRecordings = instance.CanRemoveRecordings;
+            this.autoPublishRecordings = instance.AutoPublishRecordings;
             this.forcedAddInInstallation = instance.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
 
             this.languageId = instance.LanguageId;
@@ -382,6 +383,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool canRemoveRecordings { get; set; }
+
+        [DataMember]
+        public bool autoPublishRecordings { get; set; }
 
         [DataMember]
         public bool forcedAddInInstallation { get; set; }

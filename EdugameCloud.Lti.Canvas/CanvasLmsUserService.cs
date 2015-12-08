@@ -64,13 +64,13 @@ namespace EdugameCloud.Lti.Canvas
                     string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}",
                     lmsCompany.Id, courseId);
                 logger.Error(message);
-                return OperationResult<List<LmsUserDTO>>.Error("There is no admin user set for the LMS license. Please check integration guides.");
+                return OperationResult<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrWhiteSpace(lmsCompany.AdminUser.Token))
             {
                 logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
-                return OperationResult<List<LmsUserDTO>>.Error("There is no admin user set for the LMS license. Please check integration guides.");
+                return OperationResult<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);

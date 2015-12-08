@@ -25,7 +25,7 @@
         public string ac_id { get; set; }
         
         [DataMember]
-        public string ac_role { get; set; }
+        public int? ac_role { get; set; }
         
         [DataMember]
         public string lms_role { get; set; }

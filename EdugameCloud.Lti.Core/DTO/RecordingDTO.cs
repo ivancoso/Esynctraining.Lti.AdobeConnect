@@ -83,6 +83,9 @@ namespace EdugameCloud.Lti.Core.DTO
         //[DataMember]
         //public string password { get; set; }
 
+        [DataMember]
+        public bool published { get; set; }
+
         #region methods
 
         private static string GetRecordingStatus(string jobStatus)

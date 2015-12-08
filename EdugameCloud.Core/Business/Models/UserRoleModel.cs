@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.NHibernate;
@@ -24,10 +25,10 @@
 
         public override IEnumerable<UserRole> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<UserRole>>(_cache, CachePolicies.Keys.UserRoles(), () =>
+            return CacheUtility.GetCachedItem<List<UserRole>>(_cache, CachePolicies.Keys.UserRoles(), () =>
             {
                 var query = new DefaultQueryOver<UserRole, int>().GetQueryOver().OrderBy(x => x.UserRoleName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

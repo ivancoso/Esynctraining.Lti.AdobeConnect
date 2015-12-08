@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.Domain.Entities
 {
+    [DataContract]
     public sealed class AcRole
     {
         public static readonly AcRole None = new AcRole { Id = 0, Name = "None", MeetingPermissionId = MeetingPermissionId.remove };
@@ -11,9 +13,19 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
         public static readonly AcRole Participant = new AcRole { Id = 3, Name = "Participant", MeetingPermissionId = MeetingPermissionId.view };
 
 
+        [DataMember(Name = "id")]
         public int Id { get; set; }
-
+        
         public string Name { get; set; }
+
+        [DataMember(Name = "name")]
+        public string LocalizableName
+        {
+            get
+            {
+                return Resources.AcRole.ResourceManager.GetString(Name);
+            }
+        }
 
         public MeetingPermissionId MeetingPermissionId { get; set; }
 
@@ -48,16 +60,16 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
             throw new InvalidOperationException(string.Format("Not supported role name: {0}", acMeetingRoleName));
         }
 
-        public static string GetRoleName(PermissionId permissionId)
+        public static int? GetRoleId(PermissionId permissionId)
         {
             if (permissionId == PermissionId.host)
-                return Host.Name;
+                return Host.Id;
 
             if (permissionId == PermissionId.mini_host)
-                return Presenter.Name;
+                return Presenter.Id;
 
             if (permissionId == PermissionId.view)
-                return Participant.Name;
+                return Participant.Id;
 
             return null;
         }

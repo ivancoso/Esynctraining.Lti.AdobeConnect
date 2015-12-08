@@ -39,6 +39,8 @@ namespace EdugameCloud.Lti.DTO
 
         public bool CanRemoveRecordings { get; set; }
 
+        public bool AutoPublishRecordings { get; set; }
+
         public string Language { get; set; }
 
 
@@ -74,6 +76,7 @@ namespace EdugameCloud.Lti.DTO
                     ShowMeetingDuration = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingDuration),
 
                     CanRemoveRecordings = value.CanRemoveRecordings,
+                    AutoPublishRecordings = value.AutoPublishRecordings,
                     Language = lmsLicenseLanguage.TwoLetterCode,
                 };
             });            

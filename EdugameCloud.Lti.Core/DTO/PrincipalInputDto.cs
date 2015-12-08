@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Core.DTO
         public bool promptPassword { get; set; }
 
         [DataMember]
-        public string meetingRole { get; set; }
+        public int meetingRole { get; set; }
 
     }
 

@@ -7,13 +7,13 @@ namespace EdugameCloud.WCFService
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.Web;
-
+    using Core.Business;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
-
+    using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
     using Esynctraining.Core.Extensions;
@@ -120,6 +120,11 @@ namespace EdugameCloud.WCFService
         //    }
         //}
 
+        private ICache Cache
+        {
+            get { return IoC.Resolve<ICache>(); }
+        }
+
         #endregion
 
         #region Public Methods and Operators
@@ -132,26 +137,30 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public EGCVersionsDTO GetVersionInfo()
         {
-            string @base = string.Empty;
-            DirectoryInfo parent;
-            if ((parent = Directory.GetParent(HttpContext.Current.Server.MapPath("~"))) != null)
+            return CacheUtility.GetCachedItem<EGCVersionsDTO>(Cache, CachePolicies.Keys.VersionInfo(), () =>
             {
-                @base = parent.FullName;
-                if (parent.EnumerateDirectories("EdugameCloud.Web").Any())
+                string @base = string.Empty;
+                DirectoryInfo parent;
+                if ((parent = Directory.GetParent(HttpContext.Current.Server.MapPath("~"))) != null)
                 {
-                    @base = Path.Combine(@base, "EdugameCloud.Web");
+                    @base = parent.FullName;
+                    if (parent.EnumerateDirectories("EdugameCloud.Web").Any())
+                    {
+                        @base = Path.Combine(@base, "EdugameCloud.Web");
+                    }
                 }
-            }
 
-            var adminPath = @base + @"\Content\swf\admin";
-            var publicPath = @base + @"\Content\swf\pub";
-            var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
-            var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
-            return new EGCVersionsDTO
-            {
-                adminVersion = admin.Return(x => new VersionDTO(admin), null),
-                publicVersion = @public.Return(x => new VersionDTO(@public), null),
-            };
+                var adminPath = @base + @"\Content\swf\admin";
+                var publicPath = @base + @"\Content\swf\pub";
+                var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
+                var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
+                return new EGCVersionsDTO
+                {
+                    adminVersion = admin.Return(x => new VersionDTO(admin), null),
+                    publicVersion = @public.Return(x => new VersionDTO(@public), null),
+                };
+
+            });
         }
 
         /// <summary>

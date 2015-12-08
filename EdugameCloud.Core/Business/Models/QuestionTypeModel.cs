@@ -31,10 +31,10 @@
 
         public override IEnumerable<QuestionType> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<QuestionType>>(_cache, CachePolicies.Keys.QuestionTypes(), () =>
+            return CacheUtility.GetCachedItem<List<QuestionType>>(_cache, CachePolicies.Keys.QuestionTypes(), () =>
             {
                 var query = new DefaultQueryOver<QuestionType, int>().GetQueryOver().OrderBy(x => x.Type).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

@@ -22,6 +22,7 @@
 	EsyncLti.enableMultipleMeetings = @settings.EnableMultipleMeetings.ToString().ToLower();
 	EsyncLti.enableMeetingReuse = @settings.EnableMeetingReuse.ToString().ToLower();
 	EsyncLti.canRemoveRecordings = @settings.CanRemoveRecordings.ToString().ToLower();
+	EsyncLti.autoPublishRecordings = @settings.AutoPublishRecordings.ToString().ToLower();
 	EsyncLti.maxMeetingNameLength  = 60;
 	EsyncLti.instructionText = @if (settings.SupportPageHtml == null) { @Html.Raw("null"); } else { @Html.Raw("'" + Html.Encode(settings.SupportPageHtml.ToString()) + "'"); };
 	EsyncLti.labels = { "meeting": "@settings.LabelMeeting", "officehour": "@settings.LabelOfficeHour", "studygroup": "@settings.LabelStudyGroup"  };
@@ -29,6 +30,7 @@
 	EsyncLti.showSummary = @settings.ShowMeetingSummary.ToString().ToLower();
 	EsyncLti.showTime = @settings.ShowMeetingTime.ToString().ToLower();
 	EsyncLti.showDuration = @settings.ShowMeetingDuration.ToString().ToLower();
+	EsyncLti.acRoles = @Html.Raw(ViewBag.AcRolesJson);
 	EsyncLti.language = '@settings.Language';
 	var Ext = Ext || {};
 	Ext.manifest = {

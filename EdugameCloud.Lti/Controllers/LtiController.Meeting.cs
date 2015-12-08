@@ -4,7 +4,6 @@
     using System.Runtime.Serialization;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
-    using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Extensions;
@@ -24,12 +23,7 @@
     public partial class LtiController : Controller
     {
         #region Properties
-
-        private LmsCourseMeetingModel LmsCourseMeetingModel
-        {
-            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
-        }
-
+        
         private UsersSetup UsersSetup
         {
             get { return IoC.Resolve<UsersSetup>(); }

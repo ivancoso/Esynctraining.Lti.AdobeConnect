@@ -18,6 +18,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly IAdobeConnectAccountService acAccountService;
         private readonly IMeetingSetup meetingSetup;
 
+
         public RecordingsService(LmsCourseMeetingModel lmsCourseMeetingModel, LmsUserModel lmsUserModel,
             IAdobeConnectAccountService acAccountService, IMeetingSetup meetingSetup)
         {
@@ -27,26 +28,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.meetingSetup = meetingSetup;
         }
 
-        public List<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id)
+
+        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id)
         {
             LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
 
             if (meeting == null)
             {
-                return new List<RecordingDTO>();
+                return Enumerable.Empty<RecordingDTO>();
             }
 
+            List<RecordingDTO> result;
             var meetingSco = meeting.GetMeetingScoId();
             var commonInfo = provider.GetCommonInfo().CommonInfo;
             if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
             {
-                return GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, provider);
+                result = GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, provider);
             }
 
-            return GetRecordings(meetingSco, commonInfo.AccountUrl, provider);
+            result = GetRecordings(meetingSco, commonInfo.AccountUrl, provider);
+
+            ProcessPublishedFlag(lmsCompany, meeting, result);
+
+            return result;
         }
 
-        private List<RecordingDTO> GetRecordings(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordings(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             var apiRecordings = provider.GetRecordingsList(meetingSco);
@@ -72,7 +79,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private List<RecordingDTO> GetRecordingsLegacy(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
@@ -92,6 +99,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
+        private static void ProcessPublishedFlag(LmsCompany lmsCompany, LmsCourseMeeting meeting, List<RecordingDTO> records)
+        {
+            if (lmsCompany.AutoPublishRecordings)
+            {
+                records.ForEach(x => x.published = true);
+            }
+            else
+            {
+                records.ForEach(x => x.published = meeting.MeetingRecordings.Any(r => r.ScoId == x.id));
+            }
+        }
+
         public string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic, string password)
         {
             var recording = provider.GetScoInfo(id).ScoInfo;
@@ -108,6 +127,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var recordingUrl = (lmsCompany.AcServer.EndsWith("/")
                 ? lmsCompany.AcServer.Substring(0, lmsCompany.AcServer.Length - 1)
                 : lmsCompany.AcServer) + recording.UrlPath;
+
             return recordingUrl;
         }
 

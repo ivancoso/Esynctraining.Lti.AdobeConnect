@@ -1,6 +1,8 @@
 ﻿@{
     Layout = null;
     ViewBag.Title = "LoginToAC";
+    string waitRedirection = Resources.LoginToAC.WaitRedirection;
+    string followTheLink = Resources.LoginToAC.FollowTheLink;
 }
 
 <html>
@@ -17,12 +19,12 @@
     </script>
 </head>
 <body>
-    Please wait while you are being redirected... <br /><br />
+    @waitRedirection <br /><br />
 
     <iframe src="@(this.ViewBag.AcServer)api/xml?action=sco-shortcuts&session=@this.ViewBag.BreezeSession" onload="loaded()" id="session-frame" style="width:1px; height: 1px; margin-left: -100px; position: absolute"></iframe>
 
     <div id="meeting-link" style="display: none">
-        Or follow the link: <a href="@this.ViewBag.MeetingUrl">@this.ViewBag.MeetingUrl</a>
+        @followTheLink <a href="@this.ViewBag.MeetingUrl">@this.ViewBag.MeetingUrl</a>
     </div>
 </body>
 </html>

@@ -51,12 +51,15 @@
 
         public virtual IList<LmsCourseMeetingGuest> MeetingGuests { get; protected set; }
 
+        public virtual IList<LmsCourseMeetingRecording> MeetingRecordings { get; protected set; }
+
         #endregion
 
         public LmsCourseMeeting()
         {
             MeetingRoles = new List<LmsUserMeetingRole>();
             MeetingGuests = new List<LmsCourseMeetingGuest>();
+            MeetingRecordings = new List<LmsCourseMeetingRecording>();
         }
 
     }

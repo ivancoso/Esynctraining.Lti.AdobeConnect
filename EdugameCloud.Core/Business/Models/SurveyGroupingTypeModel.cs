@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
 
     using Esynctraining.NHibernate;
@@ -24,10 +25,10 @@
 
         public override IEnumerable<SurveyGroupingType> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<SurveyGroupingType>>(_cache, CachePolicies.Keys.SurveyGroupingTypes(), () =>
+            return CacheUtility.GetCachedItem<List<SurveyGroupingType>>(_cache, CachePolicies.Keys.SurveyGroupingTypes(), () =>
             {
                 var query = new DefaultQueryOver<SurveyGroupingType, int>().GetQueryOver().OrderBy(x => x.SurveyGroupingTypeName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

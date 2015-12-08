@@ -3,11 +3,19 @@
     using System;
     using System.Collections.Generic;
     using System.Web.Mvc;
+    using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-    
+    using Esynctraining.Core.Utils;
+
     public partial class LtiController
     {
+        private LmsCourseMeetingModel LmsCourseMeetingModel
+        {
+            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+        }
+
+
         public virtual JsonResult GetAttendanceReport(string lmsProviderName, int meetingId, int startIndex = 0, int limit = 0)
         {
             LmsCompany credentials = null;

@@ -7,7 +7,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        List<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id);
+        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id);
 
         string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);

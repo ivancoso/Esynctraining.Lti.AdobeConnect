@@ -27,12 +27,12 @@
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the context id.
+        /// Gets or sets the context id. (general)
         /// </summary>
         public string context_id { get; set; }
 
         /// <summary>
-        /// Gets or sets the membership url.
+        /// Gets or sets the membership url. (sakai)
         /// </summary>
         public string ext_ims_lis_memberships_url { get; set; }
 
@@ -90,12 +90,12 @@
         public string custom_canvas_user_login_id { get; set; }
 
         /// <summary>
-        /// Gets or sets the extended IMS LIST memberships id.
+        /// Gets or sets the extended IMS LIST memberships id. (sakai)
         /// </summary>
         public string ext_ims_lis_memberships_id { get; set; }
 
         /// <summary>
-        /// Gets or sets the extended IMS LTI tool setting url.
+        /// Gets or sets the extended IMS LTI tool setting url. (sakai?)
         /// </summary>
         public string ext_ims_lti_tool_setting_url { get; set; }
 
@@ -285,7 +285,7 @@
                 }
             }
 
-            // HACK: for supporting old licenses
+            // TRICK: for supporting old licenses
             if (providerName == "desire2learn")
                 providerName = LmsProviderNames.Brightspace;
 

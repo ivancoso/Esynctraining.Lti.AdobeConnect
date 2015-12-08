@@ -30,10 +30,10 @@
         
         public override IEnumerable<Country> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<Country>>(_cache, CachePolicies.Keys.Countries(), () =>
+            return CacheUtility.GetCachedItem<List<Country>>(_cache, CachePolicies.Keys.Countries(), () =>
             {
                 var query = new DefaultQueryOver<Country, int>().GetQueryOver().OrderBy(x => x.CountryName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

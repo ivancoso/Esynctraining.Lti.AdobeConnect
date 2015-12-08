@@ -41,7 +41,7 @@
         // TRICK: uses cache!
         public override IEnumerable<LmsProvider> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
+            return CacheUtility.GetCachedItem<List<LmsProvider>>(_cache, CachePolicies.Keys.LmsProviders(), () =>
             {
                 var queryOver = new DefaultQueryOver<LmsProvider, int>().GetQueryOver();
                 return Repository.FindAll(queryOver).ToList();

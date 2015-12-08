@@ -27,10 +27,10 @@
 
         public override IEnumerable<Language> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<Language>>(_cache, CachePolicies.Keys.Languages(), () =>
+            return CacheUtility.GetCachedItem<List<Language>>(_cache, CachePolicies.Keys.Languages(), () =>
             {
                 var query = new DefaultQueryOver<Language, int>().GetQueryOver().OrderBy(x => x.LanguageName).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

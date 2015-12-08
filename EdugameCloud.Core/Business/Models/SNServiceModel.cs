@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Core.Business.Models
 {
     using System.Collections.Generic;
+    using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.NHibernate;
     using Esynctraining.Core.Caching;
@@ -23,10 +24,10 @@
 
         public override IEnumerable<SNService> GetAll()
         {
-            return CacheUtility.GetCachedItem<IEnumerable<SNService>>(_cache, CachePolicies.Keys.SNServices(), () =>
+            return CacheUtility.GetCachedItem<List<SNService>>(_cache, CachePolicies.Keys.SNServices(), () =>
             {
                 var query = new DefaultQueryOver<SNService, int>().GetQueryOver().OrderBy(x => x.SocialService).Asc;
-                return this.Repository.FindAll(query);
+                return this.Repository.FindAll(query).ToList();
             });
         }
 

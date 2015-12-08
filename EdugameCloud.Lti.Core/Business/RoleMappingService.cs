@@ -14,11 +14,11 @@ namespace EdugameCloud.Lti.Core.Business
             string role = u.lms_role != null ? u.lms_role.ToLower() : string.Empty;
 
             var permission = MeetingPermissionId.view;
-            u.ac_role = AcRole.Participant.Name;
+            u.ac_role = AcRole.Participant.Id;
             if (string.IsNullOrWhiteSpace(u.id) || u.id.Equals("0"))
             {
                 permission = MeetingPermissionId.remove;
-                u.ac_role = "Remove"; // probably doesn't make sence, need to review and remove
+                u.ac_role = null; // "Remove"; // probably doesn't make sence, need to review and remove
             }
 
             LmsCompanyRoleMapping mapping = lmsCompany.RoleMappings.FirstOrDefault(x => x.LmsRoleName.Equals(role, StringComparison.OrdinalIgnoreCase));
@@ -29,7 +29,7 @@ namespace EdugameCloud.Lti.Core.Business
                     if (!ignoreEmptyACRole)
                     {
                         permission = AcRole.None.MeetingPermissionId;
-                        u.ac_role = AcRole.None.Name;
+                        u.ac_role = AcRole.None.Id;
                     }
 
                     return permission;
@@ -37,7 +37,7 @@ namespace EdugameCloud.Lti.Core.Business
                 else
                 {
                     AcRole acRole = AcRole.GetById(mapping.AcRole);
-                    u.ac_role = acRole.Name;
+                    u.ac_role = acRole.Id;
                     return acRole.MeetingPermissionId;
                 }
             }
@@ -46,13 +46,13 @@ namespace EdugameCloud.Lti.Core.Business
                 || role.Contains("admin") || role.Contains("lecture"))
             {
                 permission = MeetingPermissionId.host;
-                u.ac_role = AcRole.Host.Name;
+                u.ac_role = AcRole.Host.Id;
             }
             else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author")
                      || role.Contains("teaching assistant") || role.Contains("course builder")
                      || role.Contains("evaluator") || role == "advisor")
             {
-                u.ac_role = AcRole.Presenter.Name;
+                u.ac_role = AcRole.Presenter.Id;
                 permission = MeetingPermissionId.mini_host;
             }
 
@@ -65,7 +65,7 @@ namespace EdugameCloud.Lti.Core.Business
                         .FirstOrDefault(x => x.LmsRoleName.Equals(user.lms_role, StringComparison.OrdinalIgnoreCase));
             if (mapping != null && mapping.AcRole == AcRole.None.Id) // LMS role is set to be not mapped to any AC role
             {
-                user.ac_role = AcRole.None.Name;
+                user.ac_role = AcRole.None.Id;
             }
         }
     }

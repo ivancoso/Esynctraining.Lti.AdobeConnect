@@ -16,7 +16,7 @@ namespace EdugameCloud.Lti.API.Canvas
 
         //void AddMoreDetailsForUser(string api, string usertoken, LmsUserDTO user);
 
-        void AnswerQuestionsForQuiz(string api, string userToken, CanvasQuizSubmissionDTO submission);
+        
 
         LmsUserDTO GetUser(string api, string userToken, string userId);
 
