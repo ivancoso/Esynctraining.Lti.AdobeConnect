@@ -175,14 +175,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("provider");
             if (param == null)
                 throw new ArgumentNullException("param");
-            if (trace == null)
-                throw new ArgumentNullException("trace");
 
             var ret = new List<MeetingDTO>();
             var t1 = Stopwatch.StartNew();          
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(credentials.Id, param.course_id);
             t1.Stop();
-            trace.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", t1.Elapsed.ToString());
+            if (trace !=  null)
+                trace.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", t1.Elapsed.ToString());
 
             //var tasks = new List<Task<MeetingDTO>>();
             // TRICK: not to lazy load within Parallel.ForEach
@@ -267,7 +266,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
             t1.Stop();
-            trace.AppendFormat("\t GetMeetings - OfficeHours processing time: {0}\r\n", t1.Elapsed.ToString());
+            if (trace != null)
+                trace.AppendFormat("\t GetMeetings - OfficeHours processing time: {0}\r\n", t1.Elapsed.ToString());
 
             var t3 = Stopwatch.StartNew();
             var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
@@ -291,7 +291,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             };
 
             t3.Stop();
-            trace.AppendFormat("\t GetMeetings - build result object: {0}\r\n", t3.Elapsed.ToString());
+            if (trace != null)
+                trace.AppendFormat("\t GetMeetings - build result object: {0}\r\n", t3.Elapsed.ToString());
 
             return r;
         }
