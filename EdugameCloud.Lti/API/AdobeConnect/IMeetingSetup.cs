@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
@@ -14,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             MeetingDTO meetingDTO,
+            StringBuilder trace,
             bool retrieveLmsUsers = false);
 
         List<string> DeleteMeeting(

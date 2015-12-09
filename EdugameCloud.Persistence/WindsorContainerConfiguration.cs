@@ -16,9 +16,7 @@
     {
         public static void RegisterComponents(this IWindsorContainer container)
         {
-//            container.Install(new CoreWindsorInstaller());
             container.Install(new NHibernateWindsorInstaller());
-            //container.Install(new MailWindsorInstaller());
 
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml")),

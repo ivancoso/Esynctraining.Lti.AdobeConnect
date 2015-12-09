@@ -155,6 +155,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public PrincipalCollectionResult GetAllByEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("email can't be empty", "email");
+
             return Execute(() => { return _provider.GetAllByEmail(email); },
                 email);
         }
@@ -173,6 +176,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public PrincipalCollectionResult GetAllByLogin(string login)
         {
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentException("login can't be empty", "login");
+
             return Execute(() => { return _provider.GetAllByLogin(login); },
                 login);
         }

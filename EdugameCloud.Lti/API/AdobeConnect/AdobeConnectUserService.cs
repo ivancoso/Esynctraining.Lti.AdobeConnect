@@ -25,6 +25,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (principal == null && !denyUserCreation)
             {
+                if (searchByEmail && string.IsNullOrWhiteSpace(email))
+                    throw new WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
+
                 principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
 
@@ -56,6 +59,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!denyUserCreation && (principal == null))
             {
+                if (searchByEmail && string.IsNullOrWhiteSpace(email))
+                    throw new WarningMessageException(Resources.Messages.CantCreatePrincipalWithEmptyEmail);
+
                 principal = CreatePrincipal(provider, login, email, firstName, lastName, searchByEmail);
             }
 
@@ -68,6 +74,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             bool searchByEmail)
         {
+            if (searchByEmail && string.IsNullOrWhiteSpace(email))
+                return null;
+            if (!searchByEmail && string.IsNullOrWhiteSpace(login))
+                return null;
+
             PrincipalCollectionResult result = searchByEmail 
                 ? provider.GetAllByEmail(email) 
                 : provider.GetAllByLogin(login);
@@ -83,6 +94,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email,
             bool searchByEmail)
         {
+            if (searchByEmail && string.IsNullOrWhiteSpace(email))
+                return null;
+            if (!searchByEmail && string.IsNullOrWhiteSpace(login))
+                return null;
+
             return searchByEmail
                 ? principalCache.FirstOrDefault(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase))
                 : principalCache.FirstOrDefault(p => p.Login.Equals(login, StringComparison.OrdinalIgnoreCase));
@@ -96,6 +112,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string lastName,
             bool acUsesEmailAsLogin)
         {
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new WarningMessageException("Adobe Connect User's First Name can't be empty.");
+            }
+            if (string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new WarningMessageException("Adobe Connect User's Last Name can't be empty.");
+            }
+
             var setup = new PrincipalSetup
             {
                 Email = string.IsNullOrWhiteSpace(email) ? null : email,

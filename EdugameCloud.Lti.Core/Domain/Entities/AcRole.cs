@@ -15,7 +15,8 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
 
         [DataMember(Name = "id")]
         public int Id { get; set; }
-        
+
+        [DataMember(Name = "systemName")]
         public string Name { get; set; }
 
         [DataMember(Name = "name")]
@@ -43,22 +44,22 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
             }
         }
 
-        public static AcRole GetByName(string acMeetingRoleName)
-        {
-            if (acMeetingRoleName == None.Name)
-                return None;
+        //public static AcRole GetByName(string acMeetingRoleName)
+        //{
+        //    if (acMeetingRoleName == None.Name)
+        //        return None;
 
-            if (acMeetingRoleName == Host.Name)
-                return Host;
+        //    if (acMeetingRoleName == Host.Name)
+        //        return Host;
 
-            if (acMeetingRoleName == Presenter.Name)
-                return Presenter;
+        //    if (acMeetingRoleName == Presenter.Name)
+        //        return Presenter;
 
-            if (acMeetingRoleName == Participant.Name)
-                return Participant;
+        //    if (acMeetingRoleName == Participant.Name)
+        //        return Participant;
 
-            throw new InvalidOperationException(string.Format("Not supported role name: {0}", acMeetingRoleName));
-        }
+        //    throw new InvalidOperationException(string.Format("Not supported role name: {0}", acMeetingRoleName));
+        //}
 
         public static int? GetRoleId(PermissionId permissionId)
         {

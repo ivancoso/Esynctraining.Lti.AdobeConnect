@@ -393,9 +393,11 @@
             var userFullName = TempData["CurrentUserFullName"] as string;
             LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
 
+            // TRICK: to change lang inside
+            LmsUserSession session = GetReadOnlySession(lmsProviderName);
+
             if (string.IsNullOrWhiteSpace(meetingsJson))
             {
-                LmsUserSession session = GetReadOnlySession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
                 var acProvider = this.GetAdobeConnectProvider(credentials);

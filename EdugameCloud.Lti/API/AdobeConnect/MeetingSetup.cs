@@ -511,6 +511,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             LtiParamDTO param,
             MeetingDTO meetingDTO,
+            StringBuilder trace,
             bool retrieveLmsUsers = false)
         {
             if (lmsCompany == null)
@@ -536,7 +537,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string meetingSco = meeting.GetMeetingScoId();
 
             sw.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: GetOneByUserIdAndCompanyLms+GetCourseMeeting: time: {0}.", sw.Elapsed.ToString());
+            trace.AppendFormat("SaveMeeting: GetOneByUserIdAndCompanyLms+GetCourseMeeting: time: {0}.", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             OfficeHours officeHours = null;
@@ -562,7 +563,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault());
 
             sw.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.", sw.Elapsed.ToString());
+            trace.AppendFormat("SaveMeeting: GetScoInfo+GetPrincipalByLoginOrEmail: time: {0}.", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             //===========================================
@@ -574,7 +575,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 this.UsersSetup.AddUserToMeetingHostsGroup(provider, currentUserPrincipal.PrincipalId);
 
                 sw.Stop();
-                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 // NOTE: for meeting we need users to add to AC meeting;
@@ -596,7 +597,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
 
                 sw.Stop();
-                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: UsersSetup.GetLMSUsers: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: UsersSetup.GetLMSUsers: time: {0}.", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
             }
             //===========================================
@@ -606,7 +607,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string meetingFolder = this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal, useLmsUserEmailForSearch);
 
             sw.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: GetMeetingFolder: time: {0}.", sw.Elapsed.ToString());
+            trace.AppendFormat("SaveMeeting: GetMeetingFolder: time: {0}.", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             SetMeetingUpdateItemFields(
@@ -619,13 +620,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 isNewMeeting, updateItem, meeting, officeHours);
 
             sw.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: ProcessMeetingName: time: {0}.", sw.Elapsed.ToString());
+            trace.AppendFormat("SaveMeeting: ProcessMeetingName: time: {0}.", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             ScoInfoResult result = isNewMeeting ? provider.CreateSco(updateItem) : provider.UpdateSco(updateItem);
 
             sw.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
+            trace.AppendFormat("SaveMeeting: CreateSco: time: {0}.", sw.Elapsed.ToString());
             
             if (!result.Success || result.ScoInfo == null)
             {
@@ -695,7 +696,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     param);
 
                 sw.Stop();
-                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: UsersSetup.SetDefaultUsers: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: UsersSetup.SetDefaultUsers: time: {0}.", sw.Elapsed.ToString());
             }
                         
             if (isNewMeeting || attachToExistedOfficeHours)
@@ -735,7 +736,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsUsers);
 
                 sw.Stop();
-                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: GetMeetingDTOByScoInfo+GetUsers: time: {0}.", sw.Elapsed.ToString());
+                trace.AppendFormat("SaveMeeting: GetMeetingDTOByScoInfo+GetUsers: time: {0}.", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
                 if (error != null)
@@ -767,7 +768,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ScoInfoResult meetingSco = provider.GetScoInfo(dto.sco_id);
             if (!meetingSco.Success)
             {
-                IoC.Resolve<ILogger>().ErrorFormat("[ReuseExistedAdobeConnectMeeting] Meeting not found in Adobe Connect. {0}.", meetingSco.Status.GetErrorInfo());
+                Logger.ErrorFormat("[ReuseExistedAdobeConnectMeeting] Meeting not found in Adobe Connect. {0}.", meetingSco.Status.GetErrorInfo());
                 return OperationResult.Error(Resources.Messages.MeetingNotFoundInAC);
             }
 
@@ -1291,7 +1292,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{ACSessionParticipantDTO}"/>.
         /// </returns>
-        private static List<ACSessionParticipantDTO> GetAttendanceReport(string meetingId, IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
+        private List<ACSessionParticipantDTO> GetAttendanceReport(string meetingId, IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -1317,7 +1318,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             catch (Exception ex)
             {
-                IoC.Resolve<ILogger>().Error("GetAttendanceReport.Exception", ex);
+                Logger.Error("GetAttendanceReport.Exception", ex);
             }
 
             return new List<ACSessionParticipantDTO>();
@@ -1397,7 +1398,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result.OrderBy(s => s.sessionNumber).ToList();
         }
 
-        private static List<ACSessionDTO> GetSessionsWithParticipants(string meetingId, IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
+        private List<ACSessionDTO> GetSessionsWithParticipants(string meetingId, IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
         {
             try
             {
@@ -1480,7 +1481,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             catch (Exception ex)
             {
-                IoC.Resolve<ILogger>().Error("GetSessionsWithParticipants.Exception", ex);
+                Logger.Error("GetSessionsWithParticipants.Exception", ex);
             }
 
             return new List<ACSessionDTO>();

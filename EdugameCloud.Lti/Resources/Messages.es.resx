@@ -129,6 +129,9 @@
   <data name="CanSaveToDb" xml:space="preserve">
     <value>No se pudo guardar la información de usuario en la base de datos. Por favor, contacte con el administrador del sistema.</value>
   </data>
+  <data name="CantCreatePrincipalWithEmptyEmail" xml:space="preserve">
+    <value>E-mail de usuario no existe.</value>
+  </data>
   <data name="CantRetrieveLmsUsers" xml:space="preserve">
     <value>Imposible recuperar información sobre usuarios del LMS.</value>
     <comment>b</comment>
@@ -261,15 +264,15 @@
     <value>Los usuarios no existen en Adobe Connect</value>
   </data>
   <data name="UsersCannotBeSync" xml:space="preserve">
-    <value>Algunos de los usuarios no pueden ser sincronizados debido a:</value>
+    <value>Algunos de los usuarios no pueden ser sincronizados debido a: </value>
     <comment>c</comment>
   </data>
   <data name="UsersDuplicateEmail" xml:space="preserve">
-    <value>existen usuarios con email duplicado,</value>
+    <value>existen usuarios con email duplicado, </value>
     <comment>c</comment>
   </data>
   <data name="UsersEmptyEmail" xml:space="preserve">
-    <value>existen usuarios con email vacío,</value>
+    <value>existen usuarios con email vacío, </value>
     <comment>c</comment>
   </data>
 </root>

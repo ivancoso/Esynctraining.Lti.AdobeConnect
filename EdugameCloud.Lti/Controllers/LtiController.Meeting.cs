@@ -2,6 +2,7 @@
 {
     using System;
     using System.Runtime.Serialization;
+    using System.Text;
     using System.Web.Mvc;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Domain.Entities;
@@ -76,11 +77,13 @@
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+                var trace = new StringBuilder();
                 OperationResult ret = this.meetingSetup.SaveMeeting(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     param,
-                    meeting);
+                    meeting,
+                    trace);
 
                 return Json(ret);
             }
@@ -100,11 +103,13 @@
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+                var trace = new StringBuilder();
                 var ret = this.meetingSetup.SaveMeeting(
                     credentials,
                     this.GetAdobeConnectProvider(credentials),
                     param,
                     meeting,
+                    trace,
                     true);
 
                 return Json(ret);

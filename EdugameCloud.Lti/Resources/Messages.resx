@@ -129,6 +129,9 @@
   <data name="CanSaveToDb" xml:space="preserve">
     <value>Could not save user information in database. Please contact system administrator.</value>
   </data>
+  <data name="CantCreatePrincipalWithEmptyEmail" xml:space="preserve">
+    <value>User Email doesn't exist</value>
+  </data>
   <data name="CantRetrieveLmsUsers" xml:space="preserve">
     <value>Unable retrieve information about LMS users.</value>
     <comment>b</comment>
@@ -261,15 +264,15 @@
     <value>User does not exist in Adobe Connect.</value>
   </data>
   <data name="UsersCannotBeSync" xml:space="preserve">
-    <value>Some of the users cannot be synchronized due to:</value>
+    <value>Some of the users cannot be synchronized due to: </value>
     <comment>c</comment>
   </data>
   <data name="UsersDuplicateEmail" xml:space="preserve">
-    <value>users with duplicate email exist,</value>
+    <value>users with duplicate email exist, </value>
     <comment>c</comment>
   </data>
   <data name="UsersEmptyEmail" xml:space="preserve">
-    <value>users with empty email exist,</value>
+    <value>users with empty email exist, </value>
     <comment>c</comment>
   </data>
 </root>

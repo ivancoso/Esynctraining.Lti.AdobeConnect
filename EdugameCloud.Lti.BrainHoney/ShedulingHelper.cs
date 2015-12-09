@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.API.BrainHoney;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -268,6 +269,7 @@ namespace EdugameCloud.Lti.BrainHoney
                 throw new NotImplementedException("TODO: it seems this API doesnt work ans nobody calls it");
 
                 DateTime startDate = DateTime.Parse(course.StartDate);
+                var trace = new StringBuilder();
                 _meetingSetup.SaveMeeting(
                     brainHoneyCompany,
                     adobeConnectProvider,
@@ -287,7 +289,8 @@ namespace EdugameCloud.Lti.BrainHoney
 
                         name = course.Title,
                         template = templates.First().With(x => x.id)
-                    });
+                    },
+                    trace);
             }
 
             return result;

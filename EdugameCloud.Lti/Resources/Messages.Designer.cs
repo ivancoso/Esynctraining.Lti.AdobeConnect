@@ -97,6 +97,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User Email doesn&apos;t exist.
+        /// </summary>
+        public static string CantCreatePrincipalWithEmptyEmail {
+            get {
+                return ResourceManager.GetString("CantCreatePrincipalWithEmptyEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable retrieve information about LMS users..
         /// </summary>
         public static string CantRetrieveLmsUsers {
@@ -448,7 +457,7 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some of the users cannot be synchronized due to:.
+        ///   Looks up a localized string similar to Some of the users cannot be synchronized due to: .
         /// </summary>
         public static string UsersCannotBeSync {
             get {
@@ -457,7 +466,7 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to users with duplicate email exist,.
+        ///   Looks up a localized string similar to users with duplicate email exist, .
         /// </summary>
         public static string UsersDuplicateEmail {
             get {
@@ -466,7 +475,7 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to users with empty email exist,.
+        ///   Looks up a localized string similar to users with empty email exist, .
         /// </summary>
         public static string UsersEmptyEmail {
             get {
