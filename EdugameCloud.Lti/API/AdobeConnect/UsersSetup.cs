@@ -1,5 +1,4 @@
 ﻿using EdugameCloud.Lti.Utils;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -7,8 +6,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
-    using System.Web.Security;
-    using Esynctraining.Core.Logging;
     using EdugameCloud.Lti.Core.Business;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Domain.Entities;
@@ -18,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
@@ -849,7 +847,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     if (containsDuplicateEmails)
                         message += Resources.Messages.UsersDuplicateEmail;
                     // TRICK: ugly string processing )
-                    message = message.Substring(0, message.Length - 1);
+                    message = message.Substring(0, message.Length - 2);
                     message += ". ";
                 }
 
@@ -893,7 +891,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsUsers = this.LmsUserModel.GetByCompanyLms(lmsCompany.Id, users);
 
                 sw.Stop();
-                IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: SetDefaultUsers.GetByCompanyLms: time: {0}.", sw.Elapsed.ToString());
+                logger.InfoFormat("SaveMeeting: SetDefaultUsers.GetByCompanyLms: time: {0}.", sw.Elapsed.ToString());
             }
 
             var sw2 = Stopwatch.StartNew();
@@ -901,7 +899,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.ProcessUsersInAC(lmsCompany, provider, meetingScoId, users, principalCache, lmsUsers, true);
 
             sw2.Stop();
-            IoC.Resolve<ILogger>().InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
+            logger.InfoFormat("SaveMeeting: SetDefaultUsers.ProcessUsersInAC: time: {0}.", sw2.Elapsed.ToString());
         }
 
         /// <summary>
@@ -1037,11 +1035,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     error = Resources.Messages.CreateAcPrincipalManually;
                     return null;
                 }
+                else
+                {
+                    error = "Can't create Adobe Connect principal";
+                    return null;
+                }
             }
             
             if (!user.ac_role.HasValue)
             {
-                throw new InvalidOperationException("AdobeConnect role is empty");
+                throw new InvalidOperationException("Adobe Connect principal role is empty");
             }
             else
             {
@@ -1595,8 +1598,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     foreach (var chunk in Chunk(users, 150))
                     {
                         PrincipalCollectionResult acResult = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
-                        ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()))
-                        : provider.GetAllByLogin(chunk.Select(x => x.GetLogin()));
+                        ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()).Where(x => !string.IsNullOrWhiteSpace(x)))
+                        : provider.GetAllByLogin(chunk.Select(x => x.GetLogin()).Where(x => !string.IsNullOrWhiteSpace(x)));
 
                         if (acResult.Success)
                         {
@@ -1641,12 +1644,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 catch (Exception ex)
                 {
-                    IoC.Resolve<ILogger>().Error("GetAllPrincipals.CONNECT", ex);
+                    logger.Error("GetAllPrincipals.CONNECT", ex);
                     throw;
                 }
             }
 
-            IoC.Resolve<ILogger>().Error("Unsupported cache mode: " + cacheMode);
+            logger.Error("Unsupported cache mode: " + cacheMode);
             return null;
         }
 
@@ -1723,8 +1726,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     if (reRunOnError)
                     {
-                        IoC.Resolve<ILogger>()
-                            .Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
+                        logger.Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
 
                         IoC.Resolve<IPrincipalCache>().RecreatePrincipalCache(IoC.Resolve<LmsCompanyModel>().GetAll());
                         IEnumerable<Principal> refreshedPrincipalCache = this.GetAllPrincipals(
@@ -1743,8 +1745,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                     else
                     {
-                        IoC.Resolve<ILogger>()
-                            .Error("UpdateScoPermissionForPrincipal - 2nd try. Status.Code=" + status.Code.ToString());
+                        logger.Error("UpdateScoPermissionForPrincipal - 2nd try. Status.Code=" + status.Code.ToString());
                         throw new InvalidOperationException(
                             "UpdateScoPermissionForPrincipal. Status.Code=" + status.Code.ToString());
                     }

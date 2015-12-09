@@ -6594,21 +6594,6 @@
             Gets or sets the type.
             </summary>
         </member>
-        <member name="T:EdugameCloud.Core.Domain.DTO.EGCVersionsDTO">
-            <summary>
-            The versions DTO.
-            </summary>
-        </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.EGCVersionsDTO.adminVersion">
-            <summary>
-            Gets or sets the admin.
-            </summary>
-        </member>
-        <member name="P:EdugameCloud.Core.Domain.DTO.EGCVersionsDTO.publicVersion">
-            <summary>
-            Gets or sets the public.
-            </summary>
-        </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.VersionDTO">
             <summary>
             The version DTO.
