@@ -674,6 +674,12 @@
                 var sw = Stopwatch.StartNew();
 
                 LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(providerInstance.Id, param.oauth_consumer_key).Value;
+
+                if (lmsCompany != null)
+                {
+                    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode);
+                }
+
                 string validationError = ValidateLmsLicense(lmsCompany, param);
                 if (!string.IsNullOrWhiteSpace(validationError))
                 {
@@ -685,8 +691,7 @@
                 trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
 
 
-                System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode);
-
+                
                 sw = Stopwatch.StartNew();
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);

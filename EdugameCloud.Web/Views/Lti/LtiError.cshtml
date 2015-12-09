@@ -1,20 +1,21 @@
 ﻿@{
-    Layout = null;
+	Layout = null;
 
-    string errorMessage = string.Empty;
+	string errorMessage = string.Empty;
 
-    if (string.IsNullOrWhiteSpace(ViewBag.Message))
-    {
-        errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
-            ? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
-            : EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
-    }
-    else
-    {
-        errorMessage = ViewBag.Message;
-    }
+	if (string.IsNullOrWhiteSpace(ViewBag.Message))
+	{
+		errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
+			? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
+			: EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
+	}
+	else
+	{
+		errorMessage = ViewBag.Message;
+	}
 
-    string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
+	string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
+	if ((errorMessage.Length > 80) && (height == "24px")) { height = "48px"; }
 }
 <!DOCTYPE html>
 <html class="x-viewport">

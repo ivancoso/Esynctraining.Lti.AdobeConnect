@@ -227,6 +227,7 @@
     <Compile Include="DTO\CanvasQuizSubmissionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionResultDTO.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="LtiWindsorInstaller.cs" />
     <Compile Include="Models\ProxyToolPasswordModel.cs" />

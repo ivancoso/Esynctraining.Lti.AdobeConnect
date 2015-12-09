@@ -674,7 +674,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            foreach (var chunk in Chunk(meetingPermissions, 50))
+            foreach (var chunk in meetingPermissions.Chunk(50))
             {
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
@@ -1235,30 +1235,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The chunk.
-        /// </summary>
-        /// <param name="source">
-        /// The source.
-        /// </param>
-        /// <param name="chunksize">
-        /// The chunksize.
-        /// </param>
-        /// <typeparam name="T">
-        /// </typeparam>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        private static IEnumerable<IEnumerable<T>> Chunk<T>(IEnumerable<T> source, int chunksize)
-        {
-            while (source.Any())
-            {
-                yield return source.Take(chunksize);
-                source = source.Skip(chunksize);
-            }
-        }
-
+        
         ///// <summary>
         ///// The is user synched.
         ///// </summary>
@@ -1595,11 +1572,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     var result = new List<Principal>();
 
-                    foreach (var chunk in Chunk(users, 150))
+                    foreach (var chunk in users.Chunk(100))
                     {
                         PrincipalCollectionResult acResult = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
-                        ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()).Where(x => !string.IsNullOrWhiteSpace(x)))
-                        : provider.GetAllByLogin(chunk.Select(x => x.GetLogin()).Where(x => !string.IsNullOrWhiteSpace(x)));
+                            ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()).Where(x => !string.IsNullOrWhiteSpace(x)))
+                            : provider.GetAllByLogin(chunk.Select(x => x.GetLogin()).Where(x => !string.IsNullOrWhiteSpace(x)));
 
                         if (acResult.Success)
                         {
@@ -1608,7 +1585,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         else
                         {
                             // TODO: PROCESS!!
-                            throw new InvalidOperationException("UsersSetup.GetAllPrincipals.CONNECT error");
+                            throw new InvalidOperationException("GetAllPrincipals. Adobe Connect error");
                         }
                     }
 
@@ -1719,7 +1696,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TRICK: do not move down to chunk part!
             this.AddUsersToMeetingHostsGroup(provider, hostPrincipals);
 
-            foreach (var chunk in Chunk(meetingPermissions, 50))
+            foreach (var chunk in meetingPermissions.Chunk(50))
             {
                 StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
                 if (status.Code != StatusCodes.ok)
