@@ -124,6 +124,9 @@
         {
             OperationContext oc = OperationContext.Current;
 
+
+            Exception originalException = error;
+
             if (oc != null)
             {
                 string wasCalledOn = oc.EndpointDispatcher.EndpointAddress.Uri.ToString();
@@ -181,7 +184,7 @@
                 }
             }
 
-            this.logger.Error("Unhandled WCF exception", error);
+            this.logger.Error("Unhandled WCF exception", originalException);
         }
 
         #endregion

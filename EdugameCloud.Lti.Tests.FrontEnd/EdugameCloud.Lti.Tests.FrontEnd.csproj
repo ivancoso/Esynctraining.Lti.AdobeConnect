@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BltiBuilder.cs" />
-    <Compile Include="CanvasLtiChecker.cs" />
+    <Compile Include="CanvasLtiChecker2.cs" />
     <Compile Include="LtiUserDTO.cs" />
     <Compile Include="MeetingDTO.cs" />
     <Compile Include="Program.cs" />

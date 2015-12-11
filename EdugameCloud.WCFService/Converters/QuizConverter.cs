@@ -816,6 +816,7 @@
         {
             foreach (var a in q.answers)
             {
+                // TODO: http://jira.esynctraining.com/browse/EDUGAMECLOUD-1529?filter=-1
                 var lmsId = a.id;
                 bool isRange = a.numerical_answer_type != null && a.numerical_answer_type.Contains("range");
                 var name = string.Format(

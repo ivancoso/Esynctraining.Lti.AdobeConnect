@@ -44,6 +44,7 @@
   </appender>
 
   <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <file value="Logs/general_" />
     <staticLogFileName value="false" />
     <appendToFile value="true" />
@@ -133,6 +134,7 @@
   </appender>
 
   <appender name="NHibernateFileLog" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <file value="Logs/nhibernate_" />
     <staticLogFileName value="false" />
     <appendToFile value="true" />
@@ -151,7 +153,8 @@
     <Fix value="0"/>
   </appender>
 
-  <appender name="ApplicationActual" type="log4net.Appender.RollingFileAppender, log4net" >
+  <appender name="ApplicationActual" type="log4net.Appender.RollingFileAppender, log4net">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <param name="File" value="Logs/Application/Application.txt"/>
     <param name="AppendToFile" value="true"/>
     <param name="RollingStyle" value="Date"/>
@@ -165,6 +168,7 @@
   </appender>
 
   <appender name="DataLog" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <file value="Logs/data.txt" />
     <appendToFile value="true" />
     <maximumFileSize value="100KB" />
