@@ -23,7 +23,7 @@ FROM
 			QR.participantName,	
 			QR.acEmail,	 
 			QR.score,
-			(SELECT Count(Q.questionid) FROM Question Q WHERE Q.subModuleItemId = @subModuleItemID) AS TotalQuestion, -- TRICK: TotalQuestion
+			(SELECT Count(Q.questionId) FROM Question Q WHERE Q.subModuleItemId = @subModuleItemID) AS TotalQuestion, -- TRICK: TotalQuestion
 			QR.startTime,
 			QR.endTime,
 			DATEDIFF(second, QR.startTime, QR.endTime) AS dateDifference,

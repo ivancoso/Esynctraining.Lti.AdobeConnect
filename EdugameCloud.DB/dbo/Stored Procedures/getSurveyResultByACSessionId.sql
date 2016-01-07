@@ -9,7 +9,7 @@ BEGIN
 SELECT   SR.surveyResultId,
 		 SR.participantName,		 
 		 SR.score,
-		 (select Count(Q.questionid) from Question Q where Q.subModuleItemId=@subModuleItemID) as TotalQuestion,
+		 (select Count(Q.questionId) from Question Q where Q.subModuleItemId=@subModuleItemId) as TotalQuestion,
 	 	 SR.startTime,
 		 SR.endTime,
 		 SR.acEmail,

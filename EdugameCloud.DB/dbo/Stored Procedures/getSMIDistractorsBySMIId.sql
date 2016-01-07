@@ -12,7 +12,7 @@ AS
 BEGIN
 
 SELECT   Distinct
-		 D.distractorId,
+		 D.distractorID,
 		 D.questionId,
 		 D.distractorType,
 		 D.distractor,
@@ -27,7 +27,7 @@ SELECT   Distinct
 FROM     Distractor D INNER JOIN
          Question Q ON D.questionID = Q.questionId INNER JOIN
          SubModuleItem SMI ON Q.subModuleItemId = SMI.subModuleItemId LEFT OUTER JOIN
-         [File] I ON I.fileId = D.imageID
+         [File] I ON I.fileId = D.imageId
          
 WHERE	 Q.subModuleItemId = @subModuleItemId AND Q.isActive = 1 AND D.isActive = 1
 

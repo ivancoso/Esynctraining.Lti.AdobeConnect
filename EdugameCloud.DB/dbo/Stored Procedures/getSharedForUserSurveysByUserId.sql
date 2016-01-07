@@ -30,7 +30,7 @@ FROM    Survey S INNER JOIN
         SubModuleItem SMI ON S.subModuleItemId = SMI.subModuleItemId AND SMI.isActive = 'True' AND SMI.isShared = 'True' INNER JOIN
         SubModuleCategory SMC ON SMI.subModuleCategoryId = SMC.subModuleCategoryId AND SMC.isActive = 'True' INNER JOIN
         [User] U ON SMC.userId = U.userId
-		INNER JOIN [User] U2 ON (SMI.createdBy = U2.userId AND U2.[Status] = 1)
+		INNER JOIN [User] U2 ON (SMI.createdBy = U2.userId AND U2.[status] = 1)
         
 WHERE   U2.userId != @userId AND U2.companyId IN (SELECT TOP 1 companyId FROM [User] WHERE userId = @userId)
 

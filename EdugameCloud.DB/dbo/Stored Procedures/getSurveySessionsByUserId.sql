@@ -14,7 +14,7 @@ BEGIN
 
 SELECT LNG.[language], 	   
 	   SR.acSessionId, 	
-	   (select Count(Q.questionid) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
+	   (select Count(Q.questionId) from Question Q where Q.subModuleItemId=ACS.subModuleItemId and q.isActive = 1) as TotalQuestion,
 	   ACS.subModuleItemId, 
 	   ACS.dateCreated,
 	   SMC.categoryName,

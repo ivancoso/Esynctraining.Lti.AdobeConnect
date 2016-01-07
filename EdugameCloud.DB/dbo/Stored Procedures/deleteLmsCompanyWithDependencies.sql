@@ -31,9 +31,9 @@ BEGIN
 			(
 				SELECT lmsUserParametersId
 				FROM LmsUserParameters
-				WHERE lmsuserid IN
+				WHERE lmsUserId IN
 				(
-					SELECT lmsuserid
+					SELECT lmsUserId
 					FROM LmsUser
 					WHERE companyLmsId = @lmsCompanyId
 				)
@@ -51,9 +51,9 @@ BEGIN
 		(
 			SELECT lmsUserParametersId
 			FROM LmsUserParameters
-			WHERE lmsuserid IN
+			WHERE lmsUserId IN
 			(
-				SELECT lmsuserid
+				SELECT lmsUserId
 				FROM LmsUser
 				WHERE companyLmsId = @lmsCompanyId
 			)
@@ -66,9 +66,9 @@ BEGIN
 	(
 		SELECT lmsUserParametersId
 		FROM LmsUserParameters
-		WHERE lmsuserid IN
+		WHERE lmsUserId IN
 		(
-			SELECT lmsuserid
+			SELECT lmsUserId
 			FROM LmsUser
 			WHERE companyLmsId = @lmsCompanyId
 		)
@@ -76,27 +76,27 @@ BEGIN
 
 	DELETE
 	FROM LmsUserParameters
-	WHERE lmsuserid IN
+	WHERE lmsUserId IN
 	(
-		SELECT lmsuserid
+		SELECT lmsUserId
 		FROM LmsUser
 		WHERE companyLmsId = @lmsCompanyId
 	)
 
 	DELETE
 	FROM OfficeHours
-	WHERE lmsuserid IN
+	WHERE lmsUserId IN
 	(
-		SELECT lmsuserid
+		SELECT lmsUserId
 		FROM LmsUser
 		WHERE companyLmsId = @lmsCompanyId
 	)
 
 	DELETE
 	FROM LmsUserSession
-	WHERE lmsuserid IN
+	WHERE lmsUserId IN
 	(
-		SELECT lmsuserid
+		SELECT lmsUserId
 		FROM LmsUser
 		WHERE companyLmsId = @lmsCompanyId
 	)
