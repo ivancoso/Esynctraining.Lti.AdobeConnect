@@ -43,8 +43,8 @@
       <HintPath>..\packages\D2L.Extensibility.AuthSdk.Restsharp.1.1.1\lib\net40\D2L.Extensibility.AuthSdk.Restsharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.31, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.31\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.32, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.32\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.21, Culture=neutral, processorArchitecture=MSIL">
@@ -70,17 +70,8 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Services" />
-    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceModel.Activation" />
-    <Reference Include="System.ServiceModel.Discovery" />
-    <Reference Include="System.ServiceModel.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -110,7 +101,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Messages.es.resx">
