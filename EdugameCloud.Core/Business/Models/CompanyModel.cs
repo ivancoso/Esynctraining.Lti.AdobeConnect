@@ -71,7 +71,6 @@
             var item = CacheUtility.GetCachedItem<CompanyCacheItem>(_cache, CachePolicies.Keys.IsActiveCompany(companyId), CachePolicies.Dependencies.IsActiveCompany(companyId), () =>
             {
                 var company = GetOneById(companyId).Value;
-                var status = company.Status;
                 DateTime? expiryDate = null;
                 if (company.CurrentLicense != null)
                     expiryDate = company.CurrentLicense.ExpiryDate.ToUniversalTime();

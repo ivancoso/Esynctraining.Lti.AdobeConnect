@@ -29,7 +29,7 @@ namespace EdugameCloud.BuildManager.Controllers
                     IEnumerable<string> messages = Enumerable.Empty<string>();
                     lock (Lock)
                     {
-                        messages = new CanvasLtiChecker(exePath, configs).DoCheckRequests();
+                        messages = new CanvasLtiChecker2(configs).DoCheckRequests();
                     }
                     return View(messages);
                 }
