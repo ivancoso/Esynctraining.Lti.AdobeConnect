@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Core;
-using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
-using Esynctraining.Core.Utils;
+using Esynctraining.Core.Logging;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -21,18 +19,6 @@ namespace EdugameCloud.Lti.Canvas
     // ReSharper disable once InconsistentNaming
     public sealed class EGCEnabledCanvasAPI : CanvasAPI, IEGCEnabledLmsAPI, IEGCEnabledCanvasAPI
     {
-        private LmsUserModel _lmsUserModel;
-
-
-        private LmsUserModel LmsUserModel
-        {
-            get 
-            {
-                return _lmsUserModel ?? (_lmsUserModel = IoC.Resolve<LmsUserModel>());
-            }
-        }
-
-
         public EGCEnabledCanvasAPI(ILogger logger)
             : base(logger)
         {
