@@ -7,8 +7,6 @@
     /// </summary>
     public static class FluentExtensions
     {
-        #region Public Methods and Operators
-
         /// <summary>
         /// The default.
         /// </summary>
@@ -25,6 +23,6 @@
             return propertyPart.Default(default(T).ToString());
         }
 
-        #endregion
     }
+
 }

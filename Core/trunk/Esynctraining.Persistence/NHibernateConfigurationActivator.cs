@@ -10,8 +10,7 @@
     using Castle.MicroKernel.Context;
 
     using Esynctraining.Core.Utils;
-
-    using NHibernate.Cfg;
+    using global::NHibernate.Cfg;
 
     /// <summary>
     /// The n hibernate configuration activator.

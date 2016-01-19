@@ -1,7 +1,7 @@
 ﻿namespace Esynctraining.Persistence
 {
     using System.Runtime.Remoting.Contexts;
-
+    using global::NHibernate;
     using NHibernate;
 
     /// <summary>

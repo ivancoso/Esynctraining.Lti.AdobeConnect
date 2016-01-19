@@ -6,7 +6,7 @@
     using Castle.MicroKernel.Context;
 
     using Esynctraining.Core.Utils;
-
+    using global::NHibernate;
     using NHibernate;
 
     /// <summary>

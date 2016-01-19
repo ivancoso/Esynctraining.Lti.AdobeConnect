@@ -3,12 +3,10 @@
     using System.Reflection;
 
     using Esynctraining.Persistence.Conventions;
-    using Esynctraining.Persistence.Mappings;
 
     using FluentNHibernate;
     using FluentNHibernate.Conventions;
-
-    using NHibernate.Cfg;
+    using global::NHibernate.Cfg;
 
     /// <summary>
     /// The fluent configuration.

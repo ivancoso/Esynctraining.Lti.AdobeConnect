@@ -2,8 +2,7 @@
 {
     using System.Runtime.Remoting.Contexts;
     using System.Web;
-
-    using NHibernate;
+    using global::NHibernate;
 
     ///<summary>
     ///The n hibernate session web source.

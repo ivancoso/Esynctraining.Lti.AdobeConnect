@@ -5,10 +5,8 @@
     using Castle.MicroKernel.ComponentActivator;
     using Castle.MicroKernel.Context;
 
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.FullText;
     using Esynctraining.Core.Utils;
-    using NHibernate.Cfg;
+    using global::NHibernate.Cfg;
 
     /// <summary>
     /// The n hibernate session factory activator.
@@ -63,12 +61,12 @@
         protected override object CreateInstance(CreationContext context, ConstructorCandidate constructor, object[] arguments)
         {
             var cfg = IoC.Resolve<Configuration>();
-            if (System.Configuration.ConfigurationManager.AppSettings["nhibernate:disable_fulltext_integration"].With(x => x.ToLower()) != "true")
-            {
-                cfg.SetListener(NHibernate.Event.ListenerType.PostUpdate, new LuceneFTIndexEventListener());
-                cfg.SetListener(NHibernate.Event.ListenerType.PostInsert, new LuceneFTIndexEventListener());
-                cfg.SetListener(NHibernate.Event.ListenerType.PostDelete, new LuceneFTIndexEventListener());
-            }
+            //if (System.Configuration.ConfigurationManager.AppSettings["nhibernate:disable_fulltext_integration"].With(x => x.ToLower()) != "true")
+            //{
+            //    cfg.SetListener(NHibernate.Event.ListenerType.PostUpdate, new LuceneFTIndexEventListener());
+            //    cfg.SetListener(NHibernate.Event.ListenerType.PostInsert, new LuceneFTIndexEventListener());
+            //    cfg.SetListener(NHibernate.Event.ListenerType.PostDelete, new LuceneFTIndexEventListener());
+            //}
 
             return cfg.BuildSessionFactory();
         }

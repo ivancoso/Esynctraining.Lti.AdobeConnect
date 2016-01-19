@@ -2,14 +2,12 @@
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Queries;
-    using Esynctraining.Core.Domain.Entities;
-
+    using Core.Domain.Entities;
+    using global::NHibernate;
+    using global::NHibernate.Criterion;
+    using global::NHibernate.Transform;
     using NHibernate;
-    using NHibernate.Criterion;
-    using NHibernate.Transform;
+    using NHibernate.Queries;
 
     /// <summary>
     /// The repository.
