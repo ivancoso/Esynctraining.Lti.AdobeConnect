@@ -88,6 +88,12 @@ namespace Esynctraining.AC.Provider
 
         public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
         {
+            if (emails == null)
+                throw new ArgumentNullException("emails");
+            if (!emails.Any())
+                throw new ArgumentException("Emails list should have values", "emails");
+            if (emails.Any(x => string.IsNullOrWhiteSpace(x)))
+                throw new ArgumentException("All emails should be non empty", "emails");
             // act: "principal-list"
             StatusInfo status;
 
@@ -133,6 +139,13 @@ namespace Esynctraining.AC.Provider
 
         public PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins)
         {
+            if (logins == null)
+                throw new ArgumentNullException("logins");
+            if (!logins.Any())
+                throw new ArgumentException("Logins list should have values", "logins");
+            if (logins.Any(x => string.IsNullOrWhiteSpace(x)))
+                throw new ArgumentException("All logins should be non empty", "logins");
+
             // act: "principal-list"
             StatusInfo status;
 

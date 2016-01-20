@@ -1064,7 +1064,7 @@
                 ? new ScoContentResult(status, ScoContentParser.Parse(scos.SelectNodes(scoPath).Cast<XmlNode>().FirstOrDefault()))
                 : new ScoContentResult(status);
         }
-
+        
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>

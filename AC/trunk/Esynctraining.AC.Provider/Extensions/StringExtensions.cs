@@ -84,16 +84,18 @@
         /// </returns>
         public static DateTime ParseDateTimeWithDefault(this string stringValue, DateTime defaultValue)
         {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return defaultValue;
+
             DateTime result;
 
-            return (!string.IsNullOrWhiteSpace(stringValue)
-                    && DateTime.TryParseExact(
+            return DateTime.TryParseExact(
                                 stringValue,
                                 DateTimeXmlFormat,
                                 DateTimeFormatInfo.InvariantInfo,
                                 DateTimeStyles.AdjustToUniversal,
-                                out result))
-                       ? result
+                                out result)
+                                ? result
                        : defaultValue;
         }
 
@@ -111,15 +113,17 @@
         /// </returns>
         public static DateTime ParseDateTimeLocal(this string stringValue, DateTime defaultValue)
         {
+            if (string.IsNullOrWhiteSpace(stringValue))
+                return defaultValue;
+
             DateTime result;
 
-            return (!string.IsNullOrWhiteSpace(stringValue)
-                    && DateTime.TryParseExact(
+            return DateTime.TryParseExact(
                                 stringValue.Substring(0, DateTimeXmlFormatLocal.Length - DateTimeXmlFormatLocal.Count(c => c == '\\')),
                                 DateTimeXmlFormatLocal,
                                 DateTimeFormatInfo.InvariantInfo,
                                 DateTimeStyles.None,
-                                out result))
+                                out result)
                        ? result
                        : defaultValue;
         }

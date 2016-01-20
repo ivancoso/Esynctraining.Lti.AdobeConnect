@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AC.Provider</id>
-    <version>1.0.1.31</version>
+    <version>1.0.1.32</version>
     <title>Esynctraining.AC.Provider</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -15,6 +15,6 @@
     <releaseNotes>Provides PDF functionality for eSyncTraining projects</releaseNotes>
   </metadata>
   <files>
-    <file src="bin\$configuration$\Esynctraining.AC.Provider.dll" target="lib\net40" />
+    <file src="bin\$configuration$\Esynctraining.AC.Provider.dll" target="lib\net45" />
   </files>
 </package>

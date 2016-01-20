@@ -27,18 +27,18 @@
             try
             {
                 var item = new MeetingItem
-                               {
-                                   ScoId = xml.SelectAttributeValue("sco-id"),
-                                   Type = EnumReflector.ReflectEnum(xml.SelectAttributeValue("type"), ScoType.not_set),
-                                   MeetingName = xml.SelectSingleNodeValue("name/text()"),
-                                   UrlPath = xml.SelectSingleNodeValue("url/text()"),
+                {
+                    ScoId = xml.SelectAttributeValue("sco-id"),
+                    Type = EnumReflector.ReflectEnum(xml.SelectAttributeValue("type"), ScoType.not_set),
+                    MeetingName = xml.SelectSingleNodeValue("name/text()"),
+                    UrlPath = xml.SelectSingleNodeValue("url/text()"),
 
-                                   // NOTE: if folder =>  date-begin is null
-                                   DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
-                                   DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                                   DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime)),
-                                   PermissionId = xml.SelectAttributeValue("permission-id")
-                               };
+                    // NOTE: if folder =>  date-begin is null
+                    DateBegin = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
+                    DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
+                    DateModified = xml.ParseNodeDateTime("date-modified/text()", default(DateTime)),
+                    PermissionId = xml.SelectAttributeValue("permission-id")
+                };
 
                 if (string.IsNullOrEmpty(item.UrlPath))
                 {
