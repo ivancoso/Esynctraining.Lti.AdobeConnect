@@ -8,29 +8,12 @@ using Esynctraining.Mail.Configuration;
 
 namespace Esynctraining.Mail
 {
-    /// <summary>
-    ///     Defines contracts for getting templates
-    /// </summary>
     public class TemplateProvider : ITemplateProvider
     {
-        #region Fields
-
-        /// <summary>
-        /// The templates directory.
-        /// </summary>
         private readonly string templatesDirectory;
-
-        /// <summary>
-        /// The images directory.
-        /// </summary>
         private readonly string imagesDirectory;
-
-        /// <summary>
-        /// The templates directory.
-        /// </summary>
         private readonly string asciiTemplatesDirectory;
 
-        #endregion
 
         #region Constructors and Destructors
 
@@ -42,6 +25,9 @@ namespace Esynctraining.Mail
             this.templatesDirectory = MailerConfigurationSection.Current.With(x => x.TemplatesFolderPath);
             this.imagesDirectory = MailerConfigurationSection.Current.With(x => x.ImagesFolderPath);
             this.asciiTemplatesDirectory = MailerConfigurationSection.Current.With(x => x.AsciiTemplatesFolderPath);
+
+            if (string.IsNullOrWhiteSpace(templatesDirectory))
+                throw new ArgumentException("templatesDirectory cannot be empty", "templatesDirectory");
         }
 
         #endregion
