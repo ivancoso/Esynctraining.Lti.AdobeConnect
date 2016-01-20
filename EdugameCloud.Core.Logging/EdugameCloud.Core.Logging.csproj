@@ -51,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoggerBase.cs" />
+    <Compile Include="MonitoringLogger.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="LoggerWindsorInstaller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
