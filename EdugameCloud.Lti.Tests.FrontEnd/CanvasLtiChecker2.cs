@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.Tests.FrontEnd
@@ -12,12 +13,16 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
     public sealed class CanvasLtiChecker2
     {
         private readonly string _configFolder;
+        private readonly string _loginUrl;
+        private readonly string _sharedSecret;
         private int _meetingId = -1;
 
 
-        public CanvasLtiChecker2(string configFolder)
+        public CanvasLtiChecker2(string configFolder, string loginUrl, string sharedSecret)
         {
             _configFolder = configFolder;
+            _loginUrl = loginUrl;
+            _sharedSecret = sharedSecret;
         }
 
 
@@ -37,11 +42,11 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
 
             if (parsing.Success)
             {
-                result.Add("canvas-login: SUCCESS - Returns 302 Http status code to 'extjs/entry' page.");
+                result.Add("canvas-login: SUCCESS-SUCCESS-SUCCESS."); // -Returns 302 Http status code to 'extjs/entry' page
             }
             else
             {
-                result.Add("canvas-login: ERROR.");
+                result.Add("canvas-login: ERROR." + ((HttpContext.Current.IsDebuggingEnabled) ? " Output = " + output : ""));
             }
             
             return result;
@@ -65,11 +70,9 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
             
             double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
             nameValueCollection.Add("oauth_timestamp", secondsSince1970.ToString());
-            //1448451144
-            //nameValueCollection.Add("oauth_timestamp", "1448451144");
             nameValueCollection.Add("oauth_nonce", Guid.NewGuid().ToString()); // "XXw271C51BRTLPNaYyWXh3Y9fWU3OXX63OP1BejmCAkAzA"
 
-            string signature = BltiBuilder.Calculate(nameValueCollection);
+            string signature = BltiBuilder.Calculate(nameValueCollection, host: new Uri(_loginUrl).Host, sharedSecret: _sharedSecret);
             nameValueCollection.Add("oauth_signature", signature);
 
             var pairs = new List<string>();
@@ -81,7 +84,7 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
 
             var data = Encoding.ASCII.GetBytes(string.Join("&", pairs));
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://app.edugamecloud.com/lti/canvas-login");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(_loginUrl);
             request.AllowAutoRedirect = false;
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
@@ -98,12 +101,12 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
             }
         }
         
-        private static string Format(string filename, string arguments)
-        {
-            return "'" + filename +
-                ((string.IsNullOrEmpty(arguments)) ? string.Empty : " " + arguments) +
-                "'";
-        }
+        //private static string Format(string filename, string arguments)
+        //{
+        //    return "'" + filename +
+        //        ((string.IsNullOrEmpty(arguments)) ? string.Empty : " " + arguments) +
+        //        "'";
+        //}
 
 
     }

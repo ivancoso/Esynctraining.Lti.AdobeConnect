@@ -154,6 +154,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\Stage\login-data.js" />
     <Content Include="App_Data\Prod\login-data.js" />
     <Content Include="Global.asax" />
     <Content Include="scripts\ai.0.15.0-build58334.js" />
@@ -179,7 +180,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\LtiMon - Web Deploy.pubxml" />
     <Content Include="Service References\Application Insights\ConnectedService.json" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +187,11 @@
       <Project>{0bb2ce25-5e74-4fb9-8782-07e10f83bf2f}</Project>
       <Name>EdugameCloud.Lti.Tests.FrontEnd</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Properties\PublishProfiles\LtiMon - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\LtiMonStage - Web Deploy.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
