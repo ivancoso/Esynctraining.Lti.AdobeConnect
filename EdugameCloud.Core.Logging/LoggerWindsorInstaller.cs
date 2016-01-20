@@ -11,6 +11,7 @@ namespace EdugameCloud.Core.Logging
         public void Install(IWindsorContainer container, IConfigurationStore store)
         {
             container.Register(Component.For<ILogger>().ImplementedBy<Logger>().LifeStyle.Singleton);
+            // WIP container.Register(Component.For<ILogger>().Named("Monitoring").ImplementedBy<MonitoringLogger>().LifeStyle.Singleton);
         }
 
     }

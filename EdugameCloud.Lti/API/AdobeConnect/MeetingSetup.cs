@@ -24,6 +24,7 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
 using EdugameCloud.Lti.Core.Constants;
+using Esynctraining.AC.Provider.Constants;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -653,7 +654,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 provider.UpdateScoPermissionForPrincipal(
                     result.ScoInfo.ScoId,
                     currentUserPrincipal.PrincipalId,
-                    MeetingPermissionId.host);               
+                    MeetingPermissionId.host);
             }
 
             bool attachToExistedOfficeHours = false;
@@ -1312,6 +1313,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             login = us.Login,
                             dateTimeEntered = us.DateCreated,
                             dateTimeLeft = us.DateEnd.FixACValue(),
+
+                            // TODO: REVIEW!!! HACK
                             durationInHours = (float)us.Duration.TotalHours,
                             transcriptId = int.Parse(us.TranscriptId)
                         }).OrderByDescending(x => x.dateTimeEntered).ToList();
@@ -1513,6 +1516,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             StringBuilder trace = null)
         {
             var psw = Stopwatch.StartNew();
+
+            // TODO: do we need this here at all???? check GetMeetingDTOByScoInfo!! already has checking it exists!!!!
             ScoInfoResult result = provider.GetScoInfo(lmsCourseMeeting.GetMeetingScoId());
             psw.Stop();
             if (trace != null)
@@ -1534,6 +1539,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 trace);
         }
 
+        //
         private MeetingDTO GetMeetingDTOByScoInfo(
             IAdobeConnectProxy provider, 
             LmsUser lmsUser,
@@ -1720,20 +1726,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meetingDTO.start_date == null || meetingDTO.start_time == null)
             {
-                updateItem.DateBegin = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
-                updateItem.DateEnd = DateTime.Now.AddDays(1).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                updateItem.DateBegin = DateTime.Now.ToString(AdobeConnectProviderConstants.DateFormat);
+                updateItem.DateEnd = DateTime.Now.AddHours(1).ToString(AdobeConnectProviderConstants.DateFormat);
             }
 
             DateTime dateBegin;
 
             if (DateTime.TryParse(meetingDTO.start_date + " " + meetingDTO.start_time, out dateBegin))
             {
-                updateItem.DateBegin = dateBegin.ToString("yyyy-MM-ddTHH:mm:ssZ");
+                updateItem.DateBegin = dateBegin.ToString(AdobeConnectProviderConstants.DateFormat);
                 TimeSpan duration;
                 if (TimeSpan.TryParse(meetingDTO.duration, out duration))
                 {
                     updateItem.DateEnd =
-                        dateBegin.AddMinutes((int)duration.TotalMinutes).ToString("yyyy-MM-ddTHH:mm:ssZ");
+                        dateBegin.AddMinutes((int)duration.TotalMinutes).ToString(AdobeConnectProviderConstants.DateFormat);
                 }
             }
         }
@@ -1857,10 +1863,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ? userFolderName
                 : credentials.UserFolderName;
             string meetingFolderScoId;
+
             CreateUserFoldersStructure(shortcut.ScoId, provider, userFolderName,
                 meetingsFolderName, out meetingFolderScoId);
             return meetingFolderScoId;
         }
+
         #endregion
 
     }

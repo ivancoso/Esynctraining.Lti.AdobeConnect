@@ -11,7 +11,7 @@
     using Esynctraining.Core.Providers;
 
     using FluentValidation;
-
+    using System.Web;
     /// <summary>
     /// The VCFProfileDTO validator.
     /// </summary>
@@ -47,8 +47,11 @@
         {
             try
             {
+                var xsdLocation = this.settings.XSDProfileLocation;
+                xsdLocation = xsdLocation.StartsWith("~") ? HttpContext.Current.Server.MapPath(xsdLocation) : xsdLocation;
+
                 var schemas = new XmlSchemaSet();
-                schemas.Add(null, this.settings.XSDProfileLocation);
+                schemas.Add(null, xsdLocation);
                 XDocument doc = XDocument.Parse(xml);
                 string msg = string.Empty;
                 doc.Validate(

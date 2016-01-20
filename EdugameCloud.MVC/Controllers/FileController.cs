@@ -451,7 +451,8 @@ namespace EdugameCloud.MVC.Controllers
             var user = this.CurrentUser;
             if (user != null)
             {
-                var storagePath = Settings.FileStorage as string;
+                var fileStorage = this.Settings.FileStorage as string ?? string.Empty;
+                var storagePath = fileStorage.StartsWith("~") ? HttpContext.Server.MapPath(fileStorage) : fileStorage;
                 var exportSubPath = Settings.ExportSubPath as string;
                 var fileName = id + ".xml";
 
@@ -504,7 +505,8 @@ namespace EdugameCloud.MVC.Controllers
             var user = this.CurrentUser;
             if (user != null)
             {
-                var storagePath = Settings.FileStorage as string;
+                var fileStorage = this.Settings.FileStorage as string ?? string.Empty;
+                var storagePath = fileStorage.StartsWith("~") ? HttpContext.Server.MapPath(fileStorage) : fileStorage;
                 var importSubPath = Settings.ImportSubPath as string;
                 var id = Guid.NewGuid().ToString();
                 var fileName = id + ".xml";
@@ -544,7 +546,8 @@ namespace EdugameCloud.MVC.Controllers
         [ActionName("import-questions")]
         public virtual ActionResult ImportQuestions()
         {
-            var storagePath = Settings.FileStorage as string;
+            var fileStorage = this.Settings.FileStorage as string ?? string.Empty;
+            var storagePath = fileStorage.StartsWith("~") ? HttpContext.Server.MapPath(fileStorage) : fileStorage;
             var importSubPath = Settings.ImportSubPath as string;
             var id = Guid.NewGuid().ToString();
             var fileName = id + ".xml";

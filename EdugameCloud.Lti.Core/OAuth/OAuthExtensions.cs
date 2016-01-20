@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Core.OAuth
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Text;
@@ -10,6 +11,8 @@
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
     internal static class OAuthExtensions
     {
+        private static readonly string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
+
         #region Public Methods and Operators
 
         /// <summary>
@@ -24,13 +27,13 @@
         [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "Reviewed. Suppression is OK here.")]
         public static string OAuthUrlEncode(this string value)
         {
-            // Per spec, all values are utf-8 encoded first
-            byte[] buffer = Encoding.UTF8.GetBytes(value);
-
+            if (value == null)
+                throw new ArgumentNullException("value");
+            
             var result = new StringBuilder();
-            string unreservedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~";
 
-            foreach (char symbol in buffer)
+            // Per spec, all values are utf-8 encoded first
+            foreach (char symbol in Encoding.UTF8.GetBytes(value))
             {
                 if (unreservedChars.IndexOf(symbol) != -1)
                 {
@@ -38,7 +41,7 @@
                 }
                 else
                 {
-                    result.Append('%' + string.Format("{0:X2}", (int)symbol));
+                    result.AppendFormat("%{0:X2}", (int)symbol);
                 }
             }
 
@@ -56,6 +59,9 @@
         /// </returns>
         public static string NormalizeRequestParameters(this IList<QueryParameter> parameters)
         {
+            if (parameters == null)
+                throw new ArgumentNullException("parameters");
+
             var sb = new StringBuilder();
             for (int i = 0; i < parameters.Count; i++)
             {
@@ -73,5 +79,7 @@
 
 
         #endregion
+
     }
+
 }

@@ -79,7 +79,7 @@
         /// <summary>
         /// Gets the question model.
         /// </summary>
-protected QuestionForTrueFalseModel QuestionForTrueFalseModel
+        protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         {
             get
             {
@@ -171,7 +171,8 @@ protected QuestionForTrueFalseModel QuestionForTrueFalseModel
         {
             get
             {
-                return this.Settings.FileStorage as string ?? string.Empty;
+                var fileStorage = this.Settings.FileStorage as string ?? string.Empty;
+                return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
             }
         }
 

@@ -7,7 +7,7 @@
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
-    ///     The RestService interface.
+    /// The RestService interface.
     /// </summary>
     [ServiceContract]
     public interface IRestService

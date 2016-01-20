@@ -34,6 +34,7 @@
         /// The used nonsense.
         /// </summary>
         private static readonly List<NonceData> usedNonsenses = new List<NonceData>();
+        private static readonly DateTime Date1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         #endregion
 
@@ -92,6 +93,12 @@
                 return false;
             }
 
+            if (usedNonsenses == null)
+            {
+                logger.Warn("[BltiProviderHelper] usedNonsenses == null");
+                return false;
+            }
+
             // First check the nonce to make sure it has not been used
             var nonce = new NonceData(form["oauth_nonce"], DateTime.UtcNow);
             if (usedNonsenses.Contains(nonce))
@@ -105,18 +112,20 @@
 
             // Do housekeeping on the list of nonces. 
             // The BLTI spec recommends only keeping a record of nonces used within the last 90 minutes
-            for (int i = usedNonsenses.Count - 1; i >= 0; i--)
-            {
-                if (DateTime.UtcNow.Subtract(usedNonsenses[i].Timestamp).TotalMinutes > 90)
-                {
-                    usedNonsenses.RemoveAt(i);
-                }
-            }
+            //for (int i = usedNonsenses.Count - 1; i >= 0; i--)
+            //{
+            //    if (DateTime.UtcNow.Subtract(usedNonsenses[i].Timestamp).TotalMinutes > 90)
+            //    {
+            //        usedNonsenses.RemoveAt(i);
+            //    }
+            //}
+
+            usedNonsenses.RemoveAll(x => DateTime.UtcNow.Subtract(x.Timestamp).TotalMinutes > 90);
 
             // Check the timestamp of the request and make sure it is within 90 minutes of the current server time
             double timestamp;
             double.TryParse(form["oauth_timestamp"], out timestamp);
-            double secondsSince1970 = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
+            double secondsSince1970 = (DateTime.UtcNow - Date1970).TotalSeconds;
             if (Math.Abs(secondsSince1970 - timestamp) > 5400)
             {
                 logger.ErrorFormat("[BltiProviderHelper] The timestamp is missing or outside of the 90 minute window so the request is invalid, oauth_timestamp:{0}.", timestamp);
@@ -170,8 +179,8 @@
 
             // Create the signature base
             var signatureBase = new StringBuilder();
-            signatureBase.AppendFormat("{0}&{1}&{2}", 
-                request.HttpMethod.ToUpper()
+            signatureBase.AppendFormat("{0}&{1}&{2}"
+                ,request.HttpMethod.ToUpper()
                 ,normalizedUrl.OAuthUrlEncode().Replace("%3a80", string.Empty)
                 ,normalizedRequestParameters.OAuthUrlEncode());
             
@@ -192,11 +201,8 @@
 
             var hmacsha1 = new HMACSHA1();
             hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", secret.OAuthUrlEncode(), string.Empty /*tokenSecret not used in BLTI*/));
-
-            byte[] dataBuffer = Encoding.ASCII.GetBytes(signatureBase.ToString());
-            byte[] hashBytes = hmacsha1.ComputeHash(dataBuffer);
-
-            string signature = Convert.ToBase64String(hashBytes);
+            
+            string signature = Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.ASCII.GetBytes(signatureBase.ToString())));
 
             // Check to make sure the signature matches what was passed in oauth_signature
             if (signature == form["oauth_signature"])

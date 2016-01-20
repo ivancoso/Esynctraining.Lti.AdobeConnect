@@ -875,9 +875,13 @@
                 methodTime.Stop();
                 var time = methodTime.Elapsed;
                 if (time > TimeSpan.FromSeconds(int.Parse((string)Settings.Monitoring_MaxLoginTime)))
+                {
+                    //IoC.Resolve<ILogger>("Monitoring")
+
                     logger.ErrorFormat("LoginWithProvider takes more than {0} seconds. Time: {1}. Details: {2}.",
-                        Settings.Monitoring_MaxLoginTime.ToString(), 
+                        Settings.Monitoring_MaxLoginTime.ToString(),
                         time.ToString(), trace.ToString());
+                }
             }
         }
         

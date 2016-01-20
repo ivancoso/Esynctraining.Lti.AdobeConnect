@@ -277,10 +277,7 @@
       <Name>EdugameCloud.Lti.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="API\Common\" />
-    <Folder Include="API\Sakai\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Resources\Messages.es.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

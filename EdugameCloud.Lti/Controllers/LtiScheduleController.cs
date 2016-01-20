@@ -16,35 +16,17 @@
     public class LtiScheduleController : Controller
     {
         #region Fields
-
-        /// <summary>
-        ///     The company LMS model.
-        /// </summary>
+        
         private readonly LmsCompanyModel lmsCompanyModel;
-
-        /// <summary>
-        /// The LMS session model.
-        /// </summary>
+        
         private readonly LmsUserSessionModel lmsSessionModel;
-
-        /// <summary>
-        ///     The DLAP API.
-        /// </summary>
+        
         private readonly IBrainHoneyApi dlapApi;
-
-        /// <summary>
-        ///     The meeting setup.
-        /// </summary>
+        
         private readonly MeetingSetup meetingSetup;
-
-        /// <summary>
-        /// The users setup.
-        /// </summary>
+        
         private readonly UsersSetup usersSetup;
-
-        /// <summary>
-        ///     The password activation model.
-        /// </summary>
+        
         private readonly ScheduleModel scheduleModel;
 
         private readonly IBrainHoneyScheduling _bhScheduling;
@@ -52,31 +34,7 @@
         #endregion
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LtiScheduleController"/> class.
-        /// </summary>
-        /// <param name="dlapApi">
-        /// The DLAP API.
-        /// </param>
-        /// <param name="meetingSetup">
-        /// The meeting Setup.
-        /// </param>
-        /// <param name="lmsCompanyModel">
-        /// The company LMS Model.
-        /// </param>
-        /// <param name="lmsSessionModel">
-        /// The LMS Session Model.
-        /// </param>
-        /// <param name="scheduleModel">
-        /// The schedule Model.
-        /// </param>
-        /// <param name="settings">
-        /// The settings
-        /// </param>
-        /// <param name="usersSetup">
-        /// The users setup.
-        /// </param>
+        
         public LtiScheduleController(
             IBrainHoneyApi dlapApi, 
             MeetingSetup meetingSetup, 
@@ -100,25 +58,13 @@
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// Gets the settings.
-        /// </summary>
+        
         public dynamic Settings { get; private set; }
 
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The force update.
-        /// </summary>
-        /// <param name="scoId">
-        /// The sco Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         [ActionName("force-update")]
         public virtual ActionResult ForceUpdate(int meetingId)
@@ -150,13 +96,7 @@
 
             return this.Content(result ?? "Tasks not found");
         }
-
-        /// <summary>
-        ///     The index.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="ActionResult" />.
-        /// </returns>
+        
         [HttpGet]
         [ActionName("update-if-necessary")]
         public virtual ActionResult UpdateIfNecessary(int meetingId)
@@ -190,27 +130,13 @@
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The update participants.
-        /// </summary>
-        /// <param name="lastScheduledRunDate">
-        /// The last scheduled run date.
-        /// </param>
-        /// <param name="scoId">
-        /// The sco Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        [NonAction]
-        // ReSharper disable once UnusedParameter.Local
+        
         private string CleanLmsSessions(IEnumerable<LmsCompany> brainHoneyCompanies, DateTime lastScheduledRunDate, int meetingId = -1)
         {
-            IEnumerable<LmsUserSession> lmsSessions = this.lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-7));
+            IEnumerable<LmsUserSession> lmsSessions = this.lmsSessionModel.GetAllOlderThen(DateTime.Now.AddDays(-2));
             foreach (var lmsSession in lmsSessions)
             {
-                this.lmsSessionModel.RegisterDelete(lmsSession);
+                this.lmsSessionModel.RegisterDelete(lmsSession, flush: false);
             }
 
             this.lmsSessionModel.Flush();
