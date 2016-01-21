@@ -2,16 +2,11 @@
 <log4net debug="true">
   <!-- ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF-->
 
-  <root>
-    <level value="WARN"/>
-    <appender-ref ref="GeneralLog" />
-    <appender-ref ref="ADONetAppender" />
-    <appender-ref ref="DebugAppender" />
-  </root>
-
   <logger name="Default">
     <level value="WARN" />
-    <appender-ref ref="Application" />
+    <appender-ref ref="ADONetAppender" />
+    <appender-ref ref="DebugAppender" />
+    <appender-ref ref="RollingLogFileAppender" />
   </logger>
 
   <logger name="Monitoring">
@@ -46,7 +41,7 @@
     </layout>
   </appender>
 
-  <appender name="GeneralLog" type="log4net.Appender.BufferingForwardingAppender">
+  <appender name="not-in-use-GeneralLog" type="log4net.Appender.BufferingForwardingAppender">
     <bufferSize value="10" />
     <appender-ref ref="RollingLogFileAppender" />
     <!--http://stackoverflow.com/questions/11319319/log4net-bufferingforwardingappender-performance-issue-->
