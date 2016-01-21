@@ -20,8 +20,11 @@
         /// </param>
         public NonceData(string nonce, DateTime timestamp)
         {
-            this.Nonce = nonce;
-            this.Timestamp = timestamp;
+            if (string.IsNullOrWhiteSpace(nonce))
+                throw new ArgumentException("nonce can't be empty", "nonce");
+
+            Nonce = nonce;
+            Timestamp = timestamp;
         }
 
         #endregion

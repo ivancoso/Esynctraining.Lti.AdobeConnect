@@ -183,7 +183,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     login_id = x.User.Username,
                     name = x.User.Name,
                     primary_email = x.User.Email,
-                    lms_role = x.LmsRole
+                    lms_role = x.LmsRole,
                 });
 
                 if (userDtos.Any())
@@ -858,6 +858,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 // NOTE: process ONLY VALID users
                 usersToAddToMeeting = lmsUsers.Where(x => !string.IsNullOrWhiteSpace(x.primary_email) && !duplicateEmails.Contains(x.primary_email)).ToList();
+            }
+
+            //TRICK: we need email on client side only if AC uses emails as login!!
+            // we use emails to check they are not empty and are unique within a course
+            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault())
+            {
+                usersToAddToMeeting.ForEach(x =>
+                {
+                    x.email = x.primary_email;
+                });
             }
 
             return usersToAddToMeeting;
