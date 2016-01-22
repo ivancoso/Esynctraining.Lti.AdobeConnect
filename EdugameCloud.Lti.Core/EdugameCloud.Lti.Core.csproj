@@ -252,6 +252,7 @@
     <Compile Include="OAuth\OAuthExtensions.cs" />
     <Compile Include="OAuth\QueryParameter.cs" />
     <Compile Include="OAuth\QueryParameterComparer.cs" />
+    <Compile Include="OAuth\NonceCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AcRole.es.Designer.cs">
       <DependentUpon>AcRole.es.resx</DependentUpon>

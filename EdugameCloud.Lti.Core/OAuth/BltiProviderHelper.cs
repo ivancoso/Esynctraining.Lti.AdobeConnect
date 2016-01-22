@@ -5,12 +5,12 @@
     using System.Security.Cryptography;
     using System.Text;
     using System.Web;
+    using System.Web.Helpers;
+    using System.Web.Mvc;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Logging;
-    using System.Web.Helpers;
-    using System.Web.Mvc;
-
+    using Esynctraining.Core.Utils;
     /// <summary>
     /// The BLTI provider helper.
     /// </summary>
@@ -30,14 +30,18 @@
         // Setting up a domain with a BLTI key/secret and creating BLTI links inside of BrainHoney: http://may2011.brainhoney.com/docs/BasicLTI
         #region Static Fields
 
-        /// <summary>
-        /// The used nonsense.
-        /// </summary>
-        private static readonly List<NonceData> usedNonsenses = new List<NonceData>();
+        private static readonly ILogger logger;
+        private static readonly NonceCache usedNonsenses;
         private static readonly DateTime Date1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         #endregion
 
+        static BltiProviderHelper()
+        {
+            logger = IoC.Resolve<ILogger>();
+            usedNonsenses = new NonceCache(logger);
+        }
+        
         #region Public Methods and Operators
 
         /// <summary>
@@ -52,12 +56,10 @@
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(LmsCompany credentials, ILogger logger, Func<bool> validateLmsCaller)
+        public static bool VerifyBltiRequest(LmsCompany credentials, Func<bool> validateLmsCaller)
         {
             if (credentials == null)
                 throw new ArgumentNullException("credentials");
-            if (logger == null)
-                throw new ArgumentNullException("logger");
 
             if (HttpContext.Current == null)
             {
@@ -93,34 +95,22 @@
                 return false;
             }
 
-            if (usedNonsenses == null)
-            {
-                logger.Warn("[BltiProviderHelper] usedNonsenses == null");
-                return false;
-            }
+            //if (usedNonsenses == null)
+            //{
+            //    logger.Warn("[BltiProviderHelper] usedNonsenses == null");
+            //    return false;
+            //}
 
-            // First check the nonce to make sure it has not been used
-            var nonce = new NonceData(form["oauth_nonce"], DateTime.UtcNow);
-            if (usedNonsenses.Contains(nonce))
+            string nonce = form["oauth_nonce"];
+            NonceCache.AddOrUpdateStatus nonceStatus = usedNonsenses.AddIfNotExist(nonce, () => new NonceData(form["oauth_nonce"], DateTime.UtcNow));
+            
+            if (nonceStatus == NonceCache.AddOrUpdateStatus.Exists)
             {
                 logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", form["oauth_nonce"]);
                 return false;
             }
-
-            // Add this nonce to the list of used nonces
-            usedNonsenses.Add(nonce);
-
-            // Do housekeeping on the list of nonces. 
-            // The BLTI spec recommends only keeping a record of nonces used within the last 90 minutes
-            //for (int i = usedNonsenses.Count - 1; i >= 0; i--)
-            //{
-            //    if (DateTime.UtcNow.Subtract(usedNonsenses[i].Timestamp).TotalMinutes > 90)
-            //    {
-            //        usedNonsenses.RemoveAt(i);
-            //    }
-            //}
-
-            usedNonsenses.RemoveAll(x => DateTime.UtcNow.Subtract(x.Timestamp).TotalMinutes > 90);
+            // NOTE: clean only if it is valid nonce - is it OK for us?
+            usedNonsenses.TryDeleteOld();
 
             // Check the timestamp of the request and make sure it is within 90 minutes of the current server time
             double timestamp;
