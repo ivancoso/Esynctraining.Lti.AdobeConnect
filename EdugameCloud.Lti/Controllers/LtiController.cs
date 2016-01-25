@@ -727,7 +727,7 @@
                 trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
-                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, logger, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
+                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
                 {
 
                     sw.Stop();

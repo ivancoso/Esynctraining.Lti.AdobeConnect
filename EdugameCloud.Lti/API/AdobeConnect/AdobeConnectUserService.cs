@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Resources;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
@@ -141,13 +142,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         UserCollectionResult guestsByEmail = provider.ReportGuestsByEmail(email);
                         if (guestsByEmail.Success && guestsByEmail.Values.Any())
-                            throw new WarningMessageException(string.Format("Unable to sync users. Guest record with email '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.", email));
+                            throw new WarningMessageException(string.Format(Messages.PrincipalEmailUsedForGuest, email));
                     }
                     else
                     {
                         UserCollectionResult guestsByLogin = provider.ReportGuestsByLogin(login);
                         if (guestsByLogin.Success && guestsByLogin.Values.Any())
-                            throw new WarningMessageException(string.Format("Unable to sync users. Guest record with login '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.", login));
+                            throw new WarningMessageException(string.Format(Messages.PrincipalLoginUsedForGuest, login));
                     }
                 }
             }

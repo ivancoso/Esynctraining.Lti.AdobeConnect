@@ -25,6 +25,7 @@ using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
 using EdugameCloud.Lti.Core.Constants;
 using Esynctraining.AC.Provider.Constants;
+using EdugameCloud.Core.Business.Models;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -70,6 +71,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private LmsProviderModel LmsProviderModel
         {
             get { return IoC.Resolve<LmsProviderModel>(); }
+        }
+
+
+        private LanguageModel LanguageModel
+        {
+            get { return IoC.Resolve<LanguageModel>(); }
         }
 
         private IAdobeConnectUserService AcUserService
@@ -613,6 +620,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             sw = Stopwatch.StartNew();
 
             SetMeetingUpdateItemFields(
+                lmsCompany,
                 meetingDTO,
                 updateItem,
                 meetingFolder,
@@ -1707,7 +1715,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return meeting;
         }
 
-        private static void SetMeetingUpdateItemFields(
+        private void SetMeetingUpdateItemFields(
+            LmsCompany lmsCompany,
             MeetingDTO meetingDTO, 
             MeetingUpdateItem updateItem, 
             string folderSco, 
@@ -1715,7 +1724,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             updateItem.Description = meetingDTO.summary;
             updateItem.FolderId = folderSco;
-            updateItem.Language = "en";
+            updateItem.Language = LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode;
             updateItem.Type = ScoType.meeting;
             
             if (isNew)

@@ -340,6 +340,24 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to sync users. Guest record with email &apos;{0}&apos; already exists in Adobe Connect. Please contact AC administrator to promote guest to user..
+        /// </summary>
+        public static string PrincipalEmailUsedForGuest {
+            get {
+                return ResourceManager.GetString("PrincipalEmailUsedForGuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to sync users. Guest record with login &apos;{0}&apos; already exists in Adobe Connect. Please contact AC administrator to promote guest to user..
+        /// </summary>
+        public static string PrincipalLoginUsedForGuest {
+            get {
+                return ResourceManager.GetString("PrincipalLoginUsedForGuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User &apos;{0}&apos; already exists in Adobe Connect..
         /// </summary>
         public static string PrincipalValidateAlreadyInAc {

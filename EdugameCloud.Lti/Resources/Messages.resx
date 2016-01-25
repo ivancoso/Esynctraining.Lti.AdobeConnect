@@ -218,6 +218,12 @@
   <data name="NoUserFound" xml:space="preserve">
     <value>No user with id {0} found.</value>
   </data>
+  <data name="PrincipalEmailUsedForGuest" xml:space="preserve">
+    <value>Unable to sync users. Guest record with email '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.</value>
+  </data>
+  <data name="PrincipalLoginUsedForGuest" xml:space="preserve">
+    <value>Unable to sync users. Guest record with login '{0}' already exists in Adobe Connect. Please contact AC administrator to promote guest to user.</value>
+  </data>
   <data name="PrincipalValidateAlreadyInAc" xml:space="preserve">
     <value>User '{0}' already exists in Adobe Connect.</value>
   </data>

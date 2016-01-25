@@ -218,6 +218,12 @@
   <data name="NoUserFound" xml:space="preserve">
     <value>No se encontró usuario con id {0}.</value>
   </data>
+  <data name="PrincipalEmailUsedForGuest" xml:space="preserve">
+    <value>No se ha podido sincronizar usuarios. El invitado con email {0} ya existe en Adobe Connect. Por favor, contacte con su administrador para convertir este invitado en usuario.</value>
+  </data>
+  <data name="PrincipalLoginUsedForGuest" xml:space="preserve">
+    <value>No se ha podido sincronizar usuarios. El invitado con login {0} ya existe en Adobe Connect. Por favor, contacte con su administrador para convertir este invitado en usuario.</value>
+  </data>
   <data name="PrincipalValidateAlreadyInAc" xml:space="preserve">
     <value>El usuario {0} y existe en Adobe Connect.</value>
   </data>
