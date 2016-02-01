@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Esynctraining.AC.Provider.Entities;
+﻿using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
@@ -19,5 +15,7 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
         }
 
         public CommonInfo CommonInfo { get; private set; }
+
     }
+
 }

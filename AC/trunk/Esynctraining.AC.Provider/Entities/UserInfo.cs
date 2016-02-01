@@ -9,9 +9,6 @@
     [Serializable]
     public class UserInfo
     {
-        [XmlAttribute("account-id")]
-        public int? AccountId { get; set; }
-
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>
@@ -29,5 +26,7 @@
         /// </summary>
         [XmlElement("login")]
         public string Login { get; set; }
+
     }
+
 }

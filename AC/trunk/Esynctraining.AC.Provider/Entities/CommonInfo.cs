@@ -31,6 +31,8 @@ namespace Esynctraining.AC.Provider.Entities
 
         [XmlElement("mobile-app-package")]
         public string MobileAppPackage { get; set; }
+        
+        public int? AccountId { get; set; }
 
         public int MajorVersion
         {
@@ -48,6 +50,10 @@ namespace Esynctraining.AC.Provider.Entities
             }
         }
 
+        [XmlElement("user")]
+        public UserInfo User { get; set; }
+
+
         private int GetParsedVersionValue(int index)
         {
             var parsedValue = 0;
@@ -62,5 +68,7 @@ namespace Esynctraining.AC.Provider.Entities
 
             return parsedValue;
         }
+
     }
+
 }

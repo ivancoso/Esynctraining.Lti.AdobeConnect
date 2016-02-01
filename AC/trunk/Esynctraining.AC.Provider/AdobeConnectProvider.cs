@@ -94,10 +94,16 @@
             this.requestProcessor.SetSessionId(null);
 
             StatusInfo statusInfo;
-
             var success = this.LoginInternal(credentials.Login, credentials.Password, out statusInfo);
-            
-            return new LoginResult(statusInfo, success ? this.GetUserInfo() : null);
+
+            UserInfo user = null;
+            if (success)
+            {
+                var commonInfo = GetCommonInfo();
+                user = commonInfo.Success ? commonInfo.CommonInfo.User : null;
+            }
+
+            return new LoginResult(statusInfo, success ? user : null);
         }
 
         /// <summary>
@@ -113,11 +119,10 @@
         {
             this.requestProcessor.SetSessionId(sessionId);
 
-            StatusInfo status;
+            var commonInfo = GetCommonInfo();
+            var user = commonInfo.Success ? commonInfo.CommonInfo.User : null;
 
-            var user = this.GetUserInfo(out status);
-
-            return new LoginResult(status, user);
+            return new LoginResult(commonInfo.Status, user);
         }
 
         /// <summary>
@@ -131,47 +136,47 @@
             this.requestProcessor.Process(Commands.Logout, null, out status);
         }
 
-        /// <summary>
-        /// Gets user info.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="UserInfo"/>.
-        /// </returns>
-        public UserInfo GetUserInfo()
-        {
-            StatusInfo status;
+        ///// <summary>
+        ///// Gets user info.
+        ///// </summary>
+        ///// <returns>
+        ///// The <see cref="UserInfo"/>.
+        ///// </returns>
+        //public UserInfo GetUserInfo()
+        //{
+        //    StatusInfo status;
 
-            return this.GetUserInfo(out status);
-        }
+        //    return this.GetUserInfo(out status);
+        //}
 
-        /// <summary>
-        /// Returns information about currently logged in user
-        /// </summary>
-        /// <param name="status">The status.</param>
-        /// <returns>
-        ///   <see cref="UserInfo"/>
-        /// </returns>
-        public UserInfo GetUserInfo(out StatusInfo status)
-        {
-            // action=common-info
-            var doc = this.requestProcessor.Process(Commands.CommonInfo, null, out status);
+        ///// <summary>
+        ///// Returns information about currently logged in user
+        ///// </summary>
+        ///// <param name="status">The status.</param>
+        ///// <returns>
+        /////   <see cref="UserInfo"/>
+        ///// </returns>
+        //public UserInfo GetUserInfo(out StatusInfo status)
+        //{
+        //    // action=common-info
+        //    var doc = this.requestProcessor.Process(Commands.CommonInfo, null, out status);
 
-            if (!ResponseIsOk(doc, status))
-            {
-                return null;
-            }
+        //    if (!ResponseIsOk(doc, status))
+        //    {
+        //        return null;
+        //    }
 
-            try
-            {
-                return UserInfoParser.Parse(doc);
-            }
-            catch (Exception ex)
-            {
-                TraceTool.TraceException(ex);
-            }
+        //    try
+        //    {
+        //        return UserInfoParser.Parse(doc);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceTool.TraceException(ex);
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
         #endregion
 
@@ -1206,9 +1211,7 @@
         {
             //act: "common-info"
             const string commonInfoPath = "//results/common";
-           
             StatusInfo status;
-
             var doc = this.requestProcessor.Process(Commands.CommonInfo, string.Empty, out status);
 
             return ResponseIsOk(doc, status)
