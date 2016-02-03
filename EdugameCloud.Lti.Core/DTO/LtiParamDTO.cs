@@ -429,6 +429,11 @@
                 {
                     result = guid.GetHashCode();
                 }
+                else
+                {
+                    // TRICK: UNIR's Sakai returns non-guid values here
+                    return this.context_id.GetHashCode();
+                }
             }
 
             return result;

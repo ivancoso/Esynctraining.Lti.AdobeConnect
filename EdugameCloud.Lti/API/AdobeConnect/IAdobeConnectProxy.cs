@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         PermissionCollectionResult GetScoPermissions(string scoId, string principalId);
         ScoShortcut GetShortcutByType(string type);
         //UserInfo GetUserInfo();
-        UserInfo GetUserInfo(out StatusInfo status);
+        //UserInfo GetUserInfo(out StatusInfo status);
         //LearningPathCollectionResult LearningPathInfo(string scoId);
         //GenericResult LearningPathUpdate(LearningPathItem u);
         LoginResult Login(UserCredentials credentials);

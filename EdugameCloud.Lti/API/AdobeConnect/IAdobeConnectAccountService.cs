@@ -14,7 +14,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IAdobeConnectProxy GetProvider(ILmsLicense license, UserCredentials credentials, bool login);
 
-        ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider, ICache cache);
+        ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider, ICache cache);
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider);
 

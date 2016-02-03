@@ -274,16 +274,7 @@
 
             return this.View(model);
         }
-
-        /// <summary>
-        /// The development.
-        /// </summary>
-        /// <param name="code">
-        /// The code.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         public virtual ActionResult Activate(string code)
         {

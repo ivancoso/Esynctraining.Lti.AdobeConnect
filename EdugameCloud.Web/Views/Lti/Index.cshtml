@@ -14,9 +14,7 @@
 	var EsyncLti = {};
 	EsyncLti.version = '@ViewBag.LtiVersion';
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
-	EsyncLti.acUsesEmailAsLogin = @settings.ACUsesEmailAsLogin.ToString().ToLower();
 	EsyncLti.usesSyncUsers = @settings.UseSynchronizedUsers.ToString().ToLower();
-	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.ACPasswordPolicies);
 	EsyncLti.useFLV  = @settings.UseFLV.ToString().ToLower();
 	EsyncLti.useMP4  = @settings.UseMP4.ToString().ToLower();
 	EsyncLti.enableMultipleMeetings = @settings.EnableMultipleMeetings.ToString().ToLower();
@@ -30,6 +28,9 @@
 	EsyncLti.showSummary = @settings.ShowMeetingSummary.ToString().ToLower();
 	EsyncLti.showTime = @settings.ShowMeetingTime.ToString().ToLower();
 	EsyncLti.showDuration = @settings.ShowMeetingDuration.ToString().ToLower();
+	EsyncLti.acVersion = '@ViewBag.AcVersion';
+	EsyncLti.acUsesEmailAsLogin = @settings.ACUsesEmailAsLogin.ToString().ToLower();
+	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.AcPasswordPolicies);
 	EsyncLti.acRoles = @Html.Raw(ViewBag.AcRolesJson);
 	EsyncLti.language = '@settings.Language';
 	var Ext = Ext || {};

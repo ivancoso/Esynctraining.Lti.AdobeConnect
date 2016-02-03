@@ -170,20 +170,19 @@ namespace EdugameCloud.Lti.API
 
                 return false;
             }
+            
+            CommonInfoResult commonInfo = provider.GetCommonInfo();
 
-            StatusInfo status;
-            UserInfo usr = provider.GetUserInfo(out status);
-
-            if (status.Code != StatusCodes.ok)
+            if (!commonInfo.Success)
             {
-                logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", status.GetErrorInfo());
-                info = status.GetErrorInfo();
+                logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. {0}.", commonInfo.Status.GetErrorInfo());
+                info = commonInfo.Status.GetErrorInfo();
                 return false;
             }
 
-            if ((usr != null) && usr.AccountId.HasValue)
+            if (commonInfo.CommonInfo.AccountId.HasValue)
             {
-                FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
+                FieldCollectionResult fields = provider.GetAclFields(commonInfo.CommonInfo.AccountId.Value);
 
                 if (!fields.Success)
                 {

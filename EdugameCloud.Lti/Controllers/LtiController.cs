@@ -391,6 +391,7 @@
             var meetingsJson = TempData["meetings"] as string;
             var policies = TempData["ACPasswordPolicies"] as string;
             var userFullName = TempData["CurrentUserFullName"] as string;
+            var acVersion = TempData["ACVersion"] as string;
             LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
 
             // TRICK: to change lang inside
@@ -408,8 +409,9 @@
                     param,
                     new StringBuilder());
 
-                meetingsJson = JsonConvert.SerializeObject(meetings);                
-                policies = JsonConvert.SerializeObject(IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider, _cache));
+                meetingsJson = JsonConvert.SerializeObject(meetings);
+                var acAccountDetails = IoC.Resolve<IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
+                policies = JsonConvert.SerializeObject(acAccountDetails.PasswordPolicies);
                 userFullName = param.lis_person_name_full;
                 settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             }
@@ -418,7 +420,8 @@
             version = version.Substring(0, version.LastIndexOf('.'));
             ViewBag.LtiVersion = version;
             ViewBag.MeetingsJson = meetingsJson;
-            ViewBag.ACPasswordPolicies = policies;
+            ViewBag.AcPasswordPolicies = policies;
+            ViewBag.AcVersion = acVersion;
             // TRICK:
             // BB contains: lis_person_name_full:" Blackboard  Administrator"
             ViewBag.CurrentUserFullName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline);
@@ -1207,7 +1210,7 @@
                 trace.AppendFormat("GetMeetings SUMMARY: time: {0}.\r\n", sw.Elapsed.ToString());
 
             sw = Stopwatch.StartNew();
-            var pwdPolicies = IoC.Resolve<IAdobeConnectAccountService>().GetPasswordPolicies(acProvider, _cache);
+            var acAccountDetails = IoC.Resolve<IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
             sw.Stop();
             if (trace != null)
                 trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -1215,8 +1218,10 @@
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             TempData["CurrentUserFullName"] = param.lis_person_name_full;
-            TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(pwdPolicies);
-            
+            TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(acAccountDetails.PasswordPolicies);
+            TempData["ACVersion"] = acAccountDetails.Version;
+
+
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode, disableCacheBuster = true });
         }
 

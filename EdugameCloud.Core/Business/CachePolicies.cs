@@ -81,7 +81,7 @@ namespace EdugameCloud.Core.Business
             }
 
 
-            public static string PasswordPolicies(string apiUrl)
+            public static string AcDetails(string apiUrl)
             {
                 return apiUrl;
             }

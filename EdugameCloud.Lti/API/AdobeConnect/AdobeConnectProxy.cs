@@ -373,20 +373,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return Execute(() => _provider.GetShortcutByType(type, out status));
         }
 
-        public UserInfo GetUserInfo(out StatusInfo status)
-        {
-            UserInfo result;
-            try
-            {
-                result = _provider.GetUserInfo(out status);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("[AdobeConnectProxy Error]", ex);
-                throw;
-            }
-        }
+        //public UserInfo GetUserInfo(out StatusInfo status)
+        //{
+        //    UserInfo result;
+        //    try
+        //    {
+        //        result = _provider.GetUserInfo(out status);
+        //        return result;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error("[AdobeConnectProxy Error]", ex);
+        //        throw;
+        //    }
+        //}
 
         public LoginResult Login(UserCredentials credentials)
         {

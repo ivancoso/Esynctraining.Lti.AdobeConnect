@@ -16,6 +16,9 @@ namespace EdugameCloud.Lti.Domain.Entities
     /// </summary>
     public class LmsCompany : Entity, ILmsLicense
     {
+        public static readonly int SpanishLanguageId = 10;
+
+
         /// <summary>
         /// The LMS domain.
         /// </summary>

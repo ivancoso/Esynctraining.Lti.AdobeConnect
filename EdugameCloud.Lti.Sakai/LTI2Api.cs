@@ -234,8 +234,11 @@
 
             using (var webResponse = (HttpWebResponse)request.GetResponse())
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                using (var sr = new StreamReader(webResponse.GetResponseStream()))
+                // TRICK: ACLTI-478 (UNIR: Accents aren't shown correctly in Participants List)
+                Encoding encoding = (company.LanguageId == LmsCompany.SpanishLanguageId)
+                    ? Encoding.GetEncoding("ISO-8859-1")
+                    : Encoding.UTF8;
+                using (var sr = new StreamReader(webResponse.GetResponseStream(), encoding, true))
                 {
                     resp = sr.ReadToEnd().Trim();
                     sr.Close();

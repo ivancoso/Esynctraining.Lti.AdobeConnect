@@ -62,29 +62,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return new AdobeConnectProxy(provider, _logger, apiUrl);
         }
+        
 
-
-        public ACPasswordPoliciesDTO GetPasswordPolicies(IAdobeConnectProxy provider, ICache cache)
+        public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
             if (cache == null)
                 throw new ArgumentNullException("cache");
             
-            var item = CacheUtility.GetCachedItem<ACPasswordPoliciesDTO>(cache, CachePolicies.Keys.PasswordPolicies(provider.ApiUrl), () =>
+            var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.ApiUrl), () =>
             {
-                StatusInfo status;
-                UserInfo usr = provider.GetUserInfo(out status);
+                CommonInfoResult commonInfo = provider.GetCommonInfo();
 
-                if (status.Code != StatusCodes.ok)
+                if (!commonInfo.Success)
                 {
-                    _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error. Code:{0}.SubCode:{1}.", status.Code, status.SubCode);
+                    _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error:{0}.", commonInfo.Status.GetErrorInfo());
                     return null;
                 }
 
-                if (usr.AccountId.HasValue)
+                if (commonInfo.CommonInfo.AccountId.HasValue)
                 {
-                    FieldCollectionResult fields = provider.GetAclFields(usr.AccountId.Value);
+                    FieldCollectionResult fields = provider.GetAclFields(commonInfo.CommonInfo.AccountId.Value);
 
                     if (fields.Status.Code != StatusCodes.ok)
                     {
@@ -100,13 +99,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
                     int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
 
-                    return new ACPasswordPoliciesDTO
+                    return new ACDetailsDTO
                     {
-                        passwordRequiresDigit = passwordRequiresDigit,
-                        passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
-                        passwordRequiresSpecialChars = passwordRequiresSpecialChars,
-                        passwordMinLength = passwordMinLength,
-                        passwordMaxLength = passwordMaxLength,
+                        Version = commonInfo.CommonInfo.Version,
+
+                        PasswordPolicies = new ACPasswordPoliciesDTO
+                        {
+                            passwordRequiresDigit = passwordRequiresDigit,
+                            passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
+                            passwordRequiresSpecialChars = passwordRequiresSpecialChars,
+                            passwordMinLength = passwordMinLength,
+                            passwordMaxLength = passwordMaxLength,
+                        },
                     };
                 }
 
