@@ -2,7 +2,8 @@
 {
     using System;
     using System.Runtime.Serialization;
-
+    using System.Web.Script.Serialization;
+    using EdugameCloud.Core.Extensions;
     /// <summary>
     ///     The participant DTO.
     /// </summary>
@@ -48,17 +49,37 @@
         [DataMember]
         public string assetId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the date entered.
-        /// </summary>
-        [DataMember]
+        [ScriptIgnore]
         public DateTime dateTimeEntered { get; set; }
 
-        /// <summary>
-        /// Gets or sets the date left.
-        /// </summary>
         [DataMember]
+        public long enteredAt
+        {
+            get
+            {
+                return (long)dateTimeEntered.ConvertToUnixTimestamp();
+            }
+            set
+            {
+            }
+        }
+
+        [ScriptIgnore]
         public DateTime? dateTimeLeft { get; set; }
+
+        [DataMember]
+        public long? leftAt
+        {
+            get
+            {
+                if (!dateTimeLeft.HasValue)
+                    return null;
+                return (long)dateTimeLeft.Value.ConvertToUnixTimestamp();
+            }
+            set
+            {
+            }
+        }
 
         /// <summary>
         /// Gets or sets the ac session participant id.

@@ -102,6 +102,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return new ACDetailsDTO
                     {
                         Version = commonInfo.CommonInfo.Version,
+                        TimeZoneShiftMinutes = commonInfo.CommonInfo.GetTimeZoneShiftMinutes(),
 
                         PasswordPolicies = new ACPasswordPoliciesDTO
                         {

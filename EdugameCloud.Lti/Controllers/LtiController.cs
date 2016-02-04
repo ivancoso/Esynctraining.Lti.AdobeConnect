@@ -389,9 +389,8 @@
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
         {
             var meetingsJson = TempData["meetings"] as string;
-            var policies = TempData["ACPasswordPolicies"] as string;
+            var acSettings = TempData["AcSettings"] as string;
             var userFullName = TempData["CurrentUserFullName"] as string;
-            var acVersion = TempData["ACVersion"] as string;
             LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
 
             // TRICK: to change lang inside
@@ -411,7 +410,7 @@
 
                 meetingsJson = JsonConvert.SerializeObject(meetings);
                 var acAccountDetails = IoC.Resolve<IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
-                policies = JsonConvert.SerializeObject(acAccountDetails.PasswordPolicies);
+                acSettings = JsonConvert.SerializeObject(acAccountDetails);
                 userFullName = param.lis_person_name_full;
                 settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             }
@@ -420,8 +419,7 @@
             version = version.Substring(0, version.LastIndexOf('.'));
             ViewBag.LtiVersion = version;
             ViewBag.MeetingsJson = meetingsJson;
-            ViewBag.AcPasswordPolicies = policies;
-            ViewBag.AcVersion = acVersion;
+            ViewBag.AcSettings = acSettings;
             // TRICK:
             // BB contains: lis_person_name_full:" Blackboard  Administrator"
             ViewBag.CurrentUserFullName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline);
@@ -1218,9 +1216,7 @@
             TempData["meetings"] = JsonConvert.SerializeObject(meetings);
             TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
             TempData["CurrentUserFullName"] = param.lis_person_name_full;
-            TempData["ACPasswordPolicies"] = JsonConvert.SerializeObject(acAccountDetails.PasswordPolicies);
-            TempData["ACVersion"] = acAccountDetails.Version;
-
+            TempData["AcSettings"] = JsonConvert.SerializeObject(acAccountDetails);
 
             return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode, disableCacheBuster = true });
         }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Web.Script.Serialization;
+using EdugameCloud.Core.Extensions;
 using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
@@ -12,6 +14,7 @@ namespace EdugameCloud.Lti.Core.DTO
             id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
+            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
             duration = GetDurationWithoutMilliseconds(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
@@ -25,6 +28,7 @@ namespace EdugameCloud.Lti.Core.DTO
             id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
+            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
             duration = ConvertSecondsToTimeFormat(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
@@ -57,11 +61,15 @@ namespace EdugameCloud.Lti.Core.DTO
         public bool is_mp4 { get; set; }
         
         [DataMember]
+        [ScriptIgnore]
         public string begin_date { get; set; }
+
+        [DataMember]
+        public long beginAt { get; set; }
 
         //[DataMember]
         //public string description { get; set; }
-        
+
         [DataMember]
         public string duration { get; set; }
 

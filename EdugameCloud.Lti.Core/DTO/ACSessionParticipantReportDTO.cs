@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.DTO;
-using Org.BouncyCastle.Asn1.Cms;
 
 namespace EdugameCloud.Lti.Core.DTO
 {

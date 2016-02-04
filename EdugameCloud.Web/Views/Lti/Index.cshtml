@@ -1,5 +1,4 @@
-﻿@using FluentNHibernate.Utils
-@{
+﻿@{
 	Layout = null;
 	EdugameCloud.Lti.DTO.LicenceSettingsDto settings = (EdugameCloud.Lti.DTO.LicenceSettingsDto)ViewBag.LmsLicenceSettings;
 }
@@ -28,9 +27,8 @@
 	EsyncLti.showSummary = @settings.ShowMeetingSummary.ToString().ToLower();
 	EsyncLti.showTime = @settings.ShowMeetingTime.ToString().ToLower();
 	EsyncLti.showDuration = @settings.ShowMeetingDuration.ToString().ToLower();
-	EsyncLti.acVersion = '@ViewBag.AcVersion';
 	EsyncLti.acUsesEmailAsLogin = @settings.ACUsesEmailAsLogin.ToString().ToLower();
-	EsyncLti.acPasswordPolicies = @Html.Raw(ViewBag.AcPasswordPolicies);
+	EsyncLti.acSettings = @Html.Raw(ViewBag.AcSettings);
 	EsyncLti.acRoles = @Html.Raw(ViewBag.AcRolesJson);
 	EsyncLti.language = '@settings.Language';
 	var Ext = Ext || {};

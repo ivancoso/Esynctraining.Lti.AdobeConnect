@@ -1,36 +1,36 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Security;
-using Esynctraining.Core.Logging;
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 using Newtonsoft.Json;
-using EdugameCloud.Lti.Core.Constants;
-using Esynctraining.AC.Provider.Constants;
-using EdugameCloud.Core.Business.Models;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public sealed partial class MeetingSetup : IMeetingSetup
     {
+        private static readonly string AcDateFormat = "yyyy-MM-ddTHH:mm"; // AdobeConnectProviderConstants.DateFormat
+
         #region Properties
 
         private LmsCourseMeetingModel LmsCourseMeetingModel
@@ -1640,6 +1640,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // HACK: localization
                 start_date = meetingSco.BeginDate.ToString("yyyy-MM-dd"),
                 start_time = meetingSco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
+                start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp(),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),
                 access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                 allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
@@ -1735,20 +1736,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (meetingDTO.start_date == null || meetingDTO.start_time == null)
             {
-                updateItem.DateBegin = DateTime.Now.ToString(AdobeConnectProviderConstants.DateFormat);
-                updateItem.DateEnd = DateTime.Now.AddHours(1).ToString(AdobeConnectProviderConstants.DateFormat);
+                updateItem.DateBegin = DateTime.Now.ToString(AcDateFormat);
+                updateItem.DateEnd = DateTime.Now.AddHours(1).ToString(AcDateFormat);
             }
 
             DateTime dateBegin;
 
             if (DateTime.TryParse(meetingDTO.start_date + " " + meetingDTO.start_time, out dateBegin))
             {
-                updateItem.DateBegin = dateBegin.ToString(AdobeConnectProviderConstants.DateFormat);
+                updateItem.DateBegin = dateBegin.ToString(AcDateFormat);
                 TimeSpan duration;
                 if (TimeSpan.TryParse(meetingDTO.duration, out duration))
                 {
                     updateItem.DateEnd =
-                        dateBegin.AddMinutes((int)duration.TotalMinutes).ToString(AdobeConnectProviderConstants.DateFormat);
+                        dateBegin.AddMinutes((int)duration.TotalMinutes).ToString(AcDateFormat);
                 }
             }
         }

@@ -67,6 +67,9 @@
         [DataMember]
         public string start_time { get; set; }
 
+        [DataMember]
+        public long start_timestamp { get; set; }
+
         /// <summary>
         /// Gets or sets the summary.
         /// </summary>

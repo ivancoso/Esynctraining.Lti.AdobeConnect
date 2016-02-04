@@ -5,7 +5,8 @@ namespace EdugameCloud.Lti.DTO
     using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
-
+    using System.Web.Script.Serialization;
+    using EdugameCloud.Core.Extensions;
     /// <summary>
     ///     The applet item DTO.
     /// </summary>
@@ -32,17 +33,39 @@ namespace EdugameCloud.Lti.DTO
         [DataMember]
         public List<ACSessionParticipantDTO> participants { get; set; }
 
-        /// <summary>
-        /// Gets or sets the date started.
-        /// </summary>
-        [DataMember]
+        [ScriptIgnore]
         public DateTime? dateStarted { get; set; }
 
-        /// <summary>
-        /// Gets or sets the date ended.
-        /// </summary>
         [DataMember]
+        public long? startedAt
+        {
+            get
+            {
+                if (!dateStarted.HasValue)
+                    return null;
+                return (long)dateStarted.Value.ConvertToUnixTimestamp();
+            }
+            set
+            {
+            }
+        }
+
+        [ScriptIgnore]
         public DateTime? dateEnded { get; set; }
+
+        [DataMember]
+        public long? endedAt
+        {
+            get
+            {
+                if (!dateEnded.HasValue)
+                    return null;
+                return (long)dateEnded.Value.ConvertToUnixTimestamp();
+            }
+            set
+            {
+            }
+        }
 
         /// <summary>
         /// Gets or sets the SCO id.

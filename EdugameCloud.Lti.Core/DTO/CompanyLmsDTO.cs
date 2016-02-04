@@ -1,4 +1,4 @@
-﻿using EdugameCloud.Lti.Core.Business.Models;
+﻿using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.Core.Constants;
 
 namespace EdugameCloud.Lti.DTO
