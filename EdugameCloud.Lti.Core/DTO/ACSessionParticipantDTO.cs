@@ -4,11 +4,8 @@
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
     using EdugameCloud.Core.Extensions;
-    /// <summary>
-    ///     The participant DTO.
-    /// </summary>
+
     [DataContract]
-    // ReSharper disable once InconsistentNaming
     public class ACSessionParticipantDTO : IComparable<ACSessionParticipantDTO>
     {
         #region Public Properties
@@ -17,36 +14,42 @@
         /// Gets or sets the sco id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string scoId  { get; set; }
 
         /// <summary>
         /// Gets or sets the participant name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string participantName { get; set; }
 
         /// <summary>
         /// Gets or sets the sco name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string scoName { get; set; }
 
         /// <summary>
         /// Gets or sets the session name.
         /// </summary>
         [DataMember]
-        public string sessionName{ get; set; }
+        [ScriptIgnore]
+        public string sessionName { get; set; }
 
         /// <summary>
         /// Gets or sets the principal id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string principalId { get; set; }
 
         /// <summary>
         /// Gets or sets the asset id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string assetId { get; set; }
 
         [ScriptIgnore]
@@ -85,6 +88,7 @@
         /// Gets or sets the ac session participant id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public float durationInHours { get; set; }
 
         /// <summary>
@@ -96,6 +100,7 @@
         /// <summary>
         /// Gets login of full name.
         /// </summary>
+        [ScriptIgnore]
         public string loginOrFullName
         {
             get
@@ -119,17 +124,20 @@
         /// Gets or sets the first name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string firstName { get; set; }
 
         /// <summary>
         /// Gets or sets the last name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string lastName { get; set; }
 
         /// <summary>
         /// Gets or sets the transcript id.
         /// </summary>
+        [ScriptIgnore]
         public int transcriptId { get; set; }
 
         #endregion
@@ -147,5 +155,7 @@
         {
             return string.Compare(this.loginOrFullName, other.loginOrFullName, StringComparison.Ordinal);
         }
+
     }
+
 }

@@ -1,15 +1,11 @@
-﻿using System.Linq;
-
-namespace EdugameCloud.Lti.DTO
+﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
     using EdugameCloud.Core.Extensions;
-    /// <summary>
-    ///     The applet item DTO.
-    /// </summary>
+    
     [DataContract]
     public class ACSessionDTO
     {
@@ -71,38 +67,46 @@ namespace EdugameCloud.Lti.DTO
         /// Gets or sets the SCO id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public int scoId { get; set; }
 
         /// <summary>
         /// Gets or sets the id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public int acSessionId { get; set; }
 
         /// <summary>
         /// Gets or sets the meeting name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string meetingName { get; set; }
 
         /// <summary>
         /// Gets or sets the session name.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public string sessionName { get; set; }
 
         /// <summary>
         /// Gets or sets the session index.
         /// </summary>
         [DataMember]
+        //[ScriptIgnore]
         public int sessionNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the asset(session) id.
         /// </summary>
         [DataMember]
+        [ScriptIgnore]
         public int assetId { get; set; }
 
         #endregion
+
     }
+
 }
