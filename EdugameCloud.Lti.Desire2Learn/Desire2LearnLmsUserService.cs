@@ -64,7 +64,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                 lmsCompany.LmsDomain,
                 string.Format(
                     d2lApiService.EnrollmentsClasslistUrlFormat,
-                    (string)this.settings.D2LApiVersion,
+                    (string)this.settings.BrightspaceApiVersion,
                     courseId),
                 lmsCompany);
 
@@ -83,7 +83,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                         lmsCompany.LmsDomain,
                         string.Format(
                             d2lApiService.EnrollmentsUrlFormat,
-                            (string) this.settings.D2LApiVersion,
+                            (string) this.settings.BrightspaceApiVersion,
                             courseId)
                         + (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
                         lmsCompany);
@@ -111,7 +111,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                             currentUserTokens[0],
                             currentUserTokens[1],
                             lmsCompany.LmsDomain,
-                            string.Format(d2lApiService.WhoAmIUrlFormat, (string) this.settings.D2LApiVersion),
+                            string.Format(d2lApiService.WhoAmIUrlFormat, (string) this.settings.BrightspaceApiVersion),
                             lmsCompany);
 
                         if (currentUserInfo != null)
@@ -119,7 +119,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                             //
                             var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1],
                                 lmsCompany.LmsDomain,
-                                string.Format(d2lApiService.GetUserUrlFormat, (string) this.settings.D2LApiVersion,
+                                string.Format(d2lApiService.GetUserUrlFormat, (string) this.settings.BrightspaceApiVersion,
                                     currentUserInfo.Identifier),
                                 lmsCompany);
 

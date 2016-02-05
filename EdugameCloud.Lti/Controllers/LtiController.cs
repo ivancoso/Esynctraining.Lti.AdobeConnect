@@ -190,11 +190,11 @@
 
                     string username = null;
                     var company = session.With(x => x.LmsCompany);
-                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.D2LApiVersion), company);
+                    var user = d2lService.GetApiObjects<WhoAmIUser>(Request.Url, hostUrl, String.Format(d2lService.WhoAmIUrlFormat, (string)Settings.BrightspaceApiVersion), company);
                     if (string.IsNullOrEmpty(user.UniqueName))
                     {
                         var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
-                            String.Format(d2lService.GetUserUrlFormat, (string)Settings.D2LApiVersion,
+                            String.Format(d2lService.GetUserUrlFormat, (string)Settings.BrightspaceApiVersion,
                                 user.Identifier), company);
                         if (userInfo != null)
                         {
@@ -1109,7 +1109,7 @@
                 if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
                     bool currentUserIsAdmin = false;
-                    if (providerKey.ToLower() == LmsProviderNames.Brightspace)
+                    if (providerKey.ToLower() == LmsProviderNames.Brightspace) // todo: review. providerKey is guid
                     {
                         if (!string.IsNullOrEmpty(param.ext_d2l_role))
                         {
@@ -1129,7 +1129,7 @@
                                 enrollments = d2lService.GetApiObjects<PagedResultSet<OrgUnitUser>>(tokens[0], tokens[1],
                                     param.lms_domain,
                                     String.Format(d2lService.EnrollmentsUrlFormat,
-                                        (string) Settings.D2LApiVersion, param.context_id) +
+                                        (string) Settings.BrightspaceApiVersion, param.context_id) +
                                     (enrollments != null ? "?bookmark=" + enrollments.PagingInfo.Bookmark : string.Empty),
                                     company);
                                 if (enrollments != null || enrollments.Items == null)

@@ -40,7 +40,7 @@
             if (requestUrl != null)
             {
                 absoluteAction = string.Format(
-                    "{0}://{1}{2}", requestUrl.Scheme, requestUrl.Authority, url.Action(action, controller, roteValues));
+                    "{0}://{1}{2}", schema.Equals("https", StringComparison.OrdinalIgnoreCase) ? schema : requestUrl.Scheme, requestUrl.Authority, url.Action(action, controller, roteValues));
             }
             else
             {

@@ -109,8 +109,8 @@ namespace EdugameCloud.Lti.Desire2Learn
             }
             else
             {
-                appId = ((dynamic) settings).D2LApiKey;
-                appKey = ((dynamic)settings).D2LApiSecret;
+                appId = ((dynamic) settings).BrightspaceAppId;
+                appKey = ((dynamic)settings).BrightspaceAppKey;
             }
 
             return new Tuple<string, string>(appId, appKey);
