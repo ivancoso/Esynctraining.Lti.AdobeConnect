@@ -145,7 +145,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                         id = enrollment.Identifier,
                         login_id = enrollment.Username,
                         name = enrollment.DisplayName,
-                        primary_email = enrollment.Email,
+                        primary_email = enrollment.Email ?? userInfo?.User.EmailAddress,
                         lms_role = userInfo != null ? userInfo.Role.Name : "Unknown",
                     };
                     result.Add(user);
