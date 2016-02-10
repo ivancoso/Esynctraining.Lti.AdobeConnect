@@ -29,7 +29,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public IAdobeConnectProxy GetProvider(ILmsLicense license, bool login = true)
         {
             var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
-            return GetProvider(license, credentials, login);
+            try
+            {
+                return GetProvider(license, credentials, login);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new WarningMessageException("Adobe Connect Server credentials are not valid in the license. Please contact EGC administrator.", ex);
+            }
         }
 
         public IAdobeConnectProxy GetProvider(ILmsLicense license, UserCredentials credentials, bool login)

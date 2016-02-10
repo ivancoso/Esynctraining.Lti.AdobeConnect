@@ -11,6 +11,8 @@ namespace EdugameCloud.Lti.Core
 
         public WarningMessageException(string message) : base(message) { }
 
+        public WarningMessageException(string message, Exception innerException) : base(message, innerException) { }
+
     }
 
 }
