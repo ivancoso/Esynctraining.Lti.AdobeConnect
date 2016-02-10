@@ -70,7 +70,7 @@ namespace EdugameCloud.Sakai.TestClient.Models
             ServicePointManager.Expect100Continue = false;
 
             var request = (HttpWebRequest)WebRequest.Create(url);
-
+            
             var pairs = new NameValueCollection
             {
                 { "id", parameters.lis_result_sourcedid },
@@ -97,7 +97,7 @@ namespace EdugameCloud.Sakai.TestClient.Models
             string resp;
             request.ContentType = "application/x-www-form-urlencoded";
             request.Method = "POST";
-            request.Timeout = 5000;  // TODO: add timeout
+            request.Timeout = 15 * 1000;  // TODO: add timeout
             request.Referer = url;
             request.Host = new Uri(url).Host;
             request.ContentLength = bytes.Length;

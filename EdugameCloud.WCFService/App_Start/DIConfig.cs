@@ -49,11 +49,7 @@
             container.Install(new NHibernateWindsorInstaller());
 
             container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionSource>().LifeStyle.PerWcfOperationIncludingWebOrb());
-
-
-            Type egcCoremodelsType = typeof(ACSessionModel);
-            Assembly egcCoreAssembly = egcCoremodelsType.Assembly;
-
+            
             container.AddFacility<WcfFacility>();
             //https://groups.google.com/forum/#!msg/castle-project-users/TewcYkiP_Uc/yLW4HrbSUJgJ
             container.AddFacility<TypedFactoryFacility>();
@@ -87,20 +83,8 @@
                     .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
                     .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
 
-            //container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>()
-            //        .DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server))
-            //        .LifeStyle.Transient);
-            
-            container.Register(Classes.FromAssembly(egcCoreAssembly).Pick()
-                    .If(Component.IsInNamespace(egcCoremodelsType.Namespace))
-                    .WithService.Self()
-                    .Configure(c => c.LifestyleTransient()));
+            container.RegisterEgcComponents();
 
-            container.Register(Classes.FromAssembly(egcCoreAssembly)
-                    .BasedOn(typeof(BaseConverter<,>))
-                    .WithService.Base()
-                    .LifestyleTransient());
-            
             container.Register(Component.For<IResourceProvider>().ImplementedBy<WcfResourceProvider>().Activator<ResourceProviderActivator>());
             
             RegisterLtiComponents(container);
