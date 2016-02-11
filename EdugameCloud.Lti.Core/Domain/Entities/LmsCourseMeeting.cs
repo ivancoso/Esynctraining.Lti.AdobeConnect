@@ -40,6 +40,8 @@
 
         public virtual int? SourceCourseMeetingId { get; set; }
 
+        public string AudioProfileId { get; set; }
+
         /// <summary>
         /// Gets or sets the owner.
         /// </summary>

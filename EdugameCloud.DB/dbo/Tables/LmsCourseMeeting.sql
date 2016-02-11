@@ -9,6 +9,7 @@
 	[meetingNameJson]		NVARCHAR(4000)		NULL,
 	[reused]				BIT					NULL, -- TODO: not null
 	[sourceCourseMeetingId]	INT					NULL,
+	[audioProfileId]		NVARCHAR(50)		NULL,
 
 	CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC),
 	CONSTRAINT [FK_LmsCourseMeeting_LmsMeetingType] FOREIGN KEY ([lmsMeetingTypeId]) REFERENCES [dbo].[LmsMeetingType] ([lmsMeetingTypeId]),

@@ -20,6 +20,7 @@ namespace EdugameCloud.Lti.Persistence.Mappings
             this.Map(x => x.LmsMeetingType).Column("lmsMeetingTypeId").Not.Nullable();
             this.Map(x => x.Reused).Nullable();
             this.Map(x => x.SourceCourseMeetingId).Nullable();
+            this.Map(x => x.AudioProfileId).Nullable();
 
             this.Map(x => x.LmsCompanyId).Column("companyLmsId").Not.Nullable();
             

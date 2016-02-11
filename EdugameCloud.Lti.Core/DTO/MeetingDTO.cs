@@ -113,6 +113,9 @@
         [DataMember]
         public bool reused { get; set; }
 
+        [DataMember]
+        public string audioProfileId { get; set; }
+
         #endregion
 
         public SpecialPermissionId GetPermissionId()

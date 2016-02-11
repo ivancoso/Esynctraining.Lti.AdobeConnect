@@ -649,6 +649,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
+            meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+
             if (isNewMeeting)
             {
                 // newly created meeting
@@ -1649,6 +1651,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 type = type,
                 office_hours = officeHoursString,
                 reused = scoIdReused,
+                audioProfileId = lmsCourseMeeting.AudioProfileId
             };
             return ret;
         }
