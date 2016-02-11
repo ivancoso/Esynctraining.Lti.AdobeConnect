@@ -111,6 +111,30 @@
             return this.Repository.FindAll(defaultQuery);
         }
 
+        public IEnumerable<LmsCourseMeeting> GetByCompanyWithAudioProfiles(LmsCompany lmsCompany)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException("lmsCompany");
+
+            // NOTE: check only licences of the company with the same AC!!
+            var query = from c in this.Repository.Session.Query<LmsCompany>()
+                        where c.CompanyId == lmsCompany.CompanyId
+                        select new { c.Id, c.AcServer };
+            var currentLicenceAc = new Uri(lmsCompany.AcServer);
+            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
+
+            LmsCourseMeeting x = null;
+            OfficeHours oh = null;
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
+                .GetQueryOver(() => x)
+                .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
+                .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
+                .And(() => x.AudioProfileId != null)
+                .TransformUsing(Transformers.DistinctRootEntity);
+
+            return this.Repository.FindAll(defaultQuery);
+        }
+
 
         public LmsCourseMeeting GetLtiCreatedByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
         {

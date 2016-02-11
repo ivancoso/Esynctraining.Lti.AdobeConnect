@@ -19,7 +19,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public string ApiUrl { get; private set; }
 
 
-        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl)
+        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl, string principalId)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
@@ -28,8 +28,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             _provider = provider;
             _logger = logger;
+            PrincipalId = principalId;
             ApiUrl = apiUrl;
         }
+
+        public string PrincipalId { get; private set; }
 
 
         public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
@@ -122,6 +125,23 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new InvalidOperationException(msg);
             }
             
+            return result;
+        }
+
+        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
+        {
+
+            TelephonyProfilesCollectionResult result;
+            try
+            {
+                result = _provider.TelephonyProfileList(principalId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "TelephonyProfileList. PrincipalId:{0}", principalId);
+                throw;
+            }
+
             return result;
         }
 

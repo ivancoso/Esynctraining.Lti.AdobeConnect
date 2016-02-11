@@ -56,6 +56,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     Url = string.Empty,
                 },
             };
+            string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
@@ -65,9 +66,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
                     throw new InvalidOperationException("Login to Adobe Connect failed. Status.Code:Status.SubCode = " + result.Status.Code.ToString() + ":" + result.Status.SubCode.ToString());
                 }
+                principalId = result.User.UserId;
             }
 
-            return new AdobeConnectProxy(provider, _logger, apiUrl);
+            return new AdobeConnectProxy(provider, _logger, apiUrl, principalId);
         }
         
 

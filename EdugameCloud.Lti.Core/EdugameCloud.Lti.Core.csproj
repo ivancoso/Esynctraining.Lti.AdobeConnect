@@ -225,6 +225,7 @@
     <Compile Include="DTO\LmsQuizInfoDTO.cs" />
     <Compile Include="DTO\LmsCompanyRoleMappingDTO.cs" />
     <Compile Include="DTO\LmsSettingsDTO.cs" />
+    <Compile Include="DTO\LmsAudioProfileDTO.cs" />
     <Compile Include="DTO\LmsUserDTO.cs" />
     <Compile Include="DTO\LmsUserParametersDTO.cs" />
     <Compile Include="DTO\LtiParamDTO.cs" />

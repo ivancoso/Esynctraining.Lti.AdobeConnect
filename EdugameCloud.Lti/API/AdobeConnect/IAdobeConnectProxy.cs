@@ -9,6 +9,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface IAdobeConnectProxy
     {
         string ApiUrl { get; }
+        string PrincipalId { get; }
 
         //StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);
@@ -27,6 +28,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind);
         //ScoContentCollectionResult GetAllEvents();
         PermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
+
+        TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
+
         PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         //ScoContentCollectionResult GetAllMeetings();
         PrincipalCollectionResult GetAllPrincipal();

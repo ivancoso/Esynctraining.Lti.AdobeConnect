@@ -767,6 +767,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Success(message, updatedMeeting);
         }
 
+        public OperationResult UpdateAudioProfileId(
+            LmsCompany lmsCompany,
+            LtiParamDTO param,
+            int meetingId,
+            int meetingType,
+            string audioProfileId)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException("lmsCompany");
+            if (param == null)
+                throw new ArgumentNullException("param");
+
+
+            LmsCourseMeeting meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingId, meetingType > 0 ? (LmsMeetingType)meetingType : LmsMeetingType.Meeting);
+            meeting.AudioProfileId = audioProfileId;
+
+            this.LmsCourseMeetingModel.RegisterSave(meeting);
+            this.LmsCourseMeetingModel.Flush();
+
+
+            return OperationResult.Success("Meeting audio profile updated", meeting);
+        }
+
         // TODO: move MeetingReuseDTO
         public OperationResult ReuseExistedAdobeConnectMeeting(LmsCompany credentials,
             LmsUser lmsUser,
