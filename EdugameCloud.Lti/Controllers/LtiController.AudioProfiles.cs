@@ -42,15 +42,16 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public JsonResult AssociateAudioProfileIdWithMeeting(string lmsProviderName, int meetingId, int meetingType, string audioProfileId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var ret = this.meetingSetup.UpdateAudioProfileId(
-                    credentials,
+                    lmsCompany,
                     param,
+                    GetAdobeConnectProvider(lmsCompany),
                     meetingId,
                     meetingType,
                     audioProfileId);
@@ -59,7 +60,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("AssociateAudioProfileIdWithMeeting", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("AssociateAudioProfileIdWithMeeting", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }
