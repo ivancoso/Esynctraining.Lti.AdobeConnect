@@ -649,7 +649,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            provider.UpdateAclField(meeting.ScoId, AclFieldId.telephony_profile, meetingDTO.audioProfileId);
+            provider.UpdateAclField(result.ScoInfo.ScoId, AclFieldId.telephony_profile, meetingDTO.audioProfileId);
             meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
 
             if (isNewMeeting)
