@@ -649,6 +649,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
+            provider.UpdateAclField(meeting.ScoId, AclFieldId.telephony_profile, meetingDTO.audioProfileId);
             meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
 
             if (isNewMeeting)
@@ -770,6 +771,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public OperationResult UpdateAudioProfileId(
             LmsCompany lmsCompany,
             LtiParamDTO param,
+            IAdobeConnectProxy provider,
             int meetingId,
             int meetingType,
             string audioProfileId)
@@ -778,9 +780,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("lmsCompany");
             if (param == null)
                 throw new ArgumentNullException("param");
+            if (provider == null)
+                throw new ArgumentNullException("provider");
 
 
             LmsCourseMeeting meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingId, meetingType > 0 ? (LmsMeetingType)meetingType : LmsMeetingType.Meeting);
+            provider.UpdateAclField(meeting.ScoId, AclFieldId.telephony_profile, audioProfileId);
             meeting.AudioProfileId = audioProfileId;
 
             this.LmsCourseMeetingModel.RegisterSave(meeting);
