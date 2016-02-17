@@ -43,6 +43,10 @@ namespace EdugameCloud.Lti.DTO
 
         public string Language { get; set; }
 
+        public bool HasMp4ServiceLicenseKey { get; set; }
+        
+        public bool HasMp4ServiceWithSubtitlesLicenseKey { get; set; }
+
 
         public static LicenceSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
@@ -78,6 +82,9 @@ namespace EdugameCloud.Lti.DTO
                     CanRemoveRecordings = value.CanRemoveRecordings,
                     AutoPublishRecordings = value.AutoPublishRecordings,
                     Language = lmsLicenseLanguage.TwoLetterCode,
+
+                    HasMp4ServiceLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey)),
+                    HasMp4ServiceWithSubtitlesLicenseKey = !string.IsNullOrWhiteSpace(value.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey)),
                 };
             });            
         }

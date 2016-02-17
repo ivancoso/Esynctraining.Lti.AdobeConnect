@@ -106,6 +106,9 @@ namespace EdugameCloud.Lti.DTO
             this.forcedAddInInstallation = instance.GetSetting<bool>(LmsCompanySettingNames.ForcedAddInInstallation);
 
             this.languageId = instance.LanguageId;
+
+            this.mp4ServiceLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
+            this.mp4ServiceWithSubtitlesLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
         }
 
         /// <summary>
@@ -392,6 +395,13 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public int languageId { get; set; }
+
+
+        [DataMember]
+        public string mp4ServiceLicenseKey { get; set; }
+
+        [DataMember]
+        public string mp4ServiceWithSubtitlesLicenseKey { get; set; }
 
     }
 

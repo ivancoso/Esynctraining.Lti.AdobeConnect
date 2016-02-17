@@ -278,6 +278,8 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AutoPublishRecordings, dto.autoPublishRecordings);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ForcedAddInInstallation, dto.forcedAddInInstallation);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LanguageId, dto.languageId);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Mp4ServiceLicenseKey, dto.mp4ServiceLicenseKey);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey, dto.mp4ServiceWithSubtitlesLicenseKey);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());

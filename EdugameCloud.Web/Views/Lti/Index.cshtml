@@ -14,8 +14,10 @@
 	EsyncLti.version = '@ViewBag.LtiVersion';
 	EsyncLti.meetings = @Html.Raw(ViewBag.MeetingsJson);
 	EsyncLti.usesSyncUsers = @settings.UseSynchronizedUsers.ToString().ToLower();
-	EsyncLti.useFLV  = @settings.UseFLV.ToString().ToLower();
-	EsyncLti.useMP4  = @settings.UseMP4.ToString().ToLower();
+	EsyncLti.useFLV = @settings.UseFLV.ToString().ToLower();
+	EsyncLti.useMP4 = @settings.UseMP4.ToString().ToLower();
+	EsyncLti.hasMp4= @settings.HasMp4ServiceLicenseKey.ToString().ToLower();
+	EsyncLti.hasMp4WithSubtitles= @settings.HasMp4ServiceWithSubtitlesLicenseKey.ToString().ToLower();
 	EsyncLti.enableMultipleMeetings = @settings.EnableMultipleMeetings.ToString().ToLower();
 	EsyncLti.enableMeetingReuse = @settings.EnableMeetingReuse.ToString().ToLower();
 	EsyncLti.canRemoveRecordings = @settings.CanRemoveRecordings.ToString().ToLower();
