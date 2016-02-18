@@ -746,6 +746,7 @@
     <Content Include="Content\lti-instructions\Sakai.pdf" />
     <Content Include="Content\lti-files\edugamecloud_1.0.6.zip" />
     <Content Include="Content\lti-instructions\Brightspace.pdf" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <None Include="PublishProfiles\EdugameCloud.Web.pubxml" />
     <None Include="Scripts\jquery-1.8.2.intellisense.js" />
