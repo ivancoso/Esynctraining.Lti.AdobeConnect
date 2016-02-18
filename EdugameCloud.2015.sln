@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Tests.Web"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Monitoring", "EdugameCloud.Lti.Monitoring\EdugameCloud.Lti.Monitoring.csproj", "{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mp4Service.Tasks.Client", "Esynctraining.Mp4Service.Tasks.Client\Esynctraining.Mp4Service.Tasks.Client.csproj", "{1237DFF4-0362-487D-8353-A8405DD098C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -373,6 +375,20 @@ Global
 		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.RootRelease|Any CPU.Build.0 = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1237DFF4-0362-487D-8353-A8405DD098C3}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

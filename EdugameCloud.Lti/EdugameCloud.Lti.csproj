@@ -209,6 +209,7 @@
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\LtiController.AudioProfiles.cs" />
+    <Compile Include="Controllers\Mp4ServiceController.cs" />
     <Compile Include="Controllers\LtiController.User.cs" />
     <Compile Include="Controllers\LtiController.ProxyTool.cs" />
     <Compile Include="Controllers\LtiController.Meeting.cs" />
@@ -278,6 +279,10 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esynctraining.Mp4Service.Tasks.Client\Esynctraining.Mp4Service.Tasks.Client.csproj">
+      <Project>{1237dff4-0362-487d-8353-a8405dd098c3}</Project>
+      <Name>Esynctraining.Mp4Service.Tasks.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

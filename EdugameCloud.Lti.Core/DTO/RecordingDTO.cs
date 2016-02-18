@@ -7,6 +7,21 @@ using Esynctraining.AC.Provider.Entities;
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
+    public sealed class Mp4ServiceStatusDto
+    {
+        [DataMember]
+        public string mp4_sco_id { set; get; }
+
+        [DataMember]
+        public string cc_sco_id { set; get; }
+
+        [DataMember]
+        public string status { set; get; }
+
+    }
+
+
+    [DataContract]
     public sealed class RecordingDTO
     {
         public RecordingDTO(Recording recording, string accountUrl)
@@ -19,7 +34,6 @@ namespace EdugameCloud.Lti.Core.DTO
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
             is_mp4 = recording.Icon == "mp4-archive";
-            job_id = string.IsNullOrEmpty(recording.JobId) ? string.Empty : recording.JobId;
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
         }
 
@@ -32,25 +46,22 @@ namespace EdugameCloud.Lti.Core.DTO
             duration = ConvertSecondsToTimeFormat(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
-            job_id = string.Empty;
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
             is_public = isPublic;
         }
 
         public RecordingDTO() { }
 
+
+        [DataMember]
+        public Mp4ServiceStatusDto mp4 { get; set; }
+
         /// <summary>
         /// Gets or sets a recording url for download. Available only for mp4.
         /// </summary>
         [DataMember]
         public string download_url { get; set; }
-
-        /// <summary>
-        /// Gets or sets a recording job id.
-        /// </summary>
-        [DataMember]
-        public string job_id { get; set; }
-
+        
         /// <summary>
         /// Gets or sets a recording status.
         /// </summary>
@@ -93,7 +104,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         [DataMember]
         public bool published { get; set; }
-
+        
         #region methods
 
         private static string GetRecordingStatus(string jobStatus)
@@ -158,8 +169,7 @@ namespace EdugameCloud.Lti.Core.DTO
                 t.Seconds);
         }
         #endregion
-
-
+        
     }
 
 }

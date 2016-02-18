@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -13,6 +16,7 @@ using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using Esynctraining.Mp4Service.Tasks.Client;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -92,6 +96,80 @@ namespace EdugameCloud.Lti.Controllers
                 if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
                 {
                     recordings = recordings.Where(x => x.published);
+                }
+
+                string mp4LicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
+                string mp4WithSubtitlesLicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+                if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+                {
+                    // TODO: call MP$ serive
+                    var mp4Tasks = new Dictionary<string, DataTask>();
+                    foreach (var recordingScoId in recordings.Where(x => !x.is_mp4).Select(x => x.id))
+                    {
+                        mp4Tasks.Add(recordingScoId, new DataTask());
+                    }
+
+                    var mp4 = new ConcurrentDictionary<string, DataTask>(mp4Tasks);
+
+                    if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
+                    {
+                        Parallel.ForEach(mp4, (recording) =>
+                        {
+                            var mp4Client = new Mp4ServiceTaskClient();
+                            var status = mp4Client.GetStatus(new Esynctraining.Mp4Service.Tasks.Client.Task
+                            {
+                                LicenseId = mp4LicenseKey,
+                                ScoId = long.Parse(recording.Key),
+                            }).Result;
+
+                            recording.Value.Id = status.Id;
+                            recording.Value.ScoId = status.ScoId;
+                            recording.Value.UploadScoId = status.UploadScoId;
+                            recording.Value.LicenseId = status.LicenseId;
+                            recording.Value.Modified = status.Modified;
+                            recording.Value.Duration = status.Duration;
+                            recording.Value.Status = status.Status;
+                            recording.Value.TranscriptScoId = status.TranscriptScoId;
+                        });
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+                    {
+                        Parallel.ForEach(mp4, (recording) =>
+                        {
+                            var mp4Client = new Mp4ServiceTaskClient();
+                            var status = mp4Client.GetStatus(new Esynctraining.Mp4Service.Tasks.Client.Task
+                            {
+                                LicenseId = mp4WithSubtitlesLicenseKey,
+                                ScoId = long.Parse(recording.Key),
+                            }).Result;
+
+                            recording.Value.Id = status.Id;
+                            recording.Value.ScoId = status.ScoId;
+                            recording.Value.UploadScoId = status.UploadScoId;
+                            recording.Value.LicenseId = status.LicenseId;
+                            recording.Value.Modified = status.Modified;
+                            recording.Value.Duration = status.Duration;
+                            recording.Value.Status = status.Status;
+                            recording.Value.TranscriptScoId = status.TranscriptScoId;
+                        });
+                    }
+
+                    foreach (var item in mp4)
+                    {
+                        // TODO:!!! process this status AS WELL!!
+                        if (item.Value.Status == Esynctraining.Mp4Service.Tasks.Client.TaskStatus.Pending)
+                            continue;
+
+                        var recording = recordings.FirstOrDefault(x => x.id == item.Key);
+                        recording.mp4 = new Mp4ServiceStatusDto
+                        {
+                            mp4_sco_id = item.Value.UploadScoId,
+                            cc_sco_id = item.Value.TranscriptScoId,
+                            status = item.Value.Status.ToString(),
+                        };
+                    }
+
                 }
 
                 return Json(OperationResult.Success(recordings));
