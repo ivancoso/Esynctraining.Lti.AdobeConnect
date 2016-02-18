@@ -24,6 +24,7 @@ namespace EdugameCloud.Lti
             container.Register(Component.For<ISynchronizationUserService>().ImplementedBy<SynchronizationUserService>());
             container.Register(Component.For<IAdobeConnectAccountService>().ImplementedBy<AdobeConnectAccountService>());
             container.Register(Component.For<IRecordingsService>().ImplementedBy<RecordingsService>());
+            container.Register(Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>());
 
             container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
 

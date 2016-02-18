@@ -109,6 +109,9 @@ namespace EdugameCloud.Lti.DTO
 
             this.mp4ServiceLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
             this.mp4ServiceWithSubtitlesLicenseKey = instance.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
+
+            this.showAudioProfile = instance.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile);
+            this.audioProfileUnique = instance.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique);
         }
 
         /// <summary>
@@ -396,13 +399,16 @@ namespace EdugameCloud.Lti.DTO
         [DataMember]
         public int languageId { get; set; }
 
-
         [DataMember]
         public string mp4ServiceLicenseKey { get; set; }
 
         [DataMember]
         public string mp4ServiceWithSubtitlesLicenseKey { get; set; }
 
-    }
+        [DataMember]
+        public bool showAudioProfile { get; set; }
 
+        [DataMember]
+        public bool? audioProfileUnique { get; set; }
+    }
 }

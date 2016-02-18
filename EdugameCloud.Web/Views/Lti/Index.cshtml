@@ -33,6 +33,7 @@
 	EsyncLti.acSettings = @Html.Raw(ViewBag.AcSettings);
 	EsyncLti.acRoles = @Html.Raw(ViewBag.AcRolesJson);
 	EsyncLti.language = '@settings.Language';
+	EsyncLti.showAudioProfile = @settings.ShowAudioProfile.ToString().ToLower();
 	var Ext = Ext || {};
 	Ext.manifest = {
 		"js": [{ "path": "app.js" }],

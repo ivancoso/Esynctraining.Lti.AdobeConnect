@@ -173,11 +173,13 @@
   <ItemGroup>
     <Compile Include="API\AdobeConnect\AdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
+    <Compile Include="API\AdobeConnect\AudioProfilesService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\AdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
+    <Compile Include="API\AdobeConnect\IAudioProfilesService.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
     <Compile Include="API\AdobeConnect\IUsersSetup.cs" />

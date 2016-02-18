@@ -17,7 +17,6 @@ using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Extensions;
@@ -87,6 +86,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private IAdobeConnectAccountService AcAccountService
         {
             get { return IoC.Resolve<IAdobeConnectAccountService>(); }
+        }
+
+        private IAudioProfilesService AudioProfileService
+        {
+            get { return IoC.Resolve<IAudioProfilesService>(); }
         }
 
         private ILogger Logger
@@ -649,8 +653,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            provider.UpdateAclField(result.ScoInfo.ScoId, AclFieldId.telephony_profile, meetingDTO.audioProfileId);
-            meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+            var principalId = meetingDTO.type == (int) LmsMeetingType.OfficeHours
+                ? lmsUser.PrincipalId
+                : provider.PrincipalId;
+            var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(result.ScoInfo.ScoId, 
+                meetingDTO.audioProfileId, provider, principalId);
+            if (audioUpdateResult.isSuccess)
+            {
+                meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+            }
 
             if (isNewMeeting)
             {
@@ -767,34 +778,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return OperationResult.Success(message, updatedMeeting);
         }
-
-        public OperationResult UpdateAudioProfileId(
-            LmsCompany lmsCompany,
-            LtiParamDTO param,
-            IAdobeConnectProxy provider,
-            int meetingId,
-            int meetingType,
-            string audioProfileId)
-        {
-            if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
-            if (param == null)
-                throw new ArgumentNullException("param");
-            if (provider == null)
-                throw new ArgumentNullException("provider");
-
-
-            LmsCourseMeeting meeting = this.GetCourseMeeting(lmsCompany, param.course_id, meetingId, meetingType > 0 ? (LmsMeetingType)meetingType : LmsMeetingType.Meeting);
-            provider.UpdateAclField(meeting.ScoId, AclFieldId.telephony_profile, audioProfileId);
-            meeting.AudioProfileId = audioProfileId;
-
-            this.LmsCourseMeetingModel.RegisterSave(meeting);
-            this.LmsCourseMeetingModel.Flush();
-
-
-            return OperationResult.Success("Meeting audio profile updated", meeting);
-        }
-
+        
         // TODO: move MeetingReuseDTO
         public OperationResult ReuseExistedAdobeConnectMeeting(LmsCompany credentials,
             LmsUser lmsUser,
@@ -1913,5 +1897,4 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #endregion
 
     }
-
 }

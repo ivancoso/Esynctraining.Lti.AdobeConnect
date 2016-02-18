@@ -283,6 +283,10 @@ namespace EdugameCloud.WCFService
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
+
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
+
             //D2L only options
             if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn)
             {

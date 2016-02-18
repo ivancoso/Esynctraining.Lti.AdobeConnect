@@ -26,6 +26,8 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string LanguageId = "LanguageId";
         public const string Mp4ServiceLicenseKey = "Mp4ServiceLicenseKey";
         public const string Mp4ServiceWithSubtitlesLicenseKey = "Mp4ServiceWithSubtitlesLicenseKey";
+        public const string ShowAudioProfile = "ShowAudioProfile";
+        public const string AudioProfileUnique = "AudioProfileUnique";
     }
 
 }
