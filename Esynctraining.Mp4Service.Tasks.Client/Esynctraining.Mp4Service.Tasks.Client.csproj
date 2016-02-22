@@ -45,14 +45,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTask.cs" />
     <Compile Include="Mp4ServiceTaskClient.cs" />
-    <Compile Include="Task.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj">
+      <Project>{0c2e795b-3599-4019-a066-cbea82af1ef7}</Project>
+      <Name>MP4Service.Contract.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -94,7 +94,7 @@
                         <description>Unable to validate message: 95D8A271-C3B0-44E5-99D1-051849737B12</description>
                         <severity>Error</severity>
                     */
-                    error = string.Format("Error from Moodle. codemajor: {0}. description : {1}. severity : {2}.",
+                    error = string.Format("Error from Sakai. codemajor: {0}. description : {1}. severity : {2}.",
                         response.XPathSelectElement("/statusinfo/codemajor").With(x => x.Value),
                         response.XPathSelectElement("/statusinfo/description").With(x => x.Value),
                         response.XPathSelectElement("/statusinfo/severity").With(x => x.Value)

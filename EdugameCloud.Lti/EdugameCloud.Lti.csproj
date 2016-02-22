@@ -108,8 +108,8 @@
       <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.3.2.3\lib\net45\Microsoft.Web.WebPages.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
@@ -272,6 +272,10 @@
     <None Include="Settings.StyleCop" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj">
+      <Project>{0c2e795b-3599-4019-a066-cbea82af1ef7}</Project>
+      <Name>MP4Service.Contract.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4E419CD8-BE17-40E0-B71B-CCA30699D758}</Project>
       <Name>EdugameCloud.Core</Name>

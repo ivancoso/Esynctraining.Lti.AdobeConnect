@@ -69,6 +69,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Monitoring
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mp4Service.Tasks.Client", "Esynctraining.Mp4Service.Tasks.Client\Esynctraining.Mp4Service.Tasks.Client.csproj", "{1237DFF4-0362-487D-8353-A8405DD098C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP4Service.Contract.Client", "..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj", "{0C2E795B-3599-4019-A066-CBEA82AF1EF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -389,6 +391,20 @@ Global
 		{1237DFF4-0362-487D-8353-A8405DD098C3}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{1237DFF4-0362-487D-8353-A8405DD098C3}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{1237DFF4-0362-487D-8353-A8405DD098C3}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.RootRelease|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
