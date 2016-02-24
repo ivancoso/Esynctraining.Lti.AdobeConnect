@@ -92,11 +92,11 @@ namespace Esynctraining.AdobeConnect
 
                     PasswordPolicies = new ACPasswordPoliciesDTO
                     {
-                        passwordRequiresDigit = passwordRequiresDigit,
-                        passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
-                        passwordRequiresSpecialChars = passwordRequiresSpecialChars,
-                        passwordMinLength = passwordMinLength,
-                        passwordMaxLength = passwordMaxLength,
+                        PasswordRequiresDigit = passwordRequiresDigit,
+                        PasswordRequiresCapitalLetter = passwordRequiresCapitalLetter,
+                        PasswordRequiresSpecialChars = passwordRequiresSpecialChars,
+                        PasswordMinLength = passwordMinLength,
+                        PasswordMaxLength = passwordMaxLength,
                     },
                 };
             }

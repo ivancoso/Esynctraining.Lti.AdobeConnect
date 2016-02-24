@@ -2,10 +2,6 @@
 <configuration>
   <components>
     <component
-      service="Esynctraining.AdobeConnect.IAdobeConnectProxy, Esynctraining.AdobeConnect"
-      type="Esynctraining.AdobeConnect.AdobeConnectProxy, Esynctraining.AdobeConnect"
-      lifestyle="transient"></component>
-    <component
       service="Esynctraining.AdobeConnect.IAdobeConnectAccountService, Esynctraining.AdobeConnect"
       type="Esynctraining.AdobeConnect.AdobeConnectAccountService, Esynctraining.AdobeConnect"
       lifestyle="transient"></component>

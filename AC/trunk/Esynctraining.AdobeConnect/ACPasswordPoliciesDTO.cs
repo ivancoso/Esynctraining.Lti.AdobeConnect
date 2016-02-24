@@ -5,20 +5,20 @@ namespace Esynctraining.AdobeConnect
     [DataContract]
     public class ACPasswordPoliciesDTO
     {
-        [DataMember]
-        public bool passwordRequiresDigit { get; set; }
+        [DataMember(Name = "passwordRequiresDigit")]
+        public bool PasswordRequiresDigit { get; set; }
 
-        [DataMember]
-        public bool passwordRequiresCapitalLetter { get; set; }
+        [DataMember(Name = "passwordRequiresCapitalLetter")]
+        public bool PasswordRequiresCapitalLetter { get; set; }
 
-        [DataMember]
-        public string passwordRequiresSpecialChars { get; set; }
+        [DataMember(Name = "passwordRequiresSpecialChars")]
+        public string PasswordRequiresSpecialChars { get; set; }
 
-        [DataMember]
-        public int passwordMinLength { get; set; }
+        [DataMember(Name = "passwordMinLength")]
+        public int PasswordMinLength { get; set; }
 
-        [DataMember]
-        public int passwordMaxLength { get; set; }
+        [DataMember(Name = "passwordMaxLength")]
+        public int PasswordMaxLength { get; set; }
 
     }
 

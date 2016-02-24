@@ -49,6 +49,7 @@
     <Compile Include="ACPasswordPoliciesDTO.cs" />
     <Compile Include="AdobeConnectAccountService.cs" />
     <Compile Include="AdobeConnectProxy.cs" />
+    <Compile Include="DateConverter.cs" />
     <Compile Include="IAdobeConnectAccess.cs" />
     <Compile Include="IAdobeConnectAccountService.cs" />
     <Compile Include="IAdobeConnectProxy.cs" />
