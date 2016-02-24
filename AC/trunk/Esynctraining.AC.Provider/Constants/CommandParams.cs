@@ -142,6 +142,11 @@
         public const string UrlPath = "url-path={0}";
 
         /// <summary>
+        /// telephony profile id
+        /// </summary>
+        public const string ProfileId = "profile-id={0}";
+
+        /// <summary>
         /// The report bulk consolidated transactions filters.
         /// </summary>
         internal static class ReportBulkConsolidatedTransactionsFilters

@@ -128,5 +128,11 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("section-count")]
         public int SectionCount { get; set; }
+
+        /// <summary>
+        /// For Meeting sco id - audio profile id
+        /// </summary>
+        [XmlElement("telephony-profile")]
+        public string TelephonyProfile { get; set; }
     }
 }

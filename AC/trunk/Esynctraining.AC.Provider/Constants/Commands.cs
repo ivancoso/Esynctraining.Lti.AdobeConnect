@@ -62,6 +62,8 @@
         /// </summary>
         public const string TelephonyProfileList = "telephony-profile-list";
 
+        public const string TelephonyProfileInfo = "telephony-profile-info";
+
         /// <summary>
         /// SCO commands.
         /// </summary>

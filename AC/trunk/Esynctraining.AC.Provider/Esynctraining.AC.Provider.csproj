@@ -58,6 +58,7 @@
     <Compile Include="DataObjects\Results\FieldResult.cs" />
     <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProfileInfoResult.cs" />
     <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
     <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
