@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Windsor.Mvc</id>
+        <version>1.0.0.1</version>
+        <title>Esynctraining.Windsor.Mvc</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides WindsorControllerFactory for MVC projects.</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright © 2016 eSyncTraining.com</copyright>
+        <tags>core mvc windsor</tags>
+        <dependencies>
+          <dependency id="Castle.Windsor" version="3.3.0" />
+          <dependency id="Microsoft.AspNet.Mvc" version="5.2.3" />
+        </dependencies>
+        <references>
+            <reference file="Esynctraining.Windsor.Mvc.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.Windsor.Mvc.dll" target="lib\net45" />
+    </files>
+</package>
