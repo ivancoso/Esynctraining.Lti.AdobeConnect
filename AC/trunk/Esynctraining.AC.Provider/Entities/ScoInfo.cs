@@ -134,5 +134,11 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("telephony-profile")]
         public string TelephonyProfile { get; set; }
+
+        /// <summary>
+        /// For Virtual classroom - Classroom ID on UI
+        /// </summary>
+        [XmlElement("sco-tag")]
+        public string ScoTag { get; set; }
     }
 }

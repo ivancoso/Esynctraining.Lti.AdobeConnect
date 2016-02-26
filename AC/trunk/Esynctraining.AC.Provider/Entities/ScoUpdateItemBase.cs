@@ -76,5 +76,8 @@
         /// </summary>
         [XmlElement("date-end")]
         public string DateEnd { get; set; }
+
+        [XmlElement("sco-tag")]
+        public string ScoTag { get; set; }
     }
 }

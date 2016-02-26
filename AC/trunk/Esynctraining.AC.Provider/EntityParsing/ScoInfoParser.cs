@@ -43,7 +43,8 @@
                 SectionCount = xml.ParseNodeInt("section-count/text()"),
                 ExternalUrl = xml.SelectSingleNodeValue("external-url/text()"),
                 MaxScore = xml.ParseNodeInt("max-score/text()"),
-                TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()")
+                TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()"),
+                ScoTag = xml.SelectSingleNodeValue("sco-tag/text()")
             };
         }
 
