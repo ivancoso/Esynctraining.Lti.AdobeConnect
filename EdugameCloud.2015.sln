@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mp4Service.Ta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP4Service.Contract.Client", "..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj", "{0C2E795B-3599-4019-A066-CBEA82AF1EF7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi.Client", "..\..\..\..\MP4Service\trunk\ClientApp\Esynctraining.WebApi.Client\Esynctraining.WebApi.Client.csproj", "{5C667552-0881-4554-B935-18E5025FE03F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -405,6 +407,20 @@ Global
 		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{0C2E795B-3599-4019-A066-CBEA82AF1EF7}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.RootRelease|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{5C667552-0881-4554-B935-18E5025FE03F}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

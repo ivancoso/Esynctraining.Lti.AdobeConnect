@@ -9,14 +9,63 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public sealed class Mp4ServiceStatusDto
     {
-        [DataMember]
-        public string mp4_sco_id { set; get; }
+        private readonly string _baseFileAccessUrl;
+
 
         [DataMember]
-        public string cc_sco_id { set; get; }
+        public string mp4_sco_id { get; set; }
 
         [DataMember]
-        public string status { set; get; }
+        public string cc_sco_id { get; set; }
+        
+        [DataMember]
+        public string status { get; set; }
+
+
+        [DataMember]
+        public string mp4_url
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(mp4_sco_id))
+                    return null;
+                // TODO: config!!
+                //return string.Format("https://dev.esynctraining.com/contentApi/mp4/{0}", mp4_sco_id);
+                return string.Format("https://dev.edugamecloud.com/lti/mp4/file/{0}", mp4_sco_id);
+            }
+            set
+            {
+            }
+        }
+
+        [DataMember]
+        public string cc_ulr
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(cc_sco_id))
+                    return null;
+                // TODO: config!!
+                return string.Format("https://dev.esynctraining.com/contentApi/subtitle/{0}", cc_sco_id);
+            }
+            set
+            {
+            }
+        }
+
+        public string lmsProviderName { get; set; }
+
+        public Mp4ServiceStatusDto()
+        {
+            //if (string.IsNullOrWhiteSpace(baseFileAccessUrl))
+            //    throw new ArgumentException("baseFileAccessUrl should have have", "baseFileAccessUrl");
+
+            //Uri result;
+            //if (!Uri.TryCreate(baseFileAccessUrl, UriKind.Absolute, out result))
+            //    throw new ArgumentException("baseFileAccessUrl should have Absolute Url value", "baseFileAccessUrl");
+
+            //_baseFileAccessUrl = baseFileAccessUrl;
+        }
 
     }
 

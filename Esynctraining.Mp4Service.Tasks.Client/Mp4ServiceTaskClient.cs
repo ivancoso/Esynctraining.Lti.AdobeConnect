@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Esynctraining.WebApi.Client;
 
 namespace Esynctraining.Mp4Service.Tasks.Client
 {
@@ -31,8 +32,8 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                 else
                 {
                     // TODO: add some extra logging
-                    string msg = response.Content.ReadAsStringAsync().Result;
-                    throw new Exception(msg);
+                    var ex = response.CreateApiException();
+                    throw ex;
                 }
             }
         }
@@ -55,8 +56,8 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                 else
                 {
                     // TODO: add some extra logging
-                    string msg = response.Content.ReadAsStringAsync().Result;
-                    throw new Exception(msg);
+                    var ex = response.CreateApiException();
+                    throw ex;
                 }
             }
         }
@@ -76,8 +77,8 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                 else
                 {
                     // TODO: add some extra logging
-                    string msg = response.Content.ReadAsStringAsync().Result;
-                    throw new Exception(msg);
+                    var ex = response.CreateApiException();
+                    throw ex;
                 }
             }
         }

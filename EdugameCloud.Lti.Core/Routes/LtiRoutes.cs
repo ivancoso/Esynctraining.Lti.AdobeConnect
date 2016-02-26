@@ -47,7 +47,8 @@
 
             routes.MapLowercaseRoute("Mp4ServiceConvert", "lti/mp4/convert", new { controller = "Mp4Service", action = "Convert" });
             routes.MapLowercaseRoute("Mp4ServiceConvertWithSubtitles", "lti/mp4/convertWithSubtitles", new { controller = "Mp4Service", action = "ConvertWithSubtitles" });
-            
+            routes.MapLowercaseRoute("Mp4ServiceMp4Video", "lti/mp4/file/{scoId}", new { controller = "Mp4Service", action = "AccessFile", scoId = UrlParameter.Optional });
+
             routes.MapLowercaseRoute("cancelMP4Converting", "Lti/Recording/CancelMP4Converting/{recordingId}", new { controller = "LtiRecording", action = "CancelMP4Converting" });
             routes.MapLowercaseRoute("joinrecording", "Lti/Recording/Join/{recordingUrl}", new { controller = "LtiRecording", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
             routes.MapLowercaseRoute("editrecording", "Lti/Recording/Edit/{recordingId}", new { controller = "LtiRecording", action = "EditRecording", recordingId = UrlParameter.Optional });

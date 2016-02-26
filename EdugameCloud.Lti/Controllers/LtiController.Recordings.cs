@@ -17,6 +17,8 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client;
+using Esynctraining.WebApi.Client;
+using MP4Service.Contract.Client;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -78,7 +80,7 @@ namespace EdugameCloud.Lti.Controllers
         }
         
         [HttpPost]
-        public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId)
+        public virtual async Task<JsonResult> GetRecordings(string lmsProviderName, int meetingId)
         {
             LmsCompany lmsCompany = null;
             try
@@ -103,70 +105,117 @@ namespace EdugameCloud.Lti.Controllers
                 if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
                 {
                     // TODO: call MP$ serive
-                    var mp4Tasks = new Dictionary<string, DataTask>();
+                    var mp4Tasks = new Dictionary<string, MP4Service.Contract.Client.DataTask>();
                     foreach (var recordingScoId in recordings.Where(x => !x.is_mp4).Select(x => x.id))
                     {
-                        mp4Tasks.Add(recordingScoId, new DataTask());
+                        mp4Tasks.Add(recordingScoId, new MP4Service.Contract.Client.DataTask());
                     }
 
-                    var mp4 = new ConcurrentDictionary<string, DataTask>(mp4Tasks);
+                    var mp4 = new ConcurrentDictionary<string, MP4Service.Contract.Client.DataTask>(mp4Tasks);
 
                     if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
                     {
-                        Parallel.ForEach(mp4, (recording) =>
+                        foreach (var recording in mp4)
+                        //Parallel.ForEach(mp4, (recording) =>
                         {
-                            var mp4Client = new Mp4ServiceTaskClient();
-                            var status = mp4Client.GetStatus(new Esynctraining.Mp4Service.Tasks.Client.Task
+                            var mp4Client = IoC.Resolve<Mp4ServiceTaskClient>();
+                            try
                             {
-                                LicenseId = mp4LicenseKey,
-                                ScoId = long.Parse(recording.Key),
-                            }).Result;
+                                var status = await mp4Client.GetStatus(new MP4Service.Contract.Client.TaskParam
+                                {
+                                    LicenseId = mp4LicenseKey,
+                                    ScoId = long.Parse(recording.Key),
+                                }).ConfigureAwait(false);
 
-                            recording.Value.Id = status.Id;
-                            recording.Value.ScoId = status.ScoId;
-                            recording.Value.UploadScoId = status.UploadScoId;
-                            recording.Value.LicenseId = status.LicenseId;
-                            recording.Value.Modified = status.Modified;
-                            recording.Value.Duration = status.Duration;
-                            recording.Value.Status = status.Status;
-                            recording.Value.TranscriptScoId = status.TranscriptScoId;
-                        });
+                                if (status != null)
+                                {
+                                    recording.Value.Id = status.Id;
+                                    recording.Value.ScoId = status.ScoId;
+                                    recording.Value.UploadScoId = status.UploadScoId;
+                                    recording.Value.LicenseId = status.LicenseId;
+                                    recording.Value.Modified = status.Modified;
+                                    recording.Value.Duration = status.Duration;
+                                    recording.Value.Status = status.Status;
+                                    recording.Value.TranscriptScoId = status.TranscriptScoId;
+                                }
+                            }
+                            catch (AggregateException ex)
+                            {
+                                // TRICK: for error handling
+                                recording.Value.Duration =-777;
+                            }
+                            catch (ApiException ex)
+                            {
+                                // TRICK: for error handling
+                                recording.Value.Duration = -777;
+                            }
+
+                        }//);
                     }
 
                     if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
                     {
-                        Parallel.ForEach(mp4, (recording) =>
+                        foreach (var recording in mp4)
+                        //Parallel.ForEach(mp4, (recording) =>
                         {
-                            var mp4Client = new Mp4ServiceTaskClient();
-                            var status = mp4Client.GetStatus(new Esynctraining.Mp4Service.Tasks.Client.Task
+                            try
                             {
-                                LicenseId = mp4WithSubtitlesLicenseKey,
-                                ScoId = long.Parse(recording.Key),
-                            }).Result;
+                                var mp4Client = IoC.Resolve<Mp4ServiceTaskClient>();
+                                var status = await mp4Client.GetStatus(new MP4Service.Contract.Client.TaskParam
+                                {
+                                    LicenseId = mp4WithSubtitlesLicenseKey,
+                                    ScoId = long.Parse(recording.Key),
+                                }).ConfigureAwait(false);
 
-                            recording.Value.Id = status.Id;
-                            recording.Value.ScoId = status.ScoId;
-                            recording.Value.UploadScoId = status.UploadScoId;
-                            recording.Value.LicenseId = status.LicenseId;
-                            recording.Value.Modified = status.Modified;
-                            recording.Value.Duration = status.Duration;
-                            recording.Value.Status = status.Status;
-                            recording.Value.TranscriptScoId = status.TranscriptScoId;
-                        });
+                                if (status != null)
+                                {
+                                    recording.Value.Id = status.Id;
+                                    recording.Value.ScoId = status.ScoId;
+                                    recording.Value.UploadScoId = status.UploadScoId;
+                                    recording.Value.LicenseId = status.LicenseId;
+                                    recording.Value.Modified = status.Modified;
+                                    recording.Value.Duration = status.Duration;
+                                    recording.Value.Status = status.Status;
+                                    recording.Value.TranscriptScoId = status.TranscriptScoId;
+                                }
+                            }
+                            catch (AggregateException ex)
+                            {
+                                // TRICK: for error handling
+                                recording.Value.Duration = -777;
+                            }
+                            catch (ApiException ex)
+                            {
+                                // TRICK: for error handling
+                                recording.Value.Duration = -777;
+                            }
+                        }//);
                     }
+
+                    //foreach (var item in recordings)
+                    //{
+                    //    item.mp4 = new Mp4ServiceStatusDto
+                    //    {
+                    //        mp4_sco_id = "40297",
+                    //        cc_sco_id = "40345",
+                    //        status = "Transcripted",
+                    //    };
+                    //}
 
                     foreach (var item in mp4)
                     {
-                        // TODO:!!! process this status AS WELL!!
-                        if (item.Value.Status == Esynctraining.Mp4Service.Tasks.Client.TaskStatus.Pending)
+                        if (string.IsNullOrEmpty(item.Value.ScoId))
                             continue;
 
                         var recording = recordings.FirstOrDefault(x => x.id == item.Key);
-                        recording.mp4 = new Mp4ServiceStatusDto
+                        recording.mp4 = new Mp4ServiceStatusDto()
                         {
-                            mp4_sco_id = item.Value.UploadScoId,
-                            cc_sco_id = item.Value.TranscriptScoId,
-                            status = item.Value.Status.ToString(),
+                            mp4_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Uploaded) ? item.Value.UploadScoId : null,
+                            cc_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Transcripted) ? item.Value.TranscriptScoId : null,
+                            // TRICK:
+                            status = item.Value.Duration == -777 ? "MP4 Service Error" : item.Value.Status.ToString(),
+
+                            lmsProviderName = lmsProviderName,
                         };
                     }
 

@@ -7,7 +7,6 @@ namespace EdugameCloud.PublicApi.Host
     {
         public static void Register(HttpConfiguration config)
         {
-            // New code
             config.EnableCors();
 
             // Web API configuration and services

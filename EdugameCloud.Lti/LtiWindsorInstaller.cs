@@ -3,6 +3,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
+using Esynctraining.Mp4Service.Tasks.Client;
 
 namespace EdugameCloud.Lti
 {
@@ -30,6 +31,11 @@ namespace EdugameCloud.Lti
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick()
                 .If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
+            
+            container.Register(Component.For<Mp4ServiceTaskClient>()
+                .ImplementedBy<Mp4ServiceTaskClient>()
+                .DependsOn(Dependency.OnValue("baseApiAddress", "http://192.168.10.211/"))
+                .LifeStyle.Singleton);
         }
 
     }
