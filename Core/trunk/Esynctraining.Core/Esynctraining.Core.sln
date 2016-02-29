@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Crypto", "..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Logging.CastleLogger", "..\Esynctraining.Core.Logging.CastleLogger\Esynctraining.Core.Logging.CastleLogger.csproj", "{0268975F-3268-4319-A885-9A4687BB29BC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mvc", "..\Esynctraining.Mvc\Esynctraining.Mvc.csproj", "{EF355DBF-24AF-451F-A112-116B83E9843B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi", "..\Esynctraining.WebApi\Esynctraining.WebApi.csproj", "{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{0268975F-3268-4319-A885-9A4687BB29BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0268975F-3268-4319-A885-9A4687BB29BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0268975F-3268-4319-A885-9A4687BB29BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF355DBF-24AF-451F-A112-116B83E9843B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF355DBF-24AF-451F-A112-116B83E9843B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF355DBF-24AF-451F-A112-116B83E9843B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF355DBF-24AF-451F-A112-116B83E9843B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
