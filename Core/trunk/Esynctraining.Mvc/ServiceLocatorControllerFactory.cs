@@ -3,33 +3,23 @@ using System.Globalization;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Castle.Windsor;
+using Esynctraining.Core.Utils;
 
-namespace Esynctraining.Windsor.Mvc
+namespace Esynctraining.Mvc
 {
-    /// <summary>
-    /// The windsor controller factory.
-    /// </summary>
-    public class WindsorControllerFactory : DefaultControllerFactory
+    public class ServiceLocatorControllerFactory : DefaultControllerFactory
     {
-        #region Fields
-
-        /// <summary>
-        /// The container.
-        /// </summary>
-        private readonly IWindsorContainer container;
-
-        #endregion
+        private readonly IServiceLocator container;
 
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="WindsorControllerFactory"/> class.
+        /// Initializes a new instance of the <see cref="ServiceLocatorControllerFactory"/> class.
         /// </summary>
         /// <param name="container">
         /// The container.
         /// </param>
-        public WindsorControllerFactory(IWindsorContainer container)
+        public ServiceLocatorControllerFactory(IServiceLocator container)
         {
             this.container = container;
         }
@@ -83,7 +73,7 @@ namespace Esynctraining.Windsor.Mvc
 
             try
             {
-                controller = (IController)this.container.Resolve(controllerType);
+                controller = (IController)this.container.GetInstance(controllerType);
             }
             catch (Exception exception)
             {
