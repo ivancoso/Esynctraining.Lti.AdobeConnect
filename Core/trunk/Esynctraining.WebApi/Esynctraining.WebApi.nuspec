@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
-        <id>Esynctraining.Windsor.WebApi</id>
+        <id>Esynctraining.WebApi</id>
         <version>1.0.0.1</version>
-        <title>Esynctraining.Windsor.WebApi</title>
+        <title>Esynctraining.WebApi</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
         <projectUrl>http://esynctraining.com/</projectUrl>
@@ -14,14 +14,14 @@
         <copyright>Copyright © 2016 eSyncTraining.com</copyright>
         <tags>core mvc webapi</tags>
         <dependencies>
-          <dependency id="Castle.Windsor" version="3.3.0" />
+          <dependency id="Esynctraining.Core.Only" version="1.0.0.21" />
           <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2.3" />
         </dependencies>
         <references>
-            <reference file="Esynctraining.Windsor.WebApi.dll" />
+            <reference file="Esynctraining.WebApi.dll" />
         </references>
     </metadata>
     <files>
-     <file src="bin\$configuration$\Esynctraining.Windsor.WebApi.dll" target="lib\net45" />
+     <file src="bin\$configuration$\Esynctraining.WebApi.dll" target="lib\net45" />
     </files>
 </package>
