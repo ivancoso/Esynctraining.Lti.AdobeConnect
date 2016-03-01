@@ -1,8 +1,6 @@
-﻿using System;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using Esynctraining.Core.Logging;
 
 namespace Esynctraining.Core.Logging.CastleLogger
 {
