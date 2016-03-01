@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("eSyncTraining Core Library.")]
 [assembly: AssemblyCompany("eSyncTraining.com")]
 [assembly: AssemblyProduct("Esynctraining.Core")]
-[assembly: AssemblyCopyright("Copyright © eSyncTraining Inc. 2014-2015")]
+[assembly: AssemblyCopyright("Copyright © eSyncTraining Inc. 2014-2016")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.22")]
-[assembly: AssemblyFileVersion("1.0.0.22")]
+[assembly: AssemblyVersion("1.0.0.23")]
+[assembly: AssemblyFileVersion("1.0.0.23")]
