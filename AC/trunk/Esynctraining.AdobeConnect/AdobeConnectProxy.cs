@@ -9,7 +9,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AdobeConnect
 {
-    internal sealed class AdobeConnectProxy : IAdobeConnectProxy
+    public class AdobeConnectProxy : IAdobeConnectProxy
     {
         private readonly AdobeConnectProvider _provider;
         private readonly ILogger _logger;

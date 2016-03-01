@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect
@@ -43,6 +41,30 @@ namespace Esynctraining.AdobeConnect
             if (login)
             {
                 LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
+                if (!result.Success)
+                {
+                    _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
+                    throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
+                }
+                principalId = result.User.UserId;
+            }
+
+            return new AdobeConnectProxy(provider, _logger, apiUrl);
+        }
+
+        public IAdobeConnectProxy GetProvider2(IAdobeConnectAccess2 credentials)
+        {
+            string apiUrl = credentials.Domain + "/api/xml";
+
+            var connectionDetails = new ConnectionDetails
+            {
+                ServiceUrl = apiUrl,
+                EventMaxParticipants = 10,
+            };
+            string principalId = null;
+            var provider = new AdobeConnectProvider(connectionDetails);
+            {
+                LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
                 if (!result.Success)
                 {
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
