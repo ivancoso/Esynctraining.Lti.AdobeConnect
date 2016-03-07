@@ -145,6 +145,14 @@
   <data name="IncorrectAcPassword" xml:space="preserve">
     <value>The password you provided is incorrect. Please try again.</value>
   </data>
+  <data name="MeetingNotUniqueName" xml:space="preserve">
+    <value>There is already another item with this name. Please try again.</value>
+    <comment>b</comment>
+  </data>
+  <data name="MeetingNotUniqueUrlPath" xml:space="preserve">
+    <value>URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
+    <comment>b</comment>
+  </data>
   <data name="SessionTimeOut" xml:space="preserve">
     <value>Session timed out. Please refresh the page.</value>
   </data>

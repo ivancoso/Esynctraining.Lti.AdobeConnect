@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.36, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\EduGameCloud\trunk\csharp\EdugameCloud.WCFService\packages\Esynctraining.AC.Provider.1.0.1.36\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.37, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.37\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.23, Culture=neutral, processorArchitecture=MSIL">
@@ -47,9 +47,11 @@
   <ItemGroup>
     <Compile Include="ACDetailsDTO.cs" />
     <Compile Include="ACPasswordPoliciesDTO.cs" />
+    <Compile Include="SeminarService.cs" />
     <Compile Include="AdobeConnectAccountService.cs" />
     <Compile Include="AdobeConnectProxy.cs" />
     <Compile Include="IAdobeConnectAccess.cs" />
+    <Compile Include="ISeminarService.cs" />
     <Compile Include="IAdobeConnectAccountService.cs" />
     <Compile Include="IAdobeConnectProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +65,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.es.resx</DependentUpon>
     </Compile>
+    <Compile Include="SeminarSessionDto.cs" />
     <Compile Include="StatusInfoExtentions.cs" />
     <Compile Include="AdobeConnectException.cs" />
     <Compile Include="WarningMessageException.cs" />

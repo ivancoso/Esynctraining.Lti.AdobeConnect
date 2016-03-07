@@ -106,5 +106,8 @@ namespace Esynctraining.AdobeConnect
 
         UserCollectionResult ReportGuestsByEmail(string email);
         UserCollectionResult ReportGuestsByLogin(string login);
+
+        ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item);
+
     }
 }

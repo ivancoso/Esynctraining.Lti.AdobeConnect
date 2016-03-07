@@ -157,6 +157,15 @@ namespace Esynctraining.AdobeConnect
             //    scoUpdateItem.Name, scoUpdateItem.FolderId);
         }
 
+        public ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item)
+        {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+            return Execute(() => { return _provider.SeminarSessionScoUpdate(item); },
+                item.ScoId, item.Name);
+        }
+
         public StatusInfo DeleteSco(string scoId)
         {
             return Execute(() => { return _provider.DeleteSco(scoId); },
