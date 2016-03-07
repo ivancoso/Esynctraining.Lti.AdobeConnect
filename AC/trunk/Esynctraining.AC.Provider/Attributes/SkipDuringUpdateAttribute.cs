@@ -2,7 +2,7 @@
 
 namespace Esynctraining.AC.Provider.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     internal sealed class SkipDuringUpdateAttribute : Attribute
     {
     }

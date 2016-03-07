@@ -1,14 +1,12 @@
 ﻿namespace Esynctraining.AC.Provider.Utils
 {
     using System;
+    using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Xml.Serialization;
-    using System.Linq;
-
     using Esynctraining.AC.Provider.Attributes;
     using Esynctraining.AC.Provider.Constants;
-    using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
 
     /// <summary>
@@ -34,19 +32,14 @@
 
             var cmdParams = new StringBuilder();
 
-            foreach (var propertyInfo in entityObject.GetType().GetProperties())
+            foreach (var propertyInfo in entityObject.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var attributes = propertyInfo.GetCustomAttributes(typeof(SkipDuringUpdateAttribute), false);
                 if (isUpdateOperation && attributes.Any())
                 {
                     continue;
                 }
-
-                if (!propertyInfo.PropertyType.IsPublic)
-                {
-                    continue;
-                }
-
+                
                 var propertyValue = propertyInfo.GetValue(entityObject, null);
 
                 if (propertyValue == null)
@@ -58,32 +51,29 @@
                 {
                     propertyValue = propertyValue.Equals(true) ? 1 : 0;
                 }
-                else
-                    if (propertyValue is DateTime)
+                else if (propertyValue is DateTime)
+                {
+                    if (propertyValue.Equals(DateTime.MinValue))
                     {
-                        if (propertyValue.Equals(DateTime.MinValue))
-                        {
-                            continue;
-                        }
-
-                        // propertyValue = ((DateTime)fieldValue).ToString(@"yyyy-MM-dd\THH:mm:ss.fffzzz");
-                        propertyValue = ((DateTime)propertyValue).ToString(AdobeConnectProviderConstants.DateFormat);
+                        continue;
                     }
-                    else
-                        if (propertyValue is TimeSpan)
-                        {
-                            if (propertyValue.Equals(TimeSpan.Zero))
-                            {
-                                continue;
-                            }
 
-                            propertyValue = ((TimeSpan)propertyValue).TotalMinutes;
-                        }
-                        else
-                            if (propertyValue is Enum)
-                            {
-                                propertyValue = ((Enum)propertyValue).ToXmlString();
-                            }
+                    // propertyValue = ((DateTime)fieldValue).ToString(@"yyyy-MM-dd\THH:mm:ss.fffzzz");
+                    propertyValue = ((DateTime)propertyValue).ToString(AdobeConnectProviderConstants.DateFormat);
+                }
+                else if (propertyValue is TimeSpan)
+                {
+                    if (propertyValue.Equals(TimeSpan.Zero))
+                    {
+                        continue;
+                    }
+
+                    propertyValue = ((TimeSpan)propertyValue).TotalMinutes;
+                }
+                else if (propertyValue is Enum)
+                {
+                    propertyValue = ((Enum)propertyValue).ToXmlString();
+                }
 
                 var propertyName = GetPropertyXmlName(propertyInfo);
 
@@ -126,5 +116,7 @@
 
             return propertyInfo.Name.Replace('_', '-').ToLower();
         }
+
     }
+
 }

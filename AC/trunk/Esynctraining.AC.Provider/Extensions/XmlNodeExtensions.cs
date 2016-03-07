@@ -223,5 +223,7 @@ namespace Esynctraining.AC.Provider.Extensions
 
             return nodeList != null && nodeList.Count > 0;
         }
+
     }
+
 }

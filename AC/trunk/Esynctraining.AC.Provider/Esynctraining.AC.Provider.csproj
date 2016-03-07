@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Seminar.cs" />
     <Compile Include="AdobeConnectProvider.Principal.cs" />
     <Compile Include="AdobeConnectProvider.Guest.cs" />
     <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
@@ -96,6 +97,9 @@
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />
+    <Compile Include="Entities\SeminarSessionUpdateItem.cs" />
+    <Compile Include="Entities\SeminarUpdateItem.cs" />
     <Compile Include="Entities\PrincipalPredefinedFields.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\PermissionUpdateTrio.cs" />

@@ -248,5 +248,12 @@
             /// </summary>
             public const string ListConverted = "list-generated-recordings";
         }
+
+        internal static class Seminar
+        {
+            public const string SeminarSessionScoUpdate = "seminar-session-sco-update";
+
+        }
+
     }
 }

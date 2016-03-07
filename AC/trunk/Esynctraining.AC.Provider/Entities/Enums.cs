@@ -125,7 +125,8 @@
         meeting,
         session,
         tree,
-        external_event
+        external_event,
+        seminarsession,
     }
 
     public enum PrincipalTypes
@@ -184,7 +185,8 @@
     public enum AclFieldId
     {
         meeting_passcode,
-        telephony_profile
+        telephony_profile,
+        seminar_expected_load,
     }
 
     public enum PermissionId
