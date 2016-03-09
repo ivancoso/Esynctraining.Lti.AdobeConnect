@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ACDetailsDTO.cs" />
+    <Compile Include="CustomizationDTO.cs" />
     <Compile Include="ACPasswordPoliciesDTO.cs" />
     <Compile Include="SeminarService.cs" />
     <Compile Include="AdobeConnectAccountService.cs" />

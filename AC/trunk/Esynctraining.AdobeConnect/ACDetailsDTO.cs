@@ -14,6 +14,9 @@ namespace Esynctraining.AdobeConnect
         [DataMember(Name = "passwordPolicies")]
         public ACPasswordPoliciesDTO PasswordPolicies { get; set; }
 
+        [DataMember(Name = "customization")]
+        public CustomizationDTO Customization { get; set; }
+
     }
 
 }

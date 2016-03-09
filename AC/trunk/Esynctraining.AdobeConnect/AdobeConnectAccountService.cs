@@ -85,7 +85,7 @@ namespace Esynctraining.AdobeConnect
 
             if (!commonInfo.Success)
             {
-                _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error:{0}.", commonInfo.Status.GetErrorInfo());
+                _logger.ErrorFormat("GetAccountDetails.GetCommonInfo. AC error:{0}.", commonInfo.Status.GetErrorInfo());
                 return null;
             }
 
@@ -95,39 +95,62 @@ namespace Esynctraining.AdobeConnect
 
                 if (fields.Status.Code != StatusCodes.ok)
                 {
-                    _logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
+                    _logger.ErrorFormat("GetAccountDetails.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
                     return null;
                 }
 
                 //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
-                bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
-                string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
-
-                int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
-                int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
-
+                
                 return new ACDetailsDTO
                 {
                     Version = commonInfo.CommonInfo.Version,
                     TimeZoneShiftMinutes = commonInfo.CommonInfo.GetTimeZoneShiftMinutes(),
 
-                    PasswordPolicies = new ACPasswordPoliciesDTO
-                    {
-                        PasswordRequiresDigit = passwordRequiresDigit,
-                        PasswordRequiresCapitalLetter = passwordRequiresCapitalLetter,
-                        PasswordRequiresSpecialChars = passwordRequiresSpecialChars,
-                        PasswordMinLength = passwordMinLength,
-                        PasswordMaxLength = passwordMaxLength,
-                    },
+                    PasswordPolicies = ParsePasswordPolicies(fields),
+                    Customization = ParseCustomization(fields, provider),
                 };
             }
 
-            _logger.Error("GetPasswordPolicies. Account is NULL");
+            _logger.Error("GetAccountDetails. Account is NULL");
             return null;
 
         }
 
+
+        private static CustomizationDTO ParseCustomization(FieldCollectionResult fields, IAdobeConnectProxy provider)
+        {
+            string domain = provider.ApiUrl.Replace("/api/xml", string.Empty);
+            var root = new Uri(domain);
+            var logo = new Uri(root, "webappBanner/custom/images/logos/banner_logo.png");
+            return new CustomizationDTO
+            {
+                AccountBannerColor = GetField(fields, "account-banner-color") ?? "FFFFFF",
+                BannerTopLinkColor = GetField(fields, "banner-top-link-color") ?? "666666",
+                BannerNavTextColor = GetField(fields, "banner-nav-text-color") ?? "666666",
+                BannerNavSelColor = GetField(fields, "banner-nav-sel-color") ?? "E9E9E9",
+                AccountHeaderColor = GetField(fields, "account-header-color") ?? "A7ACB1",
+                BannerLogoUrl = logo.ToString(),
+            };
+        }
+
+        private static ACPasswordPoliciesDTO ParsePasswordPolicies(FieldCollectionResult fields)
+        {
+            bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
+            bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
+            string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
+
+            int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
+            int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
+
+            return new ACPasswordPoliciesDTO
+            {
+                PasswordRequiresDigit = passwordRequiresDigit,
+                PasswordRequiresCapitalLetter = passwordRequiresCapitalLetter,
+                PasswordRequiresSpecialChars = passwordRequiresSpecialChars,
+                PasswordMinLength = passwordMinLength,
+                PasswordMaxLength = passwordMaxLength,
+            };
+        }
 
         private static string GetField(FieldCollectionResult value, string fieldName)
         {
