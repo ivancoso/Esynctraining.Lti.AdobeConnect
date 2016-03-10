@@ -7,7 +7,7 @@ using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect
 {
-    public sealed class SeminarService : ISeminarService
+    public class SeminarService : ISeminarService
     {
         private static readonly string AcDateFormat = "yyyy-MM-ddTHH:mm"; // AdobeConnectProviderConstants.DateFormat
 

@@ -2,7 +2,7 @@
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AC.Provider.EntityParsing;
+using Esynctraining.AC.Provider.Utils;
 
 namespace Esynctraining.AC.Provider
 {

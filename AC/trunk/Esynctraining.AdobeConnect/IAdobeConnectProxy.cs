@@ -10,7 +10,7 @@ namespace Esynctraining.AdobeConnect
     {
         string ApiUrl { get; }
 
-        //StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
+        StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);
         StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName);
         StatusInfo AddToGroupByType(string principalId, string typeName);
@@ -27,8 +27,6 @@ namespace Esynctraining.AdobeConnect
         PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind);
         //ScoContentCollectionResult GetAllEvents();
         PermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
-
-        TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
 
         PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         //ScoContentCollectionResult GetAllMeetings();
@@ -58,7 +56,7 @@ namespace Esynctraining.AdobeConnect
         //RecordingJobResult GetRecordingJob(string jobId);
         //RecordingJobCollectionResult GetRecordingJobsList(string folderId);
         RecordingCollectionResult GetRecordingsList(string folderId);
-        //ScoInfoResult GetScoByUrl(string scoUrl);
+        ScoInfoResult GetScoByUrl(string scoUrl);
         ScoContentResult GetScoContent(string scoId);
         //ScoContentCollectionResult GetScoExpandedContent(string scoId);
         ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name);
@@ -78,8 +76,8 @@ namespace Esynctraining.AdobeConnect
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation);
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError);
         GenericResult PrincipalUpdatePassword(string principalId, string newPassword);
-        //StatusInfo RemoveFromGroup(string principalId, string groupId);
-        //bool RemoveFromGroupByType(string principalId, string typeName);
+        StatusInfo RemoveFromGroup(string principalId, string groupId);
+        bool RemoveFromGroupByType(string principalId, string typeName);
         //MeetingItemCollectionResult ReportAllMeetings();
         MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
@@ -88,13 +86,14 @@ namespace Esynctraining.AdobeConnect
         MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0);
         MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0);
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
-        //MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
+        MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
         RecordingJobResult ScheduleRecordingJob(string recordingScoId);
         //ScoContentCollectionResult SearchScoByDescription(string description);
-        //ScoContentCollectionResult SearchScoByName(string name);
-        //TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
+        ScoContentCollectionResult SearchScoByName(string name);
+        TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
+        TelephonyProfileInfoResult TelephonyProfileInfo(string profileId);
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);
         StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId);

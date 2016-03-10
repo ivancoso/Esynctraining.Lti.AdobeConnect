@@ -18,7 +18,7 @@ namespace Esynctraining.AdobeConnect
         public string ApiUrl { get; private set; }
 
 
-        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl)
+        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl) 
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
@@ -29,7 +29,12 @@ namespace Esynctraining.AdobeConnect
             _logger = logger;
             ApiUrl = apiUrl;
         }
-        
+
+        public StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId)
+        {
+            return Execute(() => { return _provider.AddToGroup(principalIds, groupId); },
+                String.Join(",", principalIds), groupId);
+        }
 
         public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
         {
@@ -118,28 +123,13 @@ namespace Esynctraining.AdobeConnect
                     typeName);
                 _logger.Error(msg);
 
-                throw new AdobeConnectException( result);
+                throw new AdobeConnectException(result);
             }
 
             return result;
         }
 
-        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
-        {
 
-            TelephonyProfilesCollectionResult result;
-            try
-            {
-                result = _provider.TelephonyProfileList(principalId);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "TelephonyProfileList. PrincipalId:{0}", principalId);
-                throw new AdobeConnectException("TelephonyProfileList exception", ex);
-            }
-
-            return result;
-        }
 
         public CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId)
         {
@@ -341,6 +331,11 @@ namespace Esynctraining.AdobeConnect
                 folderId);
         }
 
+        public ScoInfoResult GetScoByUrl(string scoUrl)
+        {
+            return Execute(() => { return _provider.GetScoByUrl(scoUrl); }, scoUrl, scoUrl, true);
+        }
+
         public ScoContentResult GetScoContent(string scoId)
         {
             return Execute(() => { return _provider.GetScoContent(scoId); },
@@ -478,6 +473,16 @@ namespace Esynctraining.AdobeConnect
                 principalId, newPassword);
         }
 
+        public StatusInfo RemoveFromGroup(string principalId, string groupId)
+        {
+            return Execute(() => { return _provider.RemoveFromGroup(principalId, groupId); }, principalId, groupId);
+        }
+
+        public bool RemoveFromGroupByType(string principalId, string typeName)
+        {
+            return Execute(() => { return _provider.RemoveFromGroupByType(principalId, typeName); }, principalId, typeName);
+        }
+
         public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportMeetingsByName(nameLikeCriteria, startIndex, limit); },
@@ -502,10 +507,53 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
+        public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMyMeetings(startIndex, limit); });
+        }
+
         public RecordingJobResult ScheduleRecordingJob(string recordingScoId)
         {
             return Execute(() => { return _provider.ScheduleRecordingJob(recordingScoId); },
                 recordingScoId);
+        }
+
+        public ScoContentCollectionResult SearchScoByName(string name)
+        {
+            return _provider.SearchScoByName(name);
+        }
+
+        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
+        {
+
+            TelephonyProfilesCollectionResult result;
+            try
+            {
+                result = _provider.TelephonyProfileList(principalId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "TelephonyProfileList. PrincipalId:{0}", principalId);
+                throw new AdobeConnectException("TelephonyProfileList exception", ex);
+            }
+
+            return result;
+        }
+
+        public TelephonyProfileInfoResult TelephonyProfileInfo(string profileId)
+        {
+            TelephonyProfileInfoResult result;
+            try
+            {
+                result = _provider.TelephonyProfileInfo(profileId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "TelephonyProfileInfo. ProfileId:{0}", profileId);
+                throw;
+            }
+
+            return result;
         }
 
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
