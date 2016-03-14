@@ -146,6 +146,8 @@
         /// </summary>
         public const string ProfileId = "profile-id={0}";
 
+        public const string FolderIdAndSeminarSessionId = "folder-id={0}&seminar-session-id={1}";
+
         /// <summary>
         /// The report bulk consolidated transactions filters.
         /// </summary>

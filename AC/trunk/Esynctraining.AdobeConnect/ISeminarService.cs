@@ -5,7 +5,10 @@ namespace Esynctraining.AdobeConnect
 {
     public interface ISeminarService
     {
-        IEnumerable<ScoContent> GetSeminarLicenses(IAdobeConnectProxy provider);
+        IEnumerable<ScoContent> GetAllSeminarLicenses(IAdobeConnectProxy provider);
+
+        IEnumerable<SeminarLicenseSco> GetSharedOrUserSeminarLicenses(IAdobeConnectProxy provider,
+            bool returnUserLicenses = false);
 
         IEnumerable<ScoContent> GetSeminars(string seminarLicenseScoId, IAdobeConnectProxy provider);
 

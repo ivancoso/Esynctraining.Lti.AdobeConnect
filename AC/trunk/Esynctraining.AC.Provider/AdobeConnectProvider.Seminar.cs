@@ -2,6 +2,7 @@
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AC.Provider.EntityParsing;
 using Esynctraining.AC.Provider.Utils;
 
 namespace Esynctraining.AC.Provider
@@ -62,6 +63,21 @@ namespace Esynctraining.AC.Provider
             //return new ScoInfoResult(status, meetingDetail);
         }
 
+        public SeminarLicensesCollectionResult GetSeminarLicenses(string scoId, bool returnUserSeminars = false)
+        {
+            // act: "sco-seminar-licenses-list"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Seminar.SeminarLicensesList, 
+                string.Format("{0}{1}", 
+                    string.Format(CommandParams.ScoId, scoId), 
+                    returnUserSeminars ? "&user-webinar-selected=true" : string.Empty),
+                out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new SeminarLicensesCollectionResult(status, SeminarLicensesCollectionParser.Parse(doc.SelectSingleNode(SeminarLicensesHome)))
+                       : new SeminarLicensesCollectionResult(status);
+        }
     }
 
 }

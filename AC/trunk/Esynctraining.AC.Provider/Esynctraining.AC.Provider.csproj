@@ -97,6 +97,8 @@
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\SeminarLicenseSco.cs" />
+    <Compile Include="Entities\SeminarLicensesCollectionResult.cs" />
     <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />
     <Compile Include="Entities\SeminarSessionUpdateItem.cs" />
     <Compile Include="Entities\SeminarUpdateItem.cs" />
@@ -140,6 +142,8 @@
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
+    <Compile Include="EntityParsing\SeminarLicensesCollectionParser.cs" />
+    <Compile Include="EntityParsing\SeminarLicenseScoParser.cs" />
     <Compile Include="EntityParsing\UserParser.cs" />
     <Compile Include="EntityParsing\UserCollectionParser.cs" />
     <Compile Include="EntityParsing\PrincipalInfoParser.cs" />

@@ -7,6 +7,7 @@ using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
+using Esynctraining.AC.Provider.Extensions;
 
 namespace Esynctraining.AC.Provider
 {
@@ -225,7 +226,9 @@ namespace Esynctraining.AC.Provider
             StatusInfo status;
 
             var principals = this.requestProcessor.Process(Commands.Principal.List, 
-                string.IsNullOrWhiteSpace(groupId) ? null : string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId), out status);
+                (string.IsNullOrWhiteSpace(groupId) ? String.Empty : string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId))
+                    .AppendPagingIfNeeded(0, 20000), 
+                out status);
 
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))

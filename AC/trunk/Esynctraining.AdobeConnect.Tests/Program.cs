@@ -24,7 +24,7 @@ namespace Esynctraining.AdobeConnect.Tests
             IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("https://connect.esynctraining.com", "sergeyi@esynctraining.com", "Qrazy123"), true);
 
             var seminarService = new SeminarService(logger);
-            var licenses = seminarService.GetSeminarLicenses(ac);
+            var licenses = seminarService.GetAllSeminarLicenses(ac);
 
             string licenseScoId = licenses.Last().ScoId;
             var seminars = seminarService.GetSeminars(licenseScoId, ac);

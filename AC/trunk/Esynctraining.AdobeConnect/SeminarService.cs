@@ -13,20 +13,28 @@ namespace Esynctraining.AdobeConnect
 
         private readonly ILogger _logger;
 
-
         public SeminarService(ILogger logger)
         {
             _logger = logger;
         }
 
-        
-        public IEnumerable<ScoContent> GetSeminarLicenses(IAdobeConnectProxy provider)
+        public IEnumerable<ScoContent> GetAllSeminarLicenses(IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
 
             ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars");
             var result = provider.GetContentsByScoId(seminarShortcut.ScoId);
+            return result.Values;
+        }
+
+        public IEnumerable<SeminarLicenseSco> GetSharedOrUserSeminarLicenses(IAdobeConnectProxy provider, bool returnUserLicenses = false)
+        {
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+
+            ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars");
+            var result = provider.GetSeminarLicenses(seminarShortcut.ScoId, returnUserLicenses);
             return result.Values;
         }
 

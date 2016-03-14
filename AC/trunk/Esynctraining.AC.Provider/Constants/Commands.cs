@@ -252,8 +252,7 @@
         internal static class Seminar
         {
             public const string SeminarSessionScoUpdate = "seminar-session-sco-update";
-
+            public const string SeminarLicensesList = "sco-seminar-licenses-list";
         }
-
     }
 }

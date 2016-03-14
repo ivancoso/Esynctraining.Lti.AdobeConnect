@@ -68,6 +68,19 @@ namespace Esynctraining.AC.Provider
                 : new RecordingCollectionResult(status);
 
         }
+
+        public RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId)
+        {
+            //act: "list-recordings"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Recordings.List, string.Format(CommandParams.FolderIdAndSeminarSessionId, seminarId, seminarSessionId), out status);
+            return ResponseIsOk(doc, status)
+                ? new RecordingCollectionResult(status, RecordingCollectionParser.Parse(doc))
+                : new RecordingCollectionResult(status);
+
+        }
+
         public GeneratedRecordingJobCollectionResult GetConvertedRecordingsList(string recordingScoId)
         {
             //act: "list-generated-recordings"

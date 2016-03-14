@@ -156,6 +156,21 @@ namespace Esynctraining.AdobeConnect
                 item.ScoId, item.Name);
         }
 
+        public SeminarLicensesCollectionResult GetSeminarLicenses(string scoId, bool returnUserSeminars = false)
+        {
+            if (string.IsNullOrEmpty(scoId))
+                throw new ArgumentException("scoId");
+
+            return Execute(() => { return _provider.GetSeminarLicenses(scoId, returnUserSeminars); },
+                scoId, returnUserSeminars.ToString());
+        }
+
+        public RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId)
+        {
+            return Execute(() => { return _provider.GetSeminarSessionRecordingsList(seminarId, seminarSessionId); },
+                seminarId, seminarSessionId);
+        }
+
         public StatusInfo DeleteSco(string scoId)
         {
             return Execute(() => { return _provider.DeleteSco(scoId); },

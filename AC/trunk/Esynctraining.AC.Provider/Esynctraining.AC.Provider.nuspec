@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AC.Provider</id>
-    <version>1.0.1.37</version>
+    <version>1.0.1.38</version>
     <title>Esynctraining.AC.Provider</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,8 @@
     <description>Provides Adobe Connect functionality for eSyncTraining projects</description>
     <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
     <tags>core, pdf</tags>
-    <releaseNotes>+ Seminars support</releaseNotes>
+    <releaseNotes>+ sco-seminar-licenses-list
++ list seminar session recordings</releaseNotes>
   </metadata>
   <files>
     <file src="bin\$configuration$\Esynctraining.AC.Provider.dll" target="lib\net45" />

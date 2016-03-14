@@ -29,6 +29,7 @@
         /// </summary>
         private const string ScoHome = "//sco";
         private const string TelephonyProfileHome = "//telephony-profile";
+        private const string SeminarLicensesHome = "//seminar-licenses";
 
         #endregion
 
