@@ -30,12 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.37, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.37\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.38, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.38\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.23, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\..\EduGameCloud\trunk\csharp\EdugameCloud.WCFService\packages\Esynctraining.Core.Only.1.0.0.23\lib\net45\Esynctraining.Core.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.23\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

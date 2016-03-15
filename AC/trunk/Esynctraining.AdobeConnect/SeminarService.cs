@@ -103,6 +103,8 @@ namespace Esynctraining.AdobeConnect
                 FolderId = sessionItem.SeminarScoId,
                 Type = ScoType.seminarsession,
                 Name = sessionItem.Name,
+                DateBegin = sessionItem.DateBegin.ToString(AcDateFormat),
+                DateEnd = sessionItem.DateEnd.ToString(AcDateFormat)
             };
 
             ScoInfoResult sessionScoResult = string.IsNullOrWhiteSpace(sessionItem.SeminarSessionScoId) ? provider.CreateSco(session) : provider.UpdateSco(session);
