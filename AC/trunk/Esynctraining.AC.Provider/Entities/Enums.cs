@@ -109,8 +109,12 @@
         /// <summary>
         /// Recording is already been converted to MP4.
         /// </summary>
-        invalid_recording_job_in_progress
+        invalid_recording_job_in_progress,
 
+        /// <summary>
+        /// seminar session has already been scheduled for this time
+        /// </summary>
+        session_schedule_conflict
     }
 
     public enum ScoType
