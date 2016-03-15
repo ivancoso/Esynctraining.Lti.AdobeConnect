@@ -97,17 +97,16 @@ namespace Esynctraining.AdobeConnect
             if (sessionItem.ExpectedLoad.HasValue && (sessionItem.ExpectedLoad.Value <= 0))
                 throw new ArgumentException("ExpectedLoad should have positive value", "sessionItem");
 
+            var isNewSession = string.IsNullOrWhiteSpace(sessionItem.SeminarSessionScoId);
             var session = new SeminarSessionUpdateItem
             {
                 ScoId = sessionItem.SeminarSessionScoId,
                 FolderId = sessionItem.SeminarScoId,
                 Type = ScoType.seminarsession,
-                Name = sessionItem.Name,
-                DateBegin = sessionItem.DateBegin.ToString(AcDateFormat),
-                DateEnd = sessionItem.DateEnd.ToString(AcDateFormat)
+                Name = sessionItem.Name
             };
 
-            ScoInfoResult sessionScoResult = string.IsNullOrWhiteSpace(sessionItem.SeminarSessionScoId) ? provider.CreateSco(session) : provider.UpdateSco(session);
+            ScoInfoResult sessionScoResult = isNewSession ? provider.CreateSco(session) : provider.UpdateSco(session);
             ScoInfo sessionSco = ProcessResult(sessionScoResult);
 
             var sessionSettingsResult = provider.SeminarSessionScoUpdate(new SeminarSessionScoUpdateItem
@@ -119,6 +118,13 @@ namespace Esynctraining.AdobeConnect
                 ParentAclId = sessionItem.SeminarScoId,
                 SourceScoId = sessionItem.SeminarScoId,
             });
+
+            // if session was not updated correctly, it's sco would appear in the list anyway 
+            // with wrong parameters(dates) => deleting just created session in case of unsuccessful update
+            if (!sessionSettingsResult.Success)
+            {
+                provider.DeleteSco(sessionSco.ScoId);
+            }
 
             var result = ProcessResult(sessionSettingsResult);
 
@@ -157,6 +163,8 @@ namespace Esynctraining.AdobeConnect
 
                 if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "url-path"))
                     throw new WarningMessageException(Resources.Messages.MeetingNotUniqueUrlPath);
+                if (result.Status.SubCode == StatusSubCodes.session_schedule_conflict)
+                    throw new WarningMessageException(Resources.Messages.SessionScheduleConflict);
 
                 throw new WarningMessageException(result.Status.GetErrorInfo());
             }

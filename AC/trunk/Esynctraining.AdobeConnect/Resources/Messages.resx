@@ -153,6 +153,9 @@
     <value>URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
     <comment>b</comment>
   </data>
+  <data name="SessionScheduleConflict" xml:space="preserve">
+    <value>There is a scheduling conflict with another session scheduled on this seminar room. Please choose another start time or duration.</value>
+  </data>
   <data name="SessionTimeOut" xml:space="preserve">
     <value>Session timed out. Please refresh the page.</value>
   </data>

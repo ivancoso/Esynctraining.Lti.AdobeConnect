@@ -160,6 +160,15 @@ namespace Esynctraining.AdobeConnect.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is a scheduling conflict with another session scheduled on this seminar room. Please choose another start time or duration..
+        /// </summary>
+        public static string SessionScheduleConflict {
+            get {
+                return ResourceManager.GetString("SessionScheduleConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session timed out. Please refresh the page..
         /// </summary>
         public static string SessionTimeOut {

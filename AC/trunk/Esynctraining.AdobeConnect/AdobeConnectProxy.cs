@@ -153,7 +153,7 @@ namespace Esynctraining.AdobeConnect
                 throw new ArgumentNullException("item");
 
             return Execute(() => { return _provider.SeminarSessionScoUpdate(item); },
-                item.ScoId, item.Name);
+                item.ScoId, item.Name, true);
         }
 
         public SeminarLicensesCollectionResult GetSeminarLicenses(string scoId, bool returnUserSeminars = false)
