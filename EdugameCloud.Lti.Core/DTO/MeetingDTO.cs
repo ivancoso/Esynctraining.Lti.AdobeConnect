@@ -41,7 +41,7 @@
         /// Gets or sets the id.
         /// </summary>
         [DataMember]
-        public int id { get; set; }
+        public long id { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is editable.

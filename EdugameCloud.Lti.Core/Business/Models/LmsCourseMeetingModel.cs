@@ -31,7 +31,7 @@
 
         #endregion
         
-        public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, int courseId, int id)
+        public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, int courseId, long id)
         {
             if (companyLmsId <= 0)
                 throw new ArgumentOutOfRangeException("companyLmsId");

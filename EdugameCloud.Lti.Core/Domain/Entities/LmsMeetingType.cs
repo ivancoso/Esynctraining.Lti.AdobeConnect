@@ -19,5 +19,7 @@
         /// The study group.
         /// </summary>
         StudyGroup = 3,
+
     }
+
 }

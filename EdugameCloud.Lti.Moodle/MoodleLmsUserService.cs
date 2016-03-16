@@ -4,6 +4,7 @@ using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.Moodle
 {
@@ -16,14 +17,14 @@ namespace EdugameCloud.Lti.Moodle
             this.moodleApi = moodleApi;
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate);
             return error != null
-                ? OperationResult<List<LmsUserDTO>>.Error(error)
-                : OperationResult<List<LmsUserDTO>>.Success(users);
+                ? OperationResultWithData<List<LmsUserDTO>>.Error(error)
+                : OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)

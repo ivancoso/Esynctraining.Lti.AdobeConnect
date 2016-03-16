@@ -3,7 +3,7 @@
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
     using EdugameCloud.Lti.DTO;
 
     using Esynctraining.Core.Extensions;

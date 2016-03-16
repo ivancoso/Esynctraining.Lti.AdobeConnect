@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
 
     [DataContract]
     public class ACSessionParticipantDTO : IComparable<ACSessionParticipantDTO>

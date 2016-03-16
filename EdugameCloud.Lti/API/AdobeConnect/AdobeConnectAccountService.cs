@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Core.Business;
-using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -10,8 +9,10 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -31,17 +32,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var credentials = new UserCredentials(license.AcUsername, license.AcPassword);
             try
             {
-                return GetProvider(license, credentials, login);
+                return GetProvider(license.AcServer, credentials, login);
             }
             catch (InvalidOperationException ex)
             {
-                throw new WarningMessageException("Adobe Connect Server credentials are not valid in the license. Please contact EGC administrator.", ex);
+                throw new Core.WarningMessageException("Adobe Connect Server credentials are not valid in the license. Please contact EGC administrator.", ex);
             }
         }
 
-        public IAdobeConnectProxy GetProvider(ILmsLicense license, UserCredentials credentials, bool login)
+        public IAdobeConnectProxy GetProvider(string acDomain, UserCredentials credentials, bool login)
         {
-            string apiUrl = license.AcServer + "/api/xml";
+            string apiUrl = acDomain + "/api/xml";
 
             var connectionDetails = new ConnectionDetails
             {
@@ -73,66 +74,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
         
 
-        public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider, ICache cache)
+        public ACDetailsDTO GetAccountDetails(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
             if (cache == null)
                 throw new ArgumentNullException("cache");
-            
+
             var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.ApiUrl), () =>
             {
-                CommonInfoResult commonInfo = provider.GetCommonInfo();
-
-                if (!commonInfo.Success)
-                {
-                    _logger.ErrorFormat("GetPasswordPolicies.GetUserInfo. AC error:{0}.", commonInfo.Status.GetErrorInfo());
-                    return null;
-                }
-
-                if (commonInfo.CommonInfo.AccountId.HasValue)
-                {
-                    FieldCollectionResult fields = provider.GetAclFields(commonInfo.CommonInfo.AccountId.Value);
-
-                    if (fields.Status.Code != StatusCodes.ok)
-                    {
-                        _logger.ErrorFormat("GetPasswordPolicies.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
-                        return null;
-                    }
-
-                    //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
-                    bool passwordRequiresDigit = "YES".Equals(GetField(fields, "password-requires-digit"), StringComparison.OrdinalIgnoreCase);
-                    bool passwordRequiresCapitalLetter = "YES".Equals(GetField(fields, "password-requires-capital-letter"), StringComparison.OrdinalIgnoreCase);
-                    string passwordRequiresSpecialChars = GetField(fields, "password-requires-special-chars");
-
-                    int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
-                    int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
-
-                    return new ACDetailsDTO
-                    {
-                        Version = commonInfo.CommonInfo.Version,
-                        TimeZoneShiftMinutes = commonInfo.CommonInfo.GetTimeZoneShiftMinutes(),
-
-                        PasswordPolicies = new ACPasswordPoliciesDTO
-                        {
-                            passwordRequiresDigit = passwordRequiresDigit,
-                            passwordRequiresCapitalLetter = passwordRequiresCapitalLetter,
-                            passwordRequiresSpecialChars = passwordRequiresSpecialChars,
-                            passwordMinLength = passwordMinLength,
-                            passwordMaxLength = passwordMaxLength,
-                        },
-                    };
-                }
-
-                _logger.Error("GetPasswordPolicies. Account is NULL");
-                return null;
-
+                return IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(provider);
             });
 
             return item;
         }
 
-        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(IAdobeConnectProxy provider)
+        public IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException("provider");
@@ -174,7 +131,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             Principal registeredUser,
             string password,
-            IAdobeConnectProxy provider,
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
             bool updateAcUser = true)
         {
             if(registeredUser == null)
@@ -196,7 +153,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 catch
                 {
-                    throw new WarningMessageException(
+                    throw new Core.WarningMessageException(
                         string.Format(
                             "Error has occured trying to access \"{0} {1}\" account in Adobe Connect. Please check that account used to access has sufficient permissions."
                             , param.lis_person_name_given
@@ -237,7 +194,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// <returns>
         /// The <see cref="List{TemplateDTO}"/>.
         /// </returns>
-        public IEnumerable<TemplateDTO> GetTemplates(IAdobeConnectProxy provider, string templateFolder)
+        public IEnumerable<TemplateDTO> GetTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, string templateFolder)
         {
             ScoContentCollectionResult result = provider.GetContentsByScoId(templateFolder);
             if (result.Values == null)
@@ -247,18 +204,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
         }
-
-        private static string GetField(FieldCollectionResult value, string fieldName)
-        {
-            Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
-            if (field == null)
-            {
-                return null;
-            }
-
-            return field.Value;
-        }
-
+        
     }
 
 }

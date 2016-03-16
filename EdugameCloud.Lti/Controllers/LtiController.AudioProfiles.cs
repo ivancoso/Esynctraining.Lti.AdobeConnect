@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Utils;
 
@@ -31,7 +33,7 @@ namespace EdugameCloud.Lti.Controllers
                     ? lmsUser.PrincipalId
                     : provider.PrincipalId;
                 var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, principalId);
-                return Json(OperationResult.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
+                return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
             }
             catch (Exception ex)
             {

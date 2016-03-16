@@ -9,9 +9,7 @@
     using Castle.Facilities.WcfIntegration;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
-    using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Converters;
-    using EdugameCloud.Lti.AdobeConnect.Caching;
     using EdugameCloud.Persistence;
     using EdugameCloud.WCFService.Converters;
     using EdugameCloud.WCFService.Providers;
@@ -113,7 +111,7 @@
 
             container.Install(new LtiWindsorInstaller());
 
-            container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
+            //container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
             
             container.Register(Component.For<QuizConverter>().ImplementedBy<QuizConverter>());
         }

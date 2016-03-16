@@ -7,6 +7,7 @@
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using Esynctraining.Core.Domain;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
 
@@ -30,10 +31,10 @@
             get { return IoC.Resolve<UsersSetup>(); }
         }
 
-        private MeetingSetup MeetingSetup
-        {
-            get { return IoC.Resolve<MeetingSetup>(); }
-        }
+        //private MeetingSetup MeetingSetup
+        //{
+        //    get { return IoC.Resolve<MeetingSetup>(); }
+        //}
 
         #endregion
 
@@ -53,7 +54,7 @@
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var provider = this.GetAdobeConnectProvider(credentials);
 
-                OperationResult result = MeetingSetup.ReuseExistedAdobeConnectMeeting(credentials, session.LmsUser,
+                OperationResult result = meetingSetup.ReuseExistedAdobeConnectMeeting(credentials, session.LmsUser,
                     provider,
                     param,
                     dto,
@@ -78,12 +79,18 @@
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
+
+                var ac = this.GetAdobeConnectProvider(credentials);
+                var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
+                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
+
                 OperationResult ret = this.meetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    ac,
                     param,
                     meeting,
-                    trace);
+                    trace,
+                    fb);
 
                 return Json(ret);
             }
@@ -104,12 +111,18 @@
                 credentials = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var trace = new StringBuilder();
+
+                var ac = this.GetAdobeConnectProvider(credentials);
+                var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
+                var fb = new MeetingFolderBuilder(credentials, ac, useLmsUserEmailForSearch);
+
                 var ret = this.meetingSetup.SaveMeeting(
                     credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    ac,
                     param,
                     meeting,
                     trace,
+                    fb,
                     true);
 
                 return Json(ret);

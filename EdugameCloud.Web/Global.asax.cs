@@ -14,9 +14,7 @@ using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Core.Converters;
 using EdugameCloud.Lti;
-using EdugameCloud.Lti.AdobeConnect.Caching;
 using EdugameCloud.MVC.ModelBinders;
 using EdugameCloud.MVC.Providers;
 using EdugameCloud.Persistence;
@@ -122,15 +120,21 @@ namespace EdugameCloud.Web
             container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
             AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
 
+
+            //ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().Single());
+            //ValueProviderFactories.Factories.Add(new MyJsonValueProviderFactory());
+
+
             // TRICK: remove all files on start
             CachePolicies.InvalidateCache();
         }
 
         public static void RegisterComponentsWeb(IWindsorContainer container)
         {
-            container.Install(
-                Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Mail/Esynctraining.Mail.Windsor.xml"))
-            );
+            // NOTE: is in container.RegisterComponents();
+            //container.Install(
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml"))
+            //);
 
             container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
 
@@ -165,8 +169,9 @@ namespace EdugameCloud.Web
             );
 
             container.Install(new LtiWindsorInstaller());
-
-            container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
+            container.Install(new LtiMvcWindsorInstaller());
+            
+            //container.Register(Component.For<EdugameCloud.Lti.API.AdobeConnect.IPrincipalCache>().ImplementedBy<PrincipalCache>());
         }
 
         /// <summary>

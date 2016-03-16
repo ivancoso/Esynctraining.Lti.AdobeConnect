@@ -3,6 +3,7 @@ using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -17,12 +18,12 @@ namespace EdugameCloud.Lti.Sakai
         }
 
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
-            return error != null ? OperationResult<List<LmsUserDTO>>.Success(users): OperationResult<List<LmsUserDTO>>.Error(error);
+            return error != null ? OperationResultWithData<List<LmsUserDTO>>.Success(users): OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, 

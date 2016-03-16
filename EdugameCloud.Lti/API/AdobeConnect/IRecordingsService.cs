@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id);
+        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, int courseId, int id);
 
         string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);
@@ -21,5 +22,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             int courseId,
             string recordingId,
             int id);
+
     }
+
 }

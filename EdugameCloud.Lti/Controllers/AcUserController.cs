@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -11,10 +10,11 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.Controllers
                     ac_role = user.meetingRole,
                 };
 
-                return Json(OperationResult.Success(result));
+                return Json(OperationResultWithData<LmsUserDTO>.Success(result));
             }
             catch (Exception ex)
             {
@@ -176,10 +176,10 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (!foundPrincipals.Any())
                 {
-                    return Json(OperationResult.Success(new PrincipalDto[0]));
+                    return Json(OperationResultWithData<IEnumerable<PrincipalDto>>.Success(new PrincipalDto[0]));
                 }
 
-                return Json(OperationResult.Success(foundPrincipals
+                return Json(OperationResultWithData<IEnumerable<PrincipalDto>>.Success(foundPrincipals
                      .GroupBy(p => p.PrincipalId)
                      .Select(g => g.First())
                      .Return(x => x.Select(PrincipalDto.Build), Enumerable.Empty<PrincipalDto>())));

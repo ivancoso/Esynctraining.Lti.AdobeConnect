@@ -7,6 +7,7 @@ using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.Canvas
 {
@@ -50,7 +51,7 @@ namespace EdugameCloud.Lti.Canvas
             return user;
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             if (lmsCompany == null)
@@ -60,28 +61,25 @@ namespace EdugameCloud.Lti.Canvas
 
             if (lmsCompany.AdminUser == null)
             {
-                var message =
-                    string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}",
-                    lmsCompany.Id, courseId);
+                var message = string.Format("There is no admin user set for LmsCompanyId={0}.CourseId={1}", lmsCompany.Id, courseId);
                 logger.Error(message);
-                return OperationResult<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             if (string.IsNullOrWhiteSpace(lmsCompany.AdminUser.Token))
             {
                 logger.ErrorFormat("There is no admin user set for LmsCompanyId={0}. (AdminUser has EMPTY token).", lmsCompany.Id);
-                return OperationResult<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
+                return OperationResultWithData<List<LmsUserDTO>>.Error(Resources.Messages.NoLicenseAdmin);
             }
 
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
 
-            return OperationResult<List<LmsUserDTO>>.Success(users);
+            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
         {
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
-
             error = null;
             return GroupUsers(users);
         }
@@ -90,7 +88,6 @@ namespace EdugameCloud.Lti.Canvas
         private List<LmsUserDTO> FetchUsers(LmsCompany lmsCompany, int courseId)
         {
             string token = lmsCompany.AdminUser.Token;
-
             List<LmsUserDTO> users = canvasApi.GetUsersForCourse(
                 lmsCompany.LmsDomain,
                 token,

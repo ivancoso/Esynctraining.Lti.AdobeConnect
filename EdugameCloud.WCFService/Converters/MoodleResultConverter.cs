@@ -7,7 +7,7 @@ namespace EdugameCloud.WCFService.Converters
 
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
     using EdugameCloud.Lti.API.Moodle;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;

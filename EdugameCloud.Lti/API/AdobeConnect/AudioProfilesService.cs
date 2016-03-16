@@ -5,6 +5,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -62,7 +63,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("provider");
 
             var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider, principalId);
-            if (!opResult.isSuccess)
+            if (!opResult.IsSuccess)
             {
                 return opResult;
             }
@@ -72,7 +73,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             meetingModel.RegisterSave(meeting);
             meetingModel.Flush();
 
-            return OperationResult.Success("Meeting audio profile updated", meeting);
+            return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
         }
+
     }
+
 }

@@ -2,7 +2,7 @@
 {
     using System.Runtime.Serialization;
 
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
 
     /// <summary>
     /// The test session DTO.

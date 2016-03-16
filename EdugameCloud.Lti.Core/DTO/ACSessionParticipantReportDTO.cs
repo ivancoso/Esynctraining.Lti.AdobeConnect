@@ -1,5 +1,5 @@
 ﻿using System;
-using EdugameCloud.Core.Extensions;
+using Esynctraining.Core.Extensions;
 using EdugameCloud.Lti.DTO;
 
 namespace EdugameCloud.Lti.Core.DTO

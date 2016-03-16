@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using EdugameCloud.Core.Extensions;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Extensions;
 
 namespace EdugameCloud.Lti.Core.DTO
 {

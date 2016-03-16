@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using EdugameCloud.Lti.API;
+    using API;
     using EdugameCloud.Lti.API.BrainHoney;
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.Core.Extensions;

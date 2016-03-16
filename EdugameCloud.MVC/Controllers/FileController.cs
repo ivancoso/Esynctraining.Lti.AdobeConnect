@@ -26,7 +26,6 @@ namespace EdugameCloud.MVC.Controllers
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.MVC.Attributes;
     using EdugameCloud.MVC.ViewModels;
     using EdugameCloud.MVC.ViewResults;

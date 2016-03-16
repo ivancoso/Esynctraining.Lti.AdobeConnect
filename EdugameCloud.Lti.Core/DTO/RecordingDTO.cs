@@ -1,77 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
-using EdugameCloud.Core.Extensions;
+using Esynctraining.Core.Extensions;
 using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
-    public sealed class Mp4ServiceStatusDto
-    {
-        private readonly string _baseFileAccessUrl;
-
-
-        [DataMember]
-        public string mp4_sco_id { get; set; }
-
-        [DataMember]
-        public string cc_sco_id { get; set; }
-        
-        [DataMember]
-        public string status { get; set; }
-
-
-        [DataMember]
-        public string mp4_url
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(mp4_sco_id))
-                    return null;
-                // TODO: config!!
-                //return string.Format("https://dev.esynctraining.com/contentApi/mp4/{0}", mp4_sco_id);
-                return string.Format("https://dev.edugamecloud.com/lti/mp4/file/{0}", mp4_sco_id);
-            }
-            set
-            {
-            }
-        }
-
-        [DataMember]
-        public string cc_ulr
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(cc_sco_id))
-                    return null;
-                // TODO: config!!
-                return string.Format("https://dev.esynctraining.com/contentApi/subtitle/{0}", cc_sco_id);
-            }
-            set
-            {
-            }
-        }
-
-        public string lmsProviderName { get; set; }
-
-        public Mp4ServiceStatusDto()
-        {
-            //if (string.IsNullOrWhiteSpace(baseFileAccessUrl))
-            //    throw new ArgumentException("baseFileAccessUrl should have have", "baseFileAccessUrl");
-
-            //Uri result;
-            //if (!Uri.TryCreate(baseFileAccessUrl, UriKind.Absolute, out result))
-            //    throw new ArgumentException("baseFileAccessUrl should have Absolute Url value", "baseFileAccessUrl");
-
-            //_baseFileAccessUrl = baseFileAccessUrl;
-        }
-
-    }
-
-
-    [DataContract]
-    public sealed class RecordingDTO
+    public class RecordingDTO
     {
         public RecordingDTO(Recording recording, string accountUrl)
         {
@@ -83,7 +19,7 @@ namespace EdugameCloud.Lti.Core.DTO
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
             is_mp4 = recording.Icon == "mp4-archive";
-            download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
+            download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
         }
 
         public RecordingDTO(ScoContent recording, string accountUrl, bool isPublic)
@@ -95,15 +31,12 @@ namespace EdugameCloud.Lti.Core.DTO
             duration = ConvertSecondsToTimeFormat(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
-            download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : string.Empty;
+            download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
             is_public = isPublic;
         }
 
         public RecordingDTO() { }
-
-
-        [DataMember]
-        public Mp4ServiceStatusDto mp4 { get; set; }
+        
 
         /// <summary>
         /// Gets or sets a recording url for download. Available only for mp4.
@@ -160,10 +93,10 @@ namespace EdugameCloud.Lti.Core.DTO
         {
             if (string.IsNullOrEmpty(jobStatus))
             {
-                return string.Empty;
+                return null;
             }
 
-            var recordingStatus = string.Empty;
+            string recordingStatus = null;
 
             switch (jobStatus)
             {
@@ -217,6 +150,7 @@ namespace EdugameCloud.Lti.Core.DTO
                 t.Minutes,
                 t.Seconds);
         }
+
         #endregion
         
     }

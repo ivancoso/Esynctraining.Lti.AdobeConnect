@@ -13,6 +13,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Utils;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.API
 {

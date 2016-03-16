@@ -8,6 +8,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -29,7 +30,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, IAdobeConnectProxy provider, int courseId, int id)
+        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, int courseId, int id)
         {
             LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
 
@@ -53,7 +54,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static List<RecordingDTO> GetRecordings(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordings(string meetingSco, string accountUrl, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             var apiRecordings = provider.GetRecordingsList(meetingSco);
@@ -79,7 +80,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, string accountUrl, IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, string accountUrl, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
@@ -209,5 +210,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             provider.DeleteSco(recordingId);
             return OperationResult.Success();
         }
+
     }
+
 }

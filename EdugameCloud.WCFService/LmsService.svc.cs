@@ -12,7 +12,6 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.Core;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Core.Domain.DTO;
-    using EdugameCloud.Core.Extensions;
     using EdugameCloud.Lti.API;
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.Core;
@@ -27,8 +26,11 @@ namespace EdugameCloud.WCFService
     using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.AdobeConnect;
+    using Esynctraining.Core;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Enums;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
     using Resources;
     using ILmsService = EdugameCloud.WCFService.Contracts.ILmsService;
@@ -88,9 +90,9 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<LmsCompanyRoleMappingModel>(); }
         }
 
-        private IAdobeConnectAccountService AdobeConnectAccountService
+        private Lti.API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService
         {
-            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
+            get { return IoC.Resolve<Lti.API.AdobeConnect.IAdobeConnectAccountService>(); }
         }
         
         #endregion
@@ -307,7 +309,7 @@ namespace EdugameCloud.WCFService
         {
             LmsCompany licence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
 
-            IAdobeConnectProxy provider = AdobeConnectAccountService.GetProvider(licence);
+            var provider = AdobeConnectAccountService.GetProvider(licence);
 
             return AdobeConnectAccountService.GetMeetingHostReport(provider).ToArray();
         }
@@ -321,10 +323,10 @@ namespace EdugameCloud.WCFService
                     throw new ArgumentNullException("principalIds");
 
                 LmsCompany currentLicence = this.LmsCompanyModel.GetOneById(lmsCompanyId).Value;
-                IAdobeConnectProxy currentLicenseProvider = null;
+                Lti.API.AdobeConnect.IAdobeConnectProxy currentLicenseProvider = null;
                 try
                 {
-                    currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicence, new UserCredentials(login, password), login: true);
+                    currentLicenseProvider = AdobeConnectAccountService.GetProvider(currentLicence.AcServer, new UserCredentials(login, password), true);
                 }
                 catch (InvalidOperationException)
                 {
@@ -540,11 +542,18 @@ namespace EdugameCloud.WCFService
                     throw new FaultException<Error>(error, error.errorMessage);
                 }
             }
-            catch (WarningMessageException ex)
+            catch (Exception ex)
             {
-                var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Integration", ex.Message);
-                this.LogError("LMS.Convert", error);
-                throw new FaultException<Error>(error, ex.Message);
+                if (ex is IUserMessageException)
+                {
+                    var error = new Error(Errors.CODE_ERRORTYPE_GENERIC_ERROR, "Integration", ex.Message);
+                    this.LogError("LMS.Convert", error);
+                    throw new FaultException<Error>(error, ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 

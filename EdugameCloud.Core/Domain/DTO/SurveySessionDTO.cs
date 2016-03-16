@@ -1,7 +1,7 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
     using System.Runtime.Serialization;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Extensions;
 
     /// <summary>

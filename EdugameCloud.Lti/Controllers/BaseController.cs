@@ -9,6 +9,7 @@ using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Providers;
 using EdugameCloud.Core.Business.Models;
 using Esynctraining.Core.Utils;
+using Esynctraining.Core;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -66,6 +67,19 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         #endregion
+
+        protected override JsonResult Json(object data, string contentType,
+                System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
+        {
+            return new JsonNetResult
+            {
+                Data = data,
+                ContentType = contentType,
+                ContentEncoding = contentEncoding,
+                JsonRequestBehavior = behavior,
+            };
+        }
+
 
         protected LmsUserSession GetSession(string key)
         {
@@ -137,9 +151,8 @@ namespace EdugameCloud.Lti.Controllers
 
             logger.Error(methodName + lmsInfo, ex);
 
-            var forcePassMessage = ex as WarningMessageException;
-            if (forcePassMessage != null)
-                return forcePassMessage.Message;
+            if (ex is IUserMessageException)
+                return ex.Message;
 
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()

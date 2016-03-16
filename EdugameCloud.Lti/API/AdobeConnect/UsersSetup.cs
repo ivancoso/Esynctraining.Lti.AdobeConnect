@@ -45,24 +45,30 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         #region Fields
         
         private readonly dynamic settings;
-        private readonly LmsFactory lmsFactory;
-        private IAdobeConnectUserService acUserService;
-        private IAdobeConnectAccountService acAccountService;
-        private ILogger logger;
+        private readonly IAdobeConnectUserService acUserService;
+        private readonly IAdobeConnectAccountService acAccountService;
+        private readonly ILogger logger;
+        private LmsFactory lmsFactory;
 
         #endregion
+
+        private LmsFactory LmsFactory
+        {
+            get
+            {
+                return lmsFactory ?? (lmsFactory = IoC.Resolve<LmsFactory>());
+            }
+        }
 
         #region Constructors and Destructors
 
         public UsersSetup(
             ApplicationSettingsProvider settings,
-            LmsFactory lmsFactory,
             IAdobeConnectUserService acUserService,
             IAdobeConnectAccountService acAccountService,
             ILogger logger)
         {
             this.settings = settings;
-            this.lmsFactory = lmsFactory;
             this.acUserService = acUserService;
             this.acAccountService = acAccountService;
             this.logger = logger;
@@ -154,7 +160,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public void ResetUserACPassword(LmsUser lmsUser, string password)
         {
-            if (!String.IsNullOrEmpty(password))
+            if (!string.IsNullOrEmpty(password))
             {
                 var sharedKey = AESGCM.NewKey();
                 lmsUser.SharedKey = Convert.ToBase64String(sharedKey);
@@ -192,13 +198,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return userDtos.ToList();
                 }
             }
-            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
+            var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
-            if (serviceResult.isSuccess)
+            if (serviceResult.IsSuccess)
             {
                 error = null;
-                return serviceResult.data;
+                return serviceResult.Data;
             }
             logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
                 "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
@@ -234,7 +240,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
-                var lmsUserService = lmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
                 LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
                     param.lms_user_id,
                     param.course_id,
@@ -255,7 +261,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
-            int id, 
+            long id, 
             out string error,
             List<LmsUserDTO> users = null,
             bool forceUpdate = false)
@@ -461,7 +467,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             out string error,
             bool forceUpdate = false, string lmsUserId = null)
         {
-            var service = lmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
+            var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             //todo: not param for BrainHoney
             var lmsUser = service.GetUser(lmsCompany, lmsUserId, param.course_id, out error, param, forceUpdate);
 
@@ -559,9 +565,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public bool IsTeacher(LtiParamDTO param)
         {
-            return param.roles != null
-                && settings.TeacherRoles != null
-                && ((string)settings.TeacherRoles).Split(',').Any(x => param.roles.IndexOf(x.Trim(), StringComparison.InvariantCultureIgnoreCase) >= 0);
+            return new LmsRoleService(this.settings).IsTeacher(param);
         }
 
         /// <summary>
@@ -1715,7 +1719,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     {
                         logger.Error("UpdateScoPermissionForPrincipal - 1st try. Status.Code=" + status.Code.ToString());
 
-                        IoC.Resolve<IPrincipalCache>().RecreatePrincipalCache(IoC.Resolve<LmsCompanyModel>().GetAll());
+                        //IoC.Resolve<IPrincipalCache>().RecreatePrincipalCache(IoC.Resolve<LmsCompanyModel>().GetAll());
+
                         IEnumerable<Principal> refreshedPrincipalCache = this.GetAllPrincipals(
                             lmsCompany, 
                             provider, 

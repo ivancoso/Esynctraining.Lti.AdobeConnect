@@ -21,6 +21,7 @@ namespace EdugameCloud.Lti.BrainHoney
         private readonly LmsCompanyModel _lmsCompanyModel;
         private IAdobeConnectAccountService _acAccountService;
 
+
         public ShedulingHelper(DlapAPI dlapApi, IMeetingSetup meetingSetup, IUsersSetup usersSetup, LmsCompanyModel lmsCompanyModel, IAdobeConnectAccountService acAccountService)
         {
             _dlapApi = dlapApi;
@@ -268,16 +269,21 @@ namespace EdugameCloud.Lti.BrainHoney
 
                 throw new NotImplementedException("TODO: it seems this API doesnt work ans nobody calls it");
 
-                DateTime startDate = DateTime.Parse(course.StartDate);
+                var startDate = DateTime.Parse(course.StartDate);
                 var trace = new StringBuilder();
+
+                var param = new LtiParamDTO
+                {
+                    context_id = course.CourseId.ToString(CultureInfo.InvariantCulture),
+                    tool_consumer_info_product_family_code = "brainhoney"
+                };
+                var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
+                var fb = new MeetingFolderBuilder(brainHoneyCompany, adobeConnectProvider, useLmsUserEmailForSearch);
+
                 _meetingSetup.SaveMeeting(
                     brainHoneyCompany,
                     adobeConnectProvider,
-                    new LtiParamDTO
-                    {
-                        context_id = course.CourseId.ToString(CultureInfo.InvariantCulture),
-                        tool_consumer_info_product_family_code = "brainhoney"
-                    },
+                    param,
                     new MeetingDTO
                     {
                         start_date = startDate.ToString("MM-dd-yyyy"),
@@ -290,7 +296,8 @@ namespace EdugameCloud.Lti.BrainHoney
                         name = course.Title,
                         template = templates.First().With(x => x.id)
                     },
-                    trace);
+                    trace,
+                    fb);
             }
 
             return result;

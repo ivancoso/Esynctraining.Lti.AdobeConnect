@@ -136,6 +136,8 @@
         /// </summary>
         public string custom_enablemeeting { get; set; }
 
+        public string custom_enablestudygroup { get; set; }
+
         /// <summary>
         /// Gets a value indicating whether is_course_meeting_enabled.
         /// </summary>
@@ -144,6 +146,20 @@
             get
             {
                 return this.custom_enablemeeting != null && this.custom_enablemeeting.ToUpper().Equals("TRUE");
+            }
+        }
+
+        public bool? is_course_study_group_enabled
+        {
+            get
+            {
+                if (custom_enablestudygroup == null)
+                    return null;
+                if (custom_enablestudygroup.ToUpper().Equals("FALSE"))
+                    return false;
+                if (custom_enablestudygroup.ToUpper().Equals("TRUE"))
+                    return true;
+                return null;
             }
         }
 

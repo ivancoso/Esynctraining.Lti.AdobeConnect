@@ -36,6 +36,9 @@
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
     using Core.Domain.Entities;
+    using Esynctraining.Core;
+    using Esynctraining.Core.Domain;
+    using Esynctraining.AdobeConnect;
     public partial class LtiController : Controller
     {
         private const string ProviderKeyCookieName = "providerKey";
@@ -80,9 +83,14 @@
             get { return IoC.Resolve<CompanyModel>(); }
         }
 
-        private IAdobeConnectAccountService AdobeConnectAccountService
+        private API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService
         {
-            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
+            get { return IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>(); }
+        }
+
+        private LmsProviderModel LmsProviderModel
+        {
+            get { return IoC.Resolve<LmsProviderModel>(); }
         }
 
         #region Constructors and Destructors
@@ -137,6 +145,18 @@
         }
 
         #endregion
+
+        protected override JsonResult Json(object data, string contentType,
+                System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
+        {
+            return new JsonNetResult
+            {
+                Data = data,
+                ContentType = contentType,
+                ContentEncoding = contentEncoding,
+                JsonRequestBehavior = behavior,
+            };
+        }
 
         #region Public Methods and Operators
 
@@ -261,7 +281,7 @@
 
                 return this.View("Error");
             }
-            catch (WarningMessageException ex)
+            catch (Core.WarningMessageException ex)
             {
                 logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
                 this.ViewBag.Message = ex.Message;
@@ -320,7 +340,7 @@
 
                 lmsUser.AcConnectionMode = acConnectionMode;
                 this.lmsUserModel.RegisterSave(lmsUser);
-                return Json(OperationResult.Success(settings));
+                return Json(OperationResultWithData<LmsUserSettingsDTO>.Success(settings));
             }
             catch (Exception ex)
             {
@@ -363,7 +383,7 @@
                     }
                 }
 
-                return Json(OperationResult.Success(isValid));
+                return Json(OperationResultWithData<bool>.Success(isValid));
             }
             catch (Exception ex)
             {
@@ -388,46 +408,19 @@
 
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
         {
-            var meetingsJson = TempData["meetings"] as string;
-            var acSettings = TempData["AcSettings"] as string;
-            var userFullName = TempData["CurrentUserFullName"] as string;
-            LicenceSettingsDto settings = TempData["LicenceSettings"] as LicenceSettingsDto;
+            LtiViewModelDto model = TempData["lti-index-model"] as LtiViewModelDto;
 
             // TRICK: to change lang inside
             LmsUserSession session = GetReadOnlySession(lmsProviderName);
 
-            if (string.IsNullOrWhiteSpace(meetingsJson))
+            if (model == null)
             {
-                var credentials = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var acProvider = this.GetAdobeConnectProvider(credentials);
-                var meetings = this.meetingSetup.GetMeetings(
-                    credentials,
-                    session.LmsUser,
-                    acProvider,
-                    param,
-                    new StringBuilder());
-
-                meetingsJson = JsonConvert.SerializeObject(meetings);
-                var acAccountDetails = IoC.Resolve<IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
-                acSettings = JsonConvert.SerializeObject(acAccountDetails);
-                userFullName = param.lis_person_name_full;
-                settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
+                model = BuildModel(session);
             }
-
-            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
-            version = version.Substring(0, version.LastIndexOf('.'));
-            ViewBag.LtiVersion = version;
-            ViewBag.MeetingsJson = meetingsJson;
-            ViewBag.AcSettings = acSettings;
-            // TRICK:
-            // BB contains: lis_person_name_full:" Blackboard  Administrator"
-            ViewBag.CurrentUserFullName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline);
-            ViewBag.LmsLicenceSettings = settings;
-            ViewBag.AcRolesJson = JsonConvert.SerializeObject(new AcRole[] { AcRole.Host, AcRole.Presenter, AcRole.Participant });
-            return View("Index");
+            
+            return View("Index", model);
         }
-
+        
         /// <summary>
         /// The get templates.
         /// </summary>
@@ -449,7 +442,7 @@
                     this.GetAdobeConnectProvider(session.LmsCompany),
                     session.LmsCompany.ACTemplateScoId);
 
-                return Json(OperationResult.Success(templates));
+                return Json(OperationResultWithData<IEnumerable<TemplateDTO>>.Success(templates));
             }
             catch (Exception ex)
             {
@@ -493,7 +486,7 @@
                     SynchronizationUserService.SynchronizeUsers(lmsCompany, syncACUsers: false, meetingIds: new[] { meetingId });
                 }
 
-                var users = this.usersSetup.GetUsers(
+                IList<LmsUserDTO> users = this.usersSetup.GetUsers(
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param,
@@ -504,7 +497,7 @@
 
                 if (string.IsNullOrWhiteSpace(error))
                 {
-                    return Json(OperationResult.Success(users));
+                    return Json(OperationResultWithData<IList<LmsUserDTO>>.Success(users));
                 }
 
                 return Json(OperationResult.Error(error));
@@ -546,7 +539,7 @@
                     ref breezeSession, this.GetAdobeConnectProvider(credentials));
                 return this.LoginToAC(url, breezeSession, credentials);
             }
-            catch (WarningMessageException ex)
+            catch (Core.WarningMessageException ex)
             {
                 this.ViewBag.Message = ex.Message;
                 // TRICK: to increase window height
@@ -573,7 +566,7 @@
                 var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
                 if (lmsUser == null)
                 {
-                    throw new WarningMessageException(string.Format(Resources.Messages.NoUserFound, param.lms_user_id));
+                    throw new Core.WarningMessageException(string.Format(Resources.Messages.NoUserFound, param.lms_user_id));
                 }
 
                 var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
@@ -582,7 +575,7 @@
 
                 if (registeredUser != null)
                 {
-                    breezeSession = MeetingSetup.ACLogin(
+                    breezeSession = meetingSetup.ACLogin(
                         lmsCompany,
                         param,
                         lmsUser,
@@ -594,13 +587,13 @@
                     var message = string.Format(
                         Resources.Messages.NoUserByPrincipalIdFound, lmsUser.PrincipalId ?? string.Empty);
                     logger.Error(message);
-                    throw new WarningMessageException(message);
+                    throw new Core.WarningMessageException(message);
                 }
 
                 if (string.IsNullOrWhiteSpace(breezeSession))
                     return Json(OperationResult.Error(Resources.Messages.CanNotGetBreezeSession), JsonRequestBehavior.AllowGet);
 
-                return Json(OperationResult.Success(breezeSession), JsonRequestBehavior.AllowGet);
+                return Json(OperationResultWithData<string>.Success(breezeSession), JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -850,7 +843,7 @@
                     if (acPrincipal == null)
                     {
                         this.logger.ErrorFormat("[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", lmsCompany.Id, lmsUser.Id, param.lms_user_login);
-                        throw new WarningMessageException(Resources.Messages.LtiNoAcAccount);
+                        throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                     }
                     
                     return this.RedirectToExtJs(session, lmsUser, key, trace);
@@ -860,7 +853,7 @@
                 this.ViewBag.Error = Resources.Messages.LtiInvalidRequest;
                 return this.View("Error");
             }
-            catch (WarningMessageException ex)
+            catch (Core.WarningMessageException ex)
             {
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
@@ -905,7 +898,7 @@
                     out error);
 
                 //if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(error, updatedUsers));
+                    return Json(OperationResultWithData<List<LmsUserDTO>>.Success(error, updatedUsers));
 
                 //return Json(OperationResult.Error(error));
             }
@@ -1100,7 +1093,7 @@
                 if (acPrincipal == null)
                 {
                     this.logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
-                    throw new WarningMessageException(Resources.Messages.LtiNoAcAccount);
+                    throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
             }
 
@@ -1154,7 +1147,7 @@
                     else
                     {
                         this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
-                        throw new WarningMessageException(Resources.Messages.LtiNoLmsAdmin);
+                        throw new Core.WarningMessageException(Resources.Messages.LtiNoLmsAdmin);
                     }
                 }
                 
@@ -1182,12 +1175,26 @@
         /// </returns>
         private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
+            LtiViewModelDto model = BuildModel(session, trace);
+            TempData["lti-index-model"] = model;
+
+            var primaryColor = session.LmsUser.PrimaryColor;
+            primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (session.LmsCompany.PrimaryColor ?? string.Empty);
+
+            return RedirectToAction("GetExtJsPage", "Lti", new
+            {
+                primaryColor = primaryColor,
+                lmsProviderName = providerName,
+                acConnectionMode = (int)lmsUser.AcConnectionMode,
+                disableCacheBuster = true
+            });
+        }
+
+        private LtiViewModelDto BuildModel(LmsUserSession session, StringBuilder trace = null)
+        {
             var sw = Stopwatch.StartNew();
             
-            var credentials = session.LmsCompany;
-            var primaryColor = lmsUser.PrimaryColor;
-            primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (credentials.PrimaryColor ?? string.Empty);
-
+            var credentials = session.LmsCompany;            
             var param = session.LtiSession.LtiParam;
             var acProvider = this.GetAdobeConnectProvider(credentials);
 
@@ -1196,9 +1203,9 @@
                 trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
-            var meetings = this.meetingSetup.GetMeetings(
+            var meetings = meetingSetup.GetMeetings(
                 credentials,
-                lmsUser,
+                session.LmsUser,
                 acProvider,
                 param,
                 trace);
@@ -1208,17 +1215,55 @@
                 trace.AppendFormat("GetMeetings SUMMARY: time: {0}.\r\n", sw.Elapsed.ToString());
 
             sw = Stopwatch.StartNew();
-            var acAccountDetails = IoC.Resolve<IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
+            var acSettings = IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
             sw.Stop();
             if (trace != null)
                 trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
 
-            TempData["meetings"] = JsonConvert.SerializeObject(meetings);
-            TempData["LicenceSettings"] = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
-            TempData["CurrentUserFullName"] = param.lis_person_name_full;
-            TempData["AcSettings"] = JsonConvert.SerializeObject(acAccountDetails);
+            IEnumerable<SeminarLicenseDto> seminars = null;
+            if (credentials.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable))
+            {
+                sw = Stopwatch.StartNew();
 
-            return RedirectToAction("GetExtJsPage", "Lti", new { primaryColor = primaryColor, lmsProviderName = providerName, acConnectionMode = (int)lmsUser.AcConnectionMode, disableCacheBuster = true });
+                seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider, 
+                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany);
+                sw.Stop();
+                if (trace != null)
+                    trace.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
+
+            }
+
+            string userFullName = param.lis_person_name_full;
+            var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
+
+            string version = typeof(LtiController).Assembly.GetName().Version.ToString();
+            version = version.Substring(0, version.LastIndexOf('.'));
+
+            var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
+            return new LtiViewModelDto
+            {
+                LtiVersion = version,
+
+                // TRICK:
+                // BB contains: lis_person_name_full:" Blackboard  Administrator"
+                CurrentUserName = Regex.Replace(userFullName.Trim(), @"\s+", " ", RegexOptions.Singleline),
+                AcSettings = acSettings,
+                AcRoles = new AcRole[] { AcRole.Host, AcRole.Presenter, AcRole.Participant },
+                LicenceSettings = settings,
+                Meetings = meetings,
+                Seminars = seminars,
+
+                IsTeacher = UsersSetup.IsTeacher(param),
+                ConnectServer = credentials.AcServer + "/",
+
+                CourseMeetingsEnabled = credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
+                StudyGroupsEnabled = param.is_course_study_group_enabled.HasValue ? param.is_course_study_group_enabled.Value : credentials.EnableStudyGroups.GetValueOrDefault(),
+                
+                LmsProviderName = lmsProvider.LmsProviderName,
+                UserGuideLink = !string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
+                    ? lmsProvider.UserGuideFileUrl
+                    : string.Format("/content/lti-instructions/{0}.pdf", lmsProvider.ShortName),
+            };
         }
 
         /// <summary>
@@ -1248,7 +1293,7 @@
             if (session == null)
             {
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
@@ -1264,7 +1309,7 @@
             if (session == null)
             {
                 logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new WarningMessageException(Resources.Messages.SessionTimeOut);
+                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
             System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
@@ -1272,11 +1317,11 @@
             return session;
         }
 
-        private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
+        private API.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
         {
-            IAdobeConnectProxy provider = null;
+            API.AdobeConnect.IAdobeConnectProxy provider = null;
             if (forceReCreate ||
-                ((provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy) == null))
+                ((provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as API.AdobeConnect.IAdobeConnectProxy) == null))
             {
                 provider = AdobeConnectAccountService.GetProvider(lmsCompany);
                 this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
@@ -1398,9 +1443,8 @@
 
             logger.Error(methodName + lmsInfo, ex);
 
-            var forcePassMessage = ex as WarningMessageException;
-            if (forcePassMessage != null)
-                return forcePassMessage.Message;
+            if (ex is IUserMessageException)
+                return ex.Message;
 
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()

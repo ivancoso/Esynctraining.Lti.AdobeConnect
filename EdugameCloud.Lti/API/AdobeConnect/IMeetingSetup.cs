@@ -3,6 +3,7 @@ using System.Text;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -16,6 +17,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             MeetingDTO meetingDTO,
             StringBuilder trace,
+            IFolderBuilder fb,
             bool retrieveLmsUsers = false);
 
         List<string> DeleteMeeting(
@@ -25,8 +27,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             int id,
             out string error);
         
-        string ACLogin(LmsCompany lmsCompany, LtiParamDTO param, LmsUser lmsUser,
-            Principal registeredUser, IAdobeConnectProxy provider);
+        string ACLogin(LmsCompany lmsCompany,
+            LtiParamDTO param, 
+            LmsUser lmsUser,
+            Principal registeredUser,
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider);
     }
 
 }

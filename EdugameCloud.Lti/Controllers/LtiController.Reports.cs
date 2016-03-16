@@ -6,6 +6,7 @@
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using Esynctraining.Core.Domain;
     using Esynctraining.Core.Utils;
 
     public partial class LtiController
@@ -32,7 +33,7 @@
                     startIndex,
                     limit);
 
-                return Json(OperationResult.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return Json(OperationResultWithData<List<ACSessionParticipantDTO>>.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
             }
             catch (Exception ex)
             {
@@ -57,7 +58,7 @@
                     startIndex,
                     limit);
 
-                return Json(OperationResult.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+                return Json(OperationResultWithData<List<ACSessionDTO>>.Success(report), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
             }
             catch (Exception ex)
             {

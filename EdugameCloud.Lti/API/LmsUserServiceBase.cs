@@ -4,6 +4,7 @@ using System.Linq;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API
 {
@@ -31,7 +32,7 @@ namespace EdugameCloud.Lti.API
             return company.AdminUser != null;
         }
 
-        public abstract OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false);
+        public abstract OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false);
 
         public abstract List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, bool forceUpdate = false, object param = null);
 

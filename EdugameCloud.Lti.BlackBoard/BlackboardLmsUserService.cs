@@ -8,6 +8,7 @@ using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -74,12 +75,12 @@ namespace EdugameCloud.Lti.BlackBoard
             return lmsCompany.AdminUser != null || (lmsCompany.EnableProxyToolMode.GetValueOrDefault() && lmsCompany.ProxyToolSharedPassword != null);
         }
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error, forceUpdate);
-            return OperationResult<List<LmsUserDTO>>.Success(users);
+            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,

@@ -1,5 +1,4 @@
-﻿using EdugameCloud.Core.Extensions;
-using EdugameCloud.Lti.Core.Constants;
+﻿using EdugameCloud.Lti.Core.Constants;
 
 namespace EdugameCloud.Lti.DTO
 {
@@ -112,6 +111,8 @@ namespace EdugameCloud.Lti.DTO
 
             this.showAudioProfile = instance.GetSetting<bool>(LmsCompanySettingNames.ShowAudioProfile);
             this.audioProfileUnique = instance.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique);
+            this.enableSeminars = instance.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable);
+            this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
         }
 
         /// <summary>
@@ -410,5 +411,13 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool? audioProfileUnique { get; set; }
+
+        [DataMember]
+        public bool enableSeminars { get; set; }
+
+        [DataMember]
+        public string labelSeminar { get; set; }
+
     }
+
 }

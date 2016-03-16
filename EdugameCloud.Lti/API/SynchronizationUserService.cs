@@ -61,9 +61,9 @@ namespace EdugameCloud.Lti.API
                 {
                     //todo: set extra data param
                     var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key, forceUpdate: true);
-                    if (opResult.isSuccess)
+                    if (opResult.IsSuccess)
                     {
-                        if (!opResult.data.Any())
+                        if (!opResult.Data.Any())
                         {
                             //todo: take all users (meeting.Users) and make foreach trying to retrieve
                             logger.WarnFormat("Couldn't retrieve users from API for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}",
@@ -71,13 +71,13 @@ namespace EdugameCloud.Lti.API
                         }
                         else
                         {
-                            var userIds = opResult.data.Select(x => x.lti_id ?? x.id);
+                            var userIds = opResult.Data.Select(x => x.lti_id ?? x.id);
                             logger.InfoFormat("API user ids: {0}", String.Join(",", userIds));
                             var existedDbUsers =
                                 lmsUserModel.GetByUserIdAndCompanyLms(userIds.ToArray(),
                                     lmsCompany.Id).GroupBy(x => x.UserId).Select(x=> x.OrderBy(u=> u.Id).First());
 
-                            var newUsers = UpdateDbUsers(opResult.data, lmsCompany, existedDbUsers, acProvider);
+                            var newUsers = UpdateDbUsers(opResult.Data, lmsCompany, existedDbUsers, acProvider);
                                 
                             // merge results;
                             foreach (var meeting in courseGroup)
@@ -110,7 +110,7 @@ namespace EdugameCloud.Lti.API
                                 {
                                     Meeting = meeting,
                                     User = x,
-                                    LmsRole = opResult.data.First(dto => x.UserId == (dto.lti_id ?? dto.id)).lms_role
+                                    LmsRole = opResult.Data.First(dto => x.UserId == (dto.lti_id ?? dto.id)).lms_role
                                 }));
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
                                 // todo: optimize condition, probably refresh roles not for all users

@@ -13085,55 +13085,6 @@
             A question that requires attendees to indicate whether the statement in the question is true or false.
             </summary>
         </member>
-        <member name="T:EdugameCloud.Core.Extensions.DateConverter">
-            <summary>
-            The date converter.
-            </summary>
-        </member>
-        <member name="M:EdugameCloud.Core.Extensions.DateConverter.ConvertToUTCTimestamp(System.DateTime)">
-            <summary>
-            The convert to utc timestamp.
-            </summary>
-            <param name="date">
-            The date.
-            </param>
-            <returns>
-            The <see cref="T:System.Int32"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Extensions.DateConverter.ConvertFromUnixTimeStamp(System.Double)">
-            <summary>
-            The convert from unix time stamp.
-            </summary>
-            <param name="dt">
-            The date time double.
-            </param>
-            <returns>
-            The <see cref="T:System.DateTime"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Extensions.DateConverter.ConvertToUnixTimestamp(System.DateTime)">
-            <summary>
-            Convert a <c>DateTime</c> to a UNIX timestamp in milliseconds.
-            </summary>
-            <param name="value">
-            The value.
-            </param>
-            <returns>
-            The <see cref="T:System.Double"/>.
-            </returns>
-        </member>
-        <member name="M:EdugameCloud.Core.Extensions.DateConverter.ConvertToTimestamp(System.DateTime)">
-            <summary>
-            The convert to timestamp.
-            </summary>
-            <param name="date">
-            The date.
-            </param>
-            <returns>
-            The <see cref="T:System.Int32"/>.
-            </returns>
-        </member>
         <member name="T:EdugameCloud.Core.RTMP.NotificationType">
             <summary>
                 The notification type.

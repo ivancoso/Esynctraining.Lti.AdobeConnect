@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using System.Web.Script.Serialization;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
     
     [DataContract]
     public class ACSessionDTO

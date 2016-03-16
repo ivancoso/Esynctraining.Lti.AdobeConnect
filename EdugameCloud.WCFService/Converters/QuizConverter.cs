@@ -817,14 +817,26 @@
             foreach (var a in q.answers)
             {
                 // TODO: http://jira.esynctraining.com/browse/EDUGAMECLOUD-1529?filter=-1
+                //хотя.вадим грил что точно такой же вопрос созданный в канвасе (а не импортированный) -типо работает.
+                //Чинить ХЗ когда буду -времени на баги Майк не выдает.
+                //Ну и нужно будет смотреть чего там с муддла летит для такого случая - не понятно в каком месте правильнее чинить.. )
                 var lmsId = a.id;
                 bool isRange = a.numerical_answer_type != null && a.numerical_answer_type.Contains("range");
+
+                // http://jira.esynctraining.com/browse/EDUGAMECLOUD-1529?filter=-1
+                bool isImportedCanvasExact = a.numerical_answer_type == "exact_answer" && a.text == "answer_text";
+
                 var name = string.Format(
                     "{{\"min\":{0}, \"max\": {1}, \"error\":{2},\"type\":\"{3}\"}}",
-                    isRange ? a.start.ToString() : (string.IsNullOrWhiteSpace(a.text) ? a.exact.ToString() : a.text),
-                    string.IsNullOrWhiteSpace(a.text) ? a.end.ToString() : a.text,
+
+                    isRange 
+                    ? a.start.ToString() 
+                    : ((string.IsNullOrWhiteSpace(a.text) || isImportedCanvasExact) ? a.exact.ToString() : a.text),
+
+                    (string.IsNullOrWhiteSpace(a.text) || isImportedCanvasExact) ? a.end.ToString() : a.text,
                     a.margin,
                     isRange ? "Range" : "Exact");
+
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
                     new Distractor
                     {

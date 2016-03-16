@@ -45,9 +45,9 @@
 
             routes.MapLowercaseRoute("converttoMP4", "Lti/Recording/MakeMP4", new { controller = "LtiRecording", action = "ConvertToMP4" });
 
-            routes.MapLowercaseRoute("Mp4ServiceConvert", "lti/mp4/convert", new { controller = "Mp4Service", action = "Convert" });
-            routes.MapLowercaseRoute("Mp4ServiceConvertWithSubtitles", "lti/mp4/convertWithSubtitles", new { controller = "Mp4Service", action = "ConvertWithSubtitles" });
-            routes.MapLowercaseRoute("Mp4ServiceMp4Video", "lti/mp4/file/{scoId}", new { controller = "Mp4Service", action = "AccessFile", scoId = UrlParameter.Optional });
+            //routes.MapLowercaseRoute("Mp4ServiceConvert", "lti/mp4/convert", new { controller = "Mp4Service", action = "Convert" });
+            //routes.MapLowercaseRoute("Mp4ServiceConvertWithSubtitles", "lti/mp4/convertWithSubtitles", new { controller = "Mp4Service", action = "ConvertWithSubtitles" });
+            //routes.MapLowercaseRoute("Mp4ServiceMp4Video", "lti/mp4/file/{scoId}", new { controller = "Mp4Service", action = "AccessFile", scoId = UrlParameter.Optional });
 
             routes.MapLowercaseRoute("cancelMP4Converting", "Lti/Recording/CancelMP4Converting/{recordingId}", new { controller = "LtiRecording", action = "CancelMP4Converting" });
             routes.MapLowercaseRoute("joinrecording", "Lti/Recording/Join/{recordingUrl}", new { controller = "LtiRecording", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
@@ -68,6 +68,15 @@
             routes.MapLowercaseRoute("reuseAdobeConnectMeeting", "lti/useExistingMeeting", new { controller = "Lti", action = "ReuseExistedAdobeConnectMeeting" });
             
             routes.MapLowercaseRoute("register-proxy-tool", "lti/register-proxy-tool", new { controller = "LtiProxyTool", action = "register-proxy-tool" });
+
+
+            routes.MapLowercaseRoute("seminarsAll", "lti/seminars", new { controller = "Seminar", action = "GetAll" });
+            routes.MapLowercaseRoute("seminarsCreate", "lti/seminars/create", new { controller = "Seminar", action = "Create" });
+            routes.MapLowercaseRoute("seminarsEdit", "lti/seminars/edit", new { controller = "Seminar", action = "Edit" });
+
+            routes.MapLowercaseRoute("seminarsSessionCreate", "lti/seminars/sessions/create", new { controller = "Seminar", action = "SaveSeminarSession" });
+            routes.MapLowercaseRoute("seminarsSessionEdit", "lti/seminars/sessions/edit", new { controller = "Seminar", action = "SaveSeminarSession" });
+            routes.MapLowercaseRoute("seminarsSessionDelete", "lti/seminars/sessions/delete", new { controller = "Seminar", action = "DeleteSeminarSession" });
 
             routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });            
         }

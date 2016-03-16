@@ -80,12 +80,12 @@
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.34, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.34\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.39, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.39\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.0.21, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.21\lib\net45\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.23\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -109,7 +109,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
@@ -180,14 +180,18 @@
     <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\IAudioProfilesService.cs" />
+    <Compile Include="API\AdobeConnect\IFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
+    <Compile Include="API\AdobeConnect\ISeminarService.cs" />
     <Compile Include="API\AdobeConnect\IUsersSetup.cs" />
+    <Compile Include="API\AdobeConnect\SeminarFolderBuilder.cs" />
+    <Compile Include="API\AdobeConnect\MeetingFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\RecordingsService.cs" />
-    <Compile Include="API\AdobeConnect\StatusInfoExtentions.cs" />
+    <Compile Include="API\AdobeConnect\SeminarService.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
+    <Compile Include="API\LmsRoleService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />
-    <Compile Include="API\AdobeConnect\IPrincipalCache.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.Announcement.cs" />
     <Compile Include="API\AdobeConnect\MeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\UsersSetup.cs" />
@@ -205,6 +209,7 @@
     <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
+    <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -225,14 +230,19 @@
     <Compile Include="DTO\BBConsumerProfileDTO.cs" />
     <Compile Include="DTO\BBQuestionDTO.cs" />
     <Compile Include="DTO\LicenceSettingsDto.cs" />
+    <Compile Include="DTO\LtiViewModelDto.cs" />
     <Compile Include="DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="DTO\MoodleQuizResultDTO.cs" />
     <Compile Include="DTO\MoodleTokenDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionResultDTO.cs" />
+    <Compile Include="DTO\SeminarDto.cs" />
+    <Compile Include="DTO\SeminarLicenseDto.cs" />
+    <Compile Include="DTO\SeminarSessionDto.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
+    <Compile Include="JsonNetResult.cs" />
     <Compile Include="LtiWindsorInstaller.cs" />
     <Compile Include="Models\ProxyToolPasswordModel.cs" />
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />
@@ -251,7 +261,6 @@
     <Compile Include="OAuth\Desire2Learn\WhoAmIUser.cs" />
     <Compile Include="OAuth\LtiOpenAuthSecurityManager.cs" />
     <Compile Include="OAuth\OAuthWebSecurityWrapper.cs" />
-    <Compile Include="OperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\Messages.es.Designer.cs">
       <DependentUpon>Messages.es.resx</DependentUpon>
@@ -272,13 +281,13 @@
     <None Include="Settings.StyleCop" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\libraries\trunk\csharp\AC\trunk\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj">
+      <Project>{b9eb6309-12ab-4e69-82a8-ac981abf728a}</Project>
+      <Name>Esynctraining.AdobeConnect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\ClientApp\Esynctraining.WebApi.Client\Esynctraining.WebApi.Client.csproj">
       <Project>{5c667552-0881-4554-b935-18e5025fe03f}</Project>
       <Name>Esynctraining.WebApi.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj">
-      <Project>{0c2e795b-3599-4019-a066-cbea82af1ef7}</Project>
-      <Name>MP4Service.Contract.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4E419CD8-BE17-40E0-B71B-CCA30699D758}</Project>
@@ -287,10 +296,6 @@
     <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
       <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
       <Name>EdugameCloud.Lti.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Esynctraining.Mp4Service.Tasks.Client\Esynctraining.Mp4Service.Tasks.Client.csproj">
-      <Project>{1237dff4-0362-487d-8353-a8405dd098c3}</Project>
-      <Name>Esynctraining.Mp4Service.Tasks.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -7,6 +7,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 
@@ -64,7 +65,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                 }
 
-                return Json(OperationResult.Success(result.Select(MeetingItemDto.Build)));
+                return Json(OperationResultWithData<IEnumerable<MeetingItemDto>>.Success(result.Select(MeetingItemDto.Build)));
             }
             catch (Exception ex)
             {

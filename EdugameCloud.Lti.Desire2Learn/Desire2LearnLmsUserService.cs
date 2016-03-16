@@ -10,6 +10,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.OAuth.Desire2Learn;
 using Esynctraining.Core.Providers;
 using EdugameCloud.Lti.Core;
+using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {
@@ -30,12 +31,12 @@ namespace EdugameCloud.Lti.Desire2Learn
         }
 
 
-        public override OperationResult<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
+        public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
         {
             string error;
             var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
-            return OperationResult<List<LmsUserDTO>>.Success(users);
+            return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,

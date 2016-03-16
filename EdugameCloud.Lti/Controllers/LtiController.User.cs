@@ -4,7 +4,7 @@
     using System.Web.Mvc;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
-
+    using Esynctraining.Core.Domain;
     public partial class LtiController : Controller
     {
         [HttpPost]
@@ -46,7 +46,7 @@
 
                 // TRICK: if user not found in LMS - return original record from client  (remove user from meeting participant list - user doesn't exist in LMS)
                 if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(new[] { updatedUser ?? user }));
+                    return Json(OperationResultWithData<LmsUserDTO[]>.Success(new[] { updatedUser ?? user }));
 
                 return Json(OperationResult.Error(error));
             }
@@ -96,7 +96,7 @@
                 }
 
                 if (string.IsNullOrEmpty(error))
-                    return Json(OperationResult.Success(id));
+                    return Json(OperationResultWithData<string>.Success(id));
 
                 return Json(OperationResult.Error(error));
             }

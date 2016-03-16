@@ -4,7 +4,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
     using EdugameCloud.Core.Domain.Entities;
-    using EdugameCloud.Core.Extensions;
+    using Esynctraining.Core.Extensions;
 
     using Esynctraining.Core.Extensions;
 
