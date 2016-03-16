@@ -121,7 +121,7 @@ namespace Esynctraining.AdobeConnect
 
             // if session was not updated correctly, it's sco would appear in the list anyway 
             // with wrong parameters(dates) => deleting just created session in case of unsuccessful update
-            if (!sessionSettingsResult.Success)
+            if (!sessionSettingsResult.Success && isNewSession)
             {
                 provider.DeleteSco(sessionSco.ScoId);
             }
