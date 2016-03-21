@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -10,6 +11,9 @@ namespace Esynctraining.AdobeConnect
 {
     public sealed class AdobeConnectAccountService : IAdobeConnectAccountService
     {
+        
+
+
         private readonly ILogger _logger;
 
 
@@ -65,7 +69,7 @@ namespace Esynctraining.AdobeConnect
             var provider = new AdobeConnectProvider(connectionDetails);
             {
                 LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
-                if (!result.Success)
+                if (result.User == null)
                 {
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
                     throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
@@ -105,7 +109,7 @@ namespace Esynctraining.AdobeConnect
                 {
                     Version = commonInfo.CommonInfo.Version,
                     TimeZoneShiftMinutes = commonInfo.CommonInfo.GetTimeZoneShiftMinutes(),
-
+                    TimeZoneId = ACDetailsDTO.GetTimezoneId(commonInfo.CommonInfo.TimeZoneId),
                     PasswordPolicies = ParsePasswordPolicies(fields),
                     Customization = ParseCustomization(fields, provider),
                 };
@@ -162,7 +166,7 @@ namespace Esynctraining.AdobeConnect
 
             return field.Value;
         }
-
+        
     }
 
 }
