@@ -7,6 +7,7 @@ using System.Text;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -29,9 +30,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
 
         public IEnumerable<SeminarLicenseDto> GetLicensesWithContent(IAdobeConnectProxy acProxy,
+            IEnumerable<LmsCourseMeeting> seminarRecords,
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany)
+            LmsCompany lmsCompany,
+            TimeZoneInfo timeZone)
         {
             var licenseDtos = new List<SeminarLicenseDto>();
 
@@ -42,21 +45,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var rooms = new List<SeminarDto>();
                 foreach (ScoContent seminar in seminars)
                 {
+                    LmsCourseMeeting meetingRecord = seminarRecords.FirstOrDefault(x => x.ScoId == seminar.ScoId);
+                    if (meetingRecord == null)
+                        continue;
+                    //.Where(x => seminarRecords.Any(sr => sr.ScoId == x.ScoId))
+
                     var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
 
-                    var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar);
+                    var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, timeZone);
+                    room.id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
+
                     room.Sessions = sessions.Select(x => new SeminarSessionDto
                     {
+                        // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
                         id = x.ScoId,
+
                         name = x.Name,
                         //start_date = x.BeginDate.ToString("yyyy-MM-dd"),
                         //start_time = x.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
-                        start_timestamp = (long)x.BeginDate.ConvertToUnixTimestamp(),
+                        start_timestamp = (long)x.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, x.BeginDate),
                         duration = (x.EndDate - x.BeginDate).ToString(@"h\:mm"),
                         summary = x.Description,
                         ac_room_url = x.UrlPath.Trim('/'),
                         is_editable = true,
-                        seminarRoomId = seminar.ScoId
+
+                        // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
+                        seminarRoomId = meetingRecord.Id.ToString(),
                     }).ToArray();
                     rooms.Add(room);
                 }
@@ -73,33 +87,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return licenseDtos;
         }
 
-        public OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, IAdobeConnectProxy provider)
+        public OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, 
+            IAdobeConnectProxy provider,
+            TimeZoneInfo timeZone)
         {
             FixDateTimeFields(seminarSessionDto);
-
-            string seminarScoId = seminarSessionDto.id;
-            //            var seminarInfo = userProvider.GetScoInfo(seminarScoId);
-
-            bool isNewSeminar = String.IsNullOrEmpty(seminarScoId);
 
             var updateItem = new Esynctraining.AdobeConnect.SeminarSessionDto
             {
                 Name = seminarSessionDto.name,
-                SeminarScoId = seminarSessionDto.seminarRoomId
+                SeminarScoId = seminarSessionDto.seminarRoomId,
+                ExpectedLoad = seminarSessionDto.ExpectedLoad, 
             };
+
             if (string.IsNullOrEmpty(seminarSessionDto.start_date) || string.IsNullOrEmpty(seminarSessionDto.start_time))
             {
                 updateItem.DateBegin = DateTime.Now;
                 updateItem.DateEnd = DateTime.Now.AddDays(1);
             }
+
+            bool isNewSeminar = string.IsNullOrEmpty(seminarSessionDto.id);
             if (!isNewSeminar)
             {
                 updateItem.SeminarSessionScoId = seminarSessionDto.id;
             }
-
-
+            
             DateTime dateBegin;
-
             if (DateTime.TryParse(seminarSessionDto.start_date + " " + seminarSessionDto.start_time, out dateBegin))
             {
                 updateItem.DateBegin = dateBegin;
@@ -118,12 +131,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 name = scoInfo.Name,
                 start_date = scoInfo.BeginDate.ToString("yyyy-MM-dd"),
                 start_time = scoInfo.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
-                start_timestamp = (long)scoInfo.BeginDate.ConvertToUnixTimestamp(),
+                start_timestamp = (long)scoInfo.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, scoInfo.BeginDate),
                 duration = (scoInfo.EndDate - scoInfo.BeginDate).ToString(@"h\:mm"),
                 summary = scoInfo.Description,
                 ac_room_url = scoInfo.UrlPath.Trim('/'),
-                is_editable = true,
-                seminarRoomId = seminarSessionDto.seminarRoomId
+                is_editable = scoInfo.BeginDate.ToUniversalTime() > DateTime.UtcNow,
+                seminarRoomId = seminarSessionDto.seminarRoomId,
             };
             return OperationResultWithData<SeminarSessionDto>.Success(newSessionDto);
         }
@@ -134,6 +147,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             LmsCompany lmsCompany,
             ScoContent seminar,
+            TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
             var psw = Stopwatch.StartNew();
@@ -173,13 +187,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // HACK: localization
                 //start_date = seminar.BeginDate.ToString("yyyy-MM-dd"),
                 //start_time = seminar.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
-                start_timestamp = (long)seminar.BeginDate.ConvertToUnixTimestamp(),
+                start_timestamp = (long)seminar.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, seminar.BeginDate),
                 duration = (seminar.EndDate - seminar.BeginDate).ToString(@"h\:mm"),
                 access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                 allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
-                type = (int)LmsMeetingType.Meeting,
+                type = (int)LmsMeetingType.Seminar,
                 office_hours = null,
                 reused = false,
 
@@ -220,6 +234,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 seminarSessionDto.start_date = seminarSessionDto.start_date.Substring(6, 4) + "-"
                                         + seminarSessionDto.start_date.Substring(0, 5);
             }
+        }
+        
+        private double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
+        {
+            if (timezone != null)
+            {
+                var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
+                return offset;
+            }
+
+            return 0;
         }
 
         //public OperationResult<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, IAdobeConnectProxy adminProvider,

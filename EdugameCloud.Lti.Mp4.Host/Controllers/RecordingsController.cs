@@ -47,7 +47,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         }
 
 
-        [Route("all")]
+        [Route("")]
         [HttpPost]
         public virtual async Task<OperationResultWithData<IEnumerable<RecordingWithMp4Dto>>> GetAllMeetingRecordings(RecordingsRequestDto input)
         {
@@ -57,12 +57,17 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var session = GetReadOnlySession(input.LmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+
+                Func<IRoomTypeFactory> getRoomTypeFactory =
+                    () => new RoomTypeFactory(ac, input.LmsMeetingType, IoC.Resolve<ISeminarService>());
 
                 IEnumerable<RecordingDTO> rawRecordings = RecordingsService.GetRecordings(
                     lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
+                    ac,
                     param.course_id,
-                    input.MeetingId);
+                    input.MeetingId,
+                    getRoomTypeFactory);
 
                 var mapper = mapConfig.CreateMapper();
                 List<RecordingWithMp4Dto> recordings = rawRecordings.Select(x => mapper.Map<RecordingWithMp4Dto>(x)).ToList();

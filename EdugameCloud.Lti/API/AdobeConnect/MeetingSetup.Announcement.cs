@@ -13,9 +13,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     {
         private static readonly Dictionary<LmsMeetingType, string> meetingNames = new Dictionary<LmsMeetingType, string>
         {
-            {LmsMeetingType.Meeting, "Adobe Connect"}, 
-            {LmsMeetingType.OfficeHours, "Office Hours"}, 
-            {LmsMeetingType.StudyGroup, "Study Group"}
+            { LmsMeetingType.Meeting, "Adobe Connect" },
+            { LmsMeetingType.OfficeHours, "Office Hours" },
+            { LmsMeetingType.StudyGroup, "Study Group" },
+            { LmsMeetingType.Seminar, "Seminar Room" }
         };
 
         #region Properties
@@ -107,6 +108,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return message;
                 case LmsMeetingType.StudyGroup:
                     return String.Format("You can join the meeting \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
+
+                case LmsMeetingType.Seminar:
+                    return String.Format("You can join the seminar \"{0}\" in your <a href='{1}'>Adobe Connect Conference section</a>.", meetingDto.name.Trim(), referrer ?? string.Empty);
             }
 
             return String.Empty;

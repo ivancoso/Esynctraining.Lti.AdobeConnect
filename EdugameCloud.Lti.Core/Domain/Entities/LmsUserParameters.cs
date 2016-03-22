@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Domain.Entities
 {
+    using System;
     using Esynctraining.Core.Domain.Entities;
 
     /// <summary>
@@ -47,7 +48,7 @@
         /// <summary>
         /// Gets or sets the last logged in.
         /// </summary>
-        public virtual string LastLoggedIn { get; set; }
+        public virtual DateTime LastLoggedIn { get; set; }
 
         #endregion
     }

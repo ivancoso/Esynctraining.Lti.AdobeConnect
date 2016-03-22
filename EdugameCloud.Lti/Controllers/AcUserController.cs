@@ -91,6 +91,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 var param = session.LtiSession.With(x => x.LtiParam);
+                // HACK: LmsMeetingType.Meeting param - not in use here
                 LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode

@@ -9,12 +9,12 @@ namespace EdugameCloud.Lti.Core.DTO
     [DataContract]
     public class RecordingDTO
     {
-        public RecordingDTO(Recording recording, string accountUrl)
+        public RecordingDTO(Recording recording, string accountUrl, TimeZoneInfo timezone)
         {
             id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
-            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
+            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
             duration = GetDurationWithoutMilliseconds(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
@@ -22,13 +22,13 @@ namespace EdugameCloud.Lti.Core.DTO
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
         }
 
-        public RecordingDTO(ScoContent recording, string accountUrl, bool isPublic)
+        public RecordingDTO(ScoContent recording, string accountUrl, bool isPublic, TimeZoneInfo timezone)
         {
             id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
-            duration = ConvertSecondsToTimeFormat(recording.Duration);
+            duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
@@ -151,8 +151,19 @@ namespace EdugameCloud.Lti.Core.DTO
                 t.Seconds);
         }
 
+        private static double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
+        {
+            if (timezone != null)
+            {
+                var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
+                return offset;
+            }
+
+            return 0;
+        }
+
         #endregion
-        
+
     }
 
 }

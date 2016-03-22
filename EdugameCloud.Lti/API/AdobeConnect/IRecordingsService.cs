@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
@@ -8,7 +9,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, int courseId, int id);
+        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, 
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
+            int courseId, 
+            int id,
+            Func<IRoomTypeFactory> getRoomTypeFactory);
 
         string UpdateRecording(LmsCompany lmsCompany, IAdobeConnectProxy provider, string id, bool isPublic,
             string password);

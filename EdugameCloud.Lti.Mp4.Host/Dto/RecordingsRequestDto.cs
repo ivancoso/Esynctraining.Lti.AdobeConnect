@@ -1,4 +1,5 @@
 ﻿using System.Runtime.Serialization;
+using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.Mp4.Host.Dto
 {
@@ -10,6 +11,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
 
         [DataMember(Name = "meetingId")]
         public int MeetingId { get; set; }
+
+        [DataMember(Name = "type")]
+        public LmsMeetingType LmsMeetingType { get; set; }
 
     }
 

@@ -141,8 +141,34 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("subtitle/{fileScoId:long:min(1)}")]
+        [HttpPost]
+        [Route("subtitle/{scoId:long:min(1)}")]
+        public OperationResultWithData<string> AccessVttFile(string scoId, [FromUri]string lmsProviderName)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+
+                string breezeToken;
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
+
+                return new SubtitleUtility(ac, logger, this).AccessVttFile(scoId,
+                    lmsCompany.AcServer,
+                    principal.PrincipalId,
+                    breezeToken);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("GetVttFile", ex);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [Route("subtitle/{fileScoId:long:min(1)}/content")]
         public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string lmsProviderName)
         {
             LmsCompany lmsCompany = null;
@@ -165,7 +191,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
         }
 
         [HttpPost]
-        [Route("subtitle/{fileScoId:long:min(1)}")]
+        [Route("subtitle/{fileScoId:long:min(1)}/content/save")]
         public Task<FileUploadResultDto> PostVttFile(string fileScoId, [FromUri]string lmsProviderName)
         {
             var session = GetReadOnlySession(lmsProviderName);

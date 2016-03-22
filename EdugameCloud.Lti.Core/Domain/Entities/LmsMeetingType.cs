@@ -20,6 +20,11 @@
         /// </summary>
         StudyGroup = 3,
 
+        /// <summary>
+        /// Seminar room
+        /// </summary>
+        Seminar = 4,
+
     }
 
 }

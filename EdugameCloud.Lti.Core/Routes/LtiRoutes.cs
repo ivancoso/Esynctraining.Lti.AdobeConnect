@@ -24,14 +24,14 @@
             routes.MapLowercaseRoute("UserParameters", "Lti/GetAuthenticationParameters", new { controller = "Lti", action = "GetAuthenticationParameters" });
 
             routes.MapLowercaseRoute("scheduled", "scheduled-actions/{action}", new { controller = "LtiSchedule" });
-            routes.MapLowercaseRoute("getusers", "Lti/User/GetAll", new { controller = "Lti", action = "GetUsers" });
-            routes.MapLowercaseRoute("updateuser", "Lti/User/Update", new { controller = "Lti", action = "UpdateUser" });
-            routes.MapLowercaseRoute("removefromacmeeting", "lti/user/removefrommeeting", new { controller = "Lti", action = "RemoveFromAcMeeting" });
+            routes.MapLowercaseRoute("getusers", "lti/users", new { controller = "Lti", action = "GetUsers" });
+            routes.MapLowercaseRoute("updateuser", "lti/users/update", new { controller = "Lti", action = "UpdateUser" });
+            routes.MapLowercaseRoute("removefromacmeeting", "lti/users/removefrommeeting", new { controller = "Lti", action = "RemoveFromAcMeeting" });
             
-            routes.MapLowercaseRoute("checkpass", "Lti/Settings/CheckPass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
-            routes.MapLowercaseRoute("savesettings", "Lti/Settings/Save", new { controller = "Lti", action = "SaveSettings" });
-            routes.MapLowercaseRoute("leavemeeting", "Lti/Meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });
-            routes.MapLowercaseRoute("setdefaults", "Lti/Meeting/SetDefaultACRoles", new { controller = "Lti", action = "SetDefaultRolesForNonParticipants" });
+            routes.MapLowercaseRoute("checkpass", "lti/settings/checkpass", new { controller = "Lti", action = "CheckPasswordBeforeJoin" });
+            routes.MapLowercaseRoute("savesettings", "lti/settings/save", new { controller = "Lti", action = "SaveSettings" });
+            routes.MapLowercaseRoute("leavemeeting", "lti/Meeting/Leave", new { controller = "Lti", action = "LeaveMeeting" });
+            routes.MapLowercaseRoute("setdefaults", "lti/Meeting/SetDefaultACRoles", new { controller = "Lti", action = "SetDefaultRolesForNonParticipants" });
             routes.MapLowercaseRoute("getmeetingattendance", "Lti/Meeting/Attendance", new { controller = "Lti", action = "GetAttendanceReport" });
             routes.MapLowercaseRoute("getmeetingsessions", "Lti/Meeting/Sessions", new { controller = "Lti", action = "GetSessionsReport" });
             routes.MapLowercaseRoute("updatemeeting", "Lti/Meeting/Update", new { controller = "Lti", action = "UpdateMeeting" });
@@ -40,24 +40,20 @@
             routes.MapLowercaseRoute("joinmeeting", "Lti/Meeting/Join", new { controller = "Lti", action = "JoinMeeting" });
             routes.MapLowercaseRoute("joinmeetingmobile", "Lti/Meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });
 
-            routes.MapLowercaseRoute("getrecordings", "Lti/Recording/GetAll", new { controller = "LtiRecording", action = "GetRecordings" });
-            routes.MapLowercaseRoute("deleterecording", "Lti/Recording/Delete/{id}", new { controller = "LtiRecording", action = "DeleteRecording", id = UrlParameter.Optional });
+            routes.MapLowercaseRoute("getrecordings", "lti/recordings", new { controller = "LtiRecording", action = "GetRecordings" });
+            routes.MapLowercaseRoute("deleterecording", "lti/recordings/delete/{id}", new { controller = "LtiRecording", action = "DeleteRecording", id = UrlParameter.Optional });
 
-            routes.MapLowercaseRoute("converttoMP4", "Lti/Recording/MakeMP4", new { controller = "LtiRecording", action = "ConvertToMP4" });
+            routes.MapLowercaseRoute("converttoMP4", "lti/recordings/MakeMP4", new { controller = "LtiRecording", action = "ConvertToMP4" });
 
-            //routes.MapLowercaseRoute("Mp4ServiceConvert", "lti/mp4/convert", new { controller = "Mp4Service", action = "Convert" });
-            //routes.MapLowercaseRoute("Mp4ServiceConvertWithSubtitles", "lti/mp4/convertWithSubtitles", new { controller = "Mp4Service", action = "ConvertWithSubtitles" });
-            //routes.MapLowercaseRoute("Mp4ServiceMp4Video", "lti/mp4/file/{scoId}", new { controller = "Mp4Service", action = "AccessFile", scoId = UrlParameter.Optional });
+            routes.MapLowercaseRoute("cancelMP4Converting", "lti/recordings/CancelMP4Converting/{recordingId}", new { controller = "LtiRecording", action = "CancelMP4Converting" });
+            routes.MapLowercaseRoute("joinrecording", "lti/recordings/join/{recordingUrl}", new { controller = "LtiRecording", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
+            routes.MapLowercaseRoute("editrecording", "lti/recordings/edit/{recordingId}", new { controller = "LtiRecording", action = "EditRecording", recordingId = UrlParameter.Optional });
+            routes.MapLowercaseRoute("getrecordingflv", "lti/recordings/GetFlv/{recordingUrl}", new { controller = "LtiRecording", action = "GetRecordingFlv", recordingUrl = UrlParameter.Optional });
+            routes.MapLowercaseRoute("updaterecording", "lti/recordings/share/{recordingUrl}", new { controller = "LtiRecording", action = "ShareRecording", recordingUrl = UrlParameter.Optional });
+            routes.MapLowercaseRoute("publishrecording", "lti/recordings/publish", new { controller = "LtiRecording", action = "PublishRecording" });
+            routes.MapLowercaseRoute("unpublishrecording", "lti/recordings/unpublish", new { controller = "LtiRecording", action = "UnpublishRecording" });
 
-            routes.MapLowercaseRoute("cancelMP4Converting", "Lti/Recording/CancelMP4Converting/{recordingId}", new { controller = "LtiRecording", action = "CancelMP4Converting" });
-            routes.MapLowercaseRoute("joinrecording", "Lti/Recording/Join/{recordingUrl}", new { controller = "LtiRecording", action = "JoinRecording", recordingUrl = UrlParameter.Optional });
-            routes.MapLowercaseRoute("editrecording", "Lti/Recording/Edit/{recordingId}", new { controller = "LtiRecording", action = "EditRecording", recordingId = UrlParameter.Optional });
-            routes.MapLowercaseRoute("getrecordingflv", "Lti/Recording/GetFlv/{recordingUrl}", new { controller = "LtiRecording", action = "GetRecordingFlv", recordingUrl = UrlParameter.Optional });
-            routes.MapLowercaseRoute("updaterecording", "Lti/Recording/Share/{recordingUrl}", new { controller = "LtiRecording", action = "ShareRecording", recordingUrl = UrlParameter.Optional });
-            routes.MapLowercaseRoute("publishrecording", "lti/recording/publish", new { controller = "LtiRecording", action = "PublishRecording" });
-            routes.MapLowercaseRoute("unpublishrecording", "lti/recording/unpublish", new { controller = "LtiRecording", action = "UnpublishRecording" });
-
-            routes.MapLowercaseRoute("gettemplates", "Lti/Template/GetAll", new { controller = "Lti", action = "GetTemplates" });
+            routes.MapLowercaseRoute("gettemplates", "lti/templates", new { controller = "Lti", action = "GetTemplates" });
 
             routes.MapLowercaseRoute("extjspage", "extjs/entry", new { controller = "Lti", action = "GetExtJsPage" });
 
@@ -78,7 +74,7 @@
             routes.MapLowercaseRoute("seminarsSessionEdit", "lti/seminars/sessions/edit", new { controller = "Seminar", action = "SaveSeminarSession" });
             routes.MapLowercaseRoute("seminarsSessionDelete", "lti/seminars/sessions/delete", new { controller = "Seminar", action = "DeleteSeminarSession" });
 
-            routes.MapLowercaseRoute("DefaultLtiAction", "Lti/{action}", new { controller = "Lti" });            
+            routes.MapLowercaseRoute("DefaultLtiAction", "lti/{action}", new { controller = "Lti" });            
         }
 
     }

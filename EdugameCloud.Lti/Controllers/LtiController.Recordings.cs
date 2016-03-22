@@ -12,6 +12,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -78,20 +79,25 @@ namespace EdugameCloud.Lti.Controllers
         }
         
         [HttpPost]
-        public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId)
+        public virtual JsonResult GetRecordings(string lmsProviderName, int meetingId, int type)
         {
             LmsCompany lmsCompany = null;
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;    
+                var param = session.LtiSession.LtiParam;
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+
+                Func<IRoomTypeFactory> getRoomTypeFactory =
+                    () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<ISeminarService>());
 
                 IEnumerable<RecordingDTO> recordings = RecordingsService.GetRecordings(
                     lmsCompany,
-                    this.GetAdobeConnectProvider(lmsCompany),
+                    ac,
                     param.course_id,
-                    meetingId);
+                    meetingId,
+                    getRoomTypeFactory);
 
                 if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
                 {
@@ -280,7 +286,8 @@ namespace EdugameCloud.Lti.Controllers
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
                 }
 
-                var recording = new RecordingDTO(scheduledRecording, lmsCompany.AcServer);
+                var timeZone = acAccountService.GetAccountDetails(adobeConnectProvider, IoC.Resolve<ICache>()).GetTimeZone();
+                var recording = new RecordingDTO(scheduledRecording, lmsCompany.AcServer, timeZone);
 
                 return Json(OperationResultWithData<RecordingDTO>.Success(recording));
             }

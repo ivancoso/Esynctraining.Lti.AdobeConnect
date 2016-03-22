@@ -239,6 +239,7 @@
     <Compile Include="DTO\PrincipalDto.cs" />
     <Compile Include="DTO\PrincipalInputDto.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
+    <Compile Include="DTO\SeminarSessionRecordingDto.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\TransactionInfoDto.cs" />
     <Compile Include="DTO\VariableDTO.cs" />

@@ -147,26 +147,26 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             }
             catch (AggregateException ex)
             {
-                logger.ErrorFormat(ex, "ProcessMp4-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId);
+                ProcessAggregateException(ex, string.Format("CheckStatus-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId), logger);
                 // TRICK: for error handling
                 task.Duration = -777;
             }
             catch (ApiException ex)
             {
-                logger.ErrorFormat(ex, "ProcessMp4-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId);
+                ProcessApiException(ex, string.Format("CheckStatus-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId), logger);
                 // TRICK: for error handling
                 task.Duration = -777;
             }
             catch (HttpRequestException ex)
             {
-                logger.ErrorFormat(ex, "ProcessMp4-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId);
+                logger.ErrorFormat(ex, "CheckStatus-mp4. License Key: {0}, ScoId:{1}", mp4LicenseKey, recordingScoId);
                 // TRICK: for error handling
                 task.Duration = -777;
             }
         }
 
 
-        private static OperationResult ProcessAggregateException(AggregateException ex, string baseMessage, ILogger logger)
+        public static OperationResult ProcessAggregateException(AggregateException ex, string baseMessage, ILogger logger)
         {
             logger.Error("Mp4ApiUtility AggregateException", ex);
             foreach (ApiException exception in ex.InnerExceptions.Where(x => x is ApiException))
@@ -183,7 +183,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             return OperationResult.Error(baseMessage + ex.Message);
         }
 
-        private static OperationResult ProcessApiException(ApiException ex, string baseMessage, ILogger logger)
+        public static OperationResult ProcessApiException(ApiException ex, string baseMessage, ILogger logger)
         {
             logger.Error("Mp4ApiUtility ApiException", ex);
 

@@ -44,7 +44,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
         {
             try
             {
-                string url = AccessSco(principalId, breezeToken, acDomain, scoId, _ac);
+                string url = AccessSco(principalId, breezeToken, acDomain, scoId, _ac, ".mp4");
 
                 return OperationResultWithData<string>.Success(url);
             }
@@ -59,11 +59,34 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                 return OperationResultWithData<string>.Error(ex.Message + ex.StackTrace);
             }
         }
-        
+
+        public OperationResultWithData<string> AccessVttFile(string scoId,
+            string acDomain,
+            string principalId,
+            string breezeToken)
+        {
+            try
+            {
+                string url = AccessSco(principalId, breezeToken, acDomain, scoId, _ac, ".html");
+
+                return OperationResultWithData<string>.Success(url);
+            }
+            catch (WarningMessageException ex)
+            {
+                return OperationResultWithData<string>.Error(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "AccessVttFile exception. sco-id:{0}. AC: {1}.", scoId, acDomain);
+
+                return OperationResultWithData<string>.Error(ex.Message + ex.StackTrace);
+            }
+        }
+
         public HttpResponseMessage GetVttFile(string principalId, string fileScoId)
         {
             try
-            { 
+            {
                 ScoInfo sco = DoGetSco(fileScoId, _ac, principalId);
                 FileEntry file = GetOriginalFileContent(sco, _ac);
                 if (file == null)
@@ -148,18 +171,19 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             string breezeToken,
             string adobeConnectDomain,
             string scoId,
-             IAdobeConnectProxy provider)
+            IAdobeConnectProxy provider,
+            string fileExtention)
         {
             ScoInfo scoInfo = DoGetSco(scoId, provider, principalId);
 
             var baseUrl = adobeConnectDomain + scoInfo.UrlPath;
 
-            return GetDownloadLink(adobeConnectDomain, provider.GetScoInfo(scoId).ScoInfo.UrlPath.Replace("/", ""), "mp4") + "&session=" + breezeToken;
+            return GetDownloadLink(adobeConnectDomain, provider.GetScoInfo(scoId).ScoInfo.UrlPath.Replace("/", ""), fileExtention) + "&session=" + breezeToken;
         }
 
-        private static string GetDownloadLink(string acServer, string downloadName, string format)
+        private static string GetDownloadLink(string acServer, string downloadName, string fileExtention)
         {
-            string fileName = downloadName.Substring(0, downloadName.Length - 3) + ".mp4";
+            string fileName = downloadName.Substring(0, downloadName.Length - 3) + fileExtention;
 
             return string.Format(
                 "{0}/{1}/output/{2}?download={2}",

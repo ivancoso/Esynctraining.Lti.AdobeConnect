@@ -1586,7 +1586,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     var result = new List<Principal>();
 
-                    foreach (var chunk in users.Chunk(100))
+                    foreach (var chunk in users.Chunk(50))
                     {
                         PrincipalCollectionResult acResult = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
                             ? provider.GetAllByEmail(chunk.Select(x => x.GetEmail()).Where(x => !string.IsNullOrWhiteSpace(x)))

@@ -119,7 +119,9 @@ namespace EdugameCloud.Lti.API
                                 List<PermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
                                 var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
-                                if (syncACUsers && meeting.LmsMeetingType == (int)LmsMeetingType.Meeting &&
+                                if (syncACUsers 
+                                    && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting || meeting.LmsMeetingType == (int)LmsMeetingType.Seminar)
+                                    &&
                                     (dbPrincipalIds.Count != meeting.MeetingRoles.Count 
                                     || dbPrincipalIds.Count != acPrincipalIds.Count
                                     || dbPrincipalIds.Any(x => acPrincipalIds.All(p => p != x))))

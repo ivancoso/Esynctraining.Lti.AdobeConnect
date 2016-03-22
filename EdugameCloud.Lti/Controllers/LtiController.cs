@@ -92,7 +92,7 @@
         {
             get { return IoC.Resolve<LmsProviderModel>(); }
         }
-
+        
         #region Constructors and Destructors
 
         public LtiController(
@@ -1225,13 +1225,19 @@
             {
                 sw = Stopwatch.StartNew();
 
-                seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider, 
-                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany);
+                IEnumerable<LmsCourseMeeting> seminarRecords = this.LmsCourseMeetingModel.GetSeminarsByCourseId(credentials.Id, param.course_id);
+
+                seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider,
+                    seminarRecords,
+                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.GetTimeZone());
                 sw.Stop();
                 if (trace != null)
                     trace.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
 
             }
+
+            //TRICK: we calc shift on serverside
+            acSettings.TimeZoneShiftMinutes = 0;
 
             string userFullName = param.lis_person_name_full;
             var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);

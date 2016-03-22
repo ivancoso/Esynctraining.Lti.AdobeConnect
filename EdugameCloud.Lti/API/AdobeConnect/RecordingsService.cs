@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using EdugameCloud.Lti.Core;
@@ -8,7 +9,9 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -30,7 +33,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, int courseId, int id)
+        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
+            int courseId, 
+            int id,
+            Func<IRoomTypeFactory> getRoomTypeFactory)
         {
             LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
 
@@ -39,22 +45,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return Enumerable.Empty<RecordingDTO>();
             }
 
+            var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+
             List<RecordingDTO> result;
             var meetingSco = meeting.GetMeetingScoId();
             var commonInfo = provider.GetCommonInfo().CommonInfo;
             if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
             {
-                result = GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, provider);
+                result = GetRecordingsLegacy(meetingSco, commonInfo.AccountUrl, timeZone, provider);
             }
 
-            result = GetRecordings(meetingSco, commonInfo.AccountUrl, provider);
+            var factory = getRoomTypeFactory();
+            var recordingsExtractor = factory.GetRecordingsExtractor();
+            result = recordingsExtractor.GetRecordings(meetingSco, commonInfo.AccountUrl, timeZone);
 
             ProcessPublishedFlag(lmsCompany, meeting, result);
 
             return result;
         }
 
-        private static List<RecordingDTO> GetRecordings(string meetingSco, string accountUrl, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordings(string meetingSco, 
+            string accountUrl,
+            TimeZoneInfo timeZone,
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             var apiRecordings = provider.GetRecordingsList(meetingSco);
@@ -70,7 +83,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // NOTE: not in use on client-site
                 //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
 
-                result.Add(new RecordingDTO(v, accountUrl)
+                result.Add(new RecordingDTO(v, accountUrl, timeZone)
                 {
                     is_public = isPublic,
 
@@ -80,7 +93,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, string accountUrl, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, 
+            string accountUrl,
+            TimeZoneInfo timeZone,
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             var result = new List<RecordingDTO>();
             ScoContentCollectionResult apiRecordings = provider.GetMeetingRecordings(new [] {meetingSco});
@@ -94,7 +110,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
                 }
 
-                result.Add(new RecordingDTO(v, accountUrl, isPublic));
+                result.Add(new RecordingDTO(v, accountUrl, isPublic, timeZone));
             }
 
             return result;

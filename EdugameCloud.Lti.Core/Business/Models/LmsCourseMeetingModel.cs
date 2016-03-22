@@ -256,11 +256,25 @@
             if (courseId == 0)
                 throw new ArgumentOutOfRangeException("courseId");
 
+            int seminars = (int)LmsMeetingType.Seminar;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
-                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId);
+                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId && x.LmsMeetingType != seminars);
             return this.Repository.FindAll(defaultQuery);
         }
-        
+
+        public IEnumerable<LmsCourseMeeting> GetSeminarsByCourseId(int companyLmsId, int courseId)
+        {
+            if (companyLmsId <= 0)
+                throw new ArgumentOutOfRangeException("companyLmsId");
+            if (courseId == 0)
+                throw new ArgumentOutOfRangeException("courseId");
+
+            int seminars = (int)LmsMeetingType.Seminar;
+            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
+                .Where(x => x.LmsCompanyId == companyLmsId && x.CourseId == courseId && x.LmsMeetingType == seminars);
+            return this.Repository.FindAll(defaultQuery);
+        }
+
         /// <summary>
         /// The get all by meeting id.
         /// </summary>

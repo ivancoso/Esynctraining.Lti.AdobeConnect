@@ -18,6 +18,7 @@ using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -31,7 +32,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static readonly string AcDateFormat = "yyyy-MM-ddTHH:mm"; // AdobeConnectProviderConstants.DateFormat
 
         #region Properties
-
+        
         private LmsCourseMeetingModel LmsCourseMeetingModel
         {
             get { return IoC.Resolve<LmsCourseMeetingModel>(); }
@@ -226,6 +227,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //);            
             //ret.AddRange(resultCollection.Where(x => x != null));
 
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+
             foreach (var meeting in meetings)
             {
                 MeetingDTO dto = this.GetMeetingDTOByScoInfo(
@@ -234,6 +237,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         param,
                         credentials,
                         meeting,
+                        timeZone,
                         trace);
 
                 if (dto != null)
@@ -268,7 +272,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         lmsUser,
                         param,
                         credentials,
-                        officeHoursMeetings);
+                        officeHoursMeetings,
+                        timeZone);
                     if (meetingDTO != null)
                     {
                         meetingDTO.is_disabled_for_this_course = true;
@@ -589,7 +594,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 // NOTE: for meeting we need users to add to AC meeting;
                 // For StudyGroup - to be sure we can get them on 2nd tab (and reuse them if retrieveLmsUsers==true)
-                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup))
+                if ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) 
+                    || (meeting.LmsMeetingType == (int)LmsMeetingType.StudyGroup)
+                    || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                 {
                     string error;
                     lmsUsers = this.UsersSetup.GetLMSUsers(lmsCompany,
@@ -699,7 +706,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
 
             string message = string.Empty;
-            if (isNewMeeting && (meeting.LmsMeetingType == (int)LmsMeetingType.Meeting))
+            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar)))
             {
                 List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out message);
                 
@@ -737,13 +744,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             sw = Stopwatch.StartNew();
 
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
                 lmsUser,
                 param,
                 lmsCompany,
-                result.ScoInfo,                
-                meeting);
+                result.ScoInfo,
+                meeting,
+                timeZone);
 
             if (retrieveLmsUsers)
             {
@@ -867,13 +877,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsUsers,
                 param);
 
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
                 lmsUser,
                 param,
                 credentials,
                 meetingSco.ScoInfo,
-                meeting);
+                meeting,
+                timeZone);
 
             CreateAnnouncement(
                     (LmsMeetingType)meeting.LmsMeetingType,
@@ -1057,7 +1069,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
-            var userParameter = paramList.OrderByDescending(p => p.LastLoggedIn ?? "0").First();
+            var userParameter = paramList.OrderByDescending(p => p.LastLoggedIn).First();
             LmsProvider lmsProvider = LmsProviderModel.GetById(userParameter.CompanyLms.LmsProviderId);
             return paramList.Any() ? new LmsUserParametersDTO(userParameter, lmsProvider) : null;
         }
@@ -1218,7 +1230,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             lmsUserParameters.Wstoken = userId;
-            lmsUserParameters.LastLoggedIn = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ssZ");
+            lmsUserParameters.LastLoggedIn = DateTime.UtcNow;
             lmsUserParameters.CourseName = courseName;
             lmsUserParameters.UserEmail = userEmail;
             lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
@@ -1515,6 +1527,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             LmsCompany lmsCompany,
             LmsCourseMeeting lmsCourseMeeting,
+            TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
             var psw = Stopwatch.StartNew();
@@ -1538,6 +1551,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsCompany,
                 result.ScoInfo,
                 lmsCourseMeeting,
+                timeZone,
                 trace);
         }
 
@@ -1549,6 +1563,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             ScoInfo meetingSco,
             LmsCourseMeeting lmsCourseMeeting, 
+            TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
             if (lmsCourseMeeting == null)
@@ -1634,7 +1649,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // HACK: localization
                 start_date = meetingSco.BeginDate.ToString("yyyy-MM-dd"),
                 start_time = meetingSco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
-                start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp(),
+                start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, meetingSco.BeginDate),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),
                 access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
                 allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
@@ -1646,6 +1661,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 audioProfileId = lmsCourseMeeting.AudioProfileId
             };
             return ret;
+        }
+
+        private TimeZoneInfo GetTimezoneShift(IAdobeConnectProxy acProxy, DateTime value)
+        {
+            var timezoneId = AcAccountService.GetAccountDetails(acProxy, IoC.Resolve<ICache>()).TimeZoneId;
+            if (timezoneId != null)
+            {
+                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+            }
+
+            return null;
+        }
+
+        private double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)
+        {
+            if (timezone != null)
+            {
+                var offset = timezone.GetUtcOffset(value).TotalMilliseconds;
+                return offset;
+            }
+
+            return 0;
         }
 
         /// <summary>

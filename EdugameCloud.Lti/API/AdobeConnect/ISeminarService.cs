@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
@@ -8,15 +9,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     public interface ISeminarService : Esynctraining.AdobeConnect.ISeminarService
     {
         IEnumerable<SeminarLicenseDto> GetLicensesWithContent(IAdobeConnectProxy acProxy,
+            IEnumerable<LmsCourseMeeting> seminarRecords,
             LmsUser lmsUser,
             LtiParamDTO param,
-            LmsCompany lmsCompany);
+            LmsCompany lmsCompany,
+            TimeZoneInfo timeZone);
 
-        //SeminarSessionDto GetSeminarSessionInfo(IAdobeConnectProxy provider, string seminarSessionId);
-
-        OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, IAdobeConnectProxy provider);
-
-        //OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, IAdobeConnectProxy adminProvider, IAdobeConnectProxy userProvider, string acUsername);
+        OperationResultWithData<SeminarSessionDto> SaveSeminarSession(SeminarSessionDto seminarSessionDto, 
+            IAdobeConnectProxy provider,
+            TimeZoneInfo timeZone);
 
     }
 

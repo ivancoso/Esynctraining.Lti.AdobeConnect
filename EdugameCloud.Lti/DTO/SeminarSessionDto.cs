@@ -34,6 +34,8 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool is_editable { get; set; }
+        
+        public int ExpectedLoad { get; set; }
 
     }
 

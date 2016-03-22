@@ -183,11 +183,16 @@
     <Compile Include="API\AdobeConnect\IFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
+    <Compile Include="API\AdobeConnect\IRoomTypeFactory.cs" />
     <Compile Include="API\AdobeConnect\ISeminarService.cs" />
     <Compile Include="API\AdobeConnect\IUsersSetup.cs" />
+    <Compile Include="API\AdobeConnect\RecordingsExtractor.cs" />
+    <Compile Include="API\AdobeConnect\RecordingsExtractorBase.cs" />
+    <Compile Include="API\AdobeConnect\RoomTypeFactory.cs" />
     <Compile Include="API\AdobeConnect\SeminarFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\MeetingFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\RecordingsService.cs" />
+    <Compile Include="API\AdobeConnect\SeminarRecordingsExtractor.cs" />
     <Compile Include="API\AdobeConnect\SeminarService.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsRoleService.cs" />
