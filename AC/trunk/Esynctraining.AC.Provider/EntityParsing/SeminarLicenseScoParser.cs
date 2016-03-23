@@ -32,8 +32,10 @@ namespace Esynctraining.AC.Provider.EntityParsing
                 QuotaId = xml.SelectSingleNodeValue("quota-id/text()"),
                 ScoId = xml.SelectSingleNodeValue("sco-id/text()"),
                 Type = xml.ParseAttributeEnum("type", ScoType.not_set),
-                UrlPath = xml.SelectSingleNodeValue("url-path/text()")
+                UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
             };
         }
+
     }
+
 }

@@ -66,8 +66,8 @@ namespace Esynctraining.AC.Provider
             return ResponseIsOk(doc, status)
                 ? new RecordingCollectionResult(status, RecordingCollectionParser.Parse(doc))
                 : new RecordingCollectionResult(status);
-
         }
+
 
         public RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId)
         {

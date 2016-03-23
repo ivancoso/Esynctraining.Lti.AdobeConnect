@@ -49,7 +49,7 @@ namespace Esynctraining.AC.Provider.Entities
         public string Name { get; set; }
 
         [XmlElement("quota")]
-        public int Quota { get; set; }
+        public int? Quota { get; set; }
 
         [XmlElement("quota-id")]
         public string QuotaId { get; set; }
