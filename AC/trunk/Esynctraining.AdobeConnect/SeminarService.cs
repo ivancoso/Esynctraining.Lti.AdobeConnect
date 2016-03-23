@@ -94,7 +94,7 @@ namespace Esynctraining.AdobeConnect
                 throw new ArgumentNullException("provider");
             if (sessionItem == null)
                 throw new ArgumentNullException("sessionItem");
-            if (sessionItem.ExpectedLoad.HasValue && (sessionItem.ExpectedLoad.Value <= 0))
+            if (sessionItem.ExpectedLoad <= 0)
                 throw new ArgumentException("ExpectedLoad should have positive value", "sessionItem");
 
             var isNewSession = string.IsNullOrWhiteSpace(sessionItem.SeminarSessionScoId);
@@ -103,7 +103,7 @@ namespace Esynctraining.AdobeConnect
                 ScoId = sessionItem.SeminarSessionScoId,
                 FolderId = sessionItem.SeminarScoId,
                 Type = ScoType.seminarsession,
-                Name = sessionItem.Name
+                Name = sessionItem.Name,
             };
 
             ScoInfoResult sessionScoResult = isNewSession ? provider.CreateSco(session) : provider.UpdateSco(session);
@@ -128,8 +128,11 @@ namespace Esynctraining.AdobeConnect
 
             var result = ProcessResult(sessionSettingsResult);
 
-            if (sessionItem.ExpectedLoad.HasValue)
-                provider.UpdateAclField(result.ScoId, AclFieldId.seminar_expected_load, sessionItem.ExpectedLoad.Value.ToString());
+            StatusInfo loadResult = provider.UpdateAclField(result.ScoId, AclFieldId.seminar_expected_load, sessionItem.ExpectedLoad.ToString());
+            if ((loadResult.Code != StatusCodes.ok) && isNewSession)
+            {
+                provider.DeleteSco(sessionSco.ScoId);
+            }
 
             return result;
         }

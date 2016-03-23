@@ -48,6 +48,13 @@
     <Compile Include="ACDetailsDTO.cs" />
     <Compile Include="CustomizationDTO.cs" />
     <Compile Include="ACPasswordPoliciesDTO.cs" />
+    <Compile Include="IRecordingDto.cs" />
+    <Compile Include="IRecordingDtoBuilder.cs" />
+    <Compile Include="IRoomTypeFactory.cs" />
+    <Compile Include="ISeminarSessionRecordingDto.cs" />
+    <Compile Include="Recordings\RecordingExtractor.cs" />
+    <Compile Include="Recordings\RecordingExtractorBase.cs" />
+    <Compile Include="Recordings\SeminarRecordingExtractor.cs" />
     <Compile Include="SeminarService.cs" />
     <Compile Include="AdobeConnectAccountService.cs" />
     <Compile Include="AdobeConnectProxy.cs" />

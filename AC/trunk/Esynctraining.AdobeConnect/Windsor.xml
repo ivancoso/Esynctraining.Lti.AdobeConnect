@@ -5,5 +5,9 @@
       service="Esynctraining.AdobeConnect.IAdobeConnectAccountService, Esynctraining.AdobeConnect"
       type="Esynctraining.AdobeConnect.AdobeConnectAccountService, Esynctraining.AdobeConnect"
       lifestyle="transient"></component>
+    <component
+      service="Esynctraining.AdobeConnect.ISeminarService, Esynctraining.AdobeConnect"
+      type="Esynctraining.AdobeConnect.SeminarService, Esynctraining.AdobeConnect"
+      lifestyle="transient"></component>
   </components>
 </configuration>

@@ -14,7 +14,7 @@ namespace Esynctraining.AdobeConnect
 
         public DateTime DateEnd { get; set; }
 
-        public int? ExpectedLoad { get; set; }
+        public int ExpectedLoad { get; set; }
 
     }
 
