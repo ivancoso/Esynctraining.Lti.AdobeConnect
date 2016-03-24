@@ -33,6 +33,8 @@ namespace Esynctraining.AdobeConnect.Recordings
                         throw new InvalidOperationException("ISeminarSessionRecordingDto expected");
                     seminarRecording.SeminarSessionId = seminarSession.ScoId;
                     seminarRecording.SeminarSessionName = seminarSession.Name;
+
+                    result.Add(dto);
                 }
             }
 
