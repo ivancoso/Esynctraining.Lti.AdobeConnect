@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 using Esynctraining.Mp4Service.Tasks.Client.Dto;
 using Esynctraining.WebApi.Client;
 
@@ -52,23 +53,23 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             }
         }
 
-        public static async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus(TaskClient mp4Client,
-            long recordingScoId,
-            Guid licenseKey,
-            Guid licenseKey2,
+        public static async Task<List<IMp4StatusContainer>> ProcessMp4(List<IMp4StatusContainer> recordings,
+            string mp4LicenseKey,
+            string mp4WithSubtitlesLicenseKey,
             ILogger logger)
         {
-            if (mp4Client == null)
-                throw new ArgumentNullException("mp4Client");
+            if (recordings == null)
+                throw new ArgumentNullException("recordings");
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            string mp4LicenseKey = licenseKey.ToString();
-            string mp4WithSubtitlesLicenseKey = licenseKey2.ToString();
             if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
             {
                 var mp4Tasks = new Dictionary<string, MP4Service.Contract.Client.DataTask>();
-                mp4Tasks.Add(recordingScoId.ToString(), new MP4Service.Contract.Client.DataTask());
+                foreach (var recordingScoId in recordings/*.Where(x => !x.is_mp4)*/.Select(x => x.Id))
+                {
+                    mp4Tasks.Add(recordingScoId, new MP4Service.Contract.Client.DataTask { Id = Guid.Empty });
+                }
 
                 var mp4 = new ConcurrentDictionary<string, MP4Service.Contract.Client.DataTask>(mp4Tasks);
 
@@ -76,6 +77,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                 {
                     await Task.Run(() => Parallel.ForEach(mp4, (recording) =>
                     {
+                        var mp4Client = IoC.Resolve<TaskClient>();
                         CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), long.Parse(recording.Key), recording.Value, logger);
 
                     })).ConfigureAwait(false);
@@ -83,19 +85,20 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
                 if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
                 {
-                    await Task.Run(() => Parallel.ForEach(mp4, (recording) =>
+                    var nonProcessed = mp4.Where(x => x.Value.Id == Guid.Empty);
+                    await Task.Run(() => Parallel.ForEach(nonProcessed, (recording) =>
                     {
+                        var mp4Client = IoC.Resolve<TaskClient>();
                         CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), long.Parse(recording.Key), recording.Value, logger);
 
-                    })).ConfigureAwait(false);                    
+                    })).ConfigureAwait(false);
                 }
 
-                Mp4TaskStatusDto result = null;
                 foreach (var item in mp4)
                 {
                     if (item.Value.Duration == -777)
                     {
-                        result = new Mp4TaskStatusDto
+                        recordings.FirstOrDefault(x => x.Id == item.Key).Mp4 = new Mp4TaskStatusDto
                         {
                             status = "MP4 Service Error",
                         };
@@ -105,25 +108,77 @@ namespace Esynctraining.Mp4Service.Tasks.Client
                     if (string.IsNullOrEmpty(item.Value.ScoId))
                         continue;
 
-                    result = new Mp4TaskStatusDto
+                    var recording = recordings.FirstOrDefault(x => x.Id == item.Key);
+                    recording.Mp4 = new Mp4TaskStatusDto
                     {
                         mp4_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Uploaded) ? item.Value.UploadScoId : null,
                         cc_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Transcripted) ? item.Value.TranscriptScoId : null,
                         status = item.Value.Status.ToString(),
                     };
                 }
-                return OperationResultWithData<Mp4TaskStatusDto>.Success(result);
+
             }
-            return OperationResultWithData<Mp4TaskStatusDto>.Error("No MP4 license found");
+
+            return recordings;
         }
 
-        public static void CheckStatus(TaskClient mp4Client, Guid mp4LicenseKey, long recordingScoId, MP4Service.Contract.Client.DataTask task,
+        public static async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus(TaskClient mp4Client,
+            long recordingScoId,
+            Guid licenseKey,
+            Guid licenseKey2,
             ILogger logger)
         {
             if (mp4Client == null)
                 throw new ArgumentNullException("mp4Client");
+            if (string.IsNullOrWhiteSpace("recordingScoId"))
+                throw new ArgumentException("recordingScoId can't be empty", "recordingScoId");
             if (logger == null)
                 throw new ArgumentNullException("logger");
+
+            string mp4LicenseKey = licenseKey.ToString();
+            string mp4WithSubtitlesLicenseKey = licenseKey2.ToString();
+            if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+            {
+                var status = new MP4Service.Contract.Client.DataTask
+                {
+                    Id = Guid.Empty,
+                };
+
+                if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
+                {
+                    CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), recordingScoId, status, logger);
+                }
+
+                if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey) && (status.Id == Guid.Empty))
+                {
+                    CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), recordingScoId, status, logger);
+                }
+                
+                if (status.Duration == -777)
+                {
+                    return OperationResultWithData<Mp4TaskStatusDto>.Success(new Mp4TaskStatusDto
+                    {
+                        status = "MP4 Service Error",
+                    });
+                }
+                
+                return OperationResultWithData<Mp4TaskStatusDto>.Success(new Mp4TaskStatusDto
+                {
+                    mp4_sco_id = (status.Status >= MP4Service.Contract.Client.TaskStatus.Uploaded) ? status.UploadScoId : null,
+                    cc_sco_id = (status.Status >= MP4Service.Contract.Client.TaskStatus.Transcripted) ? status.TranscriptScoId : null,
+                    status = status.Status.ToString(),
+                });
+            }
+            return OperationResultWithData<Mp4TaskStatusDto>.Error("No MP4 license found");
+        }
+
+        private static void CheckStatus(TaskClient mp4Client, Guid mp4LicenseKey, long recordingScoId, MP4Service.Contract.Client.DataTask task,
+            ILogger logger)
+        {
+            //if (mp4Client == null)
+            //    throw new ArgumentNullException("mp4Client");
+            //if (logger == null)
+            //    throw new ArgumentNullException("logger");
 
             try
             {
@@ -168,6 +223,11 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
         public static OperationResult ProcessAggregateException(AggregateException ex, string baseMessage, ILogger logger)
         {
+            if (ex == null)
+                throw new ArgumentNullException("ex");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
             logger.Error("Mp4ApiUtility AggregateException", ex);
             foreach (ApiException exception in ex.InnerExceptions.Where(x => x is ApiException))
             {
@@ -185,6 +245,11 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
         public static OperationResult ProcessApiException(ApiException ex, string baseMessage, ILogger logger)
         {
+            if (ex == null)
+                throw new ArgumentNullException("ex");
+            if (logger == null)
+                throw new ArgumentNullException("logger");
+
             logger.Error("Mp4ApiUtility ApiException", ex);
 
             return OperationResult.Error(baseMessage + (ex.ErrorDetails != null ? ex.ErrorDetails.ToString() : ex.Message));

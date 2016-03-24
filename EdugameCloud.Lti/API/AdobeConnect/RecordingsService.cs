@@ -9,6 +9,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Utils;
@@ -33,7 +34,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
 
-        public IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
+        public IEnumerable<IRecordingDto> GetRecordings(LmsCompany lmsCompany, Esynctraining.AdobeConnect.IAdobeConnectProxy provider, 
             int courseId, 
             int id,
             Func<IRoomTypeFactory> getRoomTypeFactory)
@@ -47,7 +48,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
 
-            List<RecordingDTO> result;
+            IEnumerable<IRecordingDto> result;
             var meetingSco = meeting.GetMeetingScoId();
             var commonInfo = provider.GetCommonInfo().CommonInfo;
             if (commonInfo.MajorVersion <= 9 && commonInfo.MinorVersion < 1)
@@ -56,8 +57,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             var factory = getRoomTypeFactory();
-            var recordingsExtractor = factory.GetRecordingsExtractor();
-            result = recordingsExtractor.GetRecordings(meetingSco, commonInfo.AccountUrl, timeZone);
+            var recordingsExtractor = factory.GetRecordingExtractor();
+            result = recordingsExtractor.GetRecordings(factory.GetRecordingDtoBuilder(), meetingSco, commonInfo.AccountUrl, timeZone);
 
             ProcessPublishedFlag(lmsCompany, meeting, result);
 
@@ -85,7 +86,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 result.Add(new RecordingDTO(v, accountUrl, timeZone)
                 {
-                    is_public = isPublic,
+                    IsPublic = isPublic,
 
                 });
             }
@@ -116,15 +117,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static void ProcessPublishedFlag(LmsCompany lmsCompany, LmsCourseMeeting meeting, List<RecordingDTO> records)
+        private static void ProcessPublishedFlag(LmsCompany lmsCompany, LmsCourseMeeting meeting, IEnumerable<IRecordingDto> records)
         {
             if (lmsCompany.AutoPublishRecordings)
             {
-                records.ForEach(x => x.published = true);
+                foreach (var item in records)
+                    item.Published = true;
             }
             else
             {
-                records.ForEach(x => x.published = meeting.MeetingRecordings.Any(r => r.ScoId == x.id));
+                foreach (var item in records)
+                    item.Published = meeting.MeetingRecordings.Any(r => r.ScoId == item.Id);
             }
         }
 
@@ -158,7 +161,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
-                throw new WarningMessageException(string.Format("No user with id {0} found in the database.",
+                throw new Core.WarningMessageException(string.Format("No user with id {0} found in the database.",
                     param.lms_user_id));
             }
 
@@ -173,7 +176,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else
             {
-                throw new WarningMessageException(string.Format(
+                throw new Core.WarningMessageException(string.Format(
                     "No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty));
             }
 

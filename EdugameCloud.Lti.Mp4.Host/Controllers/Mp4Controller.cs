@@ -167,9 +167,32 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("subtitle/{fileScoId:long:min(1)}")]
+        public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string lmsProviderName)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+
+                string breezeToken;
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
+
+                return new SubtitleUtility(ac, logger, this).GetVttFile(principal.PrincipalId, fileScoId);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("GetVttFile", ex);
+                throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            }
+        }
+
         [HttpPost]
         [Route("subtitle/{fileScoId:long:min(1)}/content")]
-        public HttpResponseMessage GetVttFile(string fileScoId, [FromUri]string lmsProviderName)
+        public HttpResponseMessage GetVttFileViaPost(string fileScoId, [FromUri]string lmsProviderName)
         {
             LmsCompany lmsCompany = null;
             try

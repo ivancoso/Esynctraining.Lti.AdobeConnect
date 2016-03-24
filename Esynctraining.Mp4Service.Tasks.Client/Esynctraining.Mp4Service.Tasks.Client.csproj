@@ -65,6 +65,7 @@
     <Compile Include="Dto\FileDto.cs" />
     <Compile Include="Dto\FileEntry.cs" />
     <Compile Include="Dto\FileUploadResultDto.cs" />
+    <Compile Include="Dto\IMp4StatusContainer.cs" />
     <Compile Include="Dto\Mp4TaskStatusDto.cs" />
     <Compile Include="LicenseClient.cs" />
     <Compile Include="StatisticsClient.cs" />

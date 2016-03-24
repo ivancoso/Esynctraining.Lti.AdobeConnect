@@ -14,6 +14,7 @@ using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Mp4.Host.Dto;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -29,6 +30,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     public class RecordingsController : BaseController
     {
         private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDTO, RecordingWithMp4Dto>());
+        private static readonly MapperConfiguration seminarMapConfig = new MapperConfiguration(cfg => cfg.CreateMap<SeminarSessionRecordingDto, SeminarRecordingWithMp4Dto>());
 
 
         private IRecordingsService RecordingsService
@@ -49,7 +51,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [Route("")]
         [HttpPost]
-        public virtual async Task<OperationResultWithData<IEnumerable<RecordingWithMp4Dto>>> GetAllMeetingRecordings(RecordingsRequestDto input)
+        public virtual async Task<OperationResultWithData<IEnumerable<IMp4StatusContainer>>> GetAllMeetingRecordings(RecordingsRequestDto input)
         {
             LmsCompany lmsCompany = null;
             try
@@ -60,101 +62,40 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
-                    () => new RoomTypeFactory(ac, input.LmsMeetingType, IoC.Resolve<ISeminarService>());
+                    () => new RoomTypeFactory(ac, (LmsMeetingType)int.Parse(input.LmsMeetingType), IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                IEnumerable<RecordingDTO> rawRecordings = RecordingsService.GetRecordings(
+                IEnumerable<IRecordingDto> rawRecordings = RecordingsService.GetRecordings(
                     lmsCompany,
                     ac,
                     param.course_id,
                     input.MeetingId,
                     getRoomTypeFactory);
 
-                var mapper = mapConfig.CreateMapper();
-                List<RecordingWithMp4Dto> recordings = rawRecordings.Select(x => mapper.Map<RecordingWithMp4Dto>(x)).ToList();
+                var smap = seminarMapConfig.CreateMapper();
+                var map = mapConfig.CreateMapper();
+
+                IEnumerable<RecordingWithMp4Dto> recordings =
+                    ((LmsMeetingType)int.Parse(input.LmsMeetingType) == LmsMeetingType.Seminar)
+                    ? rawRecordings.Select(x => smap.Map<SeminarRecordingWithMp4Dto>(x))
+                    : rawRecordings.Select(x => map.Map<RecordingWithMp4Dto>(x));
 
                 if (!new LmsRoleService(Settings).IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
                 {
-                    recordings = recordings.Where(x => x.published).ToList();
+                    recordings = recordings.Where(x => x.Published).ToList();
                 }
-                
-                string mp4LicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
-                string mp4WithSubtitlesLicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
-                if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
-                {
-                    var mp4Tasks = new Dictionary<string, MP4Service.Contract.Client.DataTask>();
-                    foreach (var recordingScoId in recordings.Where(x => !x.is_mp4).Select(x => x.id))
-                    {
-                        mp4Tasks.Add(recordingScoId, new MP4Service.Contract.Client.DataTask());
-                    }
+                List<IMp4StatusContainer> 
 
-                    var mp4 = new ConcurrentDictionary<string, MP4Service.Contract.Client.DataTask>(mp4Tasks);
+                result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
+                    lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey),
+                    lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey),
+                    logger);
 
-                    if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
-                    {
-                        //foreach (var recording in mp4)
-                        //Parallel.ForEach(mp4, (recording) =>
-                        //{
-                        //    var mp4Client = IoC.Resolve<TaskClient>();
-                        //    Mp4ApiUtility.CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), long.Parse(recording.Key), recording.Value, logger);
-
-                        //});
-                        await Task.Run(() => Parallel.ForEach(mp4, (recording) =>
-                        {
-                            var mp4Client = IoC.Resolve<TaskClient>();
-                            Mp4ApiUtility.CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), long.Parse(recording.Key), recording.Value, logger);
-
-                        })).ConfigureAwait(false);
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
-                    {
-                        //foreach (var recording in mp4)
-                        //Parallel.ForEach(mp4, (recording) =>
-                        //{
-                        //    var mp4Client = IoC.Resolve<TaskClient>();
-                        //    Mp4ApiUtility.CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), long.Parse(recording.Key), recording.Value, logger);
-
-                        //});
-
-                        await Task.Run(() => Parallel.ForEach(mp4, (recording) =>
-                        {
-                            var mp4Client = IoC.Resolve<TaskClient>();
-                            Mp4ApiUtility.CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), long.Parse(recording.Key), recording.Value, logger);
-
-                        })).ConfigureAwait(false);
-                    }
-
-                    foreach (var item in mp4)
-                    {
-                        if (item.Value.Duration == -777)
-                        {
-                            recordings.FirstOrDefault(x => x.id == item.Key).Mp4 = new Mp4TaskStatusDto
-                            {
-                                status = "MP4 Service Error",
-                            };
-                            continue;
-                        }
-
-                        if (string.IsNullOrEmpty(item.Value.ScoId))
-                            continue;
-
-                        var recording = recordings.FirstOrDefault(x => x.id == item.Key);
-                        recording.Mp4 = new Mp4TaskStatusDto
-                        {
-                            mp4_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Uploaded) ? item.Value.UploadScoId : null,
-                            cc_sco_id = (item.Value.Status >= MP4Service.Contract.Client.TaskStatus.Transcripted) ? item.Value.TranscriptScoId : null,
-                            status = item.Value.Status.ToString(),
-                        };
-                    }
-
-                }
-
-                return OperationResultWithData<IEnumerable<RecordingWithMp4Dto>>.Success(recordings);
+                return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Success(result);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("MP4-GetRecordings", lmsCompany, ex);
-                return OperationResultWithData<IEnumerable<RecordingWithMp4Dto>>.Error(errorMessage);
+                string errorMessage = GetOutputErrorMessage("MP4-GetAllMeetingRecordings", lmsCompany, ex);
+                return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Error(errorMessage);
             }
         }
 

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IRecordingsService
     {
-        IEnumerable<RecordingDTO> GetRecordings(LmsCompany lmsCompany, 
+        IEnumerable<IRecordingDto> GetRecordings(LmsCompany lmsCompany, 
             Esynctraining.AdobeConnect.IAdobeConnectProxy provider,
             int courseId, 
             int id,

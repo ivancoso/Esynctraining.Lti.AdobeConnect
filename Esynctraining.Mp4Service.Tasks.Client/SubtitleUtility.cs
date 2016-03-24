@@ -42,6 +42,15 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             string principalId, 
             string breezeToken)
         {
+            if (string.IsNullOrEmpty(scoId))
+                throw new ArgumentException("scoId can't be empty", "scoId");
+            if (string.IsNullOrEmpty(acDomain))
+                throw new ArgumentException("acDomain can't be empty", "acDomain");
+            if (string.IsNullOrEmpty(principalId))
+                throw new ArgumentException("principalId can't be empty", "principalId");
+            if (string.IsNullOrEmpty(breezeToken))
+                throw new ArgumentException("breezeToken can't be empty", "breezeToken");
+
             try
             {
                 string url = AccessSco(principalId, breezeToken, acDomain, scoId, _ac, ".mp4");
@@ -158,16 +167,35 @@ namespace Esynctraining.Mp4Service.Tasks.Client
         }
 
 
-        private static ScoInfo DoGetSco(string scoId, IAdobeConnectProxy ac, string principalId)
+        private ScoInfo DoGetSco(string scoId, IAdobeConnectProxy ac, string principalId)
         {
             // check is user already has read permission!!!
             // TODO: setup only if source recording is accessible??
-            ac.UpdateScoPermissionForPrincipal(scoId, principalId, MeetingPermissionId.view);
+            //  ac.UpdateScoPermissionForPrincipal(scoId, principalId, MeetingPermissionId.view);
+            var sco = ac.GetScoInfo(scoId);
+            if (sco.Status.Code == StatusCodes.no_access && sco.Status.SubCode == StatusSubCodes.denied)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("Access denied.");
+            }
+            if (sco.Status.Code == StatusCodes.no_data && sco.Status.SubCode == StatusSubCodes.not_set)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("File not found in Adobe Connect.");
+            }
+            else if (!sco.Success)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+                 sco.Status.GetErrorInfo(),
+                 scoId);                
+                throw new InvalidOperationException(msg);
+            }
 
-            return ac.GetScoInfo(scoId).ScoInfo;
+            return sco.ScoInfo;
         }
 
-        private static string AccessSco(string principalId,
+        private string AccessSco(string principalId,
             string breezeToken,
             string adobeConnectDomain,
             string scoId,

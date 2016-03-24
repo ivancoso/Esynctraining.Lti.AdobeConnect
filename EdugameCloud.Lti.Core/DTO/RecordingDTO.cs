@@ -3,15 +3,16 @@ using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
 using Esynctraining.Core.Extensions;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
-    public class RecordingDTO
+    public class RecordingDTO : IRecordingDto
     {
         public RecordingDTO(Recording recording, string accountUrl, TimeZoneInfo timezone)
         {
-            id = recording.ScoId;
+            Id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
@@ -24,7 +25,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         public RecordingDTO(ScoContent recording, string accountUrl, bool isPublic, TimeZoneInfo timezone)
         {
-            id = recording.ScoId;
+            Id = recording.ScoId;
             name = recording.Name;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
@@ -32,7 +33,7 @@ namespace EdugameCloud.Lti.Core.DTO
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
-            is_public = isPublic;
+            IsPublic = isPublic;
         }
 
         public RecordingDTO() { }
@@ -69,8 +70,8 @@ namespace EdugameCloud.Lti.Core.DTO
         //[DataMember]
         //public string end_date { get; set; }
         
-        [DataMember]
-        public string id { get; set; }
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
         
         [DataMember]
         public string name { get; set; }
@@ -78,14 +79,14 @@ namespace EdugameCloud.Lti.Core.DTO
         [DataMember]
         public string url { get; set; }
         
-        [DataMember]
-        public bool is_public { get; set; }
+        [DataMember(Name = "is_public")]
+        public bool IsPublic { get; set; }
 
         //[DataMember]
         //public string password { get; set; }
 
-        [DataMember]
-        public bool published { get; set; }
+        [DataMember(Name = "published")]
+        public bool Published { get; set; }
         
         #region methods
 

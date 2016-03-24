@@ -47,7 +47,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
             using (var client = BuildClient(_baseUrl))
             {
-                HttpResponseMessage response = await client.GetAsync(url);
+                HttpResponseMessage response = await client.GetAsync(url).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<MP4Service.Contract.Client.DataTask>();
@@ -68,7 +68,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
             using (var client = BuildClient(_baseUrl))
             {
-                HttpResponseMessage response = await client.GetAsync(string.Format("licenses/{0}", licenseId));
+                HttpResponseMessage response = await client.GetAsync(string.Format("licenses/{0}", licenseId)).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     return await response.Content.ReadAsAsync<MP4Service.Contract.Client.License>();

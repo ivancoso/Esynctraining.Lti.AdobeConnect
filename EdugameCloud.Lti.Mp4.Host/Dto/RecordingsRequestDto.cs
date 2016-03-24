@@ -9,12 +9,12 @@ namespace EdugameCloud.Lti.Mp4.Host.Dto
         [DataMember(Name = "lmsProviderName")]
         public string LmsProviderName { get; set; }
 
+        [DataMember(Name = "type")]
+        public string LmsMeetingType { get; set; }
+
         [DataMember(Name = "meetingId")]
         public int MeetingId { get; set; }
-
-        [DataMember(Name = "type")]
-        public LmsMeetingType LmsMeetingType { get; set; }
-
+        
     }
 
 }

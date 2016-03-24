@@ -1,4 +1,7 @@
-﻿using EdugameCloud.Lti.Domain.Entities;
+﻿using System;
+using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.AdobeConnect;
+using Esynctraining.AdobeConnect.Recordings;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -8,6 +11,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly Esynctraining.AdobeConnect.IAdobeConnectProxy provider;
         private readonly ISeminarService seminarService;
 
+
         public RoomTypeFactory(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsMeetingType roomType, ISeminarService seminarService)
         {
             this.provider = provider;
@@ -15,15 +19,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             this.seminarService = seminarService;
         }
 
-        public RecordingsExtractorBase GetRecordingsExtractor()
+
+        public RecordingExtractorBase GetRecordingExtractor()
         {
             switch (roomType)
             {
                 case LmsMeetingType.Seminar:
-                    return new SeminarRecordingsExtractor(provider, seminarService);
+                    return new SeminarRecordingExtractor(provider, seminarService);
                 default:
-                    return new RecordingsExtractor(provider);
+                    return new RecordingExtractor(provider);
             }
         }
+        
+        public IRecordingDtoBuilder GetRecordingDtoBuilder()
+        {
+            switch (roomType)
+            {
+                case LmsMeetingType.Seminar:
+                    return new SeminarRecordingDtoBuilder();
+                default:
+                    return new RecordingDtoBuilder();
+            }
+        }
+
     }
+
 }
