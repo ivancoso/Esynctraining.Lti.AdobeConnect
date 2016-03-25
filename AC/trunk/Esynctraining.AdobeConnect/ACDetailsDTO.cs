@@ -119,12 +119,9 @@ namespace Esynctraining.AdobeConnect
 
         public void SetTimezoneShift(TimeZoneInfo timezone)
         {
-            if (timezone != null)
-            {
-                timezoneShiftInMinutes = Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes);
-            }
-
-            timezoneShiftInMinutes = 0;
+            timezoneShiftInMinutes = timezone != null 
+                ? Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes) 
+                : 0;
         }
 
         [DataMember(Name = "version")]
