@@ -31,6 +31,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     MobileAppPackage = xml.SelectSingleNodeValue("mobile-app-package/text()"),
                     Url = xml.SelectSingleNodeValue("url/text()"),
                     TimeZoneId = int.Parse(xml.SelectSingleNodeValue("@time-zone-id")),
+                    TimeZoneJavaId = xml.SelectSingleNodeValue("@time-zone-java-id"),
                     Locale = xml.SelectSingleNodeValue("@locale"),
                 };
 
