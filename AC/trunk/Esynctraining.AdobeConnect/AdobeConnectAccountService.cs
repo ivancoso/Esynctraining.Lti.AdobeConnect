@@ -101,13 +101,15 @@ namespace Esynctraining.AdobeConnect
 
                 //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
                 
-                return new ACDetailsDTO
+                var dto = new ACDetailsDTO
                 {
                     Version = commonInfo.CommonInfo.Version,
-                    TimeZoneInfo = GetTimeZone(commonInfo.CommonInfo),
                     PasswordPolicies = ParsePasswordPolicies(fields),
                     Customization = ParseCustomization(fields, provider),
                 };
+                var timeZone = GetTimeZone(commonInfo.CommonInfo);
+                dto.SetTimeZone(timeZone);
+                return dto;
             }
 
             _logger.Error("GetAccountDetails. Account is NULL");

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
 
 namespace Esynctraining.AdobeConnect
 {
@@ -105,6 +104,29 @@ namespace Esynctraining.AdobeConnect
 
         #endregion TimeZones
 
+        private TimeZoneInfo timeZoneInfo;
+        private int timezoneShiftInMinutes;
+
+        public TimeZoneInfo GetTimeZone()
+        {
+            return timeZoneInfo;
+        }
+
+        public void SetTimeZone(TimeZoneInfo tzInfo)
+        {
+            timeZoneInfo = tzInfo;
+        }
+
+        public void SetTimezoneShift(TimeZoneInfo timezone)
+        {
+            if (timezone != null)
+            {
+                timezoneShiftInMinutes = Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes);
+            }
+
+            timezoneShiftInMinutes = 0;
+        }
+
         [DataMember(Name = "version")]
         public string Version { get; set; }
 
@@ -112,9 +134,11 @@ namespace Esynctraining.AdobeConnect
         public int MaxMeetingNameLength { get; set; }
 
         [DataMember(Name = "timeZoneShiftMinutes")]
-        public int TimeZoneShiftMinutes => Convert.ToInt32(TimeZoneInfo.BaseUtcOffset.TotalMinutes);
-        
-        [JsonIgnore]
+        public int TimeZoneShiftMinutes
+        {
+            get { return timezoneShiftInMinutes; }
+        }
+
         public TimeZoneInfo TimeZoneInfo { get; set; }
 
         [DataMember(Name = "passwordPolicies")]
