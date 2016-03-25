@@ -107,11 +107,6 @@ namespace Esynctraining.AdobeConnect
         private TimeZoneInfo timeZoneInfo;
         private int timezoneShiftInMinutes;
 
-        public TimeZoneInfo GetTimeZone()
-        {
-            return timeZoneInfo;
-        }
-
         public void SetTimeZone(TimeZoneInfo tzInfo)
         {
             timeZoneInfo = tzInfo;
