@@ -227,7 +227,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //);            
             //ret.AddRange(resultCollection.Where(x => x != null));
 
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
 
             foreach (var meeting in meetings)
             {
@@ -744,7 +744,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             
             sw = Stopwatch.StartNew();
 
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
 
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
@@ -877,7 +877,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 lmsUsers,
                 param);
 
-            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+            TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
                 lmsUser,
@@ -1665,13 +1665,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private TimeZoneInfo GetTimezoneShift(IAdobeConnectProxy acProxy, DateTime value)
         {
-            var timezoneId = AcAccountService.GetAccountDetails(acProxy, IoC.Resolve<ICache>()).TimeZoneId;
-            if (timezoneId != null)
-            {
-                return TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
-            }
-
-            return null;
+            return AcAccountService.GetAccountDetails(acProxy, IoC.Resolve<ICache>()).TimeZoneInfo;
         }
 
         private double GetTimezoneShift(TimeZoneInfo timezone, DateTime value)

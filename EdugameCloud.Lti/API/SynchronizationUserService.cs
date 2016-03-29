@@ -164,16 +164,16 @@ namespace EdugameCloud.Lti.API
                             lmsUserDto.GetFirstName(),
                             lmsUserDto.GetLastName(), lmsCompany);
                     }
-                    catch (InvalidOperationException e)
+                    catch (Exception ex)
                     {
-                        logger.Error(e.ToString());
+                        logger.Error("SyncUsers - GetOrCreatePrincipal", ex);
                     }
                     dbUser = new LmsUser
                     {
                         LmsCompany = lmsCompany,
                         Username = login,
                         UserId = lmsUserDto.lti_id ?? lmsUserDto.id,
-                        PrincipalId = principal != null ? principal.PrincipalId : null
+                        PrincipalId = principal != null ? principal.PrincipalId : null,
                     };
                     newUsers.Add(dbUser);
                     logger.InfoFormat(

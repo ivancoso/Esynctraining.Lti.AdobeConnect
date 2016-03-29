@@ -250,7 +250,10 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            logger.Error("Mp4ApiUtility ApiException", ex);
+            logger.ErrorFormat(ex, "Mp4ApiUtility ApiException. Message:{0}. ErrorDetails:{1}. Response.Content:{2}.",
+                ex.Message,
+                ex.ErrorDetails.ToString(), 
+                ex.Response.Content.ReadAsStringAsync().Result);
 
             return OperationResult.Error(baseMessage + (ex.ErrorDetails != null ? ex.ErrorDetails.ToString() : ex.Message));
         }

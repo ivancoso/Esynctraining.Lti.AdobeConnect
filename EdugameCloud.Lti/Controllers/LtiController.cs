@@ -1229,7 +1229,7 @@
 
                 seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider,
                     seminarRecords,
-                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.GetTimeZone());
+                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.TimeZoneInfo);
                 sw.Stop();
                 if (trace != null)
                     trace.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -1237,7 +1237,7 @@
             }
 
             //TRICK: we calc shift on serverside
-            acSettings.TimeZoneShiftMinutes = 0;
+            acSettings.SetTimezoneShift(null);
 
             string userFullName = param.lis_person_name_full;
             var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);

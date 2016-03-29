@@ -14,6 +14,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.Core;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
@@ -357,15 +358,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         && usersToAddToMeeting.Contains(user))
                     {
                         // NOTE: we create Principals during Users/GetAll to have ability to join office hours meeting for all course participants.
-                        Principal principal = acUserService.GetOrCreatePrincipal2(
-                            provider,
-                            login,
-                            user.GetEmail(),
-                            user.GetFirstName(),
-                            user.GetLastName(),
-                            lmsCompany,
-                            principalCache);
-
+                        Principal principal = null;
+                        try
+                        {
+                            principal = acUserService.GetOrCreatePrincipal2(
+                                provider,
+                                login,
+                                user.GetEmail(),
+                                user.GetFirstName(),
+                                user.GetLastName(),
+                                lmsCompany,
+                                principalCache);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error("GetUsers - GetOrCreatePrincipal", ex);
+                        }
                         if (principal != null)
                         {
                             lmsUser.PrincipalId = principal.PrincipalId;
@@ -621,11 +629,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 if (string.IsNullOrEmpty(dbUser.PrincipalId))
                 {
-                    var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany);
-
+                    string err;
+                    Principal principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany, out err);
+                    if (!string.IsNullOrWhiteSpace(err))
+                    {
+                        error = err;
+                    }
                     if (principal == null && denyACUserCreation)
                     {
-                        error = Resources.Messages.CreateAcPrincipalManually;
+                        if (!error.Contains(Resources.Messages.CreateAcPrincipalManually))
+                            error += " " + Resources.Messages.CreateAcPrincipalManually;
                         continue;
                     }
                 }
@@ -660,11 +673,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     var principalInfo = provider.GetOneByPrincipalId(dbUser.PrincipalId);
                     if (!principalInfo.Success)
                     {
-                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany);
+                        string err;
+                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, lmsUserDto, dbUser, lmsCompany, out err);
+                        if (!string.IsNullOrWhiteSpace(err))
+                        {
+                            error = err;
+                        }
 
                         if (principal == null && denyACUserCreation)
                         {
-                            error = Resources.Messages.CreateAcPrincipalManually;
+                            if (!error.Contains(Resources.Messages.CreateAcPrincipalManually))
+                                error += " " + Resources.Messages.CreateAcPrincipalManually;
                             continue;
                         }
                     }
@@ -762,15 +781,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         private Principal CreatePrincipalAndUpdateLmsUserPrincipalId(IAdobeConnectProxy provider,
-            LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany)
+            LmsUserDTO lmsUserDto, LmsUser dbUser, LmsCompany lmsCompany, out string error)
         {
-            Principal principal = acUserService.GetOrCreatePrincipal(
-                provider,
-                lmsUserDto.GetLogin(),
-                lmsUserDto.GetEmail(),
-                lmsUserDto.GetFirstName(),
-                lmsUserDto.GetLastName(),
-                lmsCompany);
+            error = string.Empty;
+            Principal principal = null;
+            try
+            {
+                principal = acUserService.GetOrCreatePrincipal(
+                    provider,
+                    lmsUserDto.GetLogin(),
+                    lmsUserDto.GetEmail(),
+                    lmsUserDto.GetFirstName(),
+                    lmsUserDto.GetLastName(),
+                    lmsCompany);
+            }
+            catch (Exception ex)
+            {
+                if (ex is IUserMessageException)
+                {
+                    error = ex.Message;
+                }
+                logger.Error("CreatePrincipalAndUpdateLmsUserPrincipalId", ex);
+            }
 
             if (principal != null)
             {
@@ -1010,7 +1042,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             out string error, 
             bool skipReturningUsers = false)
         {
-            error = null;
+            error = string.Empty;
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id,
                 param.course_id,
@@ -1099,11 +1131,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         //
                         // TODO: CHECK EMAIL IS VALID (UNIQUE AND NON-EMPTY) if AC uses Emails-as-Logins
                         //
-                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany);
-
+                        string err;
+                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany, out err);
+                        if (!string.IsNullOrWhiteSpace(err))
+                        {
+                            error = err;
+                        }
                         if (principal == null && lmsCompany.DenyACUserCreation)
                         {
-                            error = Resources.Messages.CreateAcPrincipalManually;
+                            if (!error.Contains(Resources.Messages.CreateAcPrincipalManually))
+                                error += " " + Resources.Messages.CreateAcPrincipalManually;
                             return null;
                         }
                     }

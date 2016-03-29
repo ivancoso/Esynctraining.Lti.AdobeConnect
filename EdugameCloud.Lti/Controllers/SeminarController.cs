@@ -181,9 +181,9 @@ namespace EdugameCloud.Lti.Controllers
                 
                 seminarSessionDto.seminarRoomId = meeting.ScoId;
                 if (license.QuotaId == "concurrent-user-per-meeting-quota")
-                    seminarSessionDto.ExpectedLoad = license.Quota;
+                    seminarSessionDto.ExpectedLoad = license.Quota.Value;
 
-                var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).GetTimeZone();
+                var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
                 var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, ac, timeZone);
                 return Json(meetingUpdateResult);
             }

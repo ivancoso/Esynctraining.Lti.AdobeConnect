@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
@@ -40,7 +37,7 @@ namespace EdugameCloud.Lti.Controllers
 
         public LtiRecordingController(
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
             ILogger logger)
             : base(userSessionModel, acAccountService, settings, logger)
@@ -60,7 +57,7 @@ namespace EdugameCloud.Lti.Controllers
                 var param = session.LtiSession.With(x => x.LtiParam);
 
                 if (!lmsCompany.CanRemoveRecordings)
-                    throw new WarningMessageException("Recording deletion is not enabled for the LMS license");
+                    throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
 
                 OperationResult result = RecordingsService.RemoveRecording(
                     lmsCompany,
@@ -90,9 +87,9 @@ namespace EdugameCloud.Lti.Controllers
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
-                    () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<ISeminarService>());
+                    () => new RoomTypeFactory(ac, (LmsMeetingType)type, IoC.Resolve<API.AdobeConnect.ISeminarService>());
 
-                IEnumerable<RecordingDTO> recordings = RecordingsService.GetRecordings(
+                IEnumerable<IRecordingDto> recordings = RecordingsService.GetRecordings(
                     lmsCompany,
                     ac,
                     param.course_id,
@@ -101,10 +98,10 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (!UsersSetup.IsTeacher(param) && !lmsCompany.AutoPublishRecordings)
                 {
-                    recordings = recordings.Where(x => x.published);
+                    recordings = recordings.Where(x => x.Published);
                 }
                 
-                return Json(OperationResultWithData<IEnumerable<RecordingDTO>>.Success(recordings));
+                return Json(OperationResultWithData<IEnumerable<IRecordingDto>>.Success(recordings));
             }
             catch (Exception ex)
             {
@@ -123,7 +120,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
 
                 if (lmsCompany.AutoPublishRecordings)
-                    throw new WarningMessageException("Publishing is not allowed by LMS license settings");
+                    throw new Core.WarningMessageException("Publishing is not allowed by LMS license settings");
                 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
                 var recording = new LmsCourseMeetingRecording
@@ -152,7 +149,7 @@ namespace EdugameCloud.Lti.Controllers
                 lmsCompany = session.LmsCompany;
 
                 if (lmsCompany.AutoPublishRecordings)
-                    throw new WarningMessageException("UnPublishing is not allowed by LMS license settings");
+                    throw new Core.WarningMessageException("UnPublishing is not allowed by LMS license settings");
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, session.LtiSession.LtiParam.course_id, meetingId);
                 var recording = meeting.MeetingRecordings.FirstOrDefault(x => x.ScoId == recordingId);
@@ -286,7 +283,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new InvalidOperationException("Adobe connect provider. Cannot get scheduled recording");
                 }
 
-                var timeZone = acAccountService.GetAccountDetails(adobeConnectProvider, IoC.Resolve<ICache>()).GetTimeZone();
+                var timeZone = acAccountService.GetAccountDetails(adobeConnectProvider, IoC.Resolve<ICache>()).TimeZoneInfo;
                 var recording = new RecordingDTO(scheduledRecording, lmsCompany.AcServer, timeZone);
 
                 return Json(OperationResultWithData<RecordingDTO>.Success(recording));
@@ -359,7 +356,7 @@ namespace EdugameCloud.Lti.Controllers
             return this.View("~/Views/Lti/LoginToAC.cshtml");
         }
 
-        private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
+        private static Recording GetScheduledRecording(string recordingScoId, string meetingScoId, Esynctraining.AdobeConnect.IAdobeConnectProxy adobeConnectProvider)
         {
             var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
             if (recordingsByMeeting == null || !recordingsByMeeting.Success || recordingsByMeeting.Values == null || !recordingsByMeeting.Values.Any() )

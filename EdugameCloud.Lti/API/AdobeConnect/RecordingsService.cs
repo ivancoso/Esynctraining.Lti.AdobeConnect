@@ -46,7 +46,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return Enumerable.Empty<RecordingDTO>();
             }
 
-            var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).GetTimeZone();
+            var timeZone = acAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
 
             IEnumerable<IRecordingDto> result;
             var meetingSco = meeting.GetMeetingScoId();
@@ -65,34 +65,34 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result;
         }
 
-        private static List<RecordingDTO> GetRecordings(string meetingSco, 
-            string accountUrl,
-            TimeZoneInfo timeZone,
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
-        {
-            var result = new List<RecordingDTO>();
-            var apiRecordings = provider.GetRecordingsList(meetingSco);
-            foreach (var v in apiRecordings.Values)
-            {
-                var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
-                var isPublic = false;
-                if (moreDetails.Success && moreDetails.Values.Any())
-                {
-                    isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
-                }
+        //private static List<RecordingDTO> GetRecordings(string meetingSco, 
+        //    string accountUrl,
+        //    TimeZoneInfo timeZone,
+        //    Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        //{
+        //    var result = new List<RecordingDTO>();
+        //    var apiRecordings = provider.GetRecordingsList(meetingSco);
+        //    foreach (var v in apiRecordings.Values)
+        //    {
+        //        var moreDetails = provider.GetScoPublicAccessPermissions(v.ScoId);
+        //        var isPublic = false;
+        //        if (moreDetails.Success && moreDetails.Values.Any())
+        //        {
+        //            isPublic = moreDetails.Values.First().PermissionId == PermissionId.view;
+        //        }
 
-                // NOTE: not in use on client-site
-                //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
+        //        // NOTE: not in use on client-site
+        //        //string passcode = provider.GetAclField(v.ScoId, AclFieldId.meeting_passcode).FieldValue;
 
-                result.Add(new RecordingDTO(v, accountUrl, timeZone)
-                {
-                    IsPublic = isPublic,
+        //        result.Add(new RecordingDTO(v, accountUrl, timeZone)
+        //        {
+        //            IsPublic = isPublic,
 
-                });
-            }
+        //        });
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         private static List<RecordingDTO> GetRecordingsLegacy(string meetingSco, 
             string accountUrl,

@@ -59,8 +59,8 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.39, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.39\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.40, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.40\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -156,7 +156,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />

@@ -21,6 +21,10 @@
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
+                // TRICK: client-side passes 'email' but user.GetEmail() expects primary-email
+                if (string.IsNullOrEmpty(user.primary_email) && !string.IsNullOrEmpty(user.email))
+                    user.primary_email = user.email;
+
                 string error;
                 LmsUserDTO updatedUser = null;
                 if (user.guest_id.HasValue)
