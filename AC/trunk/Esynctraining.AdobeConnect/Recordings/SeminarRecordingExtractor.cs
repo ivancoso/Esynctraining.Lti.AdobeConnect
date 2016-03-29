@@ -25,6 +25,9 @@ namespace Esynctraining.AdobeConnect.Recordings
                 var sessionRecordings = AcProxy.GetSeminarSessionRecordingsList(scoId, seminarSession.ScoId);
                 foreach (var recording in sessionRecordings.Values)
                 {
+                    if (recording.Icon == "mp4-archive")
+                        continue;
+
                     var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
                     dto.IsPublic = IsPublicRecording(recording.ScoId);
 
@@ -39,6 +42,7 @@ namespace Esynctraining.AdobeConnect.Recordings
             }
 
             var recordingsWithoutSession = seminarRecordings.Values
+                .Where(x => x.Icon != "mp4-archive")
                 .Where(x => result.All(r => !r.Id.Equals(x.ScoId)))
                 .Select(x => {
                     var dto = dtoBuilder.Build(x, accountUrl, timeZone);

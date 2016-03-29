@@ -131,7 +131,7 @@ namespace Esynctraining.AdobeConnect
             get { return timezoneShiftInMinutes; }
         }
 
-        public TimeZoneInfo TimeZoneInfo { get; set; }
+        public TimeZoneInfo TimeZoneInfo { get { return timeZoneInfo; } }
 
         [DataMember(Name = "passwordPolicies")]
         public ACPasswordPoliciesDTO PasswordPolicies { get; set; }
@@ -144,5 +144,7 @@ namespace Esynctraining.AdobeConnect
         {
             MaxMeetingNameLength = 60;
         }
+
     }
+
 }
