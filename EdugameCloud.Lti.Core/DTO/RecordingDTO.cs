@@ -123,7 +123,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         private static string GenerateJoinLink(string recordingUrlPath)
         {
-            return "/Lti/Recording/Join/" + recordingUrlPath.Trim("/".ToCharArray());
+            return "/lti/recordings/join/" + recordingUrlPath.Trim("/".ToCharArray());
         }
 
         private static string GenerateDownloadLink(string accountUrl, string recordingPath, string recordingName)

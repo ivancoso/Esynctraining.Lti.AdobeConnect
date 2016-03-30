@@ -164,7 +164,6 @@
     <Compile Include="Business\MeetingNameFormatting\IMeetingNameFormatter.cs" />
     <Compile Include="Business\MeetingNameFormatting\MeetingNameFormatterFactory.cs" />
     <Compile Include="Business\MeetingNameFormatting\MeetingNameInfo.cs" />
-    <Compile Include="Business\Models\AcCachePrincipalModel.cs" />
     <Compile Include="Business\Models\LmsCompanyRoleMappingModel.cs" />
     <Compile Include="Business\Models\LmsCompanyModel.cs" />
     <Compile Include="Business\Models\LmsCompanySettingModel.cs" />

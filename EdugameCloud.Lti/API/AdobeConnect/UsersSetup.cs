@@ -1555,24 +1555,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return values;
         }
-
-        /// <summary>
-        /// The get all principals.
-        /// </summary>
-        /// <param name="lmsCompany">
-        /// The lms company.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="users">
-        /// The users.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IEnumerable"/>.
-        /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// </exception>
+        
         private IEnumerable<Principal> GetAllPrincipals(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider, 
@@ -1584,39 +1567,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 return null;
             }
-
-            if (cacheMode.Equals("DATABASE", StringComparison.OrdinalIgnoreCase))
-            {
-                try
-                {
-                    return
-                        IoC.Resolve<AcCachePrincipalModel>()
-                            .GetByLmsCompany(lmsCompany.Id, users)
-                            .Select(
-                                source =>
-                                new Principal
-                                    {
-                                        AccountId = source.AccountId, 
-                                        DisplayId = source.DisplayId, 
-                                        Email = source.Email, 
-                                        FirstName = source.FirstName, 
-                                        HasChildren = source.HasChildren.Value, 
-                                        IsHidden = source.IsHidden.Value, 
-                                        IsPrimary = source.IsPrimary.Value, 
-                                        LastName = source.LastName, 
-                                        Login = source.Login, 
-                                        Name = source.Name, 
-                                        PrincipalId = source.PrincipalId, 
-                                        Type = source.Type, 
-                                    })
-                            .ToList();
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException("UsersSetup.GetAllPrincipals.DATABASE error", ex);
-                }
-            }
-
+            
             if (cacheMode.Equals("CONNECT", StringComparison.OrdinalIgnoreCase))
             {
                 try
@@ -1641,34 +1592,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
 
                     return result;
-
-                    //PrincipalCollectionResult result = lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault()
-                    //    ? provider.GetAllByEmail(users.Select(x => x.GetEmail()))
-                    //    : provider.GetAllByLogin(users.Select(x => x.GetLogin()));
-
-                    //PrincipalCollectionResult result = provider.GetAllPrincipal();
-                    //if (result.Success)
-                    //{
-                    //    return result.Values;
-                    //}
-                    //else
-                    //{
-                    //    // See details: https://helpx.adobe.com/adobe-connect/kb/operation-size-error-connect-enterprise.html
-                    //    bool tooBigPrincipalCount = result.Status.InnerXml.Contains("operation-size-error");
-                    //    if (!tooBigPrincipalCount)
-                    //    {
-                    //        if (result.Status.UnderlyingExceptionInfo != null)
-                    //        {
-                    //            throw new InvalidOperationException(
-                    //                "UsersSetup.GetAllPrincipals.CONNECT error", 
-                    //                result.Status.UnderlyingExceptionInfo);
-                    //        }
-
-                    //        throw new InvalidOperationException("UsersSetup.GetAllPrincipals.CONNECT error");
-                    //    }
-
-                    //    return null;
-                    //}
                 }
                 catch (Exception ex)
                 {
