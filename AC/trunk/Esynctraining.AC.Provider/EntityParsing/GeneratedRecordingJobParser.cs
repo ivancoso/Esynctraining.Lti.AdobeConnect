@@ -20,7 +20,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                 {
                     ScoId = xml.SelectAttributeValue("sco-id"),
                     SourceScoId = xml.SelectAttributeValue("source-sco-id"),
-                    FolderId = xml.ParseAttributeInt("folder-id"),
+                    FolderId = xml.ParseAttributeLong("folder-id"),
                     Type = xml.SelectAttributeValue("type"),
                     Icon = xml.SelectAttributeValue("icon"),
                     DisplaySequence = xml.ParseAttributeInt("display-seq"),

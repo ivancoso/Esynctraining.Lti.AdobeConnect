@@ -17,7 +17,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
             try
             {
                 // NOTE: account - Information about the account the user belongs to. Returned if you are logged in to Adobe Connect or are making the call on a Adobe Connect hosted account.
-                int? accountId = xml.NodeExists("//account") ? int.Parse(xml.SelectSingleNodeValue("//account/@account-id")) : default(int?);
+                long? accountId = xml.NodeExists("//account") ? long.Parse(xml.SelectSingleNodeValue("//account/@account-id")) : default(long?);
 
                 var result = new CommonInfo
                 {

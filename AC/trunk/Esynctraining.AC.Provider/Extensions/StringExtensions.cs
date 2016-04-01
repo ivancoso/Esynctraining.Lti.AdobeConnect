@@ -40,6 +40,16 @@
                 : defaultValue;
         }
 
+        public static long ParseLongWithDefault(this string stringValue, long defaultValue)
+        {
+            long result;
+
+            return (!string.IsNullOrWhiteSpace(stringValue) && long.TryParse(stringValue, out result))
+                ? result
+                : defaultValue;
+        }
+
+
         /// <summary>
         /// The append paging if needed.
         /// </summary>

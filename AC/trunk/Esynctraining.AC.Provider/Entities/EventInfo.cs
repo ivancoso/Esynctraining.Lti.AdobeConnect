@@ -19,7 +19,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the tree id.
         /// </summary>
         [XmlAttribute("tree-id")]
-        public int TreeId { get; set; }
+        public long TreeId { get; set; }
 
         /// <summary>
         /// Gets or sets the permission id.

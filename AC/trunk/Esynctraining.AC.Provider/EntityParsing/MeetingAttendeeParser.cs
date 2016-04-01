@@ -25,19 +25,18 @@
             try
             {
                 var item = new MeetingAttendee
-                               {
-                                   TranscriptId = xml.SelectAttributeValue("transcript-id"),
-                                   ScoId = xml.SelectAttributeValue("sco-id"),
-                                   PrincipalId = xml.SelectAttributeValue("principal-id"),
-                                   AssetId = xml.SelectAttributeValue("asset-id"),
-                                   Login = xml.SelectSingleNodeValue("login/text()"),
-                                   SessionName = xml.SelectSingleNodeValue("session-name/text()"),
-                                   ScoName = xml.SelectSingleNodeValue("sco-name/text()"),
-                                   ParticipantName = xml.SelectSingleNodeValue("participant-name/text()"),
-                                   DateCreated = xml.ParseNodeDateTime("date-created/text()", default(DateTime)),
-                                   DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                               };
-
+                {
+                    TranscriptId = xml.SelectAttributeValue("transcript-id"),
+                    ScoId = xml.SelectAttributeValue("sco-id"),
+                    PrincipalId = xml.SelectAttributeValue("principal-id"),
+                    AssetId = xml.SelectAttributeValue("asset-id"),
+                    Login = xml.SelectSingleNodeValue("login/text()"),
+                    SessionName = xml.SelectSingleNodeValue("session-name/text()"),
+                    ScoName = xml.SelectSingleNodeValue("sco-name/text()"),
+                    ParticipantName = xml.SelectSingleNodeValue("participant-name/text()"),
+                    DateCreated = xml.ParseNodeDateTime("date-created/text()", default(DateTime)),
+                    DateEnd = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
+                };
 
                 item.Duration = item.DateEnd.Subtract(item.DateCreated);
 
@@ -53,5 +52,7 @@
 
             return null;
         }
+
     }
+
 }

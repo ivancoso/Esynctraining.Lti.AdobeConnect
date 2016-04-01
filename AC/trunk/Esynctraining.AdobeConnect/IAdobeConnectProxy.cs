@@ -18,7 +18,7 @@ namespace Esynctraining.AdobeConnect
         ScoInfoResult CreateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase;
         StatusInfo DeleteSco(string scoId);
         //FieldResult GetAclField(string aclId, AclFieldId fieldId);
-        FieldCollectionResult GetAclFields(int aclId);
+        FieldCollectionResult GetAclFields(long aclId);
         PrincipalCollectionResult GetAllByEmail(string email);
         PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails);
         PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm);

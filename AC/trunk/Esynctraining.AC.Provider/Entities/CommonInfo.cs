@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
@@ -42,7 +41,7 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlAttribute("locale")]
         public string Locale { get; set; }
 
-        public int? AccountId { get; set; }
+        public long? AccountId { get; set; }
 
         public int MajorVersion
         {
@@ -66,7 +65,7 @@ namespace Esynctraining.AC.Provider.Entities
         private int GetParsedVersionValue(int index)
         {
             var parsedValue = 0;
-            if (!String.IsNullOrEmpty(Version))
+            if (!string.IsNullOrEmpty(Version))
             {
                 var splittedVersion = Version.Split('.');
                 if (splittedVersion.Length > index)

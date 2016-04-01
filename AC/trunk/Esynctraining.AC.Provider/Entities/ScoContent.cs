@@ -25,7 +25,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the folder id.
         /// </summary>
         [XmlAttribute("folder-id")]
-        public int FolderId { get; set; }
+        public long FolderId { get; set; }
 
         /// <summary>
         /// Gets or sets the type.

@@ -153,6 +153,11 @@ namespace Esynctraining.AC.Provider.Extensions
             return SelectAttributeValue(node, attribute).ParseIntWithDefault(defaultValue);
         }
 
+        public static long ParseAttributeLong(this XmlNode node, string attribute, long defaultValue = 0)
+        {
+            return SelectAttributeValue(node, attribute).ParseLongWithDefault(defaultValue);
+        }
+
         /// <summary>
         /// The parse attribute enumerable.
         /// </summary>

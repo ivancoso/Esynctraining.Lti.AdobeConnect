@@ -232,7 +232,7 @@
         /// </returns>
         public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0)
         {
-            // act: "report-bulk-objects"
+            // act: "report-meeting-attendance"
             StatusInfo status;
 
             var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
@@ -1510,7 +1510,7 @@
                 : new FieldResult(status);
         }
 
-        public FieldCollectionResult GetAclFields(int aclId)
+        public FieldCollectionResult GetAclFields(long aclId)
         {
             StatusInfo status;
 

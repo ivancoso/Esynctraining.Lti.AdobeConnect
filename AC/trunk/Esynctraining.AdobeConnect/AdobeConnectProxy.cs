@@ -177,7 +177,7 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
-        public FieldCollectionResult GetAclFields(int aclId)
+        public FieldCollectionResult GetAclFields(long aclId)
         {
             return Execute(() => { return _provider.GetAclFields(aclId); },
                 aclId.ToString());

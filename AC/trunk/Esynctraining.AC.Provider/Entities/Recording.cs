@@ -34,7 +34,7 @@ namespace Esynctraining.AC.Provider.Entities
         public string SourceScoId { get; set; }
 
         [XmlAttribute("folder-id")]
-        public int FolderId { get; set; }
+        public long FolderId { get; set; }
 
         [XmlAttribute("type")]
         public string Type { get; set; }
