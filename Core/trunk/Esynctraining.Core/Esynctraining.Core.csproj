@@ -62,6 +62,7 @@
     <Compile Include="Domain\OperationResult.cs" />
     <Compile Include="Enums\Errors.cs" />
     <Compile Include="Extensions\BuildVersionExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\HttpContextExtensions.cs" />
     <Compile Include="Extensions\SerializeExtensions.cs" />
     <Compile Include="Extensions\StreamExtensions.cs" />
