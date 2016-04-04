@@ -8,7 +8,7 @@ namespace Esynctraining.WebApi.Client
 {
     public class ApiException : Exception
     {
-        public HttpResponseMessage Response { get; set; }
+        public HttpResponseMessage Response { get; private set; }
 
         public HttpStatusCode StatusCode
         {
@@ -17,21 +17,21 @@ namespace Esynctraining.WebApi.Client
 
         public IEnumerable<string> Errors
         {
-            get { return this.Data.Values.Cast<string>().ToList(); }
+            get { return Data.Values.Cast<string>().ToList(); }
         }
 
-        public ApiError ErrorDetails { get; set; }
+        public ApiError ErrorDetails { get; private set; }
 
 
         internal ApiException(HttpResponseMessage response, ApiError deserializedErrorObject)
         {
-            this.Response = response;
+            Response = response;
             ErrorDetails = deserializedErrorObject;
         }
 
         internal ApiException(string message, HttpResponseMessage response, ApiError deserializedErrorObject) : base(message)
         {
-            this.Response = response;
+            Response = response;
             ErrorDetails = deserializedErrorObject;
         }
 
