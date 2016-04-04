@@ -1,4 +1,5 @@
-﻿using Weborb.Data.Management;
+﻿using Esynctraining.Core.Extensions;
+using Weborb.Data.Management;
 
 namespace PDFAnnotation.Core.Domain.DTO
 {
@@ -53,6 +54,16 @@ namespace PDFAnnotation.Core.Domain.DTO
         {
             this.color = drawing.Color;
             this.points = drawing.Points;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
+        /// </summary>
+        /// <param name="rotation">
+        /// The ATRotation.
+        /// </param>
+        public ATMarkDTO(ATRotation rotation) : this(rotation.Mark)
+        {
         }
 
         /// <summary>
@@ -507,6 +518,19 @@ namespace PDFAnnotation.Core.Domain.DTO
             o.PositionY = mark.positionY;
             o.Width = mark.width;
             o.FontSize = mark.fontSize;
+            return o;
+        }
+
+        /// <summary>
+        /// Converts <see cref="ATMarkDTO"/> to requested entity type
+        /// </summary>
+        /// <param name="mark">the mark</param>
+        /// <param name="existing">existing item</param>
+        /// <returns>corresponding entity</returns>
+        public ATRotation ToRotationItem(ATMarkDTO mark, ATRotation existing)
+        {
+            var o = existing ?? new ATRotation();
+            o.Mark = this.ToMark(mark, null != existing ? existing.Mark : null);
             return o;
         }
 

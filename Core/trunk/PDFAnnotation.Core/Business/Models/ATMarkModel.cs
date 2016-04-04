@@ -68,38 +68,45 @@
         /// The <see cref="Tuple"/>.
         /// </returns>
 #pragma warning disable 168
-        public Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>> GetMarksForFile(Guid fileId)
+        public Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>, List<ATRotation>> GetMarksForFile(Guid fileId)
         {
             // trick to make NHibernate to load all child instances in one roundtrip to db (if db supports it)
-            var result = new Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>>(new List<ATShape>(), new List<ATDrawing>(), new List<ATHighlightStrikeOut>(), new List<ATTextItem>());
+            var result = new Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>, List<ATRotation>>
+                (new List<ATShape>(), new List<ATDrawing>(), new List<ATHighlightStrikeOut>(), new List<ATTextItem>(), new List<ATRotation>());
             ATMark mark = null;
             ATShape note = null;
             ATDrawing atDrawing = null;
             ATHighlightStrikeOut atHighlightStrikeOut = null;
             ATTextItem textItem = null;
+            ATRotation rotationItem = null;
 
             // Query to load the companies   
             var marks = this.Repository.Session.QueryOver(() => mark).Where(x => x.File.Id == fileId).Fetch(x => x.File).Eager.Future<ATMark>();
 
-            // Query to load the Partners with the Notes
+            // Query to load the Notes
             var notes = this.Repository.Session.QueryOver(() => note)
                 .JoinAlias(p => p.Mark, () => mark)
                 .Future<ATShape>();
 
-            // Query to load the Partners with the Notes
+            // Query to load the Drawings
             var drawings = this.Repository.Session.QueryOver(() => atDrawing)
                 .JoinAlias(p => p.Mark, () => mark)
                 .Future<ATDrawing>();
 
-            // Query to load the Partners with the Notes
+            // Query to load the Highlights
             var highlights = this.Repository.Session.QueryOver(() => atHighlightStrikeOut)
                 .JoinAlias(p => p.Mark, () => mark)
                 .Future<ATHighlightStrikeOut>();
 
-            // Query to load the Partners with the Notes
+            // Query to load the TextItems
             var textItems = this.Repository.Session.QueryOver(() => textItem)
                 .JoinAlias(p => p.Mark, () => mark)
                 .Future<ATTextItem>();
+
+            // Query to load the Rotations
+            var rotationItems = this.Repository.Session.QueryOver(() => rotationItem)
+                .JoinAlias(p => p.Mark, () => mark)
+                .Future<ATRotation>();
 
             // when this is executed, the three queries are executed in one roundtrip
             var results = marks.ToList();
@@ -120,6 +127,10 @@
                 foreach (var joinedText in joinedMark.TextItems)
                 {
                     result.Item4.Add(joinedText);
+                }
+                foreach (var rotation in joinedMark.Rotations)
+                {
+                    result.Item5.Add(rotation);
                 }
             }
             return result;
