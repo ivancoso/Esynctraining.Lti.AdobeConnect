@@ -5,6 +5,11 @@ using System.Runtime.Serialization;
 namespace Esynctraining.AdobeConnect
 {
     [DataContract]
+    [KnownType(typeof(TimeZoneInfo))]
+    [KnownType(typeof(TimeZoneInfo.AdjustmentRule))]
+    [KnownType(typeof(TimeZoneInfo.AdjustmentRule[]))]
+    [KnownType(typeof(TimeZoneInfo.TransitionTime))]
+    [KnownType(typeof(DayOfWeek))]
     public class ACDetailsDTO
     {
         public class TimeZoneMap
@@ -104,17 +109,14 @@ namespace Esynctraining.AdobeConnect
 
         #endregion TimeZones
 
-        private TimeZoneInfo timeZoneInfo;
-        private int timezoneShiftInMinutes;
-
         public void SetTimeZone(TimeZoneInfo tzInfo)
         {
-            timeZoneInfo = tzInfo;
+            TimeZoneInfo = tzInfo;
         }
 
         public void SetTimezoneShift(TimeZoneInfo timezone)
         {
-            timezoneShiftInMinutes = timezone != null 
+            TimeZoneShiftMinutes = timezone != null 
                 ? Convert.ToInt32(timezone.BaseUtcOffset.TotalMinutes) 
                 : 0;
         }
@@ -126,12 +128,27 @@ namespace Esynctraining.AdobeConnect
         public int MaxMeetingNameLength { get; set; }
 
         [DataMember(Name = "timeZoneShiftMinutes")]
-        public int TimeZoneShiftMinutes
+        public int TimeZoneShiftMinutes { get; set; }
+
+        [DataMember(Name = "timeZoneInfo")]
+        public string TimeZoneInfoString
         {
-            get { return timezoneShiftInMinutes; }
+            get
+            {
+                if (TimeZoneInfo == null)
+                    return null;
+                return TimeZoneInfo.ToSerializedString();
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    TimeZoneInfo = null;
+
+                TimeZoneInfo = TimeZoneInfo.FromSerializedString(value);
+            }
         }
 
-        public TimeZoneInfo TimeZoneInfo { get { return timeZoneInfo; } }
+        public TimeZoneInfo TimeZoneInfo { get; set; }
 
         [DataMember(Name = "passwordPolicies")]
         public ACPasswordPoliciesDTO PasswordPolicies { get; set; }
