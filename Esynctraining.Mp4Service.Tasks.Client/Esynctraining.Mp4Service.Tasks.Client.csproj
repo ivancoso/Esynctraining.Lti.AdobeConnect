@@ -30,12 +30,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.40, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.40\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.41, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.41\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Core, Version=1.0.0.23, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.23\lib\net45\Esynctraining.Core.dll</HintPath>
+    <Reference Include="Esynctraining.Core, Version=1.0.0.24, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.WebApi.Client, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\Esynctraining.WebApi.Client.1.0.0.1\lib\net45\Esynctraining.WebApi.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MP4Service.Contract.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\MP4Service.Contract.Client.1.0.0.0\lib\net45\MP4Service.Contract.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -83,14 +91,6 @@
     <ProjectReference Include="..\..\..\..\..\libraries\trunk\csharp\AC\trunk\Esynctraining.AdobeConnect\Esynctraining.AdobeConnect.csproj">
       <Project>{b9eb6309-12ab-4e69-82a8-ac981abf728a}</Project>
       <Name>Esynctraining.AdobeConnect</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\ClientApp\Esynctraining.WebApi.Client\Esynctraining.WebApi.Client.csproj">
-      <Project>{5c667552-0881-4554-b935-18e5025fe03f}</Project>
-      <Name>Esynctraining.WebApi.Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\MP4Service\trunk\MP4Service\MP4Service.Contract.Client\MP4Service.Contract.Client.csproj">
-      <Project>{0c2e795b-3599-4019-a066-cbea82af1ef7}</Project>
-      <Name>MP4Service.Contract.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

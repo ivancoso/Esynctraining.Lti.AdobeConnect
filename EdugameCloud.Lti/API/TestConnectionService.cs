@@ -151,6 +151,9 @@ namespace EdugameCloud.Lti.API
 
         public bool TestACConnection(ConnectionTestDTO test, out string info, out bool loginSameAsEmail)
         {
+            if (test == null)
+                throw new ArgumentNullException("test");
+
             loginSameAsEmail = false;
             info = string.Empty;
 

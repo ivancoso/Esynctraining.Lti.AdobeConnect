@@ -763,15 +763,24 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 else
                 {
-                    provider.UpdateScoPermissionForPrincipal(
-                        principalIds.Select(
-                            principalId =>
-                                new PermissionUpdateTrio
-                                {
-                                    ScoId = meetingSco,
-                                    PrincipalId = principalId,
-                                    PermissionId = MeetingPermissionId.remove,
-                                }));
+                    foreach (var chunk in principalIds.Select(principalId =>
+                        new PermissionUpdateTrio
+                        {
+                            ScoId = meetingSco,
+                            PrincipalId = principalId,
+                            PermissionId = MeetingPermissionId.remove,
+                        }).Chunk(50))
+                    {
+                        StatusInfo status = provider.UpdateScoPermissionForPrincipal(chunk);
+                        if (status.Code != StatusCodes.ok)
+                        {
+                            string errorMsg = string.Format("SetDefaultRolesForNonParticipants > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.",
+                                status.Code.ToString(),
+                                status.SubCode
+                                );
+                            throw new InvalidOperationException(errorMsg);
+                        }
+                    }
                 }
             }
 

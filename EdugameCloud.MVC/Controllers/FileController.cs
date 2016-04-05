@@ -1173,7 +1173,7 @@ namespace EdugameCloud.MVC.Controllers
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.Redirect("/public/" + publicBuild);
+                    return this.Redirect("~/public/" + publicBuild);
                 }
             }
             catch (Exception ex)
@@ -1241,7 +1241,7 @@ namespace EdugameCloud.MVC.Controllers
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.Redirect("/public/" + publicBuild);
+                    return this.Redirect("~/public/" + publicBuild);
                 }
             }
             catch (Exception ex)

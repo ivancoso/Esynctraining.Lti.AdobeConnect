@@ -855,16 +855,27 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // NOTE: Clean all existed AC meeting participants.
                 PermissionCollectionResult allMeetingEnrollments = provider.GetAllMeetingEnrollments(dto.sco_id);
-                
-                provider.UpdateScoPermissionForPrincipal(
-                    allMeetingEnrollments.Values.Select(
+
+                foreach (var chunk in allMeetingEnrollments.Values.Select(
                         enrollment =>
                             new PermissionUpdateTrio
                             {
                                 ScoId = dto.sco_id,
                                 PrincipalId = enrollment.PrincipalId,
                                 PermissionId = MeetingPermissionId.remove,
-                            }));
+                            }).Chunk(50))
+                {
+                    var status = provider.UpdateScoPermissionForPrincipal(chunk);
+                    if (status.Code != StatusCodes.ok)
+                    {
+                        string errorMsg = string.Format("ReuseExistedAdobeConnectMeeting > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.",
+                            status.Code.ToString(),
+                            status.SubCode
+                            );
+                        throw new InvalidOperationException(errorMsg);
+                    }
+
+                }
             }
 
             this.UsersSetup.SetDefaultUsers(

@@ -1,5 +1,6 @@
 ﻿namespace EdugameCloud.Lti.Core.Business.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -7,6 +8,7 @@
     using EdugameCloud.Lti.DTO;
     using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
+    using Esynctraining.Core.Extensions;
     using NHibernate;
     using NHibernate.Linq;
 
@@ -53,11 +55,23 @@
 
         public IEnumerable<LmsUser> GetByUserIdAndCompanyLms(string[] userIds, int companyLmsId)
         {
-            var query = from u in this.Repository.Session.Query<LmsUser>()
-                        where u.LmsCompany.Id == companyLmsId && userIds.Contains(u.UserId)
-                        select u;
+            if (userIds == null)
+                throw new ArgumentNullException("userIds");
 
-            return query.ToList().AsReadOnly();
+            if (userIds.Length == 0)
+                return Enumerable.Empty<LmsUser>();
+
+            var result = new List<LmsUser>();
+            //{"The incoming request has too many parameters. The server supports a maximum of 2100 parameters. Reduce the number of parameters and resend the request."}
+            foreach (var chunk in userIds.Chunk(2000))
+            {
+                var query = from u in this.Repository.Session.Query<LmsUser>()
+                            where u.LmsCompany.Id == companyLmsId && userIds.Contains(u.UserId)
+                            select u;
+
+                result.AddRange(query.ToList());
+            }
+            return result;
         }
 
         public IEnumerable<LmsUser> GetByCompanyLms(int companyLmsId, IList<LmsUserDTO> usersToFind)
