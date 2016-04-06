@@ -9,7 +9,7 @@
     using Esynctraining.Core.Extensions;
 
     /// <summary>
-    ///     The LTI parameter DTO.
+    /// The LTI parameter DTO.
     /// </summary>
     public class LtiParamDTO
     {
@@ -289,8 +289,8 @@
         public string GetLtiProviderName(string externalProvider = null)
         {
             string providerName = string.IsNullOrWhiteSpace(this.tool_consumer_info_product_family_code)
-                                      ? externalProvider
-                                      : this.tool_consumer_info_product_family_code.ToLower();
+                ? externalProvider
+                : this.tool_consumer_info_product_family_code.ToLower();
             if (externalProvider != null
                 && externalProvider.Equals(LmsProviderNames.Blackboard, StringComparison.OrdinalIgnoreCase))
             {
@@ -312,15 +312,6 @@
 
         #region Methods
 
-        /// <summary>
-        /// The get course from query of url.
-        /// </summary>
-        /// <param name="url">
-        /// The uri.
-        /// </param>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
         private int GetCourseFromQueryOfUrl(string url)
         {
             int result = 0;
@@ -345,49 +336,34 @@
                     }
                 }
             }
-                
-                // ReSharper disable once EmptyGeneralCatchClause
+            // ReSharper disable once EmptyGeneralCatchClause
             catch
             {
             }
 
             return result;
         }
-
-        /// <summary>
-        ///     The get LMS domain.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
+        
         private string GetLmsDomain()
         {
-            if (string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
+            if (!string.IsNullOrWhiteSpace(this.custom_canvas_api_domain))
+                return this.custom_canvas_api_domain;
+
+            if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
+                || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
             {
-                if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
-                    || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
-                {
-                    return this.LmsDomainFromUrls();
-                }
-
-                Guid uid;
-                if (Guid.TryParse(this.tool_consumer_instance_guid, out uid))
-                {
-                    return this.LmsDomainFromUrls();
-                }
-
-                return this.tool_consumer_instance_guid;
+                return this.LmsDomainFromUrls();
             }
 
-            return this.custom_canvas_api_domain;
-        }
+            Guid uid;
+            if (Guid.TryParse(this.tool_consumer_instance_guid, out uid))
+            {
+                return this.LmsDomainFromUrls();
+            }
 
-        /// <summary>
-        ///     The LMS domain from uri.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="string" />.
-        /// </returns>
+            return this.tool_consumer_instance_guid;
+        }
+        
         private string LmsDomainFromUrls()
         {
             if (!string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
@@ -406,13 +382,7 @@
             string authority = new Uri(this.referer).GetLeftPart(UriPartial.Authority).ToLowerInvariant();
             return authority.Replace(scheme, string.Empty);
         }
-
-        /// <summary>
-        ///     The try parse black board course id.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="int" />.
-        /// </returns>
+        
         private int TryParseBlackBoardCourseId()
         {
             int result = 0;
@@ -427,13 +397,7 @@
 
             return result;
         }
-
-        /// <summary>
-        /// The try get sakai course id hash.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="int"/>.
-        /// </returns>
+        
         private int TryGetSakaiCourseIdHash()
         {
             int result = 0;
@@ -456,5 +420,7 @@
         }
 
         #endregion
+
     }
+
 }

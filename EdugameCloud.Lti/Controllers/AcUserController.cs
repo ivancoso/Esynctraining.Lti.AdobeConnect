@@ -70,9 +70,7 @@ namespace EdugameCloud.Lti.Controllers
                     throw new ArgumentException("Empty lmsProviderName", "lmsProviderName");
                 if (user == null)
                     throw new ArgumentNullException("user");
-//                if (string.IsNullOrWhiteSpace(lmsProviderName))
-//                    throw new ArgumentException("Empty meetingScoId", "meetingScoId");
-//                
+
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;                
                 var provider = GetAdobeConnectProvider(credentials);

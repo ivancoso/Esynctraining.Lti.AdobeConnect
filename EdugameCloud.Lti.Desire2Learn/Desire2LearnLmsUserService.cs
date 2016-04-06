@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                     }
 
                     enrollmentsList.AddRange(enrollments.Items);
-                } while (enrollments.PagingInfo.HasMoreItems && !String.IsNullOrEmpty(enrollments.PagingInfo.Bookmark));
+                } while (enrollments.PagingInfo.HasMoreItems && !string.IsNullOrEmpty(enrollments.PagingInfo.Bookmark));
 
 
                 // current is not enrolled to this course (user is admin) -> add him to user list
@@ -112,7 +112,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                             currentUserTokens[0],
                             currentUserTokens[1],
                             lmsCompany.LmsDomain,
-                            string.Format(d2lApiService.WhoAmIUrlFormat, (string) this.settings.BrightspaceApiVersion),
+                            string.Format(d2lApiService.WhoAmIUrlFormat, (string)this.settings.BrightspaceApiVersion),
                             lmsCompany);
 
                         if (currentUserInfo != null)
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.Desire2Learn
                             //
                             var userInfo = d2lApiService.GetApiObjects<UserData>(tokens[0], tokens[1],
                                 lmsCompany.LmsDomain,
-                                string.Format(d2lApiService.GetUserUrlFormat, (string) this.settings.BrightspaceApiVersion,
+                                string.Format(d2lApiService.GetUserUrlFormat, (string)this.settings.BrightspaceApiVersion,
                                     currentUserInfo.Identifier),
                                 lmsCompany);
 
@@ -170,13 +170,12 @@ namespace EdugameCloud.Lti.Desire2Learn
         {
         }
 
+
         protected override bool AllowAdminAdditionToCourse
         {
-            get
-            {
-                return false;
-            }
+            get { return false; }
         }
+
     }
 
 }

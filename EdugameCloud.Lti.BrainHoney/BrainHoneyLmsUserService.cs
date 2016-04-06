@@ -12,10 +12,12 @@ namespace EdugameCloud.Lti.BrainHoney
     {
         private readonly IBrainHoneyApi dlapApi;
 
+
         public BrainHoneyLmsUserService(ILogger logger, IBrainHoneyApi dlapApi) : base(logger)
         {
             this.dlapApi = dlapApi;
         }
+
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
@@ -35,5 +37,7 @@ namespace EdugameCloud.Lti.BrainHoney
                 param);
             return GroupUsers(users);
         }
+
     }
+
 }
