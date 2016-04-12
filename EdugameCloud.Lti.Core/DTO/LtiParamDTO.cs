@@ -350,7 +350,8 @@
                 return this.custom_canvas_api_domain;
 
             if (string.IsNullOrWhiteSpace(this.tool_consumer_instance_guid)
-                || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
+                || !string.IsNullOrWhiteSpace(this.lis_outcome_service_url)
+                || !string.IsNullOrWhiteSpace(this.ext_ims_lis_memberships_url))
             {
                 return this.LmsDomainFromUrls();
             }
@@ -369,6 +370,12 @@
             if (!string.IsNullOrWhiteSpace(this.lis_outcome_service_url))
             {
                 return new Uri(this.lis_outcome_service_url).GetLeftPart(UriPartial.Authority);
+            }
+
+            // sakai
+            if (!string.IsNullOrWhiteSpace(this.ext_ims_lis_memberships_url))
+            {
+                return new Uri(this.ext_ims_lis_memberships_url).GetLeftPart(UriPartial.Authority);
             }
 
             if (string.IsNullOrWhiteSpace(this.referer))

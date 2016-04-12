@@ -391,16 +391,7 @@
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The get html page.
-        /// </summary>
-        /// <param name="path">
-        /// The path.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         public virtual ActionResult GetHtmlPage(string path)
         {
             return new FilePathResult(path, "text/html");
@@ -421,15 +412,6 @@
             return View("Index", model);
         }
         
-        /// <summary>
-        /// The get templates.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
         [HttpPost]
         public virtual JsonResult GetTemplates(string lmsProviderName)
         {
@@ -450,22 +432,7 @@
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The get users.
-        /// </summary>
-        /// <param name="lmsProviderName">
-        /// The LMS Provider Name.
-        /// </param>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force Update.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
+        
         [HttpPost]
         public virtual ActionResult GetUsers(string lmsProviderName, int meetingId, bool forceUpdate = false)
         {
@@ -508,16 +475,7 @@
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-
-        /// <summary>
-        /// The index.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ViewResult"/>.
-        /// </returns>
+        
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult Index(LtiParamDTO model)
         {

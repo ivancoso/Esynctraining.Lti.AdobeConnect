@@ -10,13 +10,12 @@
     using System.Text;
     using System.Xml.Linq;
     using System.Xml.XPath;
-    using Esynctraining.Core.Logging;
     using API;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using EdugameCloud.Lti.Extensions;
-
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
 
     /// <summary>
     /// The LTI 2 API.
@@ -283,5 +282,7 @@
 
             #endregion
         }
+
     }
+
 }
