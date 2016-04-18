@@ -356,11 +356,22 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetScoContent(scoId); },
                 scoId);
         }
+        public ScoContentCollectionResult GetScoExpandedContent(string scoId)
+        {
+            return Execute(() => { return _provider.GetScoExpandedContent(scoId); },
+                scoId);
+        }
 
         public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
         {
             return Execute(() => { return _provider.GetScoExpandedContentByName(scoId, name); },
                 scoId, name);
+        }
+
+        public ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria)
+        {
+            return Execute(() => { return _provider.GetScoExpandedContentByNameLike(scoId, nameLikeCriteria); },
+                scoId, nameLikeCriteria);
         }
 
         public ScoInfoResult GetScoInfo(string scoId)

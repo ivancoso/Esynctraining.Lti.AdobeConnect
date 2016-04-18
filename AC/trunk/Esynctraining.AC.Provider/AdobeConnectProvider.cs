@@ -1137,6 +1137,23 @@
                 : new ScoContentCollectionResult(status);
         }
 
+        public ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria)
+        {
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(
+                Commands.Sco.ExpandedContents,
+                string.Format(CommandParams.ScoNameLike, scoId, HttpUtility.UrlEncode(nameLikeCriteria)),
+                out status);
+
+            // ReSharper disable once InconsistentNaming
+            const string scoPath = "//expanded-scos/sco";
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos, scoPath), scoId)
+                : new ScoContentCollectionResult(status);
+        }
+
         /// <summary>
         /// The get meetings by SCO id.
         /// </summary>

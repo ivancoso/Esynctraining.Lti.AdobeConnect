@@ -58,8 +58,13 @@ namespace Esynctraining.AdobeConnect
         RecordingCollectionResult GetRecordingsList(string folderId);
         ScoInfoResult GetScoByUrl(string scoUrl);
         ScoContentResult GetScoContent(string scoId);
-        //ScoContentCollectionResult GetScoExpandedContent(string scoId);
+
+        ScoContentCollectionResult GetScoExpandedContent(string scoId);
+
         ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name);
+
+        ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria);
+
         ScoInfoResult GetScoInfo(string scoId);
         PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
         PermissionCollectionResult GetScoPermissions(string scoId, string principalId);

@@ -119,6 +119,8 @@
         /// </summary>
         public const string ScoName = "sco-id={0}&filter-name={1}";
 
+        public const string ScoNameLike = "sco-id={0}&filter-like-name={1}";
+
         public const string ScoNameAndType = "sco-id={0}&filter-name={1}&filter-type={2}";
 
         /// <summary>
