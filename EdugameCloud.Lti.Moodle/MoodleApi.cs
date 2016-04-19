@@ -209,7 +209,7 @@
                     return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
                 }
 
-                var token = (new JavaScriptSerializer()).Deserialize<MoodleTokenDTO>(resp);
+                var token = new JavaScriptSerializer().Deserialize<MoodleTokenDTO>(resp);
 
                 if (token.error != null)
                 {
