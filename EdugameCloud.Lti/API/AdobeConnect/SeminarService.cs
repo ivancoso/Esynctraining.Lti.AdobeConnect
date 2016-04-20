@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -27,7 +28,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             : base(logger)
         {
         }
-
 
         public IEnumerable<SeminarLicenseDto> GetLicensesWithContent(IAdobeConnectProxy acProxy,
             IEnumerable<LmsCourseMeeting> seminarRecords,
@@ -165,7 +165,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return null;
 
             bool isEditable = this.UsersSetup.IsTeacher(param);
-            var canJoin = this.CanJoin(lmsUser, permission);
+            var canJoin = this.CanJoin(lmsUser, permission) || GetGuestAuditRoleMappings(lmsCompany, param).Any();
 
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
 
@@ -220,6 +220,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 .Select(x => x.PermissionId)
                 .Intersect(new List<PermissionId> { PermissionId.host, PermissionId.mini_host, PermissionId.view })
                 .Any();
+        }
+
+        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(LmsCompany lmsCompany, LtiParamDTO param)
+        {
+            if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
+                return Enumerable.Empty<LmsCompanyRoleMapping>();
+            var customRoles = lmsCompany.RoleMappings.Where(x => !x.IsDefaultLmsRole && new[] { AcRole.Host.Id, AcRole.Presenter.Id }.Contains(x.AcRole));
+            var currentUserLtiRoles = new List<string>();
+            if (!string.IsNullOrEmpty(param.roles))
+            {
+                currentUserLtiRoles.AddRange(param.roles.Split(',', ';').Select(x => x.Trim()));
+            }
+
+            return customRoles.Where(x => currentUserLtiRoles.Any(lr => lr.Equals(x.LmsRoleName)));
         }
 
         private static void FixDateTimeFields(SeminarSessionDto seminarSessionDto)

@@ -113,6 +113,7 @@ namespace EdugameCloud.Lti.DTO
             this.audioProfileUnique = instance.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique);
             this.enableSeminars = instance.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable);
             this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
+            this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
         }
 
         /// <summary>
@@ -417,6 +418,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public string labelSeminar { get; set; }
+
+        [DataMember]
+        public bool enableAuditGuestEntry { get; set; }
 
     }
 

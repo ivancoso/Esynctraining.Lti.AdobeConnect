@@ -31,6 +31,8 @@ namespace EdugameCloud.Lti.Core.Constants
 
         public const string SeminarsEnable = "SeminarsEnable";
         public const string SeminarsLabel = "SeminarsLabel";
+
+        public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
     }
 
 }

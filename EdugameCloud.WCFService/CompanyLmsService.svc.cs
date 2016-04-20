@@ -285,6 +285,7 @@ namespace EdugameCloud.WCFService
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.SeminarsEnable, dto.enableSeminars.ToString());
+            LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableAuditGuestEntry, dto.enableAuditGuestEntry.ToString());
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());

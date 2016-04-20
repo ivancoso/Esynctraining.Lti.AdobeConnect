@@ -11,6 +11,7 @@ using EdugameCloud.Lti.Controllers;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -355,7 +356,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
             Principal registeredUser = principalInfo != null ? principalInfo.Principal : null;
-            
+
             if (currentMeeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
             {
                 var isOwner = currentMeeting.OfficeHours.LmsUser.UserId.Equals(param.lms_user_id);
@@ -377,6 +378,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
+                ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
+
                 breezeToken = ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
 
                 string wstoken = null;
@@ -1300,6 +1303,48 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //var enrollments = this.UsersSetup.GetMeetingAttendees(provider, meetingSco);            
             //return enrollments.Any(e => e.PrincipalId != null && e.PrincipalId.Equals(lmsUser.PrincipalId));
         }
+
+        private IEnumerable<LmsCompanyRoleMapping> GetGuestAuditRoleMappings(LmsCompany lmsCompany, LtiParamDTO param)
+        {
+            if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry))
+                return Enumerable.Empty<LmsCompanyRoleMapping>();
+            var customRoles = lmsCompany.RoleMappings.Where(x => !x.IsDefaultLmsRole && new[] { AcRole.Host.Id, AcRole.Presenter.Id }.Contains(x.AcRole));
+            var currentUserLtiRoles = new List<string>();
+            if (!string.IsNullOrEmpty(param.roles))
+            {
+                currentUserLtiRoles.AddRange(param.roles.Split(',', ';').Select(x => x.Trim()));
+            }
+
+            return customRoles.Where(x => currentUserLtiRoles.Any(lr => lr.Equals(x.LmsRoleName)));
+        }
+
+        private void ProcessGuestAuditUser(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting currentMeeting, string principalId, LtiParamDTO param)
+        {
+            var auditRoles = GetGuestAuditRoleMappings(lmsCompany, param);
+            if (auditRoles.Any())
+            {
+                PermissionCollectionResult meetingEnrollments =
+                    provider.GetAllMeetingEnrollments(currentMeeting.GetMeetingScoId());
+
+                if (meetingEnrollments.Values.All(x => x.PrincipalId != principalId))
+                {
+
+                    AcRole role = auditRoles.Any(x => x.AcRole == AcRole.Host.Id) ? AcRole.Host : AcRole.Presenter;
+                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(currentMeeting.GetMeetingScoId(),
+                        principalId, role.MeetingPermissionId);
+
+                    // Add user as guest to DB
+                    var guest = new LmsCourseMeetingGuest
+                    {
+                        PrincipalId = principalId,
+                        LmsCourseMeeting = currentMeeting
+                    };
+
+                    currentMeeting.MeetingGuests.Add(guest);
+                    this.LmsCourseMeetingModel.RegisterSave(currentMeeting, flush: true);
+                }
+            }
+        }
         
         /// <summary>
         /// The get attendance Report.
@@ -1597,8 +1642,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
             var type = lmsCourseMeeting.LmsMeetingType;
             
-            var canJoin = this.CanJoin(lmsUser, (LmsMeetingType)lmsCourseMeeting.LmsMeetingType, permission);
-            
+            var canJoin = this.CanJoin(lmsUser, (LmsMeetingType)lmsCourseMeeting.LmsMeetingType, permission)
+                || GetGuestAuditRoleMappings(lmsCompany, param).Any();
+
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
             string officeHoursString = null;
 
