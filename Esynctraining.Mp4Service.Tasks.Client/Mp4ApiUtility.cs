@@ -17,7 +17,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
         public static async Task<OperationResult> DoConvert(TaskClient mp4Client,
             Guid licenseKey,
             MP4Service.Contract.Client.LicenseType expectedLicenseType,
-            long recordingScoId,
+            string recordingScoId,
             ILogger logger)
         {
             if (mp4Client == null)
@@ -37,7 +37,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
                 var task = await mp4Client.Convert(new MP4Service.Contract.Client.TaskParam
                 {
-                    LicenseId = licenseKey.ToString(),
+                    LicenseId = licenseKey,
                     ScoId = recordingScoId,
                 }).ConfigureAwait(false);
 
@@ -54,8 +54,8 @@ namespace Esynctraining.Mp4Service.Tasks.Client
         }
 
         public static async Task<List<IMp4StatusContainer>> ProcessMp4(List<IMp4StatusContainer> recordings,
-            string mp4LicenseKey,
-            string mp4WithSubtitlesLicenseKey,
+            Guid mp4LicenseKey,
+            Guid mp4WithSubtitlesLicenseKey,
             ILogger logger)
         {
             if (recordings == null)
@@ -63,7 +63,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+            if ((mp4LicenseKey != Guid.Empty) || (mp4WithSubtitlesLicenseKey != Guid.Empty))
             {
                 var mp4Tasks = new Dictionary<string, MP4Service.Contract.Client.DataTask>();
                 foreach (var recordingScoId in recordings/*.Where(x => !x.is_mp4)*/.Select(x => x.Id))
@@ -73,23 +73,23 @@ namespace Esynctraining.Mp4Service.Tasks.Client
 
                 var mp4 = new ConcurrentDictionary<string, MP4Service.Contract.Client.DataTask>(mp4Tasks);
 
-                if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
+                if (mp4LicenseKey != Guid.Empty)
                 {
                     await Task.Run(() => Parallel.ForEach(mp4, (recording) =>
                     {
                         var mp4Client = IoC.Resolve<TaskClient>();
-                        CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), long.Parse(recording.Key), recording.Value, logger);
+                        CheckStatus(mp4Client, mp4LicenseKey, recording.Key, recording.Value, logger);
 
                     })).ConfigureAwait(false);
                 }
 
-                if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+                if (mp4WithSubtitlesLicenseKey != Guid.Empty)
                 {
                     var nonProcessed = mp4.Where(x => x.Value.Id == Guid.Empty);
                     await Task.Run(() => Parallel.ForEach(nonProcessed, (recording) =>
                     {
                         var mp4Client = IoC.Resolve<TaskClient>();
-                        CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), long.Parse(recording.Key), recording.Value, logger);
+                        CheckStatus(mp4Client, mp4WithSubtitlesLicenseKey, recording.Key, recording.Value, logger);
 
                     })).ConfigureAwait(false);
                 }
@@ -123,9 +123,9 @@ namespace Esynctraining.Mp4Service.Tasks.Client
         }
 
         public static async Task<OperationResultWithData<Mp4TaskStatusDto>> GetRecordingStatus(TaskClient mp4Client,
-            long recordingScoId,
-            Guid licenseKey,
-            Guid licenseKey2,
+            string recordingScoId,
+            Guid mp4LicenseKey,
+            Guid mp4WithSubtitlesLicenseKey,
             ILogger logger)
         {
             if (mp4Client == null)
@@ -135,23 +135,21 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             if (logger == null)
                 throw new ArgumentNullException("logger");
 
-            string mp4LicenseKey = licenseKey.ToString();
-            string mp4WithSubtitlesLicenseKey = licenseKey2.ToString();
-            if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+            if ((mp4LicenseKey != Guid.Empty) || (mp4WithSubtitlesLicenseKey != Guid.Empty))
             {
                 var status = new MP4Service.Contract.Client.DataTask
                 {
                     Id = Guid.Empty,
                 };
 
-                if (!string.IsNullOrWhiteSpace(mp4LicenseKey))
+                if (mp4LicenseKey != Guid.Empty)
                 {
-                    CheckStatus(mp4Client, Guid.Parse(mp4LicenseKey), recordingScoId, status, logger);
+                    CheckStatus(mp4Client, mp4LicenseKey, recordingScoId, status, logger);
                 }
 
-                if (!string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey) && (status.Id == Guid.Empty))
+                if ((mp4WithSubtitlesLicenseKey != Guid.Empty) && (status.Id == Guid.Empty))
                 {
-                    CheckStatus(mp4Client, Guid.Parse(mp4WithSubtitlesLicenseKey), recordingScoId, status, logger);
+                    CheckStatus(mp4Client, mp4WithSubtitlesLicenseKey, recordingScoId, status, logger);
                 }
                 
                 if (status.Duration == -777)
@@ -172,7 +170,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             return OperationResultWithData<Mp4TaskStatusDto>.Error("No MP4 license found");
         }
 
-        private static void CheckStatus(TaskClient mp4Client, Guid mp4LicenseKey, long recordingScoId, MP4Service.Contract.Client.DataTask task,
+        private static void CheckStatus(TaskClient mp4Client, Guid mp4LicenseKey, string recordingScoId, MP4Service.Contract.Client.DataTask task,
             ILogger logger)
         {
             //if (mp4Client == null)
@@ -184,7 +182,7 @@ namespace Esynctraining.Mp4Service.Tasks.Client
             {
                 var status = mp4Client.GetStatus(new MP4Service.Contract.Client.TaskParam
                 {
-                    LicenseId = mp4LicenseKey.ToString(),
+                    LicenseId = mp4LicenseKey,
                     ScoId = recordingScoId,
                 }).Result;
 

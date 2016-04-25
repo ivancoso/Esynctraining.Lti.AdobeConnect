@@ -42,12 +42,12 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.WebApi.Client, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\Esynctraining.WebApi.Client.1.0.0.1\lib\net45\Esynctraining.WebApi.Client.dll</HintPath>
+    <Reference Include="Esynctraining.WebApi.Client, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\Esynctraining.WebApi.Client.1.0.0.2\lib\net45\Esynctraining.WebApi.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MP4Service.Contract.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\MP4Service.Contract.Client.1.0.0.0\lib\net45\MP4Service.Contract.Client.dll</HintPath>
+    <Reference Include="MP4Service.Contract.Client, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\MP4Service\trunk\ClientApp\packages\MP4Service.Contract.Client.1.0.0.1\lib\net45\MP4Service.Contract.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -93,7 +93,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
