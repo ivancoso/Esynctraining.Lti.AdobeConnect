@@ -83,11 +83,16 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 {
                     recordings = recordings.Where(x => x.Published).ToList();
                 }
-                List<IMp4StatusContainer> 
+                Guid mp4;
+                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                    mp4 = Guid.Empty;
+                Guid mp4Subtitles;
+                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                    mp4Subtitles = Guid.Empty;
 
-                result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
-                    lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey),
-                    lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey),
+                List<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
+                    mp4,
+                    mp4Subtitles,
                     logger);
 
                 return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Success(result);
@@ -114,7 +119,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
                 {
                     var mp4Client = IoC.Resolve<TaskClient>();
-                    return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId,
+                    return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId.ToString(),
                         Guid.Parse(mp4LicenseKey),
                         Guid.Parse(mp4WithSubtitlesLicenseKey),
                         logger);

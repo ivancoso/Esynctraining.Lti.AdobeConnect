@@ -55,7 +55,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 return await Mp4ApiUtility.DoConvert(mp4Client, 
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4,
-                    input.RecordingId,
+                    input.RecordingId.ToString(),
                     logger).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 return await Mp4ApiUtility.DoConvert(mp4Client,
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4WithSubtitles,
-                    input.RecordingId,
+                    input.RecordingId.ToString(),
                     logger).ConfigureAwait(false);
             }
             catch (Exception ex)
