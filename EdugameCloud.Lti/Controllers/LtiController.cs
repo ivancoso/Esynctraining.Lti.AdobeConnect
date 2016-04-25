@@ -459,8 +459,7 @@
                     param,
                     meetingId,
                     out error,
-                    null,
-                    forceUpdate);
+                    null);
 
                 if (string.IsNullOrWhiteSpace(error))
                 {
@@ -852,7 +851,6 @@
                     this.GetAdobeConnectProvider(credentials),
                     param,
                     meetingId,
-                    false,
                     out error);
 
                 //if (string.IsNullOrEmpty(error))
@@ -989,14 +987,14 @@
             {
                 case LmsProviderNames.Canvas:
                     returnUrl = UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
+                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
                     OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
                     break;
                 case LmsProviderNames.Brightspace:
                     UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
+                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
                     break;
@@ -1039,7 +1037,7 @@
                                 param.lms_user_login,
                                 param.lis_person_contact_email_primary,
                                 param.lis_person_name_given,
-                                param.lis_person_name_family,
+                                param.lis_person_name_family ?? param.lis_person_name_full, // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
                                 company);
                 if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
                 {
@@ -1222,7 +1220,8 @@
 
                 CourseMeetingsEnabled = credentials.EnableCourseMeetings.GetValueOrDefault() || param.is_course_meeting_enabled,
                 StudyGroupsEnabled = param.is_course_study_group_enabled.HasValue ? param.is_course_study_group_enabled.Value : credentials.EnableStudyGroups.GetValueOrDefault(),
-                
+                SyncUsersCountLimit = Core.Utils.Constants.SyncUsersCountLimit,
+
                 LmsProviderName = lmsProvider.LmsProviderName,
                 UserGuideLink = !string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
                     ? lmsProvider.UserGuideFileUrl

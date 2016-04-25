@@ -20,15 +20,15 @@ namespace EdugameCloud.Lti.BrainHoney
 
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
+            LmsUser lmsUser, int courseId, object extraData = null)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
             return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
-            string lmsUserId, int courseId, out string error, bool forceUpdate = false, object param = null)
+            string lmsUserId, int courseId, out string error, object param = null)
         {
             List<LmsUserDTO> users = this.dlapApi.GetUsersForCourse(
                 lmsCompany,

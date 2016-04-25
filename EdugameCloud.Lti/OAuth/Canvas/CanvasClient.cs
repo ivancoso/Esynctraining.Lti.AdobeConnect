@@ -116,7 +116,7 @@
         public static string AddCanvasUrlToReturnUrl(string returnUrl, string canvasUrl)
         {
             var builder = new UriBuilder(returnUrl);
-            builder.AppendQueryArgument(Utils.Constants.ReturnUriExtensionQueryParameterName, canvasUrl);
+            builder.AppendQueryArgument(Core.Utils.Constants.ReturnUriExtensionQueryParameterName, canvasUrl);
             return builder.Uri.AbsoluteUri;
         }
 
@@ -151,9 +151,9 @@
         protected override Uri GetServiceLoginUrl(Uri returnUrl)
         {
             var collection = HttpUtility.ParseQueryString(returnUrl.Query);
-            if (collection.HasKey(Utils.Constants.ReturnUriExtensionQueryParameterName))
+            if (collection.HasKey(Core.Utils.Constants.ReturnUriExtensionQueryParameterName))
             {
-                var canvasUrl = collection[Utils.Constants.ReturnUriExtensionQueryParameterName];
+                var canvasUrl = collection[Core.Utils.Constants.ReturnUriExtensionQueryParameterName];
                 var returnUri = ClearReturnUrl(returnUrl, collection);
                 var returnUrlFixed = returnUri.AbsoluteUri;
 
@@ -338,7 +338,7 @@
                 if (keyObject != null)
                 {
                     var key = keyObject.ToString();
-                    if (!key.Equals(Utils.Constants.ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
+                    if (!key.Equals(Core.Utils.Constants.ReturnUriExtensionQueryParameterName, StringComparison.OrdinalIgnoreCase))
                     {
                         returnUrlBuilder.AppendQueryArgument(key, collection[key]);
                     }

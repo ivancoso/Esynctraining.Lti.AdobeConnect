@@ -8,6 +8,7 @@ using System.Text;
 using System.Web.Security;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Controllers;
+using EdugameCloud.Lti.Core.Business;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
@@ -351,7 +352,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
-                throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+                string error = null;
+                if (currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
+                {
+                    var lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out error, param.lms_user_id);
+                    if (error != null)
+                    {
+                        throw new Core.WarningMessageException(
+                            string.Format(
+                                "[Dynamic provisioning] No user with id {0} found. Could not create user. Message: {1}",
+                                param.lms_user_id, error));
+                    }
+
+                    lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                    ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                }
+                else
+                {
+                    throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+                }
             }
 
             var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
@@ -709,7 +728,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
 
             string message = string.Empty;
-            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar)))
+            if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
+                && lmsUsers.Count <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
             {
                 List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out message);
                 
@@ -880,17 +900,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 }
             }
-
-            this.UsersSetup.SetDefaultUsers(
-                credentials,
-                meeting,
-                provider,
-                param.lms_user_id,
-                meeting.CourseId,
-                meeting.ScoId,
-                lmsUsers,
-                param);
-
+            if (lmsUsers.Count <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
+            {
+                this.UsersSetup.SetDefaultUsers(
+                    credentials,
+                    meeting,
+                    provider,
+                    param.lms_user_id,
+                    meeting.CourseId,
+                    meeting.ScoId,
+                    lmsUsers,
+                    param);
+            }
             TimeZoneInfo timeZone = AcAccountService.GetAccountDetails(provider, IoC.Resolve<ICache>()).TimeZoneInfo;
             MeetingDTO updatedMeeting = this.GetMeetingDTOByScoInfo(
                 provider,
@@ -1345,7 +1366,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
         }
-        
+
+        private void ProcessDynamicProvisioning(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting currentMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
+        {
+            if(lmsUser !=null && lmsUser.PrincipalId != null && lmsCompany.UseSynchronizedUsers && currentMeeting.EnableDynamicProvisioning)
+            { 
+                var acRole = new RoleMappingService().SetAcRole(lmsCompany, lmsUserDto);
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(currentMeeting.GetMeetingScoId(),
+                    lmsUser.PrincipalId, acRole);
+            }
+        }
+
         /// <summary>
         /// The get attendance Report.
         /// </summary>
@@ -1643,7 +1674,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var type = lmsCourseMeeting.LmsMeetingType;
             
             var canJoin = this.CanJoin(lmsUser, (LmsMeetingType)lmsCourseMeeting.LmsMeetingType, permission)
-                || GetGuestAuditRoleMappings(lmsCompany, param).Any();
+                || GetGuestAuditRoleMappings(lmsCompany, param).Any()
+                || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning);
 
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
             string officeHoursString = null;

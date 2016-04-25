@@ -19,11 +19,11 @@ namespace EdugameCloud.Lti.API
 
         /// <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         /// <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
-        public virtual LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public virtual LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null)
         {
             // meeting parameter(second) is used for Blackboard calls of the below method.
             // BB has its own implementation of GetUser, so null can be passed here until we use meeting for retrieving user
-            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate, extraData)
+            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData)
                 .FirstOrDefault(u => u.id == lmsUserId);
         }
 
@@ -32,9 +32,9 @@ namespace EdugameCloud.Lti.API
             return company.AdminUser != null;
         }
 
-        public abstract OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false);
+        public abstract OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, LmsUser lmsUser, int courseId, object extraData = null);
 
-        public abstract List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, bool forceUpdate = false, object param = null);
+        public abstract List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, object param = null);
 
 
         // TODO: ROLEMAPPING

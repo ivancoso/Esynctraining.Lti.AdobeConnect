@@ -1,4 +1,5 @@
-﻿using EdugameCloud.Lti.Utils;
+﻿using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
@@ -176,10 +177,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string lmsUserId, 
             int courseId, 
             out string error, 
-            object extraData = null, 
-            bool forceUpdate = false)
+            object extraData = null)
         {
-            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null)
+            if (lmsCompany.UseSynchronizedUsers && meeting != null && meeting.MeetingRoles != null
+                && !meeting.EnableDynamicProvisioning)
             {
                 var dbUserMeetingRoles = GetUserMeetingRoles(meeting);
                 var userDtos = dbUserMeetingRoles.Select(x => new LmsUserDTO
@@ -201,7 +202,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             LmsUser lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
-            var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData, forceUpdate);
+            var serviceResult = service.GetUsers(lmsCompany, lmsUser ?? new LmsUser { UserId = lmsUserId }, courseId, extraData);
             if (serviceResult.IsSuccess)
             {
                 error = null;
@@ -209,7 +210,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             logger.WarnFormat("[GetLMSUsers] Running old style retrieve method. LmsCompanyId={0}, MeetingId={1}, lmsUserId={2}, " +
                 "courseId={3}", lmsCompany.Id, meeting.Return(x=>x.Id, 0), lmsUserId, courseId);
-            var users = service.GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate, extraData);
+            var users = service.GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData);
             return error == null ? users : new List<LmsUserDTO>();
         }
 
@@ -246,8 +247,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     param.lms_user_id,
                     param.course_id,
                     out error,
-                    param,
-                    true);
+                    param);
 
                 if (user != null)
                 {
@@ -264,8 +264,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param, 
             long id, 
             out string error,
-            List<LmsUserDTO> users = null,
-            bool forceUpdate = false)
+            List<LmsUserDTO> users = null)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
                 lmsCompany.Id, 
@@ -296,8 +295,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 param.lms_user_id,
                 param.course_id,
                 out error,
-                param,
-                forceUpdate).ToList();
+                param).ToList();
 
                 if (error != null)
                 {
@@ -327,11 +325,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 lmsUsers = this.LmsUserModel.GetByUserIdAndCompanyLms(userIds, lmsCompany.Id).GroupBy(x => x.UserId).Select(x => x.OrderBy(u => u.Id).First());
             }
+
+            var usersCount = users.Count;
             // Debug.Assert(userIds.Length == lmsUsers.Count(), "Should return single user by userId+lmsCompany.Id");
 
             // NOTE: sometimes we have no users here - for example due any security issue in LMS service (BlackBoard)
             // So skip this step for better performance
-            if (users.Count > 0)
+            if (usersCount > 0)
             {
                 IEnumerable<Principal> principalCache = this.GetAllPrincipals(lmsCompany, provider, users);
 
@@ -344,46 +344,49 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     string login = user.GetLogin();
                     LmsUser lmsUser = lmsUsers.FirstOrDefault(u => u.UserId == (user.lti_id ?? user.id));
-                    if (lmsUser == null)
+                    if (usersCount <= EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
                     {
-                        lmsUser = new LmsUser
+                        if (lmsUser == null)
                         {
-                            LmsCompany = lmsCompany,
-                            Username = login,
-                            UserId = user.lti_id ?? user.id,
-                        };
-                    }
+                            lmsUser = new LmsUser
+                            {
+                                LmsCompany = lmsCompany,
+                                Username = login,
+                                UserId = user.lti_id ?? user.id,
+                            };
+                        }
 
-                    if (string.IsNullOrEmpty(lmsUser.PrincipalId)
-                        && usersToAddToMeeting.Contains(user))
-                    {
-                        // NOTE: we create Principals during Users/GetAll to have ability to join office hours meeting for all course participants.
-                        Principal principal = null;
-                        try
+                        if (string.IsNullOrEmpty(lmsUser.PrincipalId)
+                            && usersToAddToMeeting.Contains(user))
                         {
-                            principal = acUserService.GetOrCreatePrincipal2(
-                                provider,
-                                login,
-                                user.GetEmail(),
-                                user.GetFirstName(),
-                                user.GetLastName(),
-                                lmsCompany,
-                                principalCache);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.Error("GetUsers - GetOrCreatePrincipal", ex);
-                        }
-                        if (principal != null)
-                        {
-                            lmsUser.PrincipalId = principal.PrincipalId;
-                            this.LmsUserModel.RegisterSave(lmsUser, flush: false);
-                            uncommitedChangesInLms = true;
+                            // NOTE: we create Principals during Users/GetAll to have ability to join office hours meeting for all course participants.
+                            Principal principal = null;
+                            try
+                            {
+                                principal = acUserService.GetOrCreatePrincipal2(
+                                    provider,
+                                    login,
+                                    user.GetEmail(),
+                                    user.GetFirstName(),
+                                    user.GetLastName(),
+                                    lmsCompany,
+                                    principalCache);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.Error("GetUsers - GetOrCreatePrincipal", ex);
+                            }
+                            if (principal != null)
+                            {
+                                lmsUser.PrincipalId = principal.PrincipalId;
+                                this.LmsUserModel.RegisterSave(lmsUser, flush: false);
+                                uncommitedChangesInLms = true;
+                            }
                         }
                     }
                     //var principalInfo = provider.GetOneByPrincipalId(lmsUser.PrincipalId);
 
-                    if (string.IsNullOrEmpty(lmsUser.PrincipalId))
+                    if (usersCount > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit || string.IsNullOrEmpty(lmsUser.PrincipalId))
                     {
                         new RoleMappingService().CheckAndSetNoneACMapping(user, lmsCompany);
                         continue;
@@ -473,11 +476,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             LmsCourseMeeting meeting,
             out string error,
-            bool forceUpdate = false, string lmsUserId = null)
+            string lmsUserId = null)
         {
             var service = LmsFactory.GetUserService((LmsProviderEnum)lmsCompany.LmsProviderId);
             //todo: not param for BrainHoney
-            var lmsUser = service.GetUser(lmsCompany, lmsUserId, param.course_id, out error, param, forceUpdate);
+            var lmsUser = service.GetUser(lmsCompany, lmsUserId, param.course_id, out error, param);
 
             if (meeting == null)
             {
@@ -486,7 +489,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (lmsUser != null)
             {
-                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.lti_id ?? lmsUser.id, lmsCompany.Id);
+                var lmsDbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUser.lti_id ?? lmsUser.id, lmsCompany.Id).Value;
                 var nonEditable = new HashSet<string>();
                 MeetingAttendees attendees = GetMeetingAttendees(
                     provider,
@@ -496,7 +499,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     new List<LmsUserDTO>{lmsUser});
 
                 bool uncommitedChangesInLms = false;
-                ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser.Value, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
+                ProcessLmsUserDtoAcInfo(lmsUser, lmsDbUser, lmsCompany, principalCache, provider, ref uncommitedChangesInLms,
                     nonEditable, attendees);
 
                 if (uncommitedChangesInLms)
@@ -590,9 +593,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </param>
         /// <param name="scoId">
         /// The SCO Id.
-        /// </param>
-        /// <param name="forceUpdate">
-        /// The force update.
         /// </param>
         /// <param name="error">
         /// The error.
@@ -828,7 +828,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider, 
             LtiParamDTO param, 
             int id, 
-            bool forceUpdate, 
             out string error)
         {
             LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(
@@ -848,10 +847,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 param.lms_user_id, 
                 param.course_id, 
                 out error, 
-                param, 
-                forceUpdate);
+                param);
 
-            if (meeting == null)
+            if (meeting == null || users.Count > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
             {
                 return users;
             }

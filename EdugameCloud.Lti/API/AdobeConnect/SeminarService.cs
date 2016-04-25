@@ -52,7 +52,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                     var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
 
-                    var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, timeZone);
+                    var room = GetDtoByScoInfo(acProxy, lmsUser, param, lmsCompany, seminar, meetingRecord, timeZone);
                     room.id = meetingRecord.Id; // TRICK: within LTI we use RECORD ID - not original SCO-ID!!
 
                     room.Sessions = sessions.Select(x => new SeminarSessionDto
@@ -147,6 +147,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LtiParamDTO param,
             LmsCompany lmsCompany,
             ScoContent seminar,
+            LmsCourseMeeting seminarMeeting,
             TimeZoneInfo timeZone,
             StringBuilder trace = null)
         {
@@ -165,7 +166,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return null;
 
             bool isEditable = this.UsersSetup.IsTeacher(param);
-            var canJoin = this.CanJoin(lmsUser, permission) || GetGuestAuditRoleMappings(lmsCompany, param).Any();
+            var canJoin = this.CanJoin(lmsUser, permission) || GetGuestAuditRoleMappings(lmsCompany, param).Any()
+                || (lmsCompany.UseSynchronizedUsers && seminarMeeting.EnableDynamicProvisioning);
 
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
 

@@ -56,6 +56,8 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "studyGroupsEnabled")]
         public bool StudyGroupsEnabled { get; set; }
 
+        [DataMember(Name = "syncUsersCountLimit")]
+        public int SyncUsersCountLimit { get; set; }
     }
 
 }

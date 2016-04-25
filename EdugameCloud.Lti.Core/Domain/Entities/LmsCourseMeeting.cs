@@ -55,6 +55,8 @@
 
         public virtual IList<LmsCourseMeetingRecording> MeetingRecordings { get; protected set; }
 
+        public virtual bool EnableDynamicProvisioning { get; set; }
+        
         #endregion
 
         public LmsCourseMeeting()

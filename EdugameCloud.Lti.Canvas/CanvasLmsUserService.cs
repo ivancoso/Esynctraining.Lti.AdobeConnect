@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Canvas
 
 
         public override LmsUserDTO GetUser(LmsCompany lmsCompany,
-            string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+            string lmsUserId, int courseId, out string error, object extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
@@ -52,7 +52,7 @@ namespace EdugameCloud.Lti.Canvas
         }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
+            LmsUser lmsUser, int courseId, object extraData = null)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException("lmsCompany");
@@ -77,7 +77,7 @@ namespace EdugameCloud.Lti.Canvas
             return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
-        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
+        public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string userId, int courseId, out string error, object param = null)
         {
             List<LmsUserDTO> users = FetchUsers(lmsCompany, courseId);
             error = null;

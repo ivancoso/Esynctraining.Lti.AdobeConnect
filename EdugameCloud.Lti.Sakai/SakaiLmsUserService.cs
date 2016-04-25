@@ -19,15 +19,15 @@ namespace EdugameCloud.Lti.Sakai
 
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany, 
-            LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
+            LmsUser lmsUser, int courseId, object extraData = null)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, forceUpdate, extraData);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser.UserId, courseId, out error, extraData);
             return error != null ? OperationResultWithData<List<LmsUserDTO>>.Success(users): OperationResultWithData<List<LmsUserDTO>>.Error(error);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany, string lmsUserId, 
-            int courseId, out string error, bool forceUpdate = false, object param = null)
+            int courseId, out string error, object param = null)
         {
             var paramDto = param as LtiParamDTO;
             if (paramDto != null)

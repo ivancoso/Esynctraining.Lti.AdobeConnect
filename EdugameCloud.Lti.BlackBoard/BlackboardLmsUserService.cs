@@ -22,10 +22,10 @@ namespace EdugameCloud.Lti.BlackBoard
             this.soapApi = soapApi; 
         }
 
-        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null, bool forceUpdate = false)
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null)
         {
             Guid guid;
-            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, forceUpdate)
+            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error)
                 .FirstOrDefault(u => lmsUserId == (Guid.TryParse(lmsUserId, out guid) ? u.lti_id : u.id));
         }
 
@@ -76,15 +76,15 @@ namespace EdugameCloud.Lti.BlackBoard
         }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
-            LmsUser lmsUser, int courseId, object extraData = null, bool forceUpdate = false)
+            LmsUser lmsUser, int courseId, object extraData = null)
         {
             string error;
-            var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error, forceUpdate);
+            var users = GetUsersOldStyle(lmsCompany, lmsUser != null ? lmsUser.UserId : null, courseId, out error);
             return OperationResultWithData<List<LmsUserDTO>>.Success(users);
         }
 
         public override List<LmsUserDTO> GetUsersOldStyle(LmsCompany lmsCompany,
-            string userId, int courseId, out string error, bool forceUpdate = false, object param = null)
+            string userId, int courseId, out string error, object param = null)
         {
             //TimeSpan timeout = TimeSpan.Parse((string)this.settings.UserCacheValidTimeout);
             //string key = lmsCompany.LmsDomain + ".course." + courseId;

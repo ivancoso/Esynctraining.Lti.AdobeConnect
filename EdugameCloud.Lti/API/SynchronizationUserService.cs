@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -15,6 +16,16 @@ namespace EdugameCloud.Lti.API
 {
     public class SynchronizationUserService : ISynchronizationUserService
     {
+//        public static int SyncUsersCountLimit
+//        {
+//            get
+//            {
+//                int limit = Lti.Core.Utils.Constants.SyncUsersCountLimit;
+//                int.TryParse(ConfigurationManager.AppSettings["SyncUsersCountLimit"], out limit);
+//                return limit;
+//            }
+//        }
+
         private readonly LmsFactory lmsFactory;
         private readonly IAdobeConnectAccountService acAccountService;
         private readonly UsersSetup usersSetup;
@@ -60,14 +71,28 @@ namespace EdugameCloud.Lti.API
                 try
                 {
                     //todo: set extra data param
-                    var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key, forceUpdate: true);
+                    var opResult = service.GetUsers(lmsCompany, lmsCompany.AdminUser, courseGroup.Key);
                     if (opResult.IsSuccess)
                     {
-                        if (!opResult.Data.Any())
+                        var usersCount = opResult.Data.Count;
+                        if (usersCount == 0)
                         {
                             //todo: take all users (meeting.Users) and make foreach trying to retrieve
                             logger.WarnFormat("Couldn't retrieve users from API for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}",
                                 lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProviderId, courseGroup.Key);
+                        }
+                        else if (usersCount > Core.Utils.Constants.SyncUsersCountLimit)
+                        {
+                            logger.WarnFormat("Course contains {0} users that is more than limit for users sync ({1}). LmsCompanyId={2}, LmsProvider={3}, CourseId={4}",
+                                usersCount, Core.Utils.Constants.SyncUsersCountLimit, lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProviderId, courseGroup.Key);
+                            foreach (var meeting in courseGroup)
+                            {
+                                if (!meeting.EnableDynamicProvisioning)
+                                {
+                                    meeting.EnableDynamicProvisioning = true;
+                                    lmsCourseMeetingModel.RegisterSave(meeting, true);
+                                }
+                            }
                         }
                         else
                         {
@@ -112,6 +137,7 @@ namespace EdugameCloud.Lti.API
                                     User = x,
                                     LmsRole = opResult.Data.First(dto => x.UserId == (dto.lti_id ?? dto.id)).lms_role
                                 }));
+                                meeting.EnableDynamicProvisioning = false;
                                 lmsCourseMeetingModel.RegisterSave(meeting, true);
                                 // todo: optimize condition, probably refresh roles not for all users
                                 var dbPrincipalIds = new HashSet<string>(

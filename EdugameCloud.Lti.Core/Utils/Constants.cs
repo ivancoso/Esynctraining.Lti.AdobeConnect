@@ -1,4 +1,4 @@
-﻿namespace EdugameCloud.Lti.Utils
+﻿namespace EdugameCloud.Lti.Core.Utils
 {
     public static class Constants
     {
@@ -7,6 +7,7 @@
         /// </summary>
         public const string ReturnUriExtensionQueryParameterName = "providerUrl";
 
+        public const int SyncUsersCountLimit = 1000;
     }
 
 }

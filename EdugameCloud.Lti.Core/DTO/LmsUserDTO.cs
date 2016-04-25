@@ -64,6 +64,7 @@
         [ScriptIgnore]
         public string lti_id { get; set; }
 
+        [DataMember]
         public string email { get; set; }
         
         [DataMember]
