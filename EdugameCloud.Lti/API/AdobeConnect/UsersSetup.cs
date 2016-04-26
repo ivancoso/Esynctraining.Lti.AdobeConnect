@@ -386,7 +386,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     }
                     //var principalInfo = provider.GetOneByPrincipalId(lmsUser.PrincipalId);
 
-                    if (usersCount > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit || string.IsNullOrEmpty(lmsUser.PrincipalId))
+                    if (string.IsNullOrEmpty(lmsUser?.PrincipalId))
                     {
                         new RoleMappingService().CheckAndSetNoneACMapping(user, lmsCompany);
                         continue;
@@ -849,7 +849,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 out error, 
                 param);
 
-            if (meeting == null || users.Count > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit)
+            if (lmsCompany.UseSynchronizedUsers && (meeting.EnableDynamicProvisioning || users.Count > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit))
             {
                 return users;
             }

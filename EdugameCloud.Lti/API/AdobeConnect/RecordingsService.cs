@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
@@ -12,6 +11,7 @@ using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
@@ -21,16 +21,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
         private readonly LmsUserModel lmsUserModel;
         private readonly IAdobeConnectAccountService acAccountService;
-        private readonly IMeetingSetup meetingSetup;
+        private readonly MeetingSetup meetingSetup;
+        private readonly UsersSetup usersSetup;
+        private readonly ILogger logger;
 
 
         public RecordingsService(LmsCourseMeetingModel lmsCourseMeetingModel, LmsUserModel lmsUserModel,
-            IAdobeConnectAccountService acAccountService, IMeetingSetup meetingSetup)
+            IAdobeConnectAccountService acAccountService, MeetingSetup meetingSetup, UsersSetup usersSetup, ILogger logger)
         {
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.lmsUserModel = lmsUserModel;
             this.acAccountService = acAccountService;
             this.meetingSetup = meetingSetup;
+            this.logger = logger;
+            this.usersSetup = usersSetup;
         }
 
 
@@ -155,8 +159,35 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             ref string breezeSession, string mode = null, IAdobeConnectProxy adobeConnectProvider = null)
         {
             var breezeToken = string.Empty;
-
+            
             IAdobeConnectProxy provider = adobeConnectProvider ?? acAccountService.GetProvider(lmsCompany);
+            LmsUserDTO lmsUserDto = null;
+
+            var acRecordingScoResult = provider.GetScoByUrl(recordingUrl);
+            if (!acRecordingScoResult.Success)
+            {
+                logger.Error(string.Format("[AdobeConnectProxy Error] {0}. Recording url:{1}", (object)StatusInfoExtentions.GetErrorInfo(acRecordingScoResult.Status), recordingUrl));
+                throw new AdobeConnectException(acRecordingScoResult.Status);
+            }
+
+            LmsCourseMeeting currentMeeting = this.lmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(lmsCompany, acRecordingScoResult.ScoInfo.FolderId);
+            if (currentMeeting == null)
+            {
+                throw new Core.WarningMessageException(string.Format("No meeting for course {0} and sco-id {1} found.", param.course_id, acRecordingScoResult.ScoInfo.FolderId));
+            }
+
+            if (lmsCompany.UseSynchronizedUsers)
+            {
+                string userCreationError = null;
+                lmsUserDto = usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                if (userCreationError != null)
+                {
+                    throw new Core.WarningMessageException(
+                        string.Format(
+                            "[Dynamic provisioning] Could not create user, id={0}. Message: {1}",
+                            param.lms_user_id, userCreationError));
+                }
+            }
 
             var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
@@ -172,6 +203,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
+                meetingSetup.ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
+                meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
                 breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
             }
             else

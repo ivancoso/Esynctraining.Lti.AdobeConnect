@@ -1037,7 +1037,7 @@
                                 param.lms_user_login,
                                 param.lis_person_contact_email_primary,
                                 param.lis_person_name_given,
-                                param.lis_person_name_family ?? param.lis_person_name_full, // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
+                                param.lis_person_name_family ?? param.lis_person_name_full?.Split('@').FirstOrDefault(), // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
                                 company);
                 if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
                 {
