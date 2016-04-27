@@ -75,6 +75,10 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Esynctraining.Mp4Service.Tasks.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mp4Service.Tasks.Client.1.0.0.1\lib\net45\Esynctraining.Mp4Service.Tasks.Client.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.NHibernate.1.0.0.1\lib\net45\Esynctraining.NHibernate.dll</HintPath>
       <Private>True</Private>
@@ -83,8 +87,8 @@
       <HintPath>..\packages\Esynctraining.WebApi.1.0.0.1\lib\net45\Esynctraining.WebApi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.WebApi.Client, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.WebApi.Client.1.0.0.1\lib\net45\Esynctraining.WebApi.Client.dll</HintPath>
+    <Reference Include="Esynctraining.WebApi.Client, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.WebApi.Client.1.0.0.2\lib\net45\Esynctraining.WebApi.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Windsor, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -104,8 +108,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MP4Service.Contract.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MP4Service.Contract.Client.1.0.0.0\lib\net45\MP4Service.Contract.Client.dll</HintPath>
+    <Reference Include="MP4Service.Contract.Client, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MP4Service.Contract.Client.1.0.0.1\lib\net45\MP4Service.Contract.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -220,10 +224,6 @@
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69d07fbf-75ca-4c6e-89f7-033e2d9fb710}</Project>
       <Name>EdugameCloud.Persistence</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Esynctraining.Mp4Service.Tasks.Client\Esynctraining.Mp4Service.Tasks.Client.csproj">
-      <Project>{1237dff4-0362-487d-8353-a8405dd098c3}</Project>
-      <Name>Esynctraining.Mp4Service.Tasks.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
