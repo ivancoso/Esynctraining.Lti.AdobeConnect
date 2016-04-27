@@ -849,7 +849,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 out error, 
                 param);
 
-            if (lmsCompany.UseSynchronizedUsers && (meeting.EnableDynamicProvisioning || users.Count > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit))
+            if (meeting.LmsMeetingType != (int)LmsMeetingType.StudyGroup && lmsCompany.UseSynchronizedUsers 
+                && (meeting.EnableDynamicProvisioning || users.Count > EdugameCloud.Lti.Core.Utils.Constants.SyncUsersCountLimit))
             {
                 return users;
             }
