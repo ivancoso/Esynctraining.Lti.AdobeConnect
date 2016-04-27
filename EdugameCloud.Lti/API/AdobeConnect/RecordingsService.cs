@@ -176,7 +176,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new Core.WarningMessageException(string.Format("No meeting for course {0} and sco-id {1} found.", param.course_id, acRecordingScoResult.ScoInfo.FolderId));
             }
 
-            if (lmsCompany.UseSynchronizedUsers)
+            if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup
+                && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
             {
                 string userCreationError = null;
                 lmsUserDto = usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
@@ -203,8 +204,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
-                meetingSetup.ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
-                meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                if ((LmsMeetingType) currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup) // study groups are usually private meetings => disable automatic addition to meeting
+                {
+                    meetingSetup.ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
+                    meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                }
+
                 breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
             }
             else

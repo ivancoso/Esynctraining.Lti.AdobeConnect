@@ -350,7 +350,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string email = param.lis_person_contact_email_primary;
             string login = param.lms_user_login;
             LmsUserDTO lmsUserDto = null;
-            if (currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
+            if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup 
+                && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
             {
                 string userCreationError = null;
                 lmsUserDto = UsersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
@@ -393,8 +394,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
-                ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
-                ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                if ((LmsMeetingType) currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup) // study groups are usually private meetings => disable automatic addition to meeting
+                {
+                    ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
+                    ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
+                }
 
                 breezeToken = ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
 
@@ -1673,16 +1677,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return null;
             
             bool isEditable = this.CanEdit(param, lmsCourseMeeting);
-            var type = lmsCourseMeeting.LmsMeetingType;
+            var type = (LmsMeetingType)lmsCourseMeeting.LmsMeetingType;
             
-            var canJoin = this.CanJoin(lmsUser, (LmsMeetingType)lmsCourseMeeting.LmsMeetingType, permission)
-                || GetGuestAuditRoleMappings(lmsCompany, param).Any()
-                || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning);
+            var canJoin = this.CanJoin(lmsUser, type, permission)
+                || (type != LmsMeetingType.StudyGroup
+                    && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
+                        || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning)));
 
             PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
             string officeHoursString = null;
 
-            if (type == (int)LmsMeetingType.OfficeHours)
+            if (type == LmsMeetingType.OfficeHours)
             {
                 officeHoursString = lmsCourseMeeting.OfficeHours.Hours;
             }
@@ -1746,7 +1751,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
-                type = type,
+                type = (int)type,
                 office_hours = officeHoursString,
                 reused = scoIdReused,
                 audioProfileId = lmsCourseMeeting.AudioProfileId
