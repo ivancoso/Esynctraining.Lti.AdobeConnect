@@ -120,11 +120,19 @@
         public LoginResult LoginWithSessionId(string sessionId)
         {
             this.requestProcessor.SetSessionId(sessionId);
+            
+            StatusInfo status;
+            var shortcuts = this.requestProcessor.Process(Commands.Sco.Shortcuts, null, out status);
 
-            var commonInfo = GetCommonInfo();
-            var user = commonInfo.Success ? commonInfo.CommonInfo.User : null;
+            UserInfo user = null;
+            if (status.Code == StatusCodes.ok)
+            {
+                var commonInfo = GetCommonInfo();
+                if (commonInfo.Success)
+                    user = commonInfo.CommonInfo.User;
+            }
 
-            return new LoginResult(commonInfo.Status, user);
+            return new LoginResult(status, user);
         }
 
         /// <summary>

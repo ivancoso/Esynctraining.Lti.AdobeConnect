@@ -1,4 +1,6 @@
-﻿namespace Esynctraining.AdobeConnect
+﻿using System;
+
+namespace Esynctraining.AdobeConnect
 {
     public interface IAdobeConnectAccess
     {
@@ -27,6 +29,13 @@
 
         public AdobeConnectAccess(string domain, string login, string password)
         {
+            if (string.IsNullOrWhiteSpace(domain))
+                throw new ArgumentException("Domain can't be empty", "domain");
+            if (string.IsNullOrWhiteSpace(domain))
+                throw new ArgumentException("Login can't be empty", "login");
+            if (string.IsNullOrWhiteSpace(domain))
+                throw new ArgumentException("Password can't be empty", "password");
+
             Domain = domain;
             Login = login;
             Password = password;
@@ -40,6 +49,18 @@
 
         public string SessionToken { get; set; }
 
+
+        public AdobeConnectAccess2(string domain, string sessionToken)
+        {
+            if (string.IsNullOrWhiteSpace(domain))
+                throw new ArgumentException("Domain can't be empty", "domain");
+            if (string.IsNullOrWhiteSpace(domain))
+                throw new ArgumentException("SessionToken can't be empty", "sessionToken");
+
+            Domain = domain;
+            SessionToken = sessionToken;
+        }
+        
     }
 
 }

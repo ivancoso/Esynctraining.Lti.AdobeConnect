@@ -229,7 +229,7 @@
                 parameters = string.Empty;
             }
 
-            HttpWebRequest webRequest = this.CreateWebRequest(action, parameters);
+            HttpWebRequest webRequest = CreateWebRequest(action, parameters);
 
             if (webRequest == null)
             {
@@ -393,7 +393,7 @@
                     this.connectionDetails.ServiceUrl + string.Format(@"?action={0}&{1}", action, parameters)) as
                 HttpWebRequest;
 
-            return this.ProcessRequest(request);
+            return ProcessRequest(request);
         }
 
         /// <summary>
@@ -548,9 +548,9 @@
                         && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
                     {
                         request.Proxy = new WebProxy(this.connectionDetails.Proxy.Url, true)
-                                            {
-                                                Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
-                                            };
+                        {
+                            Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
+                        };
                     }
                 }
             }

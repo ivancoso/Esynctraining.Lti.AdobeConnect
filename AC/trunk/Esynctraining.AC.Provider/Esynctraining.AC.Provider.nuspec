@@ -1,8 +1,8 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AC.Provider</id>
-    <version>1.0.1.42</version>
+    <version>1.0.1.43</version>
     <title>Esynctraining.AC.Provider</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -11,8 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Provides Adobe Connect functionality for eSyncTraining projects</description>
     <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
-    <tags>core, pdf</tags>
-    <releaseNotes>+GetScoExpandedContentByNameLike</releaseNotes>
+    <tags>core, AC, AdobeConnect</tags>
+    <releaseNotes>fixed LoginWithSessionId</releaseNotes>
   </metadata>
   <files>
     <file src="bin\$configuration$\Esynctraining.AC.Provider.dll" target="lib\net45" />
