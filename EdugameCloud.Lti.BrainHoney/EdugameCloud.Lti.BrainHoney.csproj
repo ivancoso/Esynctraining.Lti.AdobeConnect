@@ -35,12 +35,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.42, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.42\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.44, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.44\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.2\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.3\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.24, Culture=neutral, processorArchitecture=MSIL">

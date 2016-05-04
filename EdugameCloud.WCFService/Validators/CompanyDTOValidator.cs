@@ -110,9 +110,9 @@
         private bool ValidateLMS(IValidator<CompanyLmsDTO> lmsValidator, CompanyLmsDTO lmsDTO)
         {
             var res = lmsValidator.Validate(lmsDTO);
-            this.lastLmsError = res.IsValid
-                                               ? string.Empty
-                                               : this.GetError(res.Errors.FirstOrDefault());
+            lastLmsError = res.IsValid
+                ? string.Empty
+                : GetError(res.Errors.FirstOrDefault());
             return res.IsValid;
         }
 

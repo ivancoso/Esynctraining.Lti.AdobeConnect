@@ -41,6 +41,8 @@
             routes.MapLowercaseRoute("joinmeetingmobile", "Lti/Meeting/JoinMobile", new { controller = "Lti", action = "JoinMeetingMobile" });
 
             routes.MapLowercaseRoute("getrecordings", "lti/recordings", new { controller = "LtiRecording", action = "GetRecordings" });
+            routes.MapLowercaseRoute("editrecording2", "lti/recordings/edit/{id}", new { controller = "LtiRecording", action = "EditRecording", id = UrlParameter.Optional },
+                new { httpMethod = new HttpMethodConstraint("POST") });
             routes.MapLowercaseRoute("deleterecording", "lti/recordings/delete/{id}", new { controller = "LtiRecording", action = "DeleteRecording", id = UrlParameter.Optional });
 
             routes.MapLowercaseRoute("converttoMP4", "lti/recordings/MakeMP4", new { controller = "LtiRecording", action = "ConvertToMP4" });

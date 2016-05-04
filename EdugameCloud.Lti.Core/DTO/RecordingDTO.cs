@@ -14,6 +14,7 @@ namespace EdugameCloud.Lti.Core.DTO
         {
             Id = recording.ScoId;
             name = recording.Name;
+            summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
             duration = GetDurationWithoutMilliseconds(recording.Duration);
@@ -27,6 +28,7 @@ namespace EdugameCloud.Lti.Core.DTO
         {
             Id = recording.ScoId;
             name = recording.Name;
+            summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
             duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
@@ -75,7 +77,10 @@ namespace EdugameCloud.Lti.Core.DTO
         
         [DataMember]
         public string name { get; set; }
-        
+
+        [DataMember]
+        public string summary { get; set; }
+
         [DataMember]
         public string url { get; set; }
         

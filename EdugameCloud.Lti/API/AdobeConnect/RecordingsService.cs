@@ -232,6 +232,46 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     : string.Empty);
         }
 
+        public OperationResult EditRecording(
+            LmsCompany lmsCompany,
+            IAdobeConnectProxy provider,
+            int courseId,
+            string recordingId,
+            int id,
+            string name, 
+            string summary)
+        {
+            LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, courseId, id);
+
+            if (meeting == null)
+            {
+                return OperationResult.Error(Resources.Messages.MeetingNotFound);
+            }
+
+            ScoContentCollectionResult result = provider.GetMeetingRecordings(new[] { meeting.GetMeetingScoId() }, lmsCompany.UseMP4);
+
+            var recording = result.Values.FirstOrDefault(x => x.ScoId == recordingId);
+
+            if (recording == null)
+            {
+                return OperationResult.Error(Resources.Messages.RecordingNotFound);
+            }
+
+
+            ScoInfoResult editResult = provider.UpdateSco<RecordingUpdateItem>(new RecordingUpdateItem
+            {
+                ScoId = recordingId,
+                Name = name.Trim(),
+                Description = summary,
+                Type = ScoType.content,
+            });
+
+            if (!editResult.Success)
+                throw new InvalidOperationException(editResult.Status.GetErrorInfo());
+
+            return OperationResult.Success();
+        }
+
         public OperationResult RemoveRecording(
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,

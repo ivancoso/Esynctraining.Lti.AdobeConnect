@@ -47,6 +47,40 @@ namespace EdugameCloud.Lti.Controllers
         #region Public Methods and Operators
 
         [HttpPost]
+        public virtual JsonResult EditRecording(string lmsProviderName, int meetingId, string id, string name, string summary)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                    throw new Core.WarningMessageException("Name is required");
+
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+                var param = session.LtiSession.With(x => x.LtiParam);
+
+                if (!lmsCompany.CanRemoveRecordings)
+                    throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
+
+                OperationResult result = RecordingsService.EditRecording(
+                    lmsCompany,
+                    this.GetAdobeConnectProvider(lmsCompany),
+                    param.course_id,
+                    id,
+                    meetingId,
+                    name,
+                    summary);
+
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("EditRecording", lmsCompany, ex);
+                return Json(OperationResult.Error(errorMessage));
+            }
+        }
+
+        [HttpPost]
         public virtual JsonResult DeleteRecording(string lmsProviderName, int meetingId, string id)
         {
             LmsCompany lmsCompany = null;
