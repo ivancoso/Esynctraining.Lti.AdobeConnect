@@ -676,7 +676,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!result.Success || result.ScoInfo == null)
             {
                 if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
-                    return OperationResult.Error(Resources.Messages.MeetingNotUniqueName);
+                    return OperationResult.Error(Resources.Messages.NotUniqueName);
 
                 if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "url-path"))
                     return OperationResult.Error(Resources.Messages.MeetingNotUniqueUrlPath);

@@ -198,10 +198,6 @@
     <value>La sesión noes un grupo de estudio.</value>
     <comment>b</comment>
   </data>
-  <data name="MeetingNotUniqueName" xml:space="preserve">
-    <value>Actualmente ya existe otro con ese nombre. Inténtelo de nuevo, por favor.</value>
-    <comment>b</comment>
-  </data>
   <data name="MeetingNotUniqueUrlPath" xml:space="preserve">
     <value>La URL debe ser única, y el path que usted ha elegido ya está en uso. Por favor, seleccione una URL alternativa.</value>
     <comment>b</comment>
@@ -211,6 +207,10 @@
   </data>
   <data name="NoSessionInformation" xml:space="preserve">
     <value>No se pudo encontrar información de sesión para el actual usuario. Por favor, contacte con el administrador del sistema.</value>
+  </data>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>Actualmente ya existe otro con ese nombre. Inténtelo de nuevo, por favor.</value>
+    <comment>b</comment>
   </data>
   <data name="NoUserByPrincipalIdFound" xml:space="preserve">
     <value>No se encontró usuario con id {0} en Adobe Connect.</value>

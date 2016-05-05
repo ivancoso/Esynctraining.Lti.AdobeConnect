@@ -256,8 +256,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 return OperationResult.Error(Resources.Messages.RecordingNotFound);
             }
-
-
+            
             ScoInfoResult editResult = provider.UpdateSco<RecordingUpdateItem>(new RecordingUpdateItem
             {
                 ScoId = recordingId,
@@ -266,8 +265,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 Type = ScoType.content,
             });
 
-            if (!editResult.Success)
-                throw new InvalidOperationException(editResult.Status.GetErrorInfo());
+            if (!editResult.Success || editResult.ScoInfo == null)
+            {
+                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
+                    return OperationResult.Error(Resources.Messages.NotUniqueName);
+
+                return OperationResult.Error(editResult.Status.GetErrorInfo());
+            }
 
             return OperationResult.Success();
         }

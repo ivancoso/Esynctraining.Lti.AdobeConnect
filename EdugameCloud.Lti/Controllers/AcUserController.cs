@@ -207,8 +207,7 @@ namespace EdugameCloud.Lti.Controllers
                 Password = user.password,
                 //Name = NOTE: name is used for groups ONLY!!
             };
-
-
+            
             PrincipalResult pu = provider.PrincipalUpdate(setup, false, false);
 
             if (!pu.Success)

@@ -198,10 +198,6 @@
     <value>The meeting is not a study group, you can only leave study groups.</value>
     <comment>b</comment>
   </data>
-  <data name="MeetingNotUniqueName" xml:space="preserve">
-    <value>There is already another item with this name. Please try again.</value>
-    <comment>b</comment>
-  </data>
   <data name="MeetingNotUniqueUrlPath" xml:space="preserve">
     <value>URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
     <comment>b</comment>
@@ -211,6 +207,10 @@
   </data>
   <data name="NoSessionInformation" xml:space="preserve">
     <value>Could not find session information for current user. Please, enable cookies or try to open LTI application in a different browser.</value>
+  </data>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>There is already another item with this name. Please try again.</value>
+    <comment>b</comment>
   </data>
   <data name="NoUserByPrincipalIdFound" xml:space="preserve">
     <value>No user with principal id {0} found in Adobe Connect.</value>

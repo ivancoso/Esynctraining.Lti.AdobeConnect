@@ -46,21 +46,20 @@ namespace EdugameCloud.Lti.Controllers
 
         #region Public Methods and Operators
 
+        // TODO: create DTO with validation!!
         [HttpPost]
         public virtual JsonResult EditRecording(string lmsProviderName, int meetingId, string id, string name, string summary)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                if (string.IsNullOrWhiteSpace(name))
-                    throw new Core.WarningMessageException("Name is required");
+                // TODO: move to valid place!!!
+                if (string.IsNullOrWhiteSpace(name) || (name.Length > 60))
+                    throw new Core.WarningMessageException("This field must be between 1 and 60 characters long.");
 
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
-
-                if (!lmsCompany.CanRemoveRecordings)
-                    throw new Core.WarningMessageException("Recording deletion is not enabled for the LMS license");
 
                 OperationResult result = RecordingsService.EditRecording(
                     lmsCompany,
