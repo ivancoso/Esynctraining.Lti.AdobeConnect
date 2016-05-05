@@ -34,8 +34,8 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.21\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.7.4.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorEngine.3.7.4\lib\net45\RazorEngine.dll</HintPath>
+    <Reference Include="RazorEngine, Version=3.8.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\Esynctraining.Core\packages\RazorEngine.3.8.2\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -44,15 +44,25 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachmentsProvider.cs" />
+    <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Configuration\INotificationsSettings.cs" />
+    <Compile Include="Configuration\IEmailRecipientSettings.cs" />
+    <Compile Include="Configuration\IEmailRecipientSettingsCollection.cs" />
     <Compile Include="Configuration\MailerConfigurationSection.cs" />
+    <Compile Include="Configuration\EmailRecipientSettingsElement.cs" />
+    <Compile Include="Configuration\SystemEmailElement.cs" />
+    <Compile Include="Configuration\EmailRecipientSettingsElementCollection.cs" />
+    <Compile Include="Configuration\SystemEmailElementCollection.cs" />
     <Compile Include="IAttachmentsProvider.cs" />
     <Compile Include="ISmtpClientEngine.cs" />
+    <Compile Include="Configuration\ISystemEmail.cs" />
+    <Compile Include="Configuration\ISystemEmailCollection.cs" />
     <Compile Include="ITemplateProvider.cs" />
     <Compile Include="ITemplateTransformer.cs" />
     <Compile Include="SmtpClientEngine.cs" />
@@ -73,10 +83,10 @@
     <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+    <EmbeddedResource Include="Windsor.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Windsor.xml" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

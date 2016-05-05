@@ -29,6 +29,12 @@ namespace Esynctraining.Mail
             IEnumerable<Attachment> attachments = null,
             IEnumerable<LinkedResource> linkedResources = null);
 
+        bool SendEmailSync<TModel>(string subject, TModel model,
+            MailAddress from,
+            IEnumerable<MailAddress> to,
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null);
+
     }
 
 }

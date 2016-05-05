@@ -6,7 +6,7 @@ namespace Esynctraining.Mail.Configuration
     /// <summary>
     /// Contains properties from mailer configuration section
     /// </summary>
-    public class MailerConfigurationSection : ConfigurationSection
+    public class MailerConfigurationSection : ConfigurationSection, INotificationsSettings
     {
         /// <summary>
         /// The current mailer configuration.
@@ -31,7 +31,7 @@ namespace Esynctraining.Mail.Configuration
                             current = settings as MailerConfigurationSection;
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         // TODO: add to log!!
                     }
@@ -92,7 +92,39 @@ namespace Esynctraining.Mail.Configuration
         {
             get { return (string)this["asciiTemplatesFolderPath"]; }
             set { this["asciiTemplatesFolderPath"] = value; }
-        }        
+        }
+
+        [ConfigurationProperty("systemEmails", IsRequired = false)]
+        private SystemEmailElementCollection SystemEmails
+        {
+            get
+            {
+                return (SystemEmailElementCollection)this["systemEmails"];
+            }
+        }
+
+        [ConfigurationProperty("recipientSettings", IsRequired = false)]
+        private EmailRecipientSettingsElementCollection RecipientSettings
+        {
+            get
+            {
+                return (EmailRecipientSettingsElementCollection)this["recipientSettings"];
+            }
+        }
+
+        #region INotificationsSettings Members
+
+        ISystemEmailCollection INotificationsSettings.SystemEmails
+        {
+            get { return SystemEmails; }
+        }
+
+        IEmailRecipientSettingsCollection INotificationsSettings.RecipientSettings
+        {
+            get { return RecipientSettings; }
+        }
+
+        #endregion
 
     }
 

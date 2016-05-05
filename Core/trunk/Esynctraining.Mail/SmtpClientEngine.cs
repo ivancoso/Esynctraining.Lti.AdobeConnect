@@ -311,6 +311,22 @@ namespace Esynctraining.Mail
             return this.SendEmailSync<TModel>(strArrays, strArrays1, subject, model, fromName, fromEmail, cced, bcced, attachments, linkedResources);
         }
 
+        public bool SendEmailSync<TModel>(string subject, TModel model, 
+            MailAddress from,
+            IEnumerable<MailAddress> to,
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null)
+        {
+            bool flag;
+            string body = this.templateProvider.GetTemplate<TModel>().TransformTemplate(model);
+
+            using (SmtpClientWrapper smtpClientWrapper = new SmtpClientWrapper(new SmtpClient()))
+            {
+                flag = DoSendEmailSync(smtpClientWrapper, to, subject, body, from, cced: cced, bcced: bcced);
+            }
+            return flag;
+        }
+
         #endregion
 
         #region Methods
@@ -505,6 +521,82 @@ namespace Esynctraining.Mail
                     smtpClientWrapper.EnableSsl = true;
                 }
                 smtpClientWrapper.Send(mailAddress);
+                flag = true;
+            }
+            catch (Exception exception1)
+            {
+                Exception exception = exception1;
+                this.LastError = exception;
+                logger.Error("Error, while sending email. " + exception.Message, exception);
+                flag = false;
+            }
+            return flag;
+        }
+
+        private bool DoSendEmailSync(SmtpClientWrapper smtpClientWrapper, 
+            IEnumerable<MailAddress> to, 
+            string subject, string body, 
+            MailAddress from,            
+            IEnumerable<MailAddress> cced = null,
+            IEnumerable<MailAddress> bcced = null,
+            IEnumerable<Attachment> attachments = null,
+            IEnumerable<LinkedResource> linkedResources = null,
+            bool useSsl = false)
+        {
+            bool flag;
+            try
+            {
+                var mailMessage = new MailMessage
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true,
+                    From = from,
+                };
+
+                if (linkedResources != null && linkedResources.Any())
+                {
+                    AlternateView alternateView = AlternateView.CreateAlternateViewFromString(body, null, "text/html");
+                    foreach (LinkedResource linkedResource in linkedResources)
+                    {
+                        alternateView.LinkedResources.Add(linkedResource);
+                    }
+                    mailMessage.AlternateViews.Add(alternateView);
+                }
+
+                foreach (var toAddress in to)
+                    mailMessage.To.Add(toAddress);
+
+                if (attachments != null)
+                {
+                    foreach (Attachment attachment in attachments)
+                    {
+                        mailMessage.Attachments.Add(attachment);
+                    }
+                }
+
+                if (cced != null)
+                {
+                    foreach (MailAddress addr in cced)
+                    {
+                        mailMessage.CC.Add(addr);
+                    }
+                }
+
+                if (bcced != null)
+                {
+                    foreach (MailAddress addr in bcced)
+                    {
+                        mailMessage.Bcc.Add(addr);
+                    }
+                }
+
+                if (useSsl)
+                {
+                    smtpClientWrapper.EnableSsl = true;
+                }
+
+                smtpClientWrapper.Send(mailMessage);
                 flag = true;
             }
             catch (Exception exception1)
