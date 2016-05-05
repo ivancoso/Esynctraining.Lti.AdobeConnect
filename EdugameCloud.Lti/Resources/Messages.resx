@@ -281,4 +281,10 @@
     <value>users with empty email exist, </value>
     <comment>c</comment>
   </data>
+  <data name="ValidateSummaryLength" xml:space="preserve">
+    <value>Summary must be between 0 and 4000 characters long.</value>
+  </data>
+  <data name="ValidateTitleLength" xml:space="preserve">
+    <value>Title must be between 1 and 60 characters long.</value>
+  </data>
 </root>

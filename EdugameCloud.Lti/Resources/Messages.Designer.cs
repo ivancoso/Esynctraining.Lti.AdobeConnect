@@ -500,5 +500,23 @@ namespace EdugameCloud.Lti.Resources {
                 return ResourceManager.GetString("UsersEmptyEmail", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Summary must be between 0 and 4000 characters long..
+        /// </summary>
+        public static string ValidateSummaryLength {
+            get {
+                return ResourceManager.GetString("ValidateSummaryLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title must be between 1 and 60 characters long..
+        /// </summary>
+        public static string ValidateTitleLength {
+            get {
+                return ResourceManager.GetString("ValidateTitleLength", resourceCulture);
+            }
+        }
     }
 }

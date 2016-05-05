@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO.Recordings;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -48,16 +50,54 @@ namespace EdugameCloud.Lti.Controllers
 
         // TODO: create DTO with validation!!
         [HttpPost]
-        public virtual JsonResult EditRecording(string lmsProviderName, int meetingId, string id, string name, string summary)
+        public virtual JsonResult EditRecording(EditDto dto)
         {
             LmsCompany lmsCompany = null;
             try
             {
-                // TODO: move to valid place!!!
-                if (string.IsNullOrWhiteSpace(name) || (name.Length > 60))
-                    throw new Core.WarningMessageException("This field must be between 1 and 60 characters long.");
+                // TRICK: 1st to enable culture for thread
+                var session = GetReadOnlySession(dto.lmsProviderName);
 
-                var session = GetReadOnlySession(lmsProviderName);
+            
+                ///
+                /// TODO: REUSE!!!!
+                ///
+                foreach (var key in ModelState.Keys.ToList().Where(key => ModelState.ContainsKey(key)))
+                {
+                    ModelState[key].Errors.Clear();
+                }
+                TryValidateModel(dto);
+                if (!ModelState.IsValid)
+                {
+                    var errorMessage = new StringBuilder();
+                    if (ModelState != null)
+                    {
+                        foreach (var msgSet in ModelState.Values)
+                            foreach (var msg in msgSet.Errors)
+                            {
+                                string txt = msg.ErrorMessage;
+                                if (!string.IsNullOrWhiteSpace(txt) && txt.Contains("#_#"))
+                                {
+                                    var errorDetails = txt.Split(new[] { "#_#" }, StringSplitOptions.RemoveEmptyEntries);
+                                    int errorCode;
+                                    if (errorDetails.FirstOrDefault() == null || !int.TryParse(errorDetails.FirstOrDefault(), out errorCode))
+                                    {
+                                        txt = errorDetails.FirstOrDefault();
+                                    }
+                                    else
+                                    {
+                                        txt = errorDetails.ElementAtOrDefault(1);
+                                    }
+                                }
+
+                                errorMessage.Append(txt);
+                                errorMessage.Append(" ");
+                            }
+                    }
+
+                    return Json(OperationResult.Error(errorMessage.ToString()));
+                }
+                
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
 
@@ -65,10 +105,10 @@ namespace EdugameCloud.Lti.Controllers
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param.course_id,
-                    id,
-                    meetingId,
-                    name,
-                    summary);
+                    dto.id,
+                    dto.meetingId,
+                    dto.name,
+                    dto.summary);
 
                 return Json(result);
             }

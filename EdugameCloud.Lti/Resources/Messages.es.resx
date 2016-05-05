@@ -281,4 +281,10 @@
     <value>existen usuarios con email vacío, </value>
     <comment>c</comment>
   </data>
+  <data name="ValidateSummaryLength" xml:space="preserve">
+    <value>La longitud del resumen debe estar comprendida entre 0 y 4000 caracteres.</value>
+  </data>
+  <data name="ValidateTitleLength" xml:space="preserve">
+    <value>La longitud del titulo debe estar comprendida entre 1 y 60 caracteres.</value>
+  </data>
 </root>

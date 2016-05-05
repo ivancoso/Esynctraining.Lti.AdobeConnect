@@ -267,7 +267,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!editResult.Success || editResult.ScoInfo == null)
             {
-                if ((result.Status.SubCode == StatusSubCodes.duplicate) && (result.Status.InvalidField == "name"))
+                if ((editResult.Status.SubCode == StatusSubCodes.duplicate) && (editResult.Status.InvalidField == "name"))
                     return OperationResult.Error(Resources.Messages.NotUniqueName);
 
                 return OperationResult.Error(editResult.Status.GetErrorInfo());
