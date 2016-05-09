@@ -6,6 +6,8 @@ namespace Esynctraining.Mail.Configuration
     {
         string Token { get; }
 
+        string FromToken { get; }
+
         IEnumerable<string> ToTokens { get; }
 
         IEnumerable<string> CcTokens { get; }

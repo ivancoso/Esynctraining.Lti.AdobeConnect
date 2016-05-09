@@ -13,6 +13,12 @@ namespace Esynctraining.Mail.Configuration
             get { return (string)this["token"]; }
         }
 
+        [ConfigurationProperty("from", IsRequired = false)]
+        public string FromToken
+        {
+            get { return (string)this["from"]; }
+        }
+
         [ConfigurationProperty("to", IsRequired = false)]
         private string To
         {
