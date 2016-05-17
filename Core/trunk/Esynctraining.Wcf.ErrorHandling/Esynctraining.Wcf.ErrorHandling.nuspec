@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Wcf.ErrorHandling</id>
+        <version>1.0.0.1</version>
+        <title>Esynctraining.Wcf.ErrorHandling</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides ErrorHandling approach for WCF services (dotAMF + JSONP).</description>
+        <releaseNotes></releaseNotes>
+        <copyright>Copyright © 2016 eSyncTraining.com</copyright>
+        <tags>core wcf</tags>
+        <dependencies>
+          <dependency id="Esynctraining.Core.Only" version="1.0.0.24" />
+          <dependency id="DotAmf.Wcf" version="1.0.0.12" />
+        </dependencies>
+        <references>
+            <reference file="Esynctraining.Wcf.ErrorHandling.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.Wcf.ErrorHandling.dll" target="lib\net45" />
+    </files>
+</package>
