@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AdobeConnect.Recordings

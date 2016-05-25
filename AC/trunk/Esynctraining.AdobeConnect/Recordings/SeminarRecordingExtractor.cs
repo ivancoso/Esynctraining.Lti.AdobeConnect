@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Esynctraining.AdobeConnect.Recordings
 {
@@ -32,7 +33,7 @@ namespace Esynctraining.AdobeConnect.Recordings
                 foreach (var recording in sessionRecordings.Values.Where(x => x.Icon != "mp4-archive"))
                 {
                     var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
-                    dto.IsPublic = IsPublicRecording(recording.ScoId);
+                    //dto.IsPublic = IsPublicRecording(recording.ScoId);
 
                     ISeminarSessionRecordingDto seminarRecording = dto as ISeminarSessionRecordingDto;
                     if (seminarRecording == null)
@@ -49,12 +50,17 @@ namespace Esynctraining.AdobeConnect.Recordings
                 .Where(x => result.All(r => !r.Id.Equals(x.ScoId)))
                 .Select(x => {
                     var dto = dtoBuilder.Build(x, accountUrl, timeZone);
-                    dto.IsPublic = IsPublicRecording(x.ScoId);
+                    //dto.IsPublic = IsPublicRecording(x.ScoId);
                     return dto;
                 })
                 .ToList();
 
             result.AddRange(recordingsWithoutSession);
+
+            Parallel.ForEach(result, (recording) =>
+            {
+                recording.IsPublic = IsPublicRecording(recording.Id);
+            });
 
             // TODO: improove performance ??
             return result

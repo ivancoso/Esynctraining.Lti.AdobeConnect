@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Esynctraining.AC.Provider;
 
 namespace Esynctraining.AdobeConnect.Recordings
@@ -29,10 +30,15 @@ namespace Esynctraining.AdobeConnect.Recordings
             foreach (var recording in apiRecordings.Values)
             {
                 var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
-                dto.IsPublic = IsPublicRecording(recording.ScoId);
+                //dto.IsPublic = IsPublicRecording(recording.ScoId);
                 result.Add(dto);
             }
 
+            Parallel.ForEach(result, (recording) =>
+            {
+                recording.IsPublic = IsPublicRecording(recording.Id);
+            });
+            
             return result;
         }
 
