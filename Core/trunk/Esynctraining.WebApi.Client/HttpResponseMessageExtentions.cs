@@ -25,8 +25,8 @@ namespace Esynctraining.WebApi.Client
                 //    : new ApiException(response, deserializedErrorObject);
 
                 string responseUri = response.RequestMessage.RequestUri.ToString();
-                ApiException ex = (deserializedErrorObject != null)
-                    ? new ApiException(responseUri, response, deserializedErrorObject)
+                ApiException ex = ((deserializedErrorObject != null) && !string.IsNullOrWhiteSpace(deserializedErrorObject.message))
+                    ? new ApiException(deserializedErrorObject.message, response, deserializedErrorObject)
                     : new ApiException(responseUri, response, deserializedErrorObject);
 
                 // Sometimes, there may be Model Errors:
