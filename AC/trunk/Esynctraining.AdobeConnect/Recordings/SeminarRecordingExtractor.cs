@@ -17,17 +17,19 @@ namespace Esynctraining.AdobeConnect.Recordings
 
         public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone)
         {
+            return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, 0, int.MaxValue);
+        }
+
+        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, int skip, int take)
+        {
             var result = new List<IRecordingDto>();
             var seminarRecordings = AcProxy.GetRecordingsList(scoId);
             var seminarSessions = seminarService.GetSeminarSessions(scoId, AcProxy);
             foreach (var seminarSession in seminarSessions)
             {
                 var sessionRecordings = AcProxy.GetSeminarSessionRecordingsList(scoId, seminarSession.ScoId);
-                foreach (var recording in sessionRecordings.Values)
+                foreach (var recording in sessionRecordings.Values.Where(x => x.Icon != "mp4-archive"))
                 {
-                    if (recording.Icon == "mp4-archive")
-                        continue;
-
                     var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
                     dto.IsPublic = IsPublicRecording(recording.ScoId);
 
@@ -53,7 +55,8 @@ namespace Esynctraining.AdobeConnect.Recordings
 
             result.AddRange(recordingsWithoutSession);
 
-            return result;
+            // TODO: improove performance ??
+            return result.Skip(skip).Take(take);
         }
 
     }

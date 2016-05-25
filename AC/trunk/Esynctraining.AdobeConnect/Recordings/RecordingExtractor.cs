@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Esynctraining.AdobeConnect.Recordings
 {
@@ -12,13 +13,15 @@ namespace Esynctraining.AdobeConnect.Recordings
 
         public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone)
         {
+            return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, 0, int.MaxValue);
+        }
+
+        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, int skip, int take)
+        {
             var result = new List<IRecordingDto>();
             var apiRecordings = AcProxy.GetRecordingsList(scoId);
-            foreach (var recording in apiRecordings.Values)
+            foreach (var recording in apiRecordings.Values.Where(rec => rec.Icon != "mp4-archive").Skip(skip).Take(take))
             {
-                if (recording.Icon == "mp4-archive")
-                    continue;
-
                 var dto = dtoBuilder.Build(recording, accountUrl, timeZone);
                 dto.IsPublic = IsPublicRecording(recording.ScoId);
                 result.Add(dto);
