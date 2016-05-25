@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AdobeConnect</id>
-    <version>1.0.0.4</version>
+    <version>1.0.0.5</version>
     <title>Esynctraining.AdobeConnect</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,7 @@
     <description>Esynctraining AC DTO, Proxies, Services and Wrappers</description>
     <copyright>Copyright © 2014-2016 eSyncTraining.com</copyright>
     <tags>ac</tags>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>IRecordingDto: +BeginAt prop</releaseNotes>
     <dependencies>
        <dependency id="Esynctraining.AC.Provider" version="1.0.1.43" />
        <dependency id="Esynctraining.Core.Only" version="1.0.0.24" />

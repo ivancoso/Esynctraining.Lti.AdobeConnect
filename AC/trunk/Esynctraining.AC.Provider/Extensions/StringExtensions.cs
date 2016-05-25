@@ -80,6 +80,21 @@
             return parameters;
         }
 
+        public static string AppendSortingIfNeeded(this string parameters, string propertySortBy, SortOrder order)
+        {
+            if (order == SortOrder.Unspecified)
+                return parameters;
+
+            if (string.IsNullOrWhiteSpace(propertySortBy))
+                throw new ArgumentException("Non-empty property name expected", "propertySortBy");
+
+            //sort-name=asc 
+            //sort-date=desc
+            parameters += string.Format("&sort-{0}={1}", propertySortBy, order == SortOrder.Ascending ? "asc" : "desc");
+
+            return parameters;
+        }
+
         /// <summary>
         /// The parse date time with default.
         /// </summary>

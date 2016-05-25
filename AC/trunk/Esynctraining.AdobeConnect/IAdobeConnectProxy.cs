@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
@@ -56,6 +57,9 @@ namespace Esynctraining.AdobeConnect
         //RecordingJobResult GetRecordingJob(string jobId);
         //RecordingJobCollectionResult GetRecordingJobsList(string folderId);
         RecordingCollectionResult GetRecordingsList(string folderId);
+
+        RecordingCollectionResult GetRecordingsList(string folderId, int skip, int take, string propertySortBy, SortOrder order, bool excludeMp4 = false);
+
         ScoInfoResult GetScoByUrl(string scoUrl);
         ScoContentResult GetScoContent(string scoId);
 

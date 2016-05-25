@@ -20,7 +20,8 @@ namespace Esynctraining.AdobeConnect.Recordings
             return GetRecordings(dtoBuilder, scoId, accountUrl, timeZone, 0, int.MaxValue);
         }
 
-        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, int skip, int take)
+        public override IEnumerable<IRecordingDto> GetRecordings(IRecordingDtoBuilder dtoBuilder, string scoId, string accountUrl, TimeZoneInfo timeZone, 
+            int skip, int take)
         {
             var result = new List<IRecordingDto>();
             var seminarRecordings = AcProxy.GetRecordingsList(scoId);
@@ -56,7 +57,10 @@ namespace Esynctraining.AdobeConnect.Recordings
             result.AddRange(recordingsWithoutSession);
 
             // TODO: improove performance ??
-            return result.Skip(skip).Take(take);
+            return result
+                .OrderByDescending(x => x.BeginAt)
+                .Skip(skip)
+                .Take(take);
         }
 
     }

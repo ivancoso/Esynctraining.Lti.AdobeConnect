@@ -27,6 +27,9 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("name")]
         public string Name { get; set; }
 
+        [XmlElement("description")]
+        public string Description { get; set; }
+
         [XmlAttribute("sco-id")]
         public string ScoId { get; set; }
 

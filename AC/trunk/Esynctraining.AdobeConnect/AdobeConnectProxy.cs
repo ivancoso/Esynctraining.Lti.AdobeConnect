@@ -346,6 +346,12 @@ namespace Esynctraining.AdobeConnect
                 folderId);
         }
 
+        public RecordingCollectionResult GetRecordingsList(string folderId, int skip, int take, string propertySortBy, SortOrder order, bool excludeMp4 = false)
+        {
+            return Execute(() => { return _provider.GetRecordingsList(folderId, skip, take, propertySortBy, order, excludeMp4); },
+                folderId);
+        }
+
         public ScoInfoResult GetScoByUrl(string scoUrl)
         {
             return Execute(() => { return _provider.GetScoByUrl(scoUrl); }, scoUrl, scoUrl, true);

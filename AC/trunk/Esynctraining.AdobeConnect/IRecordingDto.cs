@@ -8,6 +8,8 @@
 
         bool Published { get; set; }
 
+        long BeginAt { get; set; }
+
     }
 
 }

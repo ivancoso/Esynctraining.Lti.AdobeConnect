@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Esynctraining.AC.Provider.Constants;
+﻿using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
+using Esynctraining.AC.Provider.Extensions;
 
 namespace Esynctraining.AC.Provider
 {
@@ -57,12 +54,29 @@ namespace Esynctraining.AC.Provider
 
             return new CancelRecordingJobResult(status);
         }
+
         public RecordingCollectionResult GetRecordingsList(string folderId)
+        {
+            return GetRecordingsList(folderId, 0, 0, null, SortOrder.Unspecified);
+        }
+
+        public RecordingCollectionResult GetRecordingsList(string folderId,
+            int startIndex, int limit, 
+            string propertySortBy, SortOrder order,
+            bool excludeMp4 = false)
         {
             //act: "list-recordings"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.Recordings.List, string.Format(CommandParams.FolderId, folderId), out status);
+            string parameters =
+                string.Format(CommandParams.FolderId, folderId)
+                .AppendPagingIfNeeded(startIndex, limit)
+                .AppendSortingIfNeeded(propertySortBy, order);
+
+            if (excludeMp4)
+                parameters += "&filter-out-icon=mp4-archive";
+
+            var doc = this.requestProcessor.Process(Commands.Recordings.List, parameters, out status);
             return ResponseIsOk(doc, status)
                 ? new RecordingCollectionResult(status, RecordingCollectionParser.Parse(doc))
                 : new RecordingCollectionResult(status);

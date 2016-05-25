@@ -27,6 +27,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     Duration = xml.SelectSingleNodeValue("duration/text()"),
                     IsFolder = xml.ParseAttributeInt("is-folder") != 0,
                     Name = xml.SelectSingleNodeValue("name/text()"),
+                    Description = xml.SelectSingleNodeValue("description/text()"),
                     UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
                     BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
                     EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),

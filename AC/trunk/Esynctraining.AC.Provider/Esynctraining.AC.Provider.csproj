@@ -187,6 +187,7 @@
     <Compile Include="AdobeConnectProvider.cs" />
     <Compile Include="HttpUtilsInternal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SortOrder.cs" />
     <Compile Include="TraceTool.cs" />
     <Compile Include="Utils\EnumReflector.cs" />
     <Compile Include="Utils\QueryStringBuilder.cs" />
@@ -197,9 +198,7 @@
     <None Include="Esynctraining.AC.Provider.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
