@@ -57,14 +57,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core.Logging",
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "EdugameCloud.DB", "EdugameCloud.DB\EdugameCloud.DB.sqlproj", "{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.BuildManager", "EdugameCloud.BuildManager\EdugameCloud.BuildManager.csproj", "{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Tests.FrontEnd", "EdugameCloud.Lti.Tests.FrontEnd\EdugameCloud.Lti.Tests.FrontEnd.csproj", "{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Tests.Web", "EdugameCloud.Lti.Tests.Web\EdugameCloud.Lti.Tests.Web.csproj", "{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Monitoring", "EdugameCloud.Lti.Monitoring\EdugameCloud.Lti.Monitoring.csproj", "{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Mp4.Host", "EdugameCloud.Lti.Mp4.Host\EdugameCloud.Lti.Mp4.Host.csproj", "{393B9E83-8496-4CA2-A245-AC140F7A2CC6}"
 EndProject
 Global
@@ -324,42 +316,6 @@ Global
 		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2B6A42CB-92AF-4D07-9668-5DEDF3417C1D}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.Release|Any CPU.Build.0 = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{393B9E83-8496-4CA2-A245-AC140F7A2CC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{393B9E83-8496-4CA2-A245-AC140F7A2CC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{393B9E83-8496-4CA2-A245-AC140F7A2CC6}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -381,9 +337,5 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{9D4D4840-9409-4B91-B994-9D17FE970AAD} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{13654D81-5B6D-4F0A-A24F-7EFA128C9B11} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{0BB2CE25-5E74-4FB9-8782-07E10F83BF2F} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{A21B9ABC-654E-42DD-9BD1-C90F07CFCB5E} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{BAC99ECC-6812-4BEC-B929-EC49A0CA5F7D} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 	EndGlobalSection
 EndGlobal
