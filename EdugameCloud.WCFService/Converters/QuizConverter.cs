@@ -650,7 +650,8 @@
                         }
                         distractorText.Append("</options>");
                     }
-                    keys.Add(blank, optionId++);
+                    if (!keys.ContainsKey(blank))
+                        keys.Add(blank, optionId++);
 
                     textId++;
                 }
