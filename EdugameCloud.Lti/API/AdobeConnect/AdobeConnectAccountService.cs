@@ -170,10 +170,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else
             {
                 string msg =
-                    string.Format("[LoginIntoAC Error] {0}. Login:{1}. Password:{2}. UserId:{3}. ConsumerKey:{4}",
+                    string.Format("[LoginIntoAC Error] {0}. Login:{1}.  UserId:{2}. ConsumerKey:{3}",
                         resultByLogin.Status.GetErrorInfo(),
                         registeredUser.Login,
-                        password,
                         param.user_id,
                         param.oauth_consumer_key);
                 _logger.Error(msg);
