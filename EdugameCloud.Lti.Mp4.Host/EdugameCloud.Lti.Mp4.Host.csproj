@@ -59,12 +59,12 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.44, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.44\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.46, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.46\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.3\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.6\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -75,8 +75,8 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Mp4Service.Tasks.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mp4Service.Tasks.Client.1.0.0.1\lib\net45\Esynctraining.Mp4Service.Tasks.Client.dll</HintPath>
+    <Reference Include="Esynctraining.Mp4Service.Tasks.Client, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mp4Service.Tasks.Client.1.0.0.2\lib\net45\Esynctraining.Mp4Service.Tasks.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">

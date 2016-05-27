@@ -62,16 +62,20 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DotAmf.Wcf, Version=1.0.0.12, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotAmf.Wcf.1.0.0.12\lib\net45\DotAmf.Wcf.dll</HintPath>
+    <Reference Include="DotAmf, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.0.13\lib\net45\DotAmf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.44, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.44\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="DotAmf.Wcf, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotAmf.Wcf.1.0.0.13\lib\net45\DotAmf.Wcf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.3\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.46, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.46\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.6\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -93,8 +97,8 @@
     <Reference Include="Esynctraining.Http.Streaming">
       <HintPath>..\packages\Esynctraining.Http.Streaming.1.0.0.1\lib\net40\Esynctraining.Http.Streaming.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Mail, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mail.1.0.0.1\lib\net45\Esynctraining.Mail.dll</HintPath>
+    <Reference Include="Esynctraining.Mail, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mail.1.0.0.5\lib\net45\Esynctraining.Mail.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">

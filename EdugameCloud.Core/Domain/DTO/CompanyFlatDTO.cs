@@ -38,7 +38,7 @@ namespace EdugameCloud.Core.Domain.DTO
                    .FirstOrDefault();
 
             var isTrial = (license != null) && (license.LicenseStatus == CompanyLicenseStatus.Trial);
-            return new CompanyFlatDTO()
+            return new CompanyFlatDTO
             {
                 id = company.Id,
                 name = company.CompanyName,

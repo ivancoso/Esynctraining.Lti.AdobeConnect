@@ -46,7 +46,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return OperationResult.Success();
                 }
 
-                logger.ErrorFormat($"Couldn't get audio profile. PrincipalId={principalId??provider.PrincipalId}, profileId={audioProfileId}.");
+                logger.ErrorFormat($"Couldn't get audio profile. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
                 return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
             }
 

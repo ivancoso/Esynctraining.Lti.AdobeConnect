@@ -16,7 +16,7 @@ namespace EdugameCloud.Lti.Core.DTO
             name = recording.Name;
             summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
-            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
+            BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
             duration = GetDurationWithoutMilliseconds(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
@@ -30,7 +30,7 @@ namespace EdugameCloud.Lti.Core.DTO
             name = recording.Name;
             summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
-            beginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
+            BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
             duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
@@ -60,8 +60,8 @@ namespace EdugameCloud.Lti.Core.DTO
         [ScriptIgnore]
         public string begin_date { get; set; }
 
-        [DataMember]
-        public long beginAt { get; set; }
+        [DataMember(Name = "beginAt")]
+        public long BeginAt { get; set; }
 
         //[DataMember]
         //public string description { get; set; }
