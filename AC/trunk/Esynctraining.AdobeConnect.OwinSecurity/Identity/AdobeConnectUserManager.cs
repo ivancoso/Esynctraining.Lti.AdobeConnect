@@ -12,12 +12,19 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 {
     public sealed class AdobeConnectUserManager : UserManager<AdobeConnectUser>
     {
-        public AdobeConnectUserManager() : base(new EdugameCloudUserStore<AdobeConnectUser>())
+        private IUserGroupPermissionProvider _userGroupPermissionProvider;
+
+        public AdobeConnectUserManager() : this(null, null)
+        {
+            
+        }
+
+        public AdobeConnectUserManager(IUserGroupPermissionProvider userGroupPermissionProvider, IUserStore<AdobeConnectUser> userStore) : base(userStore ?? new EdugameCloudUserStore<AdobeConnectUser>())
         {
             //We can retrieve Old System Hash Password and can encypt or decrypt old password using custom approach. 
             //When we want to reuse old system password as it would be difficult for all users to initiate pwd change as per Idnetity Core hashing. 
             //this.PasswordHasher = new EdugameCloudPasswordHasher();
-            
+            _userGroupPermissionProvider = userGroupPermissionProvider ?? new DefaultUserGroupPermissionProvider();
         }
 
         public override System.Threading.Tasks.Task<AdobeConnectUser> FindAsync(string userName, string password)
@@ -52,6 +59,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                     AcDomain = acDomain,
                     AcSessionToken = sessionToken,
                 };
+                //Store.CreateAsync(applicationUser);
                 return applicationUser;
                 
             });
@@ -77,28 +85,8 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 
             sessionToken = result.Status.SessionInfo;
 
-            // TRICK: meeting-hosts and administrators can access
-            var meetingHostsGroup = provider.GetGroupsByType("live-admins");
-            if (meetingHostsGroup.Item1.Code != StatusCodes.ok)
-                return null;
-
-            var meetingHosts = provider.GetGroupPrincipalUsers(meetingHostsGroup.Item2.First().PrincipalId, result.User.UserId);
-            bool isMeetingHost = meetingHosts.Success && meetingHosts.Values.Any(x => x.Login == result.User.Login);
-            if (isMeetingHost)
-                return result.User;
-
-            var adminHostsGroup = provider.GetGroupsByType("admins");
-            if (adminHostsGroup.Item1.Code != StatusCodes.ok)
-                return null;
-
-            var admins = provider.GetGroupPrincipalUsers(adminHostsGroup.Item2.First().PrincipalId, result.User.UserId);
-            bool isAdmin = admins.Success && admins.Values.Any(x => x.Login == result.User.Login);
-            if (isAdmin)
-                return result.User;
-
-            return null;
+            return _userGroupPermissionProvider.UserHasGroupPermission(provider, result.User) ? result.User : null;
         }
-
+        
     }
-
 }
