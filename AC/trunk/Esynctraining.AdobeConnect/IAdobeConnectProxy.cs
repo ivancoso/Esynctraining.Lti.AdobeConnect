@@ -92,7 +92,7 @@ namespace Esynctraining.AdobeConnect
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
-        MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0);
+        MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
         MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0);
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);

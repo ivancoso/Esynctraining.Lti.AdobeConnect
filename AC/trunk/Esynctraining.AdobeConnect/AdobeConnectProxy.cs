@@ -527,9 +527,9 @@ namespace Esynctraining.AdobeConnect
                 principalId);
         }
 
-        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
-            return Execute(() => { return _provider.ReportMettingAttendance(scoId, startIndex, limit); },
+            return Execute(() => { return _provider.ReportMettingAttendance(scoId, startIndex, limit, returnCurrentUsers); },
                 scoId);
         }
 
