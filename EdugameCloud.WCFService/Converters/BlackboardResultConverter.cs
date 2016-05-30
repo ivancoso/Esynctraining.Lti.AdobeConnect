@@ -73,8 +73,10 @@ namespace EdugameCloud.WCFService.Converters
                     || question.QuestionType.Id == (int)QuestionTypeEnum.RateScaleLikert);
 
                 var userAnswer = this.ProcessAnswers(question, quizAnswer);
+                var questionKey = question.LmsQuestionId.GetValueOrDefault();
 
-                answers.Add(question.LmsQuestionId.GetValueOrDefault(), userAnswer);
+                if (!answers.ContainsKey(questionKey))
+                    answers.Add(questionKey, userAnswer);
             }
 
             var questions = this.QuestionModel.GetAllBySubModuleItemId(surveyResult.Survey.SubModuleItem.Id);

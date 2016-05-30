@@ -1108,9 +1108,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
+            if (!paramList.Any())
+                return null;
             var userParameter = paramList.OrderByDescending(p => p.LastLoggedIn).First();
             LmsProvider lmsProvider = LmsProviderModel.GetById(userParameter.CompanyLms.LmsProviderId);
-            return paramList.Any() ? new LmsUserParametersDTO(userParameter, lmsProvider) : null;
+            return new LmsUserParametersDTO(userParameter, lmsProvider);
         }
 
         #endregion
