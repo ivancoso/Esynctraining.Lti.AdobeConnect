@@ -238,7 +238,7 @@
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
         /// </returns>
-        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
             // act: "report-meeting-attendance"
             StatusInfo status;
@@ -246,7 +246,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
+                       ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, returnCurrentUsers))
                        : new MeetingAttendeeCollectionResult(status);
         }
 

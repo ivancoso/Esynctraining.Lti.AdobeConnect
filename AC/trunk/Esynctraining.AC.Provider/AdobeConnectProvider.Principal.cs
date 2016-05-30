@@ -251,7 +251,7 @@ namespace Esynctraining.AC.Provider
         {
             if (string.IsNullOrWhiteSpace(groupId))
                 throw new ArgumentException("Group ID can't be empty", "groupId");
-            if (string.IsNullOrWhiteSpace(groupId))
+            if (string.IsNullOrWhiteSpace(principalId))
                 throw new ArgumentException("Principal ID can't be empty", "principalId");
 
             // act: "principal-list"

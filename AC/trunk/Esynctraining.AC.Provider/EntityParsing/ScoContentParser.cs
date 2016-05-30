@@ -42,8 +42,8 @@
                                EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
                                BeginDateLocal = xml.ParseNodeDateTimeLocal("date-begin/text()", default(DateTime)),
                                EndDateLocal = xml.ParseNodeDateTimeLocal("date-end/text()", default(DateTime)),
-                               DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now),
-                               DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
+                               DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now), //todo: default
+                               DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now), //todo: default
                                IsSeminar = xml.ParseNodeBool("is-seminar/text()", default(bool)),
                            };
             }

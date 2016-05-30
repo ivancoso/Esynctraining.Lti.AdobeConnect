@@ -22,7 +22,7 @@
         /// <param name="xml">The XML.</param>
         /// <param name="serviceUrl">The service URL.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingAttendee> Parse(XmlNode xml, string serviceUrl)
+        public static IEnumerable<MeetingAttendee> Parse(XmlNode xml, string serviceUrl, bool returnCurrentUsers = false)
         {
             if (xml == null || !xml.NodeListExists(Path))
             {
@@ -31,7 +31,10 @@
                 return Enumerable.Empty<MeetingAttendee>();
             }
 
-            return xml.SelectNodes(Path).Cast<XmlNode>().Select(MeetingAttendeeParser.Parse).Where(item => item != null).ToArray();
+            return xml.SelectNodes(Path)
+                .Cast<XmlNode>()
+                .Select(x => MeetingAttendeeParser.Parse(x, returnCurrentUsers))
+                .Where(item => item != null).ToArray();
         }
     }
 }

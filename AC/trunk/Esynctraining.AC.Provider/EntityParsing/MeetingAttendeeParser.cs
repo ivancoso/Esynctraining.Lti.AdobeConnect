@@ -15,7 +15,7 @@
         /// </summary>
         /// <param name="xml">The XML.</param>
         /// <returns>Meeting Item or null if it's a folder.</returns>
-        public static MeetingAttendee Parse(XmlNode xml)
+        public static MeetingAttendee Parse(XmlNode xml, bool returnCurrentUsers)
         {
             if (xml == null || xml.Attributes == null)
             {
@@ -40,7 +40,8 @@
 
                 item.Duration = item.DateEnd.Subtract(item.DateCreated);
 
-                if (!item.DateCreated.Equals(default(DateTime)) && !item.DateEnd.Equals(default(DateTime)))
+                if (!item.DateCreated.Equals(default(DateTime)) &&
+                    (returnCurrentUsers || !item.DateEnd.Equals(default(DateTime))))
                 {
                     return item;
                 }
