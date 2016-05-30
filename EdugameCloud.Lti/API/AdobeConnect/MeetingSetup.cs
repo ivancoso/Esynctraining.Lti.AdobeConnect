@@ -347,6 +347,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
             }
 
+            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            if (lmsUser == null)
+            {
+                throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+            }
+
             string email = param.lis_person_contact_email_primary;
             string login = param.lms_user_login;
             LmsUserDTO lmsUserDto = null;
@@ -362,12 +368,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             "[Dynamic provisioning] Could not create user, id={0}. Message: {1}",
                             param.lms_user_id, userCreationError));
                 }
-            }
 
-            var lmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-            if (lmsUser == null)
-            {
-                throw new Core.WarningMessageException(string.Format("No user with id {0} found.", param.lms_user_id));
+                ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
             }
 
             var principalInfo = !string.IsNullOrWhiteSpace(lmsUser.PrincipalId) ? provider.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo : null;
@@ -394,12 +396,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
-                if ((LmsMeetingType) currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup) // study groups are usually private meetings => disable automatic addition to meeting
-                {
-                    ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
-                    ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
-                }
-
+                ProcessGuestAuditUsers(provider, lmsCompany, currentMeetingScoId, registeredUser.PrincipalId, param, 
+                    () => LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, currentMeetingScoId, 0));
                 breezeToken = ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
 
                 string wstoken = null;
@@ -1345,40 +1343,48 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return customRoles.Where(x => currentUserLtiRoles.Any(lr => lr.Equals(x.LmsRoleName)));
         }
 
-        public void ProcessGuestAuditUser(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting currentMeeting, string principalId, LtiParamDTO param)
+        public void ProcessGuestAuditUsers(IAdobeConnectProxy provider, LmsCompany lmsCompany, string scoId, 
+            string principalId, LtiParamDTO param, Func<IEnumerable<LmsCourseMeeting>> retrieveMeetings)
         {
+
             var auditRoles = GetGuestAuditRoleMappings(lmsCompany, param);
             if (auditRoles.Any())
             {
                 PermissionCollectionResult meetingEnrollments =
-                    provider.GetAllMeetingEnrollments(currentMeeting.GetMeetingScoId());
+                    provider.GetAllMeetingEnrollments(scoId);
 
                 if (meetingEnrollments.Values.All(x => x.PrincipalId != principalId))
                 {
 
                     AcRole role = auditRoles.Any(x => x.AcRole == AcRole.Host.Id) ? AcRole.Host : AcRole.Presenter;
-                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(currentMeeting.GetMeetingScoId(),
-                        principalId, role.MeetingPermissionId);
+                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(scoId, principalId, role.MeetingPermissionId);
 
-                    // Add user as guest to DB
-                    var guest = new LmsCourseMeetingGuest
+                    var courseMeetings = retrieveMeetings();
+                    foreach (var courseMeeting in courseMeetings)
                     {
-                        PrincipalId = principalId,
-                        LmsCourseMeeting = currentMeeting
-                    };
+                        if ((LmsMeetingType)courseMeeting.LmsMeetingType != LmsMeetingType.StudyGroup) // study groups are usually private meetings => disable automatic addition to meeting
+                        {
+                            // Add user as guest to DB
+                            var guest = new LmsCourseMeetingGuest
+                            {
+                                PrincipalId = principalId,
+                                LmsCourseMeeting = courseMeeting
+                            };
 
-                    currentMeeting.MeetingGuests.Add(guest);
-                    this.LmsCourseMeetingModel.RegisterSave(currentMeeting, flush: true);
+                            courseMeeting.MeetingGuests.Add(guest);
+                            this.LmsCourseMeetingModel.RegisterSave(courseMeeting, flush: true);
+                        }
+                    }
                 }
             }
         }
 
-        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting currentMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
+        public void ProcessDynamicProvisioning(IAdobeConnectProxy provider, LmsCompany lmsCompany, LmsCourseMeeting courseMeeting, LmsUser lmsUser, LmsUserDTO lmsUserDto)
         {
-            if(lmsUser !=null && lmsUser.PrincipalId != null && lmsCompany.UseSynchronizedUsers && currentMeeting.EnableDynamicProvisioning)
+            if(lmsUser !=null && lmsUser.PrincipalId != null)
             { 
                 var acRole = new RoleMappingService().SetAcRole(lmsCompany, lmsUserDto);
-                StatusInfo status = provider.UpdateScoPermissionForPrincipal(currentMeeting.GetMeetingScoId(),
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(courseMeeting.GetMeetingScoId(),
                     lmsUser.PrincipalId, acRole);
             }
         }

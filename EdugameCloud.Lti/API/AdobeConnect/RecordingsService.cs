@@ -170,17 +170,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new AdobeConnectException(acRecordingScoResult.Status);
             }
 
-            LmsCourseMeeting currentMeeting = this.lmsCourseMeetingModel.GetLtiCreatedByCompanyAndScoId(lmsCompany, acRecordingScoResult.ScoInfo.FolderId);
-            if (currentMeeting == null)
+            var courseMeetings = this.lmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, acRecordingScoResult.ScoInfo.FolderId, 0);
+
+            var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+            if (lmsUser == null)
             {
-                throw new Core.WarningMessageException(string.Format("No meeting for course {0} and sco-id {1} found.", param.course_id, acRecordingScoResult.ScoInfo.FolderId));
+                throw new Core.WarningMessageException(string.Format("No user with id {0} found in the database.",
+                    param.lms_user_id));
             }
 
-            if ((LmsMeetingType)currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup
-                && currentMeeting.EnableDynamicProvisioning && lmsCompany.UseSynchronizedUsers)
+            // for AC provisioning courseMeeting.scoId() is used, so here we can take only first record if Dynamic provisioning is enabled for at least one meeting 
+            // if sync is enabled then all meetings with the same scoId should have the same users roster and the same value of EnableDynamicProvisioning property
+            var courseMeeting = courseMeetings.FirstOrDefault(x => x.EnableDynamicProvisioning);
+            if (courseMeeting != null && (LmsMeetingType)courseMeeting.LmsMeetingType != LmsMeetingType.StudyGroup && lmsCompany.UseSynchronizedUsers)
             {
                 string userCreationError = null;
-                lmsUserDto = usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, currentMeeting, out userCreationError, param.lms_user_id);
+                lmsUserDto = usersSetup.GetOrCreateUserWithAcRole(lmsCompany, provider, param, courseMeeting, out userCreationError, param.lms_user_id);
                 if (userCreationError != null)
                 {
                     throw new Core.WarningMessageException(
@@ -188,13 +193,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             "[Dynamic provisioning] Could not create user, id={0}. Message: {1}",
                             param.lms_user_id, userCreationError));
                 }
-            }
 
-            var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-            if (lmsUser == null)
-            {
-                throw new Core.WarningMessageException(string.Format("No user with id {0} found in the database.",
-                    param.lms_user_id));
+                meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, courseMeeting, lmsUser, lmsUserDto);
             }
 
             var principalInfo = lmsUser.PrincipalId != null
@@ -204,12 +204,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (registeredUser != null)
             {
-                if ((LmsMeetingType) currentMeeting.LmsMeetingType != LmsMeetingType.StudyGroup) // study groups are usually private meetings => disable automatic addition to meeting
-                {
-                    meetingSetup.ProcessGuestAuditUser(provider, lmsCompany, currentMeeting, registeredUser.PrincipalId, param);
-                    meetingSetup.ProcessDynamicProvisioning(provider, lmsCompany, currentMeeting, lmsUser, lmsUserDto);
-                }
-
+                meetingSetup.ProcessGuestAuditUsers(provider, lmsCompany, acRecordingScoResult.ScoInfo.FolderId,
+                    registeredUser.PrincipalId, param, () => courseMeetings);
                 breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
             }
             else
