@@ -243,7 +243,7 @@
     <Compile Include="Controllers\LtiController.cs" />
     <Compile Include="Controllers\LtiScheduleController.cs" />
     <Compile Include="DTO\BBAssessmentDTO.cs" />
-    <Compile Include="DTO\BBJsonConverter.cs" />
+    <Compile Include="DTO\BbAnswerJsonConverter.cs" />
     <Compile Include="DTO\CanvasQuestionDTO.cs" />
     <Compile Include="DTO\CanvasQuizDTO.cs" />
     <Compile Include="DTO\CanvasFileDTO.cs" />
