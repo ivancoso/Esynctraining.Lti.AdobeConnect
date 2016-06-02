@@ -572,7 +572,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/services</IISUrl>
+          <IISUrl>https://localhost/services</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

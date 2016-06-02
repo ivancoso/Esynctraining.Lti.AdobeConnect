@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using EdugameCloud.Lti.BlackBoard;
+using Newtonsoft.Json;
+
+namespace EdugameCloud.Lti.DTO
 {
     /// <summary>
     /// The bb question dto.
@@ -38,6 +41,7 @@
         /// <summary>
         /// Gets or sets the answers list.
         /// </summary>
+        [JsonConverter(typeof(BbAnswerJsonConverter))]
         public object answersList { get; set; }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using BbWsClient;
 using BbWsClient.Content;
 using Esynctraining.Core.Logging;
@@ -78,10 +79,10 @@ namespace EdugameCloud.Lti.BlackBoard
                                     && l.contentHandler.Equals(isSurvey ? "resource/x-bb-asmt-survey-link" : "resource/x-bb-asmt-test-link")).ToArray();
                         }
                     }
-                    
+
 
                     string testData = string.Empty;
-                    
+
                     if (tsts != null)
                     {
                         var quizDTO = new List<LmsQuizDTO>();
@@ -89,14 +90,14 @@ namespace EdugameCloud.Lti.BlackBoard
                         foreach (var t in tsts)
                         {
                             var lqd = new LmsQuizDTO()
-                                    {
-                                        course = lmsUserParameters.Course,
-                                        courseName = lmsUserParameters.CourseName,
-                                        description = t.body.ClearName(),
-                                        title = t.title.ClearName(),
-                                        id = BlackboardHelper.GetBBId(t.id),
-                                        published = true
-                                    };
+                            {
+                                course = lmsUserParameters.Course,
+                                courseName = lmsUserParameters.CourseName,
+                                description = t.body.ClearName(),
+                                title = t.title.ClearName(),
+                                id = BlackboardHelper.GetBBId(t.id),
+                                published = true
+                            };
                             if (quizIds != null && !quizIds.Contains(lqd.id))
                             {
                                 continue;
@@ -113,15 +114,15 @@ namespace EdugameCloud.Lti.BlackBoard
 
                         return quizDTO.ToList();
                     }
-                    
+
                     return new List<LmsQuizDTO> { };
                 },
                 lmsUserParameters.CompanyLms,
                     out error);
-            
+
             return tests;
         }
-        
+
         public void SendAnswers(LmsUserParameters lmsUserParameters, string contentId, bool isSurvey, string[] answers)
         {
             WebserviceWrapper client = null;
