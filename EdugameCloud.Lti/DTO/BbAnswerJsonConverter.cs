@@ -25,13 +25,15 @@ namespace EdugameCloud.Lti.BlackBoard
                     var key = reader.Value;
                     reader.Read();
                     var value = reader.Value;
-                    if (result[key] == null)
-                        result.Add(key.ToString(), value.ToString());
-                    else
+                    if (result[key] != null)
                     {
                         // AA: hack, adding space to the key in order to keep it both in JObject
-                        result.Add(key + " ", value.ToString());
+                        while (result[key] != null)
+                        {
+                            key = key + " ";
+                        }
                     }
+                    result.Add(key.ToString(), value.ToString());
                     reader.Read();
                 }
                 retVal = result;
