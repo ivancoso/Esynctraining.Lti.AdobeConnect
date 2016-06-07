@@ -143,10 +143,13 @@
         /// </summary>
         public const string UrlPath = "url-path={0}";
 
-        /// <summary>
-        /// telephony profile id
-        /// </summary>
-        public const string ProfileId = "profile-id={0}";
+        public static class Telephony
+        {
+            public const string ProfileId = "profile-id={0}";
+
+            public const string UserConfiguredProfiles = "is-meeting-host=true&principal-id={0}";
+
+        }
 
         public const string FolderIdAndSeminarSessionId = "folder-id={0}&seminar-session-id={1}";
 

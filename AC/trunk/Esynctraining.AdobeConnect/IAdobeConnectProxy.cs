@@ -101,8 +101,13 @@ namespace Esynctraining.AdobeConnect
         RecordingJobResult ScheduleRecordingJob(string recordingScoId);
         //ScoContentCollectionResult SearchScoByDescription(string description);
         ScoContentCollectionResult SearchScoByName(string name);
+
+        TelephonyProviderCollectionResult TelephonyProviderList(string principalId);
         TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
         TelephonyProfileInfoResult TelephonyProfileInfo(string profileId);
+        TelephonyProfileInfoResult TelephonyProfileUpdate(TelephonyProfileUpdateItem updateItem, bool isUpdate);
+
+
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);
         StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId);

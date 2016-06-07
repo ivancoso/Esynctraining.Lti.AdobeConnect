@@ -3,9 +3,6 @@
     using System;
     using System.Xml.Serialization;
 
-    /// <summary>
-    ///     SCO Info.
-    /// </summary>
     [Serializable]
     [XmlRoot("profile")]
     public class TelephonyProfile
@@ -49,5 +46,7 @@
         public string ProviderId { get; set; }
 
         #endregion
+
     }
+
 }

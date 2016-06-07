@@ -23,12 +23,8 @@
     public partial class AdobeConnectProvider
     {
         #region Private Constants
-
-        /// <summary>
-        /// The SCO home path.
-        /// </summary>
+        
         private const string ScoHome = "//sco";
-        private const string TelephonyProfileHome = "//telephony-profile";
         private const string SeminarLicensesHome = "//seminar-licenses";
 
         #endregion
@@ -290,21 +286,6 @@
                        : new ScoContentCollectionResult(status);
         }
 
-        /// <summary>
-        /// List all meeting's quiz
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingAttendeeCollectionResult"/>.
-        /// </returns>
         public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
         {
             // act: "report-quiz-interactions"
@@ -316,40 +297,7 @@
                        ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
                        : new QuizResponseCollectionResult(status);
         }
-
-        /// <summary>
-        /// List all meeting's quiz
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingAttendeeCollectionResult"/>.
-        /// </returns>
-        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
-        {
-            // act: "telephony-profile-list"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.TelephonyProfileList, string.Format(CommandParams.PrincipalId, principalId), out status);
-
-            return ResponseIsOk(doc, status)
-                       ? new TelephonyProfilesCollectionResult(status, TelephonyProfilesCollectionParser.Parse(doc))
-                       : new TelephonyProfilesCollectionResult(status);
-        }
-
-        public TelephonyProfileInfoResult TelephonyProfileInfo(string profileId)
-        {
-            // act: "telephony-profile-info"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.TelephonyProfileInfo, string.Format(CommandParams.ProfileId, profileId), out status);
-
-            return ResponseIsOk(doc, status)
-                       ? new TelephonyProfileInfoResult(status, TelephonyProfileParser.Parse(doc.SelectSingleNode(TelephonyProfileHome)))
-                       : new TelephonyProfileInfoResult(status);
-        }
-
+                
         /// <summary>
         /// List all meeting's sessions
         /// </summary>

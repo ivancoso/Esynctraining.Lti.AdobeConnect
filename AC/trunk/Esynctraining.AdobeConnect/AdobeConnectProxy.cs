@@ -9,7 +9,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AdobeConnect
 {
-    public class AdobeConnectProxy : IAdobeConnectProxy
+    public partial class AdobeConnectProxy : IAdobeConnectProxy
     {
         private readonly AdobeConnectProvider _provider;
         private readonly ILogger _logger;
@@ -554,40 +554,7 @@ namespace Esynctraining.AdobeConnect
         {
             return _provider.SearchScoByName(name);
         }
-
-        public TelephonyProfilesCollectionResult TelephonyProfileList(string principalId)
-        {
-
-            TelephonyProfilesCollectionResult result;
-            try
-            {
-                result = _provider.TelephonyProfileList(principalId);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "TelephonyProfileList. PrincipalId:{0}", principalId);
-                throw new AdobeConnectException("TelephonyProfileList exception", ex);
-            }
-
-            return result;
-        }
-
-        public TelephonyProfileInfoResult TelephonyProfileInfo(string profileId)
-        {
-            TelephonyProfileInfoResult result;
-            try
-            {
-                result = _provider.TelephonyProfileInfo(profileId);
-            }
-            catch (Exception ex)
-            {
-                _logger.ErrorFormat(ex, "TelephonyProfileInfo. ProfileId:{0}", profileId);
-                throw;
-            }
-
-            return result;
-        }
-
+        
         public StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value)
         {
             StatusInfo result;

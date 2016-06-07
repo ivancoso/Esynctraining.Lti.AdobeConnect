@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Telephony.cs" />
     <Compile Include="AdobeConnectProvider.Seminar.cs" />
     <Compile Include="AdobeConnectProvider.Principal.cs" />
     <Compile Include="AdobeConnectProvider.Guest.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfileInfoResult.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProviderCollectionResult.cs" />
     <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
     <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
     <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="Entities\CurriculumTaker.cs" />
     <Compile Include="Entities\GeneratedRecordingJob.cs" />
     <Compile Include="Entities\Field.cs" />
+    <Compile Include="Entities\ITelephonyProfileProviderFields.cs" />
     <Compile Include="Entities\LearningPathItem.cs" />
     <Compile Include="Entities\FolderUpdateItem.cs" />
     <Compile Include="Entities\CurriculumContent.cs" />
@@ -103,6 +106,8 @@
     <Compile Include="Entities\SeminarSessionUpdateItem.cs" />
     <Compile Include="Entities\SeminarUpdateItem.cs" />
     <Compile Include="Entities\PrincipalPredefinedFields.cs" />
+    <Compile Include="Entities\TelephonyProvider.cs" />
+    <Compile Include="Entities\TelephonyProfileUpdateItem.cs" />
     <Compile Include="Entities\User.cs" />
     <Compile Include="Entities\PermissionUpdateTrio.cs" />
     <Compile Include="Entities\Recording.cs" />
@@ -144,6 +149,8 @@
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
     <Compile Include="EntityParsing\SeminarLicensesCollectionParser.cs" />
     <Compile Include="EntityParsing\SeminarLicenseScoParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProviderParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProviderCollectionParser.cs" />
     <Compile Include="EntityParsing\UserParser.cs" />
     <Compile Include="EntityParsing\UserCollectionParser.cs" />
     <Compile Include="EntityParsing\PrincipalInfoParser.cs" />

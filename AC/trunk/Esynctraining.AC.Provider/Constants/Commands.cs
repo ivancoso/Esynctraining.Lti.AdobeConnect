@@ -57,12 +57,17 @@
         /// </summary>
         public const string ReportQuizInteractions = "report-quiz-interactions";
 
-        /// <summary>
-        /// The telephony profile list.
-        /// </summary>
-        public const string TelephonyProfileList = "telephony-profile-list";
+        internal static class Telephony
+        {
+            public const string ProviderList = "telephony-provider-list";
 
-        public const string TelephonyProfileInfo = "telephony-profile-info";
+            public const string ProfileList = "telephony-profile-list";
+
+            public const string ProfileInfo = "telephony-profile-info";
+
+            public const string ProfileUpdate = "telephony-profile-update";
+
+        }
 
         /// <summary>
         /// SCO commands.
