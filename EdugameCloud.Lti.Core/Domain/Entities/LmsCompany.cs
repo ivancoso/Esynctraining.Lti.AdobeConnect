@@ -4,6 +4,7 @@ namespace EdugameCloud.Lti.Domain.Entities
 {
     using System;
     using System.Collections.Generic;
+    using Core.Domain.Entities;
     using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Extensions;
@@ -489,6 +490,23 @@ namespace EdugameCloud.Lti.Domain.Entities
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
 
+        public TelephonyProfileOption GetTelephonyOption(LmsMeetingType meetingType)
+        {
+            switch (meetingType)
+            {
+                case LmsMeetingType.Meeting:
+                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption);
+
+                case LmsMeetingType.OfficeHours:
+                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption);
+
+                case LmsMeetingType.StudyGroup:
+                    return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption);
+
+                default:
+                    throw new ArgumentOutOfRangeException("Non supported meeting type");
+            }
+        }
 
         private static string CleanDomain(string input)
         {

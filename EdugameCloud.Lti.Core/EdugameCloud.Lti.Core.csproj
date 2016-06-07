@@ -211,6 +211,7 @@
     <Compile Include="Domain\Entities\Schedule.cs" />
     <Compile Include="Domain\Entities\ScheduleDescriptor.cs" />
     <Compile Include="Domain\Entities\ScheduleType.cs" />
+    <Compile Include="Domain\Entities\TelephonyProfileOption.cs" />
     <Compile Include="DTO\ACSessionDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantReportDTO.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="DTO\AnnouncementDTO.cs" />
     <Compile Include="DTO\AnswerDTO.cs" />
     <Compile Include="DTO\CalendarEventDTO.cs" />
+    <Compile Include="DTO\TelephonyDTO.cs" />
     <Compile Include="DTO\CompanyLmsDTO.cs" />
     <Compile Include="DTO\ConnectionInfoDTO.cs" />
     <Compile Include="DTO\ConnectionTestDTO.cs" />
@@ -247,6 +249,8 @@
     <Compile Include="DTO\PrincipalInputDto.cs" />
     <Compile Include="DTO\RecordingDTO.cs" />
     <Compile Include="DTO\SeminarSessionRecordingDto.cs" />
+    <Compile Include="DTO\TelephonyArkadinDTO.cs" />
+    <Compile Include="DTO\TelephonyMeetingOneDTO.cs" />
     <Compile Include="DTO\TemplateDTO.cs" />
     <Compile Include="DTO\TransactionInfoDto.cs" />
     <Compile Include="DTO\VariableDTO.cs" />

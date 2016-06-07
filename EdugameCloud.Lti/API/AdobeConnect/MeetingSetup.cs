@@ -682,15 +682,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            var principalId = meetingDTO.type == (int) LmsMeetingType.OfficeHours
-                ? lmsUser.PrincipalId
-                : provider.PrincipalId;
-            var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(result.ScoInfo.ScoId, 
-                meetingDTO.audioProfileId, provider, principalId);
-            if (audioUpdateResult.IsSuccess)
-            {
-                meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
-            }
+            ProcessAudio(lmsCompany, meetingDTO, lmsUser, meeting, result.ScoInfo, provider);
 
             if (isNewMeeting)
             {
@@ -1214,6 +1206,32 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
+        private void ProcessAudio(LmsCompany lmsCompany, MeetingDTO meetingDTO, LmsUser lmsUser,
+            LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
+        {
+            TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
+            if (option == TelephonyProfileOption.TurnOff)
+                return;
+
+            if (option == TelephonyProfileOption.ReuseExistingProfile)
+            {
+                var principalId = meetingDTO.type == (int)LmsMeetingType.OfficeHours
+                    ? lmsUser.PrincipalId
+                    : provider.PrincipalId;
+                var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId,
+                meetingDTO.audioProfileId, provider, principalId);
+                if (audioUpdateResult.IsSuccess)
+                {
+                    meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                }
+                return;
+            }
+            else if (option == TelephonyProfileOption.GenerateNewProfile)
+            {
+               // string audioProfileId = 
+            }
+        }
+
         //private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         //{
         //    var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
@@ -1224,31 +1242,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         //    return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         //}
-
-        /// <summary>
-        /// The save LMS user parameters.
-        /// </summary>
-        /// <param name="lmsCourseId">
-        /// The LMS Course Id.
-        /// </param>
-        /// <param name="lmsCompany">
-        /// The LMS Company.
-        /// </param>
-        /// <param name="lmsUserId">
-        /// The LMS User Id.
-        /// </param>
-        /// <param name="adobeConnectUserId">
-        /// The current user AC id.
-        /// </param>
-        /// <param name="courseName">
-        /// The course Name.
-        /// </param>
-        /// <param name="userEmail">
-        /// The user Email.
-        /// </param>
-        /// <param name="userId">
-        /// The user id.
-        /// </param>
+        
         private void SaveLMSUserParameters(
             int lmsCourseId,
             LmsCompany lmsCompany,
@@ -1277,19 +1271,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             lmsUserParameters.LmsUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(lmsUserId, lmsCompany.Id).Value;
             this.LmsUserParametersModel.RegisterSave(lmsUserParameters);
         }
-
-        /// <summary>
-        /// The can edit.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="meeting">
-        /// The meeting.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         private bool CanEdit(LtiParamDTO param, LmsCourseMeeting meeting)
         {
             if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)

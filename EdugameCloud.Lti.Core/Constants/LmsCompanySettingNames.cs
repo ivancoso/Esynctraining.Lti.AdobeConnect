@@ -33,6 +33,36 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string SeminarsLabel = "SeminarsLabel";
 
         public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
+
+        public static class Telephony
+        {
+            public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin
+
+            public const string CourseMeetingOption = "Telephony.CourseMeetingOption";
+
+            public const string OfficeHoursOption = "Telephony.OfficeHoursOption";
+
+            public const string StudyGroupOption = "Telephony.StudyGroupOption";
+
+            public static class MeetingOne
+            {
+                public const string UserName = "Telephony.MeetingOne.UserName";
+
+                public const string SecretHashKey = "Telephony.MeetingOne.SecretHashKey";
+
+                public const string OwningAccountNumber = "Telephony.MeetingOne.OwningAccountNumber";
+
+            }
+
+            public static class Arkadin
+            {
+                public const string UserName = "Telephony.Arkadin.UserName";
+
+            }
+
+
+        }
+
     }
 
 }

@@ -12,17 +12,29 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class AudioProfilesService : IAudioProfilesService
     {
-        private LmsCourseMeetingModel meetingModel;
-        private ILogger logger;
+        private readonly LmsCourseMeetingModel meetingModel;
+        private readonly ILogger logger;
+
 
         public AudioProfilesService(LmsCourseMeetingModel meetingModel, ILogger logger)
         {
+            if (meetingModel == null)
+                throw new ArgumentNullException(nameof(meetingModel));
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             this.meetingModel = meetingModel;
             this.logger = logger;
         }
 
+
         public IEnumerable<TelephonyProfile> GetAudioProfiles(IAdobeConnectProxy provider, LmsCompany lmsCompany, string principalId)
         {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+
             var usedAudioProfiles = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.AudioProfileUnique) 
                 ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).ToList().Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
@@ -35,19 +47,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public OperationResult AddAudioProfileToMeeting(string meetingScoId, string audioProfileId, 
             IAdobeConnectProxy provider, string principalId)
         {
-            //todo: telephony-profile-info to AC provider
-            var telephonyPrfilesListResult = provider.TelephonyProfileList(principalId ?? provider.PrincipalId);
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
 
-            if (telephonyPrfilesListResult.Success)
+            //todo: telephony-profile-info to AC provider
+            var telephonyProfileListResult = provider.TelephonyProfileInfo(audioProfileId);
+
+            if (telephonyProfileListResult.Success && telephonyProfileListResult.TelephonyProfile != null)
             {
-                if(telephonyPrfilesListResult.Values.Any(x => x.ProfileId.Equals(audioProfileId)))
+                //if(telephonyPrfilesListResult.Values.Any(x => x.ProfileId.Equals(audioProfileId)))
                 {
                     provider.UpdateAclField(meetingScoId, AclFieldId.telephony_profile, audioProfileId);
                     return OperationResult.Success();
                 }
 
-                logger.ErrorFormat($"Couldn't get audio profile. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
-                return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
+                //logger.ErrorFormat($"Couldn't get audio profile. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
+                //return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
             }
 
             logger.ErrorFormat($"Error occured when tried to get audio profiles. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
@@ -58,9 +73,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string audioProfileId, string principalId)
         {
             if (meeting == null)
-                throw new ArgumentNullException("meeting");
+                throw new ArgumentNullException(nameof(meeting));
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider, principalId);
             if (!opResult.IsSuccess)
@@ -70,8 +85,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             meeting.AudioProfileId = audioProfileId;
 
-            meetingModel.RegisterSave(meeting);
-            meetingModel.Flush();
+            meetingModel.RegisterSave(meeting, flush: true);
 
             return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
         }

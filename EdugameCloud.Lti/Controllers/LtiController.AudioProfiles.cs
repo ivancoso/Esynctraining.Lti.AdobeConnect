@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
@@ -19,17 +20,24 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetAudioProfiles(string lmsProviderName, int? meetingType)
+        public JsonResult GetAudioProfiles(string lmsProviderName, int meetingType)
         {
             LmsCompany lmsCompany = null;
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meetingType);
+                if (option != TelephonyProfileOption.ReuseExistingProfile)
+                {
+                    return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
+                }
+
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
                               lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-                string principalId = meetingType.HasValue && (LmsMeetingType) meetingType.Value == LmsMeetingType.OfficeHours
+                string principalId = (LmsMeetingType) meetingType == LmsMeetingType.OfficeHours
                     ? lmsUser.PrincipalId
                     : provider.PrincipalId;
                 var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, principalId);
@@ -73,5 +81,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
+
     }
+
 }

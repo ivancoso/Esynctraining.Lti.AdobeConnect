@@ -22,6 +22,7 @@ namespace EdugameCloud.Lti.DTO
         {
             roleMapping = new LmsCompanyRoleMappingDTO[0];
             additionalLmsDomains = new string[0];
+            Telephony = new TelephonyDTO();
         }
 
         /// <summary>
@@ -421,6 +422,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool enableAuditGuestEntry { get; set; }
+
+        [DataMember(Name = "telephony")]
+        public TelephonyDTO Telephony { get; set; }
 
     }
 

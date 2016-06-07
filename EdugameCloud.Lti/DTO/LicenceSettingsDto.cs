@@ -32,6 +32,24 @@ namespace EdugameCloud.Lti.DTO
 
         #endregion Inner Class: LabelsDto
 
+        #region Inner Class: TelephonyDto
+
+        [DataContract]
+        public sealed class TelephonyDto
+        {
+            [DataMember(Name = "courseMeetingOption")]
+            public int CourseMeetingOption { get; set; }
+
+            [DataMember(Name = "officeHoursOption")]
+            public int OfficeHoursOption { get; set; }
+
+            [DataMember(Name = "studyGroupOption")]
+            public int StudyGroupOption { get; set; }
+
+        }
+
+        #endregion Inner Class: TelephonyDto
+
         [DataMember(Name = "labels")]
         public LabelsDto Labels { get; set; }
 
@@ -57,25 +75,15 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "enableSeminars")]
         public bool EnableSeminars { get; set; }
-
-        //public bool EnableStudyGroups { get; set; }
+        
 
         [DataMember(Name = "enableOfficeHours")]
         public bool EnableOfficeHours { get; set; }
         
-        //public bool EnableCourseMeetings { get; set; }
 
         [DataMember(Name = "instructionText")]
         public string SupportPageHtml { get; set; }
-
-        //public string LabelMeeting { get; set; }
-
-        //public string LabelOfficeHour { get; set; }
-
-        //public string LabelStudyGroup { get; set; }
-
-        //public string LabelSeminar { get; set; }
-
+        
         [DataMember(Name = "showSummary")]
         public bool ShowMeetingSummary { get; set; }
         
@@ -119,6 +127,9 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "canRemoveMeeting")]
         public bool CanRemoveMeeting { get; set; }
 
+        [DataMember(Name = "telephony")]
+        public TelephonyDto Telephony { get; set; }
+
 
         public static LicenceSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
@@ -152,9 +163,6 @@ namespace EdugameCloud.Lti.DTO
 
                     EnableSeminars = value.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
-                    //RestoredACPassword = session.LtiSession.RestoredACPassword,
-                    //EnableStudyGroups = value.EnableStudyGroups.GetValueOrDefault(),
-                    //EnableCourseMeetings = value.EnableCourseMeetings.GetValueOrDefault(),
 
                     ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
                     ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),
@@ -176,6 +184,14 @@ namespace EdugameCloud.Lti.DTO
                         StudyGroupLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
                         SeminarLabel = value.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel) ?? "Seminar Rooms",
                     },
+
+                    Telephony = new TelephonyDto
+                    {
+                        // See TelephonyProfileOption
+                        CourseMeetingOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption),
+                        OfficeHoursOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption),
+                        StudyGroupOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption),
+                    }
                 };
             });            
         }
