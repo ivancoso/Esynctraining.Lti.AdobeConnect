@@ -41,7 +41,7 @@ namespace EdugameCloud.Lti.DTO
         /// <summary>
         /// Gets or sets the answers list.
         /// </summary>
-        [JsonConverter(typeof(BbAnswerJsonConverter))]
+        //[JsonConverter(typeof(BbAnswerJsonConverter))]
         public object answersList { get; set; }
 
         /// <summary>
