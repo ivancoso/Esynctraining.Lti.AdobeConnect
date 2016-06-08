@@ -490,7 +490,7 @@ namespace EdugameCloud.Lti.Domain.Entities
                 : (T)Convert.ChangeType(setting.Value, typeof(T)); // assuming that we convert to primitive type
         }
 
-        public TelephonyProfileOption GetTelephonyOption(LmsMeetingType meetingType)
+        public virtual TelephonyProfileOption GetTelephonyOption(LmsMeetingType meetingType)
         {
             switch (meetingType)
             {

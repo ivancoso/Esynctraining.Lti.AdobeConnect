@@ -191,7 +191,7 @@ namespace EdugameCloud.Lti.DTO
 
                     Telephony = new TelephonyDto
                     {
-                        // See TelephonyProfileOption
+                        // See TelephonyProfileOption enum
                         CourseMeetingOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption),
                         OfficeHoursOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption),
                         StudyGroupOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.StudyGroupOption),

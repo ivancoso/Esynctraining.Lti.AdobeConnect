@@ -317,6 +317,12 @@ namespace EdugameCloud.Web
             }
         }
 
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            // Code that runs when an unhandled error occurs
+            IoC.Resolve<ILogger>().Error("Unhandled exception: ", this.Server.GetLastError());
+        }
+
     }
 
 }

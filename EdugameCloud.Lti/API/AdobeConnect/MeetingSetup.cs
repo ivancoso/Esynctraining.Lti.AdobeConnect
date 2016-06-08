@@ -1228,7 +1228,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else if (option == TelephonyProfileOption.GenerateNewProfile)
             {
-               // string audioProfileId = 
+                // IoC.Resolve<ITelephonyProfileEngine>()
+                // CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
+                // string audioProfileId = 
             }
         }
 
