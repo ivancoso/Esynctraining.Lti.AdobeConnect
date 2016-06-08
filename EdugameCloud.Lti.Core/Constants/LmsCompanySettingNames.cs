@@ -33,6 +33,7 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string SeminarsLabel = "SeminarsLabel";
 
         public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
+        public const string UseSakaiEvents = "UseSakaiEvents";
 
         public static class Telephony
         {
