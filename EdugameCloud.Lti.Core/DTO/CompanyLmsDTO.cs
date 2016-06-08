@@ -15,6 +15,9 @@ namespace EdugameCloud.Lti.DTO
     [DataContract]
     public sealed class CompanyLmsDTO
     {
+        private TelephonyDTO _telephony;
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CompanyLmsDTO"/> class.
         /// </summary>
@@ -116,6 +119,8 @@ namespace EdugameCloud.Lti.DTO
             this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
             useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
+
+            Telephony = new TelephonyDTO();
         }
 
         /// <summary>
@@ -426,8 +431,13 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool useSakaiEvents { get; set; }
+
         [DataMember(Name = "telephony")]
-        public TelephonyDTO Telephony { get; set; }
+        public TelephonyDTO Telephony
+        {
+            get { return _telephony; }
+            set { _telephony = value ?? new TelephonyDTO(); }
+        }
 
     }
 
