@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using ConnectExtensions.Services.Client;
@@ -6,6 +7,7 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect.OwinSecurity.PermissionProviders;
 using Microsoft.AspNet.Identity;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
@@ -16,10 +18,11 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 
         public AdobeConnectUserManager() : this(null, null)
         {
-            
+
         }
 
-        public AdobeConnectUserManager(IUserGroupPermissionProvider userGroupPermissionProvider, IUserStore<AdobeConnectUser> userStore) : base(userStore ?? new EdugameCloudUserStore<AdobeConnectUser>())
+        public AdobeConnectUserManager(IUserGroupPermissionProvider userGroupPermissionProvider,
+            IUserStore<AdobeConnectUser> userStore) : base(userStore ?? new EdugameCloudUserStore<AdobeConnectUser>())
         {
             //We can retrieve Old System Hash Password and can encypt or decrypt old password using custom approach. 
             //When we want to reuse old system password as it would be difficult for all users to initiate pwd change as per Idnetity Core hashing. 
@@ -31,12 +34,15 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
         {
             Task<AdobeConnectUser> taskInvoke = Task<AdobeConnectUser>.Factory.StartNew(() =>
             {
-                string[] parts = userName.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] parts = userName.Split(new char[] {'|'}, StringSplitOptions.RemoveEmptyEntries);
                 string companyToken = parts[0];
                 string acDomain = parts[1];
                 string acLogin = parts[2];
 
-                string[] acDomains = new CompanySubscriptionServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken).Result;
+                var ceClient = new PublicLicenseServiceProxy();
+                var licenseProductId = int.Parse(ConfigurationManager.AppSettings["LicenseProductId"] as string);
+                string[] acDomains =
+                    ceClient.GetAdobeConnectDomainsByCompanyToken(companyToken, licenseProductId).Result;
                 if (!acDomains.Any(x => x.Equals(acDomain, StringComparison.OrdinalIgnoreCase)))
                 {
                     // TODO: add to log that AC domain is not valid for companyToken!!
@@ -59,9 +65,19 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                     AcDomain = acDomain,
                     AcSessionToken = sessionToken,
                 };
-                //Store.CreateAsync(applicationUser);
+                var store = Store as IEdugameCloudUserStore<AdobeConnectUser>;
+                if (store != null)
+                {
+                    var user = store.FindByPrincipalIdAndCompanyTokenAndAcDomainAsync(applicationUser.Id, companyToken,
+                        acDomain).Result;
+                    if (user == null)
+                    {
+                        store.CreateAsync(applicationUser, password).ConfigureAwait(false);
+                    }
+                }
+
                 return applicationUser;
-                
+
             });
             return taskInvoke;
         }
@@ -87,6 +103,31 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 
             return _userGroupPermissionProvider.UserHasGroupPermission(provider, result.User) ? result.User : null;
         }
-        
+
+        public async Task<AdobeConnectUser> RefreshSession(string userId, string companyToken, string domain,
+            string userName)
+        {
+            if(string.IsNullOrEmpty(userId))
+                throw new ArgumentException(nameof(userId));
+            if (string.IsNullOrEmpty(companyToken))
+                throw new ArgumentException(nameof(companyToken));
+            if (string.IsNullOrEmpty(domain))
+                throw new ArgumentException(nameof(domain));
+            if (string.IsNullOrEmpty(userName))
+                throw new ArgumentException(nameof(userName));
+
+            var store = Store as IEdugameCloudUserStore<AdobeConnectUser>;
+            if (store != null)
+            {
+                var login = $"{companyToken}|{domain}|{userName}";
+                var password = await store.RetrievePassword(userId, companyToken, domain);
+                if (!string.IsNullOrEmpty(password))
+                {
+                    return await FindAsync(login, password);
+                }
+            }
+
+            return null;
+        }
     }
 }

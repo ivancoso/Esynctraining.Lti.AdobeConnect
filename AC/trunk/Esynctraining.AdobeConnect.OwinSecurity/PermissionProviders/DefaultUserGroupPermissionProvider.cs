@@ -2,7 +2,7 @@ using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
 
-namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
+namespace Esynctraining.AdobeConnect.OwinSecurity.PermissionProviders
 {
     public class DefaultUserGroupPermissionProvider : IUserGroupPermissionProvider
     {

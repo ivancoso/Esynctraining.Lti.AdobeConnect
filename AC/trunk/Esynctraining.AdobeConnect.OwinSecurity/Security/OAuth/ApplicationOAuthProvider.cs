@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Identity;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 
@@ -107,6 +108,38 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
             return Task.FromResult<object>(null);
         }
 
+        public override async Task GrantRefreshToken(OAuthGrantRefreshTokenContext context)
+        {
+            var identity = context.Ticket.Identity;
+            var id = identity.GetUserId();
+            var domain = identity.FindFirst(x => x.Type == "ac_domain");
+            var companyToken = identity.FindFirst(x => x.Type == "c_token");
+            AdobeConnectUser user = null;
+            using (AdobeConnectUserManager userManager = _userManagerFactory())
+            {
+                try
+                {
+                    user = await userManager.RefreshSession(id, companyToken.Value, domain.Value, identity.Name);
+                }
+                catch (Exception ex)
+                {
+                    // TODO: production-ready exceptions
+                    context.SetError("server_error", ex.Message);
+                    return;
+                }
+            }
+
+            if (user == null)
+            {
+                context.SetError("token_refresh_error", "User session has not been updated successfully.");
+                return;
+            }
+
+            identity.AddClaim(new Claim("ac_session", user.AcSessionToken));
+            context.Validated(context.Ticket);
+//            return Task.FromResult<object>(null);
+        }
+
         public static AuthenticationProperties CreateProperties(string userName)
         {
             IDictionary<string, string> data = new Dictionary<string, string>
@@ -131,5 +164,4 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
         //}
 
     }
-
 }
