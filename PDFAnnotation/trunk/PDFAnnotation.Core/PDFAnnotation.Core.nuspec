@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PDFAnnotation.Core</id>
@@ -18,7 +18,7 @@
       <dependency id="Esynctraining.NHibernate" version="1.0.0.1" />
       <dependency id="Esynctraining.PdfProcessor" version="1.0.0.3" />
       <dependency id="Newtonsoft.Json" version="8.0.3" />
-      <dependency id="wcfrestcontrib.Json" version="1.7.14.0" />
+      <dependency id="wcfrestcontrib" version="1.7.14.0" />
     </dependencies>
     <references>
       <reference file="PDFAnnotation.Core.dll" />
