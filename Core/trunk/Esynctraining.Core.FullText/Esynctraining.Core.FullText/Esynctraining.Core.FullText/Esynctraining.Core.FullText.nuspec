@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Esynctraining.Core.FullText</id>
+        <version>1.0.0.1</version>
+        <title>Esynctraining.Core.FullText</title>
+        <authors>eSyncTraining.com</authors>
+        <owners>eSyncTraining.com</owners>
+        <projectUrl>http://esynctraining.com/</projectUrl>
+        <iconUrl>https://nuget.esynctraining.com/esync128.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Provides fulltext searching support for Nhibernate entities</description>
+        <releaseNotes>Added EnumerableExtensions.Chunk</releaseNotes>
+        <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
+        <tags>core</tags>
+        <dependencies>
+        </dependencies>
+        <references>
+            <reference file="Esynctraining.Core.FullText.dll" />
+        </references>
+    </metadata>
+    <files>
+     <file src="bin\$configuration$\Esynctraining.Core.FullText.dll" target="lib\net45" />
+    </files>
+</package>
