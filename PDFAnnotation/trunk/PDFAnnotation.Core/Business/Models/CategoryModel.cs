@@ -1,14 +1,11 @@
-using Esynctraining.NHibernate;
-using Esynctraining.NHibernate.Queries;
 
 namespace PDFAnnotation.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-   // using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.FullText;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using NHibernate;
     using NHibernate.Criterion;
     using PDFAnnotation.Core.Domain.Entities;

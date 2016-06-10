@@ -1,28 +1,21 @@
-﻿using PDFAnnotation.Core.Extensions;
-
-namespace PDFAnnotation.Core.Business.Models
+﻿namespace PDFAnnotation.Core.Business.Models
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-  //  using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.FullText;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
 
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Transform;
-    using Esynctraining.NHibernate;
-
     using PDFAnnotation.Core.Business.Queries;
     using PDFAnnotation.Core.Domain.DTO;
     using PDFAnnotation.Core.Domain.Entities;
-    using Esynctraining.NHibernate.Queries;
-    /// <summary>
-    ///     The user model.
-    /// </summary>
+    using PDFAnnotation.Core.Extensions;
+
     public class ContactModel : BaseModel<Contact, int>
     {
         /// <summary>

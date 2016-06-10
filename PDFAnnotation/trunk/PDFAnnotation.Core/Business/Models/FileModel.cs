@@ -11,27 +11,24 @@ namespace PDFAnnotation.Core.Business.Models
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Web;
     using System.Text.RegularExpressions;
-    using Esynctraining.NHibernate;
-    using Esynctraining.NHibernate.Queries;
-
-    using Esynctraining.Core.Business.Models;
+    using System.Web;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.FullText;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Esynctraining.NHibernate;
+    using Esynctraining.NHibernate.Queries;
     using Esynctraining.PdfProcessor;
-    using Esynctraining.Core.Logging;
     using NHibernate;
     using NHibernate.Criterion;
     using NHibernate.Linq;
     using NHibernate.Transform;
-
     using PDFAnnotation.Core.Business.Models.Annotation;
     using PDFAnnotation.Core.Domain.DTO;
     using PDFAnnotation.Core.Domain.Entities;
     using PDFAnnotation.Core.Utils;
-
     using File = PDFAnnotation.Core.Domain.Entities.File;
 
     /// <summary>

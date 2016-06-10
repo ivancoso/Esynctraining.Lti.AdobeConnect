@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PDFAnnotation.Core</id>
-    <version>1.1.0.7</version>
+    <version>1.1.0.8</version>
     <title>PDFAnnotation.Core</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,12 +12,13 @@
     <description>Provides core functionality for pdf annotations projects</description>
     <copyright>Copyright © 2016-2017 eSyncTraining.com</copyright>
     <tags>pdf annotation</tags>
-    <releaseNotes>Provides core functionality for pdf annotations projects</releaseNotes>
+    <releaseNotes>cleaned up dependencies.</releaseNotes>
     <dependencies>
-        <dependency id="Esynctraining.Core.Only" version="[1.0.0.0,2.0.0.0]" />
-        <dependency id="Esynctraining.PdfProcessor" version="1.0.0.3" />
-        <dependency id="Newtonsoft.Json" version="6.0.3" />
-
+      <dependency id="Esynctraining.Core.FullText" version="1.0.0.2" />
+      <dependency id="Esynctraining.NHibernate" version="1.0.0.1" />
+      <dependency id="Esynctraining.PdfProcessor" version="1.0.0.3" />
+      <dependency id="Newtonsoft.Json" version="8.0.3" />
+      <dependency id="wcfrestcontrib.Json" version="1.7.14.0" />
     </dependencies>
     <references>
       <reference file="PDFAnnotation.Core.dll" />

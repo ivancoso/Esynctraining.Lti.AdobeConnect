@@ -5,10 +5,7 @@ namespace PDFAnnotation.Core.Business.Models
 {
     using System.Collections.Generic;
     using System.Linq;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-   // using Esynctraining.Core.Business.Queries;
+    using Esynctraining.Core.FullText;
     using Esynctraining.Core.Utils;
 
     using NHibernate.Criterion;

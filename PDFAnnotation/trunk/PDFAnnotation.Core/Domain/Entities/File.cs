@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using Esynctraining.Core.Business.Models;
-using Esynctraining.Core.Extensions;
-
-namespace PDFAnnotation.Core.Domain.Entities
+﻿namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
+    using System.Collections.Generic;
     using Esynctraining.Core.Domain.Entities;
-    using Esynctraining.Core.Enums;
-  //  using Esynctraining.Core.FullText;
-    using Iesi.Collections.Generic;
+    using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.FullText;
 
     /// <summary>
     ///     The file.
