@@ -1,4 +1,4 @@
-﻿namespace Esynctraining.Core.Business.Models
+﻿namespace Esynctraining.Core.FullText
 {
     using System;
 

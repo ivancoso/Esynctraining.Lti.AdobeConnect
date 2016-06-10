@@ -1,4 +1,4 @@
-﻿namespace Esynctraining.Core.Business.Models
+﻿namespace Esynctraining.Core.FullText
 {
     using System;
     using System.Collections;
@@ -9,14 +9,12 @@
     using System.Reflection;
     using System.Web;
 
-    using Castle.Core.Logging;
-
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
-  //  using Esynctraining.Core.FullText;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
-
+    using Logging;
+    using NHibernate.Util;
 
     using Lucene.Net.Analysis.Standard;
     using Lucene.Net.Documents;
@@ -24,8 +22,6 @@
     using Lucene.Net.QueryParsers;
     using Lucene.Net.Search;
     using Lucene.Net.Store;
-
-    using NHibernate.Util;
 
     using Version = Lucene.Net.Util.Version;
 

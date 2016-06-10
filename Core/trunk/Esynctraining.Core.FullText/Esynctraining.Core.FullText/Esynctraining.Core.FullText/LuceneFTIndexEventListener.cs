@@ -2,7 +2,6 @@
 {
     using System.Diagnostics.CodeAnalysis;
 
-    using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Utils;
     using NHibernate.Event;
 
@@ -72,5 +71,7 @@
         }
 
         #endregion
+
     }
+
 }

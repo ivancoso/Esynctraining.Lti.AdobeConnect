@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Core.FullText</id>
-        <version>1.0.0.1</version>
+        <version>1.0.0.2</version>
         <title>Esynctraining.Core.FullText</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -14,6 +14,9 @@
         <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
         <tags>core</tags>
         <dependencies>
+          <dependency id="Lucene.Net" version="3.0.3" />
+          <dependency id="NHibernate" version="4.0.4.4000" />
+          <dependency id="Esynctraining.Core.Only" version="1.0.0.24" />
         </dependencies>
         <references>
             <reference file="Esynctraining.Core.FullText.dll" />
