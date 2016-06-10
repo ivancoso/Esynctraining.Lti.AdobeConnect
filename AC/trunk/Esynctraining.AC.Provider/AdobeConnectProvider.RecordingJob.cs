@@ -55,7 +55,7 @@ namespace Esynctraining.AC.Provider
             return new CancelRecordingJobResult(status);
         }
 
-        public RecordingCollectionResult GetRecordingsList(string folderId)
+        public RecordingCollectionResult GetRecordingsList(string folderId, string scoId = null)
         {
             return GetRecordingsList(folderId, 0, 0, null, SortOrder.Unspecified);
         }
@@ -63,7 +63,8 @@ namespace Esynctraining.AC.Provider
         public RecordingCollectionResult GetRecordingsList(string folderId,
             int startIndex, int limit, 
             string propertySortBy, SortOrder order,
-            bool excludeMp4 = false)
+            bool excludeMp4 = false,
+            string scoId = null)
         {
             //act: "list-recordings"
             StatusInfo status;
@@ -75,6 +76,9 @@ namespace Esynctraining.AC.Provider
 
             if (excludeMp4)
                 parameters += "&filter-out-icon=mp4-archive";
+
+            if (!string.IsNullOrEmpty(scoId))
+                parameters += $"&filter-sco-id={scoId}";
 
             var doc = this.requestProcessor.Process(Commands.Recordings.List, parameters, out status);
             return ResponseIsOk(doc, status)

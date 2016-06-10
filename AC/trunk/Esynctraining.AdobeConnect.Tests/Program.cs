@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Castle.Windsor;
+using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.DataObjects;
+using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
@@ -15,6 +18,7 @@ namespace Esynctraining.AdobeConnect.Tests
     {
         static void Main(string[] args)
         {
+            //RunUmdRecordingsReport();
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
@@ -58,6 +62,100 @@ namespace Esynctraining.AdobeConnect.Tests
             //var resDelete = seminarService.DeleteSesson("1406981", ac);
 
             //var resDelete = seminarService.DeleteSeminar("1406519", ac);
+        }
+
+        static void RunUmdRecordingsReport()
+        {
+            var container = new WindsorContainer();
+            WindsorIoC.Initialize(container);
+            DIConfig.RegisterComponents(container);
+
+            var logger = IoC.Resolve<ILogger>();
+            var accountService = new AdobeConnectAccountService(logger);
+            //            IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("https://webmeeting.umd.edu/", "mike+umd@esynctraining.com", "e$ync123UMD"), true);
+
+            string apiUrl = "https://webmeeting.umd.edu/api/xml";
+
+            var connectionDetails = new ConnectionDetails
+            {
+                ServiceUrl = apiUrl,
+                EventMaxParticipants = 10,
+                Proxy =
+                new ProxyCredentials
+                {
+                    Domain = string.Empty,
+                    Login = string.Empty,
+                    Password = string.Empty,
+                    Url = string.Empty,
+                },
+            };
+            string principalId = null;
+            var provider = new AdobeConnectProvider(connectionDetails);
+            LoginResult loginResult = provider.Login(new UserCredentials("mike+umd@esynctraining.com", "e$ync123UMD"));
+
+            var recordings = provider.ReportRecordings();
+
+            //            var recordingsWithoutCreate = recordings.Values.Where(x => x.DateCreated == default(DateTime)).ToList();
+            //            var recordingsWithoutCreateWithEnd = recordingsWithoutCreate.Where(x => x.EndDate != default(DateTime)).ToList();
+            var recordingsWithoutEnd = recordings.Values.Where(x => x.EndDate == default(DateTime)).Select(x => x.ScoId);
+
+            var result =
+                recordings.Values.Where(x => recordingsWithoutEnd.All(r => r != x.ScoId) && x.ScoId != "2434849").ToList(); //2434849 - rec without start date, can't calculate duration
+            double duration = 0;
+            double biggestDuration = 0;
+            string biggestRecSco = null;
+
+            var recsAfter_20150601 = result.Where(x => x.DateCreated >= new DateTime(2015, 06, 01));
+            foreach (var rec in recsAfter_20150601)
+            {
+                var scoInfo = provider.GetScoInfo(rec.ScoId);
+                var rec1 = provider.GetRecordingsList(scoInfo.ScoInfo.FolderId, rec.ScoId);
+                TimeSpan ts;
+                if (TimeSpan.TryParse(rec1.Values.First().Duration, out ts))
+                {
+                    duration += ts.TotalMinutes;
+                    if (ts.TotalMinutes > biggestDuration)
+                    {
+                        biggestDuration = ts.TotalMinutes;
+                        biggestRecSco = rec.ScoId;
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine($"There was a problem with scoId={rec.ScoId} . Could not parse Duration={rec1.Values.First().Duration}");
+                }
+            }
+            Console.WriteLine($"Total recordings count after 2015/05/31                   :{recsAfter_20150601.Count()}");
+            Console.WriteLine($"Total recordings duration(in minutes) after 2015/05/31    :{duration}");
+            Console.WriteLine($"The longest meeting duration(in minutes) after 2015/05/31 :{biggestDuration}, scoId={biggestRecSco}");
+            var recsBefore20150601 = result.Where(x => x.DateCreated < new DateTime(2015, 06, 01));
+            duration = 0;
+            biggestDuration = 0;
+            foreach (var rec in recsBefore20150601)
+            {
+                var scoInfo = provider.GetScoInfo(rec.ScoId);
+                var rec1 = provider.GetRecordingsList(scoInfo.ScoInfo.FolderId, rec.ScoId);
+                TimeSpan ts;
+                if (TimeSpan.TryParse(rec1.Values.First().Duration, out ts))
+                {
+                    duration += ts.TotalMinutes;
+                    if (ts.TotalMinutes > biggestDuration)
+                    {
+                        biggestDuration = ts.TotalMinutes;
+                        biggestRecSco = rec.ScoId;
+                    }
+
+                }
+                else
+                {
+                    Console.WriteLine($"There was a problem with scoId={rec.ScoId} . Could not parse Duration={rec1.Values.First().Duration}");
+                }
+            }
+            Console.WriteLine($"Total recordings count before 2015/05/31                   :{recsBefore20150601.Count()}");
+            Console.WriteLine($"Total recordings duration(in minutes) before 2015/05/31    :{duration}");
+            Console.WriteLine($"The longest meeting duration(in minutes) before 2015/05/31 :{biggestDuration}, scoId={biggestRecSco}");
+            Console.ReadLine();
         }
 
     }
