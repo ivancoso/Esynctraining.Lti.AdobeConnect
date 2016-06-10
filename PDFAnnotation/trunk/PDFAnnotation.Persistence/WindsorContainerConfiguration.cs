@@ -1,5 +1,4 @@
-﻿
-namespace PDFAnnotation.Persistence
+﻿namespace PDFAnnotation.Persistence
 {
     using System.Configuration;
     using System.Web;
@@ -81,8 +80,6 @@ namespace PDFAnnotation.Persistence
 
             container.Register(Component.For<HttpServerUtilityBase>().ImplementedBy<HttpServerUtilityWrapper>().DynamicParameters((k, d) => d.Insert("httpServerUtility", HttpContext.Current.Server)).LifeStyle.Transient);
 
-            container.Register(Component.For<ITemplateProvider>().ImplementedBy<TemplateProvider>().LifeStyle.Transient);
-            container.Register(Component.For<IAttachmentsProvider>().ImplementedBy<AttachmentsProvider>().LifeStyle.Transient);
             container.Register(Component.For<FullTextModel>().LifeStyle.Singleton);
             container.Register(Component.For<Pdf2SwfConverter>().LifeStyle.Singleton);
             container.Register(Types.FromAssemblyNamed("PDFAnnotation.Core").Pick().If(Component.IsInNamespace("PDFAnnotation.Core.Business.Models", true)).WithService.Self().Configure(c => c.LifestyleTransient()));
