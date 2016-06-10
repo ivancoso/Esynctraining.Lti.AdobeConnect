@@ -37,9 +37,9 @@ namespace EdugameCloud.Lti.DTO
         public CompanyLmsDTO(LmsCompany instance, LmsProvider provider)
         {
             if (instance == null)
-                throw new ArgumentNullException("instance");
+                throw new ArgumentNullException(nameof(instance));
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             this.id = instance.Id;
             this.useFLV = instance.UseFLV;
@@ -120,7 +120,7 @@ namespace EdugameCloud.Lti.DTO
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
             useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
 
-            Telephony = new TelephonyDTO();
+            Telephony = new TelephonyDTO(instance);
         }
 
         /// <summary>

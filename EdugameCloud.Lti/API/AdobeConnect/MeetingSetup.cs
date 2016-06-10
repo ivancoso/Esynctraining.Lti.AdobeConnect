@@ -17,6 +17,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using EdugameCloud.Lti.Telephony;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -682,7 +683,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            ProcessAudio(lmsCompany, meetingDTO, lmsUser, meeting, result.ScoInfo, provider);
+            ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
 
             if (isNewMeeting)
             {
@@ -1206,7 +1207,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private void ProcessAudio(LmsCompany lmsCompany, MeetingDTO meetingDTO, LmsUser lmsUser,
+        private async void ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
             TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
@@ -1218,8 +1219,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 var principalId = meetingDTO.type == (int)LmsMeetingType.OfficeHours
                     ? lmsUser.PrincipalId
                     : provider.PrincipalId;
-                var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId,
-                meetingDTO.audioProfileId, provider, principalId);
+                var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, meetingDTO.audioProfileId, provider);
                 if (audioUpdateResult.IsSuccess)
                 {
                     meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
@@ -1228,9 +1228,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else if (option == TelephonyProfileOption.GenerateNewProfile)
             {
-                // IoC.Resolve<ITelephonyProfileEngine>()
-                // CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
-                // string audioProfileId = 
+                //string profileName = acMeetingName;
+                //TelephonyProfile profile = await IoC.Resolve<ITelephonyProfileEngine>().CreateProfileAsync(lmsCompany, param, profileName, provider).ConfigureAwait(false);
+
+                //meetingDTO.audioProfileId
+                //var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
+                //if (audioUpdateResult.IsSuccess)
+                //{
+                    //meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                //}
             }
         }
 

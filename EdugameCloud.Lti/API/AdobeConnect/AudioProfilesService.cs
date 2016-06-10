@@ -45,7 +45,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public OperationResult AddAudioProfileToMeeting(string meetingScoId, string audioProfileId, 
-            IAdobeConnectProxy provider, string principalId)
+            IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
@@ -65,19 +65,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 //return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
             }
 
-            logger.ErrorFormat($"Error occured when tried to get audio profiles. PrincipalId={principalId ?? provider.PrincipalId}, profileId={audioProfileId}.");
+            logger.ErrorFormat($"Error occured when tried to get audio profiles. ProfileId={audioProfileId}.");
             return OperationResult.Error("Unexpected error. Please refresh page and try again.");
         }
 
-        public OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider,
-            string audioProfileId, string principalId)
+        public OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider, string audioProfileId)
         {
             if (meeting == null)
                 throw new ArgumentNullException(nameof(meeting));
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
 
-            var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider, principalId);
+            var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider);
             if (!opResult.IsSuccess)
             {
                 return opResult;

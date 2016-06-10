@@ -241,7 +241,9 @@
     <Content Include="Global.asax" />
     <Content Include="log4net.cfg.xml" />
     <Content Include="nhibernate.cfg.xml" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\DIConfig.cs" />

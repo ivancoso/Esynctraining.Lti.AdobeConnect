@@ -756,8 +756,8 @@
                 var imageName = a.question_text.Substring(a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1);
 
                 var file = distractor.Image != null
-                               ? FileModel.GetOneById(distractor.Image.Id).Value
-                               : FileModel.CreateFile(user, imageName, DateTime.Now, null, null, null, null);
+                    ? FileModel.GetOneById(distractor.Image.Id).Value
+                    : FileModel.CreateFile(user, imageName, DateTime.Now, null, null, null, null);
                 FileModel.SetData(file, image.RawBytes);
                 distractor.Image = file;
 

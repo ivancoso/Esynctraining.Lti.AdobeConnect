@@ -29,7 +29,8 @@ namespace EdugameCloud.BuildManager.Controllers
                     IEnumerable<string> messages = Enumerable.Empty<string>();
                     lock (Lock)
                     {
-                        messages = new CanvasLtiChecker2(configs).DoCheckRequests();
+                        // TODO: do we need this functionality here at all ?
+                        // messages = new CanvasLtiChecker2(configs).DoCheckRequests();
                     }
                     return View(messages);
                 }

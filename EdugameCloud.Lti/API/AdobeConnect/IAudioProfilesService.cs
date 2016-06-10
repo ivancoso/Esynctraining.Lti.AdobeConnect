@@ -10,9 +10,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         IEnumerable<TelephonyProfile> GetAudioProfiles(IAdobeConnectProxy provider, LmsCompany lmsCompany, string principalId);
 
         OperationResult AddAudioProfileToMeeting(string meetingScoId, string audioProfileId,
-            IAdobeConnectProxy provider, string principalId);
+            IAdobeConnectProxy provider);
 
         OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider,
-            string audioProfileId, string principalId);
+            string audioProfileId);
+
     }
+
 }

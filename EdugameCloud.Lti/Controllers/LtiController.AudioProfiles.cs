@@ -70,8 +70,7 @@ namespace EdugameCloud.Lti.Controllers
                 var ret = AudioProfileService.UpdateAudioProfileId(
                     meeting,
                     provider,
-                    audioProfileId,
-                    principalId);
+                    audioProfileId);
 
                 return Json(ret);
             }
