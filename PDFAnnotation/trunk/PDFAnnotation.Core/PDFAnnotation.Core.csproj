@@ -152,9 +152,7 @@
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Attributes\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="Esynctraining.Core">
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
