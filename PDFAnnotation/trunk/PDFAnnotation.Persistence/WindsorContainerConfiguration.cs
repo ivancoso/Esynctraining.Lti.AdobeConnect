@@ -1,17 +1,16 @@
-﻿using Esynctraining.Mail;
-
+﻿
 namespace PDFAnnotation.Persistence
 {
     using System.Configuration;
     using System.Web;
     using System.Web.Configuration;
 
-    using Castle.Facilities.Logging;
     using Castle.Facilities.WcfIntegration;
     using Castle.MicroKernel.Registration;
     using Castle.Windsor;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
+    using Esynctraining.Mail;
     using Esynctraining.Persistence;
 
     using NHibernate;
@@ -19,6 +18,8 @@ namespace PDFAnnotation.Persistence
 
     using Configuration = NHibernate.Cfg.Configuration;
     using Esynctraining.NHibernate;
+    using Esynctraining.Core.FullText;    
+    
     /// <summary>
     /// The windsor container configuration.
     /// </summary>
