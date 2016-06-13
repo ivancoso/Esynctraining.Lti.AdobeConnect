@@ -13,6 +13,11 @@
             public static readonly string UserConfigured = "user-conf";
         }
 
+        public static class ProviderStatuses
+        {
+            public static readonly string Enabled = "enabled";
+            public static readonly string Disabled = "disabled";
+        }
 
         [XmlElement("class-name")]
         public string ClassName { get; set; }

@@ -57,6 +57,8 @@
         /// </summary>
         public const string ReportQuizInteractions = "report-quiz-interactions";
 
+        public const string ReportScoViews = "report-sco-views";
+
         internal static class Telephony
         {
             public const string ProviderList = "telephony-provider-list";

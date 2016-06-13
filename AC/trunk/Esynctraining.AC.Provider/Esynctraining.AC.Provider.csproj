@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Report.cs" />
     <Compile Include="AdobeConnectProvider.Telephony.cs" />
     <Compile Include="AdobeConnectProvider.Seminar.cs" />
     <Compile Include="AdobeConnectProvider.Principal.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="TraceTool.cs" />
     <Compile Include="Utils\EnumReflector.cs" />
     <Compile Include="Utils\QueryStringBuilder.cs" />
+    <Compile Include="Utils\RequestProcessorAsync.cs" />
     <Compile Include="Utils\RequestProcessor.cs" />
   </ItemGroup>
   <ItemGroup>

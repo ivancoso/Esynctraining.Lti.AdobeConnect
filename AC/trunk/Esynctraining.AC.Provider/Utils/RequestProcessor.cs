@@ -28,7 +28,7 @@
         /// <summary>
         ///     The session cookie.
         /// </summary>
-        private Cookie sessionCookie;
+        protected Cookie sessionCookie;
 
         #endregion
 
@@ -386,7 +386,7 @@
         /// <returns>
         /// The <see cref="HttpWebRequest"/>.
         /// </returns>
-        private HttpWebRequest CreateWebRequest(string action, string parameters)
+        protected HttpWebRequest CreateWebRequest(string action, string parameters)
         {
             var request =
                 WebRequest.Create(
@@ -485,7 +485,7 @@
         /// <returns>
         /// The <see cref="XmlDocument"/>.
         /// </returns>
-        private XmlDocument ProcessXmlResult(StatusInfo status, string buffer)
+        protected XmlDocument ProcessXmlResult(StatusInfo status, string buffer)
         {
             var doc = new XmlDocument();
             doc.Load(new StringReader(buffer));
