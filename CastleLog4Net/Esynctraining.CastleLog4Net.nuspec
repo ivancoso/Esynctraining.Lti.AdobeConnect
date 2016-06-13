@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.CastleLog4Net</id>
-        <version>1.0.0.1</version>
+        <version>1.0.0.2</version>
         <title>Esynctraining.CastleLog4Net</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -16,7 +16,7 @@
         <dependencies>
             <dependency id="Castle.Windsor" version="3.3.0" />
             <dependency id="Castle.LoggingFacility" version="3.3.0" />
-            <dependency id="log4net" version="2.0.3" />
+            <dependency id="log4net" version="2.0.5" />
         </dependencies>
         <references>
             <reference file="Esynctraining.CastleLog4Net.dll" />
