@@ -9,7 +9,6 @@
     using Castle.Windsor;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Providers;
-    using Esynctraining.Mail;
     using Esynctraining.Persistence;
 
     using NHibernate;
