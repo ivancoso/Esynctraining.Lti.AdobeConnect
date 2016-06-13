@@ -447,7 +447,7 @@ namespace PDFAnnotation.Core.Business.Models
                 }
 
                 System.IO.File.Copy(fileTemp, permanentFileName);
-                this.ClearDirectoryAndRemoveItSafely(folderName);
+              //  this.ClearDirectoryAndRemoveItSafely(folderName);
                 file.UploadFileStatus = UploadFileStatus.Rendering;
                 this.RegisterSave(file, true);
                 return true;
@@ -1771,7 +1771,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// </returns>
         internal string StoragePhysicalPath()
         {
-            dynamic fileStorage = this.settings.Storage; //WebOrbStorage
+            dynamic fileStorage = this.settings.FileStorage; //WebOrbStorage
             return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
         }
 
