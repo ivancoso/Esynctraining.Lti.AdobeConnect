@@ -23,7 +23,7 @@
     public partial class AdobeConnectProvider
     {
         #region Private Constants
-        
+
         private const string ScoHome = "//sco";
         private const string SeminarLicensesHome = "//seminar-licenses";
 
@@ -116,7 +116,7 @@
         public LoginResult LoginWithSessionId(string sessionId)
         {
             this.requestProcessor.SetSessionId(sessionId);
-            
+
             StatusInfo status;
             var shortcuts = this.requestProcessor.Process(Commands.Sco.Shortcuts, null, out status);
 
@@ -297,7 +297,7 @@
                        ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
                        : new QuizResponseCollectionResult(status);
         }
-                
+
         /// <summary>
         /// List all meeting's sessions
         /// </summary>
@@ -764,7 +764,7 @@
                 throw new ArgumentException("Meeting SCO can't be empty", "meetingId");
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
-            
+
             var filter = new StringBuilder(23 * principalIds.Count());
             foreach (string principalId in principalIds)
                 filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, HttpUtility.UrlEncode(principalId));
@@ -838,7 +838,7 @@
             StatusInfo status;
 
             this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "true"), out status);
-            
+
             return status;
         }
 
@@ -1015,6 +1015,33 @@
             return new ScoContentCollectionResult(status);
         }
 
+        public  IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0)
+        {
+            // act: "report-bulk-objects" paged by 10K
+            StatusInfo status = new StatusInfo();
+            var responseIsOk = false;
+            var iteration = 1;
+            var limit = 10000;
+            ScoContentCollectionResult scoContentCollectionResult = new ScoContentCollectionResult(status);
+            var result = new List<ScoContentCollectionResult>();
+            do
+            {
+                var doc = this.requestProcessor.Process(Commands.ReportBulkObjects,
+                    CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded((iteration - 1)*limit + 1 , limit), out status);
+
+                responseIsOk = ResponseIsOk(doc, status);
+                if (responseIsOk)
+                {
+                    scoContentCollectionResult = new ScoContentCollectionResult(status, ScoRecordingCollectionParser.Parse(doc));
+                    result.Add(scoContentCollectionResult);
+                }
+                iteration++;
+            } while (scoContentCollectionResult.Success && scoContentCollectionResult.Values!= null && scoContentCollectionResult.Values.Any() && totalLimit > 0 && (iteration - 1) * limit < totalLimit);
+            
+
+            return result;
+        }
+
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>
@@ -1035,11 +1062,11 @@
             const string scoPath = "//results/sco";
 
             return ResponseIsOk(scos, status)
-                       // ReSharper disable once AssignNullToNotNullAttribute
+                // ReSharper disable once AssignNullToNotNullAttribute
                 ? new ScoContentResult(status, ScoContentParser.Parse(scos.SelectNodes(scoPath).Cast<XmlNode>().FirstOrDefault()))
                 : new ScoContentResult(status);
         }
-        
+
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>
@@ -1081,8 +1108,8 @@
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(
-                Commands.Sco.ExpandedContents, 
-                string.Format(CommandParams.ScoName, scoId, HttpUtility.UrlEncode(name)), 
+                Commands.Sco.ExpandedContents,
+                string.Format(CommandParams.ScoName, scoId, HttpUtility.UrlEncode(name)),
                 out status);
 
             // ReSharper disable once InconsistentNaming

@@ -8,7 +8,7 @@ namespace Esynctraining.AC.Provider
 {
     public partial class AdobeConnectProvider
     {
-        public UserCollectionResult ReportScoViews(string scoId)
+        public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
@@ -18,10 +18,10 @@ namespace Esynctraining.AC.Provider
 
             var doc = this.requestProcessor.Process(Commands.ReportScoViews,
                 string.Format(CommandParams.ScoId, scoId), out status);
-
+            
             return ResponseIsOk(doc, status)
-                       ? new UserCollectionResult(status, UserCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
-                       : new UserCollectionResult(status);
+                ? new ReportScoViewsContentCollectionResult(status, ReportScoViewCollectionParser.Parse(doc), scoId)
+                : new ReportScoViewsContentCollectionResult(status);
         }
         
     }

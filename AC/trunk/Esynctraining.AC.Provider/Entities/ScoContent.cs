@@ -3,10 +3,11 @@ namespace Esynctraining.AC.Provider.Entities
     using System;
     using System.Xml.Serialization;
 
+
     /// <summary>
-    /// SCO Content.
-    /// </summary>
-    [Serializable]
+        /// SCO Content.
+        /// </summary>
+        [Serializable]
     public class ScoContent
     {
         /// <summary>

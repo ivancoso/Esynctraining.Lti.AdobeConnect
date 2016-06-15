@@ -61,6 +61,7 @@
     <Compile Include="DataObjects\Results\FieldResult.cs" />
     <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ReportScoViewsContentCollectionResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfileInfoResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProviderCollectionResult.cs" />
     <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\ReportScoViewContent.cs" />
     <Compile Include="Entities\SeminarLicenseSco.cs" />
     <Compile Include="Entities\SeminarLicensesCollectionResult.cs" />
     <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />
@@ -148,6 +150,8 @@
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
+    <Compile Include="EntityParsing\ReportScoViewContentParser.cs" />
+    <Compile Include="EntityParsing\ReportScoViewParser.cs" />
     <Compile Include="EntityParsing\SeminarLicensesCollectionParser.cs" />
     <Compile Include="EntityParsing\SeminarLicenseScoParser.cs" />
     <Compile Include="EntityParsing\TelephonyProviderParser.cs" />
@@ -180,7 +184,7 @@
     <Compile Include="EntityParsing\PermissionInfoParser.cs" />
     <Compile Include="EntityParsing\PermissionInfoCollectionParser.cs" />
     <Compile Include="EntityParsing\ScoContentParser.cs" />
-    <Compile Include="EntityParsing\ScoContentCollectionParserCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoContentCollectionParser.cs" />
     <Compile Include="EntityParsing\ShortcutCollectionParser.cs" />
     <Compile Include="EntityParsing\ShortcutParser.cs" />
     <Compile Include="EntityParsing\EventInfoCollectionParser.cs" />

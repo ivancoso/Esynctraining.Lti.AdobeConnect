@@ -160,50 +160,6 @@ namespace Esynctraining.AdobeConnect.Tests
             Console.ReadLine();
         }
 
-        //[TestCase("http://connectdev.esynctraining.com/api/xml", "anton@esynctraining.com", "Welcome1")]
-        [TestCase("https://webmeeting.umd.edu/api/xml", "mike+umd@esynctraining.com", "e$ync123UMD")]
-        public void WillGetRecordingsStats(string apiUrl, string login, string password)
-        {
-            var container = new WindsorContainer();
-            WindsorIoC.Initialize(container);
-            DIConfig.RegisterComponents(container);
-
-            var connectionDetails = new ConnectionDetails
-            {
-                ServiceUrl = apiUrl,
-                EventMaxParticipants = 10,
-                Proxy =
-                new ProxyCredentials
-                {
-                    Domain = string.Empty,
-                    Login = string.Empty,
-                    Password = string.Empty,
-                    Url = string.Empty,
-                },
-            };
-            string principalId = null;
-            
-            var provider = new AdobeConnectProvider(connectionDetails);
-            LoginResult loginResult = provider.Login(new UserCredentials(login, password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException("Invalid login");
-            var recordings = provider.ReportRecordings();
-
-            var year = DateTime.Today.Year - 1;
-            var month = DateTime.Today.Month;
-            var day = DateTime.Today.Day;
-            if (recordings.Values == null)
-                throw new InvalidOperationException("No recordings");
-            var lastYearRecs = recordings.Values.Where(x => x.DateCreated >= new DateTime(year, month, day));
-            
-            foreach (var lastYearRec in lastYearRecs)
-            {
-                //var scoInfo = provider.GetScoInfo(lastYearRec.ScoId);
-                var scoInfo = provider.ReportScoViews(lastYearRec.ScoId);
-                //if (scoInfo.Values.First() )
-            }
-        }
-
     }
 
 }
