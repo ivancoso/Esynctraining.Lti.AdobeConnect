@@ -1022,6 +1022,8 @@
             var responseIsOk = false;
             var iteration = 1;
             var limit = 10000;
+            if (totalLimit < limit && totalLimit != 0)
+                limit = totalLimit;
             ScoContentCollectionResult scoContentCollectionResult = new ScoContentCollectionResult(status);
             var result = new List<ScoContentCollectionResult>();
             do

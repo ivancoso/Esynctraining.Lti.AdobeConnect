@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Castle.Windsor;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Utils;
 using Esynctraining.Windsor;
+using log4net.Config;
 using NUnit.Framework;
 
 namespace Esynctraining.AdobeConnect.Tests
@@ -15,6 +19,7 @@ namespace Esynctraining.AdobeConnect.Tests
     {
         private ConnectionDetails _connectionDetails;
         private AdobeConnectProvider _provider;
+        private ILogger _logger;
 
         [SetUp]
         public void Init()
@@ -22,6 +27,7 @@ namespace Esynctraining.AdobeConnect.Tests
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
+            XmlConfigurator.Configure();
 
             _connectionDetails = new ConnectionDetails
             {
@@ -34,12 +40,13 @@ namespace Esynctraining.AdobeConnect.Tests
                         Url = string.Empty,
                     },
             };
+            _logger = IoC.Resolve<ILogger>();
         }
 
         //[TestCase("http://connectdev.esynctraining.com/api/xml", "anton@esynctraining.com", "Welcome1")]
         //[TestCase("https://webmeeting.umd.edu/api/xml", "mike+umd@esynctraining.com", "e$ync123UMD")]
         [TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123")]
-        public void WillGetRecordingsStats(string apiUrl, string login, string password)
+        public void WillGetRecordingsStats(string apiUrl, string login, string password, int totalObjCount = 0)
         {
             _connectionDetails.ServiceUrl = apiUrl;
             _provider = new AdobeConnectProvider(_connectionDetails);
@@ -51,6 +58,16 @@ namespace Esynctraining.AdobeConnect.Tests
             //var report1 = GetLastYearNoViews(recordings);
             //var report2 = GetLastViewMoreThan2Years(recordings);
             var report34 = GetRecLengthStats(recordings);
+            LogRecStats(report34);
+        }
+
+        private void LogRecStats<T>(T report34)
+        {
+            var props = typeof (T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            foreach (var propertyInfo in props)
+            {
+                _logger.Info(propertyInfo.Name+ " " + propertyInfo.GetValue(report34));
+            }
         }
 
         private int GetLastYearNoViews(IEnumerable<ScoContentCollectionResult> recordings)
@@ -125,6 +142,9 @@ namespace Esynctraining.AdobeConnect.Tests
         {
             var counter10hours = 0;
             var counter3to10hours = 0;
+            var duration = 0.0;
+            double biggestDuration = 0;
+            string biggestRecSco = null;
 
             Parallel.ForEach(recordings.ToList(), (rec, y) =>
             {
@@ -135,9 +155,11 @@ namespace Esynctraining.AdobeConnect.Tests
                         return;
                     var rec1 = _provider.GetRecordingsList(scoInfo.ScoInfo.FolderId, x.ScoId);
                     TimeSpan ts;
+                    if (rec1.Values == null || !rec1.Values.Any())
+                        return;
                     if (TimeSpan.TryParse(rec1.Values.First().Duration, out ts))
                     {
-
+                        duration += ts.TotalMinutes;
                         if (ts.TotalMinutes > 10 * 60)
                         {
                             counter10hours++;
@@ -145,6 +167,11 @@ namespace Esynctraining.AdobeConnect.Tests
                         if ((ts.TotalMinutes > 3 * 60) && (ts.TotalMinutes < 10 * 60))
                         {
                             counter3to10hours++;
+                        }
+                        if (ts.TotalMinutes > biggestDuration)
+                        {
+                            biggestDuration = ts.TotalMinutes;
+                            biggestRecSco = x.ScoId;
                         }
                     }
                     else
@@ -155,10 +182,14 @@ namespace Esynctraining.AdobeConnect.Tests
                 });
                 
             });
+
             return new DurationStats()
             {
                 Counter10hours = counter10hours,
-                Counter3to10hours = counter3to10hours
+                Counter3to10hours = counter3to10hours,
+                BiggestDuration = biggestDuration,
+                BiggestSco = biggestRecSco,
+                Duration = duration
             };
         }
     }
@@ -167,6 +198,9 @@ namespace Esynctraining.AdobeConnect.Tests
     {
         public int Counter10hours { get; set; }
         public int Counter3to10hours { get; set; }
+        public double Duration { get; set; }
+        public double BiggestDuration { get; set; }
+        public string BiggestSco { get; set; }
         
     }
 }
