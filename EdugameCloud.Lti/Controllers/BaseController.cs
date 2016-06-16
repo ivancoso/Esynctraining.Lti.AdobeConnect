@@ -129,6 +129,9 @@ namespace EdugameCloud.Lti.Controllers
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)
         {
+            if (ex is IUserMessageException)
+                return ex.Message;
+
             logger.Error(methodName, ex);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()

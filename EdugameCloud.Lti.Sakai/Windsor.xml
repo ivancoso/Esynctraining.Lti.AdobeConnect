@@ -9,5 +9,9 @@
       id="Sakai"
       service="EdugameCloud.Lti.API.LmsUserServiceBase, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Sakai.SakaiLmsUserService, EdugameCloud.Lti.Sakai"></component>
+    <component
+      id="ISakaiApi"
+      service="EdugameCloud.Lti.API.Sakai.ISakaiApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"></component>
   </components>
 </configuration>

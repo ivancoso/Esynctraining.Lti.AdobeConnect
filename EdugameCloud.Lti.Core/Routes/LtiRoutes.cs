@@ -75,8 +75,14 @@
             routes.MapLowercaseRoute("seminarsSessionCreate", "lti/seminars/sessions/create", new { controller = "Seminar", action = "SaveSeminarSession" });
             routes.MapLowercaseRoute("seminarsSessionEdit", "lti/seminars/sessions/edit", new { controller = "Seminar", action = "SaveSeminarSession" });
             routes.MapLowercaseRoute("seminarsSessionDelete", "lti/seminars/sessions/delete", new { controller = "Seminar", action = "DeleteSeminarSession" });
+            routes.MapLowercaseRoute("calendarCreateBatch", "lti/calendar/createbatch", new { controller = "Calendar", action = "CreateBatch" });
+            routes.MapLowercaseRoute("calendarGetEvents", "lti/calendar/getevents", new { controller = "Calendar", action = "GetEvents" });
+            routes.MapLowercaseRoute("calendarCreateEvent", "lti/calendar/createevent", new { controller = "Calendar", action = "CreateEvent" });
+            routes.MapLowercaseRoute("calendarSaveEvent", "lti/calendar/saveevent", new { controller = "Calendar", action = "SaveEvent" });
+            routes.MapLowercaseRoute("calendarDeleteEvent", "lti/calendar/deleteevent", new { controller = "Calendar", action = "DeleteEvent" });
 
-            routes.MapLowercaseRoute("DefaultLtiAction", "lti/{action}", new { controller = "Lti" });            
+            routes.MapLowercaseRoute("DefaultLtiAction", "lti/{action}", new { controller = "Lti" });
+
         }
 
     }

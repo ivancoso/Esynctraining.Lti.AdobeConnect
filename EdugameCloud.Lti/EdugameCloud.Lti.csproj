@@ -190,12 +190,14 @@
     <Compile Include="API\AdobeConnect\AdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\AdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\AudioProfilesService.cs" />
+    <Compile Include="API\AdobeConnect\CalendarEventService.cs" />
     <Compile Include="API\AdobeConnect\DateExtensions.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectAccountService.cs" />
     <Compile Include="API\AdobeConnect\AdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectProxy.cs" />
     <Compile Include="API\AdobeConnect\IAdobeConnectUserService.cs" />
     <Compile Include="API\AdobeConnect\IAudioProfilesService.cs" />
+    <Compile Include="API\AdobeConnect\ICalendarEventService.cs" />
     <Compile Include="API\AdobeConnect\IFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
@@ -225,9 +227,11 @@
     <Compile Include="API\LmsFactory.cs" />
     <Compile Include="API\Moodle\IEGCEnabledMoodleApi.cs" />
     <Compile Include="API\Moodle\IMoodleApi.cs" />
+    <Compile Include="API\Sakai\ISakaiApi.cs" />
     <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
@@ -258,6 +262,7 @@
     <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionResultDTO.cs" />
     <Compile Include="DTO\Recordings\EditDto.cs" />
+    <Compile Include="DTO\SakaiEventDto.cs" />
     <Compile Include="DTO\SeminarDto.cs" />
     <Compile Include="DTO\SeminarLicenseDto.cs" />
     <Compile Include="DTO\SeminarSessionDto.cs" />

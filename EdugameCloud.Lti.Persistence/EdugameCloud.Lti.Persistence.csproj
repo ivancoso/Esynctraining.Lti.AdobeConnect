@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="FluentConfiguration.cs" />
     <Compile Include="Mappings\AcCachePrincipalMap.cs" />
+    <Compile Include="Mappings\LmsCalendarEventMap.cs" />
     <Compile Include="Mappings\LmsCompanyMap.cs" />
     <Compile Include="Mappings\LmsCompanyRoleMappingMap.cs" />
     <Compile Include="Mappings\LmsCompanySetting.cs" />

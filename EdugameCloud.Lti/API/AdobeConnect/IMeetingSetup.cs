@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool retrieveLmsUsers = false);
 
         List<string> DeleteMeeting(
-            LmsCompany credentials,
+            LmsCompany lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,

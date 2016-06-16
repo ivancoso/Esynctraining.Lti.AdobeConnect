@@ -341,16 +341,31 @@ namespace EdugameCloud.WCFService
 
         private void ProcessTelephony(CompanyLmsDTO dto, LmsCompany instance)
         {
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.ActiveProfile, dto.Telephony.ActiveProfile);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.CourseMeetingOption, dto.Telephony.CourseMeetingOption);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.OfficeHoursOption, dto.Telephony.OfficeHoursOption);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.StudyGroupOption, dto.Telephony.StudyGroupOption);
-
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber, dto.Telephony.MeetingOne.OwningAccountNumber);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.UserName, dto.Telephony.MeetingOne.UserName);
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey, dto.Telephony.MeetingOne.SecretHashKey);
-
-            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.Arkadin.UserName, dto.Telephony.Arkadin.UserName);
+            if (dto.Telephony != null)
+            {
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.ActiveProfile,
+                    dto.Telephony.ActiveProfile);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.CourseMeetingOption,
+                    dto.Telephony.CourseMeetingOption);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.OfficeHoursOption,
+                    dto.Telephony.OfficeHoursOption);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.StudyGroupOption,
+                    dto.Telephony.StudyGroupOption);
+                if (dto.Telephony.MeetingOne != null)
+                {
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber,
+                        dto.Telephony.MeetingOne.OwningAccountNumber);
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.UserName,
+                        dto.Telephony.MeetingOne.UserName);
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey,
+                        dto.Telephony.MeetingOne.SecretHashKey);
+                }
+                if (dto.Telephony.Arkadin != null)
+                {
+                    UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Telephony.Arkadin.UserName,
+                        dto.Telephony.Arkadin.UserName);
+                }
+            }
         }
 
         private static void ProcessRoleMapping(CompanyLmsDTO dto, LmsCompany instance)

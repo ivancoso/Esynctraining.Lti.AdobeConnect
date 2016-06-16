@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using EdugameCloud.Lti.Core.Constants;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Runtime.Serialization;
@@ -31,10 +33,10 @@
             get { return IoC.Resolve<UsersSetup>(); }
         }
 
-        //private MeetingSetup MeetingSetup
-        //{
-        //    get { return IoC.Resolve<MeetingSetup>(); }
-        //}
+        private ICalendarEventService CalendarEventService
+        {
+            get { return IoC.Resolve<ICalendarEventService>(); }
+        }
 
         #endregion
 
@@ -137,15 +139,16 @@
         [HttpPost]
         public virtual JsonResult DeleteMeeting(string lmsProviderName, int meetingId)
         {
-            LmsCompany credentials = null;
+            LmsCompany lmsCompany = null;
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
+                lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.With(x => x.LtiParam);
+                
                 OperationResult result = this.meetingSetup.DeleteMeeting(
-                    credentials,
-                    this.GetAdobeConnectProvider(credentials),
+                    lmsCompany,
+                    this.GetAdobeConnectProvider(lmsCompany),
                     param,
                     meetingId);
 
@@ -153,7 +156,7 @@
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("DeleteMeeting", credentials, ex);
+                string errorMessage = GetOutputErrorMessage("DeleteMeeting", lmsCompany, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
         }

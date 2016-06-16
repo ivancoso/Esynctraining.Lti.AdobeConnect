@@ -8,6 +8,7 @@
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Web;
+    using System.Web.Helpers;
     using System.Web.Mvc;
     using Esynctraining.Core.Logging;
     using DotNetOpenAuth.AspNet;
@@ -1131,6 +1132,30 @@
         /// </returns>
         private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
+            var request = System.Web.HttpContext.Current.Request;
+
+            FormCollection form = new FormCollection(request.Unvalidated().Form);
+
+            var action = form["lti_action"];
+            var ltiId = form["lti_id"];
+            var eventId = form["sakai_id"];
+            string tab = null;
+            if (!string.IsNullOrEmpty(action))
+            {
+                if (action == "join")
+                {
+                    int meetingId;
+                    if (int.TryParse(ltiId, out meetingId))
+                    {
+                        return JoinMeeting(session.Id.ToString("n"), meetingId);
+                    }
+                }
+                else if (action == "edit" || action == "delete")
+                {
+                    tab = "calendar";
+                }
+            }
+
             LtiViewModelDto model = BuildModel(session, trace);
             TempData["lti-index-model"] = model;
 
@@ -1142,7 +1167,11 @@
                 primaryColor = primaryColor,
                 lmsProviderName = providerName,
                 acConnectionMode = (int)lmsUser.AcConnectionMode,
-                disableCacheBuster = true
+                disableCacheBuster = true,
+                tab = tab,
+                meetingId = ltiId,
+                eventId = eventId,
+                eventAction = action
             });
         }
 

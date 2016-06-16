@@ -27,6 +27,7 @@ namespace EdugameCloud.Lti
             container.Register(Component.For<IRecordingsService>().ImplementedBy<RecordingsService>());
             container.Register(Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>());
             container.Register(Component.For<ISeminarService>().ImplementedBy<SeminarService>());
+            container.Register(Component.For<ICalendarEventService>().ImplementedBy<CalendarEventService>());
 
             container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
             
