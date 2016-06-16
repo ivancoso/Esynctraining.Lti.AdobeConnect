@@ -37,7 +37,7 @@
         public FileDTO(File file)
         {
             this.fileId = file.Id.ToString();
-            this.dateCreated = file.DateCreated.With(x => x.ConvertToTimestamp()); ;
+            this.dateCreated = file.DateCreated.With(x => x.ConvertToUnixTimestamp()); ;
             this.fileName = file.FileName;
             this.fileSize = file.FileSize;
             this.topicName = file.TopicName;
@@ -45,7 +45,7 @@
             this.categoryId = file.Category.Return(x => x.Id, (int?)null);
             this.userId = file.UserId;
             this.displayName = file.DisplayName;
-            this.dateModified = file.DateModified.Return(x => x.Value.ConvertToTimestamp(), (int?)null);
+            this.dateModified = file.DateModified.Return(x => x.Value.ConvertToUnixTimestamp(), (double?)null);
             this.fileNumber = file.FileNumber;
             this.categoryName = file.Category.With(c => c.CategoryName);
             this.userName = file.UserId.ToString();

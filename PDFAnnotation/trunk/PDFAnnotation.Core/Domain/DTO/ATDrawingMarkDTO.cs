@@ -26,8 +26,8 @@ namespace PDFAnnotation.Core.Domain.DTO
             this.id = item.Mark.Id.ToString();
             this.type = item.Mark.Type;
             this.fileId = item.Mark.File.Id.ToString();
-            this.datechanged = item.Mark.DateChanged.With(x=> x.ConvertToTimestamp());
-            this.datecreated = item.Mark.DateCreated.With(x => x.ConvertToTimestamp());
+            this.datechanged = item.Mark.DateChanged.With(x=> x.ConvertToUnixTimestamp());
+            this.datecreated = item.Mark.DateCreated.With(x => x.ConvertToUnixTimestamp());
             this.@readonly = item.Mark.IsReadonly;
             this.rotation = item.Mark.Rotation;
             this.color = item.Color;

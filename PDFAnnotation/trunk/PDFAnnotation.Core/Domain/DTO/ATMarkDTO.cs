@@ -33,8 +33,8 @@ namespace PDFAnnotation.Core.Domain.DTO
         public ATMarkDTO(ATMark mark)
         {
             this.fileId = mark.File.Id.ToString();
-            this.datechanged = mark.DateChanged.With(x => x.ConvertToTimestamp());
-            this.datecreated = mark.DateCreated.With(x => x.ConvertToTimestamp());
+            this.datechanged = mark.DateChanged.With(x => x.ConvertToUnixTimestamp());
+            this.datecreated = mark.DateCreated.With(x => x.ConvertToUnixTimestamp());
             this.displayFormat = mark.DisplayFormat;
             this.id = mark.Id.ToString();
             this.pageIndex = mark.PageIndex;

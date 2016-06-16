@@ -37,7 +37,7 @@ namespace PDFAnnotation.Core.Domain.DTO
                 this.firstName = topic.FirstName;
                 this.lastName = topic.LastName;
                 this.fullName = topic.FullName;
-                this.dateCreated = topic.DateCreated.With(x => x.ConvertToTimestamp());
+                this.dateCreated = topic.DateCreated.With(x => x.ConvertToUnixTimestamp());
                 this.exhibitsCount = topic.Files.ToList().Count(x => x.FileNumber.HasValue);
             }
         }

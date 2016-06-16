@@ -1758,7 +1758,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        internal string FolderName(File file)
+        public string FolderName(File file)
         {
             return Path.Combine(this.StoragePhysicalPath(), file.Id.ToString());
         }
@@ -1769,7 +1769,7 @@ namespace PDFAnnotation.Core.Business.Models
         /// <returns>
         ///     The <see cref="string" />.
         /// </returns>
-        internal string StoragePhysicalPath()
+        public string StoragePhysicalPath()
         {
             dynamic fileStorage = this.settings.FileStorage; //WebOrbStorage
             return fileStorage.StartsWith("~") ? HttpContext.Current.Server.MapPath(fileStorage) : fileStorage;
