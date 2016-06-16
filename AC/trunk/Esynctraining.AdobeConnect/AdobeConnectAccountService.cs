@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
@@ -14,10 +13,14 @@ namespace Esynctraining.AdobeConnect
     {
         private readonly ILogger _logger;
 
+
         public AdobeConnectAccountService(ILogger logger)
         {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
             _logger = logger;
         }
+
 
         public IAdobeConnectProxy GetProvider(IAdobeConnectAccess credentials, bool login)
         {
@@ -36,7 +39,6 @@ namespace Esynctraining.AdobeConnect
                     Url = string.Empty,
                 },
             };
-            string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
@@ -46,7 +48,6 @@ namespace Esynctraining.AdobeConnect
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
                     throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
                 }
-                principalId = result.User.UserId;
             }
 
             return new AdobeConnectProxy(provider, _logger, apiUrl);
@@ -61,7 +62,6 @@ namespace Esynctraining.AdobeConnect
                 ServiceUrl = apiUrl,
                 EventMaxParticipants = 10,
             };
-            string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             {
                 LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
@@ -70,7 +70,6 @@ namespace Esynctraining.AdobeConnect
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());
                     throw new InvalidOperationException("Login to Adobe Connect failed. Status = " + result.Status.GetErrorInfo());
                 }
-                principalId = result.User.UserId;
             }
 
             return new AdobeConnectProxy(provider, _logger, apiUrl);
@@ -79,7 +78,7 @@ namespace Esynctraining.AdobeConnect
         public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             CommonInfoResult commonInfo = provider.GetCommonInfo();
 
@@ -125,21 +124,20 @@ namespace Esynctraining.AdobeConnect
                 result = GetTimeZoneInfoForTzdbId(commonInfo.TimeZoneJavaId);
             }
 
-            if (result == null)
-            {
-                var mapping = ACDetailsDTO.TimeZones.First(x => x.Id == commonInfo.TimeZoneId);
-                result = FindSystemTimeZoneByIdOrDefault(mapping.WindowsTimeZoneId);
-                if (result == null)
-                {
-                    var timeZoneName = $"Custom time zone: {mapping.BaseUtcOffset}";
-                    result = TimeZoneInfo.CreateCustomTimeZone(
-                        timeZoneName,
-                        TimeSpan.FromMinutes((double)mapping.BaseUtcOffset),
-                        timeZoneName,
-                        timeZoneName);
-                }
-            }
+            if (result != null)
+                return result;
 
+            var mapping = ACDetailsDTO.TimeZones.First(x => x.Id == commonInfo.TimeZoneId);
+            result = FindSystemTimeZoneByIdOrDefault(mapping.WindowsTimeZoneId);
+            if (result != null)
+                return result;
+
+            var timeZoneName = $"Custom time zone: {mapping.BaseUtcOffset}";
+            result = TimeZoneInfo.CreateCustomTimeZone(
+                timeZoneName,
+                TimeSpan.FromMinutes((double)mapping.BaseUtcOffset),
+                timeZoneName,
+                timeZoneName);
             return result;
         }
 
@@ -202,12 +200,7 @@ namespace Esynctraining.AdobeConnect
         private static string GetField(FieldCollectionResult value, string fieldName)
         {
             Field field = value.Values.FirstOrDefault(x => x.FieldId == fieldName);
-            if (field == null)
-            {
-                return null;
-            }
-
-            return field.Value;
+            return field?.Value;
         }
         
     }

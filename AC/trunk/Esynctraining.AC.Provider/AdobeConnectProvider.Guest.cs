@@ -23,7 +23,7 @@ namespace Esynctraining.AC.Provider
         public UserCollectionResult ReportGuestsByLogin(string login)
         {
             if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentException("Login filter value can not be empty", "login");
+                throw new ArgumentException("Login filter value can not be empty", nameof(login));
 
             // act: "report-bulk-users"
             StatusInfo status;
@@ -39,7 +39,7 @@ namespace Esynctraining.AC.Provider
         public UserCollectionResult ReportGuestsByEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("Email filter value can not be empty", "email");
+                throw new ArgumentException("Email filter value can not be empty", nameof(email));
 
             // act: "report-bulk-users"
             StatusInfo status;

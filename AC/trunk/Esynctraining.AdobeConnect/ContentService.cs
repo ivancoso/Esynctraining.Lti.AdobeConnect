@@ -7,13 +7,13 @@ using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect
 {
-    public class MeetingService : IMeetingService
+    public class ContentService : IContentService
     {
         private readonly ILogger _logger;
         private readonly IAdobeConnectProxy _provider;
 
 
-        public MeetingService(ILogger logger, IAdobeConnectAccountService acAccountService, IAdobeConnectAccess2 creds)
+        public ContentService(ILogger logger, IAdobeConnectAccountService acAccountService, IAdobeConnectAccess2 creds)
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
@@ -26,7 +26,7 @@ namespace Esynctraining.AdobeConnect
             _provider = acAccountService.GetProvider2(creds);
         }
 
-        public MeetingService(ILogger logger, IAdobeConnectProxy provider)
+        public ContentService(ILogger logger, IAdobeConnectProxy provider)
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
@@ -38,9 +38,9 @@ namespace Esynctraining.AdobeConnect
         }
 
 
-        public IEnumerable<ScoContent> GetUserMeetings()
+        public IEnumerable<ScoContent> GetUserContent()
         {
-            var shortcut = _provider.GetShortcutByType("my-meetings");
+            var shortcut = _provider.GetShortcutByType("my-content");
 
             if (shortcut == null)
                 throw new WarningMessageException("User is not Meeting Host");
@@ -50,23 +50,23 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
         
-        public IEnumerable<ScoContent> GetSharedMeetings()
+        public IEnumerable<ScoContent> GetSharedContent()
         {
-            var shortcut = _provider.GetShortcutByType("meetings");
+            var shortcut = _provider.GetShortcutByType("content");
 
             ScoContentCollectionResult result = _provider.GetContentsByScoId(shortcut.ScoId);
 
             return result.Values;
         }
 
-        public IEnumerable<ScoContent> GetFolderMeetings(string folderScoId)
+        public IEnumerable<ScoContent> GetFolderContent(string folderScoId)
         {
             if (string.IsNullOrWhiteSpace(folderScoId))
                 throw new ArgumentException("Folder's sco-id should have value", nameof(folderScoId));
 
             ScoContentCollectionResult result = _provider.GetContentsByScoId(folderScoId);
 
-            return result.Values.Where(x => x.IsFolder || x.Type == "meeting");
+            return result.Values;
         }
 
     }

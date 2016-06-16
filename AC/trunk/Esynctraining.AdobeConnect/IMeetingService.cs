@@ -9,6 +9,8 @@ namespace Esynctraining.AdobeConnect
 
         IEnumerable<ScoContent> GetSharedMeetings();
 
+        IEnumerable<ScoContent> GetFolderMeetings(string folderScoId);
+
     }
 
 }

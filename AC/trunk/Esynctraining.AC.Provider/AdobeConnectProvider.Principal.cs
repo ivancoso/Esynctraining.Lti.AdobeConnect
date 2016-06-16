@@ -90,11 +90,11 @@ namespace Esynctraining.AC.Provider
         public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
         {
             if (emails == null)
-                throw new ArgumentNullException("emails");
+                throw new ArgumentNullException(nameof(emails));
             if (!emails.Any())
-                throw new ArgumentException("Emails list should have values", "emails");
-            if (emails.Any(x => string.IsNullOrWhiteSpace(x)))
-                throw new ArgumentException("All emails should be non empty", "emails");
+                throw new ArgumentException("Emails list should have values", nameof(emails));
+            if (emails.Any(string.IsNullOrWhiteSpace))
+                throw new ArgumentException("All emails should be non empty", nameof(emails));
             // act: "principal-list"
             StatusInfo status;
 
@@ -141,11 +141,11 @@ namespace Esynctraining.AC.Provider
         public PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins)
         {
             if (logins == null)
-                throw new ArgumentNullException("logins");
+                throw new ArgumentNullException(nameof(logins));
             if (!logins.Any())
-                throw new ArgumentException("Logins list should have values", "logins");
-            if (logins.Any(x => string.IsNullOrWhiteSpace(x)))
-                throw new ArgumentException("All logins should be non empty", "logins");
+                throw new ArgumentException("Logins list should have values", nameof(logins));
+            if (logins.Any(string.IsNullOrWhiteSpace))
+                throw new ArgumentException("All logins should be non empty", nameof(logins));
 
             // act: "principal-list"
             StatusInfo status;
@@ -185,7 +185,7 @@ namespace Esynctraining.AC.Provider
         public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
         {
             if (principalIdsToFind == null)
-                throw new ArgumentNullException("principalIdsToFind");
+                throw new ArgumentNullException(nameof(principalIdsToFind));
 
             // act: "principal-list"
             // /api/xml?action=principal-list&filter-principal-id=AAA&filter-principal-id=BBB&filter-principal-id=CCC
@@ -250,9 +250,9 @@ namespace Esynctraining.AC.Provider
         public PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId)
         {
             if (string.IsNullOrWhiteSpace(groupId))
-                throw new ArgumentException("Group ID can't be empty", "groupId");
+                throw new ArgumentException("Group ID can't be empty", nameof(groupId));
             if (string.IsNullOrWhiteSpace(principalId))
-                throw new ArgumentException("Principal ID can't be empty", "principalId");
+                throw new ArgumentException("Principal ID can't be empty", nameof(principalId));
 
             // act: "principal-list"
             StatusInfo status;
@@ -280,7 +280,8 @@ namespace Esynctraining.AC.Provider
             // act: "principal-list"
             StatusInfo status;
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Format("&group-id={0}&filter-is-member=true", groupId), out status);
+            var principals = this.requestProcessor.Process(Commands.Principal.List,
+                $"&group-id={groupId}&filter-is-member=true", out status);
 
             return ResponseIsOk(principals, status)
                 ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))

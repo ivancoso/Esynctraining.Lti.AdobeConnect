@@ -224,12 +224,12 @@ namespace Esynctraining.AC.Provider
 
             if (offset < 0 || offset >= len)
             {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
             if (count < 0 || count > len - offset)
             {
-                throw new ArgumentOutOfRangeException("count");
+                throw new ArgumentOutOfRangeException(nameof(count));
             }
 
             var result = new MemoryStream(count);

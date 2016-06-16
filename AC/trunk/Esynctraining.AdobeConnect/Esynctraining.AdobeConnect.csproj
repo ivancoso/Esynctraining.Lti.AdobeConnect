@@ -53,11 +53,13 @@
     <Compile Include="AdobeConnectProxy.Telephony.cs" />
     <Compile Include="CustomizationDTO.cs" />
     <Compile Include="ACPasswordPoliciesDTO.cs" />
+    <Compile Include="IContentService.cs" />
     <Compile Include="IMeetingService.cs" />
     <Compile Include="IRecordingDto.cs" />
     <Compile Include="IRecordingDtoBuilder.cs" />
     <Compile Include="IRoomTypeFactory.cs" />
     <Compile Include="ISeminarSessionRecordingDto.cs" />
+    <Compile Include="ContentService.cs" />
     <Compile Include="Recordings\RecordingExtractor.cs" />
     <Compile Include="Recordings\RecordingExtractorBase.cs" />
     <Compile Include="Recordings\SeminarRecordingExtractor.cs" />
