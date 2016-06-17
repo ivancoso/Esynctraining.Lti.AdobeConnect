@@ -78,11 +78,13 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         return ret;
                     }
                     var image = answersList["image"].ToString();
+                    var fileData = answersList["imageBinary"].ToString();
 
                     ret.Add(new AnswerDTO()
                     {
                         text = coords,
-                        question_text = image
+                        question_text = image,
+                        fileData = fileData
                     });
                     return ret;
                 }

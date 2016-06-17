@@ -24,5 +24,7 @@
         /// Gets or sets the height.
         /// </summary>
         public int height { get; set; }
+
+        public string base64Content { get; set; }
     }
 }

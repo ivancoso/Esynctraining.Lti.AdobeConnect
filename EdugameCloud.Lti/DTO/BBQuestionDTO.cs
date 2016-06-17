@@ -90,5 +90,8 @@ namespace EdugameCloud.Lti.DTO
         /// note: currently is not used
         public bool caseSensitive { get; set; }
 
+        public string questionImageLink { get; set; }
+        public string questionImageBinary { get; set; }
+
     }
 }

@@ -331,6 +331,17 @@
                 question.QuestionOrder = questionOrder++;
                 
                 var isTransient = question.Id == 0;
+                if (quizQuestion.files.Count == 1 && !string.IsNullOrEmpty(quizQuestion.files[0].base64Content))
+                {
+                    var imageName = quizQuestion.files[0].fileName;
+                    var imageBytes = Convert.FromBase64String(quizQuestion.files[0].base64Content);
+                    var file = question.Image != null
+                        ? FileModel.GetOneById(question.Image.Id).Value
+                        : FileModel.CreateFile(user, imageName, DateTime.Now, null, null, null, null);
+                    file.FileName = imageName.IndexOf('.') > -1 ? imageName : $"{imageName}.jpg"; // file without extension is not downloadable in our application
+                    FileModel.SetData(file, imageBytes);
+                    question.Image = file;
+                }
 
                 this.QuestionModel.RegisterSave(question);
 
@@ -711,56 +722,71 @@
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = true;
 
-                var domain = string.Format(
+                byte[] imageBytes;
+                if (string.IsNullOrEmpty(a.fileData))
+                {
+                    var domain = string.Format(
                         "{0}{1}",
                         lmsCompany.UseSSL.GetValueOrDefault() ? HttpScheme.Https : HttpScheme.Http,
                         lmsCompany.LmsDomain.EndsWith("/")
                             ? lmsCompany.LmsDomain.Substring(0, lmsCompany.LmsDomain.Length - 1)
                             : lmsCompany.LmsDomain);
-                var restClient = new RestClient(domain);
+                    var restClient = new RestClient(domain);
 
-                var restRequest = new RestRequest(string.Empty, Method.GET);
-                var cookie1 = restClient.Execute(restRequest);
+                    var restRequest = new RestRequest(string.Empty, Method.GET);
+                    var cookie1 = restClient.Execute(restRequest);
 
-                restRequest = new RestRequest("/webapps/login/", Method.POST);
-                restRequest.AddParameter("user_id", lmsCompany.AdminUser.Username);
-                restRequest.AddParameter("password", lmsCompany.AdminUser.Password);
-                restRequest.AddParameter("action", "login");
-                restRequest.AddParameter("login", "Login");
-                foreach (var c in cookie1.Cookies)
+                    restRequest = new RestRequest("/webapps/login/", Method.POST);
+                    if (lmsCompany.AdminUser != null)
+                    {
+                        restRequest.AddParameter("user_id", lmsCompany.AdminUser.Username);
+                        restRequest.AddParameter("password", lmsCompany.AdminUser.Password);
+                    }
+                    restRequest.AddParameter("action", "login");
+                    restRequest.AddParameter("login", "Login");
+                    foreach (var c in cookie1.Cookies)
+                    {
+                        restRequest.AddCookie(c.Name, c.Value);
+                    }
+
+                    var cookie2 = restClient.Execute(restRequest);
+
+                    if (cookie2.Cookies.Count == 1)
+                    {
+                        cookie2 = restClient.Execute(restRequest);
+                    }
+
+                    if (cookie2.Cookies.Count == 1)
+                    {
+                        cookie2 = restClient.Execute(restRequest);
+                    }
+
+
+                    restRequest = new RestRequest(a.question_text, Method.GET);
+
+                    foreach (var c in cookie2.Cookies)
+                    {
+                        restRequest.AddCookie(c.Name, c.Value);
+                    }
+
+                    imageBytes = restClient.Execute(restRequest).RawBytes;
+
+                }
+                else
                 {
-                    restRequest.AddCookie(c.Name, c.Value);
+                    imageBytes = Convert.FromBase64String(a.fileData);
                 }
 
-                var cookie2 = restClient.Execute(restRequest);
-                
-                if (cookie2.Cookies.Count == 1)
-                {
-                    cookie2 = restClient.Execute(restRequest);
-                }
-
-                if (cookie2.Cookies.Count == 1)
-                {
-                    cookie2 = restClient.Execute(restRequest);
-                }
-
-
-                restRequest = new RestRequest(a.question_text, Method.GET);
-
-                foreach (var c in cookie2.Cookies)
-                {
-                    restRequest.AddCookie(c.Name, c.Value);
-                }
-
-                var image = restClient.Execute(restRequest);
-                var imageName = a.question_text.Substring(a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1);
+                var imageName =
+                    a.question_text.Substring(
+                        a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1);
 
                 var file = distractor.Image != null
                     ? FileModel.GetOneById(distractor.Image.Id).Value
                     : FileModel.CreateFile(user, imageName, DateTime.Now, null, null, null, null);
-                FileModel.SetData(file, image.RawBytes);
+                FileModel.SetData(file, imageBytes);
+                file.FileName = imageName;
                 distractor.Image = file;
-
                 var coord = a.text.Split(',').Select(z => int.Parse(z.Trim())).ToArray();
                 if (coord.Length > 3)
                 {

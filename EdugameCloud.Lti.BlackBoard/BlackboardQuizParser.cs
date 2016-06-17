@@ -6,7 +6,7 @@ namespace EdugameCloud.Lti.BlackBoard
 {
     internal sealed class BlackboardQuizParser
     {
-        public static LmsQuestionDTO[] ParseQuestions(BBAssessmentDTO td)
+        public static LmsQuestionDTO[] ParseQuestions(BBAssessmentDTO td, string jsonData)
         {
             var ret = td.questions == null
                 ? new LmsQuestionDTO[] {}
@@ -25,6 +25,8 @@ namespace EdugameCloud.Lti.BlackBoard
                     return new BlackboardFillInTheBlanksParser();
                 case "fill in the blank plus":
                     return new BlackboardFillInMultipleBlanksParser();
+                case "multiple answer":
+                    return new BlackboardMultipleChoiceParser();
                 default:
                     return new BlackboardCommonQuestionParser();
             }

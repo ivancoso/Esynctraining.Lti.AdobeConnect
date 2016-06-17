@@ -107,7 +107,7 @@ namespace EdugameCloud.Lti.BlackBoard
                             if (testData != null && !testData.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(testData);
-                                lqd.question_list = BlackboardQuizParser.ParseQuestions(td);
+                                lqd.question_list = BlackboardQuizParser.ParseQuestions(td, testData);
                             }
                             quizDTO.Add(lqd);
                         }
