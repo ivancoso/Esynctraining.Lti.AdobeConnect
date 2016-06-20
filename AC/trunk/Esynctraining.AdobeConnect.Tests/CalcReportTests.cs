@@ -55,8 +55,10 @@ namespace Esynctraining.AdobeConnect.Tests
             if (!loginResult.Success)
                 throw new InvalidOperationException("Invalid login");
             var recordings = provider.ReportRecordingsPaged();
-            //var report1 = GetLastYearNoViews(recordings);
-            //var report2 = GetLastViewMoreThan2Years(recordings);
+            var report1 = GetLastYearNoViews(recordings);
+            var report2 = GetLastViewMoreThan2Years(recordings);
+            LogRecStats(report1);
+            LogRecStats(report2);
             var report34 = GetRecLengthStats(recordings);
             LogRecStats(report34);
         }
@@ -79,7 +81,7 @@ namespace Esynctraining.AdobeConnect.Tests
             var counter = 0;
             foreach (var recording in recordings)
             {
-                Console.WriteLine(@"Count {0} of all recordings", recording.Values.Count());
+                _logger.Info($"Count {recording.Values.Count()}");
                 if (recording.Values == null)
                     continue;
                     
@@ -101,7 +103,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 }
                 
             }
-            Console.WriteLine(@"Number of > 1 year no views {0}", counter);
+            _logger.Info($"Number of > 1 year no views {counter}");
             return counter;
         }
 
@@ -113,7 +115,7 @@ namespace Esynctraining.AdobeConnect.Tests
             var counter = 0;
             foreach (var recording in recordings)
             {
-                Console.WriteLine(@"Count {0}", recording.Values.Count());
+                _logger.Info($"Count {recording.Values.Count()}");
                 if (recording.Values == null)
                     continue;
 
@@ -135,7 +137,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 }
 
             }
-            Console.WriteLine(@"Number of > 1 year no views {0}", counter);
+            _logger.Info($"Number of > 1 year no views {counter}");
             return counter;
         }
 
@@ -177,8 +179,7 @@ namespace Esynctraining.AdobeConnect.Tests
                     }
                     else
                     {
-                        Console.WriteLine(
-                            $"There was a problem with scoId={x.ScoId} . Could not parse Duration={rec1.Values.First().Duration}");
+                        _logger.Info($"There was a problem with scoId={x.ScoId} . Could not parse Duration={rec1.Values.First().Duration}");
                     }
                 });
                 
