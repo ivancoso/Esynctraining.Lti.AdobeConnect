@@ -79,21 +79,22 @@ namespace Esynctraining.AdobeConnect.Tests
             var counter = 0;
             foreach (var recording in recordings)
             {
-                Console.WriteLine(@"Count {0}", recording.Values.Count());
+                Console.WriteLine(@"Count {0} of all recordings", recording.Values.Count());
                 if (recording.Values == null)
                     continue;
                     
-                var lastYearRecs = recording.Values.Where(x => x.DateCreated >= new DateTime(year, month, day));
-
-                foreach (var lastYearRec in lastYearRecs)
+                //var lastYearRecs = recording.Values.Where(x => x.DateCreated >= new DateTime(year, month, day));
+                var data = recording.Values;
+                foreach (var rec in data)
                 {
                     //var scoInfo = provider.GetScoInfo(lastYearRec.ScoId);
-                    var scoInfo = _provider.ReportScoViews(lastYearRec.ScoId);
+                    var scoInfo = _provider.ReportScoViews(rec.ScoId);
                     if (scoInfo.Values == null)
                         continue;
                     if (scoInfo.Values.Count() > 1) 
                         throw  new InvalidOperationException("Should be one item");
-                    if (scoInfo.Values.ToList()[0].Views == 0)
+                    var content = scoInfo.Values.ToList()[0];
+                    if (content.Views == 0 && rec.DateCreated > new DateTime(year, month, day))
                     {
                         counter++;
                     }
