@@ -201,7 +201,9 @@ namespace Esynctraining.AdobeConnect.Tests
         public DurationStats GetRecLengthStats(IEnumerable<ScoContentCollectionResult> recordings)
         {
             var counter10hours = 0;
+            var counter10hoursDur = 0.0;
             var counter3to10hours = 0;
+            var counter3to10hoursDur = 0.0;
             var duration = 0.0;
             double biggestDuration = 0;
             string biggestRecSco = null;
@@ -216,10 +218,12 @@ namespace Esynctraining.AdobeConnect.Tests
                     if (recDuration > 10 * 60)
                     {
                         counter10hours++;
+                        counter10hoursDur += recDuration;
                     }
                     if ((recDuration > 3 * 60) && (recDuration < 10 * 60))
                     {
                         counter3to10hours++;
+                        counter3to10hoursDur += recDuration;
                     }
                     if (recDuration > biggestDuration)
                     {
@@ -237,7 +241,9 @@ namespace Esynctraining.AdobeConnect.Tests
                 Counter3to10hours = counter3to10hours,
                 BiggestDuration = biggestDuration,
                 BiggestSco = biggestRecSco,
-                Duration = duration
+                Duration = duration,
+                Counter10hoursDur = counter3to10hoursDur,
+                Counter3to10hoursDur = counter3to10hoursDur
             };
         }
     }
@@ -247,6 +253,8 @@ namespace Esynctraining.AdobeConnect.Tests
         public int Counter10hours { get; set; }
         public int Counter3to10hours { get; set; }
         public double Duration { get; set; }
+        public double Counter10hoursDur { get; set; }
+        public double Counter3to10hoursDur { get; set; }
         public double BiggestDuration { get; set; }
         public string BiggestSco { get; set; }
 
