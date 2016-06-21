@@ -1038,7 +1038,7 @@
                     result.Add(scoContentCollectionResult);
                 }
                 iteration++;
-            } while (scoContentCollectionResult.Success && scoContentCollectionResult.Values!= null && scoContentCollectionResult.Values.Any() && totalLimit > 0 && (iteration - 1) * limit < totalLimit);
+            } while (scoContentCollectionResult.Success && scoContentCollectionResult.Values!= null &&  scoContentCollectionResult.Values.Any() && (totalLimit == 0 || totalLimit > 0 && (iteration - 1) * limit < totalLimit));
             
 
             return result;

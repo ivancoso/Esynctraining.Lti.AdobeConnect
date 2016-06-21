@@ -79,6 +79,7 @@
     <Compile Include="DIConfig.cs" />
     <Compile Include="DurationParser.cs" />
     <Compile Include="DurationParserTests.cs" />
+    <Compile Include="DurationStats.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
