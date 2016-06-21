@@ -147,6 +147,12 @@ namespace Esynctraining.AdobeConnect
             //    scoUpdateItem.Name, scoUpdateItem.FolderId);
         }
 
+        public StatusInfo MoveSco(string folderId, string scoId)
+        {
+            return Execute(() => { return _provider.MoveSco(folderId, scoId); },
+                   folderId, scoId);
+        }
+
         public ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item)
         {
             if (item == null)
@@ -519,6 +525,12 @@ namespace Esynctraining.AdobeConnect
         {
             return Execute(() => { return _provider.ReportMeetingsByName(nameLikeCriteria, startIndex, limit); },
                 nameLikeCriteria);
+        }
+
+        public TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportRecordingTransactions(recordingScoIdList, startIndex, limit); },
+                   string.Join(",", recordingScoIdList));
         }
 
         public TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0)

@@ -80,7 +80,7 @@ namespace Esynctraining.AdobeConnect
         LoginResult Login(UserCredentials credentials);
         //LoginResult LoginWithSessionId(string sessionId);
         //void Logout();
-        //StatusInfo MoveSco(string folderId, string scoId);
+        StatusInfo MoveSco(string folderId, string scoId);
         PrincipalResult PrincipalDelete(PrincipalDelete principalDelete);
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation);
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError);
@@ -91,6 +91,9 @@ namespace Esynctraining.AdobeConnect
         MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
+
+        TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0);
+
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
         MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
         MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0);
