@@ -5,7 +5,9 @@ namespace Esynctraining.AdobeConnect
 {
     public interface IContentService
     {
-        IEnumerable<ScoContent> GetUserContent();
+        IEnumerable<ScoContent> GetMyContent();
+
+        IEnumerable<ScoContent> GetUserContent(string userLogin);
 
         IEnumerable<ScoContent> GetSharedContent();
 

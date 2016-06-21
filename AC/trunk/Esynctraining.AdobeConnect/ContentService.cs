@@ -38,7 +38,7 @@ namespace Esynctraining.AdobeConnect
         }
 
 
-        public IEnumerable<ScoContent> GetUserContent()
+        public IEnumerable<ScoContent> GetMyContent()
         {
             var shortcut = _provider.GetShortcutByType("my-content");
 
@@ -49,7 +49,26 @@ namespace Esynctraining.AdobeConnect
 
             return result.Values;
         }
-        
+
+        public IEnumerable<ScoContent> GetUserContent(string userLogin)
+        {
+            if (string.IsNullOrWhiteSpace(userLogin))
+                throw new ArgumentException("Non-empty value expected", nameof(userLogin));
+
+            var shortcut = _provider.GetShortcutByType("user-content");
+
+            //if (shortcut == null)
+            //    throw new WarningMessageException("User is not Meeting Host");
+
+            ScoContentCollectionResult userFolders = _provider.GetContentsByScoId(shortcut.ScoId);
+            var requestedUserFolder = userFolders.Values.FirstOrDefault(x => x.Name == userLogin);
+            if (requestedUserFolder == null)
+                throw new WarningMessageException("Requested user's folder not found. User is not Meeting Host.");
+
+            ScoContentCollectionResult result = _provider.GetContentsByScoId(requestedUserFolder.ScoId);
+            return result.Values;
+        }
+
         public IEnumerable<ScoContent> GetSharedContent()
         {
             var shortcut = _provider.GetShortcutByType("content");

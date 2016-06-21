@@ -158,9 +158,10 @@
         /// </summary>
         internal static class ReportBulkConsolidatedTransactionsFilters
         {
-            /// <summary>
-            /// The meeting SCO id.
-            /// </summary>
+            public const string TypeRecording = "filter-type=content";
+
+            public const string AndByScoId = "&filter-sco-id={0}";
+
             public const string MeetingScoId = "filter-type=meeting&filter-sco-id={0}";
 
             public const string PrincipalId = "filter-type=meeting&filter-principal-id={0}&sort-date-created=desc";
