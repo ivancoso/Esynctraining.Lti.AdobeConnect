@@ -84,9 +84,6 @@
             }
         }
 
-        /// <summary>
-        /// Gets or sets the ac session participant id.
-        /// </summary>
         [DataMember]
         [ScriptIgnore]
         public float durationInHours { get; set; }

@@ -14,7 +14,7 @@
             try
             {
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                    throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
                 if (meetingId <= 0)
                     throw new ArgumentOutOfRangeException("meetingId");
 
@@ -69,7 +69,7 @@
             try
             {
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                    throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
                 if (meetingId <= 0)
                     throw new ArgumentOutOfRangeException("meetingId");
 

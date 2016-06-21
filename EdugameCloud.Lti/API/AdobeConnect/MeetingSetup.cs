@@ -335,6 +335,33 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
+        public IEnumerable<RecordingTransactionDTO> GetRecordingsReport(IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                var recordingsSco = provider.GetRecordingsList(meeting.GetMeetingScoId()).Values.Select(x => x.ScoId);
+                var transactions = provider.ReportRecordingTransactions(recordingsSco, startIndex, limit).Values.ToList();
+                return transactions.Select(
+                        us =>
+                        new RecordingTransactionDTO
+                        {
+                            RecordingScoId = us.ScoId,
+                            RecordingName = us.Name,
+                            Login = us.Login,
+                            UserName = us.UserName,
+                            DateClosed = us.DateClosed,
+                            DateCreated = us.DateCreated,
+                        }).OrderByDescending(x => x.DateCreated).ToList();
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("GetRecordingsReport.Exception", ex);
+            }
+
+            return Enumerable.Empty<RecordingTransactionDTO>();
+        }
+
         public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId, 
             ref string breezeSession, IAdobeConnectProxy adobeConnectProvider = null)
         {

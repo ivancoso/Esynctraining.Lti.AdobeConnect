@@ -1,8 +1,5 @@
-﻿using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Routing;
+﻿using System.Web.Http;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace EdugameCloud.Lti.Mp4.Host
 {

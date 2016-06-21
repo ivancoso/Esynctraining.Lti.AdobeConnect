@@ -119,6 +119,7 @@ namespace EdugameCloud.Lti.DTO
             this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
             useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
+            enableMyContent = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent);
 
             Telephony = new TelephonyDTO(instance);
         }
@@ -438,6 +439,9 @@ namespace EdugameCloud.Lti.DTO
             get { return _telephony; }
             set { _telephony = value ?? new TelephonyDTO(); }
         }
+
+        [DataMember]
+        public bool enableMyContent { get; set; }
 
     }
 

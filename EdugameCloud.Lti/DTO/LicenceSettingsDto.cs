@@ -78,7 +78,10 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "enableSeminars")]
         public bool EnableSeminars { get; set; }
-        
+
+        [DataMember(Name = "enableMyContent")]
+        public bool EnableMyContent { get; set; }
+
 
         [DataMember(Name = "enableOfficeHours")]
         public bool EnableOfficeHours { get; set; }
@@ -167,6 +170,7 @@ namespace EdugameCloud.Lti.DTO
 
                     EnableSeminars = value.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
+                    EnableMyContent = value.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent),
 
                     ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
                     ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),

@@ -82,7 +82,7 @@ namespace EdugameCloud.Lti.Controllers
         public virtual JsonResult Create(string lmsProviderName, string seminarLicenseId,  MeetingDTO meeting)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(seminarLicenseId))
                 throw new ArgumentException("seminarLicenseId can't be empty", "seminarLicenseId");
             if (meeting == null)
@@ -122,7 +122,7 @@ namespace EdugameCloud.Lti.Controllers
         public virtual JsonResult Edit(string lmsProviderName, string seminarLicenseId, MeetingDTO meeting)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(seminarLicenseId))
                 throw new ArgumentException("seminarLicenseId can't be empty", "seminarLicenseId");
             if (meeting == null)
@@ -157,7 +157,7 @@ namespace EdugameCloud.Lti.Controllers
         public JsonResult SaveSeminarSession(string lmsProviderName, SeminarSessionDto seminarSessionDto)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (seminarSessionDto == null)
                 throw new ArgumentNullException("seminarSessionDto");
 
@@ -198,7 +198,7 @@ namespace EdugameCloud.Lti.Controllers
         public JsonResult DeleteSeminarSession(string lmsProviderName, string seminarSessionId)
         {
             if (string.IsNullOrWhiteSpace(lmsProviderName))
-                throw new ArgumentException("lmsProviderName can't be empty", "lmsProviderName");
+                throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
             if (string.IsNullOrWhiteSpace(lmsProviderName))
                 throw new ArgumentException("seminarSessionId can't be empty", "seminarSessionId");
 

@@ -67,6 +67,32 @@
             }
         }
 
+        public virtual JsonResult GetRecordingsReport(string lmsProviderName, int meetingId, int startIndex = 0, int limit = 0)
+        {
+            LmsCompany credentials = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                credentials = session.LmsCompany;
+
+                LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+
+                IEnumerable<RecordingTransactionDTO> report = this.meetingSetup.GetRecordingsReport(
+                    this.GetAdobeConnectProvider(credentials),
+                    meeting,
+                    startIndex,
+                    limit);
+
+                return Json(OperationResultWithData<IEnumerable<RecordingTransactionDTO>>.Success(report), 
+                    this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("GetRecordingsReport", credentials, ex);
+                return Json(OperationResult.Error(errorMessage), this.IsDebug ? JsonRequestBehavior.AllowGet : JsonRequestBehavior.DenyGet);
+            }
+        }
+
     }
 
 }

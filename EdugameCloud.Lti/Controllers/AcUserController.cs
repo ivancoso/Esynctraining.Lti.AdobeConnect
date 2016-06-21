@@ -67,7 +67,7 @@ namespace EdugameCloud.Lti.Controllers
             try
             {
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
-                    throw new ArgumentException("Empty lmsProviderName", "lmsProviderName");
+                    throw new ArgumentException("Empty lmsProviderName", nameof(lmsProviderName));
                 if (user == null)
                     throw new ArgumentNullException("user");
 
