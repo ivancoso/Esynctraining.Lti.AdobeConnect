@@ -89,18 +89,19 @@ namespace Esynctraining.AdobeConnect.Tests
             if (string.IsNullOrEmpty(scoId))
             {
                 _logger.Error("sco-id should not be empty");
+                return 0;
             }
             var scoInfo = _provider.GetScoInfo(scoId);
             if (scoInfo.ScoInfo == null)
             {
-                _logger.Info($"sco-id has no sco-info sco-id={scoId}");
+                _logger.Error($"sco-id has no sco-info sco-id={scoId}");
                 return 0;
             }
                 
             var rec1 = _provider.GetRecordingsList(scoInfo.ScoInfo.FolderId, scoId);
             if (rec1.Values == null || !rec1.Values.Any())
             {
-                _logger.Info($"sco-id has no Values for list-recordings sco-id={scoId}");
+                _logger.Error($"sco-id has no Values for list-recordings sco-id={scoId}");
                 return 0;
             }
 
@@ -158,9 +159,13 @@ namespace Esynctraining.AdobeConnect.Tests
                     if (scoInfo.Values == null)
                     {
                         _logger.Warn($"sco-info values are null {rec.ScoId}");
+                        return;
                     }
                     if (scoInfo.Values.Count() > 1)
+                    {
                         _logger.Error($"sco-info values more than 1 {rec.ScoId}");
+                        return;
+                    }
                     var content = scoInfo.Values.ToList()[0];
                     
                     if (content.Views == 0 && rec.DateCreated > pivotDate)
@@ -187,7 +192,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 BiggestDuration = biggestDuration,
                 BiggestSco = biggestRecSco,
                 Duration = duration,
-                Counter10hoursDur = counter3to10hoursDur,
+                Counter10hoursDur = counter10hoursDur,
                 Counter3to10hoursDur = counter3to10hoursDur,
                 NoViewsCount = noViewCounter,
                 NoViewsDuration = noViewDur,
