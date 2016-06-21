@@ -168,14 +168,13 @@ namespace Esynctraining.AdobeConnect.Tests
                     }
                     var content = scoInfo.Values.ToList()[0];
                     
-                    if (content.Views == 0 && rec.DateCreated > pivotDate)
+                    if (content.Views == 0 && rec.DateCreated < new DateTime(pivotDate.Year - 1, pivotDate.Month, pivotDate.Day))
                     {
                         noViewCounter++;
                         noViewDur += GetDurationOfSingleRec(rec.ScoId);
                     }
                     // 2nd report > 2 year, views >= 1
-                    if (content.Views > 0 &&
-                            content.LastViewedDate + TimeSpan.FromDays(365 * 2) < pivotDate)
+                    if (content.Views > 0 && content.LastViewedDate < new DateTime(pivotDate.Year - 2, pivotDate.Month, pivotDate.Day))
                     {
                         year2Count++;
                         year2Dur += GetDurationOfSingleRec(rec.ScoId);
