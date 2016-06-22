@@ -12,6 +12,20 @@
         [ScriptIgnore]
         public DateTime DateClosed { get; set; }
 
+        [DataMember(Name = "closedAt")]
+        public long? ClosedAt
+        {
+            get
+            {
+                if (DateClosed != DateTime.MinValue)
+                    return (long)DateClosed.ConvertToUnixTimestamp();
+                return null;
+            }
+            set
+            {
+            }
+        }
+
         //[DataMember]
         [ScriptIgnore]
 

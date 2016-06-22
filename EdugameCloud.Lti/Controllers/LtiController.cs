@@ -10,7 +10,7 @@
     using System.Web;
     using System.Web.Helpers;
     using System.Web.Mvc;
-    using Esynctraining.Core.Logging;
+    using Core.Domain.Entities;
     using DotNetOpenAuth.AspNet;
     using EdugameCloud.Core.Business.Models;
     using EdugameCloud.Lti.API;
@@ -18,7 +18,6 @@
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
     using EdugameCloud.Lti.Constants;
-    using EdugameCloud.Lti.Core;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.OAuth;
@@ -28,18 +27,17 @@
     using EdugameCloud.Lti.OAuth;
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
-    using EdugameCloud.Lti.Utils;
     using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.Core;
     using Esynctraining.Core.Caching;
+    using Esynctraining.Core.Domain;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
-    using Core.Domain.Entities;
-    using Esynctraining.Core;
-    using Esynctraining.Core.Domain;
-    using Esynctraining.AdobeConnect;
+
     public partial class LtiController : Controller
     {
         private const string ProviderKeyCookieName = "providerKey";

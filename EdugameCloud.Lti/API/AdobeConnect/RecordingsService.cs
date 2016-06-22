@@ -156,11 +156,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public string JoinRecording(LmsCompany lmsCompany, LtiParamDTO param, string recordingUrl,
-            ref string breezeSession, string mode = null, IAdobeConnectProxy adobeConnectProvider = null)
+            ref string breezeSession, IAdobeConnectProxy provider, string mode = null)
         {
             var breezeToken = string.Empty;
             
-            IAdobeConnectProxy provider = adobeConnectProvider ?? acAccountService.GetProvider(lmsCompany);
             LmsUserDTO lmsUserDto = null;
 
             var acRecordingScoResult = provider.GetScoByUrl(recordingUrl);
@@ -170,8 +169,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new AdobeConnectException(acRecordingScoResult.Status);
             }
 
-            var courseMeetings = this.lmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, acRecordingScoResult.ScoInfo.FolderId, 0);
-
             var lmsUser = lmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
             if (lmsUser == null)
             {
@@ -179,6 +176,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     param.lms_user_id));
             }
 
+            var courseMeetings = this.lmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, acRecordingScoResult.ScoInfo.FolderId, 0);
             // for AC provisioning courseMeeting.scoId() is used, so here we can take only first record if Dynamic provisioning is enabled for at least one meeting 
             // if sync is enabled then all meetings with the same scoId should have the same users roster and the same value of EnableDynamicProvisioning property
             var courseMeeting = courseMeetings.FirstOrDefault(x => x.EnableDynamicProvisioning);
@@ -202,20 +200,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 : null;
             var registeredUser = principalInfo != null ? principalInfo.Principal : null;
 
-            if (registeredUser != null)
-            {
-                meetingSetup.ProcessGuestAuditUsers(provider, lmsCompany, acRecordingScoResult.ScoInfo.FolderId,
-                    registeredUser.PrincipalId, param, () => courseMeetings);
-                breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
-            }
-            else
-            {
+            if (registeredUser == null)
                 throw new Core.WarningMessageException(string.Format(
                     "No user with principal id {0} found in Adobe Connect.", lmsUser.PrincipalId ?? string.Empty));
-            }
+
+            meetingSetup.ProcessGuestAuditUsers(provider, lmsCompany, acRecordingScoResult.ScoInfo.FolderId,
+                registeredUser.PrincipalId, param, () => courseMeetings);
+            breezeToken = meetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, provider);
 
             var baseUrl = lmsCompany.AcServer + "/" + recordingUrl;
-
             breezeSession = breezeToken ?? string.Empty;
 
             return string.Format(

@@ -363,7 +363,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         }
 
         public string JoinMeeting(LmsCompany lmsCompany, LtiParamDTO param, int meetingId, 
-            ref string breezeSession, IAdobeConnectProxy adobeConnectProvider = null)
+            ref string breezeSession, IAdobeConnectProxy provider)
         {
             this.LmsCourseMeetingModel.Flush();
             LmsCourseMeeting currentMeeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(lmsCompany.Id, param.course_id, meetingId);
@@ -374,7 +374,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string currentMeetingScoId = currentMeeting.GetMeetingScoId();
-            IAdobeConnectProxy provider = adobeConnectProvider ?? AcAccountService.GetProvider(lmsCompany, true);
             var meetingUrl = string.Empty;
             
             if (!string.IsNullOrEmpty(currentMeetingScoId))

@@ -20,7 +20,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             string password);
 
         string JoinRecording(LmsCompany lmsCompany, LtiParamDTO param, string recordingUrl,
-            ref string breezeSession, string mode = null, IAdobeConnectProxy adobeConnectProvider = null);
+            ref string breezeSession, IAdobeConnectProxy adobeConnectProvider, string mode = null);
 
         OperationResult EditRecording(
             LmsCompany lmsCompany,
