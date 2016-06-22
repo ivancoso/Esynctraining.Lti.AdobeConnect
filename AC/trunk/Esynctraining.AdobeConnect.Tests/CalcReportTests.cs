@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +21,7 @@ namespace Esynctraining.AdobeConnect.Tests
         private ConnectionDetails _connectionDetails;
         private AdobeConnectProvider _provider;
         private ILogger _logger;
+        private ConcurrentDictionary<RecIdentity, double> _recStorage = new ConcurrentDictionary<RecIdentity, double>();
 
         [SetUp]
         public void Init()
@@ -55,7 +57,7 @@ namespace Esynctraining.AdobeConnect.Tests
             if (!loginResult.Success)
                 throw new InvalidOperationException("Invalid login");
             var recordings = provider.ReportRecordingsPaged(totalObjCount);
-            
+
             var reports = GetRecLengthStats(recordings);
             LogRecStats(reports);
         }
@@ -81,9 +83,13 @@ namespace Esynctraining.AdobeConnect.Tests
                 throw new InvalidOperationException("Invalid login");
             //var recordings = provider.ReportRecordingsPaged();
             var reports = GetDurationOfSingleRec(sco);
+            foreach (var rec in _recStorage)
+            {
+                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            }
             LogRecStats(reports);
         }
-        
+
         public double GetDurationOfSingleRec(string scoId)
         {
             if (string.IsNullOrEmpty(scoId))
@@ -97,7 +103,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 _logger.Error($"sco-id has no sco-info sco-id={scoId}");
                 return 0;
             }
-                
+
             var rec1 = _provider.GetRecordingsList(scoInfo.ScoInfo.FolderId, scoId);
             if (rec1.Values == null || !rec1.Values.Any())
             {
@@ -108,7 +114,18 @@ namespace Esynctraining.AdobeConnect.Tests
             var duration = rec1.Values.First().Duration;
             if (string.IsNullOrEmpty(duration))
                 return 0;
+
             var result = DurationParser.Parse(duration);
+
+            var recIdentity = new RecIdentity(scoId, scoInfo.ScoInfo.FolderId);
+            if (_recStorage.ContainsKey(recIdentity))
+            {
+                return 0;
+            }
+            _recStorage.TryAdd(recIdentity, result.TotalMinutes);
+
+            _logger.Info($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
+            Console.WriteLine($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
             return result.TotalMinutes;
         }
 
@@ -138,7 +155,6 @@ namespace Esynctraining.AdobeConnect.Tests
                     }
                     var recDuration = GetDurationOfSingleRec(rec.ScoId);
                     duration += recDuration;
-                    _logger.Info($"sco-id {rec.ScoId}, duration {recDuration}");
                     if (recDuration > 10 * 60)
                     {
                         counter10hours++;
@@ -167,7 +183,7 @@ namespace Esynctraining.AdobeConnect.Tests
                         return;
                     }
                     var content = scoInfo.Values.ToList()[0];
-                    
+
                     if (content.Views == 0 && rec.DateCreated < new DateTime(pivotDate.Year - 1, pivotDate.Month, pivotDate.Day))
                     {
                         noViewCounter++;
@@ -200,6 +216,4 @@ namespace Esynctraining.AdobeConnect.Tests
             };
         }
     }
-
-   
 }
