@@ -59,7 +59,12 @@ namespace Esynctraining.AdobeConnect.Tests
             var recordings = provider.ReportRecordingsPaged(totalObjCount);
 
             var reports = GetRecLengthStats(recordings);
+            foreach (var rec in _recStorage)
+            {
+                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            }
             LogRecStats(reports);
+
         }
 
         private void LogRecStats<T>(T report34)
@@ -83,10 +88,6 @@ namespace Esynctraining.AdobeConnect.Tests
                 throw new InvalidOperationException("Invalid login");
             //var recordings = provider.ReportRecordingsPaged();
             var reports = GetDurationOfSingleRec(sco);
-            foreach (var rec in _recStorage)
-            {
-                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
-            }
             LogRecStats(reports);
         }
 
@@ -118,11 +119,9 @@ namespace Esynctraining.AdobeConnect.Tests
             var result = DurationParser.Parse(duration);
 
             var recIdentity = new RecIdentity(scoId, scoInfo.ScoInfo.FolderId);
-            if (_recStorage.ContainsKey(recIdentity))
-            {
-                return 0;
-            }
-            _recStorage.TryAdd(recIdentity, result.TotalMinutes);
+            
+            var addOperationResult =_recStorage.TryAdd(recIdentity, result.TotalMinutes);
+            if (!addOperationResult) return 0;
 
             _logger.Info($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
             Console.WriteLine($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
