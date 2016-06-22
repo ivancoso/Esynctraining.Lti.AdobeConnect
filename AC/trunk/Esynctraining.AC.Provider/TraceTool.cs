@@ -29,7 +29,10 @@ namespace Esynctraining.AC.Provider
         /// The m_ stack trace.
         /// </summary>
         private static readonly StringBuilder StackTrace = new StringBuilder();
-        
+
+
+        private static readonly object Locker = new object();
+
         /// <summary>
         /// The count.
         /// </summary>
@@ -165,7 +168,10 @@ namespace Esynctraining.AC.Provider
                 RetriveStackRecursively(ex.InnerException);
             }
 
-            exceptionStack.Append(StackTrace);
+            lock (Locker)
+            {
+                exceptionStack.Append(StackTrace);
+            }
 
             return exceptionStack.ToString();
         }
