@@ -194,6 +194,7 @@
     <Build Include="dbo\Stored Procedures\getSurveyResultByACSessionIdAcEmail.sql" />
     <Build Include="dbo\Stored Procedures\getTestResultByACSessionIdAcEmail.sql" />
     <Build Include="dbo\Tables\LmsCourseMeetingRecording.sql" />
+    <Build Include="dbo\Tables\LmsCalendarEvent.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
