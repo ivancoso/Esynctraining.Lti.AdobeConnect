@@ -586,15 +586,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool retrieveLmsUsers = false)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (param == null)
-                throw new ArgumentNullException("param");
+                throw new ArgumentNullException(nameof(param));
             if (meetingDTO == null)
-                throw new ArgumentNullException("meetingDTO");
+                throw new ArgumentNullException(nameof(meetingDTO));
             if (fb == null)
-                throw new ArgumentNullException("fb");
+                throw new ArgumentNullException(nameof(fb));
 
             var sw = Stopwatch.StartNew();
             

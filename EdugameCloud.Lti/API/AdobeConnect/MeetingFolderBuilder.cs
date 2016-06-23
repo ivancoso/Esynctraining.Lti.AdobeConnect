@@ -26,19 +26,28 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             get { return IoC.Resolve<LmsCompanyModel>(); }
         }
 
-
-
+        
         public MeetingFolderBuilder(LmsCompany credentials, IAdobeConnectProxy provider, bool useLmsUserEmailForSearch)
         {
+            if (credentials == null)
+                throw new ArgumentNullException(nameof(credentials));
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+
             _credentials = credentials;
             _provider = provider;
             _useLmsUserEmailForSearch = useLmsUserEmailForSearch;
         }
 
+
         public string GetMeetingFolder(Principal user)
         {
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
             return GetMeetingFolder(_credentials, _provider, user, _useLmsUserEmailForSearch);
         }
+
 
         private string GetMeetingFolder(LmsCompany credentials, IAdobeConnectProxy provider, Principal user, bool useLmsUserEmailForSearch)
         {
@@ -67,7 +76,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var shortcut = provider.GetShortcutByType("user-meetings");
 
-            var userFolderName = useLmsUserEmailForSearch ? user.Email : user.Login;
+            var userFolderName = credentials.ACUsesEmailAsLogin.GetValueOrDefault() ? user.Email : user.Login;
+            
+            //var userFolderName = useLmsUserEmailForSearch ? user.Email : user.Login;
             var meetingsFolderName = string.IsNullOrEmpty(credentials.UserFolderName)
                 ? userFolderName
                 : credentials.UserFolderName;
