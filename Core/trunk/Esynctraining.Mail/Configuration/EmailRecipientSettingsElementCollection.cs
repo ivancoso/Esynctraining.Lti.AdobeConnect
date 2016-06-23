@@ -19,7 +19,7 @@ namespace Esynctraining.Mail.Configuration
                 }
             }
 
-            throw new ArgumentOutOfRangeException(string.Format("System email(token='{0}') was not found.", emailToken));
+            throw new ArgumentOutOfRangeException(string.Format("EmailRecipientSettings (token='{0}') was not found.", emailToken));
         }
 
         #endregion

@@ -22,41 +22,69 @@ namespace Esynctraining.Mail.Configuration
         public static MailAddress GetFrom(this INotificationsSettings config, IEmailRecipientSettings recipients)
         {
             if (config == null)
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
             if (recipients == null)
-                throw new ArgumentNullException("recipients");
+                throw new ArgumentNullException(nameof(recipients));
 
-            return config.SystemEmails.GetByToken(recipients.FromToken).BuildMailAddress();
+            try
+            {
+                return config.SystemEmails.GetByToken(recipients.FromToken).BuildMailAddress();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException($"GetFrom failed for {recipients.Token} email", ex);
+            }
         }
 
         public static IEnumerable<MailAddress> GetTo(this INotificationsSettings config, IEmailRecipientSettings recipients)
         {
             if (config == null)
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
             if (recipients == null)
-                throw new ArgumentNullException("recipients");
+                throw new ArgumentNullException(nameof(recipients));
 
-            return recipients.ToTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            try
+            {
+                return recipients.ToTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException($"GetTo failed for {recipients.Token} email", ex);
+            }
         }
 
         public static IEnumerable<MailAddress> GetCc(this INotificationsSettings config, IEmailRecipientSettings recipients)
         {
             if (config == null)
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
             if (recipients == null)
-                throw new ArgumentNullException("recipients");
+                throw new ArgumentNullException(nameof(recipients));
 
-            return recipients.CcTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            try
+            {
+                return recipients.CcTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException($"GetCc failed for {recipients.Token} email", ex);
+            }
         }
 
         public static IEnumerable<MailAddress> GetBcc(this INotificationsSettings config, IEmailRecipientSettings recipients)
         {
             if (config == null)
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
             if (recipients == null)
-                throw new ArgumentNullException("recipients");
+                throw new ArgumentNullException(nameof(recipients));
 
-            return recipients.BccTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            try
+            {
+                return recipients.BccTokens.Select(token => config.SystemEmails.GetByToken(token)).Select(x => x.BuildMailAddress());
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException($"GetBcc failed for {recipients.Token} email", ex);
+            }
         }
 
     }
