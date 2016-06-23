@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Security.Tokens;
+using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security.Infrastructure;
 
@@ -9,14 +10,17 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
     public class SimpleRefreshTokenProvider : IAuthenticationTokenProvider
     {
         private readonly ITokenService _tokenService;
-        public SimpleRefreshTokenProvider(ITokenService tokenService)
+        private readonly ILogger _logger;
+
+        public SimpleRefreshTokenProvider(ITokenService tokenService, ILogger logger)
         {
-            this._tokenService = tokenService;
+            _tokenService = tokenService;
+            _logger = logger;
         }
 
         public void Create(AuthenticationTokenCreateContext context)
         {
-            CreateAsync(context).ConfigureAwait(false);
+            Task.Run(async () => { await CreateAsync(context); }).Wait();
         }
 
         public async Task CreateAsync(AuthenticationTokenCreateContext context)
@@ -33,21 +37,28 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
             if (saved)
             {
                 context.SetToken(refreshTokenId.ToString("n"));
+//                _logger.Info($"[TokenProvider.CreateAsync] Id={id}, SetToken={refreshTokenId}");
+            }
+            else
+            {
+                _logger.Warn($"[TokenProvider.CreateAsync] Token not set. Id={id}, Token={refreshTokenId}");
             }
         }
 
         public void Receive(AuthenticationTokenReceiveContext context)
         {
-            ReceiveAsync(context).ConfigureAwait(false);
+            Task.Run(async () => { await ReceiveAsync(context); }).Wait();
         }
 
         public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
+//            _logger.Info($"[TokenProvider.ReceiveAsync] Incoming token={context.Token}");
             var token = new Guid(context.Token);
             var protectedTicket = await _tokenService.GetProtectedTicket(token);
             if (!string.IsNullOrEmpty(protectedTicket))
             {
                 context.DeserializeTicket(protectedTicket);
+//                _logger.Info($"[TokenRefresh] ACSession={context.Ticket.Identity.FindFirst(x => x.Type == "ac_session")}");
                 await _tokenService.Delete(token);
             }
         }

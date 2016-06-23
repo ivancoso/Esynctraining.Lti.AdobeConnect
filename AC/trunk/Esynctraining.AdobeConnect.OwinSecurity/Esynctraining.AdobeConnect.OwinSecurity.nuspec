@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AdobeConnect.OwinSecurity</id>
-    <version>1.0.0.5</version>
+    <version>1.0.0.6</version>
     <title>Esynctraining.AdobeConnect.OwinSecurity</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,7 @@
     <description>TBD</description>
     <copyright>Copyright © 2016 eSyncTraining.com</copyright>
     <tags>ac owin</tags>
-    <releaseNotes>Refresh Token Provider</releaseNotes>
+    <releaseNotes>fixed Refresh Token Provider(setting of new claim for AC Session)</releaseNotes>
     <dependencies>
       <dependency id="Esynctraining.AdobeConnect" version="1.0.0.3" />
       <dependency id="ConnectExtensions.Services.Client" version="1.0.0.2" />
