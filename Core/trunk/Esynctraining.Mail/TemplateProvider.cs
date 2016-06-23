@@ -65,44 +65,17 @@ namespace Esynctraining.Mail
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The get default template file name.
-        /// </summary>
-        /// <param name="templateType">
-        /// The template type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetDefaultTemplateFileName(Type templateType)
+        
+        private static string GetDefaultTemplateFileName(Type templateType)
         {
-            return string.Format("{0}.html", templateType.Name.Replace("Model", string.Empty));
+            return GetDefaultTemplateFileName(templateType.Name.Replace("Model", string.Empty));
         }
-
-        /// <summary>
-        /// The get default template file name.
-        /// </summary>
-        /// <param name="templateName">
-        /// The template name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetDefaultTemplateFileName(string templateName)
+        
+        private static string GetDefaultTemplateFileName(string templateName)
         {
             return string.Format("{0}.html", templateName);
         }
-
-        /// <summary>
-        /// The get full path to template.
-        /// </summary>
-        /// <param name="imageFileName">
-        /// The template file name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public string GetFullPathToImage(string imageFileName)
         {
             if (HttpContext.Current != null)
@@ -128,15 +101,6 @@ namespace Esynctraining.Mail
             }
         }
 
-        /// <summary>
-        /// The get full path to template.
-        /// </summary>
-        /// <param name="templateFileName">
-        /// The template file name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private string GetFullPathToTemplate(string templateFileName)
         {
             if (HttpContext.Current != null)
@@ -196,33 +160,13 @@ namespace Esynctraining.Mail
                 return Path.Combine(this.asciiTemplatesDirectory, templateFileName);
             }
         }
-
-        /// <summary>
-        /// The get template file name.
-        /// </summary>
-        /// <param name="templateType">
-        /// The template type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetTemplateFileName(Type templateType)
+        
+        private static string GetTemplateFileName(Type templateType)
         {
-            string cultureName = Thread.CurrentThread.CurrentCulture.Name;
-
-            return string.Format("{0}.{1}.html", templateType.Name.Replace("Model", string.Empty), cultureName);
+            return GetTemplateFileName(templateType.Name.Replace("Model", string.Empty));
         }
-
-        /// <summary>
-        /// The get template file name.
-        /// </summary>
-        /// <param name="templateName">
-        /// The template name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetTemplateFileName(string templateName)
+        
+        private static string GetTemplateFileName(string templateName)
         {
             string cultureName = Thread.CurrentThread.CurrentCulture.Name;
 
@@ -243,14 +187,14 @@ namespace Esynctraining.Mail
         /// </exception>
         private string LoadTemplate(string templateName)
         {
-            string templatePath = this.GetFullPathToTemplate(this.GetTemplateFileName(templateName));
+            string templatePath = this.GetFullPathToTemplate(GetTemplateFileName(templateName));
 
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
             }
 
-            templatePath = this.GetFullPathToTemplate(this.GetDefaultTemplateFileName(templateName));
+            templatePath = this.GetFullPathToTemplate(GetDefaultTemplateFileName(templateName));
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
@@ -273,14 +217,14 @@ namespace Esynctraining.Mail
         /// </exception>
         private string LoadAsciiTemplate(string templateName)
         {
-            string templatePath = this.GetAsciiFullPathToTemplate(this.GetTemplateFileName(templateName));
+            string templatePath = this.GetAsciiFullPathToTemplate(GetTemplateFileName(templateName));
 
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
             }
 
-            templatePath = this.GetAsciiFullPathToTemplate(this.GetDefaultTemplateFileName(templateName));
+            templatePath = this.GetAsciiFullPathToTemplate(GetDefaultTemplateFileName(templateName));
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
@@ -303,13 +247,13 @@ namespace Esynctraining.Mail
         /// </exception>
         private string LoadTemplate(Type templateType)
         {
-            string templatePath = this.GetFullPathToTemplate(this.GetTemplateFileName(templateType));
+            string templatePath = this.GetFullPathToTemplate(GetTemplateFileName(templateType));
 
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
             }
-            templatePath = this.GetFullPathToTemplate(this.GetDefaultTemplateFileName(templateType));
+            templatePath = this.GetFullPathToTemplate(GetDefaultTemplateFileName(templateType));
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
@@ -331,13 +275,13 @@ namespace Esynctraining.Mail
         /// </exception>
         private string LoadAsciiTemplate(Type templateType)
         {
-            string templatePath = this.GetAsciiFullPathToTemplate(this.GetTemplateFileName(templateType));
+            string templatePath = this.GetAsciiFullPathToTemplate(GetTemplateFileName(templateType));
 
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
             }
-            templatePath = this.GetAsciiFullPathToTemplate(this.GetDefaultTemplateFileName(templateType));
+            templatePath = this.GetAsciiFullPathToTemplate(GetDefaultTemplateFileName(templateType));
             if (File.Exists(templatePath))
             {
                 return File.OpenText(templatePath).ReadToEnd();
@@ -346,6 +290,7 @@ namespace Esynctraining.Mail
         }
 
         #endregion
+
     }
 
 }

@@ -93,30 +93,12 @@ namespace Esynctraining.Mail
 
         #region Methods
 
-        /// <summary>
-        /// The get default template file name.
-        /// </summary>
-        /// <param name="templateType">
-        /// The template type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetDefaultTemplateAttachmentsFolderName(Type templateType)
+        private static string GetDefaultTemplateAttachmentsFolderName(Type templateType)
         {
-            return string.Format("{0}", templateType.Name.Replace("Model", string.Empty));
+            return GetDefaultTemplateAttachmentsFolderName(templateType.Name.Replace("Model", string.Empty));
         }
 
-        /// <summary>
-        /// The get default template file name.
-        /// </summary>
-        /// <param name="templateName">
-        /// The template name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetDefaultTemplateAttachmentsFolderName(string templateName)
+        private static string GetDefaultTemplateAttachmentsFolderName(string templateName)
         {
             return string.Format("{0}", templateName);
         }
@@ -153,33 +135,13 @@ namespace Esynctraining.Mail
                 return Path.Combine(this.attachmentsDirectory, templateName);
             }
         }
-
-        /// <summary>
-        /// The get template file name.
-        /// </summary>
-        /// <param name="templateType">
-        /// The template type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetTemplateAttachmentFolderName(Type templateType)
+        
+        private static string GetTemplateAttachmentFolderName(Type templateType)
         {
-            string cultureName = Thread.CurrentThread.CurrentCulture.Name;
-
-            return string.Format("{0}.{1}", templateType.Name.Replace("Model", string.Empty), cultureName);
+            return GetTemplateAttachmentFolderName(templateType.Name.Replace("Model", string.Empty));
         }
-
-        /// <summary>
-        /// The get template file name.
-        /// </summary>
-        /// <param name="templateName">
-        /// The template name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        private string GetTemplateAttachmentFolderName(string templateName)
+        
+        private static string GetTemplateAttachmentFolderName(string templateName)
         {
             string cultureName = Thread.CurrentThread.CurrentCulture.Name;
 
@@ -197,12 +159,12 @@ namespace Esynctraining.Mail
         /// </returns>
         private IEnumerable<string> LoadTemplateAttachments(string templateName)
         {
-            string attachmentFolderPath = this.GetFullPathToTemplate(this.GetTemplateAttachmentFolderName(templateName));
+            string attachmentFolderPath = this.GetFullPathToTemplate(GetTemplateAttachmentFolderName(templateName));
             if (Directory.Exists(attachmentFolderPath))
             {
                 return Directory.GetFiles(attachmentFolderPath);
             }
-            attachmentFolderPath = this.GetFullPathToTemplate(this.GetDefaultTemplateAttachmentsFolderName(templateName));
+            attachmentFolderPath = this.GetFullPathToTemplate(GetDefaultTemplateAttachmentsFolderName(templateName));
             if (Directory.Exists(attachmentFolderPath))
             {
                 return Directory.GetFiles(attachmentFolderPath);
@@ -222,13 +184,13 @@ namespace Esynctraining.Mail
         /// </returns>
         private IEnumerable<string> LoadTemplateAttachments(Type templateType)
         {
-            string attachmentFolderPath = this.GetFullPathToTemplate(this.GetTemplateAttachmentFolderName(templateType));
+            string attachmentFolderPath = this.GetFullPathToTemplate(GetTemplateAttachmentFolderName(templateType));
 
             if (Directory.Exists(attachmentFolderPath))
             {
                 return Directory.GetFiles(attachmentFolderPath);
             }
-            attachmentFolderPath = this.GetFullPathToTemplate(this.GetDefaultTemplateAttachmentsFolderName(templateType));
+            attachmentFolderPath = this.GetFullPathToTemplate(GetDefaultTemplateAttachmentsFolderName(templateType));
             if (Directory.Exists(attachmentFolderPath))
             {
                 return Directory.GetFiles(attachmentFolderPath);
