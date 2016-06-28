@@ -17,11 +17,6 @@
     <level value="ERROR"/>
     <appender-ref ref="NHibernateLog"/>
   </logger>
-  
-  <logger name="Pushable.Data" additivity="false">
-    <level value="ERROR"/>
-    <appender-ref ref="DataLog"/>
-  </logger>
 
   <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
     <file value="Logs/general_" />
@@ -144,14 +139,4 @@
     </layout>
   </appender>
 
-  <appender name="DataLog" type="log4net.Appender.RollingFileAppender">
-    <file value="Logs/data.txt" />
-    <appendToFile value="true" />
-    <maximumFileSize value="100KB" />
-    <rollingStyle value="Size" />
-    <maxSizeRollBackups value="5" />
-    <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%d{HH:mm:ss.fff} [%t] %-5p %c - %m%n"  />
-    </layout>
-  </appender>
 </log4net>
