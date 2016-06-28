@@ -425,6 +425,12 @@ namespace Esynctraining.AdobeConnect
                     scoId, principalId, true);
         }
 
+        public IEnumerable<ScoShortcut> GetShortcuts()
+        {
+            StatusInfo status;
+            return Execute(() => _provider.GetShortcuts(out status));
+        }
+
         public ScoShortcut GetShortcutByType(string type)
         {
             StatusInfo status;

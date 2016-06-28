@@ -72,7 +72,11 @@ namespace Esynctraining.AdobeConnect
         ScoInfoResult GetScoInfo(string scoId);
         PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
         PermissionCollectionResult GetScoPermissions(string scoId, string principalId);
+
+        IEnumerable<ScoShortcut> GetShortcuts();
+
         ScoShortcut GetShortcutByType(string type);
+
         //UserInfo GetUserInfo();
         //UserInfo GetUserInfo(out StatusInfo status);
         //LearningPathCollectionResult LearningPathInfo(string scoId);

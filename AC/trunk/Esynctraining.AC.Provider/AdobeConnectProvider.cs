@@ -1603,6 +1603,13 @@
             return status;
         }
 
+        public IEnumerable<ScoShortcut> GetShortcuts(out StatusInfo status)
+        {
+            var shortcuts = this.requestProcessor.Process(Commands.Sco.Shortcuts, null, out status);
+
+            return !ResponseIsOk(shortcuts, status) ? null : ShortcutCollectionParser.Parse(shortcuts);
+        }
+
         /// <summary>
         /// The get shortcut by type.
         /// </summary>

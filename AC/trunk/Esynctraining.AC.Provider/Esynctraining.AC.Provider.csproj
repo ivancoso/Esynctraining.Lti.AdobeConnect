@@ -103,6 +103,7 @@
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\AclFieldUpdateTrio.cs" />
     <Compile Include="Entities\ReportScoViewContent.cs" />
+    <Compile Include="Entities\ScoShortcutType.cs" />
     <Compile Include="Entities\SeminarLicenseSco.cs" />
     <Compile Include="Entities\SeminarLicensesCollectionResult.cs" />
     <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />

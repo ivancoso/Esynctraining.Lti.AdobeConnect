@@ -38,6 +38,18 @@ namespace Esynctraining.AdobeConnect
         }
 
 
+        public IEnumerable<ScoShortcut> GetShortcuts(IEnumerable<ScoShortcutType> typesToReturn)
+        {
+            if (typesToReturn == null)
+                throw new ArgumentNullException(nameof(typesToReturn));
+
+            // TRICK: to change 'my_meetings' -> 'my-meetings'
+            IEnumerable<string> typeName = typesToReturn.Select(x => x.ToString().Replace("_", "-"));
+
+            var shortcuts = _provider.GetShortcuts();
+            return shortcuts.Where(s => typeName.Contains(s.Type));
+        }
+
         public IEnumerable<ScoContent> GetMyContent()
         {
             var shortcut = _provider.GetShortcutByType("my-content");
@@ -50,21 +62,27 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
-        public IEnumerable<ScoContent> GetUserContent(string userLogin)
+        public ScoContent GetUserContentFolder(string userLogin)
         {
             if (string.IsNullOrWhiteSpace(userLogin))
                 throw new ArgumentException("Non-empty value expected", nameof(userLogin));
 
             var shortcut = _provider.GetShortcutByType("user-content");
 
-            //if (shortcut == null)
-            //    throw new WarningMessageException("User is not Meeting Host");
-
             ScoContentCollectionResult userFolders = _provider.GetContentsByScoId(shortcut.ScoId);
             var requestedUserFolder = userFolders.Values.FirstOrDefault(x => x.Name == userLogin);
             if (requestedUserFolder == null)
                 throw new WarningMessageException("Requested user's folder not found. User is not Meeting Host.");
 
+            return requestedUserFolder;
+        }
+
+        public IEnumerable<ScoContent> GetUserContent(string userLogin)
+        {
+            if (string.IsNullOrWhiteSpace(userLogin))
+                throw new ArgumentException("Non-empty value expected", nameof(userLogin));
+
+            var requestedUserFolder = GetUserContentFolder(userLogin);
             ScoContentCollectionResult result = _provider.GetContentsByScoId(requestedUserFolder.ScoId);
             return result.Values;
         }
@@ -86,6 +104,59 @@ namespace Esynctraining.AdobeConnect
             ScoContentCollectionResult result = _provider.GetContentsByScoId(folderScoId);
 
             return result.Values;
+        }
+
+        public string GetDownloadAsZipLink(string scoId, string breezeToken)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (string.IsNullOrWhiteSpace(breezeToken))
+                throw new ArgumentException("Non-empty value expected", nameof(breezeToken));
+
+            ScoInfo scoInfo = DoGetSco(scoId);
+
+            string acDomain = _provider.ApiUrl.Replace(@"api/xml", string.Empty).Trim('/');
+            string cleanUrlPath = scoInfo.UrlPath.Trim('/');
+            string fileExtention = "zip";// $".{scoInfo.Icon}"; ppt\pptx?
+            
+            return $"{acDomain}/{cleanUrlPath}/output/{cleanUrlPath}.{fileExtention}?download={fileExtention}&session={breezeToken}";
+        }
+
+        private ScoInfo DoGetSco(string scoId)
+        {
+            // check is user already has read permission!!!
+            // TODO: setup only if source recording is accessible??
+            //  ac.UpdateScoPermissionForPrincipal(scoId, principalId, MeetingPermissionId.view);
+            var sco = _provider.GetScoInfo(scoId);
+            if (sco.Status.Code == StatusCodes.no_access && sco.Status.SubCode == StatusSubCodes.denied)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("Access denied.");
+            }
+            if (sco.Status.Code == StatusCodes.no_data && sco.Status.SubCode == StatusSubCodes.not_set)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                throw new WarningMessageException("File not found in Adobe Connect.");
+            }
+            else if (!sco.Success)
+            {
+                _logger.ErrorFormat("DoGetSco: {0}. sco-id:{1}.", sco.Status.GetErrorInfo(), scoId);
+                string msg = string.Format("[AdobeConnectProxy Error] {0}. Parameter1:{1}.",
+                 sco.Status.GetErrorInfo(),
+                 scoId);
+                throw new InvalidOperationException(msg);
+            }
+
+            return sco.ScoInfo;
+        }
+
+        private static string GetDownloadLink(string acServer, string urlPath, string fileNameWithExtention)
+        {
+            return string.Format(
+                "{0}/{1}/output/{2}?download={2}",
+                acServer.Replace(@"api/xml", string.Empty).Trim('/'),
+                urlPath,
+                fileNameWithExtention);
         }
 
     }
