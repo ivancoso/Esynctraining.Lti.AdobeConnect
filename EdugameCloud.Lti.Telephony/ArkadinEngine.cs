@@ -7,7 +7,7 @@ using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
-using Esynctraining.Arkadin.ServicesClient;
+//using Esynctraining.Arkadin.ServicesClient;
 using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.Telephony
@@ -38,47 +38,49 @@ namespace EdugameCloud.Lti.Telephony
             if (acProxy == null)
                 throw new ArgumentNullException(nameof(acProxy));
 
-            try
-            {
-                var profiles = acProxy.TelephonyProviderList(null);
-                var arkadin = profiles.Values.FirstOrDefault(x => x.ClassName == ClassName);
-                string providerId = arkadin.ProviderId;
+            throw new NotImplementedException();
 
-                if (arkadin.ProviderStatus != "enabled")
-                    throw new InvalidOperationException("Arkadin provider is not enabled");
+            //try
+            //{
+            //    var profiles = acProxy.TelephonyProviderList(null);
+            //    var arkadin = profiles.Values.FirstOrDefault(x => x.ClassName == ClassName);
+            //    string providerId = arkadin.ProviderId;
 
-                var access = new AccessDetails
-                {
-                    Login = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.UserName),
-                    //Password = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.Password),
-                    //BridgeId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.BridgeId),
-                };
+            //    if (arkadin.ProviderStatus != "enabled")
+            //        throw new InvalidOperationException("Arkadin provider is not enabled");
 
-                // TODO: DI
-                var client = new ArkadinClient();
-                var result = await client.CreateProfile(access);
+            //    var access = new AccessDetails
+            //    {
+            //        Login = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.UserName),
+            //        //Password = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.Password),
+            //        //BridgeId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.Arkadin.BridgeId),
+            //    };
 
-                var acProfile = new TelephonyProfileUpdateItem
-                {
-                    ProfileName = profileName,
-                    // ProfileStatus = "enabled",
-                    ProviderId = providerId,
+            //    // TODO: DI
+            //    var client = new ArkadinClient();
+            //    var result = await client.CreateProfile(access);
 
-                    ProviderFields = new ArkadinProviderFields
-                    {
-                        // TODO:
-                        //ConferenceId
-                    },
-                };
+            //    var acProfile = new TelephonyProfileUpdateItem
+            //    {
+            //        ProfileName = profileName,
+            //        // ProfileStatus = "enabled",
+            //        ProviderId = providerId,
 
-                TelephonyProfileInfoResult createdProfile = acProxy.TelephonyProfileUpdate(acProfile, false);
-                return createdProfile.TelephonyProfile;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error($"CreateProfileAsync error. CompanyLicenseId: {lmsCompany.Id}.", ex);
-                throw;
-            }
+            //        ProviderFields = new ArkadinProviderFields
+            //        {
+            //            // TODO:
+            //            //ConferenceId
+            //        },
+            //    };
+
+            //    TelephonyProfileInfoResult createdProfile = acProxy.TelephonyProfileUpdate(acProfile, false);
+            //    return createdProfile.TelephonyProfile;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _logger.Error($"CreateProfileAsync error. CompanyLicenseId: {lmsCompany.Id}.", ex);
+            //    throw;
+            //}
         }
 
     }
