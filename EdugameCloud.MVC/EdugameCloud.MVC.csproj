@@ -187,6 +187,8 @@
     </Compile>
     <Compile Include="Constants\Bundles.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\FileController.BuildDeliver.cs" />
+    <Compile Include="Controllers\FileController.LtiReports.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\SocialController.cs" />
