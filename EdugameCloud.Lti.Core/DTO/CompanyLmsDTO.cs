@@ -26,6 +26,9 @@ namespace EdugameCloud.Lti.DTO
             roleMapping = new LmsCompanyRoleMappingDTO[0];
             additionalLmsDomains = new string[0];
             Telephony = new TelephonyDTO();
+            enableAddGuest = true;
+            enableSetUserRole = true;
+            enableRemoveUser = true;
         }
 
         /// <summary>
@@ -120,6 +123,9 @@ namespace EdugameCloud.Lti.DTO
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
             useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
             enableMyContent = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent);
+            enableAddGuest = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true);
+            enableSetUserRole = instance.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true);
+            enableRemoveUser = instance.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true);
 
             Telephony = new TelephonyDTO(instance);
         }
@@ -442,6 +448,15 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool enableMyContent { get; set; }
+
+        [DataMember]
+        public bool enableAddGuest { get; set; }
+
+        [DataMember]
+        public bool enableSetUserRole { get; set; }
+
+        [DataMember]
+        public bool enableRemoveUser { get; set; }
 
     }
 

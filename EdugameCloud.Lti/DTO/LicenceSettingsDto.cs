@@ -136,6 +136,15 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "telephony")]
         public TelephonyDto Telephony { get; set; }
 
+        [DataMember(Name = "enableAddGuest")]
+        public bool EnableAddGuest { get; set; }
+
+        [DataMember(Name = "enableSetUserRole")]
+        public bool EnableSetUserRole { get; set; }
+
+        [DataMember(Name = "enableRemoveUser")]
+        public bool EnableRemoveUser { get; set; }
+
 
         public static LicenceSettingsDto Build(LmsCompany value, Language lmsLicenseLanguage, ICache cache)
         {
@@ -171,6 +180,9 @@ namespace EdugameCloud.Lti.DTO
                     EnableSeminars = value.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
                     EnableMyContent = value.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent),
+                    EnableAddGuest = value.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true),
+                    EnableSetUserRole = value.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true),
+                    EnableRemoveUser = value.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true),
 
                     ShowMeetingSummary =  value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingSummary),
                     ShowMeetingTime = value.GetSetting<bool>(LmsCompanySettingNames.ShowMeetingTime),

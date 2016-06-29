@@ -35,7 +35,10 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
         public const string UseSakaiEvents = "UseSakaiEvents";
         public const string EnableMyContent = nameof(EnableMyContent);
-
+        public const string EnableAddGuest = nameof(EnableAddGuest);
+        public const string EnableSetUserRole = nameof(EnableSetUserRole);
+        public const string EnableRemoveUser = nameof(EnableRemoveUser);
+        
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

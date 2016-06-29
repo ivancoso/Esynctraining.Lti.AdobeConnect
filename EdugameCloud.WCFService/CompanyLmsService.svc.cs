@@ -283,6 +283,9 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SeminarsLabel, dto.labelSeminar);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseSakaiEvents, dto.useSakaiEvents);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMyContent, dto.enableMyContent);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableAddGuest, dto.enableAddGuest);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableSetUserRole, dto.enableSetUserRole);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableRemoveUser, dto.enableRemoveUser);
 
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.EnableMeetingReuse, dto.enableMeetingReuse.ToString());
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.UseSynchronizedUsers, dto.useSynchronizedUsers.ToString());
