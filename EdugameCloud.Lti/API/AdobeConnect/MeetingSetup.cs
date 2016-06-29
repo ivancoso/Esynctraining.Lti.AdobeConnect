@@ -18,6 +18,7 @@ using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
+using EdugameCloud.Lti.Telephony;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -1271,15 +1272,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
             else if (option == TelephonyProfileOption.GenerateNewProfile)
             {
-                //string profileName = acMeetingName;
-                //TelephonyProfile profile = await IoC.Resolve<ITelephonyProfileEngine>().CreateProfileAsync(lmsCompany, param, profileName, provider).ConfigureAwait(false);
+                string profileName = acMeetingName;
+                TelephonyProfile profile = await IoC.Resolve<ITelephonyProfileEngine>().CreateProfileAsync(lmsCompany, param, profileName, provider).ConfigureAwait(false);
 
                 //meetingDTO.audioProfileId
-                //var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
-                //if (audioUpdateResult.IsSuccess)
-                //{
-                    //meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
-                //}
+                var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
+                if (audioUpdateResult.IsSuccess)
+                {
+                    meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                }
             }
         }
 
