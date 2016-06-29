@@ -256,6 +256,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Properties\DataSources\EdugameCloud.Lti.Core.DTO.ACRecordingViewReportDTO.datasource" />
     <None Include="Resources\WebResources.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>WebResources.cs</LastGenOutput>
@@ -283,6 +284,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\RecordingAttendanceReport.rdlc">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\MeetingAttendanceReport.rdlc">
       <SubType>Designer</SubType>
     </EmbeddedResource>

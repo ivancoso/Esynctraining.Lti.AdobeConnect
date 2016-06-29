@@ -363,6 +363,83 @@ namespace EdugameCloud.MVC.Controllers
         }
 
         [HttpGet]
+       // [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
+        [ActionName("meeting-recordings-report")]
+        public virtual ActionResult MeetingRecordingsReport(string lmsProviderName, int meetingId, int timezoneOffset, string format = "PDF", int startIndex = 0, int limit = 0)
+        {
+            try
+            {
+                var session = this.GetSession(lmsProviderName);
+                var credentials = session.LmsCompany;
+                var acProvider = this.GetAdobeConnectProvider(credentials);
+
+                LmsCourseMeeting meeting = lmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+
+                var acMeeting = acProvider.GetScoInfo(meeting.GetMeetingScoId());
+                var acServer = credentials.AcServer;
+                if (credentials.AcServer.EndsWith("/"))
+                {
+                    acServer = acServer.Substring(0, acServer.Length - 1);
+                }
+
+                if (format.ToUpper() != "PDF" && format.ToUpper() != "EXCEL")
+                {
+                    this.RedirectToError("Unable to generate report in such format " + " \"" + format + "\"");
+                    return null;
+                }
+
+                var tempParticipants = this.meetingSetup.GetRecordingsReport(
+                    this.GetAdobeConnectProvider(credentials),
+                    meeting,
+                    startIndex,
+                    limit);
+
+                var participants = new List<ACRecordingViewReportDTO>();
+                if (tempParticipants.Any())
+                {
+                    participants = tempParticipants.Select(x => new ACRecordingViewReportDTO(x, timezoneOffset)).ToList();
+                }
+
+                string mimeType;
+                var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
+
+                if (company == null)
+                {
+                    this.RedirectToError(" Unable to retrieve data about company");
+                    return null;
+                }
+
+                var acMeetingUrl = acServer + acMeeting.ScoInfo.UrlPath;
+                var acMeetingTitle = acMeeting.ScoInfo.Name;
+                var localDate = GetLocalDate(timezoneOffset);
+                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);
+
+                var reportRenderedBytes = GenerateReportBytes(format, "RecordingAttendanceReport", participants,
+                    out mimeType, parametersList);
+
+                if (reportRenderedBytes != null)
+                {
+                    var reportName = GenerateReportName(session, "RecordingViews", localDate);
+                    return this.File(
+                        reportRenderedBytes,
+                        mimeType,
+                        string.Format("{0}.{1}", reportName, this.GetFileExtensions(format.ToUpper())));
+                }
+
+                this.RedirectToError("Unable to generate report. Try again later.");
+
+            }
+            catch (Exception ex)
+            {
+                this.logger.Error("MeetingRecordingsReport", ex);
+                this.RedirectToError("Unable to generate report. Try again later.");
+            }
+
+            return null;
+        }
+
+
+        [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-host-report")]
         [CustomAuthorize]
@@ -2742,24 +2819,13 @@ namespace EdugameCloud.MVC.Controllers
         private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession, string acMeetingUrl, string acMeetingTitle, DateTime localDate)
         {
             if (company == null)
-            {
-                throw new ArgumentNullException("company");
-            }
-
+                throw new ArgumentNullException(nameof(company));
             if (userSession == null)
-            {
-                throw new ArgumentNullException("userSession");
-            }
-
+                throw new ArgumentNullException(nameof(userSession));
             if (acMeetingUrl == null)
-            {
-                throw new ArgumentNullException("acMeetingUrl");
-            }
-
+                throw new ArgumentNullException(nameof(acMeetingUrl));
             if (acMeetingTitle == null)
-            {
-                throw new ArgumentNullException("acMeetingTitle");
-            }
+                throw new ArgumentNullException(nameof(acMeetingTitle));
 
             var companyName = company.CompanyName;
             var companyLogo = this.GetCompanyLogoUrl(company);
@@ -2786,6 +2852,7 @@ namespace EdugameCloud.MVC.Controllers
             };
             return parametersList;
         }
+
         private string GetCompanyLogoUrl(Company company)
         {
             if (company.Theme == null || company.Theme.Logo == null)
@@ -2801,10 +2868,12 @@ namespace EdugameCloud.MVC.Controllers
 
             return basePath + "file/get?id=" + company.Theme.Logo.Id;
         }
+
         private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
         {
             this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
         }
+
         private static string GenerateReportName(LmsUserSession session, string reportName, DateTime localDate)
         {
             var strBiulder = new StringBuilder();
@@ -2827,6 +2896,7 @@ namespace EdugameCloud.MVC.Controllers
 
             return strBiulder.ToString();
         }
+
         private byte[] GenerateReportBytes<T>(
             string format,
             string reportName,
@@ -2890,5 +2960,7 @@ namespace EdugameCloud.MVC.Controllers
         }
 
         #endregion
+
     }
+
 }

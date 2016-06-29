@@ -214,6 +214,7 @@
     <Compile Include="Domain\Entities\ScheduleType.cs" />
     <Compile Include="Domain\Entities\TelephonyProfileOption.cs" />
     <Compile Include="DTO\ACSessionDTO.cs" />
+    <Compile Include="DTO\ACRecordingViewReportDTO.cs" />
     <Compile Include="DTO\RecordingTransactionDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantDTO.cs" />
     <Compile Include="DTO\ACSessionParticipantReportDTO.cs" />
