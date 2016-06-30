@@ -66,10 +66,19 @@ namespace EdugameCloud.Lti.Telephony
                         LastName = param.lis_person_name_family,
                     },
                 };
-                
+
                 // TODO: DI
-                var client = new MeetingOneClient(_baseAddress, _logger);
-                RoomDto result = await client.CreateRoomAsync(access, room);
+                RoomDto result = null;
+                try
+                {
+                    var client = new MeetingOneClient(_baseAddress, _logger);
+                    result = await client.CreateRoomAsync(access, room);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("MeetingOneClient.CreateRoomAsync failed.", ex);
+                    return null;
+                }
 
                 var acProfile = new TelephonyProfileUpdateItem
                 {

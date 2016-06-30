@@ -1,6 +1,7 @@
 ﻿namespace EdugameCloud.Lti.DTO
 {
     using System;
+    using System.Collections.Generic;
     using System.Runtime.Serialization;
     using EdugameCloud.Lti.Domain.Entities;
     using Esynctraining.AC.Provider.Entities;
@@ -70,6 +71,8 @@
 
         [DataMember]
         public string audioProfileId { get; set; }
+
+        public IDictionary<string, string> telephonyProfileFields { get; set; }
 
         #endregion
 

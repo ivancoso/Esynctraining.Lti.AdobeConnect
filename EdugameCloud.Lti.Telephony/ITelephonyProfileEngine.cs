@@ -8,6 +8,9 @@ namespace EdugameCloud.Lti.Telephony
 {
     public interface ITelephonyProfileEngine
     {
+        /// <summary>
+        /// Returns null if profile wasn't created.
+        /// </summary>
         Task<TelephonyProfile> CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy);
 
     }

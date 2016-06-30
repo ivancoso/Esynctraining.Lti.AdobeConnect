@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Security;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Controllers;
@@ -721,7 +722,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(result.Status.Code.ToString() + " " + result.Status.SubCode.ToString());
             }
 
-            ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
+            string message = string.Empty;
+            bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider).Result;
+            if (!audioProfileProccesed)
+            {
+                message += "Meeting was created without audio profile. ";
+            }
 
             if (isNewMeeting)
             {
@@ -761,8 +767,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             SpecialPermissionId specialPermissionId = meetingDTO.GetPermissionId();
             provider.UpdatePublicAccessPermissions(result.ScoInfo.ScoId, specialPermissionId);
-
-            string message = string.Empty;
+            
             if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                 && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
             {
@@ -796,7 +801,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 }
                 catch (Exception)
                 {
-                    message += "Meetings was created without announcement. Please contact administrator. ";
+                    message += "Meeting was created without announcement. Please contact administrator. ";
                 }
             }
             
@@ -1251,12 +1256,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private async void ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
+        private async Task<bool> ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
             TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
             if (option == TelephonyProfileOption.TurnOff)
-                return;
+                return true;
 
             if (option == TelephonyProfileOption.ReuseExistingProfile)
             {
@@ -1267,8 +1272,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (audioUpdateResult.IsSuccess)
                 {
                     meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
-                }
-                return;
+                    return true;
+                }                
             }
             else if (option == TelephonyProfileOption.GenerateNewProfile)
             {
@@ -1276,13 +1281,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string profileName = acMeetingName;
                 TelephonyProfile profile = await IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfileAsync(lmsCompany, param, profileName, provider).ConfigureAwait(false);
 
-                //meetingDTO.audioProfileId
-                var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
-                if (audioUpdateResult.IsSuccess)
+                if (profile != null)
                 {
-                    meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                    var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
+                    if (audioUpdateResult.IsSuccess)
+                    {
+                        meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                        return true;
+                    }
                 }
             }
+
+            return false;
         }
 
         //private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
@@ -1777,12 +1787,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             sw.Stop();
             if (trace != null)
                 trace.AppendFormat("\t GetMeetings - DB GetByCompanyAndScoId time: {0}. MeetingId: {1}\r\n", sw.Elapsed.ToString(), lmsCourseMeeting.Id);
-
-            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId))
-            {
-				// TODO: profile details
-            }
-
+            
             var ret = new MeetingDTO
             {
                 id = lmsCourseMeeting.Id,
@@ -1804,6 +1809,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 reused = scoIdReused,
                 audioProfileId = lmsCourseMeeting.AudioProfileId,
             };
+
+            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId))
+            {
+                // TODO: profile details
+                var profile = provider.TelephonyProfileInfo(lmsCourseMeeting.AudioProfileId);
+                ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
+            }
+
             return ret;
         }
 
