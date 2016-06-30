@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.AC.Provider.EntityParsing
 {
+    using System.Collections.Generic;
     using System.Xml;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.Extensions;
@@ -9,11 +10,6 @@
     /// </summary>
     internal static class TelephonyProfileParser
     {
-        /// <summary>
-        /// Parses the specified XML.
-        /// </summary>
-        /// <param name="xml">The XML.</param>
-        /// <returns>SCO Info.</returns>
         public static TelephonyProfile Parse(XmlNode xml)
         {
             if (xml == null || xml.Attributes == null)
@@ -30,6 +26,24 @@
                 AdaptorId = xml.SelectSingleNodeValue("adaptor-id/text()"),
                 ProfileName = xml.SelectSingleNodeValue("profile-name/text()"),
             };
+        }
+    }
+
+    internal static class TelephonyProfileFieldsParser
+    {
+        public static IDictionary<string, string> Parse(XmlNode xml)
+        {
+            if (xml == null || xml.Attributes == null)
+            {
+                return null;
+            }
+
+            var result = new Dictionary<string, string>(xml.ChildNodes.Count);
+            foreach (XmlNode node in xml.ChildNodes)
+            {
+                result.Add(node.Name, node.SelectSingleNodeValue("text()"));
+            }
+            return result;
         }
     }
 }

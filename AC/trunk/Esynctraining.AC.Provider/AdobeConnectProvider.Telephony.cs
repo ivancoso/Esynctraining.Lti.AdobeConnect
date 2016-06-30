@@ -13,7 +13,8 @@ namespace Esynctraining.AC.Provider
     // MeetingOne provider fields: https://connect.esynctraining.com/api/xml?action=telephony-provider-field-list&provider-id=21002
     public partial class AdobeConnectProvider
     {
-        private const string TelephonyProfileHome = "//telephony-profile";
+        private static readonly string TelephonyProfileHome = "//telephony-profile";
+        private static readonly string TelephonyProfileFieldsHome = "//telephony-profile-fields";
 
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace Esynctraining.AC.Provider
             var doc = this.requestProcessor.Process(Commands.Telephony.ProfileInfo, string.Format(CommandParams.Telephony.ProfileId, profileId), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new TelephonyProfileInfoResult(status, TelephonyProfileParser.Parse(doc.SelectSingleNode(TelephonyProfileHome)))
+                       ? new TelephonyProfileInfoResult(status, TelephonyProfileParser.Parse(doc.SelectSingleNode(TelephonyProfileHome)), TelephonyProfileFieldsParser.Parse(doc.SelectSingleNode(TelephonyProfileFieldsHome)))
                        : new TelephonyProfileInfoResult(status);
         }
 

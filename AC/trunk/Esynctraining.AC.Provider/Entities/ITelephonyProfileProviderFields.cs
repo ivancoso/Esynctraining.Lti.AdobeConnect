@@ -13,7 +13,7 @@ namespace Esynctraining.AC.Provider.Entities
 
     public sealed class MeetingOneProviderFields : ITelephonyProfileProviderFields
     {
-        private static readonly string FieldPrefix = "x-tel-arkadin-";
+        private static readonly string FieldPrefix = "x-tel-meetingone-";
 
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Esynctraining.AC.Provider.Entities
 
     public sealed class ArkadinProviderFields : ITelephonyProfileProviderFields
     {
-        private static readonly string FieldPrefix = "x-tel-meetingone-";
+        private static readonly string FieldPrefix = "x-tel-arkadin-";
 
 
         /// <summary>
