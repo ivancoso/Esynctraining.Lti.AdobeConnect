@@ -20,6 +20,7 @@ using Esynctraining.AdobeConnect;
 using Esynctraining.AdobeConnect.WebApi;
 using Esynctraining.AdobeConnect.WebApi.Content.Controllers;
 using Esynctraining.AdobeConnect.WebApi.Content.Dto;
+using Esynctraining.Core;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -338,47 +339,95 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
                 //return Content(HttpStatusCode.BadRequest, "Single file expected");
             }
-            
-            string fileName = provider.FileStreams.First().Key;
-            MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
 
-            var createFile = new ContentUpdateItem
+            try
             {
-                FolderId = folderScoId,
-                Name = name,
-                Description = description,
-                UrlPath = customUrl,
-                Type = ScoType.content,
-            };
+                string fileName = provider.FileStreams.First().Key;
+                MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
 
-            var session = GetReadOnlySession(lmsProviderName);
-            lmsCompany = session.LmsCompany;
-            var ac = this.GetAdobeConnectProvider(lmsCompany);
-            // TODO: check result; unique name\url!
-            ScoInfoResult createdFile = ac.CreateSco(createFile);
+                var createFile = new ContentUpdateItem
+                {
+                    FolderId = folderScoId,
+                    Name = name,
+                    Description = description,
+                    UrlPath = customUrl,
+                    Type = ScoType.content,
+                };
 
-            var uploadScoInfo = new UploadScoInfo
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                // TODO: check result; unique name\url!
+
+                ScoInfoResult createdFile = ac.CreateSco(createFile);
+
+                if (!createdFile.Success || createdFile.ScoInfo == null)
+                {
+                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "name"))
+                        throw new WarningMessageException(Resources.Messages.NotUniqueName);
+
+                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "url-path"))
+                        throw new WarningMessageException(Resources.Messages.NotUniqueUrlPath);
+
+                    throw new WarningMessageException(createdFile.Status.Code.ToString() + " " + createdFile.Status.SubCode.ToString());
+                }
+
+                var uploadScoInfo = new UploadScoInfo
+                {
+                    scoId = createdFile.ScoInfo.ScoId,
+                    fileContentType = stream.ContentType,
+                    fileName = fileName,
+                    fileBytes = stream.Stream.ReadToEnd(),
+                    title = fileName,
+                };
+
+                try
+                {
+                    StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
+                }
+                catch (AdobeConnectException ex)
+                {
+                    try
+                    {
+                        ac.DeleteSco(createdFile.ScoInfo.ScoId);
+                    }
+                    catch
+                    {
+                    }
+
+                    // Status.Code: invalid. Status.SubCode: format. Invalid Field: file
+                    if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.format && ex.Status.InvalidField == "file")
+                        throw new WarningMessageException("Invalid file format selected.");
+
+                    throw new WarningMessageException("Error occured during file uploading.", ex);
+                }
+
+                var sco = ac.GetScoContent(createdFile.ScoInfo.ScoId);
+                var dto = new ScoContentDtoMapper().Map(sco.ScoContent);
+                //TRICK:
+                dto.ByteCount = uploadScoInfo.fileBytes.Length;
+
+
+                string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Success(dto));
+                var response = new HttpResponseMessage();
+                response.Content = new StringContent(output);
+                response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+                return response;
+            }
+            catch (Exception ex)
             {
-                scoId = createdFile.ScoInfo.ScoId,
-                fileContentType = stream.ContentType,
-                fileName = fileName,
-                fileBytes = stream.Stream.ReadToEnd(),
-                title = fileName,
-            };
-            StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
+                IUserMessageException userError = ex as IUserMessageException;
+                if (userError != null)
+                {
+                    string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Error(ex.Message));
+                    var response = new HttpResponseMessage();
+                    response.Content = new StringContent(output);
+                    response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+                    return response;
+                }
 
-            var sco = ac.GetScoContent(createdFile.ScoInfo.ScoId);
-            var dto = new ScoContentDtoMapper().Map(sco.ScoContent);
-
-            //TRICK:
-            dto.ByteCount = uploadScoInfo.fileBytes.Length;
-            
-
-            string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Success(dto));
-            var response = new HttpResponseMessage();
-            response.Content = new StringContent(output);
-            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-            return response;
+                throw;
+            }
         }
 
         //[HttpGet]

@@ -4,6 +4,7 @@ using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Telephony;
 
 namespace EdugameCloud.Lti
 {
@@ -34,6 +35,7 @@ namespace EdugameCloud.Lti
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.Windsor.xml"))
             );
+            
         }
 
     }
@@ -44,6 +46,15 @@ namespace EdugameCloud.Lti
         {
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").Pick()
                 .If(Component.IsInNamespace("EdugameCloud.Lti.Controllers")).WithService.Self().LifestyleTransient());
+        }
+
+    }
+    public sealed class TelephonyWindsorInstaller : IWindsorInstaller
+    {
+        public void Install(IWindsorContainer container, IConfigurationStore store)
+        {
+            container.Register(Component.For<ITelephonyProfileEngine>().ImplementedBy<MeetingOneEngine>().Named("MEETINGONE"));
+            container.Register(Component.For<ITelephonyProfileEngine>().ImplementedBy<ArkadinEngine>().Named("ARKADIN"));
         }
 
     }

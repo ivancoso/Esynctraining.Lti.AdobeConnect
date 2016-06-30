@@ -14,7 +14,11 @@
         public LmsAudioProfileDTO(TelephonyProfile x)
         {
             this.adaptorId = x.AdaptorId;
+
+            /// ???!!!
             this.name = x.Name;
+
+
             this.profileId = x.ProfileId;
             this.profileName = x.ProfileName;
             this.profileStatus = x.ProfileStatus;

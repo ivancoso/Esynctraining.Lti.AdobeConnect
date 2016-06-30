@@ -79,6 +79,24 @@ namespace EdugameCloud.Lti.Content.Host.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is already another item with this name. Please try again..
+        /// </summary>
+        public static string NotUniqueName {
+            get {
+                return ResourceManager.GetString("NotUniqueName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator..
+        /// </summary>
+        public static string NotUniqueUrlPath {
+            get {
+                return ResourceManager.GetString("NotUniqueUrlPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session timed out. Please refresh the page..
         /// </summary>
         public static string SessionTimeOut {

@@ -994,7 +994,7 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>ATTENDANCE REPORT</Value>
+                      <Value> RECORDING VIEW REPORT</Value>
                       <Style>
                         <FontFamily>Lucida Sans Unicode</FontFamily>
                         <FontSize>15pt</FontSize>
@@ -1011,7 +1011,7 @@
               <Top>0.10584cm</Top>
               <Left>0.94338cm</Left>
               <Height>0.69144cm</Height>
-              <Width>6.28883cm</Width>
+              <Width>8.96112cm</Width>
               <Visibility>
                 <Hidden>=iif(Parameters!IsExcelFormat.Value, true, false)</Hidden>
               </Visibility>

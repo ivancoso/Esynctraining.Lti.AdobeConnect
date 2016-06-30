@@ -170,7 +170,7 @@ namespace EdugameCloud.Web
 
             container.Install(new LtiWindsorInstaller());
             container.Install(new LtiMvcWindsorInstaller());
-
+            container.Install(new TelephonyWindsorInstaller());
 
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
 

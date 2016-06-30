@@ -126,6 +126,14 @@
   <data name="ExceptionOccured" xml:space="preserve">
     <value>Ha ocurrido una excepción.</value>
   </data>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>Actualmente ya existe otro con ese nombre. Inténtelo de nuevo, por favor.</value>
+    <comment>b</comment>
+  </data>
+  <data name="NotUniqueUrlPath" xml:space="preserve">
+    <value>La URL debe ser única, y el path que usted ha elegido ya está en uso. Por favor, seleccione una URL alternativa.</value>
+    <comment>b</comment>
+  </data>
   <data name="SessionTimeOut" xml:space="preserve">
     <value>El tiempo de sesión ha expirado. Por favor, refresque la página.</value>
   </data>
