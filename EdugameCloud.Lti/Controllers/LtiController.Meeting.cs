@@ -53,6 +53,10 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
+
+                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
+                    return Json(OperationResult.Error("Operation is not enabled."));
+
                 var param = session.LtiSession.With(x => x.LtiParam);
                 var provider = this.GetAdobeConnectProvider(credentials);
 

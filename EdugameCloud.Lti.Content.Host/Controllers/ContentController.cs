@@ -11,6 +11,7 @@ using System.Web.Http.Description;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Content.Host.Dto;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -67,6 +68,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResultWithData<IEnumerable<ScoShortcutDto>>.Error("Operation is not enabled.");
+
                 var param = session.LtiSession.LtiParam;
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
 
@@ -77,7 +82,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 var contentService = new ContentService(logger, ac);
 
                 ScoShortcut sharedContent = contentService.GetShortcuts(new ScoShortcutType[] { ScoShortcutType.content }).First();
-                ScoContent userFolder = contentService.GetUserContentFolder(principalInfo.Principal.Login ?? principalInfo.Principal.Email);
+                ScoContent userFolder = contentService.GetUserContentFolder(lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault() ? principalInfo.Principal.Email : principalInfo.Principal.Login);
 
                 var result = new List<ScoShortcutDto>();
                 result.Add(new ScoShortcutDto { ScoId = sharedContent.ScoId, Type = ScoShortcutType.content.ToString() });
@@ -158,6 +163,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResultWithData<IEnumerable<ScoContentDto>>.Error("Operation is not enabled.");
+
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var contentService = new ContentService(logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(logger, contentService, new ScoContentDtoMapper());
@@ -188,6 +197,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResultWithData<FolderDto>.Error("Operation is not enabled.");
+
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var helper = new ContentEditControllerHelper(logger, ac);
                 return helper.CreateFolder(dto);
@@ -211,6 +224,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResult.Error("Operation is not enabled.");
+
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var contentService = new ContentService(logger, ac);
                 var helper = new ContentControllerHelper<ScoContentDto>(logger, contentService, new ScoContentDtoMapper());
@@ -252,6 +269,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResult.Error("Operation is not enabled.");
+
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var contentService = new ContentService(logger, ac);
                 var helper = new ContentEditControllerHelper(logger, ac);
@@ -273,6 +294,10 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResult.Error("Operation is not enabled.");
+
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var contentService = new ContentService(logger, ac);
                 var helper = new ContentEditControllerHelper(logger, ac);

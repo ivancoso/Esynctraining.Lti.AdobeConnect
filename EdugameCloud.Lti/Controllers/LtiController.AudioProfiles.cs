@@ -31,15 +31,20 @@ namespace EdugameCloud.Lti.Controllers
                 TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meetingType);
                 if (option != TelephonyProfileOption.ReuseExistingProfile)
                 {
+                    logger.Error($"TelephonyProfileOption {option} is not ReuseExistingProfile");
+                    return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
+                }
+
+                if ((LmsMeetingType)meetingType != LmsMeetingType.OfficeHours)
+                {
+                    logger.Error($"Meeting type {meetingType} is not supported for audio-profile reuse");
                     return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
                 }
 
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
                               lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-                string principalId = (LmsMeetingType) meetingType == LmsMeetingType.OfficeHours
-                    ? lmsUser.PrincipalId
-                    : provider.PrincipalId;
+                string principalId = lmsUser.PrincipalId;
                 var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, principalId);
                 return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
             }
@@ -50,36 +55,36 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
 
-        [HttpPost]
-        public JsonResult AssociateAudioProfileIdWithMeeting(string lmsProviderName, int meetingId, int meetingType, string audioProfileId)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.With(x => x.LtiParam);
-                var provider = GetAdobeConnectProvider(lmsCompany);
-                var lmsUser = session.LmsUser ??
-                              lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-                string principalId = (LmsMeetingType)meetingType == LmsMeetingType.OfficeHours
-                    ? lmsUser.PrincipalId
-                    : provider.PrincipalId;
-                LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(lmsCompany, param.course_id, meetingId, meetingType > 0 ? (LmsMeetingType)meetingType : LmsMeetingType.Meeting);
+        //[HttpPost]
+        //public JsonResult AssociateAudioProfileIdWithMeeting(string lmsProviderName, int meetingId, int meetingType, string audioProfileId)
+        //{
+        //    LmsCompany lmsCompany = null;
+        //    try
+        //    {
+        //        var session = GetReadOnlySession(lmsProviderName);
+        //        lmsCompany = session.LmsCompany;
+        //        var param = session.LtiSession.With(x => x.LtiParam);
+        //        var provider = GetAdobeConnectProvider(lmsCompany);
+        //        var lmsUser = session.LmsUser ??
+        //                      lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
+        //        string principalId = (LmsMeetingType)meetingType == LmsMeetingType.OfficeHours
+        //            ? lmsUser.PrincipalId
+        //            : provider.PrincipalId;
+        //        LmsCourseMeeting meeting = meetingSetup.GetCourseMeeting(lmsCompany, param.course_id, meetingId, meetingType > 0 ? (LmsMeetingType)meetingType : LmsMeetingType.Meeting);
 
-                var ret = AudioProfileService.UpdateAudioProfileId(
-                    meeting,
-                    provider,
-                    audioProfileId);
+        //        var ret = AudioProfileService.UpdateAudioProfileId(
+        //            meeting,
+        //            provider,
+        //            audioProfileId);
 
-                return Json(ret);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("AssociateAudioProfileIdWithMeeting", lmsCompany, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
+        //        return Json(ret);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("AssociateAudioProfileIdWithMeeting", lmsCompany, ex);
+        //        return Json(OperationResult.Error(errorMessage));
+        //    }
+        //}
 
     }
 

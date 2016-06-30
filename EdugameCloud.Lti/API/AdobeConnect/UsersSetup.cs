@@ -1043,11 +1043,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public LmsUserDTO UpdateUser(
             LmsCompany lmsCompany,
-            IAdobeConnectProxy provider, 
-            LtiParamDTO param, 
-            LmsUserDTO user, 
-            int id, 
-            out string error, 
+            IAdobeConnectProxy provider,
+            LtiParamDTO param,
+            LmsUserDTO user,
+            int id,
+            out string error,
             bool skipReturningUsers = false)
         {
             error = string.Empty;
@@ -1059,8 +1059,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TODO:  DO WE NEED IT ?
             if (meeting == null)
             {
-                return skipReturningUsers 
-                    ? null 
+                return skipReturningUsers
+                    ? null
                     : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
             }
 
@@ -1095,76 +1095,74 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return null;
                 }
             }
-            
+
             if (!user.ac_role.HasValue)
             {
                 throw new InvalidOperationException("Adobe Connect principal role is empty");
             }
-            else
+
+            var nonEditable = new HashSet<string>();
+            var attendees = GetMeetingAttendees(
+                provider,
+                meeting.GetMeetingScoId(),
+                nonEditable);
+            var permission = MeetingPermissionId.view;
+            if (attendees.Contains(user.ac_id))
             {
-                var nonEditable = new HashSet<string>();
-                var attendees = GetMeetingAttendees(
-                    provider,
-                    meeting.GetMeetingScoId(),
-                    nonEditable);
-                var permission = MeetingPermissionId.view;
-                if (attendees.Contains(user.ac_id))
+                if (user.ac_role.Value == AcRole.Presenter.Id)
                 {
-                    if (user.ac_role.Value == AcRole.Presenter.Id)
-                    {
-                        permission = MeetingPermissionId.mini_host;
-                    }
-                    else if (user.ac_role.Value == AcRole.Host.Id)
-                    {
-                        permission = MeetingPermissionId.host;
-                    }
+                    permission = MeetingPermissionId.mini_host;
                 }
-                else
+                else if (user.ac_role.Value == AcRole.Host.Id)
                 {
-                    permission = new RoleMappingService().SetAcRole(lmsCompany, user, ignoreEmptyACRole: true);
-                }
-
-                try
-                {
-                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
-                }
-                catch (InvalidOperationException)
-                {
-                    // NOTE: check that Principal is in AC yet
-                    var principalInfo = provider.GetOneByPrincipalId(user.ac_id);
-                    if (!principalInfo.Success)
-                    {
-                        var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value;
-
-                        //
-                        // TODO: CHECK EMAIL IS VALID (UNIQUE AND NON-EMPTY) if AC uses Emails-as-Logins
-                        //
-                        string err;
-                        var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany, out err);
-                        if (!string.IsNullOrWhiteSpace(err))
-                        {
-                            error = err;
-                        }
-                        if (principal == null && lmsCompany.DenyACUserCreation)
-                        {
-                            if (!error.Contains(Resources.Messages.CreateAcPrincipalManually))
-                                error += " " + Resources.Messages.CreateAcPrincipalManually;
-                            return null;
-                        }
-                    }
-
-                    // NOTE: try again
-                    StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
-                }
-
-                if (permission == MeetingPermissionId.host)
-                {
-                    this.AddUserToMeetingHostsGroup(provider, user.ac_id);
+                    permission = MeetingPermissionId.host;
                 }
             }
+            else
+            {
+                permission = new RoleMappingService().SetAcRole(lmsCompany, user, ignoreEmptyACRole: true);
+            }
 
-            return skipReturningUsers 
-                ? null 
+            try
+            {
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+            }
+            catch (InvalidOperationException)
+            {
+                // NOTE: check that Principal is in AC yet
+                var principalInfo = provider.GetOneByPrincipalId(user.ac_id);
+                if (!principalInfo.Success)
+                {
+                    var dbUser = this.LmsUserModel.GetOneByUserIdAndCompanyLms(user.lti_id ?? user.id, lmsCompany.Id).Value;
+
+                    //
+                    // TODO: CHECK EMAIL IS VALID (UNIQUE AND NON-EMPTY) if AC uses Emails-as-Logins
+                    //
+                    string err;
+                    var principal = CreatePrincipalAndUpdateLmsUserPrincipalId(provider, user, dbUser, lmsCompany, out err);
+                    if (!string.IsNullOrWhiteSpace(err))
+                    {
+                        error = err;
+                    }
+                    if (principal == null && lmsCompany.DenyACUserCreation)
+                    {
+                        if (!error.Contains(Resources.Messages.CreateAcPrincipalManually))
+                            error += " " + Resources.Messages.CreateAcPrincipalManually;
+                        return null;
+                    }
+                }
+
+                // NOTE: try again
+                StatusInfo status = provider.UpdateScoPermissionForPrincipal(meeting.GetMeetingScoId(), user.ac_id, permission);
+            }
+
+            if (permission == MeetingPermissionId.host)
+            {
+                this.AddUserToMeetingHostsGroup(provider, user.ac_id);
+            }
+
+            return skipReturningUsers
+                ? null
                 : GetOrCreateUserWithAcRole(lmsCompany, provider, param, meeting, out error, lmsUserId: user.id);
         }
 

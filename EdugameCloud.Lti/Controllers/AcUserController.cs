@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
@@ -61,6 +62,7 @@ namespace EdugameCloud.Lti.Controllers
 
         #endregion
 
+        //lti/acNewUser
         [HttpPost]
         public virtual ActionResult AddNewUser(string lmsProviderName, PrincipalInputDto user, int meetingId)
         {
@@ -69,10 +71,14 @@ namespace EdugameCloud.Lti.Controllers
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
                     throw new ArgumentException("Empty lmsProviderName", nameof(lmsProviderName));
                 if (user == null)
-                    throw new ArgumentNullException("user");
+                    throw new ArgumentNullException(nameof(user));
 
                 var session = this.GetSession(lmsProviderName);
-                var credentials = session.LmsCompany;                
+                var credentials = session.LmsCompany;
+                
+                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest))
+                    return Json(OperationResult.Error("Operation is not enabled."));
+
                 var provider = GetAdobeConnectProvider(credentials);
                 Principal principal;
 

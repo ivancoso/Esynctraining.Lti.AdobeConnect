@@ -58,6 +58,7 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "syncUsersCountLimit")]
         public int SyncUsersCountLimit { get; set; }
+
     }
 
 }

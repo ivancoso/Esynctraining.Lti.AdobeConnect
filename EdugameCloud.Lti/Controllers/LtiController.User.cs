@@ -2,6 +2,7 @@
 {
     using System;
     using System.Web.Mvc;
+    using Core.Constants;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Domain;
@@ -16,7 +17,7 @@
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
                     throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
                 if (meetingId <= 0)
-                    throw new ArgumentOutOfRangeException("meetingId");
+                    throw new ArgumentOutOfRangeException(nameof(meetingId));
 
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
@@ -71,10 +72,13 @@
                 if (string.IsNullOrWhiteSpace(lmsProviderName))
                     throw new ArgumentException("lmsProviderName can't be empty", nameof(lmsProviderName));
                 if (meetingId <= 0)
-                    throw new ArgumentOutOfRangeException("meetingId");
+                    throw new ArgumentOutOfRangeException(nameof(meetingId));
 
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
+
+                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser))
+                    return Json(OperationResult.Error("Operation is not enabled."));
 
                 string error = null;
                 if (guest_id.HasValue)

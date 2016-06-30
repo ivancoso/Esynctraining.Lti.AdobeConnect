@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
@@ -43,7 +44,10 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("Session doesn't contain LMS user."));
                 if (string.IsNullOrWhiteSpace(session.LmsUser.PrincipalId))
                     return Json(OperationResult.Error("You don't have Adobe Connect account."));
-                
+
+                if (!session.LmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingReuse))
+                    return Json(OperationResult.Error("Operation is not enabled."));
+
                 var provider = GetAdobeConnectProvider(session.LmsCompany);
                 var result = new List<MeetingItem>();
                 MeetingItemCollectionResult foundByNameMeetings = provider.ReportMeetingsByName(searchTerm);

@@ -54,9 +54,9 @@
         public bool ContainsByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
             if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("scoId can not be empty", "scoId");
+                throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
             // NOTE: check only licences of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
