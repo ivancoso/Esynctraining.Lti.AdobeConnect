@@ -213,9 +213,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                 var deleteResultIds = _sakaiApiService.DeleteEvents(events, param);
                 
-                if (events.SetEquals(deleteResultIds))
+                if (!events.SetEquals(deleteResultIds))
                 {
-                    //todo: logging
+                    _logger.Error($"List of all calendar events { string.Join(",", events) }, response is  {string.Join(",", deleteResultIds.ToArray())} ");
                     throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
                 }
 
