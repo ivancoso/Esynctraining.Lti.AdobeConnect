@@ -8622,6 +8622,11 @@
             Gets or sets the value indicating whether randomize answers.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionDTO.rows">
+            <summary>
+            Gets or sets the rows count value
+            </summary>
+        </member>
         <member name="M:EdugameCloud.Core.Domain.DTO.QuestionDTO.FillCustomProperties(EdugameCloud.Core.Domain.Entities.QuestionFor)">
             <summary>
             The fill custom properties.
@@ -9074,6 +9079,11 @@
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO.isAlwaysRateDropdown">
+            <summary>
+            Gets or sets the is always rate dropdown.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO.rows">
             <summary>
             Gets or sets the is always rate dropdown.
             </summary>
@@ -12150,6 +12160,11 @@
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.RandomizeAnswers">
             <summary>
             Gets or sets the value indicating whether randomize answers.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.Question.Rows">
+            <summary>
+            Gets or sets the rows count for ResponseType question.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuizQuestionResults">

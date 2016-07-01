@@ -62,6 +62,7 @@
             this.distractors = question.Distractors.Select(x => new DistractorDTO(x)).ToArray();
             this.correctReference = question.CorrectReference;
             this.randomizeAnswers = question.RandomizeAnswers;
+            rows = question.Rows;
 
             this.FillCustomProperties(instance);
         }
@@ -242,6 +243,12 @@
         /// </summary>
         [DataMember]
         public bool? randomizeAnswers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the rows count value
+        /// </summary>
+        [DataMember]
+        public int? rows { get; set; }
 
         #endregion
 

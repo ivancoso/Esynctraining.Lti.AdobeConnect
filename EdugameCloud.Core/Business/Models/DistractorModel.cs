@@ -209,6 +209,7 @@ namespace EdugameCloud.Core.Business.Models
 						.Add(Projections.Property(() => f.Y))
 						.Add(Projections.Property(() => f.Height))
 						.Add(Projections.Property(() => f.Width))
+						.Add(Projections.Property(() => q.Rows))
 				        ))
 				.Select(()=>d.Id)
 				.WithAlias(()=>dto.distractorId)
@@ -232,6 +233,8 @@ namespace EdugameCloud.Core.Business.Models
 				.WithAlias(()=>dto.height)
 				.Select(()=>f.Width)
 				.WithAlias(()=>dto.width)
+                .Select(()=>q.Rows)
+                .WithAlias(()=>dto.rows)
 				).TransformUsing(Transformers.AliasToBean<DistractorFromStoredProcedureDTO>());
 			var result = Repository.FindAll<DistractorFromStoredProcedureDTO>(qieryOver).ToList();
 			 return result;

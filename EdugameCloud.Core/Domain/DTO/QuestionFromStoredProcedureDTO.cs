@@ -156,6 +156,12 @@
         [DataMember]
         public bool? isAlwaysRateDropdown { get; set; }
 
+        /// <summary>
+        /// Gets or sets the is always rate dropdown.
+        /// </summary>
+        [DataMember]
+        public int rows { get; set; }
+
         #endregion
     }
 }

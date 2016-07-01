@@ -31,6 +31,7 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.LmsQuestionId).Nullable();
             this.Map(x => x.RandomizeAnswers).Nullable();
+            this.Map(x => x.Rows).Nullable();
             this.Map(x => x.LmsProviderId).Nullable().Column("lmsProviderId");
 
             this.HasMany(x => x.QuizQuestionResults).ExtraLazyLoad().Cascade.DeleteOrphan().Inverse();

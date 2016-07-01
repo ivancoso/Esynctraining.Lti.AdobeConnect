@@ -1,3 +1,3 @@
-﻿alter table dbo.[File]
+﻿alter table dbo.[Question]
 add rows int null
 

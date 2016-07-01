@@ -103,6 +103,11 @@
         public virtual bool? RandomizeAnswers { get; set; }
 
         /// <summary>
+        /// Gets or sets the rows count for ResponseType question.
+        /// </summary>
+        public virtual int? Rows { get; set; }
+
+        /// <summary>
         /// Gets or sets the quiz question results.
         /// </summary>
         public virtual IList<QuizQuestionResult> QuizQuestionResults { get; protected set; }

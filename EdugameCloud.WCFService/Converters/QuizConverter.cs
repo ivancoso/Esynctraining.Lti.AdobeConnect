@@ -329,7 +329,9 @@
                 question.ModifiedBy = user;
                 question.IsActive = true;
                 question.QuestionOrder = questionOrder++;
-                
+                question.Rows = quizQuestion.rows;
+
+
                 var isTransient = question.Id == 0;
                 if (quizQuestion.files.Count == 1 && !string.IsNullOrEmpty(quizQuestion.files[0].base64Content))
                 {

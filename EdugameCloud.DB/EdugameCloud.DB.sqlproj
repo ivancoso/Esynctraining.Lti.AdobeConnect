@@ -205,5 +205,6 @@
     <None Include="Schema-To-LocalLive.scmp" />
     <None Include="Schema-To-LocalDev.scmp" />
     <None Include="Updates\AddRowsIntoFileTable.sql" />
+    <None Include="Updates\returnRowsAlterSp.sql" />
   </ItemGroup>
 </Project>
