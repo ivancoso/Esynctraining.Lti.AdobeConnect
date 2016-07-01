@@ -77,7 +77,7 @@
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
 
-                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser))
+                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true))
                     return Json(OperationResult.Error("Operation is not enabled."));
 
                 string error = null;

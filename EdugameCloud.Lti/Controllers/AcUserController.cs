@@ -76,7 +76,7 @@ namespace EdugameCloud.Lti.Controllers
                 var session = this.GetSession(lmsProviderName);
                 var credentials = session.LmsCompany;
                 
-                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest))
+                if (!credentials.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true))
                     return Json(OperationResult.Error("Operation is not enabled."));
 
                 var provider = GetAdobeConnectProvider(credentials);
