@@ -119,6 +119,9 @@
         /// </summary>
         /// todo: will be removed from answer if this is question-level property
         public bool caseSensitive { get; set; }
+
+
+        public int rows { get; set; }
         
         #endregion
     }

@@ -79,6 +79,8 @@
         /// </summary>
         public bool caseSensitive { get; set; }
 
+        public int? rows { get; set; }
+
         #endregion
     }
 }

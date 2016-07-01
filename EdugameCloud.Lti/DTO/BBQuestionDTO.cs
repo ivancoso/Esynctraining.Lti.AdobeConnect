@@ -93,5 +93,7 @@ namespace EdugameCloud.Lti.DTO
         public string questionImageLink { get; set; }
         public string questionImageBinary { get; set; }
 
+        public int rows { get; set; }
+
     }
 }

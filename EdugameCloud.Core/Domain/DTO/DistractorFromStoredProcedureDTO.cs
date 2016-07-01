@@ -84,6 +84,12 @@
         [DataMember]
         public virtual int? y { get; set; }
 
+        /// <summary>
+        /// Gets or sets the rows.
+        /// </summary>
+        [DataMember]
+        public virtual int? rows { get; set; }
+
         #endregion
     }
 }

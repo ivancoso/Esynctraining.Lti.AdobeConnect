@@ -23,6 +23,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                     x => dto.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
                 question_name = dto.title.ClearName(),
                 id = BlackboardHelper.GetBBId(dto.id),
+                rows = dto.rows,
                 answers = ParseAnswers(dto)
             };
             ret.answers.ForEach(
@@ -38,7 +39,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
         protected virtual List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
             var correctAnswerId = 0;
-
+            
             if (!string.IsNullOrEmpty(q.answer))
             {
                 if (q.answers == null && q.answersList == null)
@@ -259,7 +260,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                     });
                     i++;
                 }
-
+                
                 return ret;
             }
 

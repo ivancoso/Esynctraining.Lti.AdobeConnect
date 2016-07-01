@@ -65,6 +65,7 @@
     <Folder Include="dbo\Tables\" />
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Security\" />
+    <Folder Include="Updates" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\UserRole.sql" />
@@ -203,5 +204,6 @@
     <None Include="Schema-To-Live.scmp" />
     <None Include="Schema-To-LocalLive.scmp" />
     <None Include="Schema-To-LocalDev.scmp" />
+    <None Include="Updates\AddRowsIntoFileTable.sql" />
   </ItemGroup>
 </Project>

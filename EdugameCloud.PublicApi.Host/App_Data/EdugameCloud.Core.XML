@@ -8948,6 +8948,11 @@
             Gets or sets the y.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.rows">
+            <summary>
+            Gets or sets the rows.
+            </summary>
+        </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO">
             <summary>
                 The question from stored procedure DTO.
