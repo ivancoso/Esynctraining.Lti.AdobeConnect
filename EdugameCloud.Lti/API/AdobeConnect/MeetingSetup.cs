@@ -1259,6 +1259,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private async Task<bool> ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
+            // NOTE: do nothing for seminars
+            if ((LmsMeetingType)meeting.LmsMeetingType == LmsMeetingType.Seminar)
+                return true;
+
             TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
             if (option == TelephonyProfileOption.TurnOff)
                 return true;
@@ -1812,7 +1816,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId))
             {
-                // TODO: profile details
+                // TODO: profile name??
                 var profile = provider.TelephonyProfileInfo(lmsCourseMeeting.AudioProfileId);
                 ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
             }

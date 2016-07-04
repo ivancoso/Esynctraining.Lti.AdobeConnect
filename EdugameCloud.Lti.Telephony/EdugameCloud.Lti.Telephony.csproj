@@ -59,6 +59,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
@@ -70,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArkadinEngine.cs" />
+    <Compile Include="Configuration\MeetingOneConfigurationSection.cs" />
     <Compile Include="ITelephonyProfileHumanizer.cs" />
     <Compile Include="MeetingOneEngine.cs" />
     <Compile Include="ITelephonyProfileEngine.cs" />

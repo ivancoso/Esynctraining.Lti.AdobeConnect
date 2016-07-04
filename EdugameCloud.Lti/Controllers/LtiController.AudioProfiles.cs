@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using EdugameCloud.Lti.API.AdobeConnect;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.Domain.Entities;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
@@ -44,7 +45,22 @@ namespace EdugameCloud.Lti.Controllers
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
                               lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-                string principalId = lmsUser.PrincipalId;
+
+
+                string principalId = null;
+
+                // TRICK: old ugly logic. Nodoby know why should it work this way.
+                if (lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) == TelephonyDTO.SupportedProfiles.None)
+                {
+                     principalId = (LmsMeetingType)meetingType == LmsMeetingType.OfficeHours
+                        ? lmsUser.PrincipalId
+                        : provider.PrincipalId;
+                }
+                else
+                {
+                    principalId = lmsUser.PrincipalId;
+                }
+                
                 var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, principalId);
                 return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
             }

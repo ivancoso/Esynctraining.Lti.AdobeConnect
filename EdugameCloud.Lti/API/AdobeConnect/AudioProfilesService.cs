@@ -69,25 +69,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return OperationResult.Error("Unexpected error. Please refresh page and try again.");
         }
 
-        public OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider, string audioProfileId)
-        {
-            if (meeting == null)
-                throw new ArgumentNullException(nameof(meeting));
-            if (provider == null)
-                throw new ArgumentNullException(nameof(provider));
+        //public OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider, string audioProfileId)
+        //{
+        //    if (meeting == null)
+        //        throw new ArgumentNullException(nameof(meeting));
+        //    if (provider == null)
+        //        throw new ArgumentNullException(nameof(provider));
 
-            var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider);
-            if (!opResult.IsSuccess)
-            {
-                return opResult;
-            }
+        //    var opResult = AddAudioProfileToMeeting(meeting.ScoId, audioProfileId, provider);
+        //    if (!opResult.IsSuccess)
+        //    {
+        //        return opResult;
+        //    }
 
-            meeting.AudioProfileId = audioProfileId;
+        //    meeting.AudioProfileId = audioProfileId;
 
-            meetingModel.RegisterSave(meeting, flush: true);
+        //    meetingModel.RegisterSave(meeting, flush: true);
 
-            return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
-        }
+        //    return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
+        //}
 
     }
 

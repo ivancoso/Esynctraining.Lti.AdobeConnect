@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Telephony.Configuration;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
@@ -24,9 +25,9 @@ namespace EdugameCloud.Lti.Telephony
         {
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
-            _logger = logger;
 
-            _baseAddress = baseAddress ?? "https://beta-api.meetingone.com/api/v1.0/";
+            _logger = logger;
+            _baseAddress = baseAddress ?? MeetingOneConfigurationSection.Current.ApiUrl;
         }
 
 
@@ -72,7 +73,7 @@ namespace EdugameCloud.Lti.Telephony
                 try
                 {
                     var client = new MeetingOneClient(_baseAddress, _logger);
-                    result = await client.CreateRoomAsync(access, room);
+                    result = await client.CreateRoomAsync(access, room).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

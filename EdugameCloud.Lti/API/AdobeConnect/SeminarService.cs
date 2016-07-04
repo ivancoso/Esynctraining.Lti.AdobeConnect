@@ -36,6 +36,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             TimeZoneInfo timeZone)
         {
+            if (acProxy == null)
+                throw new ArgumentNullException(nameof(acProxy));
+            if (seminarRecords == null)
+                throw new ArgumentNullException(nameof(seminarRecords));
+            if (lmsUser == null)
+                throw new ArgumentNullException(nameof(lmsUser));
+            if (param == null)
+                throw new ArgumentNullException(nameof(param));
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+            if (timeZone == null)
+                throw new ArgumentNullException(nameof(timeZone));
+
             var licenseDtos = new List<SeminarLicenseDto>();
 
             var licenses = GetSharedOrUserSeminarLicenses(acProxy).Where(x => !x.IsExpired);

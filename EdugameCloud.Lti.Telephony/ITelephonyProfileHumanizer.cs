@@ -22,17 +22,14 @@ namespace EdugameCloud.Lti.Telephony
 
             if (rawTelephonyProfileFields.Any(x => x.Key.StartsWith("x-tel-meetingone-")))
                 return HumanizeMeetingOne(rawTelephonyProfileFields);
-            else if (rawTelephonyProfileFields.Any(x => x.Key.StartsWith("x-tel-arkadin-"))) //x-tel-arkadin-
+            else if (rawTelephonyProfileFields.Any(x => x.Key.StartsWith("x-tel-arkadin-")))
                 return HumanizeArkadin(rawTelephonyProfileFields);
 
-            throw new InvalidOperationException("Not supported Telephony Provider");
+            return new Dictionary<string, string>();
         }
 
         private IDictionary<string, string> HumanizeMeetingOne(IDictionary<string, string> raw)
         {
-            //<x-tel-meetingone-conference-id>3827547</x-tel-meetingone-conference-id>
-            //<x-tel-meetingone-host-pin>704151</x-tel-meetingone-host-pin>
-            //throw new NotImplementedException();
             var result = new Dictionary<string, string>();
             result.Add("Conference Room Number", raw["x-tel-meetingone-conference-id"]);
             result.Add("Host Access Code", raw["x-tel-meetingone-host-pin"]);
@@ -49,6 +46,7 @@ namespace EdugameCloud.Lti.Telephony
             result.Add("SIP access number", raw["x-tel-arkadin-conference-number-uvline"]);
             return result;
         }
+
     }
 
 }

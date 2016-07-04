@@ -73,7 +73,7 @@ namespace EdugameCloud.Lti.Telephony
             //        },
             //    };
 
-            //    TelephonyProfileInfoResult createdProfile = acProxy.TelephonyProfileUpdate(acProfile, false);
+            //    TelephonyProfileInfoResult createdProfile = acProxy.TelephonyProfileUpdate(acProfile, false).ConfigureAwait(false);;
             //    return createdProfile.TelephonyProfile;
             //}
             //catch (Exception ex)
