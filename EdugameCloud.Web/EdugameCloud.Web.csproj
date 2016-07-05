@@ -807,6 +807,7 @@
     <Content Include="Views\Lti\LtiError.cshtml" />
     <None Include="machineKey.config">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
