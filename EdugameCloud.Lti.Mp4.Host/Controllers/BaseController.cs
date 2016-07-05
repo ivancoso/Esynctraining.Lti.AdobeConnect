@@ -4,6 +4,7 @@ using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
+using Esynctraining.Core;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -122,13 +123,9 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
             logger.Error(methodName + lmsInfo, ex);
 
-            var forcePassMessage = ex as Core.WarningMessageException;
+            var forcePassMessage = ex as IUserMessageException;
             if (forcePassMessage != null)
-                return forcePassMessage.Message;
-
-            var forcePassMessage2 = ex as Esynctraining.AdobeConnect.WarningMessageException;
-            if (forcePassMessage2 != null)
-                return forcePassMessage2.Message;
+                return ex.Message;
 
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()

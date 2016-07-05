@@ -80,12 +80,12 @@
       <HintPath>..\packages\DotNetOpenAuth.OpenId.RelyingParty.4.3.4.13329\lib\net45-full\DotNetOpenAuth.OpenId.RelyingParty.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.54, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.54\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.55, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.55\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.12, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.12\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+    <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.13, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.13\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.24, Culture=neutral, processorArchitecture=MSIL">
@@ -201,8 +201,10 @@
     <Compile Include="API\AdobeConnect\IFolderBuilder.cs" />
     <Compile Include="API\AdobeConnect\IMeetingSetup.cs" />
     <Compile Include="API\AdobeConnect\IRecordingsService.cs" />
+    <Compile Include="API\AdobeConnect\IReportService.cs" />
     <Compile Include="API\AdobeConnect\ISeminarService.cs" />
     <Compile Include="API\AdobeConnect\IUsersSetup.cs" />
+    <Compile Include="API\AdobeConnect\ReportService.cs" />
     <Compile Include="API\AdobeConnect\RecordingDtoBuilder.cs" />
     <Compile Include="API\AdobeConnect\RoomTypeFactory.cs" />
     <Compile Include="API\AdobeConnect\SeminarFolderBuilder.cs" />
@@ -231,6 +233,7 @@
     <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="API\TestConnectionService.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
+    <Compile Include="Controllers\AcTemplateController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />
@@ -296,6 +299,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Messages.resx</DependentUpon>
     </Compile>
+    <Compile Include="SessionKeyAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

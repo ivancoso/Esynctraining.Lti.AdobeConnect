@@ -17,9 +17,11 @@ namespace EdugameCloud.MVC.Controllers
     using EdugameCloud.Core.Domain.Entities;
     using EdugameCloud.MVC.Attributes;
     using Esynctraining.Core.Extensions;
+    using Esynctraining.Core.Utils;
+    using Lti.API.AdobeConnect;
     using Microsoft.Reporting.WebForms;
     using NHibernate.Util;
-    
+
     [HandleError]
     public partial class FileController : BaseController
     {
@@ -54,7 +56,7 @@ namespace EdugameCloud.MVC.Controllers
                     return null;
                 }
 
-                var tempParticipants = this.meetingSetup.GetAttendanceReport(
+                var tempParticipants = IoC.Resolve<IReportService>().GetAttendanceReport(
                     this.GetAdobeConnectProvider(credentials),
                     meeting,
                     startIndex,
@@ -99,8 +101,7 @@ namespace EdugameCloud.MVC.Controllers
 
             return null;
         }
-
-
+        
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-sessions-report")]
@@ -119,7 +120,7 @@ namespace EdugameCloud.MVC.Controllers
                 var acMeetingUrl = credentials.AcServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
 
-                var tempMeetingSessions  = this.meetingSetup.GetSessionsReport(
+                var tempMeetingSessions  = IoC.Resolve<IReportService>().GetSessionsReport(
                     acProvider,                   
                     meeting,
                     startIndex,
@@ -224,7 +225,7 @@ namespace EdugameCloud.MVC.Controllers
                     return null;
                 }
 
-                var tempParticipants = this.meetingSetup.GetRecordingsReport(
+                var tempParticipants = IoC.Resolve<IReportService>().GetRecordingsReport(
                     this.GetAdobeConnectProvider(credentials),
                     meeting,
                     startIndex,
@@ -273,8 +274,7 @@ namespace EdugameCloud.MVC.Controllers
 
             return null;
         }
-
-
+        
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("meeting-host-report")]

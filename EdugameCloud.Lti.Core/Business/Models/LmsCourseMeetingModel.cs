@@ -34,11 +34,11 @@
         public LmsCourseMeeting GetOneByCourseAndId(int companyLmsId, int courseId, long id)
         {
             if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException("companyLmsId");
+                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
             if (courseId == 0)
-                throw new ArgumentOutOfRangeException("courseId");
+                throw new ArgumentOutOfRangeException(nameof(courseId));
             if (id <= 0)
-                throw new ArgumentOutOfRangeException("id");
+                throw new ArgumentOutOfRangeException(nameof(id));
 
             LmsCourseMeeting x = null;
             //OfficeHours oh = null;
@@ -85,9 +85,9 @@
         public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
             if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("scoId can not be empty", "scoId");
+                throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
             // NOTE: check only licences of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
@@ -114,7 +114,7 @@
         public IEnumerable<LmsCourseMeeting> GetByCompanyWithAudioProfiles(LmsCompany lmsCompany)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
 
             // NOTE: check only licences of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()
@@ -139,9 +139,9 @@
         public LmsCourseMeeting GetLtiCreatedByCompanyAndScoId(LmsCompany lmsCompany, string scoId)
         {
             if (lmsCompany == null)
-                throw new ArgumentNullException("lmsCompany");
+                throw new ArgumentNullException(nameof(lmsCompany));
             if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("scoId can not be empty", "scoId");
+                throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
             // NOTE: check only licences of the company with the same AC!!
             var query = from c in this.Repository.Session.Query<LmsCompany>()

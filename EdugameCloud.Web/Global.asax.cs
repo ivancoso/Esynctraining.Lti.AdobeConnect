@@ -16,7 +16,6 @@ using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti;
 using EdugameCloud.MVC.ModelBinders;
-using EdugameCloud.MVC.Providers;
 using EdugameCloud.Persistence;
 using EdugameCloud.Web.Providers;
 using Esynctraining.CastleLog4Net;
@@ -26,6 +25,7 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.FluentValidation;
+using Esynctraining.Mvc;
 using Esynctraining.Windsor;
 using FluentValidation;
 using FluentValidation.Mvc;
@@ -216,7 +216,7 @@ namespace EdugameCloud.Web
         /// </param>
         private static void SetControllerFactory(IWindsorContainer container)
         {
-            var controllerFactory = new WindsorControllerFactory(new WindsorServiceLocator(container));
+            var controllerFactory = new ServiceLocatorControllerFactory(new WindsorServiceLocator(container));
             ControllerBuilder.Current.SetControllerFactory(controllerFactory);
         }
 

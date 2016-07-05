@@ -287,6 +287,34 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         }
 
         [HttpPost]
+        [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/edit")]
+        public OperationResult EditFile(string lmsProviderName, string scoId, [FromBody]FileUpdateDto dto)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            LmsCompany lmsCompany = null;
+            try
+            {
+                var session = GetReadOnlySession(lmsProviderName);
+                lmsCompany = session.LmsCompany;
+
+                if (!lmsCompany.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent))
+                    return OperationResult.Error("Operation is not enabled.");
+
+                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var contentService = new ContentService(logger, ac);
+                var helper = new ContentEditControllerHelper(logger, ac);
+                return helper.EditFile(scoId, dto);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("ContentApi-EditFile", lmsCompany, ex);
+                return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
+            }
+        }
+
+        [HttpPost]
         [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/move-to/{destinationFolderScoId}")]
         public OperationResult MoveFileOrFolder(string lmsProviderName, string scoId, string destinationFolderScoId)
         {

@@ -91,7 +91,12 @@
         {
             get { return IoC.Resolve<LmsProviderModel>(); }
         }
-        
+
+        private LmsCourseMeetingModel LmsCourseMeetingModel
+        {
+            get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+        }
+
         #region Constructors and Destructors
 
         public LtiController(
@@ -391,10 +396,10 @@
             }
         }
         
-        public virtual ActionResult GetHtmlPage(string path)
-        {
-            return new FilePathResult(path, "text/html");
-        }
+        //public virtual ActionResult GetHtmlPage(string path)
+        //{
+        //    return new FilePathResult(path, "text/html");
+        //}
 
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
         {
@@ -410,28 +415,7 @@
             
             return View("Index", model);
         }
-        
-        [HttpPost]
-        public virtual JsonResult GetTemplates(string lmsProviderName)
-        {
-            LmsCompany credentials = null;
-            try
-            {
-                var session = GetReadOnlySession(lmsProviderName);
-                credentials = session.LmsCompany;
-                IEnumerable<TemplateDTO> templates = AdobeConnectAccountService.GetTemplates(
-                    this.GetAdobeConnectProvider(session.LmsCompany),
-                    session.LmsCompany.ACTemplateScoId);
-
-                return Json(OperationResultWithData<IEnumerable<TemplateDTO>>.Success(templates));
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetTemplates", credentials, ex);
-                return Json(OperationResult.Error(errorMessage));
-            }
-        }
-        
+                
         [HttpPost]
         public virtual ActionResult GetUsers(string lmsProviderName, int meetingId, bool forceUpdate = false)
         {
@@ -474,12 +458,12 @@
             }
         }
         
-        [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        public virtual ActionResult Index(LtiParamDTO model)
-        {
-            string providerName = model.tool_consumer_info_product_family_code;
-            return this.LoginWithProvider(providerName, model);
-        }
+        //[OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
+        //public virtual ActionResult Index(LtiParamDTO model)
+        //{
+        //    string providerName = model.tool_consumer_info_product_family_code;
+        //    return this.LoginWithProvider(providerName, model);
+        //}
         
         public virtual ActionResult JoinMeeting(string lmsProviderName, int meetingId)
         {
@@ -919,32 +903,11 @@
             return keyToFix;
         }
         
-        /// <summary>
-        /// The get user name or email.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
         private static string GetUserNameOrEmail(LtiParamDTO param)
         {
             return string.IsNullOrWhiteSpace(param.lms_user_login) ? param.lis_person_contact_email_primary : param.lms_user_login;
         }
 
-        /// <summary>
-        /// The validate LMS domain and save if needed.
-        /// </summary>
-        /// <param name="param">
-        /// The parameter.
-        /// </param>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool ValidateLMSDomainAndSaveIfNeeded(LtiParamDTO param, LmsCompany credentials)
         {
             if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
@@ -961,18 +924,6 @@
             //return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
         }
 
-        /// <summary>
-        /// The start OAUTH2 authentication.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="providerKey">
-        /// The provider Key.
-        /// </param>
-        /// <param name="model">
-        /// The model.
-        /// </param>
         private void StartOAuth2Authentication(string provider, string providerKey, LtiParamDTO model)
         {
             string schema = Request.GetScheme();
@@ -1113,21 +1064,6 @@
             return View(viewName);
         }
 
-        /// <summary>
-        /// The redirect to EXT JS.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="user">
-        /// The user.
-        /// </param>
-        /// <param name="providerName">
-        /// The provider name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
             var request = System.Web.HttpContext.Current.Request;
@@ -1210,9 +1146,16 @@
 
                 IEnumerable<LmsCourseMeeting> seminarRecords = this.LmsCourseMeetingModel.GetSeminarsByCourseId(credentials.Id, param.course_id);
 
-                seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider,
-                    seminarRecords,
-                    session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.TimeZoneInfo);
+                try
+                {
+                    seminars = IoC.Resolve<API.AdobeConnect.ISeminarService>().GetLicensesWithContent(acProvider,
+                        seminarRecords,
+                        session.LmsUser, session.LtiSession.LtiParam, session.LmsCompany, acSettings.TimeZoneInfo);
+                }
+                catch (InvalidOperationException ex)
+                {
+                }
+
                 sw.Stop();
                 if (trace != null)
                     trace.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -1255,16 +1198,7 @@
                     : string.Format("/content/lti-instructions/{0}.pdf", lmsProvider.ShortName),
             };
         }
-
-        /// <summary>
-        /// The is admin role.
-        /// </summary>
-        /// <param name="providerName">
-        /// The provider name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
+        
         private bool IsAdminRole(LtiParamDTO param)
         {
             if (param == null)
@@ -1392,16 +1326,7 @@
 
             return session;
         }
-
-        /// <summary>
-        /// Sets the parameter.
-        /// </summary>
-        /// <param name="session">
-        /// The session.
-        /// </param>
-        /// <param name="lmsUser">
-        /// The LMS User.
-        /// </param>
+        
         private void SaveSessionUser(LmsUserSession session, LmsUser lmsUser)
         {
             if (session != null)

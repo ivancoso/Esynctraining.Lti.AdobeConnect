@@ -89,18 +89,6 @@
 
         #region Methods
         
-        /// <summary>
-        /// The try register EGC tool.
-        /// </summary>
-        /// <param name="model">
-        /// The model.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
         private bool TryRegisterEGCTool(ProxyToolPasswordModel model, out string error)
         {
             var pass = (string)settings.InitialBBPassword;
@@ -108,15 +96,6 @@
             return soapApi.TryRegisterEGCTool(model.LmsDomain, model.RegistrationPassword, pass, out error);
         }
 
-        /// <summary>
-        /// The parse black board shared info.
-        /// </summary>
-        /// <param name="lmsDomain">
-        /// The LMS domain.
-        /// </param>
-        /// <returns>
-        /// The <see cref="BBConsumerProfileDTO"/>.
-        /// </returns>
         private BBConsumerProfileDTO ParseBlackBoardSharedInfo(string lmsDomain)
         {
             var res = new BBConsumerProfileDTO();

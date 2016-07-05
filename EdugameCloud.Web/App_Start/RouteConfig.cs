@@ -19,6 +19,7 @@
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
+            routes.IgnoreRoute("{*robotstxt}", new { robotstxt = @"(.*/)?robots.txt(/.*)?" });
             routes.MapLowercaseRoute("Public", "public/{fileName}", new { controller = "File", action = "Public" });
             RegisterSocialRoutes(routes);
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });

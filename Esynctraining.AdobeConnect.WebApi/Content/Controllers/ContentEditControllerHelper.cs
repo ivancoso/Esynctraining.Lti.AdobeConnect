@@ -112,6 +112,48 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
             }
         }
 
+        public OperationResult EditFile(string scoId, FileUpdateDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto));
+
+            try
+            {
+                ScoInfoResult updatedSco =
+                                _acProxy.UpdateSco(
+                                    new FolderUpdateItem
+                                    {
+                                        Name = dto.Name,
+                                        Description = dto.Description,
+                                        ScoId = scoId,
+                                        Type = ScoType.content,
+                                    });
+
+                if (!updatedSco.Success)
+                {
+                    return OperationResult.Error(updatedSco.Status.GetErrorInfo());
+                }
+                return OperationResult.Success();
+            }
+            catch (AdobeConnectException ex)
+            {
+                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
+                {
+                    return OperationResult.Error("You do not have permission to access this item.");
+                }
+
+                string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
+                return OperationResult.Error(errorMessage);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
+                return OperationResult.Error(errorMessage);
+            }
+        }
+
         /// <summary>
         /// Deletes passed folder or file.
         /// </summary>

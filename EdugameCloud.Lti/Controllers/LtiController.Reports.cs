@@ -3,17 +3,34 @@
     using System;
     using System.Collections.Generic;
     using System.Web.Mvc;
+    using API.AdobeConnect;
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
     using Esynctraining.Core.Domain;
+    using Esynctraining.Core.Logging;
+    using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
 
-    public partial class LtiController
+    public partial class LtiReportController : BaseController
     {
+        private readonly IReportService meetingSetup;
+
         private LmsCourseMeetingModel LmsCourseMeetingModel
         {
             get { return IoC.Resolve<LmsCourseMeetingModel>(); }
+        }
+
+
+        public LtiReportController(
+            IReportService meetingSetup,
+            LmsUserSessionModel userSessionModel,
+            API.AdobeConnect.IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
+            ILogger logger)
+            : base(userSessionModel, acAccountService, settings, logger)
+        {
+            this.meetingSetup = meetingSetup;
         }
 
 
