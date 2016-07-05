@@ -71,6 +71,9 @@ namespace EdugameCloud.Lti.Content.Host.Dto
         [DataMember(Name = "byteCount")]
         public int ByteCount { get; set; }
 
+        [DataMember(Name = "description")]
+        public string Description { get; set; }
+
         [DataMember(Name = "modifiedAt")]
         public long? ModifiedAt
         {
@@ -105,6 +108,7 @@ namespace EdugameCloud.Lti.Content.Host.Dto
                 EndDate = sco.EndDate,
                 DateModified = sco.DateModified,
                 ByteCount = sco.ByteCount,
+                Description = sco.Description,
             };
         }
 
