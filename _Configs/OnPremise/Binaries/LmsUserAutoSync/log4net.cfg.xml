@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<log4net>
-  <!-- levels: DEBUG, INFO, WARN, ERROR, FATAL -->
+<log4net debug="false">
+  <!-- ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF-->
   <root>
     <level value="WARN"/>
     <appender-ref ref="GeneralLog" />
@@ -10,52 +10,16 @@
   <logger name="Default">
     <level value="WARN" />
     <appender-ref ref="Application" />
+    <appender-ref ref="ConsoleAppender" />
   </logger>
 
   <logger name="NHibernate" additivity="false">
     <level value="ERROR"/>
     <appender-ref ref="NHibernateFileLog"/>
   </logger>
-  
-  <logger name="Pushable.Data" additivity="false">
-    <level value="ERROR"/>
-    <appender-ref ref="DataLog"/>
-  </logger>
-
-  <appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
-    <file value="Logs/general_" />
-    <staticLogFileName value="false" />
-    <appendToFile value="true" />
-    <rollingStyle value="Date" />
-    <datePattern value="yyyyMMdd'.txt'" />
-    <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%d{yyyy.MM.dd HH:mm:ss.fff} [%t] %-5p %c - %m%n"  />
-    </layout>
-  </appender>
-
-  <appender name="GeneralLog" type="log4net.Appender.BufferingForwardingAppender">
-    <bufferSize value="10" />
-    <appender-ref ref="RollingLogFileAppender" />
-    <!--http://stackoverflow.com/questions/11319319/log4net-bufferingforwardingappender-performance-issue-->
-    <!-- Set Fix flag to NONE -->
-    <Fix value="0"/>
-  </appender>
-
-  <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
-    <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
-    </layout>
-  </appender>
-
-  <appender name="NHibernateLog" type="log4net.Appender.BufferingForwardingAppender">
-    <bufferSize value="20" />
-    <appender-ref ref="NHibernateFileLog" />
-    <!--http://stackoverflow.com/questions/11319319/log4net-bufferingforwardingappender-performance-issue-->
-    <!-- Set Fix flag to NONE -->
-    <Fix value="0"/>
-  </appender>
 
   <appender name="NHibernateFileLog" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <file value="Logs/nhibernate_" />
     <staticLogFileName value="false" />
     <appendToFile value="true" />
@@ -66,15 +30,14 @@
     </layout>
   </appender>
 
-  <appender name="Application" type="log4net.Appender.BufferingForwardingAppender">
-    <bufferSize value="20" />
-    <appender-ref ref="ApplicationActual" />
-    <!--http://stackoverflow.com/questions/11319319/log4net-bufferingforwardingappender-performance-issue-->
-    <!-- Set Fix flag to NONE -->
-    <Fix value="0"/>
+  <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
+    <layout type="log4net.Layout.PatternLayout">
+      <conversionPattern value="%date [%thread] %-5level %logger [%property{NDC}] - %message%newline" />
+    </layout>
   </appender>
 
-  <appender name="ApplicationActual" type="log4net.Appender.RollingFileAppender, log4net" >
+  <appender name="Application" type="log4net.Appender.RollingFileAppender, log4net">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
     <param name="File" value="Logs/Application/Application.txt"/>
     <param name="AppendToFile" value="true"/>
     <param name="RollingStyle" value="Date"/>
@@ -83,18 +46,19 @@
     <param name="MaxSizeRollBackups" value="10"/>
     <param name="MaximumFileSize" value="1024KB"/>
     <layout type="log4net.Layout.PatternLayout,log4net">
-      <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
+      <param name="ConversionPattern" value="%d{yyyy.MM.dd HH:mm:ss.fff} [%t] %-5p %c - %m%n"/>
     </layout>
   </appender>
 
-  <appender name="DataLog" type="log4net.Appender.RollingFileAppender">
-    <file value="Logs/data.txt" />
+  <appender name="GeneralLog" type="log4net.Appender.RollingFileAppender">
+    <lockingModel type="log4net.Appender.FileAppender+MinimalLock" />
+    <file value="Logs/general_" />
+    <staticLogFileName value="false" />
     <appendToFile value="true" />
-    <maximumFileSize value="1024KB" />
-    <rollingStyle value="Size" />
-    <maxSizeRollBackups value="5" />
+    <rollingStyle value="Date" />
+    <datePattern value="yyyyMMdd'.txt'" />
     <layout type="log4net.Layout.PatternLayout">
-      <conversionPattern value="%d{HH:mm:ss.fff} [%t] %-5p %c - %m%n"  />
+      <conversionPattern value="%d{yyyy.MM.dd HH:mm:ss.fff} [%t] %-5p %c - %m%n %aspnet-request{HTTP_HOST} %newline "  />
     </layout>
   </appender>
 
