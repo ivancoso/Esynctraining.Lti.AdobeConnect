@@ -288,7 +288,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         [HttpPost]
         [Route("{lmsProviderName:guid}/content/{scoId:long:min(1)}/edit")]
-        public OperationResult EditFile(string lmsProviderName, string scoId, [FromBody]FileUpdateDto dto)
+        public OperationResult EditSco(string lmsProviderName, string scoId, [FromBody]FileUpdateDto dto)
         {
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
@@ -305,7 +305,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(lmsCompany);
                 var contentService = new ContentService(logger, ac);
                 var helper = new ContentEditControllerHelper(logger, ac);
-                return helper.EditFile(scoId, dto);
+                return helper.EditSco(scoId, dto);
             }
             catch (Exception ex)
             {

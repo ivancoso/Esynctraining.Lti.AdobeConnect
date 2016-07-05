@@ -112,24 +112,34 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
             }
         }
 
-        public OperationResult EditFile(string scoId, FileUpdateDto dto)
+        public OperationResult EditSco(string scoId, FileUpdateDto dto)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
             if (dto == null)
                 throw new ArgumentNullException(nameof(dto));
-
+            
             try
             {
+                ScoInfoResult scoResult = _acProxy.GetScoInfo(scoId);
+                if (!scoResult.Success)
+                {
+                    if (scoResult.Status.Code == StatusCodes.no_access && scoResult.Status.SubCode == StatusSubCodes.denied)
+                    {
+                        return OperationResult.Error("You do not have permission to access this item.");
+                    }
+                    throw new AdobeConnectException(scoResult.Status);
+                }
+
                 ScoInfoResult updatedSco =
-                                _acProxy.UpdateSco(
-                                    new FolderUpdateItem
-                                    {
-                                        Name = dto.Name,
-                                        Description = dto.Description,
-                                        ScoId = scoId,
-                                        Type = ScoType.content,
-                                    });
+                    _acProxy.UpdateSco(
+                        new FolderUpdateItem
+                        {
+                            Name = dto.Name,
+                            Description = dto.Description,
+                            ScoId = scoId,
+                            Type = scoResult.ScoInfo.Type,
+                        });
 
                 if (!updatedSco.Success)
                 {
@@ -144,12 +154,12 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
                     return OperationResult.Error("You do not have permission to access this item.");
                 }
 
-                string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
+                string errorMessage = GetOutputErrorMessage("EditSco", ex);
                 return OperationResult.Error(errorMessage);
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("DeleteFolder", ex);
+                string errorMessage = GetOutputErrorMessage("EditSco", ex);
                 return OperationResult.Error(errorMessage);
             }
         }
