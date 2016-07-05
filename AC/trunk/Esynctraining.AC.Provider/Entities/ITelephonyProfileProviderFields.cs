@@ -122,7 +122,8 @@ namespace Esynctraining.AC.Provider.Entities
             var query = new StringBuilder(_values.Count * 25);
             foreach (KeyValuePair<string, string> value in _values)
             {
-                query.AppendFormat("&{0}={1}", value.Key, HttpUtility.UrlEncode(value.Value));
+                //&field-id=x-tel-intercall-leader-pin&value=xxxxxx
+                query.AppendFormat("&field-id={0}{1}&value={2}", _fieldPrefix, value.Key, HttpUtility.UrlEncode(value.Value));
             }
             return query.ToString();
         }

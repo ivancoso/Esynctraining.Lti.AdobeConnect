@@ -437,6 +437,18 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => _provider.GetShortcutByType(type, out status));
         }
 
+        public ScoShortcut GetShortcutByType(string type, out StatusInfo status)
+        {
+            StatusInfo st = null;
+            var result = Execute(() =>
+            {
+                return _provider.GetShortcutByType(type, out st);
+            });
+
+            status = st;
+            return result;
+        }
+
         //public UserInfo GetUserInfo(out StatusInfo status)
         //{
         //    UserInfo result;

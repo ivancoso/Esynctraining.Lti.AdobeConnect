@@ -34,6 +34,9 @@
 
             foreach (var propertyInfo in entityObject.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
+                if (propertyInfo.GetCustomAttribute<SkipAttribute>() != null)
+                    continue;
+
                 var attributes = propertyInfo.GetCustomAttributes(typeof(SkipDuringUpdateAttribute), false);
                 if (isUpdateOperation && attributes.Any())
                 {

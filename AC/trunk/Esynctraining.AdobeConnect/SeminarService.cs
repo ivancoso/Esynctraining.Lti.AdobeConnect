@@ -13,17 +13,25 @@ namespace Esynctraining.AdobeConnect
 
         private readonly ILogger _logger;
 
+
         public SeminarService(ILogger logger)
         {
             _logger = logger;
         }
 
+
         public IEnumerable<ScoContent> GetAllSeminarLicenses(IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
-            ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars");
+            StatusInfo status;
+            ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars", out status);
+            if (status.Code != StatusCodes.ok)
+                throw new AdobeConnectException(status);
+            if (seminarShortcut == null)
+                throw new InvalidOperationException("Seminars are not acessible for the principal");
+
             var result = provider.GetContentsByScoId(seminarShortcut.ScoId);
             return result.Values;
         }
@@ -31,9 +39,15 @@ namespace Esynctraining.AdobeConnect
         public IEnumerable<SeminarLicenseSco> GetSharedOrUserSeminarLicenses(IAdobeConnectProxy provider, bool returnUserLicenses = false)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
-            ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars");
+            StatusInfo status;
+            ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars", out status);
+            if (status.Code != StatusCodes.ok)
+                throw new AdobeConnectException(status);
+            if (seminarShortcut == null)
+                throw new InvalidOperationException("Seminars are not acessible for the principal");
+
             var result = provider.GetSeminarLicenses(seminarShortcut.ScoId, returnUserLicenses);
             return result.Values;
         }
@@ -41,7 +55,7 @@ namespace Esynctraining.AdobeConnect
         public IEnumerable<ScoContent> GetSeminars(string seminarLicenseScoId, IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             var sessionResult = provider.GetContentsByScoId(seminarLicenseScoId);
             return sessionResult.Values.Where(x => x.Type == "meeting" && x.IsSeminar);
@@ -50,7 +64,7 @@ namespace Esynctraining.AdobeConnect
         public IEnumerable<ScoContent> GetSeminarSessions(string seminarScoId, IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             var sessionResult = provider.GetContentsByScoId(seminarScoId);
             return sessionResult.Values.Where(x => x.Type == "seminarsession");
@@ -59,7 +73,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfo CreateSeminar(SeminarUpdateItem seminar, IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (seminar == null)
                 throw new ArgumentNullException("seminar");
             if (!string.IsNullOrWhiteSpace(seminar.ScoId))
@@ -72,7 +86,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfo SaveSeminar(SeminarUpdateItem seminar, IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (seminar == null)
                 throw new ArgumentNullException("seminar");
 
@@ -91,7 +105,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfo SaveSession(SeminarSessionDto sessionItem, IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (sessionItem == null)
                 throw new ArgumentNullException("sessionItem");
             if (sessionItem.ExpectedLoad <= 0)
@@ -142,7 +156,7 @@ namespace Esynctraining.AdobeConnect
             if (string.IsNullOrWhiteSpace(seminarSessionScoId))
                 throw new ArgumentException("Empty sco-id value", "seminarSessionScoId");
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             return provider.DeleteSco(seminarSessionScoId);
         }
@@ -152,7 +166,7 @@ namespace Esynctraining.AdobeConnect
             if (string.IsNullOrWhiteSpace(seminarScoId))
                 throw new ArgumentException("Empty sco-id value", "seminarScoId");
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
             return provider.DeleteSco(seminarScoId);
         }

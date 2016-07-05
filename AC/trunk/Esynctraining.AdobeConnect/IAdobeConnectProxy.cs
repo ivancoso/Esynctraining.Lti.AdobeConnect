@@ -77,6 +77,8 @@ namespace Esynctraining.AdobeConnect
 
         ScoShortcut GetShortcutByType(string type);
 
+        ScoShortcut GetShortcutByType(string type, out StatusInfo status);
+
         //UserInfo GetUserInfo();
         //UserInfo GetUserInfo(out StatusInfo status);
         //LearningPathCollectionResult LearningPathInfo(string scoId);

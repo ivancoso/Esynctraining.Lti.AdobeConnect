@@ -49,6 +49,7 @@
     <Compile Include="AdobeConnectProvider.Principal.cs" />
     <Compile Include="AdobeConnectProvider.Guest.cs" />
     <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
+    <Compile Include="Attributes\SkipAttribute.cs" />
     <Compile Include="Attributes\SkipDuringUpdateAttribute.cs" />
     <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
     <Compile Include="Constants\Commands.cs" />
