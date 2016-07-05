@@ -1541,7 +1541,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 audioProfileId = lmsCourseMeeting.AudioProfileId,
             };
 
-            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId))
+            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId) 
+                && (lmsCompany.GetTelephonyOption((LmsMeetingType)lmsCourseMeeting.LmsMeetingType) == TelephonyProfileOption.GenerateNewProfile))
             {
                 // TODO: profile name??
                 var profile = provider.TelephonyProfileInfo(lmsCourseMeeting.AudioProfileId);

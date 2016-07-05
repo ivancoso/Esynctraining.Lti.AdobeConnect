@@ -37,6 +37,9 @@ namespace EdugameCloud.Lti.DTO
         [DataContract]
         public sealed class TelephonyDto
         {
+            [DataMember(Name = "activeProfile")]
+            public string ActiveProfile { get; set; }
+
             [DataMember(Name = "courseMeetingOption")]
             public int CourseMeetingOption { get; set; }
 
@@ -207,6 +210,7 @@ namespace EdugameCloud.Lti.DTO
 
                     Telephony = new TelephonyDto
                     {
+                        ActiveProfile = value.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper(),
                         // See TelephonyProfileOption enum
                         CourseMeetingOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption),
                         OfficeHoursOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption),
