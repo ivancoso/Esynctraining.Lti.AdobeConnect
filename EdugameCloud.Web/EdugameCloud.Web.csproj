@@ -805,6 +805,9 @@
     <Content Include="Views\Home\Unsubscribed.cshtml" />
     <Content Include="Views\Lti\Index.cshtml" />
     <Content Include="Views\Lti\LtiError.cshtml" />
+    <None Include="machineKey.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\swf\config\" />
