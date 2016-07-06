@@ -21,7 +21,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         #endregion
 
-        public dynamic Settings { get; private set; }
+        protected dynamic Settings { get; private set; }
 
         protected ILogger logger { get; private set; }
 
@@ -62,7 +62,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         }
 
         #endregion
-        
+
 
         protected LmsUserSession GetReadOnlySession(string key)
         {
@@ -83,16 +83,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
         {
             IAdobeConnectProxy provider = null;
-            if (lmsCompany != null)
-            {
-                //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                //if (provider == null)
-                {
-                    provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
-                   // this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-                }
-            }
-
+            provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
             return provider;
         }
 

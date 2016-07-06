@@ -11,6 +11,9 @@ namespace EdugameCloud.Lti.Content.Host.Dto
         [DataMember(Name = "type")]
         public string Type { get; set; }
 
+        [DataMember(Name = "name")]
+        public string Name { get; set; }
+
     }
 
 }
