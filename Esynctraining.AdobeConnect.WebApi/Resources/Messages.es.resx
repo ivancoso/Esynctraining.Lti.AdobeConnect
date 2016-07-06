@@ -117,27 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionMessage" xml:space="preserve">
-    <value>An exception is occured. Try again later or contact your administrator.</value>
-  </data>
-  <data name="ExceptionOccured" xml:space="preserve">
-    <value>An exception is occured. </value>
-  </data>
-  <data name="NameNotUnique" xml:space="preserve">
-    <value>There is already another item with this name. Please try again.</value>
+  <data name="NotUniqueName" xml:space="preserve">
+    <value>Actualmente ya existe otro con ese nombre. Inténtelo de nuevo, por favor.</value>
     <comment>b</comment>
   </data>
-  <data name="SessionTimeOut" xml:space="preserve">
-    <value>Session timed out. Please refresh the page.</value>
-  </data>
-  <data name="UrlPathInvalidFormat" xml:space="preserve">
-    <value>The URL path you chose is improperly formatted. It must begin with an alpha character, and can only include alphanumeric characters. Please select an alternative URL path. If you continue to encounter problems, please contact your account administrator.</value>
-  </data>
-  <data name="UrlPathNotUnique" xml:space="preserve">
-    <value>URLs must be unique, and the URL path you chose is already in use. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
+  <data name="NotUniqueUrlPath" xml:space="preserve">
+    <value>La URL debe ser única, y el path que usted ha elegido ya está en uso. Por favor, seleccione una URL alternativa.</value>
     <comment>b</comment>
-  </data>
-  <data name="UrlPathReserved" xml:space="preserve">
-    <value>This URL uses a path that is reserved. Please select an alternative URL path. If you need additional information, please contact your account administrator.</value>
   </data>
 </root>

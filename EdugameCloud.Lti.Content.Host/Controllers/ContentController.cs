@@ -319,69 +319,19 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             {
                 string fileName = provider.FileStreams.First().Key;
                 MultipartFormDataMemoryStreamProvider.FileContent stream = provider.FileStreams.First().Value;
-
-                var createFile = new ContentUpdateItem
-                {
-                    FolderId = folderScoId,
-                    Name = name,
-                    Description = description,
-                    UrlPath = customUrl,
-                    Type = ScoType.content,
-                };
-
+                
                 var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var ac = this.GetAdobeConnectProvider(session);
-                // TODO: check result; unique name\url!
-
-                ScoInfoResult createdFile = ac.CreateSco(createFile);
-
-                if (!createdFile.Success || createdFile.ScoInfo == null)
-                {
-                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "name"))
-                        throw new WarningMessageException(Resources.Messages.NotUniqueName);
-
-                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "url-path"))
-                        throw new WarningMessageException(Resources.Messages.NotUniqueUrlPath);
-
-                    throw new WarningMessageException(createdFile.Status.Code.ToString() + " " + createdFile.Status.SubCode.ToString());
-                }
-
-                var uploadScoInfo = new UploadScoInfo
-                {
-                    scoId = createdFile.ScoInfo.ScoId,
-                    fileContentType = stream.ContentType,
-                    fileName = fileName,
-                    fileBytes = stream.Stream.ReadToEnd(),
-                    title = fileName,
-                };
-
-                try
-                {
-                    StatusInfo uploadResult = ac.UploadContent(uploadScoInfo);
-                }
-                catch (AdobeConnectException ex)
-                {
-                    try
-                    {
-                        ac.DeleteSco(createdFile.ScoInfo.ScoId);
-                    }
-                    catch
-                    {
-                    }
-
-                    // Status.Code: invalid. Status.SubCode: format. Invalid Field: file
-                    if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.format && ex.Status.InvalidField == "file")
-                        throw new WarningMessageException("Invalid file format selected.");
-
-                    throw new WarningMessageException("Error occured during file uploading.", ex);
-                }
-
+                var contentService = new ContentService(logger, ac);
+                var helper = new ContentEditControllerHelper(logger, ac);
+                int fileSize;
+                ScoInfoResult createdFile = helper.UploadFile(folderScoId, name, description, customUrl, fileName, stream.ContentType, stream.Stream, out fileSize);
+                
                 var sco = ac.GetScoContent(createdFile.ScoInfo.ScoId);
                 var dto = new ScoContentDtoMapper().Map(sco.ScoContent);
                 //TRICK:
-                dto.ByteCount = uploadScoInfo.fileBytes.Length;
-
+                dto.ByteCount = fileSize;
 
                 string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Success(dto));
                 var response = new HttpResponseMessage();

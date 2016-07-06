@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
+using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect.WebApi.Content.Dto;
 using Esynctraining.Core;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
@@ -198,6 +201,83 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
             }
         }
 
+        public ScoInfoResult UploadFile(string folderScoId, string name, string description, string customUrl, 
+            string fileName, string fileContentType, Stream fileStream,
+            out int fileSize)
+        {
+            try
+            {
+                var createFile = new ContentUpdateItem
+                {
+                    FolderId = folderScoId,
+                    Name = name,
+                    Description = description,
+                    UrlPath = customUrl,
+                    Type = ScoType.content,
+                };
+
+                ScoInfoResult createdFile = _acProxy.CreateSco(createFile);
+
+                if (!createdFile.Success || createdFile.ScoInfo == null)
+                {
+                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "name"))
+                        throw new WarningMessageException(Resources.Messages.NameNotUnique);
+
+                    if ((createdFile.Status.SubCode == StatusSubCodes.duplicate) && (createdFile.Status.InvalidField == "url-path"))
+                        throw new WarningMessageException(Resources.Messages.UrlPathNotUnique);
+
+                    if ((createdFile.Status.SubCode == StatusSubCodes.illegal_operation) && (createdFile.Status.InvalidField == "url-path"))
+                        throw new WarningMessageException(Resources.Messages.UrlPathReserved);
+
+                    if ((createdFile.Status.SubCode == StatusSubCodes.format) && (createdFile.Status.InvalidField == "url-path"))
+                        throw new WarningMessageException(Resources.Messages.UrlPathInvalidFormat);
+
+                    _logger.Error("UploadFile.CreateSco error. " + createdFile.Status.GetErrorInfo());
+                    throw new WarningMessageException(createdFile.Status.Code.ToString() + " " + createdFile.Status.SubCode.ToString());
+                }
+
+                var uploadScoInfo = new UploadScoInfo
+                {
+                    scoId = createdFile.ScoInfo.ScoId,
+                    fileContentType = fileContentType,
+                    fileName = fileName,
+                    fileBytes = fileStream.ReadToEnd(),
+                    title = fileName,
+                };
+
+                // TRICK:
+                fileSize = uploadScoInfo.fileBytes.Length;
+
+                try
+                {
+                    StatusInfo uploadResult = _acProxy.UploadContent(uploadScoInfo);
+                }
+                catch (AdobeConnectException ex)
+                {
+                    try
+                    {
+                        _acProxy.DeleteSco(createdFile.ScoInfo.ScoId);
+                    }
+                    catch
+                    {
+                    }
+
+                    // Status.Code: invalid. Status.SubCode: format. Invalid Field: file
+                    if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.format && ex.Status.InvalidField == "file")
+                        throw new WarningMessageException(Resources.Messages.FileInvalidFormat);
+
+                    throw new WarningMessageException("Error occured during file uploading.", ex);
+                }
+                
+                return createdFile;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("UploadFile", ex);
+                throw;
+            }
+        }
 
         private string GetOutputErrorMessage(string methodName, Exception ex)
         {

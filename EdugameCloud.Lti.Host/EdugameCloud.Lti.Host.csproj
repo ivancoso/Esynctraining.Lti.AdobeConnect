@@ -236,6 +236,7 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Properties\PublishProfiles\LtiApi.pubxml" />
+    <None Include="Properties\PublishProfiles\LtiApiDev.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EdugameCloud.Lti.Content.Host.Resources {
+namespace Esynctraining.AdobeConnect.WebApi.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.Content.Host.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("EdugameCloud.Lti.Content.Host.Resources.Messages", typeof(Messages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Esynctraining.AdobeConnect.WebApi.Resources.Messages", typeof(Messages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,20 +61,11 @@ namespace EdugameCloud.Lti.Content.Host.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An exception is occured. Try again later or contact your administrator..
+        ///   Looks up a localized string similar to Invalid file format selected..
         /// </summary>
-        public static string ExceptionMessage {
+        public static string FileInvalidFormat {
             get {
-                return ResourceManager.GetString("ExceptionMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An exception is occured. .
-        /// </summary>
-        public static string ExceptionOccured {
-            get {
-                return ResourceManager.GetString("ExceptionOccured", resourceCulture);
+                return ResourceManager.GetString("FileInvalidFormat", resourceCulture);
             }
         }
         
@@ -84,15 +75,6 @@ namespace EdugameCloud.Lti.Content.Host.Resources {
         public static string NameNotUnique {
             get {
                 return ResourceManager.GetString("NameNotUnique", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Session timed out. Please refresh the page..
-        /// </summary>
-        public static string SessionTimeOut {
-            get {
-                return ResourceManager.GetString("SessionTimeOut", resourceCulture);
             }
         }
         

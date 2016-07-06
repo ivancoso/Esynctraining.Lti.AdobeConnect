@@ -117,18 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionMessage" xml:space="preserve">
-    <value>An exception is occured. Try again later or contact your administrator.</value>
-  </data>
-  <data name="ExceptionOccured" xml:space="preserve">
-    <value>An exception is occured. </value>
+  <data name="FileInvalidFormat" xml:space="preserve">
+    <value>Invalid file format selected.</value>
   </data>
   <data name="NameNotUnique" xml:space="preserve">
     <value>There is already another item with this name. Please try again.</value>
     <comment>b</comment>
-  </data>
-  <data name="SessionTimeOut" xml:space="preserve">
-    <value>Session timed out. Please refresh the page.</value>
   </data>
   <data name="UrlPathInvalidFormat" xml:space="preserve">
     <value>The URL path you chose is improperly formatted. It must begin with an alpha character, and can only include alphanumeric characters. Please select an alternative URL path. If you continue to encounter problems, please contact your account administrator.</value>
