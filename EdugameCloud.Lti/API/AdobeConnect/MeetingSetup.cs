@@ -731,8 +731,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (isNewMeeting && ((meeting.LmsMeetingType == (int)LmsMeetingType.Meeting) || (meeting.LmsMeetingType == (int)LmsMeetingType.Seminar))
                 && lmsUsers.Count <= Core.Utils.Constants.SyncUsersCountLimit)
             {
-                List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out message);
-                
+                string msg;
+                List<LmsUserDTO> usersToAddToMeeting = this.UsersSetup.GetUsersToAddToMeeting(lmsCompany, lmsUsers, out msg);
+                message += msg;
+
                 sw = Stopwatch.StartNew();
 
                 this.UsersSetup.SetDefaultUsers(

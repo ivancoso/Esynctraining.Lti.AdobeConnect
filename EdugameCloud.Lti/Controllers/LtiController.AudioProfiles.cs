@@ -36,7 +36,9 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
                 }
 
-                if ((LmsMeetingType)meetingType != LmsMeetingType.OfficeHours)
+                // NOTE: For None option - reuse can be active for every meeting type
+                if (((LmsMeetingType)meetingType != LmsMeetingType.OfficeHours)
+                    && (lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) != TelephonyDTO.SupportedProfiles.None))
                 {
                     logger.Error($"Meeting type {meetingType} is not supported for audio-profile reuse");
                     return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
@@ -45,7 +47,6 @@ namespace EdugameCloud.Lti.Controllers
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
                               lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-
 
                 string principalId = null;
 

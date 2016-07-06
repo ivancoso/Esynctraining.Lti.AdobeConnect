@@ -37,6 +37,9 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "seminars")]
         public IEnumerable<SeminarLicenseDto> Seminars { get; set; }
 
+        [DataMember(Name = "seminarsMessage")]
+        public string SeminarsMessage { get; set; }
+
 
         [DataMember(Name = "isTeacher")]
         public bool IsTeacher { get; set; }

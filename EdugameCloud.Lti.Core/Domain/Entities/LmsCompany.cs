@@ -495,6 +495,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             switch (meetingType)
             {
                 case LmsMeetingType.Meeting:
+                case LmsMeetingType.Seminar:
                     return (TelephonyProfileOption)GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption);
 
                 case LmsMeetingType.OfficeHours:

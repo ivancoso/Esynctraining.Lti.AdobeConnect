@@ -1140,6 +1140,7 @@
                 trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
 
             IEnumerable<SeminarLicenseDto> seminars = null;
+            string seminarsMessage = null;
             if (credentials.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable))
             {
                 sw = Stopwatch.StartNew();
@@ -1154,6 +1155,9 @@
                 }
                 catch (InvalidOperationException ex)
                 {
+                    // NOTE: a little bit tricky to catch InvalidOperationException
+                    logger.Error("BuildModel.GetLicensesWithContent", ex);
+                    seminarsMessage = "Seminars are not enabled for admin user set in the license.";
                 }
 
                 sw.Stop();
@@ -1184,6 +1188,7 @@
                 LicenceSettings = settings,
                 Meetings = meetings,
                 Seminars = seminars,
+                SeminarsMessage = seminarsMessage,
 
                 IsTeacher = UsersSetup.IsTeacher(param),
                 ConnectServer = credentials.AcServer + "/",
