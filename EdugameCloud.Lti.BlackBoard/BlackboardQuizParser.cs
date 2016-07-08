@@ -26,6 +26,7 @@ namespace EdugameCloud.Lti.BlackBoard
                 case "fill in the blank plus":
                     return new BlackboardFillInMultipleBlanksParser();
                 case "multiple answer":
+                case "multiple choice":
                     return new BlackboardMultipleChoiceParser();
                 default:
                     return new BlackboardCommonQuestionParser();
