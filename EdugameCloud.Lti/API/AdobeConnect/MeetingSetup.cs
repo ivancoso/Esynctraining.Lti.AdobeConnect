@@ -1543,12 +1543,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 audioProfileId = lmsCourseMeeting.AudioProfileId,
             };
 
-            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId) 
-                && (lmsCompany.GetTelephonyOption((LmsMeetingType)lmsCourseMeeting.LmsMeetingType) == TelephonyProfileOption.GenerateNewProfile))
+            if (!string.IsNullOrWhiteSpace(lmsCourseMeeting.AudioProfileId))
             {
                 // TODO: profile name??
                 var profile = provider.TelephonyProfileInfo(lmsCourseMeeting.AudioProfileId);
-                ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
+                ret.audioProfileName = profile.TelephonyProfile.ProfileName;
+
+                if (lmsCompany.GetTelephonyOption((LmsMeetingType)lmsCourseMeeting.LmsMeetingType) == TelephonyProfileOption.GenerateNewProfile)
+                    ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
             }
 
             return ret;

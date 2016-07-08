@@ -73,6 +73,9 @@
         public string audioProfileId { get; set; }
 
         [DataMember]
+        public string audioProfileName { get; set; }
+
+        [DataMember]
         public IDictionary<string, string> telephonyProfileFields { get; set; }
 
         #endregion
