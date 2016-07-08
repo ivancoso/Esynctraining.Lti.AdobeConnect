@@ -795,14 +795,11 @@
     <Content Include="Views\Shared\_BaseModelData.cshtml" />
     <Content Include="Views\Shared\_IESpecific.cshtml" />
     <Content Include="Views\Shared\_BaseLayout.cshtml" />
-    <Content Include="Views\Home\History.cshtml" />
     <Content Include="Views\Home\Admin.cshtml" />
     <Content Include="Views\File\VCF.cshtml" />
     <Content Include="Views\File\ImportUsers.cshtml" />
     <Content Include="Views\File\ImportQuestions.cshtml" />
-    <Content Include="Views\Home\LogIn.cshtml" />
     <Content Include="Views\Social\LoggedIn.cshtml" />
-    <Content Include="Views\Home\Unsubscribed.cshtml" />
     <Content Include="Views\Lti\Index.cshtml" />
     <Content Include="Views\Lti\LtiError.cshtml" />
     <Content Include="machineKey.config">

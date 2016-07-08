@@ -40,37 +40,22 @@ namespace EdugameCloud.MVC.Controllers
         /// The logger.
         /// </summary>
         private readonly ILogger logger;
-
-        /// <summary>
-        /// The public folder path.
-        /// </summary>
-        private const string PublicFolderPath = "~/Content/swf/pub";
-
+        
         /// <summary>
         ///     The company model.
         /// </summary>
         private readonly CompanyModel companyModel;
-
-        /// <summary>
-        /// The meeting setup.
-        /// </summary>
-        private readonly MeetingSetup meetingSetup;
-
+        
         /// <summary>
         /// The LMS company model.
         /// </summary>
-        private readonly LmsCompanyModel lmsCompanyModel;
+        private readonly LmsCompanyModel lmsCompanyModel;  // lti reports
 
         /// <summary>
         /// The adobe connect account service.
         /// </summary>
-        private readonly IAdobeConnectAccountService adobeConnectAccountService;
-
-        /// <summary>
-        ///     The product model.
-        /// </summary>
-        private readonly FileModel fileModel;
-
+        private readonly IAdobeConnectAccountService adobeConnectAccountService; // lti reports
+        
         /// <summary>
         ///     The group discussion model.
         /// </summary>
@@ -95,11 +80,8 @@ namespace EdugameCloud.MVC.Controllers
         /// The AC session model.
         /// </summary>
         private readonly ACSessionModel sessionModel;
-
-        /// <summary>
-        /// The AC user mode model.
-        /// </summary>
-        private readonly ACUserModeModel userModeModel;
+        
+        private readonly ACUserModeModel userModeModel; // lti reports
 
         /// <summary>
         /// The authentication model.
@@ -111,14 +93,13 @@ namespace EdugameCloud.MVC.Controllers
         /// </summary>
         private readonly VCFModel vcfModel;
 
-        private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
+        private readonly LmsCourseMeetingModel lmsCourseMeetingModel; // lti reports
 
         #endregion
 
         #region Constructors and Destructors
 
         public FileController(
-            FileModel fileModel, 
             VCFModel vcfModel, 
             CompanyModel companyModel, 
             SNGroupDiscussionModel groupDiscussionModel, 
@@ -129,14 +110,12 @@ namespace EdugameCloud.MVC.Controllers
             AuthenticationModel authenticationModel,
             ApplicationSettingsProvider settings,
             LmsCompanyModel lmsCompanyModel,
-            MeetingSetup meetingSetup,
             IAdobeConnectAccountService adobeAccountService, 
             LmsUserSessionModel userSessionModel,
             LmsCourseMeetingModel lmsCourseMeetingModel,
             ILogger logger)
             : base(settings)
         {
-            this.fileModel = fileModel;
             this.vcfModel = vcfModel;
             this.companyModel = companyModel;
             this.groupDiscussionModel = groupDiscussionModel;
@@ -146,7 +125,6 @@ namespace EdugameCloud.MVC.Controllers
             this.userModeModel = userModeModel;
             this.authenticationModel = authenticationModel;
             this.lmsCompanyModel = lmsCompanyModel;
-            this.meetingSetup = meetingSetup;
             this.adobeConnectAccountService = adobeAccountService;
             this.userSessionModel = userSessionModel;
             this.lmsCourseMeetingModel = lmsCourseMeetingModel;
@@ -2003,6 +1981,7 @@ namespace EdugameCloud.MVC.Controllers
             this.Response.End();
         }
 
+        // lti reports
         private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
         {
             IAdobeConnectProxy provider = null;

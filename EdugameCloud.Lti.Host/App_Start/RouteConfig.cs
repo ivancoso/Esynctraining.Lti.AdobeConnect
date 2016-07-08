@@ -14,7 +14,7 @@
 
             // TODO!!:
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
-            LtiRoutes.AppendTo2(routes);
+            LtiRoutes.AppendTo(routes); //AppendTo2
         }
 
     }

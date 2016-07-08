@@ -210,7 +210,7 @@ namespace EdugameCloud.Lti.DTO
 
                     Telephony = new TelephonyDto
                     {
-                        ActiveProfile = value.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper(),
+                        ActiveProfile = value.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile)?.ToUpper(),
                         // See TelephonyProfileOption enum
                         CourseMeetingOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.CourseMeetingOption),
                         OfficeHoursOption = value.GetSetting<int>(LmsCompanySettingNames.Telephony.OfficeHoursOption),

@@ -354,27 +354,7 @@ namespace EdugameCloud.MVC.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "format", format);
             return callInfo;
         }
-
-        public override System.Web.Mvc.ActionResult GetFile(string id)
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetFile);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult Public(string fileName)
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Public);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "fileName", fileName);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult GetPublicBuild()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetPublicBuild);
-            return callInfo;
-        }
-
+                
         public override System.Web.Mvc.ActionResult GetGroupDiscussion(int id)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetGroupDiscussion);

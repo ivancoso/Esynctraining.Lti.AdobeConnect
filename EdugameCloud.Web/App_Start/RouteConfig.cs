@@ -22,12 +22,20 @@
             routes.IgnoreRoute("{*robotstxt}", new { robotstxt = @"(.*/)?robots.txt(/.*)?" });
             routes.MapLowercaseRoute("Public", "public/{fileName}", new { controller = "File", action = "Public" });
             RegisterSocialRoutes(routes);
+
+
+            routes.MapLowercaseRoute("FileGet", "file/get", new { controller = "BuildDeliver", action = "get" });
+            routes.MapLowercaseRoute("FilePublic", "file/public", new { controller = "BuildDeliver", action = "public" });
+            routes.MapLowercaseRoute("FileGetPublicBuild", "file/get-public-build", new { controller = "BuildDeliver", action = "get-public-build" });
+            routes.MapLowercaseRoute("FileGetMobileBuild", "file/get-mobile-build", new { controller = "BuildDeliver", action = "get-mobile-build" });
+
             routes.MapLowercaseRoute("File", "file/{action}", new { controller = "File" });
             routes.MapLowercaseRoute("Default", "{action}", new { controller = "Home", action = "Admin" });
             LtiRoutes.AppendTo(routes);
         }
 
 
+        // TODO: delete
         private static void RegisterSocialRoutes(RouteCollection routes)
         {
             routes.MapLowercaseRoute("OAuthLogin", "social/{provider}-login", new { controller = "Social", action = "login" });

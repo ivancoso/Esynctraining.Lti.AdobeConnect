@@ -131,11 +131,6 @@ namespace EdugameCloud.Web
 
         public static void RegisterComponentsWeb(IWindsorContainer container)
         {
-            // NOTE: is in container.RegisterComponents();
-            //container.Install(
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml"))
-            //);
-
             container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
 
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()

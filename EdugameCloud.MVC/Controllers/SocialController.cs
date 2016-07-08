@@ -23,38 +23,15 @@
 
     using Microsoft.Web.WebPages.OAuth;
 
-    /// <summary>
-    ///     The social controller.
-    /// </summary>
     [HandleError]
     public partial class SocialController : BaseController
     {
-        /// <summary>
-        /// The social user tokens model.
-        /// </summary>
         private readonly SocialUserTokensModel socialUserTokensModel;
-
-        /// <summary>
-        /// The RTMP model.
-        /// </summary>
         private readonly RealTimeNotificationModel realTimeNotificationModel;
 
         private readonly ILogger logger;
 
-        #region Constructors and Destructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SocialController"/> class.
-        /// </summary>
-        /// <param name="socialUserTokensModel">
-        /// The social User Tokens Model.
-        /// </param>
-        /// <param name="realTimeNotificationModel">
-        /// The RTMP Model.
-        /// </param>
-        /// <param name="settings">
-        /// The settings
-        /// </param>
         public SocialController(SocialUserTokensModel socialUserTokensModel, RealTimeNotificationModel realTimeNotificationModel, ILogger logger, ApplicationSettingsProvider settings)
             : base(settings)
         {
@@ -63,136 +40,15 @@
             this.logger = logger;
         }
 
-        #endregion
 
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The authentication callback.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="hub">
-        /// The hub.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        [ActionName("realtime-callback")]
-        [AllowAnonymous]
+        [ActionName("login")]
         [HttpGet]
-        public virtual ActionResult RealtimeCallback(string provider, InstagramSubscriptionHub hub)
+        public void LoginWithProvider(string provider, string key)
         {
-            return this.Content(hub.challenge);
+            var login = Url.AbsoluteAction(EdugameCloudT4.Social.AuthenticationCallback(provider, key)) + "?key=" + key;
+            OAuthWebSecurity.RequestAuthentication(provider, login);
         }
 
-        /// <summary>
-        /// The authentication callback.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="updates">
-        /// The updates.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
-        [ActionName("realtime-callback")]
-        [AllowAnonymous]
-        [HttpPost]
-        public virtual ActionResult RealtimeCallback(string provider)
-        {
-            var connectionString = (string)this.Settings.ConnectionString;
-            var updates = new List<SubscriptionUpdateDTO>();
-            string data = "Not received";
-            var log = this.logger;
-            try
-            {
-                data = System.Text.Encoding.ASCII.GetString(HttpContext.Request.InputStream.ReadToEnd());
-                var des = (SubscriptionUpdateWrapper)Newtonsoft.Json.JsonConvert.DeserializeObject("{data:" + data + "}", typeof(SubscriptionUpdateWrapper));
-                updates = des.data.ToList();
-            }
-            catch (Exception ex)
-            {
-                log.Error("Social Realtime Error data=" + data, ex);
-            }
-
-            if (updates.Any() && bool.Parse((string)Settings.SocialSubscriptionsEnabled))
-            {
-                Task.Factory.StartNew(() => this.InsertRealTimeCallbackData(connectionString, updates, log));
-            }
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
-        }
-
-        /// <summary>
-        /// The insert real time callback data.
-        /// </summary>
-        /// <param name="connectionString">
-        /// The connection string.
-        /// </param>
-        /// <param name="dtos">
-        /// The DTOS.
-        /// </param>
-        /// <param name="log">
-        /// The log.
-        /// </param>
-        private void InsertRealTimeCallbackData(string connectionString, IEnumerable<SubscriptionUpdateDTO> dtos, ILogger log)
-        {
-            const string InsertCommand = @"declare @logCount int
-		                                        set @logCount = 0
-		                                        select @logCount = count(*) from [EduGameCloud].[dbo].[SubscriptionHistoryLog] where subscriptionId = @subscriptionId
-		                                        if (@logCount > 0)
-		                                        begin
-                                                insert into [EduGameCloud].[dbo].[SubscriptionUpdate] ([subscription_id],[object],[object_id],[changed_aspect],[time],[createdDate]) values(@subscriptionId,@objectType,@objectId,@changedAspect,@time,GETDATE())
-                                                end";
-            using (var con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                foreach (var dto in dtos)
-                {
-                    try
-                    {
-                        using (var cmd = new SqlCommand(InsertCommand, con))
-                        {
-                            cmd.Parameters.AddWithValue("@subscriptionId", dto.subscription_id);
-                            cmd.Parameters.AddWithValue("@objectType", dto.@object);
-                            cmd.Parameters.AddWithValue("@objectId", dto.object_id);
-                            cmd.Parameters.AddWithValue("@changedAspect", dto.changed_aspect);
-                            cmd.Parameters.AddWithValue("@time", dto.time);
-                            cmd.ExecuteNonQuery();
-                        }
-                    }
-                        // ReSharper disable once EmptyGeneralCatchClause
-                    catch (Exception ex)
-                    {
-                        try
-                        {
-                            log.Error("Social subscription update. Failed to insert: " + dto, ex);
-                        }
-                            // ReSharper disable once EmptyGeneralCatchClause
-                        catch
-                        {
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// The authentication callback.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         [ActionName("callback")]
         [AllowAnonymous]
         public virtual ActionResult AuthenticationCallback(string provider, string key)
@@ -233,7 +89,7 @@
                             {
 
                             }
-                            
+
                         }
 
                         return this.View(
@@ -259,23 +115,85 @@
             return new ContentResult { Content = error };
         }
 
-        /// <summary>
-        /// The login with provider.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        [ActionName("login")]
+        [ActionName("realtime-callback")]
+        [AllowAnonymous]
         [HttpGet]
-        public void LoginWithProvider(string provider, string key)
+        public virtual ActionResult RealtimeCallback(string provider, InstagramSubscriptionHub hub)
         {
-            var login = Url.AbsoluteAction(EdugameCloudT4.Social.AuthenticationCallback(provider, key)) + "?key=" + key;
-            OAuthWebSecurity.RequestAuthentication(provider, login);
+            return this.Content(hub.challenge);
+        }
+        
+        [ActionName("realtime-callback")]
+        [AllowAnonymous]
+        [HttpPost]
+        public virtual ActionResult RealtimeCallback(string provider)
+        {
+            var connectionString = (string)this.Settings.ConnectionString;
+            var updates = new List<SubscriptionUpdateDTO>();
+            string data = "Not received";
+            var log = this.logger;
+            try
+            {
+                data = System.Text.Encoding.ASCII.GetString(HttpContext.Request.InputStream.ReadToEnd());
+                var des = (SubscriptionUpdateWrapper)Newtonsoft.Json.JsonConvert.DeserializeObject("{data:" + data + "}", typeof(SubscriptionUpdateWrapper));
+                updates = des.data.ToList();
+            }
+            catch (Exception ex)
+            {
+                log.Error("Social Realtime Error data=" + data, ex);
+            }
+
+            if (updates.Any() && bool.Parse((string)Settings.SocialSubscriptionsEnabled))
+            {
+                Task.Factory.StartNew(() => this.InsertRealTimeCallbackData(connectionString, updates, log));
+            }
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+        
+
+        private void InsertRealTimeCallbackData(string connectionString, IEnumerable<SubscriptionUpdateDTO> dtos, ILogger log)
+        {
+            const string InsertCommand = @"declare @logCount int
+		                                        set @logCount = 0
+		                                        select @logCount = count(*) from [EduGameCloud].[dbo].[SubscriptionHistoryLog] where subscriptionId = @subscriptionId
+		                                        if (@logCount > 0)
+		                                        begin
+                                                insert into [EduGameCloud].[dbo].[SubscriptionUpdate] ([subscription_id],[object],[object_id],[changed_aspect],[time],[createdDate]) values(@subscriptionId,@objectType,@objectId,@changedAspect,@time,GETDATE())
+                                                end";
+            using (var con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                foreach (var dto in dtos)
+                {
+                    try
+                    {
+                        using (var cmd = new SqlCommand(InsertCommand, con))
+                        {
+                            cmd.Parameters.AddWithValue("@subscriptionId", dto.subscription_id);
+                            cmd.Parameters.AddWithValue("@objectType", dto.@object);
+                            cmd.Parameters.AddWithValue("@objectId", dto.object_id);
+                            cmd.Parameters.AddWithValue("@changedAspect", dto.changed_aspect);
+                            cmd.Parameters.AddWithValue("@time", dto.time);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    // ReSharper disable once EmptyGeneralCatchClause
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            log.Error("Social subscription update. Failed to insert: " + dto, ex);
+                        }
+                        // ReSharper disable once EmptyGeneralCatchClause
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
         }
 
-        #endregion
     }
+    
 }

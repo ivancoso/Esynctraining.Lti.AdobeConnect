@@ -175,65 +175,21 @@ namespace EdugameCloud.MVC.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "providerKey", providerKey);
             return callInfo;
         }
-
-        public override System.Web.Mvc.ActionResult Fake()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Fake);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult Cookies()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Cookies);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult LogIn()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.LogIn);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult LogIn(EdugameCloud.MVC.ViewModels.LoginViewModel model)
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.LogIn);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
-            return callInfo;
-        }
-
+        
         public override System.Web.Mvc.ActionResult Activate(string code)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Activate);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             return callInfo;
         }
-
-        public override System.Web.Mvc.ActionResult Unsubscribe(string code)
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Unsubscribe);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
-            return callInfo;
-        }
-
+                
         public override System.Web.Mvc.ActionResult Config(string referer)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Config);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "referer", referer);
             return callInfo;
         }
-
-        public override System.Web.Mvc.ActionResult Config()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Config);
-            return callInfo;
-        }
-
-        public override System.Web.Mvc.ActionResult History()
-        {
-            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.History);
-            return callInfo;
-        }
-
+        
     }
 }
 

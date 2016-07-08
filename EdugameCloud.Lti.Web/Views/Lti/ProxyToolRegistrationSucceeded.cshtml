@@ -1,69 +1,67 @@
-﻿@using EdugameCloud.Lti.API.BlackBoard
-@using EdugameCloud.Lti.BlackBoard
-@model EdugameCloud.Lti.Models.ProxyToolPasswordModel
+﻿@model EdugameCloud.Lti.Models.ProxyToolPasswordModel
 @{
-    Layout = null;
+	Layout = null;
 }
-
 <!DOCTYPE html>
-
 <html>
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@Model.BlackBoardTitle Proxy Tool Registration Succeeded</title>
-    <style>
-        .content {
-            width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+	<meta name="viewport" content="width=device-width" />
+	<title>@Model.BlackBoardTitle Proxy Tool Registration Succeeded</title>
+	<style>
+		.content {
+			width: 700px;
+			margin-left: auto;
+			margin-right: auto;
+		}
 
-        .div-table {
-            display: table;
-            width: auto;
-            background-color: #eee;
-            border: 1px solid #666666;
-            border-spacing: 5px; /*cellspacing:poor IE support for  this*/
-        }
+		.div-table {
+			display: table;
+			width: auto;
+			background-color: #eee;
+			border: 1px solid #666666;
+			border-spacing: 5px; /*cellspacing:poor IE support for  this*/
+		}
 
-        .div-table-row {
-            display: table-row;
-            width: auto;
-            clear: both;
-        }
+		.div-table-row {
+			display: table-row;
+			width: auto;
+			clear: both;
+		}
 
-        .div-table-col {
-            float: left; /*fix for  buggy browsers*/
-            display: table-column;
-            width: 200px;
-        }
+		.div-table-col {
+			float: left; /*fix for  buggy browsers*/
+			display: table-column;
+			width: 200px;
+		}
 
-        .last {
-            width: 480px !important;
-        }
-    </style>
+		.last {
+			width: 480px !important;
+		}
+	</style>
 </head>
 <body>
-    <div class="container">
-        <div class="content">
-                <div class="div-table">
-                    <div class="div-table-row">
-                        <h2> @Model.BlackBoardTitle Proxy Tool Registration Succeeded</h2>
-                        <h3> Please go to <a href="@(Model.LmsDomain + "/webapps/ws/wsadmin/wsclientprograms")">System Admin -> Building Blocks -> Proxy Tools</a> 
-                            <br/> and make it available.</h3>
-                        <h3>Then set custom password for <strong>@(SoapBlackBoardApi.VendorEgc + " " + SoapBlackBoardApi.ProgramLti)</strong> Proxy Tool and save it to EGC Admin</h3>
-                    </div>
-                    <div class="div-table-row">
-                        <h3>
-                            This page can be closed now.
-                        </h3>
-                    </div>
-                    <div class="div-table-row">
-                        <div class="div-table-col">&nbsp;</div>
-                        <div class="div-table-col last">&nbsp;</div>
-                    </div>
-                </div>
-        </div>
-    </div>
+	<div class="container">
+		<div class="content">
+			<div class="div-table">
+				<div class="div-table-row">
+					<h2> @Model.BlackBoardTitle Proxy Tool Registration Succeeded</h2>
+					<h3>
+						Please go to <a href="@(Model.LmsDomain + "/webapps/ws/wsadmin/wsclientprograms")">System Admin -> Building Blocks -> Proxy Tools</a>
+						<br /> and make it available.
+					</h3>
+					<h3>Then set custom password for <strong>@(SoapBlackBoardApi.VendorEgc + " " + SoapBlackBoardApi.ProgramLti)</strong> Proxy Tool and save it to EGC Admin</h3>
+				</div>
+				<div class="div-table-row">
+					<h3>
+						This page can be closed now.
+					</h3>
+				</div>
+				<div class="div-table-row">
+					<div class="div-table-col">&nbsp;</div>
+					<div class="div-table-col last">&nbsp;</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
