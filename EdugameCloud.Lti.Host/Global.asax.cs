@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Web.Routing;
-using System.Web.Security;
-using System.Web.SessionState;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -22,7 +18,6 @@ using Esynctraining.Mvc;
 using Esynctraining.Windsor;
 using FluentValidation;
 using FluentValidation.Mvc;
-//using EdugameCloud.MVC.ModelBinders;
 
 namespace EdugameCloud.Lti.Host
 {
@@ -63,12 +58,9 @@ namespace EdugameCloud.Lti.Host
             ModelValidatorProviders.Providers.Add(new FluentValidationModelValidatorProvider(new WindsorValidatorFactory(new WindsorServiceLocator(container), IoC.Resolve<ILogger>())));
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            //BundleConfig.RegisterBundles(BundleTable.Bundles);
             DefaultModelBinder.ResourceClassKey = "Errors";
             MvcHandler.DisableMvcResponseHeader = true;
 
-            //string pathPropertiesPath = this.GetPathPropertiesPath();
-            //container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
             AuthConfig.RegisterAuth(container.Resolve<ApplicationSettingsProvider>());
             
             // TRICK: remove all files on start
@@ -98,23 +90,16 @@ namespace EdugameCloud.Lti.Host
 
         public static void RegisterComponentsWeb(IWindsorContainer container)
         {
-            // NOTE: is in container.RegisterComponents();
-            //container.Install(
-            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.Core/Esynctraining.Core.Windsor.xml"))
-            //);
-
             container.Register(Component.For<ISessionSource>().ImplementedBy<NHibernateSessionWebSource>().LifeStyle.PerWebRequest);
 
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
                 .DynamicParameters((k, d) => d.Add("collection", WebConfigurationManager.AppSettings))
                 .DynamicParameters((k, d) => d.Add("globalizationSection", ConfigurationManager.GetSection("system.web/globalization") as GlobalizationSection)).LifeStyle.Singleton);
 
-
-            //container.Register(Component.For<AuthenticationModel>().LifeStyle.PerWebRequest);
-
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").Pick().If(Component.IsInNamespace("EdugameCloud.MVC.Controllers")).WithService.Self().LifestyleTransient());
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-            //container.Register(Classes.FromAssemblyNamed("EdugameCloud.Web").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Host").Pick()
+                .If(Component.IsInNamespace("EdugameCloud.Lti.Host.Areas.Reports.Controllers"))
+                .WithService.Self()
+                .LifestyleTransient());
         }
 
         private static void RegisterLtiComponents(WindsorContainer container)

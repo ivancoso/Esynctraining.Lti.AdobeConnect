@@ -572,7 +572,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
         {
             var localReport = new LocalReport { EnableHyperlinks = true, EnableExternalImages = true };
 
-            var reportPath = string.Format("EdugameCloud.MVC.Reports.{0}.rdlc", reportName);
+            var reportPath = string.Format("EdugameCloud.Lti.Host.Areas.Reports.Reports.{0}.rdlc", reportName);
             var reportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(reportPath);
             localReport.LoadReportDefinition(reportSource);
 
@@ -581,7 +581,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 foreach (string placeholder in subReports.Keys)
                 {
                     var subReportName = string.Format(
-                    "EdugameCloud.MVC.Reports.SubReports.{0}.rdlc",
+                    "EdugameCloud.Lti.Host.Areas.Reports.Reports.SubReports.{0}.rdlc",
                     subReports[placeholder].Key);
 
                     var subReportSource = Assembly.GetExecutingAssembly().GetManifestResourceStream(subReportName);

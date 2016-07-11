@@ -1,31 +1,30 @@
 ﻿@{
-    Layout = null;
-    ViewBag.Title = "LoginToAC";
-    string waitRedirection = Resources.LoginToAC.WaitRedirection;
-    string followTheLink = Resources.LoginToAC.FollowTheLink;
+	Layout = null;
+	ViewBag.Title = "LoginToAC";
+	string waitRedirection = Resources.LoginToAC.WaitRedirection;
+	string followTheLink = Resources.LoginToAC.FollowTheLink;
 }
-
 <html>
 <head>
-    <title>Redirecting to the meeting</title>
-    <script type="text/javascript">
-            function loaded() {
-                var href = '@this.ViewBag.MeetingUrl';
-                if (href) {
-document.location.href = href;
-                }
-            }
-            window.setTimeout(function () { document.getElementById('meeting-link').setAttribute('style', ''); }, 3000);
-    </script>
+	<title>Redirecting to the meeting</title>
+	<script type="text/javascript">
+		function loaded() {
+			var href = '@this.ViewBag.MeetingUrl';
+			if (href) {
+				document.location.href = href;
+			}
+		}
+		window.setTimeout(function () { document.getElementById('meeting-link').setAttribute('style', ''); }, 3000);
+	</script>
 </head>
 <body>
-    @waitRedirection <br /><br />
+	@waitRedirection <br /><br />
 
-    <iframe src="@(this.ViewBag.AcServer)api/xml?action=sco-shortcuts&session=@this.ViewBag.BreezeSession" onload="loaded()" id="session-frame" style="width:1px; height: 1px; margin-left: -100px; position: absolute"></iframe>
+	<iframe src="@(this.ViewBag.AcServer)api/xml?action=sco-shortcuts&session=@this.ViewBag.BreezeSession" onload="loaded()" id="session-frame" style="width:1px; height: 1px; margin-left: -100px; position: absolute"></iframe>
 
-    <div id="meeting-link" style="display: none">
-        @followTheLink <a href="@this.ViewBag.MeetingUrl">@this.ViewBag.MeetingUrl</a>
-    </div>
+	<div id="meeting-link" style="display: none">
+		@followTheLink <a href="@this.ViewBag.MeetingUrl">@this.ViewBag.MeetingUrl</a>
+	</div>
 </body>
 </html>
 
