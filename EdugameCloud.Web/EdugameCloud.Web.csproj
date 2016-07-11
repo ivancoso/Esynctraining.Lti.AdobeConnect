@@ -540,7 +540,7 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
-    <Content Include="Content\lti-files\edugame-cloud-ws-1.0.37.jar" />
+    <Content Include="Content\lti-files\edugame-cloud-ws-1.1.3.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
     <Content Include="Content\swf\admin\appStyles.css" />
