@@ -35,65 +35,22 @@ namespace EdugameCloud.MVC.Controllers
     public partial class FileController : BaseController
     {
         #region Fields
-
-        /// <summary>
-        /// The logger.
-        /// </summary>
+        
         private readonly ILogger logger;
-        
-        /// <summary>
-        ///     The company model.
-        /// </summary>
         private readonly CompanyModel companyModel;
-        
-        /// <summary>
-        /// The LMS company model.
-        /// </summary>
         private readonly LmsCompanyModel lmsCompanyModel;  // lti reports
-
-        /// <summary>
-        /// The adobe connect account service.
-        /// </summary>
         private readonly IAdobeConnectAccountService adobeConnectAccountService; // lti reports
         
-        /// <summary>
-        ///     The group discussion model.
-        /// </summary>
         private readonly SNGroupDiscussionModel groupDiscussionModel;
-
-        /// <summary>
-        ///     The user model.
-        /// </summary>
         private readonly UserModel userModel;
-
-        /// <summary>
-        ///     The LMS user session model.
-        /// </summary>
         private readonly LmsUserSessionModel userSessionModel;
-
-        /// <summary>
-        /// The survey result model.
-        /// </summary>
         private readonly SurveyResultModel surveyResultModel;
-
-        /// <summary>
-        /// The AC session model.
-        /// </summary>
         private readonly ACSessionModel sessionModel;
         
         private readonly ACUserModeModel userModeModel; // lti reports
-
-        /// <summary>
-        /// The authentication model.
-        /// </summary>
+        
         private readonly AuthenticationModel authenticationModel;
-
-        /// <summary>
-        /// Gets the VCF model.
-        /// </summary>
         private readonly VCFModel vcfModel;
-
-        private readonly LmsCourseMeetingModel lmsCourseMeetingModel; // lti reports
 
         #endregion
 
@@ -112,7 +69,6 @@ namespace EdugameCloud.MVC.Controllers
             LmsCompanyModel lmsCompanyModel,
             IAdobeConnectAccountService adobeAccountService, 
             LmsUserSessionModel userSessionModel,
-            LmsCourseMeetingModel lmsCourseMeetingModel,
             ILogger logger)
             : base(settings)
         {
@@ -127,17 +83,13 @@ namespace EdugameCloud.MVC.Controllers
             this.lmsCompanyModel = lmsCompanyModel;
             this.adobeConnectAccountService = adobeAccountService;
             this.userSessionModel = userSessionModel;
-            this.lmsCourseMeetingModel = lmsCourseMeetingModel;
             this.logger = logger;
         }
 
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets the current user.
-        /// </summary>
+        
         public User CurrentUser
         {
             get
@@ -1974,6 +1926,7 @@ namespace EdugameCloud.MVC.Controllers
 
             return session;
         }
+
         private void RedirectToError(string errorText)
         {
             this.Response.Clear();

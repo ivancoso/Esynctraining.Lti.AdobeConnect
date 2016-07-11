@@ -27,7 +27,6 @@ public static class EdugameCloudT4
     public static EdugameCloud.MVC.Controllers.ErrorController Error = new EdugameCloud.MVC.Controllers.T4MVC_ErrorController();
     public static EdugameCloud.MVC.Controllers.FileController File = new EdugameCloud.MVC.Controllers.T4MVC_FileController();
     public static EdugameCloud.MVC.Controllers.HomeController Home = new EdugameCloud.MVC.Controllers.T4MVC_HomeController();
-    public static EdugameCloud.MVC.Controllers.SocialController Social = new EdugameCloud.MVC.Controllers.T4MVC_SocialController();
     public static EdugameCloud.MVC.SharedController Shared = new EdugameCloud.MVC.SharedController();
 }
 
