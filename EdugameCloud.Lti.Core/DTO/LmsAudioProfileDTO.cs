@@ -7,7 +7,6 @@
     [DataContract]
     public class LmsAudioProfileDTO
     {
-
         public LmsAudioProfileDTO()
         {
         }

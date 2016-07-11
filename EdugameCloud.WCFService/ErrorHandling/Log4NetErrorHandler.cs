@@ -20,7 +20,9 @@
     using Esynctraining.Core.Utils;
 
     using Resources;
-    
+    using System.Xml.Serialization;
+    using System.IO;
+
     [DataContract]
     public class WcfErrorWrapper
     {
@@ -104,7 +106,16 @@
         /// </returns>
         public bool HandleError(Exception exception)
         {
-            this.logger.Error("Unhandled WCF exception", exception);
+            var fault = exception as FaultException<Error>;
+            if (fault != null)
+            {
+                var detail = SerializeFaultDetail(fault.Detail);
+                logger.Error($"Unhandled FaultException<Error> exception. {exception.ToString()}{Environment.NewLine} FaultDetail: {detail}{Environment.NewLine}  StackTrace:{exception.StackTrace}");
+            }
+            else
+            {
+                logger.Error("Unhandled WCF exception.", exception);
+            }
             return true;
         }
 
@@ -188,6 +199,16 @@
         }
 
         #endregion
+
+        private static string SerializeFaultDetail(Error toSerialize)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(Error));
+            using (var textWriter = new StringWriter())
+            {
+                xmlSerializer.Serialize(textWriter, toSerialize);
+                return textWriter.ToString();
+            }
+        }
 
     }
 

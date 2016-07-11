@@ -214,8 +214,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\swf\playerProductInstall.swf" />
-    <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="log4net.cfg.xml">
       <SubType>Designer</SubType>
     </Content>

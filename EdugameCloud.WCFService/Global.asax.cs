@@ -7,6 +7,7 @@
 
     using Esynctraining.Core.Utils;
     using Esynctraining.Windsor;
+    using Core.Business;
 
     public class Global : HttpApplication
     {
@@ -41,6 +42,9 @@
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
+
+            // TRICK: remove all files on start
+            CachePolicies.InvalidateCache();
         }
 
         // source : http://stackoverflow.com/questions/1178831/remove-server-response-header-iis7
