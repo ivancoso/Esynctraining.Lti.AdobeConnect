@@ -109,10 +109,6 @@
       <HintPath>..\packages\Esynctraining.FluentValidation.1.0.0.1\lib\net45\Esynctraining.FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Mail, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mail.1.0.0.5\lib\net45\Esynctraining.Mail.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
       <Private>True</Private>
@@ -144,10 +140,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Web.WebPages.OAuth, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebPages.OAuth.3.2.3\lib\net45\Microsoft.Web.WebPages.OAuth.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -188,10 +180,6 @@
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -258,25 +246,10 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="App_GlobalResources\Views\Lti\LoginToAC.es.designer.cs">
-      <DependentUpon>LoginToAC.es.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Lti\LoginToAC.designer.cs">
-      <DependentUpon>LoginToAC.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="App_GlobalResources\Views\Shared\Buttons.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Buttons.resx</DependentUpon>
-    </Compile>
-    <Compile Include="App_GlobalResources\Views\Shared\LogIn.designer.cs">
-      <DependentUpon>LogIn.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="App_GlobalResources\Views\Shared\Error.designer.cs">
       <AutoGen>True</AutoGen>
@@ -288,13 +261,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Shared.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\Views\Social\Social.designer.cs">
-      <DependentUpon>Social.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="App_Start\AuthConfig.cs" />
-    <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Global.asax.cs">
@@ -574,11 +540,6 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
-    <Content Include="Content\lti-config\blackboard.xml" />
-    <Content Include="Content\lti-config\brightspace.xml" />
-    <Content Include="Content\lti-config\moodle.xml" />
-    <Content Include="Content\lti-config\sakai.xml" />
-    <Content Include="Content\lti-files\edugame-cloud-ws-1.0.25.jar" />
     <Content Include="Content\lti-files\edugame-cloud-ws-1.0.37.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
@@ -710,48 +671,25 @@
     <Content Include="Content\swf\admin\resources\images\swfIcon.png" />
     <Content Include="Content\swf\admin\resources\images\videoHelpThumb.jpg" />
     <Content Include="Content\swf\admin\resources\images\wordsbg.png" />
-    <Content Include="Content\lti-config\brainhoney.xml" />
-    <Content Include="Content\lti-config\canvas.xml" />
     <Content Include="Content\swf\admin\resources\xml\surveyPredefinedData.xml" />
     <Content Include="Content\swf\admin\resources\xml\weightBucketPreDefinedData.xml" />
     <Content Include="Content\swf\playerProductInstall.swf" />
     <Content Include="Content\swf\pub\SocialAccessProxy.swf" />
     <Content Include="crossdomain.xml" />
     <Content Include="Global.asax" />
+    <Content Include="Logs\placeholder.js" />
     <Content Include="Mail\Attachments\svn.ignore" />
     <Content Include="Content\swf\admin\resources\fonts\ARIAL.TTF" />
     <Content Include="Content\swf\admin\resources\fonts\ARIALBD.TTF" />
-    <Content Include="Content\lti-instructions\Blackboard.pdf" />
-    <Content Include="Content\lti-instructions\BrainHoney.pdf" />
-    <Content Include="Content\lti-instructions\Canvas.pdf" />
-    <Content Include="Content\lti-instructions\Moodle.pdf" />
-    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Error.cshtml">
-      <Link>Views\Lti\Error.cshtml</Link>
-    </Content>
-    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolPassword.cshtml">
-      <Link>Views\LtiProxyTool\ProxyToolPassword.cshtml</Link>
-    </Content>
-    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\ProxyToolRegistrationSucceeded.cshtml">
-      <Link>Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml</Link>
-    </Content>
-    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\Redirect.cshtml">
-      <Link>Views\Lti\Redirect.cshtml</Link>
-    </Content>
-    <Content Include="..\EdugameCloud.Lti.Web\Views\Lti\LoginToAC.cshtml">
-      <Link>Views\Lti\LoginToAC.cshtml</Link>
-    </Content>
     <Content Include="Content\xsd\snGroupDiscussion.xsd">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Content\xsd\vcfProfile.xsd">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Content\lti-instructions\Sakai.pdf" />
-    <Content Include="Content\lti-files\edugamecloud_1.0.6.zip" />
-    <Content Include="Content\lti-instructions\Brightspace.pdf" />
+    <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
-    <None Include="Scripts\jquery-1.8.2.intellisense.js" />
     <Content Include="log4net.cfg.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -759,15 +697,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Scripts\core.js" />
-    <Content Include="Scripts\jquery-1.8.2.js" />
-    <Content Include="Scripts\jquery-1.8.2.min.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\swfobject.js" />
     <None Include="T4MVC.tt.settings.xml">
       <SubType>Designer</SubType>
@@ -782,26 +711,19 @@
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Scripts\_references.js" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
-    <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Web.constrings">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Views\Shared\_BaseModelData.cshtml" />
-    <Content Include="Views\Shared\_IESpecific.cshtml" />
     <Content Include="Views\Shared\_BaseLayout.cshtml" />
     <Content Include="Views\Home\Admin.cshtml" />
     <Content Include="Views\File\VCF.cshtml" />
     <Content Include="Views\File\ImportUsers.cshtml" />
     <Content Include="Views\File\ImportQuestions.cshtml" />
-    <Content Include="Views\Social\LoggedIn.cshtml" />
-    <Content Include="Views\Lti\Index.cshtml" />
-    <Content Include="Views\Lti\LtiError.cshtml" />
     <Content Include="machineKey.config">
       <SubType>Designer</SubType>
     </Content>
@@ -826,38 +748,6 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BlackBoard\EdugameCloud.Lti.BlackBoard.csproj">
-      <Project>{998db65f-e928-4987-929c-ad2c3931fba7}</Project>
-      <Name>EdugameCloud.Lti.BlackBoard</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.BrainHoney\EdugameCloud.Lti.BrainHoney.csproj">
-      <Project>{42F32F14-1E81-4620-9AA0-EC58BF381283}</Project>
-      <Name>EdugameCloud.Lti.BrainHoney</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Canvas\EdugameCloud.Lti.Canvas.csproj">
-      <Project>{1B19293E-B5CA-463A-93A8-EF09CC255275}</Project>
-      <Name>EdugameCloud.Lti.Canvas</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Core\EdugameCloud.Lti.Core.csproj">
-      <Project>{fe423c91-0de1-45df-8d88-29777f8f8d75}</Project>
-      <Name>EdugameCloud.Lti.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Desire2Learn\EdugameCloud.Lti.Desire2Learn.csproj">
-      <Project>{c55551ab-4dd5-4bfd-9e75-253456213285}</Project>
-      <Name>EdugameCloud.Lti.Desire2Learn</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Moodle\EdugameCloud.Lti.Moodle.csproj">
-      <Project>{0e20b71c-4291-42f8-9f83-e1a51ee5494c}</Project>
-      <Name>EdugameCloud.Lti.Moodle</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj">
-      <Project>{2a856007-ffab-4d1d-b8d5-510451bf8b79}</Project>
-      <Name>EdugameCloud.Lti.Sakai</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
-      <Project>{0654349b-3097-448f-a4b3-b412b9ab20d5}</Project>
-      <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
       <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
@@ -909,33 +799,6 @@
     <Content Include="App_GlobalResources\Views\File\ImportUsers.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>ImportUsers.designer.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\Shared\LogIn.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>LogIn.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\Social\Social.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>Social.designer.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\Lti\LoginToAC.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>LoginToAC.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\Views\Lti\LoginToAC.es.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>LoginToAC.es.designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <PropertyGroup>

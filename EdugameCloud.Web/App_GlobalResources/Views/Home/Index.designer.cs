@@ -68,14 +68,5 @@ namespace Resources {
                 return ResourceManager.GetString("AdminTitle", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Public.
-        /// </summary>
-        internal static string Title {
-            get {
-                return ResourceManager.GetString("Title", resourceCulture);
-            }
-        }
     }
 }
