@@ -164,6 +164,9 @@
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\MyContentApi.pubxml" />
+    <Content Include="Web.constrings">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
