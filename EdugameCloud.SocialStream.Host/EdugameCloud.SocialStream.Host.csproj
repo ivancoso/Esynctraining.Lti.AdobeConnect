@@ -223,6 +223,7 @@
     </Content>
     <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\SocialDev.pubxml" />
+    <None Include="Properties\PublishProfiles\SocialPublish.pubxml" />
     <None Include="T4MVC.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>T4MVC.cs</LastGenOutput>
