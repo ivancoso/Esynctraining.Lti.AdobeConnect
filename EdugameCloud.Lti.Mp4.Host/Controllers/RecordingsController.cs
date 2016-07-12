@@ -113,15 +113,20 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             {
                 var session = GetReadOnlySession(input.LmsProviderName);
                 lmsCompany = session.LmsCompany;
-                
-                string mp4LicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey);
-                string mp4WithSubtitlesLicenseKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey);
-                if (!string.IsNullOrWhiteSpace(mp4LicenseKey) || !string.IsNullOrWhiteSpace(mp4WithSubtitlesLicenseKey))
+
+                Guid mp4;
+                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceLicenseKey), out mp4))
+                    mp4 = Guid.Empty;
+                Guid mp4Subtitles;
+                if (!Guid.TryParse(lmsCompany.GetSetting<string>(LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey), out mp4Subtitles))
+                    mp4Subtitles = Guid.Empty;
+
+                if ((mp4 != Guid.Empty) || (mp4Subtitles != Guid.Empty))
                 {
                     var mp4Client = IoC.Resolve<TaskClient>();
                     return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId.ToString(),
-                        Guid.Parse(mp4LicenseKey),
-                        Guid.Parse(mp4WithSubtitlesLicenseKey),
+                        mp4,
+                        mp4Subtitles,
                         logger);
                 }
 
