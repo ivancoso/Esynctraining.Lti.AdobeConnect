@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
@@ -44,6 +43,7 @@ namespace EdugameCloud.SocialStream.Host.Controllers
         {
             try
             {
+                logger.Info($"LoginWithProvider Provider:{provider}. IP:{HttpContextExtensions.GetIPAddress()}");
                 var login = Url.AbsoluteAction(EdugameCloudT4.Social.AuthenticationCallback(provider, key)) + "?key=" + key;
                 OAuthWebSecurity.RequestAuthentication(provider, login);
             }
@@ -61,6 +61,8 @@ namespace EdugameCloud.SocialStream.Host.Controllers
             string error;
             try
             {
+                logger.Info($"AuthenticationCallback Provider:{provider}. IP:{HttpContextExtensions.GetIPAddress()}");
+
                 var result = OAuthWebSecurity.VerifyAuthentication();
                 if (result.IsSuccessful)
                 {
@@ -126,6 +128,8 @@ namespace EdugameCloud.SocialStream.Host.Controllers
         [HttpGet]
         public virtual ActionResult RealtimeCallback(string provider, InstagramSubscriptionHub hub)
         {
+            logger.Info($"RealtimeCallback GET Provider:{provider}. IP:{HttpContextExtensions.GetIPAddress()}");
+
             return this.Content(hub.challenge);
         }
 
@@ -134,6 +138,8 @@ namespace EdugameCloud.SocialStream.Host.Controllers
         [HttpPost]
         public virtual ActionResult RealtimeCallback(string provider)
         {
+            logger.Info($"RealtimeCallback POST Provider:{provider}. IP:{HttpContextExtensions.GetIPAddress()}");
+
             var connectionString = (string)this.Settings.ConnectionString;
             var updates = new List<SubscriptionUpdateDTO>();
             string data = "Not received";
@@ -156,6 +162,7 @@ namespace EdugameCloud.SocialStream.Host.Controllers
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
+
 
         private void InsertRealTimeCallbackData(string connectionString, IEnumerable<SubscriptionUpdateDTO> dtos, ILogger log)
         {
