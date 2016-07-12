@@ -439,6 +439,22 @@ CREATE UNIQUE NONCLUSTERED INDEX [UI_Language_language]
 
 
 GO
+PRINT N'Creating [dbo].[LmsCalendarEvent]...';
+
+
+GO
+CREATE TABLE [dbo].[LmsCalendarEvent] (
+    [lmsCalendarEventId] INT            IDENTITY (1, 1) NOT NULL,
+    [eventId]            NVARCHAR (50)  NOT NULL,
+    [name]               NVARCHAR (200) NOT NULL,
+    [startDate]          DATETIME2 (7)  NOT NULL,
+    [endDate]            DATETIME2 (7)  NOT NULL,
+    [lmsCourseMeetingId] INT            NOT NULL,
+    CONSTRAINT [PK_LmsCalendarEvent] PRIMARY KEY CLUSTERED ([lmsCalendarEventId] ASC)
+);
+
+
+GO
 PRINT N'Creating [dbo].[LmsCompanyRoleMapping]...';
 
 
@@ -501,6 +517,7 @@ CREATE TABLE [dbo].[LmsCourseMeeting] (
     [meetingNameJson]       NVARCHAR (4000) NULL,
     [reused]                BIT             NULL,
     [sourceCourseMeetingId] INT             NULL,
+    [audioProfileId]        NVARCHAR (50)   NULL,
     CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
 );
 
@@ -671,15 +688,15 @@ PRINT N'Creating [dbo].[LmsUserParameters]...';
 
 GO
 CREATE TABLE [dbo].[LmsUserParameters] (
-    [lmsUserParametersId] INT            IDENTITY (1, 1) NOT NULL,
-    [wstoken]             NVARCHAR (50)  NULL,
-    [course]              INT            NOT NULL,
-    [acId]                NVARCHAR (10)  NOT NULL,
-    [lmsUserId]           INT            NULL,
-    [companyLmsId]        INT            NULL,
-    [courseName]          NVARCHAR (100) NULL,
-    [userEmail]           NVARCHAR (50)  NULL,
-    [lastLoggedIn]        NVARCHAR (25)  NULL,
+    [lmsUserParametersId] INT             IDENTITY (1, 1) NOT NULL,
+    [wstoken]             NVARCHAR (128)  NULL,
+    [course]              INT             NOT NULL,
+    [acId]                NVARCHAR (10)   NOT NULL,
+    [lmsUserId]           INT             NULL,
+    [companyLmsId]        INT             NULL,
+    [courseName]          NVARCHAR (4000) NULL,
+    [userEmail]           NVARCHAR (254)  NULL,
+    [lastLoggedIn]        DATETIME        NULL,
     CONSTRAINT [PK_LmsUserParameters] PRIMARY KEY CLUSTERED ([lmsUserParametersId] ASC)
 );
 
@@ -1345,11 +1362,11 @@ PRINT N'Creating [dbo].[SurveyQuestionResultAnswer]...';
 
 GO
 CREATE TABLE [dbo].[SurveyQuestionResultAnswer] (
-    [surveyQuestionResultAnswerId] INT            IDENTITY (1, 1) NOT NULL,
-    [surveyQuestionResultId]       INT            NOT NULL,
-    [surveyDistractorId]           INT            NULL,
-    [value]                        NVARCHAR (500) NOT NULL,
-    [surveyDistractorAnswerId]     INT            NULL,
+    [surveyQuestionResultAnswerId] INT             IDENTITY (1, 1) NOT NULL,
+    [surveyQuestionResultId]       INT             NOT NULL,
+    [surveyDistractorId]           INT             NULL,
+    [value]                        NVARCHAR (4000) NOT NULL,
+    [surveyDistractorAnswerId]     INT             NULL,
     CONSTRAINT [PK_SurveyQuestionResultAnswer] PRIMARY KEY CLUSTERED ([surveyQuestionResultAnswerId] ASC)
 );
 
@@ -2557,6 +2574,15 @@ PRINT N'Creating [dbo].[FK_Image_User]...';
 GO
 ALTER TABLE [dbo].[File]
     ADD CONSTRAINT [FK_Image_User] FOREIGN KEY ([createdBy]) REFERENCES [dbo].[User] ([userId]);
+
+
+GO
+PRINT N'Creating [dbo].[FK_LmsCalendarEvent_LmsCourseMeeting]...';
+
+
+GO
+ALTER TABLE [dbo].[LmsCalendarEvent]
+    ADD CONSTRAINT [FK_LmsCalendarEvent_LmsCourseMeeting] FOREIGN KEY ([lmsCourseMeetingId]) REFERENCES [dbo].[LmsCourseMeeting] ([lmsCourseMeetingId]);
 
 
 GO
@@ -5031,7 +5057,7 @@ BEGIN
 		SELECT T.x.value('@id', 'NVARCHAR(256)') AS id,
 			   T.x.value('@email', 'NVARCHAR(256)') AS email,
 			   T.x.value('@login', 'NVARCHAR(256)') AS login
-		FROM @userFilter.nodes('/users/user') AS T(x)​
+		FROM @userFilter.nodes('/users/user') AS T(x)
 	) flt
 	LEFT OUTER JOIN LmsUser lms_usr
 		ON lms_usr.userId = flt.id OR lms_usr.username = flt.login OR lms_usr.username = flt.email
@@ -5215,8 +5241,8 @@ FROM    Test T INNER JOIN
 WHERE U2.userId = @userId
       
 END
-
 GO
+
 PRINT N'Update complete.';
 
 
