@@ -231,12 +231,6 @@
     <Content Include="..\edugamecloud.lti.web\views\lti\Redirect.cshtml">
       <Link>Views\Lti\Redirect.cshtml</Link>
     </Content>
-    <Content Include="..\edugamecloud.lti.web\views\lti\ProxyToolPassword.cshtml">
-      <Link>Views\LtiProxyTool\ProxyToolPassword.cshtml</Link>
-    </Content>
-    <Content Include="..\edugamecloud.lti.web\views\lti\ProxyToolRegistrationSucceeded.cshtml">
-      <Link>Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml</Link>
-    </Content>
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
@@ -252,11 +246,14 @@
     </Content>
     <None Include="Properties\PublishProfiles\LtiApi.pubxml" />
     <None Include="Properties\PublishProfiles\LtiApiDev.pubxml" />
+    <Content Include="Views\LtiProxyTool\ProxyToolPassword.cshtml" />
+    <Content Include="Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -396,7 +393,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6099</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/</IISUrl>
+          <IISUrl>http://localhost/lti</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
