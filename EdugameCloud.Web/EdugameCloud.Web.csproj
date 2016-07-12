@@ -626,7 +626,6 @@
     <Content Include="crossdomain.xml" />
     <Content Include="Global.asax" />
     <Content Include="Logs\placeholder.js" />
-    <Content Include="Mail\Attachments\svn.ignore" />
     <Content Include="Content\swf\admin\resources\fonts\ARIAL.TTF" />
     <Content Include="Content\swf\admin\resources\fonts\ARIALBD.TTF" />
     <Content Include="Content\xsd\snGroupDiscussion.xsd">
@@ -678,7 +677,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\swf\config\" />
-    <Folder Include="Mail\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
@@ -696,6 +694,10 @@
     <ProjectReference Include="..\EdugameCloud.Core\EdugameCloud.Core.csproj">
       <Project>{4e419cd8-be17-40e0-b71b-cca30699d758}</Project>
       <Name>EdugameCloud.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EdugameCloud.Lti\EdugameCloud.Lti.csproj">
+      <Project>{0654349B-3097-448F-A4B3-B412B9AB20D5}</Project>
+      <Name>EdugameCloud.Lti</Name>
     </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
       <Project>{a17d2033-4439-4418-8224-96a408b548db}</Project>
@@ -767,7 +769,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost</IISUrl>
+          <IISUrl>http://localhost</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

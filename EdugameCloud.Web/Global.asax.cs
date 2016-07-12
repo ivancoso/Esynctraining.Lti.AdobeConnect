@@ -10,8 +10,8 @@ using System.Web.Routing;
 using System.Web.Security;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
-using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti;
 using EdugameCloud.MVC.ModelBinders;
 using EdugameCloud.Persistence;
 using EdugameCloud.Web.Providers;
@@ -75,6 +75,7 @@ namespace EdugameCloud.Web
             WindsorIoC.Initialize(container);
 
             container.RegisterComponents();
+            RegisterLtiComponents(container);
             RegisterComponentsWeb(container);
             container.Install(new LoggerWindsorInstaller());
             container.Install(new EdugameCloud.Core.Logging.LoggerWindsorInstaller());
@@ -104,6 +105,26 @@ namespace EdugameCloud.Web
 
             string pathPropertiesPath = this.GetPathPropertiesPath();
             container.Register(Component.For<FlexSettingsProvider>().ImplementedBy<FlexSettingsProvider>().DynamicParameters((k, d) => d.Add("collection", FlexSettingsProvider.ReadSettings(pathPropertiesPath))).LifeStyle.Singleton);
+        }
+
+
+        // NOTE: for meeting-host-report only
+        private static void RegisterLtiComponents(WindsorContainer container)
+        {
+            //container.Install(
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Moodle/EdugameCloud.Lti.Moodle.Windsor.xml")),
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Desire2Learn/EdugameCloud.Lti.Desire2Learn.Windsor.xml")),
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Canvas/EdugameCloud.Lti.Canvas.Windsor.xml")),
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.BrainHoney/EdugameCloud.Lti.BrainHoney.Windsor.xml")),
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Blackboard/EdugameCloud.Lti.BlackBoard.Windsor.xml")),
+            //    Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://EdugameCloud.Lti.Sakai/EdugameCloud.Lti.Sakai.Windsor.xml"))
+            //);
+
+            container.Install(new LtiWindsorInstaller());
+            //container.Install(new LtiMvcWindsorInstaller());
+            //container.Install(new TelephonyWindsorInstaller());
+
+            container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
         }
 
         public static void RegisterComponentsWeb(IWindsorContainer container)

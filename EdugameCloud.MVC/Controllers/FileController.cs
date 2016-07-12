@@ -257,13 +257,7 @@ namespace EdugameCloud.MVC.Controllers
             
             return new ContentResultWithStatusCode(HttpStatusCode.OK) { Content = id };
         }
-
-        /// <summary>
-        /// The import questions.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
+        
         [HttpGet]
         [ActionName("test-import-questions")]
         [CustomAuthorize]
