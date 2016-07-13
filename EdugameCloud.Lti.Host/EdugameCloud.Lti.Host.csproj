@@ -222,15 +222,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="..\edugamecloud.lti.web\views\lti\Error.cshtml">
-      <Link>Views\Lti\Error.cshtml</Link>
-    </Content>
     <Content Include="Views\Lti\Index.cshtml" />
     <Content Include="Views\Lti\LoginToAC.cshtml" />
     <Content Include="Views\Lti\LtiError.cshtml" />
-    <Content Include="..\edugamecloud.lti.web\views\lti\Redirect.cshtml">
-      <Link>Views\Lti\Redirect.cshtml</Link>
-    </Content>
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
@@ -241,13 +235,12 @@
     <Content Include="Content\lti-instructions\Canvas.pdf" />
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
-    <Content Include="machineKey.config">
-      <SubType>Designer</SubType>
-    </Content>
     <None Include="Properties\PublishProfiles\LtiApi.pubxml" />
     <None Include="Properties\PublishProfiles\LtiApiDev.pubxml" />
     <Content Include="Views\LtiProxyTool\ProxyToolPassword.cshtml" />
     <Content Include="Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml" />
+    <Content Include="Views\Lti\Error.cshtml" />
+    <Content Include="Views\Lti\Redirect.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -266,7 +259,9 @@
     <Content Include="nhibernate.cfg.xml">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_GlobalResources\Errors.designer.cs">

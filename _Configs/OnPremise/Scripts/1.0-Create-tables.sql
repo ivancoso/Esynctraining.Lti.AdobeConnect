@@ -796,6 +796,7 @@ CREATE TABLE [dbo].[Question] (
     [isMoodleSingle]   BIT              NULL,
     [lmsProviderId]    INT              NULL,
     [randomizeAnswers] BIT              NULL,
+    [rows]             INT              NULL,
     CONSTRAINT [PK_Question] PRIMARY KEY CLUSTERED ([questionId] ASC)
 );
 
@@ -4274,7 +4275,7 @@ SELECT   Q.questionId,
 		 Q.imageId,
 		 Q.scoreValue,
 		 Q.randomizeAnswers,
-		 
+		 Q.[rows],
 		 CASE 
 		    WHEN Q.questionTypeId = 12 THEN qr.restrictions 
 			WHEN Q.questionTypeId = 10 or Q.questionTypeId = 11 THEN qo.restrictions 

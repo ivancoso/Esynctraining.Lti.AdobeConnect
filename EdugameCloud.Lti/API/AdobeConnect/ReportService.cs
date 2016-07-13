@@ -115,6 +115,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         
         public List<ACSessionDTO> GetSessionsReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (provider == null)
+                throw new ArgumentNullException(nameof(meeting));
+
             return GetSessionsWithParticipants(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
         
@@ -122,14 +127,27 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             Justification = "Reviewed. Suppression is OK here.")]
         public List<ACSessionParticipantDTO> GetAttendanceReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (provider == null)
+                throw new ArgumentNullException(nameof(meeting));
+
             return GetAttendanceReport(meeting.GetMeetingScoId(), provider, startIndex, limit);
         }
 
         public IEnumerable<RecordingTransactionDTO> GetRecordingsReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, LmsCourseMeeting meeting, int startIndex = 0, int limit = 0)
         {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (provider == null)
+                throw new ArgumentNullException(nameof(meeting));
+
             try
             {
                 var recordingsSco = provider.GetRecordingsList(meeting.GetMeetingScoId()).Values.Select(x => x.ScoId);
+                if (!recordingsSco.Any())
+                    return Enumerable.Empty<RecordingTransactionDTO>();
+
                 var transactions = provider.ReportRecordingTransactions(recordingsSco, startIndex, limit).Values.ToList();
                 return transactions.Select(
                         us =>
@@ -147,9 +165,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             catch (Exception ex)
             {
                 Logger.Error("GetRecordingsReport.Exception", ex);
+                return Enumerable.Empty<RecordingTransactionDTO>();
             }
-
-            return Enumerable.Empty<RecordingTransactionDTO>();
         }
         
         #endregion

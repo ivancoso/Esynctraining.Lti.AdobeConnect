@@ -49,8 +49,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.PublicApi.Host", "EdugameCloud.PublicApi.Host\EdugameCloud.PublicApi.Host.csproj", "{27AE88C3-F844-47AD-9D70-8312884579AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Sakai.TestClient", "EdugameCloud.Sakai.TestClient\EdugameCloud.Sakai.TestClient.csproj", "{9D4D4840-9409-4B91-B994-9D17FE970AAD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Sakai", "EdugameCloud.Lti.Sakai\EdugameCloud.Lti.Sakai.csproj", "{2A856007-FFAB-4D1D-B8D5-510451BF8B79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Core.Logging", "EdugameCloud.Core.Logging\EdugameCloud.Core.Logging.csproj", "{2C718C51-FA6E-47DF-8260-E1F085B3BC48}"
@@ -337,18 +335,6 @@ Global
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{27AE88C3-F844-47AD-9D70-8312884579AE}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Mp4Release|Any CPU.Build.0 = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A856007-FFAB-4D1D-B8D5-510451BF8B79}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
@@ -481,7 +467,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D1C6AF7C-0560-4C09-8650-1A07BBCF92EB} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 		{4AE3721C-5DE1-4E4C-B6BE-2809E32A8F12} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
-		{9D4D4840-9409-4B91-B994-9D17FE970AAD} = {262066CC-6518-4C8E-9D9A-7BFECED2E5F6}
 	EndGlobalSection
 EndGlobal

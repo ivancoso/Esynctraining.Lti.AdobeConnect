@@ -11,6 +11,7 @@
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using Resources;
 
     public partial class LtiReportController : BaseController
     {
@@ -43,6 +44,8 @@
                 credentials = session.LmsCompany;
 
                 LmsCourseMeeting meeting = this.LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                if (meeting == null)
+                    return Json(OperationResult.Error(Messages.MeetingNotFound));
 
                 List<ACSessionParticipantDTO> report = this.meetingSetup.GetAttendanceReport(
                     this.GetAdobeConnectProvider(credentials),
@@ -68,6 +71,8 @@
                 credentials = session.LmsCompany;
                 
                 LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                if (meeting == null)
+                    return Json(OperationResult.Error(Messages.MeetingNotFound));
 
                 List<ACSessionDTO> report = this.meetingSetup.GetSessionsReport(
                     this.GetAdobeConnectProvider(credentials),
@@ -93,6 +98,8 @@
                 credentials = session.LmsCompany;
 
                 LmsCourseMeeting meeting = LmsCourseMeetingModel.GetOneByCourseAndId(credentials.Id, session.LtiSession.LtiParam.course_id, meetingId);
+                if (meeting == null)
+                    return Json(OperationResult.Error(Messages.MeetingNotFound));
 
                 IEnumerable<RecordingTransactionDTO> report = this.meetingSetup.GetRecordingsReport(
                     this.GetAdobeConnectProvider(credentials),
