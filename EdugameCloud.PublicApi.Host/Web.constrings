@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<connectionStrings>
+  <remove name="Database" />
+  <add name="Database" connectionString="Server=192.168.10.113;Database=EduGameCloud.Dev;User ID=edugame;password=$Pr!DHEgsEGC;Connection Timeout=180;" />
+</connectionStrings>
