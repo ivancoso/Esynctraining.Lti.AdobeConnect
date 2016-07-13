@@ -1,16 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Desire2Learn;
+using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.OAuth.Desire2Learn;
-using Esynctraining.Core.Providers;
-using EdugameCloud.Lti.Core;
 using Esynctraining.Core.Domain;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 
 namespace EdugameCloud.Lti.Desire2Learn
 {
