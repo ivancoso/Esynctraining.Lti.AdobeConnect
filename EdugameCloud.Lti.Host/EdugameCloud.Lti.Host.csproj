@@ -208,12 +208,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\lti-config\blackboard.xml" />
-    <Content Include="Content\lti-config\brainhoney.xml" />
-    <Content Include="Content\lti-config\brightspace.xml" />
-    <Content Include="Content\lti-config\canvas.xml" />
-    <Content Include="Content\lti-config\moodle.xml" />
-    <Content Include="Content\lti-config\sakai.xml" />
     <Content Include="Logs\placeholder.js" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
@@ -229,12 +223,6 @@
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Content\lti-instructions\Blackboard.pdf" />
-    <Content Include="Content\lti-instructions\BrainHoney.pdf" />
-    <Content Include="Content\lti-instructions\Brightspace.pdf" />
-    <Content Include="Content\lti-instructions\Canvas.pdf" />
-    <Content Include="Content\lti-instructions\Moodle.pdf" />
-    <Content Include="Content\lti-instructions\Sakai.pdf" />
     <None Include="Properties\PublishProfiles\LtiApi.pubxml" />
     <None Include="Properties\PublishProfiles\LtiApiDev.pubxml" />
     <Content Include="Views\LtiProxyTool\ProxyToolPassword.cshtml" />

@@ -488,6 +488,12 @@
     <Content Include="Content\images\logos\singleUser.png" />
     <Content Include="Content\images\tick.png" />
     <Content Include="Content\images\warning.png" />
+    <Content Include="Content\lti-config\blackboard.xml" />
+    <Content Include="Content\lti-config\brainhoney.xml" />
+    <Content Include="Content\lti-config\brightspace.xml" />
+    <Content Include="Content\lti-config\canvas.xml" />
+    <Content Include="Content\lti-config\moodle.xml" />
+    <Content Include="Content\lti-config\sakai.xml" />
     <Content Include="Content\lti-files\edugame-cloud-ws-1.1.3.jar" />
     <Content Include="Content\styles\main.css" />
     <Content Include="Content\styles\reset.css" />
@@ -635,6 +641,12 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Content\lti-files\edugamecloud_1.0.7.zip" />
+    <Content Include="Content\lti-instructions\Blackboard.pdf" />
+    <Content Include="Content\lti-instructions\BrainHoney.pdf" />
+    <Content Include="Content\lti-instructions\Brightspace.pdf" />
+    <Content Include="Content\lti-instructions\Canvas.pdf" />
+    <Content Include="Content\lti-instructions\Moodle.pdf" />
+    <Content Include="Content\lti-instructions\Sakai.pdf" />
     <None Include="Properties\PublishProfiles\Dev.pubxml" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <Content Include="log4net.cfg.xml">
