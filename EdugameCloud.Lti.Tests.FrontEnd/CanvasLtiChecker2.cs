@@ -38,7 +38,7 @@ namespace EdugameCloud.Lti.Tests.FrontEnd
                 redirectUrl = url.Groups["redirectUrl"].Value;
             }
 
-            var parsing = Regex.Match(output, "Object moved to <a href=\\\"/extjs/entry[?]primaryColor=(?<color>[A-Z-a-z0-9]+)[&][a]mp;lmsProviderName=(?<session>[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12})[&][a]mp;");
+            var parsing = Regex.Match(output, "Object moved to <a href=\\\"/lti/extjs-entry[?]primaryColor=(?<color>[A-Z-a-z0-9]+)[&][a]mp;lmsProviderName=(?<session>[A-Fa-f0-9]{8}(?:-[A-Fa-f0-9]{4}){3}-[A-Fa-f0-9]{12})[&][a]mp;");
 
             if (parsing.Success)
             {
