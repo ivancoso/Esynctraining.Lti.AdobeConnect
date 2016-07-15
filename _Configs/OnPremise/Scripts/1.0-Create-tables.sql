@@ -518,6 +518,7 @@ CREATE TABLE [dbo].[LmsCourseMeeting] (
     [reused]                BIT             NULL,
     [sourceCourseMeetingId] INT             NULL,
     [audioProfileId]        NVARCHAR (50)   NULL,
+    [enableDynamicProvisioning]	BIT NOT NULL,
     CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC)
 );
 
@@ -1603,6 +1604,10 @@ CREATE TABLE [dbo].[Webinar] (
 
 GO
 PRINT N'Creating [dbo].[DF_ACSession_dateCreated]...';
+GO
+
+ALTER TABLE [dbo].[LmsCourseMeeting]
+    ADD CONSTRAINT [DF_LmsCourseMeeting_enableDynamicProvisioning] DEFAULT (0) FOR [enableDynamicProvisioning];
 
 
 GO
