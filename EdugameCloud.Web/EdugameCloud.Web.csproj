@@ -647,7 +647,10 @@
     <Content Include="Content\lti-instructions\Canvas.pdf" />
     <Content Include="Content\lti-instructions\Moodle.pdf" />
     <Content Include="Content\lti-instructions\Sakai.pdf" />
-    <None Include="Properties\PublishProfiles\Dev.pubxml" />
+    <None Include="Properties\PublishProfiles\Dev.pubxml">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\PublishProfiles\test.pubxml" />
     <None Include="Properties\PublishProfiles\Web.pubxml" />
     <Content Include="log4net.cfg.xml">
       <SubType>Designer</SubType>
@@ -781,7 +784,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>35153</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost</IISUrl>
+          <IISUrl>https://dev.edugamecloud.com</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

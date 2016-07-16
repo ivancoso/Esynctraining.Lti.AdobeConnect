@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
 using Esynctraining.Core.Logging;
@@ -92,6 +93,49 @@ namespace EdugameCloud.Lti.Sakai
                 : HttpScheme.Http;
 
             return $"{scheme}{param.lms_domain}/egcint/service/";
+        }
+
+        public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
+        {
+            var apiParam = new SakaiExtendedParams
+            {
+                LtiMessageType = "egc_get_assessment_data",
+            };
+
+            var json = JsonConvert.SerializeObject(apiParam);
+            string resp;
+            var url =
+                @"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid=test_lti&assessmentId=8&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
+            using (var webClient = new WebClient())
+            {
+                //webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+                resp = webClient.DownloadString(url);
+            }
+
+            var quizzes = JsonConvert.DeserializeObject<LmsQuizDTO[]>(resp);
+
+            var result = quizzes.Select(q => new LmsQuizInfoDTO
+            {
+                id = q.id,
+                name = q.title,
+                course = q.course,
+                courseName = q.courseName,
+                lastModifiedLMS = q.lastModifiedLMS,
+                isPublished = q.published
+            });
+
+            error = string.Empty;
+            return result;
+        }
+
+        public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

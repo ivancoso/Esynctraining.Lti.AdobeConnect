@@ -1,28 +1,24 @@
-﻿namespace EdugameCloud.Lti.Moodle
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Specialized;
-    using System.Globalization;
-    using System.Linq;
-    using System.Net;
-    using System.Text;
-    using System.Web.Script.Serialization;
-    using System.Xml;
-    using Esynctraining.Core.Logging;
-    using EdugameCloud.Lti.API;
-    using EdugameCloud.Lti.API.Moodle;
-    using EdugameCloud.Lti.Domain.Entities;
-    using EdugameCloud.Lti.DTO;
-    using EdugameCloud.Lti.Extensions;
-    using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Providers;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Web.Script.Serialization;
+using System.Xml;
+using EdugameCloud.Lti.API;
+using EdugameCloud.Lti.API.Sakai;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using EdugameCloud.Lti.Extensions;
+using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 
-    /// <summary>
-    ///     The Moodle API.
-    /// </summary>
-    // ReSharper disable once InconsistentNaming
-    public class MoodleApi : ILmsAPI, IMoodleApi
+namespace EdugameCloud.Lti.Sakai
+{
+    public class SakaiLmsApi : ILmsAPI, ISakaiLmsApi
     {
         #region Fields
 
@@ -45,7 +41,7 @@
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MoodleAPI"/> class.
+        /// Initializes a new instance of the <see cref="SakaiAPI"/> class.
         /// </summary>
         /// <param name="settings">
         /// The settings.
@@ -53,7 +49,7 @@
         /// <param name="logger">
         /// The logger.
         /// </param>
-        public MoodleApi(ApplicationSettingsProvider settings, ILogger logger)
+        public SakaiLmsApi(ApplicationSettingsProvider settings, ILogger logger)
         {
             this.settings = settings;
             this.logger = logger;
@@ -63,7 +59,7 @@
 
         #region Properties
 
-        protected virtual string MoodleServiceShortName
+        protected virtual string SakaiServiceShortName
         {
             get { return "lms"; }
         }
@@ -73,8 +69,8 @@
         #region Public Methods and Operators
 
         public List<LmsUserDTO> GetUsersForCourse(
-            LmsCompany company, 
-            int courseId, 
+            LmsCompany company,
+            int courseId,
             out string error)
         {
             try
@@ -82,7 +78,7 @@
                 if (company == null)
                     throw new ArgumentNullException("company");
 
-                MoodleSession token = null;
+                SakaiSession token = null;
 
                 var result = new List<LmsUserDTO>();
                 List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
@@ -91,8 +87,8 @@
                     {
                         var pairs = new NameValueCollection
                         {
-                            { "wsfunction", "core_enrol_get_enrolled_users" }, 
-                            { "wstoken", c.Token }, 
+                            { "wsfunction", "core_enrol_get_enrolled_users" },
+                            { "wstoken", c.Token },
                             { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
                         };
 
@@ -108,11 +104,11 @@
                         {
                             var xmlDoc = new XmlDocument();
                             xmlDoc.LoadXml(resp);
-                            return new Tuple<List<LmsUserDTO>, string>(MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), null);
+                            return new Tuple<List<LmsUserDTO>, string>(SakaiLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), null);
                         }
                         catch (Exception ex)
                         {
-                            logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
+                            logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
 
                             return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
                         }
@@ -122,7 +118,7 @@
 
                 if (enrollmentsResult == null)
                 {
-                    error = error ?? "Moodle XML. Unable to retrive result from API";
+                    error = error ?? "Sakai XML. Unable to retrive result from API";
                     return result;
                 }
 
@@ -130,7 +126,7 @@
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
+                logger.ErrorFormat(ex, "[SakaiApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
                 throw;
             }
         }
@@ -175,12 +171,12 @@
         /// <returns>
         /// The <see cref="WebserviceWrapper"/>.
         /// </returns>
-        private MoodleSession LoginAndCreateAClient(
-            out string error, 
-            bool useSsl, 
-            string lmsDomain, 
-            string userName, 
-            string password, 
+        private SakaiSession LoginAndCreateAClient(
+            out string error,
+            bool useSsl,
+            string lmsDomain,
+            string userName,
+            string password,
             bool recursive = false)
         {
             error = null;
@@ -190,11 +186,11 @@
             {
                 var pairs = new NameValueCollection
                 {
-                    { "username", userName }, 
-                    { "password", password }, 
-                    { "service", this.MoodleServiceShortName }
+                    { "username", userName },
+                    { "password", password },
+                    { "service", this.SakaiServiceShortName }
                 };
-                
+
                 byte[] response;
                 string url = this.GetTokenUrl(lmsDomain, useSsl);
 
@@ -209,7 +205,7 @@
                     return this.LoginAndCreateAClient(out error, true, lmsDomain, userName, password, true);
                 }
 
-                var token = new JavaScriptSerializer().Deserialize<MoodleTokenDTO>(resp);
+                var token = new JavaScriptSerializer().Deserialize<SakaiTokenDTO>(resp);
 
                 if (token.error != null)
                 {
@@ -221,7 +217,7 @@
                     return null;
                 }
 
-                return new MoodleSession
+                return new SakaiSession
                 {
                     Token = token.token,
                     Url = this.GetServicesUrl(lmsDomain, useSsl),
@@ -230,7 +226,7 @@
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[MoodleApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
+                logger.ErrorFormat(ex, "[SakaiApi.LoginAndCreateAClient] LmsDomain:{0}. Username:{1}. Password:{2}.", lmsDomain, userName, password);
 
                 error = string.Format(
                     "Not able to login into: {0} for user: {1};{2} error: {3}",
@@ -241,7 +237,7 @@
                 return null;
             }
         }
-        
+
         /// <summary>
         /// The create rest client.
         /// </summary>
@@ -252,9 +248,9 @@
         /// The company LMS.
         /// </param>
         /// <returns>
-        /// The <see cref="MoodleSession"/>.
+        /// The <see cref="SakaiSession"/>.
         /// </returns>
-        private MoodleSession BeginBatch(out string error, LmsCompany lmsCompany)
+        private SakaiSession BeginBatch(out string error, LmsCompany lmsCompany)
         {
             if (lmsCompany == null)
             {
@@ -294,9 +290,9 @@
                 domain = domain + '/';
             }
 
-            if (((string)this.settings.MoodleChangeUrl).Equals("TRUE", StringComparison.OrdinalIgnoreCase))
+            if (((string)this.settings.SakaiChangeUrl).Equals("TRUE", StringComparison.OrdinalIgnoreCase))
             {
-                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60").Replace("moodle.esynctraining.com", "192.168.10.60");
+                return domain.Replace("64.27.12.61", "WIN-J0J791DL0DG").Replace("64.27.12.60", "192.168.10.60").Replace("Sakai.esynctraining.com", "192.168.10.60");
             }
 
             return domain;
@@ -316,7 +312,7 @@
         /// </returns>
         private string GetServicesUrl(string domain, bool useSsl)
         {
-            var serviceUrl = (string)this.settings.MoodleServiceUrl;
+            var serviceUrl = (string)this.settings.SakaiServiceUrl;
             return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
         }
 
@@ -334,7 +330,7 @@
         /// </returns>
         private string GetTokenUrl(string domain, bool useSsl)
         {
-            var tokenUrl = (string)this.settings.MoodleTokenUrl;
+            var tokenUrl = (string)this.settings.SakaiTokenUrl;
             return this.FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);
         }
 
@@ -360,8 +356,8 @@
         /// The <see cref="bool"/>.
         /// </returns>
         internal T LoginIfNecessary<T>(
-            MoodleSession session,
-            Func<MoodleSession, T> action,
+            SakaiSession session,
+            Func<SakaiSession, T> action,
             out string error,
             LmsUser lmsUser = null)
         {
@@ -377,8 +373,8 @@
 
         // TRICK: marked as 'internal'
         internal T LoginIfNecessary<T>(
-            MoodleSession session,
-            Func<MoodleSession, T> action,
+            SakaiSession session,
+            Func<SakaiSession, T> action,
             LmsCompany lmsCompany,
             out string error)
         {
@@ -414,8 +410,8 @@
         /// The <see cref="bool"/>.
         /// </returns>
         internal T LoginIfNecessary<T>(
-            MoodleSession session,
-            Func<MoodleSession, Tuple<T, string>> action,
+            SakaiSession session,
+            Func<SakaiSession, Tuple<T, string>> action,
             LmsCompany lmsCompany,
             out string error)
         {

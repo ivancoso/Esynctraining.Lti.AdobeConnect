@@ -2,6 +2,7 @@
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.API.Moodle;
+using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.API
@@ -28,6 +29,10 @@ namespace EdugameCloud.Lti.API
         /// </summary>
         private readonly IEGCEnabledBlackBoardApi blackboardApi;
 
+
+        private readonly IEGCEnabledSakaiApi sakaiApi;
+        
+
         #endregion
 
         #region Constructors and Destructors
@@ -41,8 +46,9 @@ namespace EdugameCloud.Lti.API
         /// <param name="moodleApi">
         /// The Moodle API.
         /// </param>
-        public LmsFactory(IEGCEnabledCanvasAPI canvasApi, IEGCEnabledMoodleApi moodleApi, IEGCEnabledBlackBoardApi blackboardApi)
+        public LmsFactory(IEGCEnabledCanvasAPI canvasApi, IEGCEnabledMoodleApi moodleApi, IEGCEnabledBlackBoardApi blackboardApi, IEGCEnabledSakaiApi sakaiApi)
         {
+            this.sakaiApi = sakaiApi;
             this.canvasApi = canvasApi;
             this.moodleApi = moodleApi;
             this.blackboardApi = blackboardApi;
@@ -71,6 +77,8 @@ namespace EdugameCloud.Lti.API
                     return this.moodleApi;
                 case LmsProviderEnum.Blackboard:
                     return this.blackboardApi;
+                case LmsProviderEnum.Sakai:
+                    return this.sakaiApi;
             }
 
             return null;

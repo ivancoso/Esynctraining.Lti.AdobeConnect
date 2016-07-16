@@ -6,5 +6,4 @@ namespace EdugameCloud.Lti.API.BlackBoard
     public interface IEGCEnabledBlackBoardApi : IEGCEnabledLmsAPI
     {
     }
-
 }

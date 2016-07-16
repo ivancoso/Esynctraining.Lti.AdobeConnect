@@ -13,5 +13,9 @@
       id="ISakaiApi"
       service="EdugameCloud.Lti.API.Sakai.ISakaiApi, EdugameCloud.Lti"
       type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"></component>
+    <component
+      id="IEGCEnabledSakaiAPI"
+      service="EdugameCloud.Lti.API.Sakai.IEGCEnabledSakaiApi, EdugameCloud.Lti"
+      type="EdugameCloud.Lti.Sakai.SakaiApi, EdugameCloud.Lti.Sakai"></component>
   </components>
 </configuration>

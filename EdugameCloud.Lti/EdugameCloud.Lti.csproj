@@ -212,6 +212,7 @@
     <Compile Include="API\AdobeConnect\RecordingsService.cs" />
     <Compile Include="API\AdobeConnect\SeminarRecordingDtoBuilder.cs" />
     <Compile Include="API\AdobeConnect\SeminarService.cs" />
+    <Compile Include="API\Sakai\IEGCEnabledSakaiApi.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsRoleService.cs" />
     <Compile Include="API\LmsUserServiceBase.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="DTO\LtiViewModelDto.cs" />
     <Compile Include="DTO\MoodleQuizInfoDTO.cs" />
     <Compile Include="DTO\MoodleQuizResultDTO.cs" />
+    <Compile Include="DTO\SakaiTokenDTO.cs" />
     <Compile Include="DTO\MoodleTokenDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionDTO.cs" />
     <Compile Include="DTO\CanvasQuizSubmissionQuestionDTO.cs" />

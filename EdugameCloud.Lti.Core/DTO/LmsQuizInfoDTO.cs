@@ -64,6 +64,22 @@
         [DataMember]
         public bool isPublished { get; set; }
 
+        [DataMember]
+        public bool description { get; set; }
+
+        [DataMember]
+        public bool instructions { get; set; }
+
+        [DataMember]
+        public bool titleColor { get; set; }
+
+
+        [DataMember]
+        public bool linkRef { get; set; }
+
+        [DataMember]
+        public bool aggregationModel { get; set; }
+        
         #endregion
     }
 }
