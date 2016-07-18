@@ -36,15 +36,9 @@ namespace EdugameCloud.MVC
             public class _ViewNamesClass
             {
                 public readonly string _BaseLayout = "_BaseLayout";
-                public readonly string _BaseModelData = "_BaseModelData";
-                public readonly string _IESpecific = "_IESpecific";
-                public readonly string _Layout = "_Layout";
                 public readonly string Error = "Error";
             }
             public readonly string _BaseLayout = "~/Views/Shared/_BaseLayout.cshtml";
-            public readonly string _BaseModelData = "~/Views/Shared/_BaseModelData.cshtml";
-            public readonly string _IESpecific = "~/Views/Shared/_IESpecific.cshtml";
-            public readonly string _Layout = "~/Views/Shared/_Layout.cshtml";
             public readonly string Error = "~/Views/Shared/Error.cshtml";
         }
     }

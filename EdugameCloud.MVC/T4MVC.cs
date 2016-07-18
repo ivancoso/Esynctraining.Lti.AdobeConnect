@@ -24,6 +24,7 @@ using EdugameCloud.MVC;
 [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
 public static class EdugameCloudT4
 {
+    public static EdugameCloud.MVC.Controllers.BuildDeliverController BuildDeliver = new EdugameCloud.MVC.Controllers.T4MVC_BuildDeliverController();
     public static EdugameCloud.MVC.Controllers.ErrorController Error = new EdugameCloud.MVC.Controllers.T4MVC_ErrorController();
     public static EdugameCloud.MVC.Controllers.FileController File = new EdugameCloud.MVC.Controllers.T4MVC_FileController();
     public static EdugameCloud.MVC.Controllers.HomeController Home = new EdugameCloud.MVC.Controllers.T4MVC_HomeController();
@@ -59,19 +60,6 @@ public class T4MVC_ActionResult : System.Web.Mvc.ActionResult, IT4MVCActionResul
     public string Protocol { get; set; }
     public RouteValueDictionary RouteValueDictionary { get; set; }
 }
-[GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-public class T4MVC_JsonResult : System.Web.Mvc.JsonResult, IT4MVCActionResult
-{
-    public T4MVC_JsonResult(string area, string controller, string action, string protocol = null): base()
-    {
-        this.InitMVCT4Result(area, controller, action, protocol);
-    }
-    
-    public string Controller { get; set; }
-    public string Action { get; set; }
-    public string Protocol { get; set; }
-    public RouteValueDictionary RouteValueDictionary { get; set; }
-}
 
 
 
@@ -82,26 +70,8 @@ namespace EdugameCloud.MVC.Links
         private const string URLPATH = "~/Scripts";
         public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
         public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-        public static readonly string _references_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/_references.min.js") ? Url("_references.min.js") : Url("_references.js");
-                      
         public static readonly string core_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/core.min.js") ? Url("core.min.js") : Url("core.js");
-                                            
-        public static readonly string jquery_1_8_2_intellisense_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.8.2.intellisense.min.js") ? Url("jquery-1.8.2.intellisense.min.js") : Url("jquery-1.8.2.intellisense.js");
                       
-        public static readonly string jquery_1_8_2_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery-1.8.2.min.js") ? Url("jquery-1.8.2.min.js") : Url("jquery-1.8.2.js");
-                      
-        public static readonly string jquery_1_8_2_min_js = Url("jquery-1.8.2.min.js");
-        public static readonly string jquery_unobtrusive_ajax_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery.unobtrusive-ajax.min.js") ? Url("jquery.unobtrusive-ajax.min.js") : Url("jquery.unobtrusive-ajax.js");
-                      
-        public static readonly string jquery_unobtrusive_ajax_min_js = Url("jquery.unobtrusive-ajax.min.js");
-        public static readonly string jquery_validate_vsdoc_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery.validate-vsdoc.min.js") ? Url("jquery.validate-vsdoc.min.js") : Url("jquery.validate-vsdoc.js");
-                      
-        public static readonly string jquery_validate_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery.validate.min.js") ? Url("jquery.validate.min.js") : Url("jquery.validate.js");
-                      
-        public static readonly string jquery_validate_min_js = Url("jquery.validate.min.js");
-        public static readonly string jquery_validate_unobtrusive_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/jquery.validate.unobtrusive.min.js") ? Url("jquery.validate.unobtrusive.min.js") : Url("jquery.validate.unobtrusive.js");
-                      
-        public static readonly string jquery_validate_unobtrusive_min_js = Url("jquery.validate.unobtrusive.min.js");
         public static readonly string swfobject_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/swfobject.min.js") ? Url("swfobject.min.js") : Url("swfobject.js");
                       
     }
@@ -116,6 +86,267 @@ namespace EdugameCloud.MVC.Links
             private const string URLPATH = "~/Content/images";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string ajax_loader_gif = Url("ajax-loader.gif");
+            public static readonly string cross_png = Url("cross.png");
+            public static readonly string egcicon_png = Url("egcicon.png");
+            [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+            public static class flags {
+                private const string URLPATH = "~/Content/images/flags";
+                public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+                public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                public static readonly string ad_gif = Url("ad.gif");
+                public static readonly string ae_gif = Url("ae.gif");
+                public static readonly string af_gif = Url("af.gif");
+                public static readonly string ag_gif = Url("ag.gif");
+                public static readonly string ai_gif = Url("ai.gif");
+                public static readonly string al_gif = Url("al.gif");
+                public static readonly string am_gif = Url("am.gif");
+                public static readonly string an_gif = Url("an.gif");
+                public static readonly string ao_gif = Url("ao.gif");
+                public static readonly string ar_gif = Url("ar.gif");
+                public static readonly string as_gif = Url("as.gif");
+                public static readonly string at_gif = Url("at.gif");
+                public static readonly string au_gif = Url("au.gif");
+                public static readonly string aw_gif = Url("aw.gif");
+                public static readonly string ax_gif = Url("ax.gif");
+                public static readonly string az_gif = Url("az.gif");
+                public static readonly string ba_gif = Url("ba.gif");
+                public static readonly string bb_gif = Url("bb.gif");
+                public static readonly string bd_gif = Url("bd.gif");
+                public static readonly string be_gif = Url("be.gif");
+                public static readonly string bf_gif = Url("bf.gif");
+                public static readonly string bg_gif = Url("bg.gif");
+                public static readonly string bh_gif = Url("bh.gif");
+                public static readonly string bi_gif = Url("bi.gif");
+                public static readonly string bj_gif = Url("bj.gif");
+                public static readonly string bm_gif = Url("bm.gif");
+                public static readonly string bn_gif = Url("bn.gif");
+                public static readonly string bo_gif = Url("bo.gif");
+                public static readonly string br_gif = Url("br.gif");
+                public static readonly string bs_gif = Url("bs.gif");
+                public static readonly string bt_gif = Url("bt.gif");
+                public static readonly string bv_gif = Url("bv.gif");
+                public static readonly string bw_gif = Url("bw.gif");
+                public static readonly string by_gif = Url("by.gif");
+                public static readonly string bz_gif = Url("bz.gif");
+                public static readonly string ca_gif = Url("ca.gif");
+                public static readonly string catalonia_gif = Url("catalonia.gif");
+                public static readonly string cc_gif = Url("cc.gif");
+                public static readonly string cd_gif = Url("cd.gif");
+                public static readonly string cf_gif = Url("cf.gif");
+                public static readonly string cg_gif = Url("cg.gif");
+                public static readonly string ch_gif = Url("ch.gif");
+                public static readonly string ci_gif = Url("ci.gif");
+                public static readonly string ck_gif = Url("ck.gif");
+                public static readonly string cl_gif = Url("cl.gif");
+                public static readonly string cm_gif = Url("cm.gif");
+                public static readonly string cn_gif = Url("cn.gif");
+                public static readonly string co_gif = Url("co.gif");
+                public static readonly string cr_gif = Url("cr.gif");
+                public static readonly string cs_gif = Url("cs.gif");
+                public static readonly string cu_gif = Url("cu.gif");
+                public static readonly string cv_gif = Url("cv.gif");
+                public static readonly string cx_gif = Url("cx.gif");
+                public static readonly string cy_gif = Url("cy.gif");
+                public static readonly string cz_gif = Url("cz.gif");
+                public static readonly string de_gif = Url("de.gif");
+                public static readonly string dj_gif = Url("dj.gif");
+                public static readonly string dk_gif = Url("dk.gif");
+                public static readonly string dm_gif = Url("dm.gif");
+                public static readonly string do_gif = Url("do.gif");
+                public static readonly string dz_gif = Url("dz.gif");
+                public static readonly string ec_gif = Url("ec.gif");
+                public static readonly string ee_gif = Url("ee.gif");
+                public static readonly string eg_gif = Url("eg.gif");
+                public static readonly string eh_gif = Url("eh.gif");
+                public static readonly string england_gif = Url("england.gif");
+                public static readonly string er_gif = Url("er.gif");
+                public static readonly string es_gif = Url("es.gif");
+                public static readonly string et_gif = Url("et.gif");
+                public static readonly string europeanunion_gif = Url("europeanunion.gif");
+                public static readonly string fam_gif = Url("fam.gif");
+                public static readonly string fi_gif = Url("fi.gif");
+                public static readonly string fj_gif = Url("fj.gif");
+                public static readonly string fk_gif = Url("fk.gif");
+                public static readonly string fm_gif = Url("fm.gif");
+                public static readonly string fo_gif = Url("fo.gif");
+                public static readonly string fr_gif = Url("fr.gif");
+                public static readonly string ga_gif = Url("ga.gif");
+                public static readonly string gb_gif = Url("gb.gif");
+                public static readonly string gb_png = Url("gb.png");
+                public static readonly string gd_gif = Url("gd.gif");
+                public static readonly string ge_gif = Url("ge.gif");
+                public static readonly string gf_gif = Url("gf.gif");
+                public static readonly string gh_gif = Url("gh.gif");
+                public static readonly string gi_gif = Url("gi.gif");
+                public static readonly string gl_gif = Url("gl.gif");
+                public static readonly string gm_gif = Url("gm.gif");
+                public static readonly string gn_gif = Url("gn.gif");
+                public static readonly string gp_gif = Url("gp.gif");
+                public static readonly string gq_gif = Url("gq.gif");
+                public static readonly string gr_gif = Url("gr.gif");
+                public static readonly string gs_gif = Url("gs.gif");
+                public static readonly string gt_gif = Url("gt.gif");
+                public static readonly string gu_gif = Url("gu.gif");
+                public static readonly string gw_gif = Url("gw.gif");
+                public static readonly string gy_gif = Url("gy.gif");
+                public static readonly string hk_gif = Url("hk.gif");
+                public static readonly string hm_gif = Url("hm.gif");
+                public static readonly string hn_gif = Url("hn.gif");
+                public static readonly string hr_gif = Url("hr.gif");
+                public static readonly string ht_gif = Url("ht.gif");
+                public static readonly string hu_gif = Url("hu.gif");
+                public static readonly string id_gif = Url("id.gif");
+                public static readonly string ie_gif = Url("ie.gif");
+                public static readonly string il_gif = Url("il.gif");
+                public static readonly string in_gif = Url("in.gif");
+                public static readonly string in_png = Url("in.png");
+                public static readonly string io_gif = Url("io.gif");
+                public static readonly string iq_gif = Url("iq.gif");
+                public static readonly string ir_gif = Url("ir.gif");
+                public static readonly string is_gif = Url("is.gif");
+                public static readonly string it_gif = Url("it.gif");
+                public static readonly string jm_gif = Url("jm.gif");
+                public static readonly string jo_gif = Url("jo.gif");
+                public static readonly string jp_gif = Url("jp.gif");
+                public static readonly string jp_png = Url("jp.png");
+                public static readonly string ke_gif = Url("ke.gif");
+                public static readonly string kg_gif = Url("kg.gif");
+                public static readonly string kh_gif = Url("kh.gif");
+                public static readonly string ki_gif = Url("ki.gif");
+                public static readonly string km_gif = Url("km.gif");
+                public static readonly string kn_gif = Url("kn.gif");
+                public static readonly string kp_gif = Url("kp.gif");
+                public static readonly string kr_gif = Url("kr.gif");
+                public static readonly string kw_gif = Url("kw.gif");
+                public static readonly string ky_gif = Url("ky.gif");
+                public static readonly string kz_gif = Url("kz.gif");
+                public static readonly string la_gif = Url("la.gif");
+                public static readonly string lb_gif = Url("lb.gif");
+                public static readonly string lc_gif = Url("lc.gif");
+                public static readonly string li_gif = Url("li.gif");
+                public static readonly string lk_gif = Url("lk.gif");
+                public static readonly string lr_gif = Url("lr.gif");
+                public static readonly string ls_gif = Url("ls.gif");
+                public static readonly string lt_gif = Url("lt.gif");
+                public static readonly string lu_gif = Url("lu.gif");
+                public static readonly string lv_gif = Url("lv.gif");
+                public static readonly string ly_gif = Url("ly.gif");
+                public static readonly string ma_gif = Url("ma.gif");
+                public static readonly string mc_gif = Url("mc.gif");
+                public static readonly string md_gif = Url("md.gif");
+                public static readonly string me_gif = Url("me.gif");
+                public static readonly string mg_gif = Url("mg.gif");
+                public static readonly string mh_gif = Url("mh.gif");
+                public static readonly string mk_gif = Url("mk.gif");
+                public static readonly string ml_gif = Url("ml.gif");
+                public static readonly string mm_gif = Url("mm.gif");
+                public static readonly string mn_gif = Url("mn.gif");
+                public static readonly string mo_gif = Url("mo.gif");
+                public static readonly string mp_gif = Url("mp.gif");
+                public static readonly string mq_gif = Url("mq.gif");
+                public static readonly string mr_gif = Url("mr.gif");
+                public static readonly string ms_gif = Url("ms.gif");
+                public static readonly string mt_gif = Url("mt.gif");
+                public static readonly string mu_gif = Url("mu.gif");
+                public static readonly string mv_gif = Url("mv.gif");
+                public static readonly string mw_gif = Url("mw.gif");
+                public static readonly string mx_gif = Url("mx.gif");
+                public static readonly string my_gif = Url("my.gif");
+                public static readonly string mz_gif = Url("mz.gif");
+                public static readonly string na_gif = Url("na.gif");
+                public static readonly string nc_gif = Url("nc.gif");
+                public static readonly string ne_gif = Url("ne.gif");
+                public static readonly string nf_gif = Url("nf.gif");
+                public static readonly string ng_gif = Url("ng.gif");
+                public static readonly string ni_gif = Url("ni.gif");
+                public static readonly string nl_gif = Url("nl.gif");
+                public static readonly string no_gif = Url("no.gif");
+                public static readonly string np_gif = Url("np.gif");
+                public static readonly string nr_gif = Url("nr.gif");
+                public static readonly string nu_gif = Url("nu.gif");
+                public static readonly string nz_gif = Url("nz.gif");
+                public static readonly string om_gif = Url("om.gif");
+                public static readonly string pa_gif = Url("pa.gif");
+                public static readonly string pe_gif = Url("pe.gif");
+                public static readonly string pf_gif = Url("pf.gif");
+                public static readonly string pg_gif = Url("pg.gif");
+                public static readonly string ph_gif = Url("ph.gif");
+                public static readonly string pk_gif = Url("pk.gif");
+                public static readonly string pl_gif = Url("pl.gif");
+                public static readonly string pm_gif = Url("pm.gif");
+                public static readonly string pn_gif = Url("pn.gif");
+                public static readonly string pr_gif = Url("pr.gif");
+                public static readonly string ps_gif = Url("ps.gif");
+                public static readonly string pt_gif = Url("pt.gif");
+                public static readonly string pw_gif = Url("pw.gif");
+                public static readonly string py_gif = Url("py.gif");
+                public static readonly string qa_gif = Url("qa.gif");
+                public static readonly string re_gif = Url("re.gif");
+                public static readonly string ro_gif = Url("ro.gif");
+                public static readonly string rs_gif = Url("rs.gif");
+                public static readonly string ru_gif = Url("ru.gif");
+                public static readonly string rw_gif = Url("rw.gif");
+                public static readonly string sa_gif = Url("sa.gif");
+                public static readonly string sb_gif = Url("sb.gif");
+                public static readonly string sc_gif = Url("sc.gif");
+                public static readonly string scotland_gif = Url("scotland.gif");
+                public static readonly string sd_gif = Url("sd.gif");
+                public static readonly string se_gif = Url("se.gif");
+                public static readonly string sg_gif = Url("sg.gif");
+                public static readonly string sh_gif = Url("sh.gif");
+                public static readonly string si_gif = Url("si.gif");
+                public static readonly string sj_gif = Url("sj.gif");
+                public static readonly string sk_gif = Url("sk.gif");
+                public static readonly string sl_gif = Url("sl.gif");
+                public static readonly string sm_gif = Url("sm.gif");
+                public static readonly string sn_gif = Url("sn.gif");
+                public static readonly string so_gif = Url("so.gif");
+                public static readonly string sr_gif = Url("sr.gif");
+                public static readonly string st_gif = Url("st.gif");
+                public static readonly string sv_gif = Url("sv.gif");
+                public static readonly string sy_gif = Url("sy.gif");
+                public static readonly string sz_gif = Url("sz.gif");
+                public static readonly string tc_gif = Url("tc.gif");
+                public static readonly string td_gif = Url("td.gif");
+                public static readonly string tf_gif = Url("tf.gif");
+                public static readonly string tg_gif = Url("tg.gif");
+                public static readonly string th_gif = Url("th.gif");
+                public static readonly string tj_gif = Url("tj.gif");
+                public static readonly string tk_gif = Url("tk.gif");
+                public static readonly string tl_gif = Url("tl.gif");
+                public static readonly string tm_gif = Url("tm.gif");
+                public static readonly string tn_gif = Url("tn.gif");
+                public static readonly string to_gif = Url("to.gif");
+                public static readonly string tr_gif = Url("tr.gif");
+                public static readonly string tt_gif = Url("tt.gif");
+                public static readonly string tv_gif = Url("tv.gif");
+                public static readonly string tw_gif = Url("tw.gif");
+                public static readonly string tz_gif = Url("tz.gif");
+                public static readonly string ua_gif = Url("ua.gif");
+                public static readonly string ug_gif = Url("ug.gif");
+                public static readonly string um_gif = Url("um.gif");
+                public static readonly string us_gif = Url("us.gif");
+                public static readonly string us_png = Url("us.png");
+                public static readonly string uy_gif = Url("uy.gif");
+                public static readonly string uz_gif = Url("uz.gif");
+                public static readonly string va_gif = Url("va.gif");
+                public static readonly string vc_gif = Url("vc.gif");
+                public static readonly string ve_gif = Url("ve.gif");
+                public static readonly string vg_gif = Url("vg.gif");
+                public static readonly string vi_gif = Url("vi.gif");
+                public static readonly string vn_gif = Url("vn.gif");
+                public static readonly string vu_gif = Url("vu.gif");
+                public static readonly string wales_gif = Url("wales.gif");
+                public static readonly string wf_gif = Url("wf.gif");
+                public static readonly string ws_gif = Url("ws.gif");
+                public static readonly string ye_gif = Url("ye.gif");
+                public static readonly string yt_gif = Url("yt.gif");
+                public static readonly string za_gif = Url("za.gif");
+                public static readonly string zm_gif = Url("zm.gif");
+                public static readonly string zw_gif = Url("zw.gif");
+            }
+        
             public static readonly string header_png = Url("header.png");
             [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
             public static class logos {
@@ -135,6 +366,8 @@ namespace EdugameCloud.MVC.Links
                 public static readonly string singleUser_png = Url("singleUser.png");
             }
         
+            public static readonly string tick_png = Url("tick.png");
+            public static readonly string warning_png = Url("warning.png");
         }
     
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -142,11 +375,21 @@ namespace EdugameCloud.MVC.Links
             private const string URLPATH = "~/Content/lti-config";
             public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-            public static readonly string Blackboard_pdf = Url("Blackboard.pdf");
+            public static readonly string blackboard_xml = Url("blackboard.xml");
             public static readonly string brainhoney_xml = Url("brainhoney.xml");
+            public static readonly string brightspace_xml = Url("brightspace.xml");
             public static readonly string canvas_xml = Url("canvas.xml");
-            public static readonly string index_html = Url("index.html");
-            public static readonly string Moodle_pdf = Url("Moodle.pdf");
+            public static readonly string moodle_xml = Url("moodle.xml");
+            public static readonly string sakai_xml = Url("sakai.xml");
+        }
+    
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public static class lti_files {
+            private const string URLPATH = "~/Content/lti-files";
+            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+            public static readonly string edugame_cloud_ws_1_1_3_jar = Url("edugame-cloud-ws-1.1.3.jar");
+            public static readonly string edugamecloud_1_0_7_zip = Url("edugamecloud_1.0.7.zip");
         }
     
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -156,8 +399,10 @@ namespace EdugameCloud.MVC.Links
             public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
             public static readonly string Blackboard_pdf = Url("Blackboard.pdf");
             public static readonly string BrainHoney_pdf = Url("BrainHoney.pdf");
+            public static readonly string Brightspace_pdf = Url("Brightspace.pdf");
             public static readonly string Canvas_pdf = Url("Canvas.pdf");
             public static readonly string Moodle_pdf = Url("Moodle.pdf");
+            public static readonly string Sakai_pdf = Url("Sakai.pdf");
         }
     
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -181,7 +426,6 @@ namespace EdugameCloud.MVC.Links
                 private const string URLPATH = "~/Content/swf/admin";
                 public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
                 public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-                public static readonly string Adm_EdugameCloud_1_0_1_7_swf = Url("Adm_EdugameCloud_1.0.1.7.swf");
                 public static readonly string appStyles_css = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/appStyles.min.css") ? Url("appStyles.min.css") : Url("appStyles.css");
                      
                 [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -207,7 +451,13 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string addSmall_png = Url("addSmall.png");
                         public static readonly string announce_png = Url("announce.png");
                         public static readonly string bird_png = Url("bird.png");
+                        public static readonly string blackboard_jpg = Url("blackboard.jpg");
+                        public static readonly string brainhoney_jpg = Url("brainhoney.jpg");
+                        public static readonly string brightspace_jpg = Url("brightspace.jpg");
+                        public static readonly string canvas_jpg = Url("canvas.jpg");
                         public static readonly string closeRed_png = Url("closeRed.png");
+                        public static readonly string collapse_png = Url("collapse.png");
+                        public static readonly string connect_png = Url("connect.png");
                         public static readonly string cross_png = Url("cross.png");
                         public static readonly string crossListIcon_png = Url("crossListIcon.png");
                         public static readonly string crosswordIcon_png = Url("crosswordIcon.png");
@@ -216,7 +466,10 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string dislike_png = Url("dislike.png");
                         public static readonly string downArrow_png = Url("downArrow.png");
                         public static readonly string downListIcon_png = Url("downListIcon.png");
+                        public static readonly string download_png = Url("download.png");
+                        public static readonly string egcIcon_png = Url("egcIcon.png");
                         public static readonly string errorBig_png = Url("errorBig.png");
+                        public static readonly string expand_png = Url("expand.png");
                         public static readonly string facebook_png = Url("facebook.png");
                         public static readonly string gearBox_png = Url("gearBox.png");
                         public static readonly string helpIcon_png = Url("helpIcon.png");
@@ -230,13 +483,16 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string iconOrder_png = Url("iconOrder.png");
                         public static readonly string iconSppedoMeter_png = Url("iconSppedoMeter.png");
                         public static readonly string iconTrueFalse_png = Url("iconTrueFalse.png");
+                        public static readonly string import_export_png = Url("import-export.png");
                         public static readonly string info_png = Url("info.png");
                         public static readonly string infoGreyIcon_png = Url("infoGreyIcon.png");
                         public static readonly string leftArrow_png = Url("leftArrow.png");
                         public static readonly string like_png = Url("like.png");
                         public static readonly string linkedin_png = Url("linkedin.png");
                         public static readonly string listIcon_png = Url("listIcon.png");
+                        public static readonly string lms_png = Url("lms.png");
                         public static readonly string logout_png = Url("logout.png");
+                        public static readonly string moodle_jpg = Url("moodle.jpg");
                         public static readonly string multiUser_png = Url("multiUser.png");
                         public static readonly string ovalIcon_png = Url("ovalIcon.png");
                         public static readonly string pencil_png = Url("pencil.png");
@@ -256,9 +512,11 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string reset_png = Url("reset.png");
                         public static readonly string review_png = Url("review.png");
                         public static readonly string rightArrow_png = Url("rightArrow.png");
+                        public static readonly string sakai_jpg = Url("sakai.jpg");
                         public static readonly string searchClear_png = Url("searchClear.png");
                         public static readonly string searchSmall_png = Url("searchSmall.png");
                         public static readonly string shared_png = Url("shared.png");
+                        public static readonly string shuffle_png = Url("shuffle.png");
                         public static readonly string singleUser_png = Url("singleUser.png");
                         public static readonly string slideShare_png = Url("slideShare.png");
                         public static readonly string smallNo_png = Url("smallNo.png");
@@ -268,6 +526,7 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string supportIcon_png = Url("supportIcon.png");
                         public static readonly string surveyIcon_png = Url("surveyIcon.png");
                         public static readonly string surveyIconSolidColor_png = Url("surveyIconSolidColor.png");
+                        public static readonly string testIconColor_png = Url("testIconColor.png");
                         public static readonly string testIconSolidColor_png = Url("testIconSolidColor.png");
                         public static readonly string textIcon_png = Url("textIcon.png");
                         public static readonly string ticMark_png = Url("ticMark.png");
@@ -302,17 +561,6 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string custom_png = Url("custom.png");
                         public static readonly string downIcon_png = Url("downIcon.png");
                         public static readonly string eSyncLogo_png = Url("eSyncLogo.png");
-                        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-                        public static class flags {
-                            private const string URLPATH = "~/Content/swf/admin/resources/images/flags";
-                            public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
-                            public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
-                            public static readonly string gb_png = Url("gb.png");
-                            public static readonly string in_png = Url("in.png");
-                            public static readonly string jp_png = Url("jp.png");
-                            public static readonly string us_png = Url("us.png");
-                        }
-                    
                         public static readonly string headeBG_png = Url("headeBG.png");
                         public static readonly string leftIcon_png = Url("leftIcon.png");
                         public static readonly string loader_swf = Url("loader.swf");
@@ -328,6 +576,7 @@ namespace EdugameCloud.MVC.Links
                             public static readonly string bing_jpg = Url("bing.jpg");
                             public static readonly string google_jpg = Url("google.jpg");
                             public static readonly string ilog_jpg = Url("ilog.jpg");
+                            public static readonly string mapQuest_jpg = Url("mapQuest.jpg");
                         }
                     
                         public static readonly string mask_png = Url("mask.png");
@@ -339,6 +588,15 @@ namespace EdugameCloud.MVC.Links
                         public static readonly string swfIcon_png = Url("swfIcon.png");
                         public static readonly string videoHelpThumb_jpg = Url("videoHelpThumb.jpg");
                         public static readonly string wordsbg_png = Url("wordsbg.png");
+                    }
+                
+                    [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+                    public static class xml {
+                        private const string URLPATH = "~/Content/swf/admin/resources/xml";
+                        public static string Url() { return T4MVCHelpers.ProcessVirtualPath(URLPATH); }
+                        public static string Url(string fileName) { return T4MVCHelpers.ProcessVirtualPath(URLPATH + "/" + fileName); }
+                        public static readonly string surveyPredefinedData_xml = Url("surveyPredefinedData.xml");
+                        public static readonly string weightBucketPreDefinedData_xml = Url("weightBucketPreDefinedData.xml");
                     }
                 
                 }
@@ -386,7 +644,7 @@ namespace EdugameCloud.MVC.Links
 }
 
 [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-public static class T4MVCHelpers {
+internal static class T4MVCHelpers {
     // You can change the ProcessVirtualPath method to modify the path that gets returned to the client.
     // e.g. you can prepend a domain, or append a query string:
     //      return "http://localhost" + path + "?foo=bar";
@@ -401,6 +659,8 @@ public static class T4MVCHelpers {
     // Calling ProcessVirtualPath through delegate to allow it to be replaced for unit testing
     public static Func<string, string> ProcessVirtualPath = ProcessVirtualPathDefault;
 
+    // Calling T4Extension.TimestampString through delegate to allow it to be replaced for unit testing and other purposes
+    public static Func<string, string> TimestampString = System.Web.Mvc.T4Extensions.TimestampString;
 
     // Logic to determine if the app is running in production or dev environment
     public static bool IsProduction() { 

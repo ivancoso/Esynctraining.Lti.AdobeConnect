@@ -61,18 +61,6 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public System.Web.Mvc.ActionResult GetFile()
-        {
-            return new T4MVC_ActionResult(Area, Name, ActionNames.GetFile);
-        }
-        [NonAction]
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public System.Web.Mvc.ActionResult Public()
-        {
-            return new T4MVC_ActionResult(Area, Name, ActionNames.Public);
-        }
-        [NonAction]
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public System.Web.Mvc.ActionResult GetGroupDiscussion()
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.GetGroupDiscussion);
@@ -101,6 +89,12 @@ namespace EdugameCloud.MVC.Controllers
         {
             return new T4MVC_ActionResult(Area, Name, ActionNames.GetTestReport);
         }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public System.Web.Mvc.ActionResult MeetingHostReport()
+        {
+            return new T4MVC_ActionResult(Area, Name, ActionNames.MeetingHostReport);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public FileController Actions { get { return EdugameCloudT4.File; } }
@@ -123,15 +117,13 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string ConvertToVCF = "toVcf";
             public readonly string GetCollaborationReport = "collaboration-report";
             public readonly string GetCrosswordsReport = "crossword-report";
-            public readonly string GetFile = "get";
-            public readonly string Public = "public";
-            public readonly string GetPublicBuild = "get-public-build";
             public readonly string GetGroupDiscussion = "get-group-discussion";
             public readonly string GetProfileVCard = "get-profile-vCard";
             public readonly string GetQuizReport = "quiz-report";
             public readonly string GetSurveyReport = "survey-report";
             public readonly string GetTestReport = "test-report";
             public readonly string ImportUsers = "import-users";
+            public readonly string MeetingHostReport = "meeting-host-report";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -143,15 +135,13 @@ namespace EdugameCloud.MVC.Controllers
             public const string ConvertToVCF = "toVcf";
             public const string GetCollaborationReport = "collaboration-report";
             public const string GetCrosswordsReport = "crossword-report";
-            public const string GetFile = "get";
-            public const string Public = "public";
-            public const string GetPublicBuild = "get-public-build";
             public const string GetGroupDiscussion = "get-group-discussion";
             public const string GetProfileVCard = "get-profile-vCard";
             public const string GetQuizReport = "quiz-report";
             public const string GetSurveyReport = "survey-report";
             public const string GetTestReport = "test-report";
             public const string ImportUsers = "import-users";
+            public const string MeetingHostReport = "meeting-host-report";
         }
 
 
@@ -198,22 +188,6 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string userId = "userId";
             public readonly string sessionId = "sessionId";
             public readonly string format = "format";
-        }
-        static readonly ActionParamsClass_GetFile s_params_GetFile = new ActionParamsClass_GetFile();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_GetFile GetFileParams { get { return s_params_GetFile; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_GetFile
-        {
-            public readonly string id = "id";
-        }
-        static readonly ActionParamsClass_Public s_params_Public = new ActionParamsClass_Public();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_Public PublicParams { get { return s_params_Public; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_Public
-        {
-            public readonly string fileName = "fileName";
         }
         static readonly ActionParamsClass_GetGroupDiscussion s_params_GetGroupDiscussion = new ActionParamsClass_GetGroupDiscussion();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -272,6 +246,15 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionParamsClass_ImportUsers
         {
             public readonly string model = "model";
+        }
+        static readonly ActionParamsClass_MeetingHostReport s_params_MeetingHostReport = new ActionParamsClass_MeetingHostReport();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_MeetingHostReport MeetingHostReportParams { get { return s_params_MeetingHostReport; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_MeetingHostReport
+        {
+            public readonly string lmsCompanyId = "lmsCompanyId";
+            public readonly string format = "format";
         }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -354,7 +337,7 @@ namespace EdugameCloud.MVC.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "format", format);
             return callInfo;
         }
-                
+
         public override System.Web.Mvc.ActionResult GetGroupDiscussion(int id)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetGroupDiscussion);
@@ -410,6 +393,14 @@ namespace EdugameCloud.MVC.Controllers
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.ImportUsers);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            return callInfo;
+        }
+
+        public override System.Web.Mvc.ActionResult MeetingHostReport(int lmsCompanyId, string format)
+        {
+            var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.MeetingHostReport);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lmsCompanyId", lmsCompanyId);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "format", format);
             return callInfo;
         }
 

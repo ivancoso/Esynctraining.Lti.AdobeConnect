@@ -18,7 +18,7 @@
     using File = EdugameCloud.Core.Domain.Entities.File;
 
     [HandleError]
-    public class BuildDeliverController : BaseController
+    public partial class BuildDeliverController : BaseController
     {
         private const string PublicFolderPath = "~/Content/swf/pub";
         private static readonly object _publicBuildZipLocker = new object();
@@ -56,7 +56,6 @@
 
         [HttpGet]
         [OutputCache(Duration = 2592000, VaryByParam = "id", NoStore = false, Location = OutputCacheLocation.Any)]
-        [ActionName("get")]
         public virtual ActionResult GetFile(string id)
         {
             File file = null;
@@ -65,7 +64,7 @@
             {
                 file = this.fileModel.GetOneByWebOrbId(webOrbId).Value;
             }
-            
+
             if (file != null)
             {
                 byte[] buffer = this.fileModel.GetData(file);
@@ -74,23 +73,22 @@
                     return this.File(buffer, file.FileName.GetContentTypeByExtension(), file.FileName);
                 }
             }
-            
+
             return new HttpStatusCodeResult(HttpStatusCode.NotFound);
         }
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("public")]
         [CustomAuthorize]
         public virtual ActionResult Public(string fileName)
         {
             var file = new FileInfo(Path.Combine(Server.MapPath(PublicFolderPath), fileName));
             if (file.Exists)
             {
-                return File(file.FullName, 
-                    file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase) 
-                        ? "application/zip" 
-                        : "application/x-shockwave-flash", 
+                return File(file.FullName,
+                    file.Extension.EndsWith("ZIP", StringComparison.OrdinalIgnoreCase)
+                        ? "application/zip"
+                        : "application/x-shockwave-flash",
                     file.Name);
             }
 
@@ -99,7 +97,6 @@
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("get-public-build")]
         [CustomAuthorize]
         public virtual ActionResult GetPublicBuild()
         {
@@ -151,7 +148,7 @@
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.Redirect("~/public/" + publicBuild);
+                    return this.RedirectToAction(EdugameCloudT4.BuildDeliver.Public(publicBuild));
                 }
             }
             catch (Exception ex)
@@ -165,7 +162,6 @@
 
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
-        [ActionName("get-mobile-build")]
         [CustomAuthorize]
         public virtual ActionResult GetMobileBuild()
         {
@@ -183,8 +179,8 @@
 
                     string physicalPath = Path.Combine(Server.MapPath(PublicFolderPath), publicBuild);
                     Company company = user.Company;
-                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise) 
-                        && (company.Theme != null) 
+                    if (company.CurrentLicense.With(x => x.LicenseStatus == CompanyLicenseStatus.Enterprise)
+                        && (company.Theme != null)
                         && System.IO.File.Exists(physicalPath))
                     {
                         // NOTE: current POD size is about 960kb
@@ -219,7 +215,7 @@
                     }
 
                     EnsureServicePathConfigExists(physicalPath);
-                    return this.Redirect("~/public/" + publicBuild);
+                    return this.RedirectToAction(EdugameCloudT4.BuildDeliver.Public(publicBuild));
                 }
             }
             catch (Exception ex)
@@ -299,7 +295,7 @@
             }
 
         }
-        
+
     }
 
 }

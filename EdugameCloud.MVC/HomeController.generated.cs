@@ -49,9 +49,9 @@ namespace EdugameCloud.MVC.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public System.Web.Mvc.ActionResult Unsubscribe()
+        public System.Web.Mvc.ActionResult Config()
         {
-            return new T4MVC_ActionResult(Area, Name, ActionNames.Unsubscribe);
+            return new T4MVC_ActionResult(Area, Name, ActionNames.Config);
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -70,26 +70,16 @@ namespace EdugameCloud.MVC.Controllers
         public class ActionNamesClass
         {
             public readonly string Admin = "Admin";
-            public readonly string Fake = "Fake";
-            public readonly string Cookies = "Cookies";
-            public readonly string LogIn = "LogIn";
             public readonly string Activate = "Activate";
-            public readonly string Unsubscribe = "Unsubscribe";
             public readonly string Config = "Config";
-            public readonly string History = "History";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Admin = "Admin";
-            public const string Fake = "Fake";
-            public const string Cookies = "Cookies";
-            public const string LogIn = "LogIn";
             public const string Activate = "Activate";
-            public const string Unsubscribe = "Unsubscribe";
             public const string Config = "Config";
-            public const string History = "History";
         }
 
 
@@ -104,28 +94,13 @@ namespace EdugameCloud.MVC.Controllers
             public readonly string __provider__ = "__provider__";
             public readonly string __sid__ = "__sid__";
             public readonly string state = "state";
-        }
-        static readonly ActionParamsClass_LogIn s_params_LogIn = new ActionParamsClass_LogIn();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_LogIn LogInParams { get { return s_params_LogIn; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_LogIn
-        {
-            public readonly string model = "model";
+            public readonly string providerKey = "providerKey";
         }
         static readonly ActionParamsClass_Activate s_params_Activate = new ActionParamsClass_Activate();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ActionParamsClass_Activate ActivateParams { get { return s_params_Activate; } }
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_Activate
-        {
-            public readonly string code = "code";
-        }
-        static readonly ActionParamsClass_Unsubscribe s_params_Unsubscribe = new ActionParamsClass_Unsubscribe();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_Unsubscribe UnsubscribeParams { get { return s_params_Unsubscribe; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_Unsubscribe
         {
             public readonly string code = "code";
         }
@@ -148,14 +123,8 @@ namespace EdugameCloud.MVC.Controllers
             public class _ViewNamesClass
             {
                 public readonly string Admin = "Admin";
-                public readonly string History = "History";
-                public readonly string LogIn = "LogIn";
-                public readonly string Unsubscribed = "Unsubscribed";
             }
             public readonly string Admin = "~/Views/Home/Admin.cshtml";
-            public readonly string History = "~/Views/Home/History.cshtml";
-            public readonly string LogIn = "~/Views/Home/LogIn.cshtml";
-            public readonly string Unsubscribed = "~/Views/Home/Unsubscribed.cshtml";
         }
     }
 
@@ -175,21 +144,21 @@ namespace EdugameCloud.MVC.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "providerKey", providerKey);
             return callInfo;
         }
-        
+
         public override System.Web.Mvc.ActionResult Activate(string code)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Activate);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "code", code);
             return callInfo;
         }
-                
+
         public override System.Web.Mvc.ActionResult Config(string referer)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.Config);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "referer", referer);
             return callInfo;
         }
-        
+
     }
 }
 

@@ -12,7 +12,7 @@ namespace EdugameCloud.Lti.Monitoring.Controllers
         private static object Lock = new object();
 
 
-        //[OutputCache(Duration = 60, Location = System.Web.UI.OutputCacheLocation.Server)]
+        [OutputCache(Duration = 60, Location = System.Web.UI.OutputCacheLocation.Server)]
         public ActionResult Index()
         {
             lock (Lock)

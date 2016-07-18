@@ -6,6 +6,11 @@ to fork the 'official' template in order to achieve what they want.
  
 */
 
+// <Custom>
+const string ViewsProject = "EdugameCloud.Web";
+const string SollutionRootFolderPath = @"d:\Freelance\eSyncTraining\EdugameCloud\branches\0.5\csharp\EdugameCloud.WCFService\";
+// </Custom>
+
 static bool AddTimestampToStaticLink(ProjectItem projectItem) {
     // By default, this just returns the static flag, but you can add additional logic to make more complex
     // decisions about which files should have the timestamp
