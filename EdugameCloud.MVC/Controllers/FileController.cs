@@ -2,6 +2,7 @@
 using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.MVC.Services;
 
 namespace EdugameCloud.MVC.Controllers
 {
@@ -30,7 +31,7 @@ namespace EdugameCloud.MVC.Controllers
     using Esynctraining.Core.Utils;
     using Microsoft.Reporting.WebForms;
     using NHibernate.Util;
-    
+
     [HandleError]
     public partial class FileController : BaseController
     {
@@ -51,6 +52,9 @@ namespace EdugameCloud.MVC.Controllers
         
         private readonly AuthenticationModel authenticationModel;
         private readonly VCFModel vcfModel;
+        private readonly IExtendedReportService reportService;
+        private readonly QuizResultModel quizResultModel;
+        private readonly TestResultModel testResultModel;
 
         #endregion
 
@@ -69,7 +73,10 @@ namespace EdugameCloud.MVC.Controllers
             LmsCompanyModel lmsCompanyModel,
             IAdobeConnectAccountService adobeAccountService, 
             LmsUserSessionModel userSessionModel,
-            ILogger logger)
+            ILogger logger,
+            IExtendedReportService reportService,
+            QuizResultModel quizResultModel,
+            TestResultModel testResultModel)
             : base(settings)
         {
             this.vcfModel = vcfModel;
@@ -84,6 +91,9 @@ namespace EdugameCloud.MVC.Controllers
             this.adobeConnectAccountService = adobeAccountService;
             this.userSessionModel = userSessionModel;
             this.logger = logger;
+            this.reportService = reportService;
+            this.quizResultModel = quizResultModel;
+            this.testResultModel = testResultModel;
         }
 
         #endregion
@@ -829,7 +839,7 @@ namespace EdugameCloud.MVC.Controllers
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("quiz-report")]
         [CustomAuthorize]
-        public virtual ActionResult GetQuizReport(int userId, int? sessionId, string format = "pdf", string type = "full")
+        public virtual ActionResult GetQuizReport(int userId, int? sessionId, string format = "pdf", string type = "full", bool detailed = false)
         {
             var cu = this.CurrentUser;
             if (cu != null)
@@ -849,9 +859,19 @@ namespace EdugameCloud.MVC.Controllers
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
 
+                if (detailed)
+                {
+                    var data = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value);
+                    var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
+                    return this.File(
+                        bytes,
+                        "application/vnd.ms-excel",
+                        string.Format("{0}.{1}", outputName, "xls"));
+                }
+
                 var sessionResults = userSessions.ToDictionary(
                     s => s,
-                    s => IoC.Resolve<QuizResultModel>().GetQuizResultByACSessionId(s.acSessionId, s.subModuleItemId));
+                    s => quizResultModel.GetQuizResultByACSessionId(s.acSessionId, s.subModuleItemId));
 
                 Func<QuizSessionFromStoredProcedureDTO, IDictionary<int, string>, object> resultConverter =
                     (s, userModes) =>
@@ -1205,7 +1225,7 @@ namespace EdugameCloud.MVC.Controllers
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("test-report")]
         [CustomAuthorize]
-        public virtual ActionResult GetTestReport(int userId, int? sessionId, string format = "pdf", string type = "full")
+        public virtual ActionResult GetTestReport(int userId, int? sessionId, string format = "pdf", string type = "full", bool detailed = false)
         {
             var cu = this.CurrentUser;
             if (cu != null)
@@ -1226,7 +1246,16 @@ namespace EdugameCloud.MVC.Controllers
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
 
-                var testResultModel = IoC.Resolve<TestResultModel>();
+                if (detailed)
+                {
+                    var data = testResultModel.GetExtendedReportQuizReportData(sessionId.Value);
+                    var bytes = new ExtendedReportService().GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
+                    return this.File(
+                        bytes,
+                        "application/vnd.ms-excel",
+                        string.Format("{0}.{1}", outputName, "xls"));
+                }
+
                 var sessionResults = userSessions.ToDictionary(
                     s => s,
                     s => testResultModel.GetTestResultByACSessionId(s.acSessionId, s.subModuleItemId));

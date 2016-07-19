@@ -162,8 +162,11 @@
     <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
     <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />
+    <Compile Include="Domain\DTO\ExtendedReportDto.cs" />
+    <Compile Include="Domain\DTO\ExtendedReportResultDto.cs" />
     <Compile Include="Domain\DTO\OperationResultDto.cs" />
     <Compile Include="Domain\DTO\AdobeConnectSessionDtoBase.cs" />
+    <Compile Include="Domain\DTO\QuestionResultDto.cs" />
     <Compile Include="Domain\DTO\UploadedFileDTO.cs" />
     <Compile Include="Domain\DTO\QuizFromStoredProcedureExDTO.cs" />
     <Compile Include="Domain\DTO\QuizPlayerFromStoredProcedureDTO.cs" />

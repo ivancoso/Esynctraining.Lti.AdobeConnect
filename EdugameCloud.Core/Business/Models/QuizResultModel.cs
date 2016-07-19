@@ -168,5 +168,39 @@
                 .TransformUsing(Transformers.RootEntity);
             return this.Repository.FindAll(query);
         }
+
+        public IEnumerable<QuizResult> GetQuizResultsByAcSessionId(int adobeConnectSessionId)
+        {
+            var query =
+                new DefaultQueryOver<QuizResult, int>().GetQueryOver().Where(x => x.ACSessionId == adobeConnectSessionId)
+                //.Fetch(x => x.Quiz).Eager
+                .Fetch(x => x.Results).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+            return this.Repository.FindAll(query);
+        }
+
+        public ExtendedReportDto GetExtendedReportQuizReportData(int acSessionId)
+        {
+            var dto = new ExtendedReportDto();
+            var qr = GetQuizResultsByAcSessionId(acSessionId);
+            dto.QuizResults = qr.Select(x => new ExtendedReportResultDto
+            {
+                Id = x.Id,
+                ParticipantName = x.ParticipantName,
+                Results = x.Results.Select(r => new QuestionResultDto
+                {
+                    IsCorrect = r.IsCorrect,
+                    QuestionId = r.QuestionId
+                }).ToList()
+            });
+
+            if (qr.Any()) //quiz must be the same for all quizResults with the same acSession
+            {
+                dto.QuizName = qr.First().Quiz.QuizName;
+                dto.Questions = qr.First().Quiz.SubModuleItem.Questions;
+            }
+
+            return dto;
+        }
     }
 }

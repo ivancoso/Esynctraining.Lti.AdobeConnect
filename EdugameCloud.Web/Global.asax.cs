@@ -13,6 +13,7 @@ using Castle.Windsor;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti;
 using EdugameCloud.MVC.ModelBinders;
+using EdugameCloud.MVC.Services;
 using EdugameCloud.Persistence;
 using EdugameCloud.Web.Providers;
 using Esynctraining.CastleLog4Net;
@@ -160,6 +161,10 @@ namespace EdugameCloud.Web
                 Component.For<IResourceProvider>()
                     .ImplementedBy<EGCResourceProvider>()
                     .Activator<ResourceProviderActivator>());
+
+            container.Register(
+                Component.For<IExtendedReportService>()
+                    .ImplementedBy<ExtendedReportService>());
         }
 
         private static void SetControllerFactory(IWindsorContainer container)

@@ -155,6 +155,17 @@ namespace EdugameCloud.Core.Business.Models
             return res;
         }
 
+
+        public IEnumerable<TestResult> GetTestResultsByAcSessionId(int adobeConnectSessionId)
+        {
+            var query =
+                new DefaultQueryOver<TestResult, int>().GetQueryOver().Where(x => x.ACSessionId == adobeConnectSessionId)
+//                .Fetch(x => x.Test).Eager
+                .Fetch(x => x.Results).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+            return this.Repository.FindAll(query);
+        }
+
         public TestResultDataDTO GetTestResultByACSessionIdAcEmail(int adobeConnectSessionId, int smiId, string adobeConnectEmail)
         {
             var test = this.testRepository.FindOne(new DefaultQueryOver<Test, int>().GetQueryOver().Where(x => x.SubModuleItem.Id == smiId).Take(1)).Value;
@@ -234,6 +245,29 @@ namespace EdugameCloud.Core.Business.Models
             return res;
         }
 
+        public ExtendedReportDto GetExtendedReportQuizReportData(int acSessionId)
+        {
+            var dto = new ExtendedReportDto();
+            var qr = GetTestResultsByAcSessionId(acSessionId);
+            dto.QuizResults = qr.Select(x => new ExtendedReportResultDto
+            {
+                Id = x.Id,
+                ParticipantName = x.ParticipantName,
+                Results = x.Results.Select(r => new QuestionResultDto
+                {
+                    IsCorrect = r.IsCorrect,
+                    QuestionId = r.QuestionId
+                }).ToList()
+            });
+
+            if (qr.Any()) //test must be the same for all quizResults with the same acSession
+            {
+                dto.QuizName = qr.First().Test.TestName;
+                dto.Questions = qr.First().Test.SubModuleItem.Questions;
+            }
+
+            return dto;
+        }
     }
 
 }

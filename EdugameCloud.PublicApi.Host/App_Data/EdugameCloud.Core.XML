@@ -10457,6 +10457,11 @@
             Gets or sets a value indicating whether is correct.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.TestQuestionResult.QuestionId">
+            <summary>
+            questionId (FK for QuestionRef)
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.TestQuestionResult.QuestionRef">
             <summary>
             Gets or sets the question.
@@ -11942,6 +11947,11 @@
             Gets or sets a value indicating whether is correct.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.QuizQuestionResult.QuestionId">
+            <summary>
+            questionId (FK for QuestionRef)
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.QuizQuestionResult.QuestionRef">
             <summary>
             Gets or sets the question.
@@ -12135,6 +12145,11 @@
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionOrder">
             <summary>
             Gets or sets the question order.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionTypeId">
+            <summary>
+            FK for QuestionType
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionType">

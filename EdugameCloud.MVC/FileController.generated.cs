@@ -353,7 +353,7 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult GetQuizReport(int userId, int? sessionId, string format, string type)
+        public override System.Web.Mvc.ActionResult GetQuizReport(int userId, int? sessionId, string format, string type, bool detailed)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetQuizReport);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "userId", userId);
@@ -373,7 +373,7 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult GetTestReport(int userId, int? sessionId, string format, string type)
+        public override System.Web.Mvc.ActionResult GetTestReport(int userId, int? sessionId, string format, string type, bool detailed)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetTestReport);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "userId", userId);

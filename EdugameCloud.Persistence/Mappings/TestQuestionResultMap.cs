@@ -16,6 +16,7 @@
         {
             this.Map(x => x.Question).Length(500).Not.Nullable();
             this.Map(x => x.IsCorrect).Not.Nullable();
+            this.Map(x => x.QuestionId).Not.Nullable();
             this.References(x => x.TestResult).Not.Nullable();
             this.References(x => x.QuestionRef).Not.Nullable();
             this.References(x => x.QuestionType).Not.Nullable();
