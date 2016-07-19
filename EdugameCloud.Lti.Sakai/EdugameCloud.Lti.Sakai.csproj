@@ -43,17 +43,21 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SakaiCommonQuestionParser.cs" />
+    <Compile Include="SakaiQuizParser.cs" />
     <Compile Include="Dto\SakaiExtendedParams.cs" />
     <Compile Include="EGCEnabledSakaiApi.cs" />
+    <Compile Include="IBlackboardQuestionParser.cs" />
     <Compile Include="ISakaiLmsApi.cs" />
     <Compile Include="LTI2Api.cs" />
     <Compile Include="SakaiQuizInfoParser.cs" />
-    <Compile Include="SakaiQuizParser.cs" />
+    <Compile Include="SakaiQuizParser2.cs" />
     <Compile Include="SakaiLmsUserParser.cs" />
     <Compile Include="SakaiSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

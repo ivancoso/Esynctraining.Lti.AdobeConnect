@@ -24,6 +24,8 @@ namespace EdugameCloud.Lti.BlackBoard
         public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
             var quizzes = this.GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
+            if (quizzes == null)
+                throw new InvalidOperationException("There was a problem establishing connection to an api");
             return quizzes.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,

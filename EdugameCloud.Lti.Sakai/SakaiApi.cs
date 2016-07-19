@@ -104,17 +104,42 @@ namespace EdugameCloud.Lti.Sakai
 
             var json = JsonConvert.SerializeObject(apiParam);
             string resp;
+            var assessmentId = 8;
+            var quizIds = new List<int>();
+            quizIds.Add(assessmentId);
             var url =
-                @"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid=test_lti&assessmentId=8&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
+                $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid=test_lti&assessmentId={assessmentId}&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
             using (var webClient = new WebClient())
             {
                 //webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
                 resp = webClient.DownloadString(url);
             }
 
-            var quizzes = JsonConvert.DeserializeObject<LmsQuizDTO[]>(resp);
+            var quizDTO = new List<LmsQuizDTO>();
 
-            var result = quizzes.Select(q => new LmsQuizInfoDTO
+            var lqd = new LmsQuizDTO()
+            {
+                course = lmsUserParameters.Course,
+                courseName = lmsUserParameters.CourseName,
+                //description = t.body.ClearName(),
+                //title = t.title.ClearName(),
+                //id = BlackboardHelper.GetBBId(t.id),
+                published = true
+            };
+            //if (quizIds != null && !quizIds.Contains(lqd.id))
+            //{
+            //    continue;
+            //}
+            //testData = egc.getAssessmentDetails(t.id, isSurvey);
+
+            if (resp != null && !resp.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(resp);
+                lqd.question_list = SakaiQuizParser.ParseQuestions(td, resp);
+            }
+            quizDTO.Add(lqd);
+
+            var result = quizDTO.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,

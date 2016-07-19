@@ -110,7 +110,7 @@ namespace EdugameCloud.Lti.Sakai
                             var xmlDoc = UploadValues(c.Url, pairs);
                             string errorMessage = string.Empty;
                             string err = string.Empty;
-                            return SakaiQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                            return SakaiQuizParser2.Parse(xmlDoc, ref errorMessage, ref err);
                         },
                         out error,
                         lmsUserParameters.LmsUser);
@@ -171,7 +171,7 @@ namespace EdugameCloud.Lti.Sakai
 
                         string errorMessage = string.Empty;
                         string err = string.Empty;
-                        var result = SakaiQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                        var result = SakaiQuizParser2.Parse(xmlDoc, ref errorMessage, ref err);
 
                         if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
                         {
