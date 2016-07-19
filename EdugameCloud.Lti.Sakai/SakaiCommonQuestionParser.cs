@@ -22,7 +22,7 @@ namespace EdugameCloud.Lti.Sakai
                 is_single = singleQuestionTypes.Any(
                     x => dto.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
                 question_name = dto.title.ClearName(),
-                //id = BlackboardHelper.GetBBId(dto.id),
+                id = int.Parse(dto.id),
                 rows = dto.rows,
                 answers = ParseAnswers(dto)
             };

@@ -97,49 +97,11 @@ namespace EdugameCloud.Lti.Sakai
 
         public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
-            var apiParam = new SakaiExtendedParams
-            {
-                LtiMessageType = "egc_get_assessment_data",
-            };
+            
 
-            var json = JsonConvert.SerializeObject(apiParam);
-            string resp;
-            var assessmentId = 8;
-            var quizIds = new List<int>();
-            quizIds.Add(assessmentId);
-            var url =
-                $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid=test_lti&assessmentId={assessmentId}&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
-            using (var webClient = new WebClient())
-            {
-                //webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                resp = webClient.DownloadString(url);
-            }
+            var quizDtos = GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
 
-            var quizDTO = new List<LmsQuizDTO>();
-
-            var lqd = new LmsQuizDTO()
-            {
-                course = lmsUserParameters.Course,
-                courseName = lmsUserParameters.CourseName,
-                //description = t.body.ClearName(),
-                //title = t.title.ClearName(),
-                //id = BlackboardHelper.GetBBId(t.id),
-                published = true
-            };
-            //if (quizIds != null && !quizIds.Contains(lqd.id))
-            //{
-            //    continue;
-            //}
-            //testData = egc.getAssessmentDetails(t.id, isSurvey);
-
-            if (resp != null && !resp.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
-            {
-                var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(resp);
-                lqd.question_list = SakaiQuizParser.ParseQuestions(td, resp);
-            }
-            quizDTO.Add(lqd);
-
-            var result = quizDTO.Select(q => new LmsQuizInfoDTO
+            var result = quizDtos.Select(q => new LmsQuizInfoDTO
             {
                 id = q.id,
                 name = q.title,
@@ -148,19 +110,94 @@ namespace EdugameCloud.Lti.Sakai
                 lastModifiedLMS = q.lastModifiedLMS,
                 isPublished = q.published
             });
-
-            error = string.Empty;
+            
             return result;
         }
 
         public IEnumerable<LmsQuizDTO> GetItemsForUser(LmsUserParameters lmsUserParameters, bool isSurvey, IEnumerable<int> quizIds, out string error)
         {
-            throw new NotImplementedException();
+            var apiParam = new SakaiExtendedParams
+            {
+                LtiMessageType = "egc_get_assessment_data",
+            };
+
+
+            var course = lmsUserParameters.CourseName;
+            var testsUrl = $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessments&sourcedid={ course }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
+
+            string testsJson;
+
+            using (var webClient = new WebClient())
+            {
+                testsJson = webClient.DownloadString(testsUrl);
+            }
+
+            SakaiSiteDto[] tests = null;
+            if (!testsJson.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
+            {
+                tests = JsonConvert.DeserializeObject<SakaiSiteDto[]>(testsJson);
+            }
+
+            if (tests == null)
+            {
+                throw new InvalidOperationException("Sakai api getting tests method failed!");
+            }
+
+            var quizDto = new List<LmsQuizDTO>();
+            foreach (var test in tests)
+            {
+                var json = JsonConvert.SerializeObject(apiParam);
+                string resp;
+                var assessmentId = test.publishedAssessmentId;
+                var quizzesIds = new List<int>();
+                quizzesIds.Add(assessmentId);
+                var url =
+                    $"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_get_assessment_data&sourcedid={ course }&assessmentId={ assessmentId }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&user_id=admin&ext_sakai_provider_eid=admin";
+                using (var webClient = new WebClient())
+                {
+                    resp = webClient.DownloadString(url);
+                }
+
+                var lqd = new LmsQuizDTO()
+                {
+                    course = lmsUserParameters.Course,
+                    courseName = lmsUserParameters.CourseName,
+                    //description = test.name,
+                    title = test.name,
+                    id = test.publishedAssessmentId,
+                    published = true
+                };
+                //if (quizIds != null && !quizIds.Contains(lqd.id))
+                //{
+                //    continue;
+                //}
+                //testData = egc.getAssessmentDetails(t.id, isSurvey);
+
+                if (!resp.StartsWith("Error", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(resp);
+                    lqd.question_list = SakaiQuizParser.ParseQuestions(td, resp);
+                }
+                quizDto.Add(lqd);
+                
+            }
+            error = string.Empty;
+            return quizDto.ToList();
+
         }
 
         public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
         {
-            throw new NotImplementedException();
+            var url =
+                $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results&contentId=4&sourcedid=test_lti&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&siteId=test_lti&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&ext_sakai_provider_eid=student&user_id=dd082be4-2755-4ba8-a9aa-48703effdde5";
+            
+            using (var webClient = new WebClient())
+            {
+                webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
+                webClient.UploadString(url, json);
+            }
+
+
         }
     }
 }
