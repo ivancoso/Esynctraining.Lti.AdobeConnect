@@ -866,7 +866,7 @@ namespace EdugameCloud.MVC.Controllers
                     return this.File(
                         bytes,
                         "application/vnd.ms-excel",
-                        string.Format("{0}.{1}", outputName, "xls"));
+                        string.Format("{0}.{1}", outputName, "xlsx"));
                 }
 
                 var sessionResults = userSessions.ToDictionary(
@@ -1253,7 +1253,7 @@ namespace EdugameCloud.MVC.Controllers
                     return this.File(
                         bytes,
                         "application/vnd.ms-excel",
-                        string.Format("{0}.{1}", outputName, "xls"));
+                        string.Format("{0}.{1}", outputName, "xlsx"));
                 }
 
                 var sessionResults = userSessions.ToDictionary(
