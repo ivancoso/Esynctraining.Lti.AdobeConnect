@@ -76,11 +76,6 @@
         /// Gets or sets the question order.
         /// </summary>
         public virtual int QuestionOrder { get; set; }
-        
-        /// <summary>
-        /// FK for QuestionType
-        /// </summary>
-        public virtual int QuestionTypeId { get; set; }
 
         /// <summary>
         /// Gets or sets the question type.

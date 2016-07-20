@@ -52,7 +52,7 @@ namespace EdugameCloud.MVC.Services
                     {
                         startUserPartColumn = StartUserColumn;
                         int answerOrder = Convert.ToInt32('a');
-                        switch ((QuestionTypeEnum)q.QuestionTypeId)
+                        switch ((QuestionTypeEnum)q.QuestionType.Id)
                         {
                             case QuestionTypeEnum.SingleMultipleChoiceText:
                                 foreach (var distractor in q.Distractors)

@@ -190,7 +190,7 @@
                 Results = x.Results.Select(r => new QuestionResultDto
                 {
                     IsCorrect = r.IsCorrect,
-                    QuestionId = r.QuestionId
+                    QuestionId = r.QuestionRef.Id
                 }).ToList()
             });
 

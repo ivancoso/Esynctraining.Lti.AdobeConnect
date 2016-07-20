@@ -15,10 +15,6 @@
         public virtual bool IsCorrect { get; set; }
 
         /// <summary>
-        /// questionId (FK for QuestionRef)
-        /// </summary>
-        public virtual int QuestionId { get; set; }
-        /// <summary>
         /// Gets or sets the question.
         /// </summary>
         public virtual Question QuestionRef { get; set; }
