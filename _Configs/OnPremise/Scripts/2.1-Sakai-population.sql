@@ -1,9 +1,10 @@
 INSERT [dbo].[LmsProvider] ([lmsProviderId], [lmsProvider], [shortName], [configurationUrl], [userGuideFileUrl]) VALUES(5, 'Sakai', 'sakai', NULL, NULL)
 
---SET IDENTITY_INSERT [dbo].[LmsQuestionType] ON
+ insert into LmsQuestionType
+  values (5, 1, 'Multiple Choice', NULL)
 
---GO
+  insert into LmsQuestionType
+  values (5, 2, 'True/False', NULL)
 
---SET IDENTITY_INSERT [dbo].[LmsQuestionType] OFF
-
---GO
+  insert into LmsQuestionType
+  values (5, 16, 'Essay', NULL)

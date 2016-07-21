@@ -651,7 +651,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Properties\PublishProfiles\test.pubxml" />
-    <None Include="Properties\PublishProfiles\Web.pubxml" />
+    <None Include="Properties\PublishProfiles\Web.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="log4net.cfg.xml">
       <SubType>Designer</SubType>
     </Content>
