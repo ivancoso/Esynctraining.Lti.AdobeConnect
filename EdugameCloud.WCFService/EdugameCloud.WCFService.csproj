@@ -276,6 +276,7 @@
     <Compile Include="Converters\MoodleResultConverter.cs" />
     <Compile Include="Converters\QuizConverter.cs" />
     <Compile Include="Converters\QuizResultConverter.cs" />
+    <Compile Include="Converters\SakaiResultConverter.cs" />
     <Compile Include="CORS\CustomHeaderMessageInspector.cs" />
     <Compile Include="CORS\EnableCrossOriginResourceSharingBehavior.cs" />
     <Compile Include="DTO\CompanyLmsOperationDTO.cs" />

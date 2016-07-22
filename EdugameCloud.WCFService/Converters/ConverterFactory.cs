@@ -12,17 +12,21 @@
         
         private readonly MoodleResultConverter moodleResultConverter;
 
+        private readonly SakaiResultConverter sakaiResultConverter;
+
         #endregion
 
         #region Constructors and Destructors
 
         public ConverterFactory(BlackboardResultConverter blackboardResultConverter, 
             CanvasResultConverter canvasResultConverter, 
-            MoodleResultConverter moodleResultConverter)
+            MoodleResultConverter moodleResultConverter,
+            SakaiResultConverter sakaiResultConverter)
         {
             this.blackboardResultConverter = blackboardResultConverter;
             this.canvasResultConverter = canvasResultConverter;
             this.moodleResultConverter = moodleResultConverter;
+            this.sakaiResultConverter = sakaiResultConverter;
         }
 
         #endregion
@@ -48,6 +52,8 @@
                     return this.moodleResultConverter;
                 case LmsProviderEnum.Blackboard:
                     return this.blackboardResultConverter;
+                case LmsProviderEnum.Sakai:
+                    return sakaiResultConverter;
             }
 
             return null;
