@@ -189,12 +189,18 @@ namespace EdugameCloud.Lti.Sakai
         public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
         {
             var url =
-                $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results&contentId=4&sourcedid=test_lti&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&siteId=test_lti&context_id=test_lti&secret=07951-BAUER-41481-CRLSHM&ext_sakai_provider_eid=student&user_id=dd082be4-2755-4ba8-a9aa-48703effdde5";
+                $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results2" +
+                $"&contentId=4&sourcedid={ lmsUserParameters.CourseName }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com&siteId=test_lti" +
+                $"&secret=07951-BAUER-41481-CRLSHM&ext_sakai_provider_eid={ lmsUserParameters.LmsUser.Username }&user_id={ lmsUserParameters.LmsUser.UserId }";
             
+            //stud = @"[\"false\", \"test\", \"2\"]"
+
+            var resultsJson = JsonConvert.SerializeObject(answers);
+
             using (var webClient = new WebClient())
             {
                 webClient.Headers[HttpRequestHeader.ContentType] = "application/json";
-                webClient.UploadString(url, json);
+                webClient.UploadString(url, resultsJson);
             }
 
 
