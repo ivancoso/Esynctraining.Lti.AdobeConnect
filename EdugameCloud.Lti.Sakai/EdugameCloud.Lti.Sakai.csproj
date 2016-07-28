@@ -49,13 +49,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlackboardMultipleChoiceParser.cs" />
+    <Compile Include="SakaiMultipleChoiceParser.cs" />
     <Compile Include="Dto\SakaiSiteDto.cs" />
     <Compile Include="SakaiCommonQuestionParser.cs" />
     <Compile Include="SakaiQuizParser.cs" />
     <Compile Include="Dto\SakaiExtendedParams.cs" />
     <Compile Include="EGCEnabledSakaiApi.cs" />
-    <Compile Include="IBlackboardQuestionParser.cs" />
+    <Compile Include="ISakaiQuestionParser.cs" />
     <Compile Include="ISakaiLmsApi.cs" />
     <Compile Include="LTI2Api.cs" />
     <Compile Include="SakaiQuizInfoParser.cs" />

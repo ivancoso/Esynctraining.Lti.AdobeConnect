@@ -8,3 +8,12 @@ INSERT [dbo].[LmsProvider] ([lmsProviderId], [lmsProvider], [shortName], [config
 
   insert into LmsQuestionType
   values (5, 16, 'Essay', NULL)
+  
+  insert into LmsQuestionType
+  values (5, 3, 'Matching', NULL)
+
+  insert into LmsQuestionType
+  values (5, 4, 'Fill in the Blank', NULL)
+
+  insert into LmsQuestionType
+  values (5, 15, 'Short Answer', NULL)

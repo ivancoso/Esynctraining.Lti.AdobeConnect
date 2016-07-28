@@ -25,8 +25,9 @@ namespace EdugameCloud.Lti.Sakai
                 //    return new BlackboardFillInTheBlanksParser();
                 //case "fill in the blank plus":
                 //    return new BlackboardFillInMultipleBlanksParser();
-                //case "multiple answer":
+
                 case "multiple choice":
+                case "multiple answer":
                     return new SakaiMultipleChoiceParser();
                 default:
                     return new SakaiCommonQuestionParser();

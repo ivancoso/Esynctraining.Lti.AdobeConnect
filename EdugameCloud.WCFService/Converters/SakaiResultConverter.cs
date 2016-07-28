@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -87,6 +88,15 @@ namespace EdugameCloud.WCFService.Converters
             SakaiApi.SendAnswers(lmsUserParameters, surveyResult.Survey.LmsSurveyId.GetValueOrDefault().ToString(), true, ret.ToArray());
         }
 
+        
+        protected string GetMultipleChoiceAnswers(Question question, QuizQuestionResultDTO answer)
+        {
+            var answers = answer.answers ?? new string[] { };
+            var distractorIds =
+                question.Distractors.Select((distractor, index) => (answers.Contains(distractor.Id.ToString(CultureInfo.InvariantCulture)) && distractor.IsCorrect.HasValue &&  distractor.IsCorrect.Value)? index : -1 ).Where(x => x != -1);
+            return string.Join(";", distractorIds);
+        }
+
         /// <summary>
         /// The process blackboard answers.
         /// </summary>
@@ -109,12 +119,12 @@ namespace EdugameCloud.WCFService.Converters
                 }
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                 {
-                    var isSingle = this.IsSingleAnswer(question);
-                    if (isSingle)
-                    {
-                        return this.GetMultipleChoiceLmsIds(question, answer).FirstOrDefault().ToString();
-                    }
-                    return this.GetMultipleChoiceAnswersString(question, answer);
+                    //var isSingle = this.IsSingleAnswer(question);
+                    //if (isSingle)
+                    //{
+                    //    return this.GetMultipleChoiceLmsIds(question, answer).FirstOrDefault().ToString();
+                    //}
+                    return this.GetMultipleChoiceAnswers(question, answer);
                 }
                 case (int)QuestionTypeEnum.RateScaleLikert:
                 {
