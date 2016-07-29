@@ -25,7 +25,8 @@
         #region Private Constants
 
         private const string ScoHome = "//sco";
-        private const string SeminarLicensesHome = "//seminar-licenses";
+        private const string SharedSeminarLicensesHome = "//seminar-licenses";
+        private const string UserSeminarLicensesHome = "//user-webinar-licenses";
 
         #endregion
 

@@ -75,7 +75,8 @@ namespace Esynctraining.AC.Provider
                 out status);
 
             return ResponseIsOk(doc, status)
-                       ? new SeminarLicensesCollectionResult(status, SeminarLicensesCollectionParser.Parse(doc.SelectSingleNode(SeminarLicensesHome)))
+                       ? new SeminarLicensesCollectionResult(status, SeminarLicensesCollectionParser.Parse(
+                           doc.SelectSingleNode(returnUserSeminars? UserSeminarLicensesHome : SharedSeminarLicensesHome)))
                        : new SeminarLicensesCollectionResult(status);
         }
     }
