@@ -525,6 +525,9 @@
                 case LmsProviderEnum.Moodle:
                     this.ProcessFillInTheBlankDistractorsMoodle(user, q, question, option);
                     break;
+                case LmsProviderEnum.Sakai:
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    break;
 
             }
         }

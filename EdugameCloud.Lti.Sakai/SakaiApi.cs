@@ -190,6 +190,10 @@ namespace EdugameCloud.Lti.Sakai
 
         public void SendAnswers(LmsUserParameters lmsUserParameters, string json, bool isSurvey, string[] answers = null)
         {
+            //var session = GetReadOnlySession(lmsProviderName);
+            //LtiParamDTO param = session.LtiSession.LtiParam;
+            //var param = SessionModel.
+            //var url =GetApiUrl(param);
             var url =
                 $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results2" +
                 $"&contentId={json }&sourcedid={ lmsUserParameters.CourseName }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com" +

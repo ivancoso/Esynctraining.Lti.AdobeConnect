@@ -21,10 +21,11 @@ namespace EdugameCloud.Lti.Sakai
         {
             switch (questionType.ToLowerInvariant())
             {
-                //case "fill in the blank":
-                //    return new BlackboardFillInTheBlanksParser();
+                case "fill in the blank":
+                    //return new SakaiFillInTheBlanksParser();
                 //case "fill in the blank plus":
-                //    return new BlackboardFillInMultipleBlanksParser();
+                    return new SakaiFillInMultipleBlanksParser();
+
 
                 case "multiple choice":
                 case "multiple answer":
