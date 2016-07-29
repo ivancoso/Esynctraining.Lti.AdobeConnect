@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
+    using Esynctraining.AdobeConnect;
     using Esynctraining.Core;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
@@ -126,7 +127,34 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public void AddUsersToMeetingHostsGroup(IAdobeConnectProxy provider, IEnumerable<string> principalIds)
         {
             if (principalIds.Any())
-                provider.AddToGroupByType(principalIds, "live-admins");
+            {
+                try
+                {
+                    provider.AddToGroupByType(principalIds, "live-admins");
+                }
+                catch (AdobeConnectException ex)
+                {
+                    if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.missing && ex.Status.InvalidField == "name")
+                    {
+                        logger.Warn("AC failed to add some users to MeetingHosts group. Trying to add them one-by-one...");
+                        foreach (string principal in principalIds)
+                        {
+                            try
+                            {
+                                provider.AddToGroupByType(principal, "live-admins");
+                            }
+                            catch (AdobeConnectException)
+                            {
+                                // TRICK: do nothing. exception was logged by IAdobeConnectProxy
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
         }
 
         public bool SetACPassword(IAdobeConnectProxy provider, LmsCompany lmsCompany, 
