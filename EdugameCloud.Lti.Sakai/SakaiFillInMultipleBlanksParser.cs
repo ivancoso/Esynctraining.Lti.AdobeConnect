@@ -17,15 +17,25 @@ namespace EdugameCloud.Lti.Sakai
 
         protected override List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
+            //var ret = new List<AnswerDTO>();
+            //int i = 0;
+            //var answersList = (JArray)q.answersList;
+            //var items = answersList.ToObject<List<FillInTheBlankAnswer>>();
+            ////foreach (var answer in items)
+            //{
+            //    var dto = ParseFillInBlankAnswer(items, "don't know", i);
+            //    ret.Add(dto);
+            //    //i++;
+            //}
+
+            //return ret;
             var ret = new List<AnswerDTO>();
             int i = 0;
-            var answersList = (JArray)q.answersList;
-            var items = answersList.ToObject<List<FillInTheBlankAnswer>>();
-            //foreach (var answer in items)
+            foreach (var answer in (JObject)q.answersList)
             {
-                var dto = ParseFillInBlankAnswer(items, "don't know", i);
+                var dto = ParseFillInBlankAnswer(answer.Value.ToObject<List<FillInTheBlankAnswer>>(), answer.Key, i);
                 ret.Add(dto);
-                //i++;
+                i++;
             }
 
             return ret;

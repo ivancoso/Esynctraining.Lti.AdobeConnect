@@ -115,19 +115,19 @@ namespace EdugameCloud.WCFService.Converters
         {
             switch (question.QuestionType.Id)
             {
-                case (int)QuestionTypeEnum.FillInTheBlank:
-                    {
-                        var obj = new JsonObject();
-                        var userAnswers = this.GetMultipleBlanksValues(question, answer);
-                        foreach (var key in userAnswers.Keys)
-                        {
-                            obj.Add(key, userAnswers[key]);
-                        }
+                //case (int)QuestionTypeEnum.FillInTheBlank:
+                //    {
+                //        var obj = new JsonObject();
+                //        var userAnswers = this.GetMultipleBlanksValues(question, answer);
+                //        foreach (var key in userAnswers.Keys)
+                //        {
+                //            obj.Add(key, userAnswers[key]);
+                //        }
 
-                        var answers = JsonConvert.SerializeObject(obj);
+                //        var answers = JsonConvert.SerializeObject(obj);
 
-                        return answers;
-                    }
+                //        return answers;
+                //    }
 
                 case (int)QuestionTypeEnum.TrueFalse:
                 {
