@@ -24,8 +24,12 @@
         {
             if (value != null)
             {
+                string str = value.ToString();
+                if (string.IsNullOrWhiteSpace(str))
+                    return null;
+
                 Guid result;
-                if (Guid.TryParse(value.ToString(), out result))
+                if (Guid.TryParse(str, out result))
                 {
                     return result;
                 }

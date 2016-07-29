@@ -53,12 +53,11 @@
         {
             if (value != null)
             {
-                var type = value.GetType();
-                if (type.IsArray)
+                if (value.GetType().IsArray)
                 {
                     return ((IEnumerable)value).Cast<object>()
-                                 .Select(x => x.ToString())
-                                 .ToArray();
+                        .Select(x => x.ToString())
+                        .ToArray();
                 }
             }
 

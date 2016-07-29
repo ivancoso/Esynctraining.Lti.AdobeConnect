@@ -14,14 +14,14 @@
         /// The custom format.
         /// </summary>
         private static readonly NumberFormatInfo CustomFormat = new NumberFormatInfo
-                                                                    {
-                                                                        NegativeSign = "-", 
-                                                                        NumberDecimalSeparator = ".", 
-                                                                        NumberGroupSeparator = ",", 
-                                                                        CurrencySymbol = "$", 
-                                                                        CurrencyDecimalSeparator = ".", 
-                                                                        CurrencyGroupSeparator = ",", 
-                                                                    };
+        {
+            NegativeSign = "-", 
+            NumberDecimalSeparator = ".", 
+            NumberGroupSeparator = ",", 
+            CurrencySymbol = "$", 
+            CurrencyDecimalSeparator = ".", 
+            CurrencyGroupSeparator = ",", 
+        };
 
         #endregion
 
