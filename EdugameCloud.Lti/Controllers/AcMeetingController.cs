@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.Security;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
+using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.DTO;
+using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
     public class AcMeetingController : BaseController
     {
         private readonly IAdobeConnectUserService acUserService;
-
+        private UsersSetup UsersSetup
+        {
+            get { return IoC.Resolve<UsersSetup>(); }
+        }
         #region Constructors and Destructors
 
         public AcMeetingController(
@@ -49,33 +57,75 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error("Operation is not enabled."));
 
                 var provider = GetAdobeConnectProvider(session.LmsCompany);
-                var result = new List<MeetingItem>();
-                MeetingItemCollectionResult foundByNameMeetings = provider.ReportMeetingsByName(searchTerm);
 
-                if (IsCurrentUserAcAdministrator(provider, session.LmsUser.PrincipalId))
-                {
-                    result.AddRange(foundByNameMeetings.Values);
-                }
-                else
-                {
-                    foreach (var meeting in foundByNameMeetings.Values)
-                    {
-                        PermissionCollectionResult prm = provider.GetScoPermissions(meeting.ScoId, session.LmsUser.PrincipalId);// CommandParams.Permissions.Filter.PermissionId.Host);
-                        if ((prm.Status.Code == StatusCodes.ok)
-                            && (prm.Values.First().PermissionId == PermissionId.host))
-                        {
-                            result.Add(meeting);
-                        }
-                    }
-                }
+                var principal = provider.GetOneByPrincipalId(session.LmsUser.PrincipalId).PrincipalInfo.Principal;
+                var userProvider = GetUserProvider(session.LmsCompany, session.LmsUser, principal, provider);
 
-                return Json(OperationResultWithData<IEnumerable<MeetingItemDto>>.Success(result.Select(MeetingItemDto.Build)));
+                var myMeetings = userProvider.ReportMyMeetings(MeetingPermissionId.host).Values
+                    .Where(x => x.MeetingName.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >=0 || x.UrlPath.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0);
+                
+                return Json(OperationResultWithData<IEnumerable<MeetingItemDto>>.Success(myMeetings.Select(MeetingItemDto.Build)));
             }
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("AcMeetingController.SearchExistingMeeting", ex);
                 return Json(OperationResult.Error(errorMessage));
             }
+        }
+
+        // copy-pasted from MeetingSetup.LoginToAC. Needs review
+        private IAdobeConnectProxy GetUserProvider(LmsCompany lmsCompany, LmsUser lmsUser,
+            Principal registeredUser, Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
+        {
+            IAdobeConnectProxy userProvider = null;
+            string breezeToken = null;
+            string generatedPassword = null;
+            if (lmsUser.AcConnectionMode == AcConnectionMode.Overwrite && string.IsNullOrEmpty(lmsUser.ACPassword))
+            {
+                if (lmsCompany.AcUsername.Equals(registeredUser.Login, StringComparison.OrdinalIgnoreCase))
+                {
+                    generatedPassword = lmsCompany.AcPassword;
+                    UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
+                }
+                else
+                {
+                    generatedPassword = Membership.GeneratePassword(8, 2);
+                    var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
+                    if (resetPasswordResult.Success)
+                    {
+                        UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
+                    }
+                }
+            }
+            var password = lmsUser.ACPassword;
+            if (!string.IsNullOrEmpty(password))
+            {
+                try //todo: GetProvider throws exceptions in case of unsuccess. Here unsuccess is possible, so need to change approach.
+                {
+                    userProvider = acAccountService.GetProvider(lmsCompany.AcServer,
+                        new UserCredentials(registeredUser.Login, password), true);
+                }
+                catch (Exception e)
+                {
+                    logger.Error($"User provider error. server={lmsCompany.AcServer}, login={registeredUser.Login}", e);
+                    if (userProvider == null && generatedPassword == null && lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
+                    {
+                        // trying to login with new generated password (in case, for example, when user changed his AC password manually)
+                        generatedPassword = Membership.GeneratePassword(8, 2);
+                        var resetPasswordResult = provider.PrincipalUpdatePassword(registeredUser.PrincipalId, generatedPassword);
+                        if (resetPasswordResult.Success)
+                        {
+                            UsersSetup.ResetUserACPassword(lmsUser, generatedPassword);
+                        }
+
+                        userProvider = acAccountService.GetProvider(lmsCompany.AcServer,
+                            new UserCredentials(registeredUser.Login, generatedPassword), true);
+                    }
+                }
+                
+            }
+
+            return userProvider;
         }
 
         private bool IsCurrentUserAcAdministrator(IAdobeConnectProxy ac, string principalId)
