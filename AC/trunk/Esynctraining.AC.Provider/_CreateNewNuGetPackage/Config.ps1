@@ -55,10 +55,10 @@ $appendConfigurationAndPlatformToNuGetPackageFileName = $false
 #------------------------------------------------
 
 # The NuGet gallery to upload to. If not provided, the DefaultPushSource in your NuGet.config file is used (typically nuget.org).
-$sourceToUploadTo = "https://nuget.esynctraining.com/nuget"
+$sourceToUploadTo = "http://192.168.10.59/nuget"
 
 # The API Key to use to upload the package to the gallery. If not provided and a system-level one does not exist for the specified Source, you will be prompted for it.
-$apiKey = ""
+$apiKey = "1a4d6ac5-2fa1-4844-a42d-b95e432f00ee"
 
 # Specify any NuGet Push options to pass to nuget.exe.
 #	e.g. $pushOptions = "-Timeout 120"
