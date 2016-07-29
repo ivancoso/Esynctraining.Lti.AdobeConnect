@@ -105,6 +105,7 @@ namespace Esynctraining.AdobeConnect
         MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0);
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
+        MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
         RecordingJobResult ScheduleRecordingJob(string recordingScoId);

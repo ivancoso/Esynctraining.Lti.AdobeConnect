@@ -574,6 +574,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportMyMeetings(startIndex, limit); });
         }
 
+        public MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportMyMeetings(permission, startIndex, limit); });
+        }
+
         public RecordingJobResult ScheduleRecordingJob(string recordingScoId)
         {
             return Execute(() => { return _provider.ScheduleRecordingJob(recordingScoId); },
