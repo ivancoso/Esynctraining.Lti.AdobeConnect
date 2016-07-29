@@ -92,9 +92,9 @@ namespace Esynctraining.AC.Provider
                 return this.TelephonyProfileInfo(updateItem.ProfileId);
             }
 
-            // notice: no '/profile' will be returned during update
-            var detailNode = doc.SelectSingleNode("profile");
-
+            // notice: no 'profile' will be returned during update!!
+            //https://helpx.adobe.com/adobe-connect/webservices/telephony-provider-update.html
+            var detailNode = doc.SelectSingleNode("results/telephony-profile");
             if (detailNode == null || detailNode.Attributes == null)
             {
                 return new TelephonyProfileInfoResult(status);

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Sco.cs" />
     <Compile Include="AdobeConnectProvider.Report.cs" />
     <Compile Include="AdobeConnectProvider.Telephony.cs" />
     <Compile Include="AdobeConnectProvider.Seminar.cs" />
