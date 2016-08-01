@@ -27,7 +27,7 @@ namespace EdugameCloud.Lti.Telephony
         }
 
 
-        public async Task<TelephonyProfile> CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
+        public TelephonyProfile CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));

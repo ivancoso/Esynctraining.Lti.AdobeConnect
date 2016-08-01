@@ -682,7 +682,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string message = string.Empty;
-            bool audioProfileProccesed = Task.Run(() => { return ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider); }).Result;
+            bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
             //bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider).ConfigureAwait(false).Result;
             if (!audioProfileProccesed)
             {
@@ -1217,7 +1217,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private async Task<bool> ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
+        private bool ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
             // NOTE: do nothing for seminars
@@ -1244,7 +1244,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
                 string profileName = acMeetingName;
-                TelephonyProfile profile = await IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfileAsync(lmsCompany, param, profileName, provider).ConfigureAwait(false);
+
+                TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfileAsync(lmsCompany, param, profileName, provider);
 
                 if (profile != null)
                 {

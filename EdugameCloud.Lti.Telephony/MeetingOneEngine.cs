@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Telephony
         }
 
 
-        public async Task<TelephonyProfile> CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
+        public TelephonyProfile CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -73,7 +73,7 @@ namespace EdugameCloud.Lti.Telephony
                 try
                 {
                     var client = new MeetingOneClient(_baseAddress, _logger);
-                    result = await client.CreateRoomAsync(access, room).ConfigureAwait(false);
+                    result = client.CreateRoom(access, room);
                 }
                 catch (Exception ex)
                 {
