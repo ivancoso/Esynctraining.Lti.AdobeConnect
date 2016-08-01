@@ -65,8 +65,8 @@
       <HintPath>..\packages\Castle.Windsor.3.3.0\lib\net45\Castle.Windsor.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.57, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.57\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+    <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.58, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.58\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.CastleLog4Net, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
@@ -118,8 +118,8 @@
       <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RazorEngine, Version=3.8.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorEngine.3.8.2\lib\net45\RazorEngine.dll</HintPath>
+    <Reference Include="RazorEngine, Version=3.9.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\packages\RazorEngine.3.9.0\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
