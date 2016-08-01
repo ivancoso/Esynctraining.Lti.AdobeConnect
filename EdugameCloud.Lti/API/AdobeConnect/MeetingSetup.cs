@@ -173,6 +173,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var result = provider.DeleteSco(meeting.GetMeetingScoId());
             if (result.Code == StatusCodes.ok)
             {
+                if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
+                {
+                    // TODO: do we need to process any error??
+                    // Skip it?
+                    var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
+                }
+
                 return OperationResult.Success();
             }
 
@@ -989,11 +996,25 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (lmsCompany.EnableMeetingReuse && !acMeetingIsStillUsed)
             {
                 if (!meeting.Reused.GetValueOrDefault() || (meeting.Reused.GetValueOrDefault() && meeting.SourceCourseMeetingId.HasValue))
+                {
                     provider.DeleteSco(meeting.GetMeetingScoId());
+                    if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
+                    {
+                        // TODO: do we need to process any error??
+                        // Skip it?
+                        var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
+                    }
+                }
             }
             else
             {
                 provider.DeleteSco(meeting.GetMeetingScoId());
+                if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
+                {
+                    // TODO: do we need to process any error??
+                    // Skip it?
+                    var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
+                }
             }
 
             return enrollments.Select(x => x.Login).ToList();
@@ -1548,10 +1569,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // TODO: profile name??
                 var profile = provider.TelephonyProfileInfo(lmsCourseMeeting.AudioProfileId);
-                ret.audioProfileName = profile.TelephonyProfile.ProfileName;
+                if (profile.TelephonyProfile != null)
+                {
+                    ret.audioProfileName = profile.TelephonyProfile.ProfileName;
 
-                if (lmsCompany.GetTelephonyOption((LmsMeetingType)lmsCourseMeeting.LmsMeetingType) == TelephonyProfileOption.GenerateNewProfile)
-                    ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
+                    if (lmsCompany.GetTelephonyOption((LmsMeetingType)lmsCourseMeeting.LmsMeetingType) == TelephonyProfileOption.GenerateNewProfile)
+                        ret.telephonyProfileFields = new TelephonyProfileHumanizer().Humanize(profile.TelephonyProfileFields);
+                }
+                else
+                {
+                    Logger.Warn($"Audio profile is in DB but not found in AC. ProfileId:{lmsCourseMeeting.AudioProfileId}. MeetingID:{lmsCourseMeeting.Id}");
+                }
             }
 
             return ret;
