@@ -65,6 +65,7 @@ namespace EdugameCloud.Lti.Telephony
                         Email = param.lis_person_contact_email_primary,
                         FirstName = param.lis_person_name_given,
                         LastName = param.lis_person_name_family,
+                        MailingAddress = param.lis_person_contact_email_primary,
                     },
                 };
 
