@@ -62,7 +62,7 @@ namespace Esynctraining.ImportExport.Excel.ImportModels
                 //{
                 //notInsertedItems = (IEnumerable<int>)dataSaver.InsertItems(batch, batchItems);
 
-                dataSaver.InsertItems(dataSaver.GetRoot(), batchItems);
+                int reallyInserted = dataSaver.InsertItems(dataSaver.GetRoot(), batchItems);
 
                 //tran.Complete();
                 //}
@@ -70,7 +70,9 @@ namespace Esynctraining.ImportExport.Excel.ImportModels
                 return new ImportResult
                 {
                     OperationResult = ImportOperationResult.CompletedSuccessfully,
-                    Message = string.Format("Successfuly imported: '{0}' records, not imported: '{1}' records.", importedCount, notImportedCount),
+                    Message = string.Format("Successfuly imported: '{0}' records, not imported: '{1}' records.", 
+                    reallyInserted, 
+                    importedCount + notImportedCount - reallyInserted),
                 };
             }
             else
