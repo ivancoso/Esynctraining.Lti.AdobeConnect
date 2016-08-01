@@ -50,6 +50,7 @@ namespace EdugameCloud.MVC.Services
                     int questionOrder = 1;
                     foreach (var q in sessionResult.Questions)
                     {
+                        List<int> correctRows = new List<int>();
                         startUserPartColumn = StartUserColumn;
                         int answerOrder = Convert.ToInt32('a');
                         switch ((QuestionTypeEnum)q.QuestionType.Id)
@@ -59,7 +60,12 @@ namespace EdugameCloud.MVC.Services
                                 {
                                     if (distractor.IsCorrect.GetValueOrDefault())
                                     {
-                                        startUserRowCorrect = endRow;
+                                        if (!correctRows.Any())
+                                        {
+                                            startUserRowCorrect = endRow;
+                                        }
+
+                                        correctRows.Add(endRow);
                                     }
 
                                     ws.Cells[endRow, 3].Value = Convert.ToString((char)answerOrder);
@@ -79,6 +85,7 @@ namespace EdugameCloud.MVC.Services
                                     startUserRowCorrect = q.Distractors[0].IsCorrect.GetValueOrDefault()
                                         ? endRow - 2
                                         : endRow - 1;
+                                    correctRows.Add(startUserRowCorrect);
                                 }
                                 break;
                             default:
@@ -91,6 +98,7 @@ namespace EdugameCloud.MVC.Services
                         if (startUserRowCorrect < startRow)
                         {
                             startUserRowCorrect = endRow - 1; //Score
+                            correctRows.Add(startUserRowCorrect);
                         }
 
                         foreach (var qr in sessionResult.QuizResults)
@@ -107,13 +115,22 @@ namespace EdugameCloud.MVC.Services
                             }
 
                             startUserPartColumn++;
+
+                            foreach (var correctRow in correctRows)
+                            {
+                                ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
+                                ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                            }
                         }
-                        ws.Cells[startUserRowCorrect, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                        ws.Cells[startUserRowCorrect, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
+
                         ws.Cells[startRow, 1, endRow - 1, 1].Merge = true;
+                        ws.Cells[startRow, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        ws.Cells[startRow, 1].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                         ws.Cells[startRow, 1].Value = questionOrder++;
                         ws.Cells[startRow, 2, endRow - 1, 2].Merge = true;
                         ws.Cells[startRow, 2].Style.WrapText = true;
+                        ws.Cells[startRow, 2].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                        ws.Cells[startRow, 2].Style.VerticalAlignment = ExcelVerticalAlignment.Center;
                         ws.Cells[startRow, 2].Value = Regex.Replace(q.QuestionName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "); //replace tags
                         startRow = endRow;
                     }
