@@ -59,6 +59,9 @@ namespace Esynctraining.AC.Provider
 
         public TelephonyProfileInfoResult TelephonyProfileInfo(string profileId)
         {
+            if (string.IsNullOrWhiteSpace(profileId))
+                throw new ArgumentException("Non-empty value expected", "profileId");
+
             // act: "telephony-profile-info"
             StatusInfo status;
 
@@ -115,6 +118,18 @@ namespace Esynctraining.AC.Provider
             }
 
             return new TelephonyProfileInfoResult(status, detail);
+        }
+
+        public StatusInfo TelephonyProfileDelete(string profileId)
+        {
+            if (string.IsNullOrWhiteSpace(profileId))
+                throw new ArgumentException("Non-empty value expected", "profileId");
+
+            // act: "telephony-profile-delete"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Telephony.ProfileDelete, string.Format(CommandParams.Telephony.ProfileId, profileId), out status);
+            return status;
         }
 
     }

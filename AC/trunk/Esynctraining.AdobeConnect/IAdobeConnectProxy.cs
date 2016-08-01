@@ -117,6 +117,8 @@ namespace Esynctraining.AdobeConnect
         TelephonyProfileInfoResult TelephonyProfileInfo(string profileId);
         TelephonyProfileInfoResult TelephonyProfileUpdate(TelephonyProfileUpdateItem updateItem, bool isUpdate);
 
+        StatusInfo TelephonyProfileDelete(string profileId);
+
 
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);

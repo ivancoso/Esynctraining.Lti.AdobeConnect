@@ -69,6 +69,8 @@
 
             public const string ProfileUpdate = "telephony-profile-update";
 
+            public const string ProfileDelete = "telephony-profile-delete";
+
         }
 
         /// <summary>
