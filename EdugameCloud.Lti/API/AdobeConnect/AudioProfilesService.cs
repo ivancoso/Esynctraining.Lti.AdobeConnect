@@ -49,6 +49,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
+            if (string.IsNullOrWhiteSpace(meetingScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(meetingScoId));
+            if (string.IsNullOrWhiteSpace(audioProfileId))
+                throw new ArgumentException("Non-empty value expected", nameof(audioProfileId));
 
             //todo: telephony-profile-info to AC provider
             var telephonyProfileListResult = provider.TelephonyProfileInfo(audioProfileId);
