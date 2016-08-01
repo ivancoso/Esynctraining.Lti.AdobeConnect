@@ -6,8 +6,6 @@
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
-    using Esynctraining.Core.Extensions;
-
     /// <summary>
     /// The user DTO.
     /// </summary>

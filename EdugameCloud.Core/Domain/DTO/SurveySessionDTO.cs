@@ -2,7 +2,6 @@
 {
     using System.Runtime.Serialization;
     using Esynctraining.Core.Extensions;
-    using Esynctraining.Core.Extensions;
 
     /// <summary>
     /// The survey session DTO.

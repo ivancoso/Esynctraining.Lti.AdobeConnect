@@ -4,8 +4,6 @@
     using EdugameCloud.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
 
-    using Esynctraining.Core.Extensions;
-
     /// <summary>
     /// The company license DTO.
     /// </summary>

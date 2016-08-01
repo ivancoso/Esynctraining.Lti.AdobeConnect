@@ -1,13 +1,8 @@
 ﻿namespace EdugameCloud.Core.Domain.DTO
 {
-    using System;
     using System.Runtime.Serialization;
-    using System.Text;
-    using System.Xml;
 
     using EdugameCloud.Core.Domain.Entities;
-    using Esynctraining.Core.Extensions;
-
     using Esynctraining.Core.Extensions;
 
     /// <summary>
