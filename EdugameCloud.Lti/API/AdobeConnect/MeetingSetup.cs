@@ -1273,7 +1273,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     var audioUpdateResult = AudioProfileService.AddAudioProfileToMeeting(scoInfo.ScoId, profile.ProfileId, provider);
                     if (audioUpdateResult.IsSuccess)
                     {
-                        meeting.AudioProfileId = meetingDTO.audioProfileId; //todo: review after testing
+                        meeting.AudioProfileId = profile.ProfileId; //todo: review after testing
                         return true;
                     }
                 }
