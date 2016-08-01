@@ -9,6 +9,7 @@ using Esynctraining.LogViewer.MvcWeb.Models;
 using Esynctraining.LogViewer.MvcWeb.Extensions;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
+using System.Data.Common;
 
 namespace Esynctraining.LogViewer.WebMvc.Controllers
 {
@@ -39,7 +40,7 @@ namespace Esynctraining.LogViewer.WebMvc.Controllers
         /// <summary>
         /// Creates a database connection that can be profiled by MiniProfiler.
         /// </summary>
-        protected ProfiledDbConnection CreateProfiledDbConnection()
+        protected DbConnection CreateProfiledDbConnection()
         {
             var connStrName = GetSelectedConnectionStringName();
             var connStrSettings = LogDatabaseConnectionStrings.Single(css => css.Name.Equals(connStrName, StringComparison.OrdinalIgnoreCase));
