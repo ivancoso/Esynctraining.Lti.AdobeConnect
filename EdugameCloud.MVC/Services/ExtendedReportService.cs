@@ -118,8 +118,8 @@ namespace EdugameCloud.MVC.Services
 
                             foreach (var correctRow in correctRows)
                             {
-                                ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
                                 ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
                             }
                         }
 
