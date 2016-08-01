@@ -11,6 +11,7 @@ namespace Esynctraining.CastleLog4Net
     {
         private static readonly Type DeclaringType = typeof(Log4netLogger);
 
+
         public Log4netLogger(ILogger logger, Log4NetFactory factory)
         {
             Logger = logger;
@@ -25,6 +26,7 @@ namespace Esynctraining.CastleLog4Net
             : this(log.Logger, factory)
         {
         }
+
 
         public bool IsDebugEnabled
         {
