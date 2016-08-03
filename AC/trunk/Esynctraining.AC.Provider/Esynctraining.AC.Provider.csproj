@@ -34,15 +34,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Internal.cs" />
     <Compile Include="AdobeConnectProvider.Sco.cs" />
     <Compile Include="AdobeConnectProvider.Report.cs" />
     <Compile Include="AdobeConnectProvider.Telephony.cs" />

@@ -1,5 +1,4 @@
-﻿using System;
-using Esynctraining.AC.Provider.Constants;
+﻿using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
@@ -9,6 +8,9 @@ namespace Esynctraining.AC.Provider
 {
     public partial class AdobeConnectProvider
     {
+        private const string SharedSeminarLicensesHome = "//seminar-licenses";
+        private const string UserSeminarLicensesHome = "//user-webinar-licenses";
+
         public ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item)
         {
             if (item == null)

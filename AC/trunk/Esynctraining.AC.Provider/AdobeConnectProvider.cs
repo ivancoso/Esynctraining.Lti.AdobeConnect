@@ -2,11 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Text;
-    using System.Web;
     using System.Xml;
     using Esynctraining.AC.Provider.Constants;
     using Esynctraining.AC.Provider.DataObjects;
@@ -19,16 +16,8 @@
     /// <summary>
     /// The adobe connect provider.
     /// </summary>
-    [AspNetHostingPermission(System.Security.Permissions.SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
     public partial class AdobeConnectProvider
     {
-        #region Private Constants
-
-        private const string SharedSeminarLicensesHome = "//seminar-licenses";
-        private const string UserSeminarLicensesHome = "//user-webinar-licenses";
-
-        #endregion
-
         #region Fields
 
         /// <summary>
@@ -43,34 +32,17 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="AdobeConnectProvider"/> class.
         /// </summary>
-        public AdobeConnectProvider()
-            : this(new ConnectionDetails
-            {
-                ServiceUrl = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringServiceUrl],
-                EventMaxParticipants = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringEventMaxParticipants].ParseIntWithDefault(AdobeConnectProviderConstants.DefaultEventMaxParticipants),
-
-                Proxy = new ProxyCredentials
-                {
-                    Url = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringProxyUrl],
-                    Domain = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringProxyDomain],
-                    Login = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringProxyLogin],
-                    Password = ConfigurationManager.AppSettings[AdobeConnectProviderConstants.ConfigStringProxyPassword]
-                }
-            })
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AdobeConnectProvider"/> class.
-        /// </summary>
         /// <param name="connectionDetails">
         /// The connection details.
         /// </param>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="ArgumentNullException">
         /// ConnectionDetails should not be null
         /// </exception>
         public AdobeConnectProvider(ConnectionDetails connectionDetails)
         {
+            if (connectionDetails == null)
+                throw new ArgumentNullException(nameof(connectionDetails));
+
             this.requestProcessor = new RequestProcessor(connectionDetails, null);
         }
 
@@ -648,7 +620,7 @@
 
             var filter = new StringBuilder(23 * principalIds.Count());
             foreach (string principalId in principalIds)
-                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, HttpUtility.UrlEncode(principalId));
+                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, UrlEncode(principalId));
 
             return this.GetPermissionsInfo(meetingId, null, filter.ToString());
         }
@@ -831,7 +803,6 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
         public ScoContentCollectionResult GetMeetingsByFolder(string folderScoId)
         {
             StatusInfo status;
@@ -960,8 +931,8 @@
             var parameters = string.Format(
                 CommandParams.PrincipalUpdatePassword,
                 principalId,
-                HttpUtility.UrlEncode(newPassword),
-                HttpUtility.UrlEncode(newPassword));
+                UrlEncode(newPassword),
+                UrlEncode(newPassword));
             this.requestProcessor.Process(Commands.Principal.UpdatePassword, parameters, out status);
 
             return new GenericResult(status);
@@ -1336,8 +1307,8 @@
                     Commands.Login,
                     string.Format(
                         CommandParams.LoginParams,
-                        HttpUtility.UrlEncode(login),
-                        HttpUtility.UrlEncode(password)),
+                        UrlEncode(login),
+                        UrlEncode(password)),
                     out status);
 
                 return ResponseIsOk(doc, status);

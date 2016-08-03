@@ -2,24 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Configuration;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using System.Text;
-    using System.Web;
     using System.Xml;
     using Esynctraining.AC.Provider.Constants;
-    using Esynctraining.AC.Provider.DataObjects;
     using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.EntityParsing;
-    using Esynctraining.AC.Provider.Extensions;
     using Esynctraining.AC.Provider.Utils;
 
     /// <summary>
     /// The adobe connect provider.
     /// </summary>
-    [AspNetHostingPermission(System.Security.Permissions.SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
     public partial class AdobeConnectProvider
     {
         #region Private Constants
@@ -138,8 +131,7 @@
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(Commands.Sco.Contents,
-                string.Format(CommandParams.ScoNameAndType, scoId, HttpUtility.UrlEncode(filterName), HttpUtility.UrlEncode(filterType)),
-                //string.Format(CommandParams.ScoId, scoId), 
+                string.Format(CommandParams.ScoNameAndType, scoId, UrlEncode(filterName), UrlEncode(filterType)),
                 out status);
 
             return ResponseIsOk(scos, status)
@@ -156,7 +148,6 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
         public ScoContentResult GetScoContent(string scoId)
         {
             StatusInfo status;
@@ -181,7 +172,6 @@
         /// <returns>
         /// The <see cref="ScoContentCollectionResult"/>.
         /// </returns>
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1303:ConstFieldNamesMustBeginWithUpperCaseLetter", Justification = "Reviewed. Suppression is OK here.")]
         public ScoContentCollectionResult GetScoExpandedContent(string scoId)
         {
             StatusInfo status;
@@ -214,7 +204,7 @@
 
             var scos = this.requestProcessor.Process(
                 Commands.Sco.ExpandedContents,
-                string.Format(CommandParams.ScoName, scoId, HttpUtility.UrlEncode(name)),
+                string.Format(CommandParams.ScoName, scoId, UrlEncode(name)),
                 out status);
 
             // ReSharper disable once InconsistentNaming
@@ -231,7 +221,7 @@
 
             var scos = this.requestProcessor.Process(
                 Commands.Sco.ExpandedContents,
-                string.Format(CommandParams.ScoNameLike, scoId, HttpUtility.UrlEncode(nameLikeCriteria)),
+                string.Format(CommandParams.ScoNameLike, scoId, UrlEncode(nameLikeCriteria)),
                 out status);
 
             // ReSharper disable once InconsistentNaming
