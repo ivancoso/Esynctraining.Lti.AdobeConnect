@@ -6,7 +6,6 @@ namespace Esynctraining.AC.Provider.Entities
     /// <summary>
     /// Event information 
     /// </summary>
-    [Serializable]
     public class EventInfo
     {
         /// <summary>
@@ -67,6 +66,8 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the duration.
         /// </summary>
         [XmlElement("duration")]
-        public TimeSpan Duration { get; set; }   
+        public TimeSpan Duration { get; set; }
+
     }
+
 }

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     public class SeminarSessionScoUpdateItem
     {
         [XmlAttribute("sco-id")]

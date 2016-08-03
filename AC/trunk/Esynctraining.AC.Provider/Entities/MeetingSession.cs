@@ -3,10 +3,6 @@
     using System;
     using System.Xml.Serialization;
 
-    /// <summary>
-    /// MeetingItem structure
-    /// </summary>
-    [Serializable]
     [XmlRoot("meeting-session")]
     public class MeetingSession
     {

@@ -6,7 +6,6 @@
     /// <summary>
     /// TransactionInfo structure
     /// </summary>
-    [Serializable]
     [XmlRoot("row")]
     public class TransactionInfo
     {

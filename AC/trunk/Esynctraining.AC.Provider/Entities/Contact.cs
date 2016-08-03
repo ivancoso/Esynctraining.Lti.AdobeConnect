@@ -1,12 +1,10 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// The contact.
     /// </summary>
-    [Serializable]
     public class Contact
     {
         /// <summary>

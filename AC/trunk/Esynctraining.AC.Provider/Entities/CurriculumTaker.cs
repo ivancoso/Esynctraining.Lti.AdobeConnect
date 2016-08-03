@@ -6,7 +6,6 @@ namespace Esynctraining.AC.Provider.Entities
     /// <summary>
     ///     Curriculum taker.
     /// </summary>
-    [Serializable]
     public class CurriculumTaker : CurriculumContent
     {
         #region Public Properties

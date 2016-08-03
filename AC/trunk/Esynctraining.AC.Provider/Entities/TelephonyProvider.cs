@@ -1,9 +1,7 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
-    [Serializable]
     [XmlRoot("provider")]
     public class TelephonyProvider
     {

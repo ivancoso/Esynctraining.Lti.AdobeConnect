@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// PermissionInfo structure
     /// </summary>
-    [Serializable]
     public class PermissionInfo
     {
         /// <summary>
@@ -50,5 +48,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("description")]
         public string Description { get; set; }
+
     }
+
 }

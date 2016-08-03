@@ -1,12 +1,10 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// UserInfo structure
     /// </summary>
-    [Serializable]
     public class UserInfo
     {
         /// <summary>

@@ -3,7 +3,6 @@ using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     public class ReportScoViewContent
     {
         /// <summary>
@@ -17,7 +16,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlAttribute("is-folder")]
         public bool IsFolder { get; set; }
-        
+
         [XmlAttribute("type")]
         public string Type { get; set; }
 
@@ -26,5 +25,7 @@ namespace Esynctraining.AC.Provider.Entities
 
         [XmlAttribute("last-viewed-date")]
         public DateTime LastViewedDate { get; set; }
+
     }
+
 }

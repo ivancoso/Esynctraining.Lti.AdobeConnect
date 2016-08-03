@@ -1,12 +1,10 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// The sco update item base.
     /// </summary>
-    [Serializable]
     public abstract class ScoUpdateItemBase
     {
         /// <summary>
@@ -79,5 +77,7 @@
 
         [XmlElement("sco-tag")]
         public string ScoTag { get; set; }
+
     }
+
 }

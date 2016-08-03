@@ -1,11 +1,3 @@
-/*
-Copyright (c) 2007-2009 Dmitry Stroganov (DmitryStroganov.info)
-Redistributions of any form must retain the above copyright notice.
- 
-Use of any commands included in this SDK is at your own risk. 
-Dmitry Stroganov cannot be held liable for any damage through the use of these commands.
-*/
-
 namespace Esynctraining.AC.Provider.Entities
 {
     using System;
@@ -14,7 +6,6 @@ namespace Esynctraining.AC.Provider.Entities
     /// <summary>
     /// MeetingItem structure
     /// </summary>
-    [Serializable]
     [XmlRoot("meeting")]
     public class MeetingItem
     {
@@ -139,5 +130,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlAttribute("permission-id")]
         public string PermissionId { get; set; }
+
     }
+
 }

@@ -3,7 +3,6 @@ using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     [XmlRoot("recording-job")]
     public class RecordingJob
     {
@@ -65,4 +64,5 @@ namespace Esynctraining.AC.Provider.Entities
         public string RecServiceIpAddress { get; set; }
 
     }
+
 }

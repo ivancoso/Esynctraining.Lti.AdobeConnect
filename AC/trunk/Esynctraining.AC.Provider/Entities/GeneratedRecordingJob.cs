@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     public class GeneratedRecordingJob : Recording
     {
         [XmlElement("job-date-created")]
@@ -14,5 +10,7 @@ namespace Esynctraining.AC.Provider.Entities
 
         [XmlElement("job-date-modified")]
         public DateTime JobDateModified { get; set; }
+
     }
+
 }

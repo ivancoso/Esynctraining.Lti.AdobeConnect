@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// One field describing the principal, account, or object.
     /// </summary>
-    [Serializable]
     public class Field
     {
         /// <summary>

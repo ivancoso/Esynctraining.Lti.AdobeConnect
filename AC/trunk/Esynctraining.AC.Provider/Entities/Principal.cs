@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// The principal.
     /// </summary>
-    [Serializable]
     [XmlRoot("principal")]
     public class Principal
     {
@@ -81,5 +79,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("email")]
         public string Email { get; set; }
+
     }
+
 }

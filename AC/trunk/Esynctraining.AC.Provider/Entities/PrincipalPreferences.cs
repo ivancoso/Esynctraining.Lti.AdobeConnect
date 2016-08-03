@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// Principal Preferences structure
     /// </summary>
-    [Serializable]
     public class PrincipalPreferences
     {
         /// <summary>
@@ -26,5 +24,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlAttribute("time-zone-id")]
         public string TimeZoneId { get; set; }
+
     }
+
 }

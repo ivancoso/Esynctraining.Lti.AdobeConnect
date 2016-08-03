@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// EventUpdateItem structure
     /// </summary>
-    [Serializable]
     [XmlRoot("event")]
     public class EventUpdateItem : ScoUpdateItemBase
     {

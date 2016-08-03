@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// PrincipalInfo structure
     /// </summary>
-    [Serializable]
     [XmlRoot("results")]
     public class PrincipalInfo
     {
@@ -33,5 +31,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("manager")]
         public Principal Manager { get; set; }
+
     }
+
 }

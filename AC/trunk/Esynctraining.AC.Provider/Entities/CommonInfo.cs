@@ -4,7 +4,6 @@ using System.Xml.Serialization;
 namespace Esynctraining.AC.Provider.Entities
 {
     //todo:should implement all common info fields
-    [Serializable]
     [XmlRoot("common")]
     public class CommonInfo
     {

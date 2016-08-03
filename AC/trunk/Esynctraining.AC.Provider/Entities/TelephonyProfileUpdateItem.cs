@@ -1,13 +1,11 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
     using Attributes;
 
     //http://help.adobe.com/en_US/connect/8.0/webservices/WSc0dcc5922abc44bd571464d2127da61dbfe-8000.html#WSc6aa55b6edbd9ad2-3230cb5d126e9100633-7ffe
     //https://helpx.adobe.com/adobe-connect/webservices/topics/using-the-telephony-xml-api.html
     //https://helpx.adobe.com/adobe-connect/webservices/telephony-profile-update.html
-    [Serializable]
     [XmlRoot("profile")]
     public class TelephonyProfileUpdateItem
     {

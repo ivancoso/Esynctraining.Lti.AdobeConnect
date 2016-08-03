@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Web;
 
 namespace Esynctraining.AC.Provider.Entities
 {
@@ -123,7 +122,7 @@ namespace Esynctraining.AC.Provider.Entities
             foreach (KeyValuePair<string, string> value in _values)
             {
                 //&field-id=x-tel-intercall-leader-pin&value=xxxxxx
-                query.AppendFormat("&field-id={0}{1}&value={2}", _fieldPrefix, value.Key, HttpUtility.UrlEncode(value.Value));
+                query.AppendFormat("&field-id={0}{1}&value={2}", _fieldPrefix, value.Key, HttpUtilsInternal.UrlEncode(value.Value));
             }
             return query.ToString();
         }

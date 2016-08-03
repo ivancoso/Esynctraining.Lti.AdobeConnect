@@ -3,7 +3,6 @@ using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     public class Recording
     {
         [XmlElement("date-created")]
@@ -77,5 +76,7 @@ namespace Esynctraining.AC.Provider.Entities
 
         [XmlElement("duration")]
         public string Duration { get; set; }
+
     }
+
 }

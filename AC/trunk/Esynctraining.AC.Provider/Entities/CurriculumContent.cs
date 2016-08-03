@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     ///     Curriculum Content.
     /// </summary>
-    [Serializable]
     public class CurriculumContent : ScoContent
     {
         #region Public Properties

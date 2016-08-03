@@ -3,10 +3,6 @@
     using System;
     using System.Xml.Serialization;
 
-    /// <summary>
-    /// SCO Info.
-    /// </summary>
-    [Serializable]
     [XmlRoot("row")]
     public class QuizResponse
     {
@@ -64,10 +60,8 @@
         [XmlElement("description")]
         public string Description { get; set; }
 
-        /// <summary>
-        /// Gets or sets the description.
-        /// </summary>
         [XmlElement("response")]
         public string Response { get; set; }
+
     }
 }

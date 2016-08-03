@@ -1,12 +1,10 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// SCO Shortcut structure.
     /// </summary>
-    [Serializable]
     public class ScoShortcut
     {
         /// <summary>
@@ -32,5 +30,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("domain-name")]
         public string DomainName { get; set; }
+
     }
+
 }

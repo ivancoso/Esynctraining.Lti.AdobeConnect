@@ -3,11 +3,9 @@ namespace Esynctraining.AC.Provider.Entities
     using System;
     using System.Xml.Serialization;
 
-
     /// <summary>
-        /// SCO Content.
-        /// </summary>
-        [Serializable]
+    /// SCO Content.
+    /// </summary>
     public class ScoContent
     {
         /// <summary>
@@ -120,5 +118,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("date-modified")]
         public DateTime DateModified { get; set; }
+
     }
+
 }

@@ -1,13 +1,11 @@
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
     /// <summary>
     /// User structure
     /// http://help.adobe.com/en_US/connect/9.0/webservices/WS5b3ccc516d4fbf351e63e3d11a171ddf77-7f2d_SP1.html
     /// </summary>
-    [Serializable]
     [XmlRoot("row")]
     public class User
     {

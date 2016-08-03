@@ -5,7 +5,6 @@ namespace Esynctraining.AC.Provider.Entities
     /// <summary>
     /// StatusInfo structure, holds status information during API calls
     /// </summary>
-    [Serializable]
     public class StatusInfo
     {
         /// <summary>
@@ -56,5 +55,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the session info.
         /// </summary>
         public string SessionInfo { get; set; }
+
     }
+
 }

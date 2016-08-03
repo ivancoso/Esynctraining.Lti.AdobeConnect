@@ -6,7 +6,6 @@ namespace Esynctraining.AC.Provider.Entities
     /// <summary>
     /// SCO Info.
     /// </summary>
-    [Serializable]
     [XmlRoot("sco")]
     public class ScoInfo
     {
@@ -140,5 +139,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("sco-tag")]
         public string ScoTag { get; set; }
+
     }
+
 }

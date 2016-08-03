@@ -3,7 +3,6 @@ using System.Xml.Serialization;
 
 namespace Esynctraining.AC.Provider.Entities
 {
-    [Serializable]
     [XmlRoot("sco")]
     public class SeminarLicenseSco
     {

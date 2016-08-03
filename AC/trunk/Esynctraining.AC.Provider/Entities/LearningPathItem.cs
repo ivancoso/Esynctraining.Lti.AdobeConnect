@@ -1,21 +1,7 @@
-// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LearningPathItem.cs" company="">
-//   
-// </copyright>
-// <summary>
-//   Curriculum Content.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
 namespace Esynctraining.AC.Provider.Entities
 {
-    using System;
     using System.Xml.Serialization;
 
-    /// <summary>
-    ///     Curriculum Content.
-    /// </summary>
-    [Serializable]
     public class LearningPathItem
     {
         #region Public Properties
