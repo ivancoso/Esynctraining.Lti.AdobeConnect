@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Web;
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
@@ -21,20 +20,14 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public PrincipalCollectionResult GetAllPrincipals()
         {
-            return this.GetGroupPrincipalUsers(null);
+            return CallPrincipalList(string.Empty);
         }
 
-        /// <summary>
-        /// Provides a list of users by email
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
         public PrincipalInfoResult GetOneByPrincipalId(string principalId)
         {
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+
             // act: "principal-info"
             StatusInfo status;
 
@@ -44,25 +37,7 @@ namespace Esynctraining.AC.Provider
                 ? new PrincipalInfoResult(status, PrincipalInfoParser.Parse(principalInfo))
                 : new PrincipalInfoResult(status);
         }
-
-        /// <summary>
-        /// Provides a list of users.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
-        public PrincipalCollectionResult GetAllPrincipal()
-        {
-            // act: "principal-list"
-            StatusInfo status;
-
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Empty, out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
-        }
-
+        
         /// <summary>
         /// Provides a list of users by email
         /// </summary>
@@ -74,17 +49,11 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public PrincipalCollectionResult GetAllByEmail(string email)
         {
-            // act: "principal-list"
-            StatusInfo status;
+            if (string.IsNullOrWhiteSpace(email))
+                throw new ArgumentException("Non-empty value expected", nameof(email));
 
-            var principals = this.requestProcessor.Process(
-                Commands.Principal.List,
-                string.Format(CommandParams.PrincipalByEmail, HttpUtility.UrlEncode(email)),
-                out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            var filter = string.Format(CommandParams.PrincipalByEmail, UrlEncode(email));
+            return CallPrincipalList(filter);
         }
 
         public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
@@ -95,27 +64,22 @@ namespace Esynctraining.AC.Provider
                 throw new ArgumentException("Emails list should have values", nameof(emails));
             if (emails.Any(string.IsNullOrWhiteSpace))
                 throw new ArgumentException("All emails should be non empty", nameof(emails));
-            // act: "principal-list"
-            StatusInfo status;
 
             var trios = new List<string>(emails.Count());
             var paramBuilder = new StringBuilder();
             foreach (string email in emails)
             {
                 paramBuilder.Length = 0;
-                paramBuilder.AppendFormat(CommandParams.PrincipalByEmail, HttpUtility.UrlEncode(email));
+                paramBuilder.AppendFormat(CommandParams.PrincipalByEmail, UrlEncode(email));
                 trios.Add(paramBuilder.ToString());
             }
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Join("&", trios), out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            var filter = string.Join("&", trios);
+            return CallPrincipalList(filter);
         }
 
         /// <summary>
-        /// Provides a list of users by email
+        /// Provides a list of users by login.
         /// </summary>
         /// <param name="login">
         /// The login.
@@ -125,17 +89,9 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public PrincipalCollectionResult GetAllByLogin(string login)
         {
-            // act: "principal-list"
-            StatusInfo status;
+            var filter = string.Format(CommandParams.PrincipalByLogin, UrlEncode(login));
 
-            var principals = this.requestProcessor.Process(
-                Commands.Principal.List,
-                string.Format(CommandParams.PrincipalByLogin, HttpUtility.UrlEncode(login)),
-                out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            return CallPrincipalList(filter);
         }
 
         public PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins)
@@ -147,49 +103,41 @@ namespace Esynctraining.AC.Provider
             if (logins.Any(string.IsNullOrWhiteSpace))
                 throw new ArgumentException("All logins should be non empty", nameof(logins));
 
-            // act: "principal-list"
-            StatusInfo status;
-
             var trios = new List<string>(logins.Count());
             var paramBuilder = new StringBuilder();
             foreach (string login in logins)
             {
                 paramBuilder.Length = 0;
-                paramBuilder.AppendFormat(CommandParams.PrincipalByLogin, HttpUtility.UrlEncode(login));
+                paramBuilder.AppendFormat(CommandParams.PrincipalByLogin, UrlEncode(login));
                 trios.Add(paramBuilder.ToString());
             }
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, string.Join("&", trios), out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            var filter = string.Join("&", trios);
+            return CallPrincipalList(filter);
         }
 
         public PrincipalCollectionResult GetAllByFieldLike(string fieldName, string searchTerm)
         {
-            // act: "principal-list"
+            if (string.IsNullOrWhiteSpace(fieldName))
+                throw new ArgumentException("Non-empty value expected", nameof(fieldName));
+
             //http://dev.connectextensions.com/api/xml?action=principal-list&filter-like-login=@esynctraining&filter-like-name=sergey
-            StatusInfo status;
 
-            var principals = this.requestProcessor.Process(
-                Commands.Principal.List,
-                string.Format(CommandParams.PrincipalByFieldLike, fieldName, HttpUtility.UrlEncode(searchTerm)),
-                out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            var filter = string.Format(CommandParams.PrincipalByFieldLike, fieldName, UrlEncode(searchTerm));
+            return CallPrincipalList(filter);
         }
 
         public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
         {
             if (principalIdsToFind == null)
                 throw new ArgumentNullException(nameof(principalIdsToFind));
+            if (!principalIdsToFind.Any())
+                throw new ArgumentException("Principal Id list should have values", nameof(principalIdsToFind));
+            if (principalIdsToFind.Any(string.IsNullOrWhiteSpace))
+                throw new ArgumentException("All principalIds should be non empty", nameof(principalIdsToFind));
 
             // act: "principal-list"
             // /api/xml?action=principal-list&filter-principal-id=AAA&filter-principal-id=BBB&filter-principal-id=CCC
-            StatusInfo status;
 
             var parameters = new List<string>(principalIdsToFind.Count());
             var paramBuilder = new StringBuilder();
@@ -200,19 +148,13 @@ namespace Esynctraining.AC.Provider
                 parameters.Add(paramBuilder.ToString());
             }
 
-            var principals = this.requestProcessor.Process(
-                Commands.Principal.List,
-                string.Join("&", parameters),
-                out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            var filter = string.Join("&", parameters);
+            return CallPrincipalList(filter);
         }
 
         /// <summary>
-        /// Gets all principals if no Group Id specified.
-        /// Otherwise gets only users of the specified Group.
+        /// Gets all group's *user* principals. 
+        /// Doesn't return groups!
         /// </summary>
         /// <param name="groupId">
         /// The group id.
@@ -222,17 +164,11 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public PrincipalCollectionResult GetGroupPrincipalUsers(string groupId)
         {
-            // act: "principal-list"
-            StatusInfo status;
+            if (string.IsNullOrWhiteSpace(groupId))
+                throw new ArgumentException("Non-empty value expected", nameof(groupId));
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List, 
-                (string.IsNullOrWhiteSpace(groupId) ? String.Empty : string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId))
-                    .AppendPagingIfNeeded(0, 20000), 
-                out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            string filter = string.Format(CommandParams.PrincipalGroupIdUsersOnly, groupId);
+            return CallPrincipalList(filter);
         }
 
         /// <summary>
@@ -254,20 +190,12 @@ namespace Esynctraining.AC.Provider
             if (string.IsNullOrWhiteSpace(principalId))
                 throw new ArgumentException("Principal ID can't be empty", nameof(principalId));
 
-            // act: "principal-list"
-            StatusInfo status;
-
-            var principals = this.requestProcessor.Process(Commands.Principal.List,
-                string.Format(CommandParams.PrincipalGroupIdPrincipalIdUsersOnly, groupId, principalId), out status);
-
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            string filter = string.Format(CommandParams.PrincipalGroupIdPrincipalIdUsersOnly, groupId, principalId);
+            return CallPrincipalList(filter);
         }
 
         /// <summary>
-        /// Gets all principals if no Group Id specified.
-        /// Otherwise gets only users of the specified Group.
+        /// Gets all group principals. Both users and groups.
         /// </summary>
         /// <param name="groupId">
         /// The group id.
@@ -277,17 +205,39 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public PrincipalCollectionResult GetGroupUsers(string groupId)
         {
+            string filter = $"&group-id={groupId}&filter-is-member=true";
+            return CallPrincipalList(filter);
+        }
+
+
+        private PrincipalCollectionResult CallPrincipalList(string filter)
+        {
+            return DoCallPrincipalList(filter, 0, 20000);
+        }
+
+        private PrincipalCollectionResult DoCallPrincipalList(string filter, int startIndex, int limit)
+        {
             // act: "principal-list"
             StatusInfo status;
 
-            var principals = this.requestProcessor.Process(Commands.Principal.List,
-                $"&group-id={groupId}&filter-is-member=true", out status);
+            var principals = this.requestProcessor.Process(Commands.Principal.List, filter.AppendPagingIfNeeded(startIndex, limit), out status);
 
-            return ResponseIsOk(principals, status)
-                ? new PrincipalCollectionResult(status, PrincipalCollectionParser.Parse(principals))
-                : new PrincipalCollectionResult(status);
+            IEnumerable<Principal> data = PrincipalCollectionParser.Parse(principals);
+            bool okResponse = ResponseIsOk(principals, status);
+
+            if (!okResponse)
+                return new PrincipalCollectionResult(status);
+
+            if (data.Count() < limit)
+                return new PrincipalCollectionResult(status, data);
+
+            PrincipalCollectionResult nextPage = DoCallPrincipalList(filter, startIndex + limit + 1, limit);
+            if (!nextPage.Success)
+                return nextPage;
+
+            return new PrincipalCollectionResult(status, data.Concat(nextPage.Values));
         }
-
+        
     }
 
 }
