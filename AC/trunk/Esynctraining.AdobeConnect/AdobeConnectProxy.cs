@@ -192,7 +192,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalCollectionResult GetAllByEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                throw new ArgumentException("email can't be empty", "email");
+                throw new ArgumentException("email can't be empty", nameof(email));
 
             return Execute(() => { return _provider.GetAllByEmail(email); },
                 email);
@@ -200,6 +200,9 @@ namespace Esynctraining.AdobeConnect
 
         public PrincipalCollectionResult GetAllByEmail(IEnumerable<string> emails)
         {
+            if (emails == null)
+                throw new ArgumentNullException(nameof(emails));
+
             return Execute(() => { return _provider.GetAllByEmail(emails); },
                 string.Join(", ", emails));
         }
@@ -213,7 +216,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalCollectionResult GetAllByLogin(string login)
         {
             if (string.IsNullOrWhiteSpace(login))
-                throw new ArgumentException("login can't be empty", "login");
+                throw new ArgumentException("login can't be empty", nameof(login));
 
             return Execute(() => { return _provider.GetAllByLogin(login); },
                 login);
@@ -221,6 +224,9 @@ namespace Esynctraining.AdobeConnect
 
         public PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins)
         {
+            if (logins == null)
+                throw new ArgumentNullException(nameof(logins));
+
             return Execute(() => { return _provider.GetAllByLogin(logins); },
                 string.Join(", ", logins));
         }
@@ -228,7 +234,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind)
         {
             if (principalIdsToFind == null)
-                throw new ArgumentNullException("principalIdsToFind");
+                throw new ArgumentNullException(nameof(principalIdsToFind));
 
             return Execute(() => { return _provider.GetAllByPrincipalIds(principalIdsToFind); },
                 string.Join(";", principalIdsToFind));
@@ -236,6 +242,9 @@ namespace Esynctraining.AdobeConnect
 
         public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
         {
+            if (string.IsNullOrWhiteSpace(meetingId))
+                throw new ArgumentException("Non-empty value expected", nameof(meetingId));
+
             return Execute(() => { return _provider.GetAllMeetingEnrollments(meetingId); },
                 meetingId);
         }
@@ -282,12 +291,7 @@ namespace Esynctraining.AdobeConnect
             //return Execute(() => { return _provider.GetMeetingPermissions(meetingId, principalIds); },
             //    meetingId, string.Join(",", principalIds));
         }
-
-        public PrincipalCollectionResult GetAllPrincipal()
-        {
-            return Execute(() => { return _provider.GetAllPrincipal(); });
-        }
-
+        
         public PrincipalCollectionResult GetAllPrincipals()
         {
             return Execute(() => { return _provider.GetAllPrincipals(); });
@@ -300,54 +304,83 @@ namespace Esynctraining.AdobeConnect
 
         public ScoContentCollectionResult GetContentsByScoId(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetContentsByScoId(scoId); },
                 scoId);
         }
 
         public ScoContentCollectionResult GetContentsByType(string type)
         {
+            if (string.IsNullOrWhiteSpace(type))
+                throw new ArgumentException("Non-empty value expected", nameof(type));
+
             return Execute(() => { return _provider.GetContentsByType(type); },
                 type);
         }
 
         public PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId)
         {
+            if (string.IsNullOrWhiteSpace(groupId))
+                throw new ArgumentException("Non-empty value expected", nameof(groupId));
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+
             return Execute(() => { return _provider.GetGroupPrincipalUsers(groupId, principalId); },
                 groupId, principalId);
         }
 
-        public Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type)
+        public PrincipalCollectionResult GetGroupsByType(string type)
         {
+            if (string.IsNullOrWhiteSpace(type))
+                throw new ArgumentException("Non-empty value expected", nameof(type));
+
             return Execute(() => { return _provider.GetGroupsByType(type); },
                 type);
         }
 
-        public Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type)
+        public PrincipalCollectionResult GetPrimaryGroupsByType(string type)
         {
+            if (string.IsNullOrWhiteSpace(type))
+                throw new ArgumentException("Non-empty value expected", nameof(type));
+
             return Execute(() => { return _provider.GetPrimaryGroupsByType(type); },
                 type);
         }
 
         public PrincipalCollectionResult GetGroupUsers(string groupId)
         {
+            if (string.IsNullOrWhiteSpace(groupId))
+                throw new ArgumentException("Non-empty value expected", nameof(groupId));
+
             return Execute(() => { return _provider.GetGroupUsers(groupId); },
                 groupId);
         }
 
         public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds, bool includeMP4recordings = false)
         {
+            if (scoIds == null)
+                throw new ArgumentNullException(nameof(scoIds));
+
             return Execute(() => { return _provider.GetMeetingRecordings(scoIds, includeMP4recordings); },
                 string.Join(";", scoIds), includeMP4recordings.ToString());
         }
 
         public PrincipalInfoResult GetOneByPrincipalId(string principalId)
         {
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+
             return Execute(() => { return _provider.GetOneByPrincipalId(principalId); },
                 principalId);
         }
 
         public RecordingCollectionResult GetRecordingsList(string folderId)
         {
+            if (string.IsNullOrWhiteSpace(folderId))
+                throw new ArgumentException("Non-empty value expected", nameof(folderId));
+
             return Execute(() => { return _provider.GetRecordingsList(folderId); },
                 folderId);
         }
@@ -365,29 +398,44 @@ namespace Esynctraining.AdobeConnect
 
         public ScoContentResult GetScoContent(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetScoContent(scoId); },
                 scoId);
         }
         public ScoContentCollectionResult GetScoExpandedContent(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetScoExpandedContent(scoId); },
                 scoId);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetScoExpandedContentByName(scoId, name); },
                 scoId, name);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetScoExpandedContentByNameLike(scoId, nameLikeCriteria); },
                 scoId, nameLikeCriteria);
         }
 
         public ScoInfoResult GetScoInfo(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             ScoInfoResult result;
             try
             {
@@ -415,12 +463,33 @@ namespace Esynctraining.AdobeConnect
 
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.GetScoPublicAccessPermissions(scoId); },
                 scoId);
         }
 
+        /// <summary>
+        /// Returns permissions for SCO (SCOs other than meetings or courses, e.g. files\folders)
+        /// Returns only records with view\publish\manage\denied permissions.
+        /// </summary>
+        public PermissionCollectionResult GetScoPermissions(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            return Execute(() => { return _provider.GetScoPermissions(scoId); },
+                    scoId);
+        }
+
         public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+
             return Execute(() => { return _provider.GetScoPermissions(scoId, principalId); },
                     scoId, principalId, true);
         }

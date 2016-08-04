@@ -31,7 +31,6 @@ namespace Esynctraining.AdobeConnect
 
         PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         //ScoContentCollectionResult GetAllMeetings();
-        PrincipalCollectionResult GetAllPrincipal();
         PrincipalCollectionResult GetAllPrincipals();
         CommonInfoResult GetCommonInfo();
         //byte[] GetContent(string scoId, out string error, string format = "zip");
@@ -44,8 +43,8 @@ namespace Esynctraining.AdobeConnect
         //PrincipalResult GetGroupByName(string groupName);
         // PrincipalCollectionResult GetGroupPrincipalUsers(string groupId);
         PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId);
-        Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type);
-        Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type);
+        PrincipalCollectionResult GetGroupsByType(string type);
+        PrincipalCollectionResult GetPrimaryGroupsByType(string type);
         PrincipalCollectionResult GetGroupUsers(string groupId);
         //PermissionCollectionResult GetMeetingHosts(string meetingId);
         //PermissionCollectionResult GetMeetingParticipants(string meetingId);
@@ -71,6 +70,13 @@ namespace Esynctraining.AdobeConnect
 
         ScoInfoResult GetScoInfo(string scoId);
         PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
+
+        /// <summary>
+        /// Returns permissions for SCO (SCOs other than meetings or courses, e.g. files\folders)
+        /// Returns only records with view\publish\manage\denied permissions.
+        /// </summary>
+        PermissionCollectionResult GetScoPermissions(string scoId);
+
         PermissionCollectionResult GetScoPermissions(string scoId, string principalId);
 
         IEnumerable<ScoShortcut> GetShortcuts();
