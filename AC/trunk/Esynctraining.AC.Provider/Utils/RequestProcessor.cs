@@ -14,19 +14,16 @@
     using Esynctraining.AC.Provider.Extensions;
 
     /// <summary>
-    ///     The request processor.
+    /// The request processor.
     /// </summary>
     internal class RequestProcessor
     {
         #region Fields
 
-        /// <summary>
-        ///     The _connection details.
-        /// </summary>
         private readonly ConnectionDetails connectionDetails;
 
         /// <summary>
-        ///     The session cookie.
+        /// The session cookie.
         /// </summary>
         protected Cookie sessionCookie;
 
@@ -40,18 +37,13 @@
         /// <param name="details">
         /// The details.
         /// </param>
-        /// <param name="sessionId">
-        /// The session id.
-        /// </param>
-        public RequestProcessor(ConnectionDetails details, string sessionId)
+        public RequestProcessor(ConnectionDetails details)
         {
-            if (details == null || string.IsNullOrWhiteSpace(details.ServiceUrl))
-            {
-                throw new ArgumentException("ConnectionDetails was not properly initialized", "details");
-            }
+            if (connectionDetails == null)
+                throw new ArgumentNullException(nameof(connectionDetails));
 
             this.connectionDetails = details;
-            this.SetSessionId(sessionId);
+            this.SetSessionId(null);
         }
 
         #endregion
@@ -156,7 +148,7 @@
         {
             error = null;            
             var request = WebRequest.Create(url) as HttpWebRequest;
-            request = this.ProcessRequest(request);
+            request = ProcessRequest(request);
             if (request != null)
             {
                 HttpWebResponse webResponse = null;
@@ -337,7 +329,7 @@
 
                 using (Stream requestStream = webRequest.GetRequestStream())
                 {
-                    this.WriteMultipartForm(
+                    WriteMultipartForm(
                         requestStream, 
                         boundary, 
                         new Dictionary<string, string>(), 
@@ -535,14 +527,9 @@
         /// </returns>
         private HttpWebRequest ProcessRequest(HttpWebRequest request)
         {
-            if (request == null)
-            {
-                return null;
-            }
-
             try
             {
-                if (this.connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
+                if (connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
                 {
                     if (!string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Login)
                         && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
@@ -594,7 +581,7 @@
         /// <param name="fileData">
         /// The file Data.
         /// </param>
-        private void WriteMultipartForm(
+        private static void WriteMultipartForm(
             Stream s, 
             string boundary, 
             Dictionary<string, string> data, 
@@ -625,14 +612,14 @@
                     //// if we need to drop a CRLF, do that.
                     if (needsCRLF)
                     {
-                        this.WriteToStream(s, "\r\n");
+                        WriteToStream(s, "\r\n");
                     }
 
                     //// Write the boundary.
-                    this.WriteToStream(s, boundarybytes);
+                    WriteToStream(s, boundarybytes);
 
                     //// Write the key.
-                    this.WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
+                    WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
                     needsCRLF = true;
                 }
             }
@@ -640,15 +627,15 @@
             //// If we don't have keys, we don't need a crlf.
             if (needsCRLF)
             {
-                this.WriteToStream(s, "\r\n");
+                WriteToStream(s, "\r\n");
             }
 
-            this.WriteToStream(s, boundarybytes);
-            this.WriteToStream(s, string.Format(fileheaderTemplate, "file", fileName, fileContentType));
+            WriteToStream(s, boundarybytes);
+            WriteToStream(s, string.Format(fileheaderTemplate, "file", fileName, fileContentType));
 
             //// Write the file data to the stream.
-            this.WriteToStream(s, fileData);
-            this.WriteToStream(s, trailer);
+            WriteToStream(s, fileData);
+            WriteToStream(s, trailer);
         }
 
         /// <summary>
@@ -660,7 +647,7 @@
         /// <param name="txt">
         /// The text.
         /// </param>
-        private void WriteToStream(Stream s, string txt)
+        private static void WriteToStream(Stream s, string txt)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(txt);
             s.Write(bytes, 0, bytes.Length);
@@ -675,11 +662,13 @@
         /// <param name="bytes">
         /// The bytes.
         /// </param>
-        private void WriteToStream(Stream s, byte[] bytes)
+        private static void WriteToStream(Stream s, byte[] bytes)
         {
             s.Write(bytes, 0, bytes.Length);
         }
 
         #endregion
+
     }
+
 }

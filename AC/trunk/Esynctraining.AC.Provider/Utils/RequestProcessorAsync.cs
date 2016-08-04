@@ -13,7 +13,7 @@
 
     internal class RequestProcessorAsync : RequestProcessor
     {
-        public RequestProcessorAsync(ConnectionDetails details, string sessionId) : base(details, sessionId)
+        public RequestProcessorAsync(ConnectionDetails details) : base(details)
         {
         }
         

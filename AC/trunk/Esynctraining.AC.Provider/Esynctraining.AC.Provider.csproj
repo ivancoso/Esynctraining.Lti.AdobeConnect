@@ -39,7 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.Meeting.cs" />
+    <Compile Include="AdobeConnectProvider.Content.cs" />
     <Compile Include="AdobeConnectProvider.Internal.cs" />
+    <Compile Include="AdobeConnectProvider.Group.cs" />
     <Compile Include="AdobeConnectProvider.Sco.cs" />
     <Compile Include="AdobeConnectProvider.Report.cs" />
     <Compile Include="AdobeConnectProvider.Telephony.cs" />

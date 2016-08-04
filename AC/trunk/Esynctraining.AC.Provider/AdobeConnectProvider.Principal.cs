@@ -7,6 +7,7 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.EntityParsing;
 using Esynctraining.AC.Provider.Extensions;
+using Esynctraining.AC.Provider.Utils;
 
 namespace Esynctraining.AC.Provider
 {
@@ -207,6 +208,68 @@ namespace Esynctraining.AC.Provider
         {
             string filter = $"&group-id={groupId}&filter-is-member=true";
             return CallPrincipalList(filter);
+        }
+
+
+        /// <summary>
+        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
+        /// updated in the same account as the user making the call.
+        /// </summary>
+        /// <param name="principalSetup">The principal setup.</param>
+        /// <returns>Status Info.</returns>
+        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation = false)
+        {
+            // action=principal-update
+            var commandParams = QueryStringBuilder.EntityToQueryString(principalSetup, isUpdateOperation);
+
+            StatusInfo status;
+            var doc = requestProcessor.Process(Commands.Principal.Update, commandParams, out status);
+
+            return new PrincipalResult(status, PrincipalParser.Parse(doc));
+        }
+
+        /// <summary>
+        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
+        /// updated in the same account as the user making the call.
+        /// </summary>
+        /// <param name="principalId">
+        /// The principal Id.
+        /// </param>
+        /// <param name="newPassword">
+        /// The new Password.
+        /// </param>
+        /// <returns>
+        /// Status Info.
+        /// </returns>
+        public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
+        {
+            StatusInfo status;
+            var parameters = string.Format(
+                CommandParams.PrincipalUpdatePassword,
+                principalId,
+                UrlEncode(newPassword),
+                UrlEncode(newPassword));
+            requestProcessor.Process(Commands.Principal.UpdatePassword, parameters, out status);
+
+            return new GenericResult(status);
+        }
+
+        /// <summary>
+        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
+        /// updated in the same account as the user making the call.
+        /// </summary>
+        /// <param name="principalDelete">The principal setup.</param>
+        /// <returns>Status Info.</returns>
+        public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)
+        {
+            // action=principal-update
+            var commandParams = QueryStringBuilder.EntityToQueryString(principalDelete);
+
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.Principal.Delete, commandParams, out status);
+
+            return new PrincipalResult(status, PrincipalParser.Parse(doc));
         }
 
 

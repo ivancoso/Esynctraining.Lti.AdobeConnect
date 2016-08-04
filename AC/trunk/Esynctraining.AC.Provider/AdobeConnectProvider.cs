@@ -18,14 +18,7 @@
     /// </summary>
     public partial class AdobeConnectProvider
     {
-        #region Fields
-
-        /// <summary>
-        /// The request processor
-        /// </summary>
         private readonly RequestProcessor requestProcessor;
-
-        #endregion
 
         #region Constructors
 
@@ -43,7 +36,7 @@
             if (connectionDetails == null)
                 throw new ArgumentNullException(nameof(connectionDetails));
 
-            this.requestProcessor = new RequestProcessor(connectionDetails, null);
+            requestProcessor = new RequestProcessor(connectionDetails);
         }
 
         #endregion
@@ -113,49 +106,7 @@
 
             this.requestProcessor.Process(Commands.Logout, null, out status);
         }
-
-        ///// <summary>
-        ///// Gets user info.
-        ///// </summary>
-        ///// <returns>
-        ///// The <see cref="UserInfo"/>.
-        ///// </returns>
-        //public UserInfo GetUserInfo()
-        //{
-        //    StatusInfo status;
-
-        //    return this.GetUserInfo(out status);
-        //}
-
-        ///// <summary>
-        ///// Returns information about currently logged in user
-        ///// </summary>
-        ///// <param name="status">The status.</param>
-        ///// <returns>
-        /////   <see cref="UserInfo"/>
-        ///// </returns>
-        //public UserInfo GetUserInfo(out StatusInfo status)
-        //{
-        //    // action=common-info
-        //    var doc = this.requestProcessor.Process(Commands.CommonInfo, null, out status);
-
-        //    if (!ResponseIsOk(doc, status))
-        //    {
-        //        return null;
-        //    }
-
-        //    try
-        //    {
-        //        return UserInfoParser.Parse(doc);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TraceTool.TraceException(ex);
-        //    }
-
-        //    return null;
-        //}
-
+        
         #endregion
 
         #region Read
@@ -420,87 +371,7 @@
             this.requestProcessor.Process(Commands.Curriculum.LearningPathUpdate, string.Format(CommandParams.LearningPathUpdate, u.CurriculumId, u.CurrentScoId, u.TargetScoId, u.PathType), out status);
             return new GenericResult(status);
         }
-
-        /// <summary>
-        /// The get contents by SCO id.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <param name="format">
-        /// The format.
-        /// </param>
-        /// <returns>
-        /// The <see cref="byte"/>.
-        /// </returns>
-        public byte[] GetContent(string scoId, out string error, string format = "zip")
-        {
-            var res = this.GetScoInfo(scoId);
-            if (res.Success && res.ScoInfo != null && !string.IsNullOrEmpty(res.ScoInfo.UrlPath))
-            {
-                return this.GetContentByUrlPath(res.ScoInfo.UrlPath, format, out error);
-            }
-
-            error = res.Status == null
-                        ? "Result is null"
-                        : (string.IsNullOrWhiteSpace(res.Status.InnerXml)
-                               ? res.Status.UnderlyingExceptionInfo.ToString()
-                               : res.Status.InnerXml);
-            return null;
-        }
-
-        /// <summary>
-        /// The get content by url path.
-        /// </summary>
-        /// <param name="urlPath">
-        /// The url path.
-        /// </param>
-        /// <param name="format">
-        /// The format.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="byte"/>.
-        /// </returns>
-        public byte[] GetContentByUrlPath(string urlPath, string format, out string error)
-        {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadData(downloadName, format, out error);
-        }
-
-        public byte[] GetContentByUrlPath2(string urlPath, string fileName, out string error)
-        {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadData2(downloadName, fileName, out error);
-        }
-
-        public byte[] GetSourceContentByUrlPath(string urlPath, string fileName, out string error)
-        {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadSourceData(downloadName, fileName, out error);
-        }
-
-        /// <summary>
-        /// Uploads contents by SCO id.
-        /// </summary>
-        /// <param name="uploadScoInfo">
-        /// The upload SCO Info.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
-        {
-            StatusInfo status;
-            this.requestProcessor.ProcessUpload(Commands.Sco.Upload, string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, uploadScoInfo.summary, uploadScoInfo.title), uploadScoInfo, out status);
-            return status;
-        }
-
+        
         /// <summary>
         /// The get Curriculum contents by SCO id.
         /// </summary>
@@ -556,262 +427,12 @@
         }
 
         /// <summary>
-        /// The get meeting hosts.
+        /// Returns permissions for SCO (SCOs other than meetings or courses, e.g. files\folders)
+        /// Returns only records with view\publish\manage\denied permissions.
         /// </summary>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetMeetingHosts(string meetingId)
+        public PermissionCollectionResult GetScoPermissions(string scoId)
         {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.Host);
-        }
-
-        /// <summary>
-        /// The get meeting presenters.
-        /// </summary>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetMeetingPresenters(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.MiniHost);
-        }
-
-        /// <summary>
-        /// The get meeting participants.
-        /// </summary>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetMeetingParticipants(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.View);
-        }
-
-        /// <summary>
-        /// The get meeting participants.
-        /// </summary>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.All);
-        }
-
-        public PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds)
-        {
-            if (string.IsNullOrWhiteSpace(meetingId))
-                throw new ArgumentException("Meeting SCO can't be empty", "meetingId");
-            if (principalIds == null)
-                throw new ArgumentNullException("principalIds");
-
-            var filter = new StringBuilder(23 * principalIds.Count());
-            foreach (string principalId in principalIds)
-                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, UrlEncode(principalId));
-
-            return this.GetPermissionsInfo(meetingId, null, filter.ToString());
-        }
-
-        /// <summary>
-        /// Gets Group by name.
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <param name="typeName">
-        /// The type Name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
-        public StatusInfo AddToGroupByType(string principalId, string typeName)
-        {
-            var groups = this.GetGroupsByType(typeName);
-            var group = groups.Item2.FirstOrDefault();
-            return group != null ? this.AddToGroup(principalId, group.PrincipalId) : groups.Item1;
-        }
-
-        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
-        {
-            var groups = this.GetGroupsByType(typeName);
-            var group = groups.Item2.FirstOrDefault();
-            return group != null ? this.AddToGroup(principalIds, group.PrincipalId) : groups.Item1;
-        }
-
-        /// <summary>
-        /// Gets Group by name.
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <param name="typeName">
-        /// The type Name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
-        public bool RemoveFromGroupByType(string principalId, string typeName)
-        {
-            var group = this.GetGroupsByType(typeName).Item2.FirstOrDefault();
-            if (group != null)
-            {
-                return ResponseIsOk(this.RemoveFromGroup(principalId, group.PrincipalId));
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// The add to group.
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <param name="groupId">
-        /// The group id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="StatusInfo"/>.
-        /// </returns>
-        public StatusInfo AddToGroup(string principalId, string groupId)
-        {
-            StatusInfo status;
-
-            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "true"), out status);
-
-            return status;
-        }
-
-        public StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId)
-        {
-            StatusInfo status;
-
-            var trios = new List<string>(principalIds.Count());
-            var paramBuilder = new StringBuilder();
-            foreach (string principalId in principalIds)
-            {
-                paramBuilder.Length = 0;
-                paramBuilder.AppendFormat(CommandParams.GroupMembership, groupId, principalId, "true");
-                trios.Add(paramBuilder.ToString());
-            }
-
-            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Join("&", trios), out status);
-            return status;
-        }
-
-        /// <summary>
-        /// The remove from group.
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <param name="groupId">
-        /// The group id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="StatusInfo"/>.
-        /// </returns>
-        public StatusInfo RemoveFromGroup(string principalId, string groupId)
-        {
-            StatusInfo status;
-
-            this.requestProcessor.Process(Commands.Principal.GroupMembershipUpdate, string.Format(CommandParams.GroupMembership, groupId, principalId, "false"), out status);
-
-            return status;
-        }
-
-        /// <summary>
-        /// Gets Group by name.
-        /// </summary>
-        /// <param name="groupName">
-        /// The group id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
-        public PrincipalResult GetGroupByName(string groupName)
-        {
-            var groupsResult = this.GetGroupsByType("group");
-            var status = groupsResult.Item1;
-            var groups = groupsResult.Item2;
-            var group = groups.FirstOrDefault(
-                g => g.Name.Equals(groupName, StringComparison.InvariantCultureIgnoreCase));
-            if (null != group)
-            {
-                return new PrincipalResult(status, group);
-            }
-
-            return new PrincipalResult(status);
-        }
-
-        /// <summary>
-        /// Gets Group by name.
-        /// </summary>
-        /// <param name="type">
-        /// The group type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PrincipalCollectionResult"/>.
-        /// </returns>
-        public Tuple<StatusInfo, IEnumerable<Principal>> GetGroupsByType(string type)
-        {
-            // act: "principal-list"
-            StatusInfo status;
-
-            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-type=" + type, out status);
-            if (ResponseIsOk(principals, status))
-            {
-                return new Tuple<StatusInfo, IEnumerable<Principal>>(status, PrincipalCollectionParser.Parse(principals));
-            }
-
-            return new Tuple<StatusInfo, IEnumerable<Principal>>(status, new List<Principal>());
-        }
-
-        public Tuple<StatusInfo, IEnumerable<Principal>> GetPrimaryGroupsByType(string type)
-        {
-            // act: "principal-list"
-            StatusInfo status;
-
-            var principals = this.requestProcessor.Process(Commands.Principal.List, "&filter-is-primary=true&filter-type=" + type, out status);
-            if (ResponseIsOk(principals, status))
-            {
-                return new Tuple<StatusInfo, IEnumerable<Principal>>(status, PrincipalCollectionParser.Parse(principals));
-            }
-
-            return new Tuple<StatusInfo, IEnumerable<Principal>>(status, new List<Principal>());
-        }
-        
-        /// <summary>
-        /// The get meetings by SCO id.
-        /// </summary>
-        /// <param name="folderScoId">
-        /// The folder SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult GetMeetingsByFolder(string folderScoId)
-        {
-            StatusInfo status;
-
-            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.Meetings, folderScoId), out status);
-
-            return ResponseIsOk(scos, status)
-                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
-                : new ScoContentCollectionResult(status);
+            return this.GetPermissionsInfo(scoId, principalId: null, filter: CommandParams.Permissions.Filter.PermissionId.NonMeetingAll);
         }
 
         /// <summary>
@@ -893,68 +514,6 @@
         #endregion
 
         #region Write
-
-        /// <summary>
-        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
-        /// updated in the same account as the user making the call.
-        /// </summary>
-        /// <param name="principalSetup">The principal setup.</param>
-        /// <returns>Status Info.</returns>
-        public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation = false)
-        {
-            // action=principal-update
-            var commandParams = QueryStringBuilder.EntityToQueryString(principalSetup, isUpdateOperation);
-
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.Principal.Update, commandParams, out status);
-
-            return new PrincipalResult(status, PrincipalParser.Parse(doc));
-        }
-
-        /// <summary>
-        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
-        /// updated in the same account as the user making the call.
-        /// </summary>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <param name="newPassword">
-        /// The new Password.
-        /// </param>
-        /// <returns>
-        /// Status Info.
-        /// </returns>
-        public GenericResult PrincipalUpdatePassword(string principalId, string newPassword)
-        {
-            StatusInfo status;
-            var parameters = string.Format(
-                CommandParams.PrincipalUpdatePassword,
-                principalId,
-                UrlEncode(newPassword),
-                UrlEncode(newPassword));
-            this.requestProcessor.Process(Commands.Principal.UpdatePassword, parameters, out status);
-
-            return new GenericResult(status);
-        }
-
-        /// <summary>
-        /// Creates or updates a user or group. The user or group (that is, the principal) is created or
-        /// updated in the same account as the user making the call.
-        /// </summary>
-        /// <param name="principalDelete">The principal setup.</param>
-        /// <returns>Status Info.</returns>
-        public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)
-        {
-            // action=principal-update
-            var commandParams = QueryStringBuilder.EntityToQueryString(principalDelete);
-
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.Principal.Delete, commandParams, out status);
-
-            return new PrincipalResult(status, PrincipalParser.Parse(doc));
-        }
         
         /// <summary>
         /// The server defines a special principal, public-access, which combines with values of permission-id to create special access permissions to meetings.
@@ -1266,6 +825,9 @@
         /// <returns>Permissions result.</returns>
         private PermissionCollectionResult GetPermissionsInfo(string aclId, string principalId = null, string filter = null)
         {
+            if (string.IsNullOrWhiteSpace(aclId))
+                throw new ArgumentException("Non-empty value expected", nameof(aclId));
+
             // action=permissions-info
             StatusInfo status;
 
@@ -1322,5 +884,7 @@
         }
         
         #endregion
+
     }
+
 }

@@ -78,7 +78,7 @@
         public const string PrincipalGroupIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true";
 
         public const string PrincipalGroupIdPrincipalIdUsersOnly = "group-id={0}&filter-type=user&filter-is-member=true&filter-principal-id={1}";
-        
+
         /// <summary>
         /// The principal by email
         /// </summary>
@@ -261,6 +261,7 @@
             {
                 /// <summary>
                 /// The permission id.
+                /// http://help.adobe.com/en_US/connect/8.0/webservices/WS8d7bb3e8da6fb92f73b3823d121e63182fe-8000_SP1.html#WS5b3ccc516d4fbf351e63e3d11a171ddf77-7fe9_SP1
                 /// </summary>
                 internal static class PermissionId
                 {
@@ -282,9 +283,16 @@
                     /// <summary>
                     /// The view.
                     /// </summary>
-                    public const string All = "filter-permission-id=host&filter-permission-id=mini-host&filter-permission-id=view";
+                    public const string MeetingAll = "filter-permission-id=host&filter-permission-id=mini-host&filter-permission-id=view";
+
+                    public const string NonMeetingAll = "filter-permission-id=view&filter-permission-id=publish&filter-permission-id=manage&filter-permission-id=denied";
+
                 }
+
             }
+
         }
+
     }
+
 }
