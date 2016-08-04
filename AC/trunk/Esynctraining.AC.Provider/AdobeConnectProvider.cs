@@ -290,28 +290,16 @@
                 ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
                 : new MeetingItemCollectionResult(status);
         }
-
-        /// <summary>
-        /// The get all events.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="EventCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult GetAllEvents()
-        {
-            return this.GetContentsByType(CommandParams.ShortcutTypes.Events);
-        }
-
-        /// <summary>
-        /// The get all meetings.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult GetAllMeetings()
-        {
-            return this.GetContentsByType(CommandParams.ShortcutTypes.Meetings);
-        }
+        
+        //public ScoContentCollectionResult GetAllEvents()
+        //{
+        //    return this.GetContentsByType(CommandParams.ShortcutTypes.Events);
+        //}
+        
+        //public ScoContentCollectionResult GetAllMeetings()
+        //{
+        //    return this.GetContentsByType(CommandParams.ShortcutTypes.Meetings);
+        //}
         
         /// <summary>
         /// Reports curriculum taker results.
@@ -406,35 +394,7 @@
 
             return eventShortcut == null ? new ScoContentCollectionResult(status) : this.GetContentsByScoId(eventShortcut.ScoId);
         }
-
-        /// <summary>
-        /// The get SCO permissions info.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
-        {
-            return this.GetPermissionsInfo(scoId, CommandParams.PrincipalIdPublicAccess);
-        }
-
-        public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)
-        {
-            return this.GetPermissionsInfo(scoId, principalId);
-        }
-
-        /// <summary>
-        /// Returns permissions for SCO (SCOs other than meetings or courses, e.g. files\folders)
-        /// Returns only records with view\publish\manage\denied permissions.
-        /// </summary>
-        public PermissionCollectionResult GetScoPermissions(string scoId)
-        {
-            return this.GetPermissionsInfo(scoId, principalId: null, filter: CommandParams.Permissions.Filter.PermissionId.NonMeetingAll);
-        }
-
+        
         /// <summary>
         /// The get curriculum by folder SCO id.
         /// </summary>
@@ -455,16 +415,7 @@
                 : new ScoContentCollectionResult(status);
         }
 
-        /// <summary>
-        /// The get contents by SCO id.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult GetMeetingRecordings(string scoId, bool includeMP4recordings = false)
+        private ScoContentCollectionResult GetMeetingRecordings(string scoId, bool includeMP4recordings = false)
         {
             StatusInfo status;
 
@@ -515,44 +466,6 @@
 
         #region Write
         
-        /// <summary>
-        /// The server defines a special principal, public-access, which combines with values of permission-id to create special access permissions to meetings.
-        /// </summary>
-        /// <param name="aclId">ACL id - required.</param>
-        /// <param name="permissionId">Permission id - required.</param>
-        /// <returns>Status Info.</returns>
-        public StatusInfo UpdatePublicAccessPermissions(string aclId, SpecialPermissionId permissionId)
-        {
-            switch (permissionId)
-            {
-                case SpecialPermissionId.denied:
-                    return this.UpdatePermissionsInternal(aclId, CommandParams.PrincipalIdPublicAccess, PermissionId.denied);
-                case SpecialPermissionId.remove:
-                    return this.UpdatePermissionsInternal(aclId, CommandParams.PrincipalIdPublicAccess, PermissionId.remove);
-                case SpecialPermissionId.view_hidden:
-                    return this.UpdatePermissionsInternal(aclId, CommandParams.PrincipalIdPublicAccess, PermissionId.view_hidden);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// The update public access permissions.
-        /// </summary>
-        /// <param name="aclId">
-        /// The acl id.
-        /// </param>
-        /// <param name="permissionId">
-        /// The permission id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="StatusInfo"/>.
-        /// </returns>
-        public StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId)
-        {
-            return this.UpdatePermissionsInternal(aclId, CommandParams.PrincipalIdPublicAccess, permissionId);
-        }
-
         /// <summary>
         /// The update meeting feature for account
         /// </summary>
@@ -667,51 +580,7 @@
 
             return status;
         }
-
-
-        /// <summary>
-        /// The update meeting permission for user or a group.
-        /// </summary>
-        /// <param name="scoId">
-        /// The meeting id.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal id.
-        /// </param>
-        /// <param name="permissionId">
-        /// The permission id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="StatusInfo"/>.
-        /// </returns>
-        public StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId)
-        {
-            switch (permissionId)
-            {
-                case MeetingPermissionId.host:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.host);
-                case MeetingPermissionId.mini_host:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.mini_host);
-                case MeetingPermissionId.view:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.view);
-                case MeetingPermissionId.remove:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.remove);
-                case MeetingPermissionId.denied:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.denied);
-                case MeetingPermissionId.manage:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.manage);
-                case MeetingPermissionId.publish:
-                    return this.UpdatePermissionsInternal(scoId, principalId, PermissionId.publish);
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
-        {
-            return this.UpdatePermissionsInternal(values);
-        }
-
+        
         #endregion
 
         #region internal routines
@@ -787,14 +656,14 @@
             return status;
         }
 
-        private StatusInfo UpdatePermissionsInternal(IEnumerable<PermissionUpdateTrio> values)
+        private StatusInfo UpdatePermissionsInternal(IEnumerable<IPermissionUpdateTrio> values)
         {
             // act: "permissions-update"
             StatusInfo status;
 
             var trios = new List<string>(values.Count());
             var paramBuilder = new StringBuilder();
-            foreach (PermissionUpdateTrio trio in values)
+            foreach (IPermissionUpdateTrio trio in values)
             {
                 paramBuilder.Length = 0;
                 paramBuilder.AppendFormat(CommandParams.Permissions.Update, trio.ScoId, trio.PrincipalId, trio.Permission.ToXmlString());
@@ -805,7 +674,7 @@
 
             return status;
         }
-        
+
         /// <summary>
         /// Returns the list of principals (users or groups) who have permissions to act on a SCO,
         /// principal, or account.
@@ -823,25 +692,18 @@
         /// </param>
         /// <param name="filter">Optional filter.</param>
         /// <returns>Permissions result.</returns>
-        private PermissionCollectionResult GetPermissionsInfo(string aclId, string principalId = null, string filter = null)
+        private PermissionCollectionResult GetPermissionsInfo(string aclId, string filter)
         {
             if (string.IsNullOrWhiteSpace(aclId))
                 throw new ArgumentException("Non-empty value expected", nameof(aclId));
+            if (string.IsNullOrWhiteSpace(filter))
+                throw new ArgumentException("Non-empty value expected", nameof(filter));
 
             // action=permissions-info
             StatusInfo status;
 
             var commandParams = string.Format(CommandParams.Permissions.AclId, aclId);
-
-            if (!string.IsNullOrWhiteSpace(principalId))
-            {
-                commandParams += "&" + string.Format(CommandParams.Permissions.PrincipalId, principalId);
-            }
-
-            if (!string.IsNullOrWhiteSpace(filter))
-            {
-                commandParams += string.Format("&{0}", filter);
-            }
+            commandParams += string.Format("&{0}", filter);
 
             var doc = this.requestProcessor.Process(Commands.Permissions.Info, commandParams, out status);
 

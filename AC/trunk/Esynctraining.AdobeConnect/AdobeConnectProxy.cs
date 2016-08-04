@@ -240,7 +240,7 @@ namespace Esynctraining.AdobeConnect
                 string.Join(";", principalIdsToFind));
         }
 
-        public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
+        public MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
         {
             if (string.IsNullOrWhiteSpace(meetingId))
                 throw new ArgumentException("Non-empty value expected", nameof(meetingId));
@@ -249,10 +249,10 @@ namespace Esynctraining.AdobeConnect
                 meetingId);
         }
 
-        public PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC)
+        public MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC)
         {
             meetingExistsInAC = true;
-            PermissionCollectionResult result;
+            MeetingPermissionCollectionResult result;
             try
             {
                 result = _provider.GetMeetingPermissions(meetingId, principalIds);
@@ -704,12 +704,12 @@ namespace Esynctraining.AdobeConnect
             //    scoUpdateItem.ScoId, scoUpdateItem.Name);
         }
 
-        public StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values)
+        public StatusInfo UpdateScoPermissions(IEnumerable<IPermissionUpdateTrio> values)
         {
             StatusInfo result;
             try
             {
-                result = _provider.UpdateScoPermissionForPrincipal(values);
+                result = _provider.UpdateScoPermissions(values);
             }
             catch (Exception ex)
             {
@@ -726,13 +726,7 @@ namespace Esynctraining.AdobeConnect
 
             return result;
         }
-
-        public StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId)
-        {
-            return Execute(() => { return _provider.UpdateScoPermissionForPrincipal(scoId, principalId, permissionId); },
-                scoId, principalId);
-        }
-
+        
         public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
         {
             return Execute(() => { return _provider.UploadContent(uploadScoInfo); }, uploadScoInfo.scoId);

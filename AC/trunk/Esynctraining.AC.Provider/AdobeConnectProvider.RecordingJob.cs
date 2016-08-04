@@ -21,30 +21,31 @@ namespace Esynctraining.AC.Provider
                ? new RecordingJobResult(status, RecordingJobParser.Parse(doc.SelectSingleNode(recordingJobPath)))
                : new RecordingJobResult(status);
         }
-        public RecordingJobCollectionResult GetRecordingJobsList(string folderId)
-        {
-            // act: "list-recording-jobs"
 
-            StatusInfo status;
-            var doc = this.requestProcessor.Process(Commands.Recordings.ListJobs, string.Format(CommandParams.FolderId, folderId), out status);
+        //public RecordingJobCollectionResult GetRecordingJobsList(string folderId)
+        //{
+        //    // act: "list-recording-jobs"
 
-            return ResponseIsOk(doc, status)
-                ? new RecordingJobCollectionResult(status, RecordingJobCollectionParser.Parse(doc))
-                : new RecordingJobCollectionResult(status);
-        }
-        public RecordingJobResult GetRecordingJob(string jobId)
-        {
-            // act: "get-recording-job"
+        //    StatusInfo status;
+        //    var doc = this.requestProcessor.Process(Commands.Recordings.ListJobs, string.Format(CommandParams.FolderId, folderId), out status);
 
-            StatusInfo status;
-            const string recordingJobPath = "//results/recording-job";
+        //    return ResponseIsOk(doc, status)
+        //        ? new RecordingJobCollectionResult(status, RecordingJobCollectionParser.Parse(doc))
+        //        : new RecordingJobCollectionResult(status);
+        //}
+        //public RecordingJobResult GetRecordingJob(string jobId)
+        //{
+        //    // act: "get-recording-job"
 
-            var doc = this.requestProcessor.Process(Commands.Recordings.GetJob, string.Format(CommandParams.JobId, jobId), out status);
+        //    StatusInfo status;
+        //    const string recordingJobPath = "//results/recording-job";
 
-            return ResponseIsOk(doc, status)
-                ? new RecordingJobResult(status, RecordingJobParser.Parse(doc.SelectSingleNode(recordingJobPath)))
-                : new RecordingJobResult(status);
-        }
+        //    var doc = this.requestProcessor.Process(Commands.Recordings.GetJob, string.Format(CommandParams.JobId, jobId), out status);
+
+        //    return ResponseIsOk(doc, status)
+        //        ? new RecordingJobResult(status, RecordingJobParser.Parse(doc.SelectSingleNode(recordingJobPath)))
+        //        : new RecordingJobResult(status);
+        //}
         public CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId)
         {
             //act: "cancel-recording-job"

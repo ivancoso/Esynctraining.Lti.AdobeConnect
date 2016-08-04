@@ -43,6 +43,7 @@
     <Compile Include="AdobeConnectProvider.Content.cs" />
     <Compile Include="AdobeConnectProvider.Internal.cs" />
     <Compile Include="AdobeConnectProvider.Group.cs" />
+    <Compile Include="AdobeConnectProvider.Permission.cs" />
     <Compile Include="AdobeConnectProvider.Sco.cs" />
     <Compile Include="AdobeConnectProvider.Report.cs" />
     <Compile Include="AdobeConnectProvider.Telephony.cs" />
@@ -98,12 +99,16 @@
     <Compile Include="Entities\CurriculumTaker.cs" />
     <Compile Include="Entities\GeneratedRecordingJob.cs" />
     <Compile Include="Entities\Field.cs" />
+    <Compile Include="Entities\IPermissionUpdateTrio.cs" />
     <Compile Include="Entities\ITelephonyProfileProviderFields.cs" />
     <Compile Include="Entities\LearningPathItem.cs" />
     <Compile Include="Entities\FolderUpdateItem.cs" />
     <Compile Include="Entities\CurriculumContent.cs" />
     <Compile Include="Entities\CurriculumUpdateItem.cs" />
     <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\MeetingPermissionUpdateTrio.cs" />
+    <Compile Include="Entities\PermissionBase.cs" />
+    <Compile Include="Entities\MeetingPermissionInfo.cs" />
     <Compile Include="Entities\ReportScoViewContent.cs" />
     <Compile Include="Entities\ScoShortcutType.cs" />
     <Compile Include="Entities\SeminarLicenseSco.cs" />
@@ -135,7 +140,7 @@
     <Compile Include="Entities\EventInfo.cs" />
     <Compile Include="Entities\MeetingItem.cs" />
     <Compile Include="Entities\MeetingUpdateItem.cs" />
-    <Compile Include="Entities\Permissions.cs" />
+    <Compile Include="Entities\PermissionInfo.cs" />
     <Compile Include="Entities\Principal.cs" />
     <Compile Include="Entities\ScoShortcut.cs" />
     <Compile Include="Entities\ScoUpdateItemBase.cs" />

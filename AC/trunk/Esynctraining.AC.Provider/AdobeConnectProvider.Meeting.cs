@@ -39,47 +39,44 @@
         }
 
 
-        public PermissionCollectionResult GetMeetingHosts(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.Host);
-        }
+        //public PermissionCollectionResult GetMeetingHosts(string meetingId)
+        //{
+        //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.Host);
+        //}
         
-        public PermissionCollectionResult GetMeetingPresenters(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.MiniHost);
-        }
+        //public PermissionCollectionResult GetMeetingPresenters(string meetingId)
+        //{
+        //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.MiniHost);
+        //}
         
-        public PermissionCollectionResult GetMeetingParticipants(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.View);
-        }
+        //public PermissionCollectionResult GetMeetingParticipants(string meetingId)
+        //{
+        //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.View);
+        //}
 
         /// <summary>
         /// Returns ALL meeting participants (hosts, presenters and participans)
         /// </summary>
-        /// <param name="meetingId">
-        /// The meeting id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="PermissionCollectionResult"/>.
-        /// </returns>
-        public PermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
-        {
-            return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.MeetingAll);
-        }
-
-        public PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds)
+        public MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
         {
             if (string.IsNullOrWhiteSpace(meetingId))
-                throw new ArgumentException("Meeting SCO can't be empty", "meetingId");
+                throw new ArgumentException("Meeting SCO can't be empty", nameof(meetingId));
+
+            return this.GetPermissionsInfo(meetingId, CommandParams.Permissions.Filter.PermissionId.MeetingAll).ConvertForMeeting();
+        }
+
+        public MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds)
+        {
+            if (string.IsNullOrWhiteSpace(meetingId))
+                throw new ArgumentException("Meeting SCO can't be empty", nameof(meetingId));
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
 
             var filter = new StringBuilder(23 * principalIds.Count());
             foreach (string principalId in principalIds)
-                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, UrlEncode(principalId));
+                filter.AppendFormat("&" + CommandParams.PrincipalByPrincipalId, principalId);
 
-            return this.GetPermissionsInfo(meetingId, null, filter.ToString());
+            return this.GetPermissionsInfo(meetingId, filter.ToString()).ConvertForMeeting();
         }
  
     }

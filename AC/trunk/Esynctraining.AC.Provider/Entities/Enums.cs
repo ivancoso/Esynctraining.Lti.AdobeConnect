@@ -166,7 +166,7 @@
         /// <summary>
         /// The meeting is private, and only registered users and participants can enter the room.
         /// </summary>
-        denied
+        denied,
     }
 
     public enum MeetingPermissionId
@@ -176,9 +176,10 @@
         mini_host,
         view,
         remove,
-        publish,
-        manage,
-        denied
+        //http://help.adobe.com/en_US/connect/8.0/webservices/WS8d7bb3e8da6fb92f73b3823d121e63182fe-8000_SP1.html#WS5b3ccc516d4fbf351e63e3d11a171ddf77-7fe9_SP1
+        //publish,
+        //manage,
+        //denied
     }
 
     public enum MeetingFeatureId

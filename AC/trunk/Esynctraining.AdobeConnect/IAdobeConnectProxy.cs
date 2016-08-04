@@ -27,9 +27,10 @@ namespace Esynctraining.AdobeConnect
         PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins);
         PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind);
         //ScoContentCollectionResult GetAllEvents();
-        PermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
 
-        PermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
+        MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
+
+        MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
         //ScoContentCollectionResult GetAllMeetings();
         PrincipalCollectionResult GetAllPrincipals();
         CommonInfoResult GetCommonInfo();
@@ -131,8 +132,9 @@ namespace Esynctraining.AdobeConnect
         StatusInfo UpdatePublicAccessPermissions(string aclId, PermissionId permissionId);
         StatusInfo UpdatePublicAccessPermissions(string aclId, SpecialPermissionId permissionId);
         ScoInfoResult UpdateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase;
-        StatusInfo UpdateScoPermissionForPrincipal(IEnumerable<PermissionUpdateTrio> values);
-        StatusInfo UpdateScoPermissionForPrincipal(string scoId, string principalId, MeetingPermissionId permissionId);
+
+        StatusInfo UpdateScoPermissions(IEnumerable<IPermissionUpdateTrio> values);
+
         StatusInfo UploadContent(UploadScoInfo uploadScoInfo);
 
         UserCollectionResult ReportGuestsByEmail(string email);
