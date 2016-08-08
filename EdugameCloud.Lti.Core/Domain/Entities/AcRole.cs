@@ -61,15 +61,15 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
         //    throw new InvalidOperationException(string.Format("Not supported role name: {0}", acMeetingRoleName));
         //}
 
-        public static int? GetRoleId(PermissionId permissionId)
+        public static int? GetRoleId(MeetingPermissionId permissionId)
         {
-            if (permissionId == PermissionId.host)
+            if (permissionId == MeetingPermissionId.host)
                 return Host.Id;
 
-            if (permissionId == PermissionId.mini_host)
+            if (permissionId == MeetingPermissionId.mini_host)
                 return Presenter.Id;
 
-            if (permissionId == PermissionId.view)
+            if (permissionId == MeetingPermissionId.view)
                 return Participant.Id;
 
             return null;

@@ -167,7 +167,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var psw = Stopwatch.StartNew();
 
             bool meetingExistsInAC;
-            IEnumerable<PermissionInfo> permission = provider.GetMeetingPermissions(seminar.ScoId,
+            IEnumerable<MeetingPermissionInfo> permission = provider.GetMeetingPermissions(seminar.ScoId,
                 new List<string> { "public-access", lmsUser.PrincipalId },
                 out meetingExistsInAC).Values;
 
@@ -182,7 +182,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var canJoin = this.CanJoin(lmsUser, permission) || GetGuestAuditRoleMappings(lmsCompany, param).Any()
                 || (lmsCompany.UseSynchronizedUsers && seminarMeeting.EnableDynamicProvisioning);
 
-            PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
+            MeetingPermissionInfo permissionInfo = permission != null 
+                ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.not_set) 
+                : null;
 
             var sw = Stopwatch.StartNew();
 
@@ -205,7 +207,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 start_timestamp = (long)seminar.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, seminar.BeginDate),
                 duration = (seminar.EndDate - seminar.BeginDate).ToString(@"h\:mm"),
                 access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
-                allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
+                allow_guests = permissionInfo == null || permissionInfo.PermissionId == MeetingPermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
                 type = (int)LmsMeetingType.Seminar,
@@ -221,7 +223,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         private bool CanJoin(
             LmsUser lmsUser,
-            IEnumerable<PermissionInfo> permission)
+            IEnumerable<MeetingPermissionInfo> permission)
         {
             // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
             if (string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
@@ -233,7 +235,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 && permission
                 .Where(x => x.PrincipalId == lmsUser.PrincipalId)
                 .Select(x => x.PermissionId)
-                .Intersect(new List<PermissionId> { PermissionId.host, PermissionId.mini_host, PermissionId.view })
+                .Intersect(new List<MeetingPermissionId> { MeetingPermissionId.host, MeetingPermissionId.mini_host, MeetingPermissionId.view })
                 .Any();
         }
 

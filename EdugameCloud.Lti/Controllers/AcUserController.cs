@@ -99,7 +99,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsCourseMeeting meeting = MeetingSetup.GetCourseMeeting(credentials, param.course_id, meetingId, LmsMeetingType.Meeting);
 
                 // TODO: review for user-sync mode
-                PermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());
+                MeetingPermissionCollectionResult meetingEnrollments = provider.GetAllMeetingEnrollments(meeting.GetMeetingScoId());
                 if (meetingEnrollments.Status.Code != StatusCodes.ok)
                 {
                     string errorMessage = GetOutputErrorMessage(

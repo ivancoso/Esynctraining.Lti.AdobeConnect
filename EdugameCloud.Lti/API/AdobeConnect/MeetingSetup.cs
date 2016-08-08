@@ -4,9 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.Security;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Controllers;
@@ -886,18 +884,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (!dto.mergeUsers)
             {
                 // NOTE: Clean all existed AC meeting participants.
-                PermissionCollectionResult allMeetingEnrollments = provider.GetAllMeetingEnrollments(dto.sco_id);
+                MeetingPermissionCollectionResult allMeetingEnrollments = provider.GetAllMeetingEnrollments(dto.sco_id);
 
                 foreach (var chunk in allMeetingEnrollments.Values.Select(
                         enrollment =>
-                            new PermissionUpdateTrio
+                            new MeetingPermissionUpdateTrio
                             {
                                 ScoId = dto.sco_id,
                                 PrincipalId = enrollment.PrincipalId,
                                 PermissionId = MeetingPermissionId.remove,
-                            }).Chunk(50))
+                            }).Chunk(provider.GetPermissionChunk()))
                 {
-                    var status = provider.UpdateScoPermissionForPrincipal(chunk);
+                    var status = provider.UpdateScoPermissions(chunk);
                     if (status.Code != StatusCodes.ok)
                     {
                         string errorMsg = string.Format("ReuseExistedAdobeConnectMeeting > UpdateScoPermissionForPrincipal. Status.Code:{0}, Status.SubCode:{1}.",
@@ -984,7 +982,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ? this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id)
                 : false;
 
-            List<PermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
+            List<MeetingPermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
             if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
             {
@@ -1340,7 +1338,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private bool CanJoin(
             LmsUser lmsUser,
             LmsMeetingType meetingType,
-            IEnumerable<PermissionInfo> permission)
+            IEnumerable<MeetingPermissionInfo> permission)
         {
             if (meetingType == LmsMeetingType.OfficeHours)
             {
@@ -1356,7 +1354,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 && permission
                 .Where(x => x.PrincipalId == lmsUser.PrincipalId)
                 .Select(x => x.PermissionId)
-                .Intersect(new List<PermissionId> { PermissionId.host, PermissionId.mini_host, PermissionId.view })
+                .Intersect(new List<MeetingPermissionId> { MeetingPermissionId.host, MeetingPermissionId.mini_host, MeetingPermissionId.view })
                 .Any();
 
             //var enrollments = this.UsersSetup.GetMeetingAttendees(provider, meetingSco);            
@@ -1384,7 +1382,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var auditRoles = GetGuestAuditRoleMappings(lmsCompany, param);
             if (auditRoles.Any())
             {
-                PermissionCollectionResult meetingEnrollments =
+                MeetingPermissionCollectionResult meetingEnrollments =
                     provider.GetAllMeetingEnrollments(scoId);
 
                 if (meetingEnrollments.Values.All(x => x.PrincipalId != principalId))
@@ -1473,7 +1471,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var psw = Stopwatch.StartNew();
 
             bool meetingExistsInAC;
-            IEnumerable<PermissionInfo> permission = provider.GetMeetingPermissions(lmsCourseMeeting.GetMeetingScoId(),
+            IEnumerable<MeetingPermissionInfo> permission = provider.GetMeetingPermissions(lmsCourseMeeting.GetMeetingScoId(),
                 new List<string> { "public-access", lmsUser.PrincipalId }, 
                 out meetingExistsInAC).Values;
             
@@ -1492,7 +1490,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
                         || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning)));
 
-            PermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != PermissionId.none) : null;
+            MeetingPermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.not_set) : null;
             string officeHoursString = null;
 
             if (type == LmsMeetingType.OfficeHours)
@@ -1556,7 +1554,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, meetingSco.BeginDate),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),
                 access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
-                allow_guests = permissionInfo == null || permissionInfo.PermissionId == PermissionId.remove,
+                allow_guests = permissionInfo == null || permissionInfo.PermissionId == MeetingPermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
                 type = (int)type,

@@ -142,7 +142,7 @@ namespace EdugameCloud.Lti.API
                                 // todo: optimize condition, probably refresh roles not for all users
                                 var dbPrincipalIds = new HashSet<string>(
                                     meeting.MeetingRoles.Where(x => x.User.PrincipalId != null).Select(x => x.User.PrincipalId));
-                                List<PermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
+                                List<MeetingPermissionInfo> enrollments = usersSetup.GetMeetingAttendees(acProvider, meeting.GetMeetingScoId());
                                 var acPrincipalIds = new HashSet<string>(enrollments.Select(e => e.PrincipalId));
 
                                 if (syncACUsers 
@@ -217,7 +217,7 @@ namespace EdugameCloud.Lti.API
         }
 
         private void UpdateACRoles(LmsCompany lmsCompany, LmsCourseMeeting meeting,
-            IAdobeConnectProxy acProvider, List<PermissionInfo> enrollments)
+            IAdobeConnectProxy acProvider, List<MeetingPermissionInfo> enrollments)
         {
             string error = null;
             var meetingRoles = usersSetup.GetUserMeetingRoles(meeting);

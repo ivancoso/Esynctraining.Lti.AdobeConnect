@@ -95,10 +95,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException("provider");
 
             var group = provider.GetGroupsByType("live-admins");
-            if (group.Item1.Code != StatusCodes.ok)
+            if (group.Status.Code != StatusCodes.ok)
                 throw new InvalidOperationException("AC.GetGroupsByType error");
 
-            PrincipalCollectionResult usersResult = provider.GetGroupUsers(group.Item2.First().PrincipalId);
+            PrincipalCollectionResult usersResult = provider.GetGroupUsers(group.Values.First().PrincipalId);
             if (usersResult.Status.Code != StatusCodes.ok)
                 throw new InvalidOperationException("AC.GetGroupUsers error");
 
