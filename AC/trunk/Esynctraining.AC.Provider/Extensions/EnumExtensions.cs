@@ -14,7 +14,7 @@ namespace Esynctraining.AC.Provider.Extensions
     /// <summary>
     /// Enumeration extensions.
     /// </summary>
-    public static class EnumExtensions
+    internal static class EnumExtensions
     {
         /// <summary>
         /// The to string.

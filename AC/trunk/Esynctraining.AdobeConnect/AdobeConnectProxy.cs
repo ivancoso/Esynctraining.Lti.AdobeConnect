@@ -626,13 +626,13 @@ namespace Esynctraining.AdobeConnect
                 principalId);
         }
 
-        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
+        public MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
-            return Execute(() => { return _provider.ReportMettingAttendance(scoId, startIndex, limit, returnCurrentUsers); },
+            return Execute(() => { return _provider.ReportMeetingAttendance(scoId, startIndex, limit, returnCurrentUsers); },
                 scoId);
         }
 
-        public MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportMettingSessions(scoId, startIndex, limit); },
                 scoId);
@@ -730,6 +730,12 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo UploadContent(UploadScoInfo uploadScoInfo)
         {
             return Execute(() => { return _provider.UploadContent(uploadScoInfo); }, uploadScoInfo.scoId);
+        }
+
+        public byte[] GetContent(string scoId, out string error, string format = "zip")
+        {
+            // TODO:
+            return _provider.GetContent(scoId, out error, format);
         }
 
         public byte[] GetContentByUrlPath(string urlPath, string format, out string error)

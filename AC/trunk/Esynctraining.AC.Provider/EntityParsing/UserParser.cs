@@ -15,9 +15,8 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
         /// <returns>User or null if it's a folder.</returns>
-        public static User Parse(XmlNode xml, string serviceUrl)
+        public static User Parse(XmlNode xml)
         {
             if (xml == null || xml.Attributes == null)
             {

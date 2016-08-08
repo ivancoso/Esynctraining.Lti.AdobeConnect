@@ -20,11 +20,9 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
         /// <returns>Collection of User Items.</returns>
-        public static IEnumerable<User> Parse(XmlNode xml, string serviceUrl, string path)
+        public static IEnumerable<User> Parse(XmlNode xml, string path = Path)
         {
-            path = path ?? Path;
             if (xml == null || !xml.NodeListExists(path))
             {
                 TraceTool.TraceMessage(string.Format("Node {0} is empty: no data available", path));
@@ -33,9 +31,11 @@
             }
 
             return xml.SelectNodes(path).Cast<XmlNode>()
-                .Select(node => UserParser.Parse(node, serviceUrl))
+                .Select(node => UserParser.Parse(node))
                 .Where(item => item != null)
                 .ToArray();
         }
+
     }
+
 }

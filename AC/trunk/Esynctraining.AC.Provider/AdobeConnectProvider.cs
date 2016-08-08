@@ -42,16 +42,7 @@
         #endregion
 
         #region Login/Logout
-
-        /// <summary>
-        /// The login.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LoginResult"/>.
-        /// </returns>
+        
         public LoginResult Login(UserCredentials credentials)
         {
             this.requestProcessor.SetSessionId(null);
@@ -69,15 +60,6 @@
             return new LoginResult(statusInfo, success ? user : null);
         }
 
-        /// <summary>
-        /// Logs the User in with session id.
-        /// </summary>
-        /// <param name="sessionId">
-        /// The session id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LoginResult"/>.
-        /// </returns>
         public LoginResult LoginWithSessionId(string sessionId)
         {
             this.requestProcessor.SetSessionId(sessionId);
@@ -95,10 +77,7 @@
 
             return new LoginResult(status, user);
         }
-
-        /// <summary>
-        /// Performs log-out procedure
-        /// </summary>
+        
         public void Logout()
         {
             // action=logout
@@ -157,7 +136,7 @@
         /// <returns>
         /// The <see cref="MeetingAttendeeCollectionResult"/>.
         /// </returns>
-        public MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
+        public MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
             // act: "report-meeting-attendance"
             StatusInfo status;
@@ -169,17 +148,17 @@
                        : new MeetingAttendeeCollectionResult(status);
         }
         
-        public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
-        {
-            // act: "report-quiz-interactions"
-            StatusInfo status;
+        //public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
+        //{
+        //    // act: "report-quiz-interactions"
+        //    StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
+        //    var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
-            return ResponseIsOk(doc, status)
-                       ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
-                       : new QuizResponseCollectionResult(status);
-        }
+        //    return ResponseIsOk(doc, status)
+        //               ? new QuizResponseCollectionResult(status, QuizResponseCollectionParser.Parse(doc))
+        //               : new QuizResponseCollectionResult(status);
+        //}
 
         /// <summary>
         /// List all meeting's sessions
@@ -208,34 +187,34 @@
                        : new MeetingSessionCollectionResult(status);
         }
 
-        /// <summary>
-        /// Provides information about each event the current user has attended or is scheduled to attend.
-        /// The user can be either a host or a participant in the event. The events returned are those in the
-        /// user’s my-events folder.
-        /// To obtain information about all events on your Enterprise Server or in your Enterprise Hosted
-        /// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
-        /// with the SCO id to list all events.
-        /// </summary>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// <see cref="EventInfo">EventInfo array</see>
-        /// </returns>
-        public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
-        {
-            // act: "report-my-events"
-            StatusInfo status;
+        ///// <summary>
+        ///// Provides information about each event the current user has attended or is scheduled to attend.
+        ///// The user can be either a host or a participant in the event. The events returned are those in the
+        ///// user’s my-events folder.
+        ///// To obtain information about all events on your Enterprise Server or in your Enterprise Hosted
+        ///// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
+        ///// with the SCO id to list all events.
+        ///// </summary>
+        ///// <param name="startIndex">
+        ///// The start Index.
+        ///// </param>
+        ///// <param name="limit">
+        ///// The limit.
+        ///// </param>
+        ///// <returns>
+        ///// <see cref="EventInfo">EventInfo array</see>
+        ///// </returns>
+        //public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
+        //{
+        //    // act: "report-my-events"
+        //    StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMyEvents, string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
+        //    var doc = this.requestProcessor.Process(Commands.ReportMyEvents, string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
 
-            return ResponseIsOk(doc, status)
-                ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
-                : new EventCollectionResult(status);
-        }
+        //    return ResponseIsOk(doc, status)
+        //        ? new EventCollectionResult(status, EventInfoCollectionParser.Parse(doc))
+        //        : new EventCollectionResult(status);
+        //}
 
         /// <summary>
         /// Provides information about each event the current user has attended or is scheduled to attend.
@@ -290,95 +269,85 @@
                 ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
                 : new MeetingItemCollectionResult(status);
         }
-        
-        //public ScoContentCollectionResult GetAllEvents()
+
+        ///// <summary>
+        ///// Reports curriculum taker results.
+        ///// </summary>
+        ///// <param name="scoId">
+        ///// The SCO id.
+        ///// </param>
+        ///// <param name="principalId">
+        ///// The principal Id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="CurriculumTakerCollectionResult"/>.
+        ///// </returns>
+        //public CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId)
         //{
-        //    return this.GetContentsByType(CommandParams.ShortcutTypes.Events);
+        //    StatusInfo status;
+
+        //    var scos = this.requestProcessor.Process(Commands.Curriculum.ReportCurriculumTaker, string.Format(CommandParams.ScoIdAndUserId, scoId, principalId), out status);
+
+        //    return ResponseIsOk(scos, status)
+        //        ? new CurriculumTakerCollectionResult(status, CurriculumTakerCollectionParser.Parse(scos), scoId)
+        //        : new CurriculumTakerCollectionResult(status);
         //}
-        
-        //public ScoContentCollectionResult GetAllMeetings()
+
+        ///// <summary>
+        ///// The learning path info.
+        ///// </summary>
+        ///// <param name="scoId">
+        ///// The SCO id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="LearningPathCollectionResult"/>.
+        ///// </returns>
+        //public LearningPathCollectionResult LearningPathInfo(string scoId)
         //{
-        //    return this.GetContentsByType(CommandParams.ShortcutTypes.Meetings);
+        //    StatusInfo status;
+
+        //    var scos = this.requestProcessor.Process(Commands.Curriculum.LearningPathInfo, string.Format(CommandParams.CurriculumIdAndScoId, scoId, scoId), out status);
+
+        //    return ResponseIsOk(scos, status)
+        //        ? new LearningPathCollectionResult(status, LearningPathCollectionParser.Parse(scos), scoId)
+        //        : new LearningPathCollectionResult(status);
         //}
-        
-        /// <summary>
-        /// Reports curriculum taker results.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <param name="principalId">
-        /// The principal Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="CurriculumTakerCollectionResult"/>.
-        /// </returns>
-        public CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId)
-        {
-            StatusInfo status;
 
-            var scos = this.requestProcessor.Process(Commands.Curriculum.ReportCurriculumTaker, string.Format(CommandParams.ScoIdAndUserId, scoId, principalId), out status);
+        ///// <summary>
+        ///// The learning path info.
+        ///// </summary>
+        ///// <param name="u">
+        ///// The u.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="LearningPathCollectionResult"/>.
+        ///// </returns>
+        //public GenericResult LearningPathUpdate(LearningPathItem u)
+        //{
+        //    StatusInfo status;
+        //    this.requestProcessor.Process(Commands.Curriculum.LearningPathUpdate, string.Format(CommandParams.LearningPathUpdate, u.CurriculumId, u.CurrentScoId, u.TargetScoId, u.PathType), out status);
+        //    return new GenericResult(status);
+        //}
 
-            return ResponseIsOk(scos, status)
-                ? new CurriculumTakerCollectionResult(status, CurriculumTakerCollectionParser.Parse(scos), scoId)
-                : new CurriculumTakerCollectionResult(status);
-        }
+        ///// <summary>
+        ///// The get Curriculum contents by SCO id.
+        ///// </summary>
+        ///// <param name="scoId">
+        ///// The SCO id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="ScoContentCollectionResult"/>.
+        ///// </returns>
+        //public CurriculumContentCollectionResult GetCurriculumContentsByScoId(string scoId)
+        //{
+        //    StatusInfo status;
 
-        /// <summary>
-        /// The learning path info.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LearningPathCollectionResult"/>.
-        /// </returns>
-        public LearningPathCollectionResult LearningPathInfo(string scoId)
-        {
-            StatusInfo status;
+        //    var scos = this.requestProcessor.Process(Commands.Curriculum.Contents, string.Format(CommandParams.ScoId, scoId), out status);
 
-            var scos = this.requestProcessor.Process(Commands.Curriculum.LearningPathInfo, string.Format(CommandParams.CurriculumIdAndScoId, scoId, scoId), out status);
-
-            return ResponseIsOk(scos, status)
-                ? new LearningPathCollectionResult(status, LearningPathCollectionParser.Parse(scos), scoId)
-                : new LearningPathCollectionResult(status);
-        }
-
-        /// <summary>
-        /// The learning path info.
-        /// </summary>
-        /// <param name="u">
-        /// The u.
-        /// </param>
-        /// <returns>
-        /// The <see cref="LearningPathCollectionResult"/>.
-        /// </returns>
-        public GenericResult LearningPathUpdate(LearningPathItem u)
-        {
-            StatusInfo status;
-            this.requestProcessor.Process(Commands.Curriculum.LearningPathUpdate, string.Format(CommandParams.LearningPathUpdate, u.CurriculumId, u.CurrentScoId, u.TargetScoId, u.PathType), out status);
-            return new GenericResult(status);
-        }
-        
-        /// <summary>
-        /// The get Curriculum contents by SCO id.
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public CurriculumContentCollectionResult GetCurriculumContentsByScoId(string scoId)
-        {
-            StatusInfo status;
-
-            var scos = this.requestProcessor.Process(Commands.Curriculum.Contents, string.Format(CommandParams.ScoId, scoId), out status);
-
-            return ResponseIsOk(scos, status)
-                ? new CurriculumContentCollectionResult(status, CurriculumContentCollectionParser.Parse(scos), scoId)
-                : new CurriculumContentCollectionResult(status);
-        }
+        //    return ResponseIsOk(scos, status)
+        //        ? new CurriculumContentCollectionResult(status, CurriculumContentCollectionParser.Parse(scos), scoId)
+        //        : new CurriculumContentCollectionResult(status);
+        //}
 
         /// <summary>
         /// Gets the type of the contents by.
@@ -395,25 +364,25 @@
             return eventShortcut == null ? new ScoContentCollectionResult(status) : this.GetContentsByScoId(eventShortcut.ScoId);
         }
         
-        /// <summary>
-        /// The get curriculum by folder SCO id.
-        /// </summary>
-        /// <param name="folderScoId">
-        /// The folder SCO Id.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult GetCurriculumsByFolder(string folderScoId)
-        {
-            StatusInfo status;
+        ///// <summary>
+        ///// The get curriculum by folder SCO id.
+        ///// </summary>
+        ///// <param name="folderScoId">
+        ///// The folder SCO Id.
+        ///// </param>
+        ///// <returns>
+        ///// The <see cref="ScoContentCollectionResult"/>.
+        ///// </returns>
+        //public ScoContentCollectionResult GetCurriculumsByFolder(string folderScoId)
+        //{
+        //    StatusInfo status;
 
-            var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.FolderCurriculums, folderScoId), out status);
+        //    var scos = this.requestProcessor.Process(Commands.Sco.Contents, string.Format(CommandParams.FolderCurriculums, folderScoId), out status);
 
-            return ResponseIsOk(scos, status)
-                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
-                : new ScoContentCollectionResult(status);
-        }
+        //    return ResponseIsOk(scos, status)
+        //        ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), folderScoId)
+        //        : new ScoContentCollectionResult(status);
+        //}
 
         private ScoContentCollectionResult GetMeetingRecordings(string scoId, bool includeMP4recordings = false)
         {
@@ -702,8 +671,7 @@
             // action=permissions-info
             StatusInfo status;
 
-            var commandParams = string.Format(CommandParams.Permissions.AclId, aclId);
-            commandParams += string.Format("&{0}", filter);
+            var commandParams = string.Format(CommandParams.Permissions.AclId + "&{1}", aclId, filter);
 
             var doc = this.requestProcessor.Process(Commands.Permissions.Info, commandParams, out status);
 

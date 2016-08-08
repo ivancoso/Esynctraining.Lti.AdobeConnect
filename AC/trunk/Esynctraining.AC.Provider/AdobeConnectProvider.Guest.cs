@@ -32,7 +32,7 @@ namespace Esynctraining.AC.Provider
                 string.Format(CommandParams.ReportBulkUsersFilters.GuestByLogin, login), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new UserCollectionResult(status, UserCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
+                       ? new UserCollectionResult(status, UserCollectionParser.Parse(doc))
                        : new UserCollectionResult(status);
         }
 
@@ -48,7 +48,7 @@ namespace Esynctraining.AC.Provider
                 string.Format(CommandParams.ReportBulkUsersFilters.GuestByEmail, email), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new UserCollectionResult(status, UserCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
+                       ? new UserCollectionResult(status, UserCollectionParser.Parse(doc))
                        : new UserCollectionResult(status);
         }
 

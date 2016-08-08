@@ -1,7 +1,6 @@
 ﻿namespace Esynctraining.AC.Provider.Utils
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Net;
     using System.Net.Http;
@@ -30,17 +29,11 @@
         #endregion
 
         #region Constructors and Destructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestProcessor"/> class.
-        /// </summary>
-        /// <param name="details">
-        /// The details.
-        /// </param>
+        
         public RequestProcessor(ConnectionDetails details)
         {
-            if (connectionDetails == null)
-                throw new ArgumentNullException(nameof(connectionDetails));
+            if (details == null)
+                throw new ArgumentNullException(nameof(details));
 
             this.connectionDetails = details;
             this.SetSessionId(null);
@@ -51,7 +44,7 @@
         #region Public Properties
 
         /// <summary>
-        ///     Gets the service url.
+        /// Gets the service url.
         /// </summary>
         public string ServiceUrl
         {
@@ -230,25 +223,7 @@
 
             return this.FinalizeProcessingResponse(status, webRequest);
         }
-
-        /// <summary>
-        /// Processes a request.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="parameters">
-        /// The parameters.
-        /// </param>
-        /// <param name="uploadData">
-        /// The upload Data.
-        /// </param>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
+        
         public XmlDocument ProcessUpload(
             string action,
             string parameters,
@@ -273,7 +248,7 @@
                 response.EnsureSuccessStatusCode();
                 httpClient.Dispose();
                 var result = response.Content.ReadAsStringAsync().Result;
-                return this.ProcessXmlResult(status, result);
+                return ProcessXmlResult(status, result);
             }
             catch (Exception ex)
             {
@@ -281,71 +256,53 @@
                 return null;
             }
         }
+        
+        //public XmlDocument ProcessUploadMultipart(
+        //    string action, 
+        //    string parameters, 
+        //    UploadScoInfo uploadData, 
+        //    out StatusInfo status)
+        //{
+        //    status = new StatusInfo { Code = StatusCodes.not_set };
 
-        /// <summary>
-        /// Processes a request.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="parameters">
-        /// The parameters.
-        /// </param>
-        /// <param name="uploadData">
-        /// The upload Data.
-        /// </param>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
-        public XmlDocument ProcessUploadMultipart(
-            string action, 
-            string parameters, 
-            UploadScoInfo uploadData, 
-            out StatusInfo status)
-        {
-            status = new StatusInfo { Code = StatusCodes.not_set };
+        //    if (parameters == null)
+        //    {
+        //        parameters = string.Empty;
+        //    }
 
-            if (parameters == null)
-            {
-                parameters = string.Empty;
-            }
+        //    HttpWebRequest webRequest = this.CreateWebRequest(action, parameters);
 
-            HttpWebRequest webRequest = this.CreateWebRequest(action, parameters);
+        //    if (webRequest == null || uploadData == null)
+        //    {
+        //        return null;
+        //    }
 
-            if (webRequest == null || uploadData == null)
-            {
-                return null;
-            }
+        //    try
+        //    {
+        //        string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
+        //        webRequest.ContentType = "multipart/form-data; boundary=" + boundary;
+        //        webRequest.Method = "POST";
+        //        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            try
-            {
-                string boundary = "----------" + DateTime.Now.Ticks.ToString("x");
-                webRequest.ContentType = "multipart/form-data; boundary=" + boundary;
-                webRequest.Method = "POST";
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        //        using (Stream requestStream = webRequest.GetRequestStream())
+        //        {
+        //            WriteMultipartForm(
+        //                requestStream, 
+        //                boundary, 
+        //                new Dictionary<string, string>(), 
+        //                uploadData.fileName, 
+        //                uploadData.fileContentType, 
+        //                uploadData.fileBytes);
+        //        }
 
-                using (Stream requestStream = webRequest.GetRequestStream())
-                {
-                    WriteMultipartForm(
-                        requestStream, 
-                        boundary, 
-                        new Dictionary<string, string>(), 
-                        uploadData.fileName, 
-                        uploadData.fileContentType, 
-                        uploadData.fileBytes);
-                }
-
-                return this.FinalizeProcessingResponse(status, webRequest);
-            }
-            catch (Exception ex)
-            {
-                TraceTool.TraceException(ex);
-                return null;
-            }
-        }
+        //        return this.FinalizeProcessingResponse(status, webRequest);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TraceTool.TraceException(ex);
+        //        return null;
+        //    }
+        //}
 
         /// <summary>
         /// The set session cookie.
@@ -365,19 +322,7 @@
         #endregion
 
         #region Methods
-
-        /// <summary>
-        /// The create web request.
-        /// </summary>
-        /// <param name="action">
-        /// The action.
-        /// </param>
-        /// <param name="parameters">
-        /// The parameters.
-        /// </param>
-        /// <returns>
-        /// The <see cref="HttpWebRequest"/>.
-        /// </returns>
+        
         protected HttpWebRequest CreateWebRequest(string action, string parameters)
         {
             var request =
@@ -387,19 +332,7 @@
 
             return ProcessRequest(request);
         }
-
-        /// <summary>
-        /// The finalize processing response.
-        /// </summary>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <param name="webRequest">
-        /// The web request.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
+        
         private XmlDocument FinalizeProcessingResponse(StatusInfo status, HttpWebRequest webRequest)
         {
             HttpWebResponse webResponse = null;
@@ -465,18 +398,6 @@
             return null;
         }
 
-        /// <summary>
-        /// The process xml result.
-        /// </summary>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <param name="buffer">
-        /// The buffer.
-        /// </param>
-        /// <returns>
-        /// The <see cref="XmlDocument"/>.
-        /// </returns>
         protected XmlDocument ProcessXmlResult(StatusInfo status, string buffer)
         {
             var doc = new XmlDocument();
@@ -515,16 +436,7 @@
 
             return doc;
         }
-
-        /// <summary>
-        /// The process request.
-        /// </summary>
-        /// <param name="request">
-        /// The request.
-        /// </param>
-        /// <returns>
-        /// The <see cref="HttpWebRequest"/>.
-        /// </returns>
+        
         private HttpWebRequest ProcessRequest(HttpWebRequest request)
         {
             try
@@ -559,113 +471,74 @@
 
             return request;
         }
+        
+        //private static void WriteMultipartForm(
+        //    Stream s, 
+        //    string boundary, 
+        //    Dictionary<string, string> data, 
+        //    string fileName, 
+        //    string fileContentType, 
+        //    byte[] fileData)
+        //{
+        //    //// The first boundary
+        //    byte[] boundarybytes = Encoding.UTF8.GetBytes("--" + boundary + "\r\n");
 
-        /// <summary>
-        /// Writes multi part HTTP POST request.
-        /// </summary>
-        /// <param name="s">
-        /// The s.
-        /// </param>
-        /// <param name="boundary">
-        /// The boundary.
-        /// </param>
-        /// <param name="data">
-        /// The data.
-        /// </param>
-        /// <param name="fileName">
-        /// The file Name.
-        /// </param>
-        /// <param name="fileContentType">
-        /// The file Content Type.
-        /// </param>
-        /// <param name="fileData">
-        /// The file Data.
-        /// </param>
-        private static void WriteMultipartForm(
-            Stream s, 
-            string boundary, 
-            Dictionary<string, string> data, 
-            string fileName, 
-            string fileContentType, 
-            byte[] fileData)
-        {
-            //// The first boundary
-            byte[] boundarybytes = Encoding.UTF8.GetBytes("--" + boundary + "\r\n");
+        //    //// the last boundary.
+        //    byte[] trailer = Encoding.UTF8.GetBytes("\r\n--" + boundary + "–-\r\n");
 
-            //// the last boundary.
-            byte[] trailer = Encoding.UTF8.GetBytes("\r\n--" + boundary + "–-\r\n");
+        //    //// the form data, properly formatted
+        //    string formdataTemplate = "Content-Dis-data; name=\"{0}\"\r\n\r\n{1}";
 
-            //// the form data, properly formatted
-            string formdataTemplate = "Content-Dis-data; name=\"{0}\"\r\n\r\n{1}";
+        //    //// the form-data file upload, properly formatted
+        //    string fileheaderTemplate = "Content-Dis-data; name=\"{0}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n";
 
-            //// the form-data file upload, properly formatted
-            string fileheaderTemplate = "Content-Dis-data; name=\"{0}\"; filename=\"{1}\";\r\nContent-Type: {2}\r\n\r\n";
+        //    //// Added to track if we need a CRLF or not.
+        //    // ReSharper disable once InconsistentNaming
+        //    bool needsCRLF = false;
 
-            //// Added to track if we need a CRLF or not.
-            // ReSharper disable once InconsistentNaming
-            bool needsCRLF = false;
+        //    if (data != null)
+        //    {
+        //        foreach (string key in data.Keys)
+        //        {
+        //            //// if we need to drop a CRLF, do that.
+        //            if (needsCRLF)
+        //            {
+        //                WriteToStream(s, "\r\n");
+        //            }
 
-            if (data != null)
-            {
-                foreach (string key in data.Keys)
-                {
-                    //// if we need to drop a CRLF, do that.
-                    if (needsCRLF)
-                    {
-                        WriteToStream(s, "\r\n");
-                    }
+        //            //// Write the boundary.
+        //            WriteToStream(s, boundarybytes);
 
-                    //// Write the boundary.
-                    WriteToStream(s, boundarybytes);
+        //            //// Write the key.
+        //            WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
+        //            needsCRLF = true;
+        //        }
+        //    }
 
-                    //// Write the key.
-                    WriteToStream(s, string.Format(formdataTemplate, key, data[key]));
-                    needsCRLF = true;
-                }
-            }
+        //    //// If we don't have keys, we don't need a crlf.
+        //    if (needsCRLF)
+        //    {
+        //        WriteToStream(s, "\r\n");
+        //    }
 
-            //// If we don't have keys, we don't need a crlf.
-            if (needsCRLF)
-            {
-                WriteToStream(s, "\r\n");
-            }
+        //    WriteToStream(s, boundarybytes);
+        //    WriteToStream(s, string.Format(fileheaderTemplate, "file", fileName, fileContentType));
 
-            WriteToStream(s, boundarybytes);
-            WriteToStream(s, string.Format(fileheaderTemplate, "file", fileName, fileContentType));
-
-            //// Write the file data to the stream.
-            WriteToStream(s, fileData);
-            WriteToStream(s, trailer);
-        }
-
-        /// <summary>
-        /// Writes string to stream.
-        /// </summary>
-        /// <param name="s">
-        /// The stream.
-        /// </param>
-        /// <param name="txt">
-        /// The text.
-        /// </param>
-        private static void WriteToStream(Stream s, string txt)
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(txt);
-            s.Write(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// Writes byte array to stream.
-        /// </summary>
-        /// <param name="s">
-        /// The stream.
-        /// </param>
-        /// <param name="bytes">
-        /// The bytes.
-        /// </param>
-        private static void WriteToStream(Stream s, byte[] bytes)
-        {
-            s.Write(bytes, 0, bytes.Length);
-        }
+        //    //// Write the file data to the stream.
+        //    WriteToStream(s, fileData);
+        //    WriteToStream(s, trailer);
+        //}
+        
+        //private static void WriteToStream(Stream s, string txt)
+        //{
+        //    byte[] bytes = Encoding.UTF8.GetBytes(txt);
+        //    s.Write(bytes, 0, bytes.Length);
+        //}
+        
+        //private static void WriteToStream(Stream s, byte[] bytes)
+        //{
+        //    s.Write(bytes, 0, bytes.Length);
+        //}
 
         #endregion
 

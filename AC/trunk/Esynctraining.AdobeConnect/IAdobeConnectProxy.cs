@@ -31,11 +31,13 @@ namespace Esynctraining.AdobeConnect
         MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
 
         MeetingPermissionCollectionResult GetMeetingPermissions(string meetingId, IEnumerable<string> principalIds, out bool meetingExistsInAC);
-        //ScoContentCollectionResult GetAllMeetings();
         PrincipalCollectionResult GetAllPrincipals();
         CommonInfoResult GetCommonInfo();
-        //byte[] GetContent(string scoId, out string error, string format = "zip");
+
+        byte[] GetContent(string scoId, out string error, string format = "zip");
+
         byte[] GetContentByUrlPath(string urlPath, string format, out string error);
+
         ScoContentCollectionResult GetContentsByScoId(string scoId);
         ScoContentCollectionResult GetContentsByType(string type);
         //GeneratedRecordingJobCollectionResult GetConvertedRecordingsList(string recordingScoId);
@@ -108,8 +110,8 @@ namespace Esynctraining.AdobeConnect
         TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0);
 
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
-        MeetingAttendeeCollectionResult ReportMettingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
-        MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0);
+        MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
+        MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0);
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);

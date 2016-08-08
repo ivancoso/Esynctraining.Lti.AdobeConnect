@@ -5,6 +5,9 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
 {
     public class ScoContentCollectionResult : GenericCollectionResultBase<ScoContent>
     {
+        public string ScoId { get; private set; }
+
+
         public ScoContentCollectionResult(StatusInfo status) : base(status)
         {
         }
@@ -19,7 +22,7 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
         {
             this.ScoId = scoId;
         }
-
-        public string ScoId { get; set; }
+        
     }
+
 }

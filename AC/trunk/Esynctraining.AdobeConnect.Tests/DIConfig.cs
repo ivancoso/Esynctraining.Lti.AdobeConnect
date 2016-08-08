@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Configuration;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;

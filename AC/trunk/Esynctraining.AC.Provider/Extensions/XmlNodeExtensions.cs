@@ -1,13 +1,4 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="XmlNodeExtensions.cs" company="eSyncTraining">
-//   eSyncTraining
-// </copyright>
-// <summary>
-//   The xml document extensions.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-
-namespace Esynctraining.AC.Provider.Extensions
+﻿namespace Esynctraining.AC.Provider.Extensions
 {
     using System;
     using System.Xml;
@@ -17,7 +8,7 @@ namespace Esynctraining.AC.Provider.Extensions
     /// <summary>
     /// The xml node extensions.
     /// </summary>
-    public static class XmlNodeExtensions
+    internal static class XmlNodeExtensions
     {
         /// <summary>
         /// The select single node value.
@@ -29,9 +20,7 @@ namespace Esynctraining.AC.Provider.Extensions
         /// </returns>
         public static string SelectSingleNodeValue(this XmlNode node, string path)
         {
-            var childNode = node.SelectSingleNode(path);
-
-            return childNode != null ? childNode.Value : string.Empty;
+            return node.SelectSingleNode(path)?.Value ?? string.Empty;
         }
 
         /// <summary>
@@ -129,8 +118,8 @@ namespace Esynctraining.AC.Provider.Extensions
         public static string SelectAttributeValue(this XmlNode node, string attribute)
         {
             return node.Attributes != null && node.Attributes[attribute] != null
-                       ? node.Attributes[attribute].Value
-                       : null;
+                ? node.Attributes[attribute].Value
+                : null;
         }
 
         /// <summary>

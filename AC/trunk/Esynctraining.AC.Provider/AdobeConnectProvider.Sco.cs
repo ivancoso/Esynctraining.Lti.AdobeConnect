@@ -21,15 +21,6 @@
 
         #endregion
         
-        /// <summary>
-        /// The search SCO by name.
-        /// </summary>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
         public ScoContentCollectionResult SearchScoByName(string name)
         {
             StatusInfo status;
@@ -72,6 +63,9 @@
         /// </returns>
         public ScoInfoResult GetScoInfo(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             // act: "sco-info"
             StatusInfo status;
 
@@ -93,6 +87,9 @@
         /// </returns>
         public ScoInfoResult GetScoByUrl(string scoUrl)
         {
+            if (string.IsNullOrWhiteSpace(scoUrl))
+                throw new ArgumentException("Non-empty value expected", nameof(scoUrl));
+
             // act: "sco-by-url"
             StatusInfo status;
 
@@ -116,6 +113,9 @@
         /// </returns>
         public ScoContentCollectionResult GetContentsByScoId(string scoId)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             StatusInfo status;
 
             // TRICK: http://www.connectusers.com/forums/topic/8827/adobe-connect-8-web-services-bytecount-missing-scocontents/
@@ -128,6 +128,9 @@
 
         public ScoContentCollectionResult GetContentsByScoId(string scoId, string filterName, string filterType)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(Commands.Sco.Contents,
@@ -174,55 +177,43 @@
         /// </returns>
         public ScoContentCollectionResult GetScoExpandedContent(string scoId)
         {
-            StatusInfo status;
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
-            var scos = this.requestProcessor.Process(Commands.Sco.ExpandedContents, string.Format(CommandParams.ScoId, scoId), out status);
-
-            // ReSharper disable once InconsistentNaming
-            const string scoPath = "//expanded-scos/sco";
-
-            return ResponseIsOk(scos, status)
-                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos, scoPath), scoId)
-                : new ScoContentCollectionResult(status);
+            var filter = string.Format(CommandParams.ScoId, scoId);
+            return CallScoExpandedContent(scoId, filter);
         }
 
-        /// <summary>
-        /// The get sco expanded content by name.
-        /// </summary>
-        /// <param name="scoId">
-        /// The sco id.
-        /// </param>
-        /// <param name="name">
-        /// The name.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
         public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
         {
-            StatusInfo status;
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            // ???
+            //if (string.IsNullOrWhiteSpace(name))
+            //    throw new ArgumentException("Non-empty value expected", nameof(name));
 
-            var scos = this.requestProcessor.Process(
-                Commands.Sco.ExpandedContents,
-                string.Format(CommandParams.ScoName, scoId, UrlEncode(name)),
-                out status);
-
-            // ReSharper disable once InconsistentNaming
-            const string scoPath = "//expanded-scos/sco";
-
-            return ResponseIsOk(scos, status)
-                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos, scoPath), scoId)
-                : new ScoContentCollectionResult(status);
+            var filter = string.Format(CommandParams.ScoName, scoId, UrlEncode(name));
+            return CallScoExpandedContent(scoId, filter);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria)
         {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            // ???
+            //if (string.IsNullOrWhiteSpace(nameLikeCriteria))
+            //    throw new ArgumentException("Non-empty value expected", nameof(nameLikeCriteria));
+
+            var filter = string.Format(CommandParams.ScoNameLike, scoId, UrlEncode(nameLikeCriteria)); ;
+            return CallScoExpandedContent(scoId, filter);
+        }
+        
+
+        private ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
+        {
             StatusInfo status;
 
-            var scos = this.requestProcessor.Process(
-                Commands.Sco.ExpandedContents,
-                string.Format(CommandParams.ScoNameLike, scoId, UrlEncode(nameLikeCriteria)),
-                out status);
+            var scos = this.requestProcessor.Process(Commands.Sco.ExpandedContents, filter, out status);
 
             // ReSharper disable once InconsistentNaming
             const string scoPath = "//expanded-scos/sco";
@@ -232,8 +223,9 @@
                 : new ScoContentCollectionResult(status);
         }
 
+
         #region Write
-        
+
         /// <summary>
         /// The create SCO.
         /// </summary>
@@ -460,11 +452,6 @@
         }
 
         #endregion
-
-        private static bool IsReservedUrlPath()
-        {
-            return true;
-        }
 
     }
 
