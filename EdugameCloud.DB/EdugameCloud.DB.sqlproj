@@ -86,7 +86,6 @@
     <Build Include="dbo\Tables\SNService.sql" />
     <Build Include="dbo\Tables\SNProfileSNService.sql" />
     <Build Include="dbo\Tables\SNProfile.sql" />
-    <Build Include="dbo\Tables\ServerStatus.sql" />
     <Build Include="dbo\Tables\ScoreType.sql" />
     <Build Include="dbo\Tables\QuizResult.sql" />
     <Build Include="dbo\Tables\QuizQuestionResult.sql" />
@@ -163,7 +162,6 @@
     <Build Include="dbo\Tables\QuestionForLikert_1.sql" />
     <Build Include="dbo\Tables\QuestionForTrueFalse.sql" />
     <Build Include="dbo\Tables\SubModuleItemTheme.sql" />
-    <Build Include="dbo\Tables\Webinar_1.sql" />
     <Build Include="dbo\Tables\SubscriptionUpdate_1.sql" />
     <Build Include="dbo\Tables\SubscriptionHistoryLog_1.sql" />
     <Build Include="dbo\Tables\SocialUserTokens_1.sql" />
