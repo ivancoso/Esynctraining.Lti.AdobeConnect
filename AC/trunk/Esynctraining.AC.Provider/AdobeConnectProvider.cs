@@ -349,12 +349,6 @@
         //        : new CurriculumContentCollectionResult(status);
         //}
 
-        /// <summary>
-        /// Gets the type of the contents by.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>Contents by Type.</returns>
-        /// TODO: should it be refactored Enum?
         public ScoContentCollectionResult GetContentsByType(string type)
         {
             StatusInfo status;

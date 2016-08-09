@@ -289,7 +289,17 @@ namespace Esynctraining.AC.Provider
             bool okResponse = ResponseIsOk(principals, status);
 
             if (!okResponse)
+            {
+                if (status.Code == StatusCodes.operation_size_error)
+                {
+                    int? actualAcLimit = status.TryGetSubCodeAsInt32();
+                    if (actualAcLimit.HasValue)
+                    {
+                        return DoCallPrincipalList(filter, startIndex, actualAcLimit.Value);
+                    }
+                }
                 return new PrincipalCollectionResult(status);
+            }
 
             if (data.Count() < limit)
                 return new PrincipalCollectionResult(status, data);

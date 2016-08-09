@@ -33,7 +33,11 @@
         too_much_data,
         internal_error,
         too_much_meetings,
-        template_not_found
+        template_not_found,
+
+        // <status code="operation-size-error" subcode="10000"/>
+        // If result count is more than 20000(default value, can be other value)
+        operation_size_error,
     }
 
     public enum StatusSubCodes

@@ -1,6 +1,8 @@
 namespace Esynctraining.AC.Provider.Entities
 {
     using System;
+    using System.Xml;
+    using Extensions;
 
     /// <summary>
     /// StatusInfo structure, holds status information during API calls
@@ -55,6 +57,24 @@ namespace Esynctraining.AC.Provider.Entities
         /// Gets or sets the session info.
         /// </summary>
         public string SessionInfo { get; set; }
+
+
+        public int? TryGetSubCodeAsInt32()
+        {
+            if (string.IsNullOrWhiteSpace(InnerXml))
+                return null;
+
+            var doc = new XmlDocument();
+            doc.LoadXml(InnerXml);
+            var subCode = doc.SelectSingleNodeValue("//status/@subcode");
+            int value;
+            if (int.TryParse(subCode, out value))
+            {
+                return value;
+            }
+
+            return null;
+        }
 
     }
 
