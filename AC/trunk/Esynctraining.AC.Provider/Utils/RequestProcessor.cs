@@ -141,7 +141,7 @@
         {
             error = null;            
             var request = WebRequest.Create(url) as HttpWebRequest;
-            request = ProcessRequest(request);
+            request = ProcessRequest(request, contentRequest: true);
             if (request != null)
             {
                 HttpWebResponse webResponse = null;
@@ -239,14 +239,20 @@
 
             try
             {
-                HttpWebRequest webRequest = this.CreateWebRequest(action, parameters);
-                var httpClient = new HttpClient();
+                HttpResponseMessage response = null;
+                var url = $"{connectionDetails.ServiceUrl}?action={action}&{parameters}&session={sessionCookie.Value}";
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 var form = new MultipartFormDataContent();
-                form.Add(new ByteArrayContent(uploadData.fileBytes, 0, uploadData.fileBytes.Length), "file", uploadData.fileName);
-                var response = httpClient.PostAsync(webRequest.RequestUri + "&session=" + this.sessionCookie.Value, form).Result;
+                form.Add(new ByteArrayContent(uploadData.fileBytes, 0, uploadData.fileBytes.Length), "file",
+                    uploadData.fileName);
+                using (var httpClient = new HttpClient())
+                {
+                    httpClient.Timeout = TimeSpan.FromMilliseconds(connectionDetails.HttpContentRequestTimeout);
+                    
+                    response = httpClient.PostAsync(url, form).Result;
+                }
+
                 response.EnsureSuccessStatusCode();
-                httpClient.Dispose();
                 var result = response.Content.ReadAsStringAsync().Result;
                 return ProcessXmlResult(status, result);
             }
@@ -437,7 +443,7 @@
             return doc;
         }
         
-        private HttpWebRequest ProcessRequest(HttpWebRequest request)
+        private HttpWebRequest ProcessRequest(HttpWebRequest request, bool contentRequest = false)
         {
             try
             {
@@ -459,7 +465,7 @@
             }
 
             // 20 sec. timeout: A Domain Name System (DNS) query may take up to 15 seconds to return or time out.
-            request.Timeout = 20000 * 60;
+            request.Timeout = contentRequest ? connectionDetails.HttpContentRequestTimeout : connectionDetails.HttpRequestTimeout;
             request.Accept = "*/*";
             request.KeepAlive = false;
             request.CookieContainer = new CookieContainer();

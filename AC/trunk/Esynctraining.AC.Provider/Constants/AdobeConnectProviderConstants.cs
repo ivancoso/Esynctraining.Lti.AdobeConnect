@@ -28,6 +28,15 @@
         /// </summary>
         public const string DateFormat = @"yyyy-MM-dd\THH:mm:sszzz";
 
+        /// <summary>
+        /// The http client timeout for http requests
+        /// </summary>
+        public const int DefaultHttpRequestTimeout = 2000*60; //2 min
+        
+		/// <summary>
+        /// The http client timeout for content download/upload requests
+        /// </summary>
+        public const int DefaultHttpContentRequestTimeout = 10000*60; //10 min
     }
 
 }

@@ -1,3 +1,5 @@
+using Esynctraining.AC.Provider.Constants;
+
 namespace Esynctraining.AC.Provider
 {
     using System;
@@ -36,7 +38,7 @@ namespace Esynctraining.AC.Provider
                                            };
             }
 
-            httpWebRequest.Timeout = 20000 * 60;
+            httpWebRequest.Timeout = AdobeConnectProviderConstants.DefaultHttpContentRequestTimeout;
             httpWebRequest.Accept = "*/*";
             httpWebRequest.KeepAlive = false;
             httpWebRequest.CookieContainer = new CookieContainer();
