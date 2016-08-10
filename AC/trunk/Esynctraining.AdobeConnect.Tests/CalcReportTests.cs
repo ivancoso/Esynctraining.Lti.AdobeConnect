@@ -30,18 +30,7 @@ namespace Esynctraining.AdobeConnect.Tests
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
             XmlConfigurator.Configure();
-
-            _connectionDetails = new ConnectionDetails
-            {
-                EventMaxParticipants = 10,
-                Proxy = new ProxyCredentials
-                {
-                    Domain = string.Empty,
-                    Login = string.Empty,
-                    Password = string.Empty,
-                    Url = string.Empty,
-                },
-            };
+            
             _logger = IoC.Resolve<ILogger>();
         }
 
@@ -50,7 +39,7 @@ namespace Esynctraining.AdobeConnect.Tests
         [TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123")]
         public void WillGetRecordingsStats(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails.ServiceUrl = apiUrl;
+            _connectionDetails = new ConnectionDetails(apiUrl);
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));
@@ -80,7 +69,7 @@ namespace Esynctraining.AdobeConnect.Tests
         [TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123", "17131049")]
         public void WillParseDurationForSco(string apiUrl, string login, string password, string sco)
         {
-            _connectionDetails.ServiceUrl = apiUrl;
+            _connectionDetails = new ConnectionDetails(apiUrl);
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));

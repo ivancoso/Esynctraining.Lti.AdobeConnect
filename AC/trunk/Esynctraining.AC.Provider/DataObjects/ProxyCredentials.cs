@@ -6,6 +6,9 @@
 
         public string Domain { get; set; }
 
+
+        public ProxyCredentials(string login, string password) : base(login, password) { }
+
     }
 
 }

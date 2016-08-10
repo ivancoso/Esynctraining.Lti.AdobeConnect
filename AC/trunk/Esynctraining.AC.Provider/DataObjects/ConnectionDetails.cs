@@ -1,23 +1,25 @@
-﻿namespace Esynctraining.AC.Provider.DataObjects
+﻿using System;
+
+namespace Esynctraining.AC.Provider.DataObjects
 {
     /// <summary>
     /// Connection Details for Adobe Connect API
     /// </summary>
     public class ConnectionDetails
     {
-        /// <summary>
-        /// Service URL. Required!
-        /// </summary>
-        public string ServiceUrl { get; set; }
+        public string ServiceUrl { get; private set; }
         
-        /// <summary>
-        /// Proxy Credentials (optional).
-        /// </summary>
         public ProxyCredentials Proxy { get; set; }
 
-        /// <summary>
-        /// Event maximum participants.
-        /// </summary>
-        public int EventMaxParticipants { get; set; }
+
+        public ConnectionDetails(string serviceUrl)
+        {
+            if (string.IsNullOrWhiteSpace(serviceUrl))
+                throw new ArgumentException("Non-empty value expected", nameof(serviceUrl));
+
+            ServiceUrl = serviceUrl;
+        }
+
     }
+
 }
