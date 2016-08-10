@@ -30,6 +30,7 @@ namespace Esynctraining.AdobeConnect
             ApiUrl = apiUrl;
         }
 
+
         public StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId)
         {
             return Execute(() => { return _provider.AddToGroup(principalIds, groupId); },
@@ -536,7 +537,7 @@ namespace Esynctraining.AdobeConnect
         public LoginResult Login(UserCredentials credentials)
         {
             if (credentials == null)
-                throw new ArgumentNullException("credentials");
+                throw new ArgumentNullException(nameof(credentials));
 
             return Execute(() => { return _provider.Login(credentials); },
                 credentials.Login, credentials.Password, skipAcResultProcessing: true);

@@ -45,6 +45,9 @@
         
         public LoginResult Login(UserCredentials credentials)
         {
+            if (credentials == null)
+                throw new ArgumentNullException(nameof(credentials));
+
             this.requestProcessor.SetSessionId(null);
 
             StatusInfo statusInfo;
@@ -62,6 +65,9 @@
 
         public LoginResult LoginWithSessionId(string sessionId)
         {
+            if (string.IsNullOrWhiteSpace(sessionId))
+                throw new ArgumentException("Non-empty value expected", nameof(sessionId));
+
             this.requestProcessor.SetSessionId(sessionId);
 
             StatusInfo status;
