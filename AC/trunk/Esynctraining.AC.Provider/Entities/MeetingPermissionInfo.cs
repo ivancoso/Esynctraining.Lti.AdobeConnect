@@ -24,8 +24,7 @@ namespace Esynctraining.AC.Provider.Entities
             Name = value.Name;
             Description = value.Description;
 
-            // TODO: add Enum.IsDefined??
-            PermissionId = (MeetingPermissionId)value.PermissionId;
+            PermissionId = (MeetingPermissionId)Enum.Parse(typeof(MeetingPermissionId), value.PermissionId.ToString());
         }
         
     }

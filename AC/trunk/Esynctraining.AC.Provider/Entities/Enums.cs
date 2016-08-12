@@ -175,7 +175,7 @@
 
     public enum MeetingPermissionId
     {
-        not_set,
+        none,
         host,
         mini_host,
         view,
