@@ -162,6 +162,13 @@
         [DataMember]
         public int rows { get; set; }
 
+        /// <summary>
+        /// TODO: make different types for single and multiple choice questions, remove this property
+        /// Currently is needed for Moodle (single choice which can have multiple correct answers)
+        /// </summary>
+        [DataMember]
+        public bool isMultipleChoice { get { return restrictions != null && restrictions.Contains("multiple_choice"); } }
+
         #endregion
     }
 }

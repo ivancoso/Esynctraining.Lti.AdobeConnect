@@ -50,20 +50,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
                 ? new MeetingNameInfo()
                 : JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
-            int i = 1 ;
+            var meetingName = nameInfo.meetingName ?? nameInfo.reusedMeetingName;
+            int i = 1;
             var latestDateToCheck = startDate.AddDays(dto.Weeks*7);
 
             var listOfEvents = new List<SakaiEventDto>();
             while (startDate < latestDateToCheck)
             {
-                
                 if (dto.DaysOfWeek.Contains(startDate.DayOfWeek))
                 {
                     var ev = new SakaiEventDto
                     {
-                        Name = nameInfo.meetingName + " #" + i.ToString(),
+                        Name = meetingName + " #" + i.ToString(),
                         Description = string.Empty,
-                        EgcId = nameInfo.meetingName + " " + i.ToString(),
+                        EgcId = meetingName + " " + i.ToString(),
                         StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
                         EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
                     };
