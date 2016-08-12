@@ -127,16 +127,20 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (principalIds.Any())
             {
+                var groupPrincipal = provider.GetGroupsByType("live-admins").Values.Single();
+                var groupParticipants = provider.GetGroupUsers(groupPrincipal.PrincipalId);
+                var usersToAdd = principalIds.Where(x => groupParticipants.Values.All(gp => gp.PrincipalId != x));
                 try
                 {
-                    provider.AddToGroupByType(principalIds, "live-admins");
+                    if(usersToAdd.Any())
+                        provider.AddToGroupByType(usersToAdd, "live-admins");
                 }
                 catch (AdobeConnectException ex)
                 {
                     if (ex.Status.Code == StatusCodes.invalid && ex.Status.SubCode == StatusSubCodes.missing && ex.Status.InvalidField == "name")
                     {
                         logger.Warn("AC failed to add some users to MeetingHosts group. Trying to add them one-by-one...");
-                        foreach (string principal in principalIds)
+                        foreach (string principal in usersToAdd)
                         {
                             try
                             {
@@ -1015,7 +1019,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 provider.UpdateScoPermissionForPrincipal(meetingScoId, principalId, permission);
                 if (permission == MeetingPermissionId.host)
                 {
-                    this.AddUserToMeetingHostsGroup(provider, principalId);
+                    this.AddUsersToMeetingHostsGroup(provider, new []{ principalId });
                 }
             }
         }
@@ -1185,7 +1189,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (permission == MeetingPermissionId.host)
             {
-                this.AddUserToMeetingHostsGroup(provider, user.ac_id);
+                this.AddUsersToMeetingHostsGroup(provider, new[] { user.ac_id });
             }
 
             return skipReturningUsers
@@ -1262,7 +1266,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (permission == MeetingPermissionId.host)
             {
-                AddUserToMeetingHostsGroup(provider, user.ac_id);
+                AddUsersToMeetingHostsGroup(provider, new[] { user.ac_id });
             }
 
             return new LmsUserDTO

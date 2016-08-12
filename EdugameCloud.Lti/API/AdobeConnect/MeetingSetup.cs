@@ -386,7 +386,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         isOwner ? MeetingPermissionId.host : MeetingPermissionId.view);
                     if (isOwner)
                     {
-                        this.UsersSetup.AddUserToMeetingHostsGroup(provider, registeredUser.PrincipalId);
+                        this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new [] { registeredUser.PrincipalId });
                     }
                 }
             }
@@ -606,7 +606,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 //NOTE: need to call before use GetMeetingFolder method;
                 // when we call group-membership-update api action ac create folder in the user-meetings directory called as user login;
-                this.UsersSetup.AddUserToMeetingHostsGroup(provider, currentUserPrincipal.PrincipalId);
+                this.UsersSetup.AddUsersToMeetingHostsGroup(provider, new [] { currentUserPrincipal.PrincipalId });
 
                 sw.Stop();
                 trace.AppendFormat("SaveMeeting: AddUserToMeetingHostsGroup: time: {0}.", sw.Elapsed.ToString());
