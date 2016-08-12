@@ -161,7 +161,7 @@ namespace EdugameCloud.Lti.API
                 return false;
 
             var apiUrl = string.Format("{0}/api/xml", test.domain.ToLowerInvariant());
-            var provider = new AdobeConnectProvider(new ConnectionDetails { ServiceUrl = apiUrl });
+            var provider = new AdobeConnectProvider(new ConnectionDetails(apiUrl));
             var result = provider.Login(new UserCredentials(test.login, test.password));
 
             if (!result.Success)
