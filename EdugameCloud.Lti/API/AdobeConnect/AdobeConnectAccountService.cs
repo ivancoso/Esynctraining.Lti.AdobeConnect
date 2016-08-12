@@ -44,19 +44,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             string apiUrl = acDomain + "/api/xml";
 
-            var connectionDetails = new ConnectionDetails
-            {
-                ServiceUrl = apiUrl,
-                EventMaxParticipants = 10,
-                Proxy =
-                new ProxyCredentials
-                {
-                    Domain = string.Empty,
-                    Login = string.Empty,
-                    Password = string.Empty,
-                    Url = string.Empty,
-                },
-            };
+            var connectionDetails = new ConnectionDetails(apiUrl);
             string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)

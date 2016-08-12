@@ -177,7 +177,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             try
             {
-                var meetingAttendees = acp.ReportMettingAttendance(meetingId, startIndex, limit).Values.ToList();
+                var meetingAttendees = acp.ReportMeetingAttendance(meetingId, startIndex, limit).Values.ToList();
                 return meetingAttendees.Select(
                         us =>
                         new ACSessionParticipantDTO
@@ -210,7 +210,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static List<ACSessionDTO> GetSessionsWithParticipantsBySessionTime(string meetingId, List<MeetingAttendee> meetingAttendees,
             Esynctraining.AdobeConnect.IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
         {
-            List<MeetingSession> sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
+            List<MeetingSession> sessions = acp.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
             var result = sessions.Select(sco => new ACSessionDTO
             {
                 scoId = int.Parse(sco.ScoId),
@@ -285,7 +285,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             try
             {
-                List<MeetingAttendee> meetingAttendees = acp.ReportMettingAttendance(meetingId).Values.ToList();
+                List<MeetingAttendee> meetingAttendees = acp.ReportMeetingAttendance(meetingId).Values.ToList();
                 if (meetingAttendees.All(x => string.IsNullOrEmpty(x.AssetId)))
                 {
                     //todo: we should not rely on AssetId parameter and probably use following method in all cases
@@ -297,7 +297,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     .GroupBy(v => v.AssetId, v => v)
                     .ToDictionary(g => int.Parse(g.Key), g => g.ToList());
 
-                var sessions = acp.ReportMettingSessions(meetingId, startIndex, limit).Values.ToList();
+                var sessions = acp.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
 
                 var sessionList =
                     (from asset in userSessions.Keys.Except(sessions.ConvertAll(s => int.Parse(s.AssetId)))
