@@ -1504,7 +1504,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
                         || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning)));
 
-            MeetingPermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.none) : null;
+            // TRICK:  PermissionStringValue acn contains specialpermission value
+            MeetingPermissionInfo publicAccessPermission = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && !string.IsNullOrWhiteSpace(x.PermissionStringValue)) : null;
             string officeHoursString = null;
 
             if (type == LmsMeetingType.OfficeHours)
@@ -1567,8 +1568,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 start_time = meetingSco.BeginDate.ToString("h:mm tt", CultureInfo.InvariantCulture),
                 start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, meetingSco.BeginDate),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),
-                access_level = permissionInfo != null ? permissionInfo.PermissionId.ToString() : "remove",
-                allow_guests = permissionInfo == null || permissionInfo.PermissionId == MeetingPermissionId.remove,
+                access_level = publicAccessPermission != null ? publicAccessPermission.PermissionStringValue : "remove",
+                allow_guests = publicAccessPermission == null || publicAccessPermission.PermissionId == MeetingPermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
                 type = (int)type,

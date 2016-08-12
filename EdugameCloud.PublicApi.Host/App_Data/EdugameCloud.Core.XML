@@ -9088,6 +9088,12 @@
             Gets or sets the is always rate dropdown.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO.isMultipleChoice">
+            <summary>
+            TODO: make different types for single and multiple choice questions, remove this property
+            Currently is needed for Moodle (single choice which can have multiple correct answers)
+            </summary>
+        </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizDataDTO">
             <summary>
             The quiz data DTO.
