@@ -1234,6 +1234,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (option == TelephonyProfileOption.ReuseExistingProfile)
             {
+                // Profile was not selected
+                if (string.IsNullOrWhiteSpace(meetingDTO.audioProfileId))
+                    return true;
+
                 var principalId = meetingDTO.type == (int)LmsMeetingType.OfficeHours
                     ? lmsUser.PrincipalId
                     : provider.PrincipalId;
@@ -1247,6 +1251,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             else if (option == TelephonyProfileOption.GenerateNewProfile)
             {
                 string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
+
+                if (TelephonyDTO.SupportedProfiles.None.Equals(providerName, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("GenerateNewProfile option with None provider");
+
                 string profileName = acMeetingName;
 
                 TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfile(lmsCompany, param, profileName, provider);
