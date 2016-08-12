@@ -19,7 +19,7 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
             if (Status.Code != StatusCodes.ok)
                 return new MeetingPermissionCollectionResult(Status);
 
-            var meetingPermissions = Values?.Select(x => new MeetingPermissionInfo(x));
+            var meetingPermissions = Values?.Select(x => new MeetingPermissionInfo(x)).ToList();
             return new MeetingPermissionCollectionResult(Status, meetingPermissions);
         }
 

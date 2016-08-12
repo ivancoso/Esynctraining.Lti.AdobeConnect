@@ -8,6 +8,8 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlAttribute("permission-id")]
         public MeetingPermissionId PermissionId { get; set; }
 
+        public string PermissionStringValue { get; set; }
+
 
         public MeetingPermissionInfo() { }
 
@@ -24,7 +26,13 @@ namespace Esynctraining.AC.Provider.Entities
             Name = value.Name;
             Description = value.Description;
 
-            PermissionId = (MeetingPermissionId)Enum.Parse(typeof(MeetingPermissionId), value.PermissionId.ToString());
+            PermissionStringValue = value.PermissionId.ToString();
+
+            MeetingPermissionId val;
+            if (Enum.TryParse<MeetingPermissionId>(PermissionStringValue, out val))
+                PermissionId = val;
+            else
+                PermissionId = MeetingPermissionId.none;
         }
         
     }
