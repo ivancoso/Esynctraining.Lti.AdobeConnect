@@ -171,12 +171,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var result = provider.DeleteSco(meeting.GetMeetingScoId());
             if (result.Code == StatusCodes.ok)
             {
-                if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
-                {
-                    // TODO: do we need to process any error??
-                    // Skip it?
-                    var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
-                }
+                DeleteAudioProfile(lmsCompany, meeting, provider);
 
                 return OperationResult.Success();
             }
@@ -996,23 +991,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (!meeting.Reused.GetValueOrDefault() || (meeting.Reused.GetValueOrDefault() && meeting.SourceCourseMeetingId.HasValue))
                 {
                     provider.DeleteSco(meeting.GetMeetingScoId());
-                    if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
-                    {
-                        // TODO: do we need to process any error??
-                        // Skip it?
-                        var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
-                    }
+                    DeleteAudioProfile(lmsCompany, meeting, provider);
                 }
             }
             else
             {
                 provider.DeleteSco(meeting.GetMeetingScoId());
-                if (!string.IsNullOrWhiteSpace(meeting.AudioProfileId))
-                {
-                    // TODO: do we need to process any error??
-                    // Skip it?
-                    var deleteProfileStatus = provider.TelephonyProfileDelete(meeting.AudioProfileId);
-                }
+                DeleteAudioProfile(lmsCompany, meeting, provider);
             }
 
             return enrollments.Select(x => x.Login).ToList();
@@ -1264,7 +1249,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
                 string profileName = acMeetingName;
 
-                TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfileAsync(lmsCompany, param, profileName, provider);
+                TelephonyProfile profile = IoC.Resolve<ITelephonyProfileEngine>(providerName).CreateProfile(lmsCompany, param, profileName, provider);
 
                 if (profile != null)
                 {
@@ -1280,6 +1265,27 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return false;
         }
 
+        private void DeleteAudioProfile(LmsCompany lmsCompany, LmsCourseMeeting meeting, IAdobeConnectProxy provider)
+        {
+            if (string.IsNullOrWhiteSpace(meeting.AudioProfileId))
+                return;
+
+            TelephonyProfileInfoResult profile = provider.TelephonyProfileInfo(meeting.AudioProfileId);
+
+            AudioProfileService.DeleteAudioProfile(meeting.AudioProfileId, provider);
+
+            // NOTE: do nothing for seminars
+            if ((LmsMeetingType)meeting.LmsMeetingType == LmsMeetingType.Seminar)
+                return;
+
+            TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
+            if (option != TelephonyProfileOption.GenerateNewProfile)
+                return;
+
+            string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
+            IoC.Resolve<ITelephonyProfileEngine>(providerName).DeleteProfile(lmsCompany, profile);
+        }
+
         //private Recording GetScheduledRecording(string recordingScoId, string meetingScoId, IAdobeConnectProxy adobeConnectProvider)
         //{
         //    var recordingsByMeeting = adobeConnectProvider.GetRecordingsList(meetingScoId);
@@ -1290,7 +1296,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         //    return recordingsByMeeting.Values.SingleOrDefault(x => x.ScoId == recordingScoId);
         //}
-        
+
         private void SaveLMSUserParameters(
             int lmsCourseId,
             LmsCompany lmsCompany,

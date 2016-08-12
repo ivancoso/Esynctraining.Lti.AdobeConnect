@@ -15,6 +15,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         //OperationResult UpdateAudioProfileId(LmsCourseMeeting meeting, IAdobeConnectProxy provider,
         //    string audioProfileId);
 
+        OperationResult DeleteAudioProfile(string audioProfileId, IAdobeConnectProxy provider);
     }
 
 }

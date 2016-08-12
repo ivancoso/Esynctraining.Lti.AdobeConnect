@@ -4,6 +4,7 @@ using System.Linq;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
+using EdugameCloud.Lti.Telephony;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
@@ -92,6 +93,18 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         //    return OperationResultWithData<LmsCourseMeeting>.Success("Meeting audio profile updated", meeting);
         //}
+
+        public OperationResult DeleteAudioProfile(string audioProfileId, IAdobeConnectProxy provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (string.IsNullOrWhiteSpace(audioProfileId))
+                throw new ArgumentException("Non-empty value expected", nameof(audioProfileId));
+
+            var deleteProfileStatus = provider.TelephonyProfileDelete(audioProfileId);
+            
+            return OperationResult.Success();
+        }
 
     }
 

@@ -31,7 +31,7 @@ namespace EdugameCloud.Lti.Telephony
         }
 
 
-        public TelephonyProfile CreateProfileAsync(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
+        public TelephonyProfile CreateProfile(LmsCompany lmsCompany, LtiParamDTO param, string profileName, IAdobeConnectProxy acProxy)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -103,6 +103,39 @@ namespace EdugameCloud.Lti.Telephony
                 _logger.Error($"CreateProfileAsync error. CompanyLicenseId: {lmsCompany.Id}.", ex);
                 throw;
             }
+        }
+
+        public void DeleteProfile(LmsCompany lmsCompany, TelephonyProfileInfoResult profile)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+            if (profile == null)
+                throw new ArgumentNullException(nameof(profile));
+
+            string roomNumber = profile.TelephonyProfileFields.First(x => x.Key == "x-tel-meetingone-conference-id").Value;
+            if (string.IsNullOrWhiteSpace(roomNumber))
+                throw new InvalidOperationException("Can't find meeting-one room number");
+
+            var access = new AccessDetails
+            {
+                UserName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.UserName),
+                SecretHashKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.SecretHashKey),
+                OwningAccountNumber = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.MeetingOne.OwningAccountNumber),
+            };
+
+            bool deleted = false;
+            try
+            {
+                var client = new MeetingOneClient(_baseAddress, _logger);
+                deleted = client.DeleteRoom(access, roomNumber);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"MeetingOneClient.DeleteRoom failed. RoomNumber:'{roomNumber}'. LmsCompanyId:{lmsCompany.Id}", ex);
+            }
+
+            if (!deleted)
+                throw new InvalidOperationException("MeetingONE API hasn't deleted room.");
         }
 
     }
