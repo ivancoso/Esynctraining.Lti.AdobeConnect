@@ -1504,7 +1504,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     && (GetGuestAuditRoleMappings(lmsCompany, param).Any()
                         || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning)));
 
-            MeetingPermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.not_set) : null;
+            MeetingPermissionInfo permissionInfo = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.none) : null;
             string officeHoursString = null;
 
             if (type == LmsMeetingType.OfficeHours)

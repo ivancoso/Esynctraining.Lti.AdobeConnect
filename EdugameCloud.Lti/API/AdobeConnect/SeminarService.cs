@@ -183,7 +183,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 || (lmsCompany.UseSynchronizedUsers && seminarMeeting.EnableDynamicProvisioning);
 
             MeetingPermissionInfo permissionInfo = permission != null 
-                ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.not_set) 
+                ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.none) 
                 : null;
 
             var sw = Stopwatch.StartNew();
