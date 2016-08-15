@@ -191,10 +191,7 @@
   </system.diagnostics>-->
 
   <system.net>
-    <defaultProxy>
-      <proxy proxyaddress="http://127.0.0.1:8888"/>
-      <!-- for easy debug with Charles or Fiddler -->
-    </defaultProxy>
+    <defaultProxy />
   </system.net>
   
 </configuration>

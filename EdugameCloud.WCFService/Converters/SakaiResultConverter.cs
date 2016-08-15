@@ -94,8 +94,8 @@ namespace EdugameCloud.WCFService.Converters
         protected string GetMultipleChoiceAnswers(Question question, QuizQuestionResultDTO answer)
         {
             var answers = answer.answers ?? new string[] { };
-            var distractorIds =
-                question.Distractors.Select((distractor, index) => (answers.Contains(distractor.Id.ToString(CultureInfo.InvariantCulture)) && distractor.IsCorrect.HasValue &&  distractor.IsCorrect.Value)? index : -1 ).Where(x => x != -1);
+            var distractorIds = question.Distractors.Select((distractor, index) => answers.Contains(distractor.Id.ToString(CultureInfo.InvariantCulture)) ? index : -1 ).Where(x => x != -1);
+            //var distractorIds = question.Distractors.Select((distractor, index) => (answers.Contains(distractor.Id.ToString(CultureInfo.InvariantCulture)) && distractor.IsCorrect.HasValue &&  distractor.IsCorrect.Value)? index : -1 ).Where(x => x != -1);
             return string.Join(";", distractorIds);
         }
 
