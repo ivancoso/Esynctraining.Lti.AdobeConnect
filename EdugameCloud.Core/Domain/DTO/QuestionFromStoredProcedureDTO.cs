@@ -167,7 +167,7 @@
         /// Currently is needed for Moodle (single choice which can have multiple correct answers)
         /// </summary>
         [DataMember]
-        public bool isMultipleChoice { get { return restrictions != null && restrictions.Contains("multiple_choice"); } }
+        public bool isMultipleChoice { get { return restrictions != null && restrictions.Contains("multi_choice"); } }
 
         #endregion
     }
