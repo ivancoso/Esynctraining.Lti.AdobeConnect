@@ -30,7 +30,7 @@ namespace EdugameCloud.WCFService.Converters
         {
             var toSend = new List<MoodleQuizResultDTO>();
 
-            foreach (QuizQuestionResultDTO r in results)
+            foreach (QuizQuestionResultDTO r in results.Where(x => x.questionTypeId != (int)QuestionTypeEnum.TextNoQuestion))
             {
                 var m = new MoodleQuizResultDTO();
 
@@ -78,7 +78,7 @@ namespace EdugameCloud.WCFService.Converters
         {
             var toSend = new List<MoodleQuizResultDTO>();
 
-            foreach (SurveyQuestionResultDTO r in results)
+            foreach (SurveyQuestionResultDTO r in results.Where(x => x.questionTypeId != (int)QuestionTypeEnum.TextNoQuestion))
             {
                 var m = new MoodleQuizResultDTO();
 
