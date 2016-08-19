@@ -26,19 +26,7 @@ namespace Esynctraining.AdobeConnect
         {
             string apiUrl = credentials.Domain + "/api/xml";
 
-            var connectionDetails = new ConnectionDetails
-            {
-                ServiceUrl = apiUrl,
-                EventMaxParticipants = 10,
-                Proxy =
-                new ProxyCredentials
-                {
-                    Domain = string.Empty,
-                    Login = string.Empty,
-                    Password = string.Empty,
-                    Url = string.Empty,
-                },
-            };
+            var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
@@ -57,11 +45,7 @@ namespace Esynctraining.AdobeConnect
         {
             string apiUrl = credentials.Domain + "/api/xml";
 
-            var connectionDetails = new ConnectionDetails
-            {
-                ServiceUrl = apiUrl,
-                EventMaxParticipants = 10,
-            };
+            var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
             {
                 LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
