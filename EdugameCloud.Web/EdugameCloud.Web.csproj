@@ -681,11 +681,11 @@
     <Content Include="machineKey.config">
       <SubType>Designer</SubType>
     </Content>
-    <None Include="Web.config.template">
-      <SubType>Designer</SubType>
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
     </None>
-    <None Include="Web.*.config.template">
-      <DependentUpon>Web.config.template</DependentUpon>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -813,8 +813,5 @@
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
-  </Target> -->
-  <Target Name="AfterBuild">
-    <TransformXml Source="Web.config.template" Transform="Web.$(Configuration).config.template" Destination="Web.config" StackTrace="true" />
-  </Target>
+  </Target> -->  
 </Project>
