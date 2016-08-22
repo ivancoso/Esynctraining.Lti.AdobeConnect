@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "..\Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.NHibernate", "..\Esynctraining.NHibernate\Esynctraining.NHibernate.csproj", "{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.NHibernate", "Esynctraining.NHibernate\Esynctraining.NHibernate.csproj", "{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Windsor", "..\Esynctraining.Windsor\Esynctraining.Windsor.csproj", "{FE048076-0422-48F3-8955-B32ABFD62595}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Windsor", "Esynctraining.Windsor\Esynctraining.Windsor.csproj", "{FE048076-0422-48F3-8955-B32ABFD62595}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.FluentValidation", "..\Esynctraining.FluentValidation\Esynctraining.FluentValidation.csproj", "{640E39C0-59A8-45C6-AB50-5C8F15A3803C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.FluentValidation", "Esynctraining.FluentValidation\Esynctraining.FluentValidation.csproj", "{640E39C0-59A8-45C6-AB50-5C8F15A3803C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Wcf", "..\Esynctraining.Core.Wcf\Esynctraining.Core.Wcf.csproj", "{FB054AF9-5332-4A82-9311-13B8AB09193D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Wcf", "Esynctraining.Core.Wcf\Esynctraining.Core.Wcf.csproj", "{FB054AF9-5332-4A82-9311-13B8AB09193D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Crypto", "..\Esynctraining.Crypto\Esynctraining.Crypto.csproj", "{9AC42D6C-8D85-4EFB-BCF5-CF0A6923C9A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Crypto", "Esynctraining.Crypto\Esynctraining.Crypto.csproj", "{9AC42D6C-8D85-4EFB-BCF5-CF0A6923C9A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Logging.CastleLogger", "..\Esynctraining.Core.Logging.CastleLogger\Esynctraining.Core.Logging.CastleLogger.csproj", "{0268975F-3268-4319-A885-9A4687BB29BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.Logging.CastleLogger", "Esynctraining.Core.Logging.CastleLogger\Esynctraining.Core.Logging.CastleLogger.csproj", "{0268975F-3268-4319-A885-9A4687BB29BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mvc", "..\Esynctraining.Mvc\Esynctraining.Mvc.csproj", "{EF355DBF-24AF-451F-A112-116B83E9843B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mvc", "Esynctraining.Mvc\Esynctraining.Mvc.csproj", "{EF355DBF-24AF-451F-A112-116B83E9843B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi", "..\Esynctraining.WebApi\Esynctraining.WebApi.csproj", "{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi", "Esynctraining.WebApi\Esynctraining.WebApi.csproj", "{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
