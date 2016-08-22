@@ -180,15 +180,6 @@ namespace EdugameCloud.WCFService
             };
         }
 
-        /// <summary>
-        /// The save.
-        /// </summary>
-        /// <param name="test">
-        /// The test.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ConnectionInfoDTO"/>.
-        /// </returns>
         public ConnectionInfoDTO TestConnection(ConnectionTestDTO test)
         {
             return TestConnectionService.TestConnection(test);
@@ -197,7 +188,7 @@ namespace EdugameCloud.WCFService
         public int DeleteById(int id)
         {
             if (id <= 0)
-                throw new ArgumentOutOfRangeException("id");
+                throw new ArgumentOutOfRangeException(nameof(id));
 
             LmsCompanyModel.DeleteWithDependencies(id);
             

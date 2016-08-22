@@ -97,8 +97,8 @@
     <Reference Include="Esynctraining.Http.Streaming">
       <HintPath>..\packages\Esynctraining.Http.Streaming.1.0.0.1\lib\net40\Esynctraining.Http.Streaming.dll</HintPath>
     </Reference>
-    <Reference Include="Esynctraining.Mail, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mail.1.0.0.5\lib\net45\Esynctraining.Mail.dll</HintPath>
+    <Reference Include="Esynctraining.Mail, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mail.1.0.0.6\lib\net45\Esynctraining.Mail.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
@@ -582,7 +582,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>21646</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://dev.edugamecloud.com/services</IISUrl>
+          <IISUrl>http://localhost/services</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -129,20 +129,28 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public ACSessionDTO Save(ACSessionDTO session)
         {
-            ValidationResult validationResult;
-            if (this.IsValid(session, out validationResult))
+            try
             {
-                ACSessionModel sessionModel = this.ACSessionModel;
-                bool isTransient = session.acSessionId == 0;
-                ACSession sessionInstance = isTransient ? null : sessionModel.GetOneById(session.acSessionId).Value;
-                sessionInstance = this.ConvertDto(session, sessionInstance);
-                sessionModel.RegisterSave(sessionInstance, true);
-                return new ACSessionDTO(sessionInstance);
-            }
+                ValidationResult validationResult;
+                if (this.IsValid(session, out validationResult))
+                {
+                    ACSessionModel sessionModel = this.ACSessionModel;
+                    bool isTransient = session.acSessionId == 0;
+                    ACSession sessionInstance = isTransient ? null : sessionModel.GetOneById(session.acSessionId).Value;
+                    sessionInstance = this.ConvertDto(session, sessionInstance);
+                    sessionModel.RegisterSave(sessionInstance, true);
+                    return new ACSessionDTO(sessionInstance);
+                }
 
-            var error = this.GenerateValidationError(validationResult);
-            this.LogError("ACSession.Save", error);
-            throw new FaultException<Error>(error, error.errorMessage);
+                var error = this.GenerateValidationError(validationResult);
+                this.LogError("ACSession.Save", error);
+                throw new FaultException<Error>(error, error.errorMessage);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("ACSession.Save", ex);
+                throw;
+            }
         }
 
         #endregion

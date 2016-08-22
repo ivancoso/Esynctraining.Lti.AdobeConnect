@@ -2,6 +2,7 @@
 namespace EdugameCloud.WCFService
 // ReSharper restore CheckNamespace
 {
+    using System;
     using System.IO;
     using System.Linq;
     using System.ServiceModel;
@@ -137,30 +138,38 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public EGCVersionsDTO GetVersionInfo()
         {
-            return CacheUtility.GetCachedItem<EGCVersionsDTO>(Cache, CachePolicies.Keys.VersionInfo(), () =>
+            try
             {
-                string @base = string.Empty;
-                DirectoryInfo parent;
-                if ((parent = Directory.GetParent(HttpContext.Current.Server.MapPath("~"))) != null)
+                return CacheUtility.GetCachedItem<EGCVersionsDTO>(Cache, CachePolicies.Keys.VersionInfo(), () =>
                 {
-                    @base = parent.FullName;
-                    if (parent.EnumerateDirectories("EdugameCloud.Web").Any())
+                    string @base = string.Empty;
+                    DirectoryInfo parent;
+                    if ((parent = Directory.GetParent(HttpContext.Current.Server.MapPath("~"))) != null)
                     {
-                        @base = Path.Combine(@base, "EdugameCloud.Web");
+                        @base = parent.FullName;
+                        if (parent.EnumerateDirectories("EdugameCloud.Web").Any())
+                        {
+                            @base = Path.Combine(@base, "EdugameCloud.Web");
+                        }
                     }
-                }
 
-                var adminPath = @base + @"\Content\swf\admin";
-                var publicPath = @base + @"\Content\swf\pub";
-                var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
-                var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
-                return new EGCVersionsDTO
-                {
-                    adminVersion = admin.Return(x => new VersionDTO(admin), null),
-                    publicVersion = @public.Return(x => new VersionDTO(@public), null),
-                };
+                    var adminPath = @base + @"\Content\swf\admin";
+                    var publicPath = @base + @"\Content\swf\pub";
+                    var admin = this.ProcessVersion(adminPath, (string)this.Settings.BuildSelector);
+                    var @public = this.ProcessVersion(publicPath, (string)this.Settings.PublicBuildSelector);
+                    return new EGCVersionsDTO
+                    {
+                        adminVersion = admin.Return(x => new VersionDTO(admin), null),
+                        publicVersion = @public.Return(x => new VersionDTO(@public), null),
+                    };
 
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetVersionInfo", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -171,7 +180,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public CountryDTO[] GetCountries()
         {
-            return this.CountryModel.GetAll().Select(x => new CountryDTO(x)).ToArray();
+            try
+            {
+                return this.CountryModel.GetAll().Select(x => new CountryDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetCountries", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -254,8 +271,16 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public string ConvertFromVCF(string vcfProfile)
         {
-            var result = this.VCFModel.ConvertFromVCF(vcfProfile);
-            return result;
+            try
+            {
+                var result = this.VCFModel.ConvertFromVCF(vcfProfile);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.ConvertFromVCF", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -314,7 +339,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public StateDTO[] GetStates()
         {
-            return this.StateModel.GetAll().Select(x => new StateDTO(x)).ToArray();
+            try
+            {
+                return this.StateModel.GetAll().Select(x => new StateDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetStates", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -325,7 +358,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SNServiceDTO[] GetServices()
         {
-            return this.SNServiceModel.GetAll().Select(x => new SNServiceDTO(x)).ToArray();
+            try
+            {
+                return this.SNServiceModel.GetAll().Select(x => new SNServiceDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetServices", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -336,7 +377,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SNMapProviderDTO[] GetMapProviders()
         {
-            return this.SNMapProviderModel.GetAll().Select(x => new SNMapProviderDTO(x)).ToArray();
+            try
+            {
+                return this.SNMapProviderModel.GetAll().Select(x => new SNMapProviderDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetMapProviders", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -347,7 +396,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public BuildVersionTypeDTO[] GetBuildVersionTypes()
         {
-            return this.BuildVersionTypeModel.GetAll().Select(x => new BuildVersionTypeDTO(x)).ToArray();
+            try
+            {
+                return this.BuildVersionTypeModel.GetAll().Select(x => new BuildVersionTypeDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetBuildVersionTypes", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -358,8 +415,16 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public LanguageDTO[] GetLanguages()
         {
-            return this.LanguageModel.GetAll().Select(x => new LanguageDTO(x)).ToArray();
-        }
+            try
+            {
+                return this.LanguageModel.GetAll().Select(x => new LanguageDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetLanguages", ex);
+                throw;
+            }
+}
 
         /// <summary>
         /// The get question types.
@@ -369,7 +434,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public QuestionTypeDTO[] GetQuestionTypes()
         {
-            return this.QuestionTypeModel.GetAll().Select(x => new QuestionTypeDTO(x)).ToArray();
+            try
+            {
+                return this.QuestionTypeModel.GetAll().Select(x => new QuestionTypeDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetQuestionTypes", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -380,7 +453,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public TimeZoneDTO[] GetTimeZones()
         {
-            return this.TimeZoneModel.GetAll().Select(x => new TimeZoneDTO(x)).ToArray();
+            try
+            {
+                return this.TimeZoneModel.GetAll().Select(x => new TimeZoneDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetTimeZones", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -391,7 +472,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public ScoreTypeDTO[] GetScoreTypes()
         {
+            try
+            { 
             return this.ScoreTypeModel.GetAll().Select(x => new ScoreTypeDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetScoreTypes", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -427,7 +516,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public UserRoleDTO[] GetUserRoles()
         {
-            return this.UserRoleModel.GetAll().Select(x => new UserRoleDTO(x)).ToArray();
+            try
+            {
+                return this.UserRoleModel.GetAll().Select(x => new UserRoleDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetUserRoles", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -438,7 +535,15 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public QuizFormatDTO[] GetQuizFormats()
         {
-            return this.QuizFormatModel.GetAll().Select(x => new QuizFormatDTO(x)).ToArray();
+            try
+            {
+                return this.QuizFormatModel.GetAll().Select(x => new QuizFormatDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetQuizFormats", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -449,21 +554,18 @@ namespace EdugameCloud.WCFService
         /// </returns>
         public SurveyGroupingTypeDTO[] GetSurveyGroupingTypes()
         {
-            return this.SurveyGroupingTypeModel.GetAll().Select(x => new SurveyGroupingTypeDTO(x)).ToArray();
+            try
+            {
+                return this.SurveyGroupingTypeModel.GetAll().Select(x => new SurveyGroupingTypeDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetSurveyGroupingTypes", ex);
+                throw;
+            }
         }
         
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="countryDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="Country"/>.
-        /// </returns>
+
         private Country ConvertDto(GeoCountryDTO countryDTO, Country instance)
         {
             instance.Latitude = countryDTO.latitude;
@@ -472,18 +574,6 @@ namespace EdugameCloud.WCFService
             return instance;
         }
 
-        /// <summary>
-        /// The convert DTO.
-        /// </summary>
-        /// <param name="stateDTO">
-        /// The user.
-        /// </param>
-        /// <param name="instance">
-        /// The instance.
-        /// </param>
-        /// <returns>
-        /// The <see cref="State"/>.
-        /// </returns>
         private State ConvertDto(GeoStateDTO stateDTO, State instance)
         {
             instance.Latitude = stateDTO.latitude;
@@ -493,5 +583,7 @@ namespace EdugameCloud.WCFService
         }
 
         #endregion
+
     }
+
 }
