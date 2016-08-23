@@ -12,6 +12,11 @@
         public const string LoginParams = "login={0}&password={1}";
 
         /// <summary>
+        /// The login
+        /// </summary>
+        public const string LoginWithAccountParams = "login={0}&password={1}&account-id={2}";
+
+        /// <summary>
         /// The job id
         /// </summary>
         public const string JobId = "job-id={0}";

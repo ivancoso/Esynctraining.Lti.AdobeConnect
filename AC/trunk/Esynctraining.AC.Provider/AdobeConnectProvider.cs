@@ -42,7 +42,7 @@
         #endregion
 
         #region Login/Logout
-        
+
         public LoginResult Login(UserCredentials credentials)
         {
             if (credentials == null)
@@ -51,7 +51,7 @@
             this.requestProcessor.SetSessionId(null);
 
             StatusInfo statusInfo;
-            var success = this.LoginInternal(credentials.Login, credentials.Password, out statusInfo);
+            var success = this.LoginInternal(credentials.Login, credentials.Password, credentials.AccountId, out statusInfo);
 
             UserInfo user = null;
             if (success)
@@ -83,7 +83,7 @@
 
             return new LoginResult(status, user);
         }
-        
+
         public void Logout()
         {
             // action=logout
@@ -91,7 +91,7 @@
 
             this.requestProcessor.Process(Commands.Logout, null, out status);
         }
-        
+
         #endregion
 
         #region Read
@@ -153,7 +153,7 @@
                        ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, returnCurrentUsers))
                        : new MeetingAttendeeCollectionResult(status);
         }
-        
+
         //public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
         //{
         //    // act: "report-quiz-interactions"
@@ -363,7 +363,7 @@
 
             return eventShortcut == null ? new ScoContentCollectionResult(status) : this.GetContentsByScoId(eventShortcut.ScoId);
         }
-        
+
         ///// <summary>
         ///// The get curriculum by folder SCO id.
         ///// </summary>
@@ -434,7 +434,7 @@
         #endregion
 
         #region Write
-        
+
         /// <summary>
         /// The update meeting feature for account
         /// </summary>
@@ -549,7 +549,7 @@
 
             return status;
         }
-        
+
         #endregion
 
         #region internal routines
@@ -686,8 +686,9 @@
         /// <param name="login">Valid Adobe Connect account name.</param>
         /// <param name="password">Valid Adobe Connect account password.</param>
         /// <param name="status">After successful login, <see cref="StatusInfo">status</see> contains session ID to be used for single-sign-on.</param>
+        /// <param name="accountId"></param>
         /// <returns><see cref="bool"/>Success or not.</returns>
-        private bool LoginInternal(string login, string password, out StatusInfo status)
+        private bool LoginInternal(string login, string password, string accountId, out StatusInfo status)
         {
             // action=login&login=bobs@acme.com&password=football&session=
             // cookie: BREEZESESSION
@@ -695,12 +696,26 @@
 
             try
             {
+                string parameters;
+                if (string.IsNullOrEmpty(accountId))
+                {
+                   parameters = string.Format(
+                   CommandParams.LoginParams,
+                   UrlEncode(login),
+                   UrlEncode(password));
+                }
+                else
+                {
+                   parameters = string.Format(
+                   CommandParams.LoginWithAccountParams,
+                   UrlEncode(login),
+                   UrlEncode(password),
+                   UrlEncode(accountId));
+                }
+
                 var doc = this.requestProcessor.Process(
                     Commands.Login,
-                    string.Format(
-                        CommandParams.LoginParams,
-                        UrlEncode(login),
-                        UrlEncode(password)),
+                    parameters,
                     out status);
 
                 return ResponseIsOk(doc, status);
@@ -712,7 +727,7 @@
 
             return false;
         }
-        
+
         #endregion
 
     }
