@@ -1242,6 +1242,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     if (!isNewMeeting)
                     {
                         AudioProfileService.RemoveAudioProfileFromMeeting(scoInfo.ScoId, provider);
+                        meeting.AudioProfileId = null;
                     }
 
                     return true;
