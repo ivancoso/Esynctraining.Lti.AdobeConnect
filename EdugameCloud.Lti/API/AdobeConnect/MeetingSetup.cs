@@ -682,7 +682,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             string message = string.Empty;
-            bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
+            bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
             //bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider).ConfigureAwait(false).Result;
             if (!audioProfileProccesed)
             {
@@ -1221,7 +1221,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private bool ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
+        private bool ProcessAudio(LmsCompany lmsCompany, LtiParamDTO param, bool isNewMeeting, 
+            MeetingDTO meetingDTO, string acMeetingName, LmsUser lmsUser,
             LmsCourseMeeting meeting, ScoInfo scoInfo, IAdobeConnectProxy provider)
         {
             // NOTE: do nothing for seminars
@@ -1236,7 +1237,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 // Profile was not selected
                 if (string.IsNullOrWhiteSpace(meetingDTO.audioProfileId))
+                {
+                    // if it's not meeting creation - remove
+                    if (!isNewMeeting)
+                    {
+                        AudioProfileService.RemoveAudioProfileFromMeeting(scoInfo.ScoId, provider);
+                    }
+
                     return true;
+                }
 
                 var principalId = meetingDTO.type == (int)LmsMeetingType.OfficeHours
                     ? lmsUser.PrincipalId

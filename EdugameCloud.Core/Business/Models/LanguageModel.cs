@@ -37,7 +37,7 @@
         public Language GetById(int id)
         {
             if (id <= 0)
-                throw new ArgumentOutOfRangeException("id");
+                throw new ArgumentOutOfRangeException(nameof(id));
 
             return GetAll().Single(x => x.Id == id);
         }

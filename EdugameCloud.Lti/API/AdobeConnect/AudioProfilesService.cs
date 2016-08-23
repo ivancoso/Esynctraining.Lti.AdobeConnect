@@ -4,8 +4,8 @@ using System.Linq;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
-using EdugameCloud.Lti.Telephony;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 
@@ -70,7 +70,22 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 //return OperationResult.Error("Couldn't get audio profile. Please refresh page and try again.");
             }
 
-            logger.ErrorFormat($"Error occured when tried to get audio profiles. ProfileId={audioProfileId}.");
+            logger.ErrorFormat($"Error occured when tried to AddAudioProfileToMeeting. ProfileId={audioProfileId}.");
+            return OperationResult.Error("Unexpected error. Please refresh page and try again.");
+        }
+
+        public OperationResult RemoveAudioProfileFromMeeting(string meetingScoId, IAdobeConnectProxy provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (string.IsNullOrWhiteSpace(meetingScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(meetingScoId));
+
+            StatusInfo status = provider.UpdateAclField(meetingScoId, AclFieldId.telephony_profile, string.Empty);
+            if (status.Code == StatusCodes.ok)
+                return OperationResult.Success();
+
+            logger.ErrorFormat($"Error occured when tried to RemoveAudioProfileFromMeeting. MeetingScoId={meetingScoId}. AC Error: {status.GetErrorInfo()}");
             return OperationResult.Error("Unexpected error. Please refresh page and try again.");
         }
 

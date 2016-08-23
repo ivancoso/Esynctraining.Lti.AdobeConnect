@@ -3,10 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using EdugameCloud.Core.Domain.Entities;
-
-    using Esynctraining.NHibernate;
     using Esynctraining.Core.Caching;
-    using NHibernate;
+    using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
 
     /// <summary>
