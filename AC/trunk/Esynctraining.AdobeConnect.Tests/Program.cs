@@ -82,16 +82,14 @@ namespace Esynctraining.AdobeConnect.Tests
 
             string apiUrl = "https://webmeeting.umd.edu/api/xml";
 
-            var connectionDetails = new ConnectionDetails
+            var connectionDetails = new ConnectionDetails(apiUrl)
             {
-                ServiceUrl = apiUrl,
-                EventMaxParticipants = 10,
+                //ServiceUrl = apiUrl,
+                //EventMaxParticipants = 10,
                 Proxy =
-                new ProxyCredentials
+                new ProxyCredentials(string.Empty, string.Empty)
                 {
                     Domain = string.Empty,
-                    Login = string.Empty,
-                    Password = string.Empty,
                     Url = string.Empty,
                 },
             };
