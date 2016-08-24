@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Esynctraining.AC.Provider, Version=1.0.1.68, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.68\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AC.Provider.1.0.1.70\lib\net45\Esynctraining.AC.Provider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.24, Culture=neutral, processorArchitecture=MSIL">

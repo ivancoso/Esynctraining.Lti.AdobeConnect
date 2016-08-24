@@ -30,7 +30,8 @@ namespace Esynctraining.AdobeConnect
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
-                LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
+                var userCredentials = new UserCredentials(credentials.Login, credentials.Password);
+                LoginResult result = provider.Login(userCredentials);
                 if (!result.Success)
                 {
                     _logger.Error("AdobeConnectAccountService.GetProvider. Login failed. Status = " + result.Status.GetErrorInfo());

@@ -76,12 +76,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdobeConnectLoginTests.cs" />
+    <Compile Include="AdobeConnectProxy.cs" />
     <Compile Include="CalcReportTests.cs" />
     <Compile Include="ConcurrentDictionaryTests.cs" />
     <Compile Include="DIConfig.cs" />
     <Compile Include="DurationParser.cs" />
     <Compile Include="DurationParserTests.cs" />
     <Compile Include="DurationStats.cs" />
+    <Compile Include="FakeLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecIdentity.cs" />
