@@ -47,22 +47,8 @@ namespace EdugameCloud.Lti.Controllers
                 var provider = this.GetAdobeConnectProvider(lmsCompany);
                 var lmsUser = session.LmsUser ??
                               lmsUserModel.GetOneByUserIdAndCompanyLms(session.LtiSession.LtiParam?.lms_user_id, lmsCompany.Id).Value;
-
-                string principalId = null;
-
-                // TRICK: old ugly logic. Nodoby know why should it work this way.
-                if (lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) == TelephonyDTO.SupportedProfiles.None)
-                {
-                     principalId = (LmsMeetingType)meetingType == LmsMeetingType.OfficeHours
-                        ? lmsUser.PrincipalId
-                        : provider.PrincipalId;
-                }
-                else
-                {
-                    principalId = lmsUser.PrincipalId;
-                }
                 
-                var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, principalId);
+                var profiles = AudioProfileService.GetAudioProfiles(provider, lmsCompany, lmsUser.PrincipalId);
                 return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(profiles.Select(x => new LmsAudioProfileDTO(x)).ToList()));
             }
             catch (Exception ex)

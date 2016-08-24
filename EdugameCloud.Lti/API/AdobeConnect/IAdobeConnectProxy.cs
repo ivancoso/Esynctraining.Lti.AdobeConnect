@@ -2,7 +2,7 @@
 {
     public interface IAdobeConnectProxy : Esynctraining.AdobeConnect.IAdobeConnectProxy
     {
-        string PrincipalId { get; }
+        //string PrincipalId { get; }
         
     }
 

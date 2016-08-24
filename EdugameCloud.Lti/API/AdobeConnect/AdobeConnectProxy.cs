@@ -8,10 +8,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl, string principalId)
             : base(provider, logger, apiUrl)
         {
-            PrincipalId = principalId;
+            //PrincipalId = principalId;
         }
 
-        public string PrincipalId { get; private set; }
+        //public string PrincipalId { get; private set; }
         
     }
 

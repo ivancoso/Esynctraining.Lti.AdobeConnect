@@ -11,29 +11,14 @@
     {
         #region Public Properties
 
-        /// <summary>
-        /// Gets or sets the company LMS.
-        /// </summary>
         public virtual int LmsCompanyId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the course id.
-        /// </summary>
         public virtual int CourseId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the SCO id.
-        /// </summary>
         public virtual string ScoId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the lms meeting type.
-        /// </summary>
         public virtual int LmsMeetingType { get; set; }
 
-        /// <summary>
-        /// Gets or sets the office hours.
-        /// </summary>
         public virtual OfficeHours OfficeHours { get; set; }
 
         public virtual bool? Reused { get; set; }
@@ -43,8 +28,10 @@
         public virtual string AudioProfileId { get; set; }
 
         /// <summary>
-        /// Gets or sets the owner.
+        /// If non empty - represents provider profile was generated for.
         /// </summary>
+        public virtual string AudioProfileProvider { get; set; }
+
         public virtual LmsUser Owner { get; set; }
 
         public virtual string MeetingNameJson { get; set; }

@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 ? meetingModel.GetByCompanyWithAudioProfiles(lmsCompany).ToList().Select(x => x.AudioProfileId).ToList() 
                 : new List<string>();
 
-            var telephonyPrfilesListResult = provider.TelephonyProfileList(principalId ?? provider.PrincipalId);
+            var telephonyPrfilesListResult = provider.TelephonyProfileList(principalId);
             var profiles = telephonyPrfilesListResult.Values.Where(x => !usedAudioProfiles.Contains(x.ProfileId)).ToList();
             return profiles;
         }

@@ -10,6 +10,7 @@
 	[reused]				BIT					NULL, -- TODO: not null
 	[sourceCourseMeetingId]	INT					NULL,
 	[audioProfileId]		NVARCHAR(50)		NULL,
+	[audioProfileProvider]	NVARCHAR(50)		NULL,
 	[enableDynamicProvisioning] BIT NOT NULL CONSTRAINT [DF_LmsCourseMeeting_enableDynamicProvisioning]  DEFAULT ((0)),
 
 	CONSTRAINT [PK_LmsCourseMeeting] PRIMARY KEY CLUSTERED ([lmsCourseMeetingId] ASC),
