@@ -1288,13 +1288,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (string.IsNullOrWhiteSpace(meeting.AudioProfileId))
                 return;
 
-            TelephonyProfileInfoResult profile = provider.TelephonyProfileInfo(meeting.AudioProfileId);
-
-            AudioProfileService.DeleteAudioProfile(meeting.AudioProfileId, provider);
-
             // NOTE: do nothing for seminars
             if ((LmsMeetingType)meeting.LmsMeetingType == LmsMeetingType.Seminar)
                 return;
+
+            TelephonyProfileInfoResult profile = provider.TelephonyProfileInfo(meeting.AudioProfileId);
+            // NOTE: if profile wasn't generated - do not delete it from AC
+            if (string.IsNullOrWhiteSpace(meeting.AudioProfileProvider))
+                return;
+
+            AudioProfileService.DeleteAudioProfile(meeting.AudioProfileId, provider);
 
             TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meeting.LmsMeetingType);
             if (option != TelephonyProfileOption.GenerateNewProfile)
