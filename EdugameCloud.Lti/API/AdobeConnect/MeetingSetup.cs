@@ -1254,6 +1254,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 if (audioUpdateResult.IsSuccess)
                 {
                     meeting.AudioProfileId = meetingDTO.audioProfileId;
+                    meeting.AudioProfileProvider = null;
                     return true;
                 }                
             }
