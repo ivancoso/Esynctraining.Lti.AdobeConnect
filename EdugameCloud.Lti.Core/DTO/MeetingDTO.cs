@@ -64,10 +64,16 @@
 
         /// <summary>
         /// SCO-ID of this meeting is used in several meetings. 
-        /// Current meeting is either created by re-using existed meeting either current meeting is reused as source for another meeting.
+        /// Current meeting is created by re-using existed meeting
         /// </summary>
         [DataMember]
         public bool reused { get; set; }
+
+        /// <summary>
+        /// Means that there is at least one other meeting in LTI which uses the same SCO-ID as current meeting
+        /// </summary>
+        [DataMember]
+        public bool reusedByAnotherMeeting { get; set; }
 
         [DataMember]
         public string audioProfileId { get; set; }

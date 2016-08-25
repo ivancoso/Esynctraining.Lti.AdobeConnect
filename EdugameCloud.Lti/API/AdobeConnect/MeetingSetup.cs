@@ -117,7 +117,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             LmsCompany lmsCompany,
             IAdobeConnectProxy provider,
             LtiParamDTO param,
-            int id)
+            int id,
+            bool removeIfReused = false)
         {
             if (!lmsCompany.CanRemoveMeeting.GetValueOrDefault())
             {
@@ -141,10 +142,11 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             //TRICK: before deletion
+            //removeIfReused - means that we should not delete meeting from AC even in case when it is not reused by any other meeting
             bool acMeetingIsStillUsed =
-                lmsCompany.EnableMeetingReuse
-                 ? this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id)
-                 : false;
+                lmsCompany.EnableMeetingReuse && 
+                    (removeIfReused || 
+                        this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id));
 
             if (lmsCompany.LmsProviderId == (int) LmsProviderEnum.Sakai &&
                 lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
@@ -1566,10 +1568,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var sw = Stopwatch.StartNew();
             // HACK: TEST!!!
-            bool scoIdReused = lmsCompany.EnableMeetingReuse
-                ? (lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value) 
-                    || LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, lmsCourseMeeting.GetMeetingScoId(), lmsCourseMeeting.Id)
-                : false;
+            bool scoIdReused = false;
+            bool usedByAnotherMeeting = false;
+            if (lmsCompany.EnableMeetingReuse)
+            {
+                usedByAnotherMeeting = !LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany,
+                    lmsCourseMeeting.GetMeetingScoId(),
+                    lmsCourseMeeting.Id);
+                scoIdReused = lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value;
+            }
 
             sw.Stop();
             if (trace != null)
@@ -1594,6 +1601,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 type = (int)type,
                 office_hours = officeHoursString,
                 reused = scoIdReused,
+                reusedByAnotherMeeting = usedByAnotherMeeting,
                 audioProfileId = lmsCourseMeeting.AudioProfileId,
             };
 
