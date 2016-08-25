@@ -683,7 +683,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             string message = string.Empty;
             bool audioProfileProccesed = ProcessAudio(lmsCompany, param, isNewMeeting, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider);
-            //bool audioProfileProccesed = ProcessAudio(lmsCompany, param, meetingDTO, updateItem.Name, lmsUser, meeting, result.ScoInfo, provider).ConfigureAwait(false).Result;
             if (!audioProfileProccesed)
             {
                 message += "Meeting was created without audio profile. ";
@@ -1258,7 +1257,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return true;
                 }                
             }
-            else if (option == TelephonyProfileOption.GenerateNewProfile)
+            else if ((option == TelephonyProfileOption.GenerateNewProfile) && isNewMeeting)
             {
                 string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
 
