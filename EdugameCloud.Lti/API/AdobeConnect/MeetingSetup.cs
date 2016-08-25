@@ -1257,8 +1257,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return true;
                 }                
             }
-            else if ((option == TelephonyProfileOption.GenerateNewProfile) && isNewMeeting)
+            else if ((option == TelephonyProfileOption.GenerateNewProfile))
             {
+                // if generatenew - we do nothing dirung update.
+                if (!isNewMeeting)
+                    return true;
+
                 string providerName = lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile).ToUpper();
 
                 if (TelephonyDTO.SupportedProfiles.None.Equals(providerName, StringComparison.OrdinalIgnoreCase))
