@@ -1572,7 +1572,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool usedByAnotherMeeting = false;
             if (lmsCompany.EnableMeetingReuse)
             {
-                usedByAnotherMeeting = !LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany,
+                usedByAnotherMeeting = LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany,
                     lmsCourseMeeting.GetMeetingScoId(),
                     lmsCourseMeeting.Id);
                 scoIdReused = lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value;
