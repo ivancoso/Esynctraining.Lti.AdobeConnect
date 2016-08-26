@@ -71,12 +71,11 @@
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 //.Clone()
-                .WhereRestrictionOn(() => x.Id).IsIn(companyLicenses)
+                .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
                 .And(() => x.Id != excludedLmsCourseMeetingId)
                 .And(() => 
                     ((x.ScoId != null) && (x.ScoId == scoId)) ||
                      (x.OfficeHours != null && oh.ScoId == scoId))
-                .SelectList(res => res.Select(() => x.Id))
                 .Take(1);
 
             return this.Repository.FindOne(defaultQuery).Value != null;
