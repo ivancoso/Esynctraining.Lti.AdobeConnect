@@ -165,10 +165,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 return OperationResult.Success();
             }
-            if (lmsCompany.EnableMeetingReuse && meeting.Reused.GetValueOrDefault() && !meeting.SourceCourseMeetingId.HasValue)
-            {
-                return OperationResult.Success();
-            }
 
             var result = provider.DeleteSco(meeting.GetMeetingScoId());
             if (result.Code == StatusCodes.ok)
