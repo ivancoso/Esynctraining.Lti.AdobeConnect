@@ -29,11 +29,24 @@ namespace EdugameCloud.Lti.Sakai
             ret.answers.ForEach(
                 a =>
                 {
-                    a.text = a.text.ClearName();
+                    a.text = a.text;
+                    //a.text = a.text.ClearName();
                     a.question_text = a.question_text.ClearName();
                 });
             ret.caseSensitive = ret.answers.Any(x => x.caseSensitive);
-            return ret;
+
+            var lmsQuestion = ret;
+            if (!string.IsNullOrEmpty(dto.questionImageBinary))
+            {
+                var fileDto = new LmsQuestionFileDTO
+                {
+                    fileName = dto.questionImageLink.Split('/').Last(),
+                    fileUrl = dto.questionImageLink,
+                    base64Content = dto.questionImageBinary
+                };
+                lmsQuestion.files.Add(0, fileDto);
+            }
+            return lmsQuestion;
         }
 
         protected virtual List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
