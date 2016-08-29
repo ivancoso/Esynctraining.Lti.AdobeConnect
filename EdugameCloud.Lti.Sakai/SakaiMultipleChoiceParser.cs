@@ -37,6 +37,19 @@ namespace EdugameCloud.Lti.Sakai
             ret.caseSensitive = ret.answers.Any(x => x.caseSensitive);
 
             var lmsQuestion = ret;
+
+            //if (!string.IsNullOrEmpty(dto.questionImageLink) && !string.IsNullOrEmpty(dto.questionImageBinary))
+            if (!string.IsNullOrEmpty(dto.questionImageBinary))
+            {
+                var fileDto = new LmsQuestionFileDTO
+                {
+                    fileName = dto.questionImageLink.Split('/').Last(),
+                    fileUrl = dto.questionImageLink,
+                    base64Content = dto.questionImageBinary
+                };
+                lmsQuestion.files.Add(0, fileDto);
+            }
+
             return lmsQuestion;
         }
 
