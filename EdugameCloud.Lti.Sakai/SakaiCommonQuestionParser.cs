@@ -29,8 +29,8 @@ namespace EdugameCloud.Lti.Sakai
             ret.answers.ForEach(
                 a =>
                 {
-                    //a.text = a.text;
-                    a.text = a.text.ClearName();
+                    a.text = a.text;
+                    //a.text = a.text.ClearName();
                     a.question_text = a.question_text.ClearName();
                 });
             ret.caseSensitive = ret.answers.Any(x => x.caseSensitive);

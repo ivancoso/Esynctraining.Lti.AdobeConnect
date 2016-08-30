@@ -42,7 +42,7 @@ namespace EdugameCloud.Lti.Sakai
             {
                 var fileDto = new LmsQuestionFileDTO
                 {
-                    fileName = dto.questionImageLink.Split('/').Last(),
+                    fileName = !string.IsNullOrEmpty(dto.questionImageLink) ? dto.questionImageLink.Split('/').Last() : string.Empty,
                     fileUrl = dto.questionImageLink,
                     base64Content = dto.questionImageBinary
                 };
