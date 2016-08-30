@@ -41,7 +41,11 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     EncoderServiceJobProgress = xml.ParseAttributeInt("encoder-service-job-progress"),
                     JobStatus = xml.SelectAttributeValue("job-status"),
                     AccountId = xml.SelectAttributeValue("account-id"),
-                    JobId = xml.SelectAttributeValue("job-id")
+                    JobId = xml.SelectAttributeValue("job-id"),
+                    RecordingEdited = xml.ParseNodeBool("recording-edited/text()"),
+                    RecordingEditedDuration = xml.SelectSingleNodeValue("recording-edited-duration/text()"),
+                    AfRecordingDuration = xml.SelectSingleNodeValue("af-recording-duration/text()"),
+
                 };
             }
             catch (Exception ex)

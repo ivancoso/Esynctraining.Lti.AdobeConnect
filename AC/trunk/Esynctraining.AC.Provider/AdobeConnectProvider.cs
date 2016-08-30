@@ -404,17 +404,19 @@
         /// </returns>
         public ScoContentCollectionResult GetMeetingRecordings(IEnumerable<string> scoIds, bool includeMP4recordings = false)
         {
-            var result = new ScoContentCollectionResult(
-                new StatusInfo { Code = StatusCodes.ok }, new List<ScoContent>());
+            IEnumerable<ScoContent> values = new List<ScoContent>();
+            
             foreach (var id in scoIds)
             {
                 var recordings = this.GetMeetingRecordings(id, includeMP4recordings);
                 if (recordings.Success)
                 {
-                    result.Values = result.Values.Concat(recordings.Values);
+                    values = values.Concat(recordings.Values);
                 }
             }
 
+            var result = new ScoContentCollectionResult(
+                new StatusInfo { Code = StatusCodes.ok }, values);
             return result;
         }
 
@@ -553,6 +555,18 @@
         #endregion
 
         #region internal routines
+
+        private GenericCollectionResultBase<T> GetCollection<T>(string command, string args, string xmlRootName, string xmlElementName, Func<XmlNode, T> elementParser)
+        {
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(command, args, out status);
+
+            return ResponseIsOk(doc, status)
+                       ? new GenericCollectionResultBase<T>(status, GenericCollectionParser<T>.Parse(
+                           doc.SelectSingleNode(xmlRootName), xmlElementName, elementParser))
+                       : new GenericCollectionResultBase<T>(status);
+        }
 
         #region Private Helpers
 

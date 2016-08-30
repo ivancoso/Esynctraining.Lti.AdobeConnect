@@ -140,6 +140,10 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("sco-tag")]
         public string ScoTag { get; set; }
 
+        /// <summary>
+        /// For recordings/meetings that require passcode.
+        /// </summary>
+        [XmlElement("meeting-passcode")]
+        public string MeetingPasscode { get; set; }
     }
-
 }

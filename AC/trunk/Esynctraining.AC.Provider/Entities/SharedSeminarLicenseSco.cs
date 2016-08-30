@@ -4,9 +4,9 @@ using System.Xml.Serialization;
 namespace Esynctraining.AC.Provider.Entities
 {
     [XmlRoot("sco")]
-    public class SeminarLicenseSco
+    public class SharedSeminarLicenseSco
     {
-        public SeminarLicenseSco()
+        public SharedSeminarLicenseSco()
         {
             this.Type = ScoType.not_set;
         }

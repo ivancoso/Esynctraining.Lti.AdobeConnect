@@ -5,16 +5,16 @@ using Esynctraining.AC.Provider.Extensions;
 
 namespace Esynctraining.AC.Provider.EntityParsing
 {
-    internal static class SeminarLicenseScoParser
+    internal static class SharedSeminarLicenseScoParser
     {
-        public static SeminarLicenseSco Parse(XmlNode xml)
+        public static SharedSeminarLicenseSco Parse(XmlNode xml)
         {
             if (xml == null)
             {
                 return null;
             }
 
-            return new SeminarLicenseSco
+            return new SharedSeminarLicenseSco
             {
                 AclId = xml.SelectSingleNodeValue("acl-id/text()"),
                 BeginDate = xml.ParseNodeDateTime("begindate/text()", default(DateTime)),
@@ -35,7 +35,5 @@ namespace Esynctraining.AC.Provider.EntityParsing
                 UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
             };
         }
-
     }
-
 }

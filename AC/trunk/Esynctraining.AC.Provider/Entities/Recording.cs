@@ -77,6 +77,9 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("duration")]
         public string Duration { get; set; }
 
+        public bool RecordingEdited { get; set; }
+        public string RecordingEditedDuration { get; set; }
+        public string AfRecordingDuration { get; set; }
     }
 
 }

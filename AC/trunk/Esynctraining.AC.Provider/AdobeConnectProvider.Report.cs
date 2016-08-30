@@ -108,7 +108,7 @@ namespace Esynctraining.AC.Provider
             return new ScoContentCollectionResult(status);
         }
 
-        public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0)
+        public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
         {
             // act: "report-bulk-objects" paged by 10K
             StatusInfo status = new StatusInfo();
@@ -122,7 +122,7 @@ namespace Esynctraining.AC.Provider
             do
             {
                 var doc = this.requestProcessor.Process(Commands.ReportBulkObjects,
-                    CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded((iteration - 1) * limit + 1, limit), out status);
+                    $"{filter}{(filter!=null ? "&" : "")}{CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded((iteration - 1) * limit + 1, limit)}", out status);
 
                 responseIsOk = ResponseIsOk(doc, status);
                 if (responseIsOk)

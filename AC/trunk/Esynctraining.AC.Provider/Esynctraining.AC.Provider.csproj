@@ -110,9 +110,9 @@
     <Compile Include="Entities\PermissionBase.cs" />
     <Compile Include="Entities\MeetingPermissionInfo.cs" />
     <Compile Include="Entities\ReportScoViewContent.cs" />
+    <Compile Include="Entities\ScoNav.cs" />
     <Compile Include="Entities\ScoShortcutType.cs" />
-    <Compile Include="Entities\SeminarLicenseSco.cs" />
-    <Compile Include="Entities\SeminarLicensesCollectionResult.cs" />
+    <Compile Include="Entities\SharedSeminarLicenseSco.cs" />
     <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />
     <Compile Include="Entities\SeminarSessionUpdateItem.cs" />
     <Compile Include="Entities\SeminarUpdateItem.cs" />
@@ -147,6 +147,7 @@
     <Compile Include="Entities\StatusInfo.cs" />
     <Compile Include="Entities\TransactionInfo.cs" />
     <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="Entities\UserSeminarLicenseSco.cs" />
     <Compile Include="EntityParsing\CommonInfoParser.cs" />
     <Compile Include="EntityParsing\ContactParser.cs" />
     <Compile Include="EntityParsing\CurriculumTakerCollectionParser.cs" />
@@ -156,12 +157,13 @@
     <Compile Include="EntityParsing\GeneratedRecordingJobParser.cs" />
     <Compile Include="EntityParsing\FieldValueParser.cs" />
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
+    <Compile Include="EntityParsing\GenericCollectionParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
     <Compile Include="EntityParsing\ReportScoViewContentParser.cs" />
     <Compile Include="EntityParsing\ReportScoViewParser.cs" />
-    <Compile Include="EntityParsing\SeminarLicensesCollectionParser.cs" />
-    <Compile Include="EntityParsing\SeminarLicenseScoParser.cs" />
+    <Compile Include="EntityParsing\ScoNavParser.cs" />
+    <Compile Include="EntityParsing\SharedSeminarLicenseScoParser.cs" />
     <Compile Include="EntityParsing\TelephonyProviderParser.cs" />
     <Compile Include="EntityParsing\TelephonyProviderCollectionParser.cs" />
     <Compile Include="EntityParsing\UserParser.cs" />
@@ -200,6 +202,7 @@
     <Compile Include="EntityParsing\MeetingItemCollectionParser.cs" />
     <Compile Include="EntityParsing\MeetingItemParser.cs" />
     <Compile Include="EntityParsing\UserInfoParser.cs" />
+    <Compile Include="EntityParsing\UserSeminarLicenseScoParser.cs" />
     <Compile Include="Extensions\XmlNodeExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

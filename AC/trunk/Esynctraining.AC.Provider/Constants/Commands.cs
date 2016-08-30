@@ -142,6 +142,8 @@
             /// The search by field.
             /// </summary>
             public const string SearchByField = "sco-search-by-field";
+
+            public const string ScoNav = "sco-nav";
         }
 
         /// <summary>

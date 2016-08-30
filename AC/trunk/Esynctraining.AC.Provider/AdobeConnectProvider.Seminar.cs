@@ -65,22 +65,22 @@ namespace Esynctraining.AC.Provider
             //return new ScoInfoResult(status, meetingDetail);
         }
 
-        public SeminarLicensesCollectionResult GetSeminarLicenses(string scoId, bool returnUserSeminars = false)
+        public GenericCollectionResultBase<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
         {
             // act: "sco-seminar-licenses-list"
-            StatusInfo status;
+            var args = string.Format(CommandParams.ScoId, scoId);
 
-            var doc = this.requestProcessor.Process(Commands.Seminar.SeminarLicensesList, 
-                string.Format("{0}{1}", 
-                    string.Format(CommandParams.ScoId, scoId), 
-                    returnUserSeminars ? "&user-webinar-selected=true" : string.Empty),
-                out status);
+            return GetCollection(Commands.Seminar.SeminarLicensesList, args, SharedSeminarLicensesHome, "//sco",
+                SharedSeminarLicenseScoParser.Parse);
+        }
 
-            return ResponseIsOk(doc, status)
-                       ? new SeminarLicensesCollectionResult(status, SeminarLicensesCollectionParser.Parse(
-                           doc.SelectSingleNode(returnUserSeminars? UserSeminarLicensesHome : SharedSeminarLicensesHome)))
-                       : new SeminarLicensesCollectionResult(status);
+        public GenericCollectionResultBase<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
+        {
+            // act: "sco-seminar-licenses-list"
+            var args = $"{string.Format(CommandParams.ScoId, scoId)}&user-webinar-selected=true";
+
+            return GetCollection(Commands.Seminar.SeminarLicensesList, args, UserSeminarLicensesHome, "//sco",
+                UserSeminarLicenseScoParser.Parse);
         }
     }
-
 }

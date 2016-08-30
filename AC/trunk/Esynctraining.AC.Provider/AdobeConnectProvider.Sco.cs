@@ -18,9 +18,10 @@
         #region Private Constants
 
         private const string ScoHome = "//sco";
+        private const string ScoNavHome = "//sco-nav";
 
         #endregion
-        
+
         public ScoContentCollectionResult SearchScoByName(string name)
         {
             StatusInfo status;
@@ -207,7 +208,15 @@
             var filter = string.Format(CommandParams.ScoNameLike, scoId, UrlEncode(nameLikeCriteria)); ;
             return CallScoExpandedContent(scoId, filter);
         }
-        
+
+        public GenericCollectionResultBase<ScoNav> GetScoNavigation(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            return GetCollection(Commands.Sco.ScoNav, "sco-id=" + scoId, ScoNavHome, "//sco",
+                ScoNavParser.Parse);
+        }
 
         private ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
         {

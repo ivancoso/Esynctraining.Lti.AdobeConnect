@@ -44,7 +44,8 @@
                 ExternalUrl = xml.SelectSingleNodeValue("external-url/text()"),
                 MaxScore = xml.ParseNodeInt("max-score/text()"),
                 TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()"),
-                ScoTag = xml.SelectSingleNodeValue("sco-tag/text()")
+                ScoTag = xml.SelectSingleNodeValue("sco-tag/text()"),
+                MeetingPasscode = xml.SelectSingleNodeValue("meeting-passcode/text()")
             };
         }
 
