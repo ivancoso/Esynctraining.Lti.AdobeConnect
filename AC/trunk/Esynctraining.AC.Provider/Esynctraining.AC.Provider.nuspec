@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AC.Provider</id>
-    <version>1.0.1.71</version>
+    <version>1.0.1.72</version>
     <title>Esynctraining.AC.Provider</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,12 @@
     <description>Provides Adobe Connect functionality for eSyncTraining projects</description>
     <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
     <tags>core, AC, AdobeConnect</tags>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>GenericCollectionParser - public, generic;
+Sco-nav action;
+Shared/User seminars - separated;
+Meeting-passcode field for sco-info;
+Additional properties for recordings;
+Paged recordings - filtering, sorting</releaseNotes>
   </metadata>
   <files>
     <file src="bin\$configuration$\Esynctraining.AC.Provider.dll" target="lib\net45" />
