@@ -36,7 +36,22 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
-        public IEnumerable<SeminarLicenseSco> GetSharedOrUserSeminarLicenses(IAdobeConnectProxy provider, bool returnUserLicenses = false)
+        public IEnumerable<SharedSeminarLicenseSco> GetSharedSeminarLicenses(IAdobeConnectProxy provider)
+        {
+            var seminarsShortcutId = GetSeminarsShortcutId(provider);
+            var result = provider.GetSharedSeminarLicenses(seminarsShortcutId);
+            return result.Values;
+        }
+
+        public IEnumerable<UserSeminarLicenseSco> GetUserSeminarLicenses(IAdobeConnectProxy provider)
+        {
+
+            var seminarsShortcutId = GetSeminarsShortcutId(provider);
+            var result = provider.GetUserSeminarLicenses(seminarsShortcutId);
+            return result.Values;
+        }
+
+        private string GetSeminarsShortcutId(IAdobeConnectProxy provider)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
@@ -45,11 +60,11 @@ namespace Esynctraining.AdobeConnect
             ScoShortcut seminarShortcut = provider.GetShortcutByType("seminars", out status);
             if (status.Code != StatusCodes.ok)
                 throw new AdobeConnectException(status);
-            if (seminarShortcut == null)
-                throw new InvalidOperationException("Seminars are not acessible for the principal");
 
-            var result = provider.GetSeminarLicenses(seminarShortcut.ScoId, returnUserLicenses);
-            return result.Values;
+            if (seminarShortcut == null)
+                throw new InvalidOperationException("Seminars are not acсessible for the principal");
+
+            return seminarShortcut.ScoId;
         }
 
         public IEnumerable<ScoContent> GetSeminars(string seminarLicenseScoId, IAdobeConnectProxy provider)
