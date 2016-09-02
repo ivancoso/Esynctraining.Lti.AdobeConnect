@@ -38,6 +38,23 @@ namespace Esynctraining.AC.Provider
             return GetResult(doc, status, "//field", ParserSingleton<CustomFieldParser>.Instance);
         }
 
+        public StatusInfo CustomFieldDelete(string customFieldName)
+        {
+            if (string.IsNullOrWhiteSpace(customFieldName))
+                throw new ArgumentException("Non-empty value expected", nameof(customFieldName));
+
+            SingleObjectResult<CustomField> field = GetCustomField(customFieldName);
+            // NOTE: field not found - ok for us. OK?
+            if (field.Status.Code == StatusCodes.ok && field.Value == null)
+                return field.Status;
+
+            StatusInfo status;
+            var commandParams = string.Format(CommandParams.CustomFields.Delete, UrlEncode(field.Value.FieldId), field.Value.ObjectType.ToString().Replace("_", "-"));
+            var doc = requestProcessor.Process(Commands.CustomField.Delete, commandParams, out status);
+
+            return status;
+        }
+
 
     }
 

@@ -272,6 +272,8 @@
 
             public static readonly string Update = "custom-field-update";
 
+            public static readonly string Delete = "custom-fields-delete";
+
         }
 
     }

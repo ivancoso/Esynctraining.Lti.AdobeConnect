@@ -302,6 +302,8 @@
         {
             public static readonly string FilterByName = "filter-name={0}";
 
+            public static readonly string Delete = "field-id={0}&object-type={1}";
+
         }
     }
 
