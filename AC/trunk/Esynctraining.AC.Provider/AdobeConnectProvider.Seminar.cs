@@ -65,7 +65,7 @@ namespace Esynctraining.AC.Provider
             //return new ScoInfoResult(status, meetingDetail);
         }
 
-        public GenericCollectionResultBase<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
+        public CollectionResult<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
         {
             // act: "sco-seminar-licenses-list"
             var args = string.Format(CommandParams.ScoId, scoId);
@@ -74,7 +74,7 @@ namespace Esynctraining.AC.Provider
                 SharedSeminarLicenseScoParser.Parse);
         }
 
-        public GenericCollectionResultBase<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
+        public CollectionResult<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
         {
             // act: "sco-seminar-licenses-list"
             var args = $"{string.Format(CommandParams.ScoId, scoId)}&user-webinar-selected=true";

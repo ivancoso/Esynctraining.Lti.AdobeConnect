@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.AC.Provider.DataObjects.Results
 {
+    using System;
     using Esynctraining.AC.Provider.Entities;
 
     /// <summary>
@@ -15,7 +16,10 @@
         /// </param>
         protected ResultBase(StatusInfo status)
         {
-            this.Status = status;
+            if (status == null)
+                throw new ArgumentNullException(nameof(status));
+
+            Status = status;
         }
 
         /// <summary>
@@ -30,8 +34,10 @@
         {
             get
             {
-                return this.Status != null && this.Status.Code == StatusCodes.ok;
+                return Status != null && Status.Code == StatusCodes.ok;
             }
         }
+
     }
+
 }

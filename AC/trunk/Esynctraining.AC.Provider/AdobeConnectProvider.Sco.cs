@@ -209,7 +209,7 @@
             return CallScoExpandedContent(scoId, filter);
         }
 
-        public GenericCollectionResultBase<ScoNav> GetScoNavigation(string scoId)
+        public CollectionResult<ScoNav> GetScoNavigation(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));

@@ -298,6 +298,11 @@
 
         }
 
+        internal static class CustomFields
+        {
+            public static readonly string FilterByName = "filter-name={0}";
+
+        }
     }
 
 }

@@ -29,7 +29,7 @@
         /// <param name="fieldValue">
         /// The field value.
         /// </param>
-        public FieldResult(StatusInfo status, String fieldValue)
+        public FieldResult(StatusInfo status, string fieldValue)
             : base(status)
         {
             this.FieldValue = fieldValue;
@@ -38,6 +38,6 @@
         /// <summary>
         /// Gets or sets the field value.
         /// </summary>
-        public String FieldValue { get; set; }
+        public string FieldValue { get; set; }
     }
 }

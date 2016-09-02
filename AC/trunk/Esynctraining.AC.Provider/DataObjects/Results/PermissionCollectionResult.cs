@@ -4,7 +4,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class PermissionCollectionResult : GenericCollectionResultBase<PermissionInfo>
+    public class PermissionCollectionResult : CollectionResult<PermissionInfo>
     {
         public PermissionCollectionResult(StatusInfo status) : base(status)
         {
@@ -25,7 +25,7 @@ namespace Esynctraining.AC.Provider.DataObjects.Results
 
     }
 
-    public class MeetingPermissionCollectionResult : GenericCollectionResultBase<MeetingPermissionInfo>
+    public class MeetingPermissionCollectionResult : CollectionResult<MeetingPermissionInfo>
     {
         public MeetingPermissionCollectionResult(StatusInfo status) : base(status)
         {

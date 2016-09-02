@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdobeConnectProvider.CustomFields.cs" />
     <Compile Include="AdobeConnectProvider.Meeting.cs" />
     <Compile Include="AdobeConnectProvider.Content.cs" />
     <Compile Include="AdobeConnectProvider.Internal.cs" />
@@ -65,6 +66,7 @@
     <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
     <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
     <Compile Include="DataObjects\Results\ReportScoViewsContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\SingleObjectResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProfileInfoResult.cs" />
     <Compile Include="DataObjects\Results\TelephonyProviderCollectionResult.cs" />
     <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Entities\MeetingPermissionUpdateTrio.cs" />
     <Compile Include="Entities\PermissionBase.cs" />
     <Compile Include="Entities\MeetingPermissionInfo.cs" />
+    <Compile Include="Entities\CustomField.cs" />
     <Compile Include="Entities\ReportScoViewContent.cs" />
     <Compile Include="Entities\ScoNav.cs" />
     <Compile Include="Entities\ScoShortcutType.cs" />
@@ -158,8 +161,10 @@
     <Compile Include="EntityParsing\FieldValueParser.cs" />
     <Compile Include="EntityParsing\FieldCollectionParser.cs" />
     <Compile Include="EntityParsing\GenericCollectionParser.cs" />
+    <Compile Include="EntityParsing\IEntityParser.cs" />
     <Compile Include="EntityParsing\LearningPathItemParser.cs" />
     <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
+    <Compile Include="EntityParsing\CustomFieldParser.cs" />
     <Compile Include="EntityParsing\ReportScoViewContentParser.cs" />
     <Compile Include="EntityParsing\ReportScoViewParser.cs" />
     <Compile Include="EntityParsing\ScoNavParser.cs" />

@@ -264,4 +264,51 @@
         /// The meeting is private, and only registered users and participants can enter the room.
         /// </summary>
     }
+
+    // https://helpx.adobe.com/adobe-connect/webservices/common-xml-elements-attributes.html#object_type
+    public enum ObjectType
+    {
+        /// <summary>
+        /// An account that contains principals and SCOs.
+        /// </summary>
+        object_type_account,
+
+        /// <summary>
+        /// An action in the Web Services XML API. 
+        /// </summary>
+        object_type_action,
+
+
+        /// <summary>
+        /// An Adobe Connect event. 
+        /// </summary>
+        object_type_event,
+        
+        /// <summary>
+        /// A SCO that is not visible in Adobe Connect Central (or in your application, if you use this value).
+        /// </summary>
+        object_type_hidden,
+
+        /// <summary>
+        /// An Adobe Connect meeting.
+        /// </summary>
+        object_type_meeting,
+
+        /// <summary>
+        /// A user or group.
+        /// </summary>
+        object_type_principal,
+
+        /// <summary>
+        /// A setting indicating that Adobe Connect Central displays some data, but a user cannot set the data in Adobe Connect Central.
+        /// </summary>
+        object_type_read_only,
+
+        /// <summary>
+        /// A SCO representing a meeting, course, curriculum, piece of content, folder, or any other object on the server.
+        /// </summary>
+        object_type_sco,
+ 
+    }
+
 }

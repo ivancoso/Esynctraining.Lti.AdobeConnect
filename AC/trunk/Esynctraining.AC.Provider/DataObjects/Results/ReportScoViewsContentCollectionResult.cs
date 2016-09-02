@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class ReportScoViewsContentCollectionResult : GenericCollectionResultBase<ReportScoViewContent>
+    public class ReportScoViewsContentCollectionResult : CollectionResult<ReportScoViewContent>
     {
         public ReportScoViewsContentCollectionResult(StatusInfo status) : base(status)
         {

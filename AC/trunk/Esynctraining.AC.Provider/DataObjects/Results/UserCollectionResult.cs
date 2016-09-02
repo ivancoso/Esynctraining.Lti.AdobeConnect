@@ -4,7 +4,7 @@
 
     using Esynctraining.AC.Provider.Entities;
 
-    public class UserCollectionResult : GenericCollectionResultBase<User>
+    public class UserCollectionResult : CollectionResult<User>
     {
         #region Constructors and Destructors
 

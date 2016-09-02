@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class CurriculumContentCollectionResult : GenericCollectionResultBase<CurriculumContent>
+    public class CurriculumContentCollectionResult : CollectionResult<CurriculumContent>
     {
         public CurriculumContentCollectionResult(StatusInfo status) : base(status)
         {

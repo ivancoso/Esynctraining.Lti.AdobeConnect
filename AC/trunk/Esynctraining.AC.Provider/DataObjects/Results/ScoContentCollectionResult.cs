@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class ScoContentCollectionResult : GenericCollectionResultBase<ScoContent>
+    public class ScoContentCollectionResult : CollectionResult<ScoContent>
     {
         public string ScoId { get; private set; }
 

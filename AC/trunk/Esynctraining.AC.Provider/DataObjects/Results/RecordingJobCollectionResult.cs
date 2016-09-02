@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class RecordingJobCollectionResult : GenericCollectionResultBase<RecordingJob>
+    public class RecordingJobCollectionResult : CollectionResult<RecordingJob>
     {
         public RecordingJobCollectionResult(StatusInfo status)
             : base(status)

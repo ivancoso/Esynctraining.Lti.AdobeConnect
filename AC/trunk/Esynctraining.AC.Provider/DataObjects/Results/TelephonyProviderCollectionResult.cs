@@ -4,7 +4,7 @@
 
     using Esynctraining.AC.Provider.Entities;
 
-    public class TelephonyProviderCollectionResult : GenericCollectionResultBase<TelephonyProvider>
+    public class TelephonyProviderCollectionResult : CollectionResult<TelephonyProvider>
     {
         public TelephonyProviderCollectionResult(StatusInfo status)
             : base(status)

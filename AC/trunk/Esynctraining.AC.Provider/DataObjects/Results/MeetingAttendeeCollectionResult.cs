@@ -7,7 +7,7 @@
     /// <summary>
     /// The meeting attendee collection result.
     /// </summary>
-    public class MeetingAttendeeCollectionResult : GenericCollectionResultBase<MeetingAttendee>
+    public class MeetingAttendeeCollectionResult : CollectionResult<MeetingAttendee>
     {
         #region Constructors and Destructors
 

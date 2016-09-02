@@ -7,7 +7,7 @@
     /// <summary>
     /// The curriculum taker collection result.
     /// </summary>
-    public class CurriculumTakerCollectionResult : GenericCollectionResultBase<CurriculumTaker>
+    public class CurriculumTakerCollectionResult : CollectionResult<CurriculumTaker>
     {
         #region Constructors and Destructors
 

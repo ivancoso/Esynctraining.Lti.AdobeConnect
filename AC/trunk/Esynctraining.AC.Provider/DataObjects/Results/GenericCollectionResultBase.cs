@@ -3,17 +3,22 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class GenericCollectionResultBase<T> : ResultBase
+    public class CollectionResult<T> : ResultBase
     {
-        public GenericCollectionResultBase(StatusInfo status) : base(status)
+        public IEnumerable<T> Values { get; private set; }
+
+
+        public CollectionResult(StatusInfo status) : base(status)
         {
         }
 
-        public GenericCollectionResultBase(StatusInfo status, IEnumerable<T> values) : base(status)
+        public CollectionResult(StatusInfo status, IEnumerable<T> values) : base(status)
         {
+            // TODO: check on null? review is required!
+
             Values = values;
         }
-
-        public IEnumerable<T> Values { get; private set; }
+        
     }
+
 }

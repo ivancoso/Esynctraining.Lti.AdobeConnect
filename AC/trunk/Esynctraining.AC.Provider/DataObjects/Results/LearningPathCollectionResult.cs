@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class LearningPathCollectionResult : GenericCollectionResultBase<LearningPathItem>
+    public class LearningPathCollectionResult : CollectionResult<LearningPathItem>
     {
         public LearningPathCollectionResult(StatusInfo status) : base(status)
         {

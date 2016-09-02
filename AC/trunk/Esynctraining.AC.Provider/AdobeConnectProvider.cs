@@ -51,7 +51,7 @@
             this.requestProcessor.SetSessionId(null);
 
             StatusInfo statusInfo;
-            var success = this.LoginInternal(credentials.Login, credentials.Password, credentials.AccountId, out statusInfo);
+            var success = LoginInternal(credentials.Login, credentials.Password, credentials.AccountId, out statusInfo);
 
             UserInfo user = null;
             if (success)
@@ -556,16 +556,16 @@
 
         #region internal routines
 
-        private GenericCollectionResultBase<T> GetCollection<T>(string command, string args, string xmlRootName, string xmlElementName, Func<XmlNode, T> elementParser)
+        private CollectionResult<T> GetCollection<T>(string command, string args, string xmlRootName, string xmlElementName, Func<XmlNode, T> elementParser)
         {
             StatusInfo status;
 
             var doc = this.requestProcessor.Process(command, args, out status);
 
             return ResponseIsOk(doc, status)
-                       ? new GenericCollectionResultBase<T>(status, GenericCollectionParser<T>.Parse(
+                       ? new CollectionResult<T>(status, GenericCollectionParser<T>.Parse(
                            doc.SelectSingleNode(xmlRootName), xmlElementName, elementParser))
-                       : new GenericCollectionResultBase<T>(status);
+                       : new CollectionResult<T>(status);
         }
 
         #region Private Helpers
@@ -616,6 +616,18 @@
         private static bool ResponseIsOk(StatusInfo status)
         {
             return status.Code == StatusCodes.ok;
+        }
+
+        private SingleObjectResult<T> GetResult<T>(XmlDocument doc, StatusInfo status, string xPath, IEntityParser<T> parser) where T : class
+        {
+            if (!ResponseIsOk(doc, status))
+                return new SingleObjectResult<T>(status);
+
+            var node = doc.SelectSingleNode(xPath);
+            if (node == null)
+                return new SingleObjectResult<T>(status);
+
+            return new SingleObjectResult<T>(status, parser.Parse(node));
         }
 
         #endregion

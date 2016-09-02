@@ -6,7 +6,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class RecordingCollectionResult : GenericCollectionResultBase<Recording>
+    public class RecordingCollectionResult : CollectionResult<Recording>
     {
         public RecordingCollectionResult(StatusInfo status)
             : base(status)

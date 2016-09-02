@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Esynctraining.AC.Provider.Entities;
 
-    public class FieldCollectionResult : GenericCollectionResultBase<Field>
+    public class FieldCollectionResult : CollectionResult<Field>
     {
         public FieldCollectionResult(StatusInfo status)
             : base(status)

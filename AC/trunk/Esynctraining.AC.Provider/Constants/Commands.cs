@@ -265,5 +265,14 @@
             public const string SeminarSessionScoUpdate = "seminar-session-sco-update";
             public const string SeminarLicensesList = "sco-seminar-licenses-list";
         }
+
+        internal static class CustomField
+        {
+            public static readonly string CustomFields = "custom-fields";
+
+            public static readonly string Update = "custom-field-update";
+
+        }
+
     }
 }

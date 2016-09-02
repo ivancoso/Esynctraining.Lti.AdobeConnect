@@ -7,7 +7,7 @@
     /// <summary>
     /// The telephony profile collection result.
     /// </summary>
-    public class TelephonyProfilesCollectionResult : GenericCollectionResultBase<TelephonyProfile>
+    public class TelephonyProfilesCollectionResult : CollectionResult<TelephonyProfile>
     {
         #region Constructors and Destructors
 

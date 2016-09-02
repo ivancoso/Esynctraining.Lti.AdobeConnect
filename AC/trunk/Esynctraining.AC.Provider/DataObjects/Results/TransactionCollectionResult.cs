@@ -3,7 +3,7 @@ using Esynctraining.AC.Provider.Entities;
 
 namespace Esynctraining.AC.Provider.DataObjects.Results
 {
-    public class TransactionCollectionResult : GenericCollectionResultBase<TransactionInfo>
+    public class TransactionCollectionResult : CollectionResult<TransactionInfo>
     {
         public TransactionCollectionResult(StatusInfo status) : base(status)
         {

@@ -25,9 +25,7 @@
         public static T ReflectEnum<T>(string enumFieldName, T defaultValue)
         {
             if (string.IsNullOrWhiteSpace(enumFieldName))
-            {
-                TraceTool.TraceMessage("ReflectEnum: enumFieldName parameter IsNullOrWhiteSpace");
-            }
+                throw new ArgumentException("Non-empty value expected", nameof(enumFieldName));            
 
             try
             {
@@ -42,5 +40,23 @@
 
             return defaultValue;
         }
+
+        public static T ReflectEnum<T>(string enumFieldValue)
+        {
+            if (string.IsNullOrWhiteSpace(enumFieldValue))
+                throw new ArgumentException("Non-empty value expected", nameof(enumFieldValue));
+
+            try
+            {
+                enumFieldValue = enumFieldValue.Replace('-', '_');
+                return (T)Enum.Parse(typeof(T), enumFieldValue, true);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error converting {enumFieldValue} to {typeof(T).Name}.", ex);
+            }
+        }
+
     }
+
 }
