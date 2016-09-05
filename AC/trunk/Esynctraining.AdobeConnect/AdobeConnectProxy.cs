@@ -163,7 +163,7 @@ namespace Esynctraining.AdobeConnect
                 item.ScoId, item.Name, true);
         }
 
-        public GenericCollectionResultBase<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
+        public CollectionResult<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
         {
             if (string.IsNullOrEmpty(scoId))
                 throw new ArgumentException("scoId");
@@ -172,7 +172,7 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
-        public GenericCollectionResultBase<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
+        public CollectionResult<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
         {
             if (string.IsNullOrEmpty(scoId))
                 throw new ArgumentException("scoId");
@@ -197,6 +197,30 @@ namespace Esynctraining.AdobeConnect
         {
             return Execute(() => { return _provider.GetAclFields(aclId); },
                 aclId.ToString());
+        }
+
+        public string GetAclField(string scoId, string aclId)
+        {
+            var result = Execute(() => _provider.GetAclField(scoId, aclId),
+                aclId);
+            if (!result.Success)
+            {
+                throw new InvalidOperationException($"Can't get Acl Field by scoId {scoId} and aclId {aclId}");
+            }
+            return result.FieldValue;
+        }
+
+        public CustomField GetCustomField(string name)
+        {
+            var result =Execute(() => { return _provider.GetCustomField(name); },
+                name);
+            if (!result.Success)
+            {
+                throw new InvalidOperationException($"Getting custom field {name} failed {result.Status}");
+            }
+
+            var fieldName = result.Value;
+            return fieldName;
         }
 
         public PrincipalCollectionResult GetAllByEmail(string email)

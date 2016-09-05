@@ -36,7 +36,8 @@ namespace Esynctraining.AdobeConnect.Tests
 
         //[TestCase("http://connectdev.esynctraining.com/api/xml", "anton@esynctraining.com", "Welcome1")]
         //[TestCase("https://webmeeting.umd.edu/api/xml", "mike+umd@esynctraining.com", "e$ync123UMD")]
-        [TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123")]
+        //[TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123")]
+        [TestCase("http://connect.uthsc.edu/api/xml", "itsadmin", "Memphis2016", 0)]
         public void WillGetRecordingsStats(string apiUrl, string login, string password, int totalObjCount = 0)
         {
             _connectionDetails = new ConnectionDetails(apiUrl);

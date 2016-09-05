@@ -146,9 +146,11 @@ namespace Esynctraining.AdobeConnect
         UserCollectionResult ReportGuestsByLogin(string login);
 
         ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item);
-        GenericCollectionResultBase<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId);
-        GenericCollectionResultBase<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId);
+        CollectionResult<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId);
+        CollectionResult<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId);
 
         RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId);
+        string GetAclField(string scoId, string aclId);
+        CustomField GetCustomField(string name);
     }
 }
