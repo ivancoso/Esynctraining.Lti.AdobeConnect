@@ -250,6 +250,13 @@ namespace Esynctraining.AdobeConnect
                 string.Join(";", principalIdsToFind));
         }
 
+        public PrincipalInfoResult GetPrincipalInfo(string principalId)
+        {
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+            return Execute(() => GetOneByPrincipalId(principalId), principalId);
+        }
+
         public MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
         {
             if (string.IsNullOrWhiteSpace(meetingId))

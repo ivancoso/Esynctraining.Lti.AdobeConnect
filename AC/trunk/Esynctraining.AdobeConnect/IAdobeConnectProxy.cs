@@ -26,6 +26,9 @@ namespace Esynctraining.AdobeConnect
         PrincipalCollectionResult GetAllByLogin(string login);
         PrincipalCollectionResult GetAllByLogin(IEnumerable<string> logins);
         PrincipalCollectionResult GetAllByPrincipalIds(string[] principalIdsToFind);
+
+        PrincipalInfoResult GetPrincipalInfo(string principalId);
+
         //ScoContentCollectionResult GetAllEvents();
 
         MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId);
