@@ -137,7 +137,7 @@
         seminarsession,
     }
 
-    public enum PrincipalTypes
+    public enum PrincipalType
     {
         admins,
         authors,

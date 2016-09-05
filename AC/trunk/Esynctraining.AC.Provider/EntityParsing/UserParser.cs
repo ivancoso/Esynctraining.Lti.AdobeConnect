@@ -28,7 +28,7 @@
                 var item = new User
                 {
                     PrincipalId = xml.SelectAttributeValue("principal-id"),
-                    Type = EnumReflector.ReflectEnum(xml.SelectAttributeValue("type"), PrincipalTypes.user),
+                    Type = EnumReflector.ReflectEnum(xml.SelectAttributeValue("type"), PrincipalType.user),
                     Name = xml.SelectSingleNodeValue("name/text()"),
                     Login = xml.SelectSingleNodeValue("login/text()"),
                     Email = xml.SelectSingleNodeValue("email/text()"),

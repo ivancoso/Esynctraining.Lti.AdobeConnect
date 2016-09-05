@@ -15,7 +15,7 @@ namespace Esynctraining.AC.Provider
         /// </summary>
         public PrincipalResult GetGroupByName(string groupName)
         {
-            var groupsResult = GetGroupsByType("group");
+            var groupsResult = GetGroupsByType(PrincipalType.group);
             var group = groupsResult.Values?.FirstOrDefault(g => g.Name.Equals(groupName, StringComparison.InvariantCultureIgnoreCase));
             if (null != group)
             {
@@ -25,15 +25,15 @@ namespace Esynctraining.AC.Provider
             return new PrincipalResult(groupsResult.Status);
         }
 
-        public PrincipalCollectionResult GetGroupsByType(string type)
+        public PrincipalCollectionResult GetGroupsByType(PrincipalType type)
         {
-            var filter = "&filter-type=" + type;
+            var filter = "&filter-type=" + type.ToString().Replace("_", "-");
             return CallPrincipalList(filter);
         }
 
-        public PrincipalCollectionResult GetPrimaryGroupsByType(string type)
+        public PrincipalCollectionResult GetPrimaryGroupsByType(PrincipalType type)
         {
-            var filter = "&filter-is-primary=true&filter-type=" + type;
+            var filter = "&filter-is-primary=true&filter-type=" + type.ToString().Replace("_", "-");
             return CallPrincipalList(filter);
         }
 
@@ -74,14 +74,12 @@ namespace Esynctraining.AC.Provider
             return status;
         }
 
-        public StatusInfo AddToGroupByType(string principalId, string typeName)
+        public StatusInfo AddToGroupByType(string principalId, PrincipalType type)
         {
             if (string.IsNullOrWhiteSpace(principalId))
                 throw new ArgumentException("Non-empty value expected", nameof(principalId));
-            if (string.IsNullOrWhiteSpace(typeName))
-                throw new ArgumentException("Non-empty value expected", nameof(typeName));
 
-            var groups = GetGroupsByType(typeName);
+            var groups = GetGroupsByType(type);
             var group = groups.Values?.FirstOrDefault();
             return group != null ? AddToGroup(principalId, group.PrincipalId) : groups.Status;
         }

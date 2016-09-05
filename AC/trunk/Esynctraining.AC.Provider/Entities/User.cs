@@ -14,7 +14,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         public User()
         {
-            this.Type = PrincipalTypes.user;
+            this.Type = PrincipalType.user;
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement]
         [XmlAttribute("type")]
-        public PrincipalTypes Type { get; set; }
+        public PrincipalType Type { get; set; }
 
         /// <summary>
         /// Gets or sets the login.

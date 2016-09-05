@@ -14,7 +14,7 @@ namespace Esynctraining.AC.Provider.Entities
         /// </summary>
         [XmlElement("type")]
         [SkipDuringUpdate]
-        public PrincipalTypes Type { get; set; }
+        public PrincipalType Type { get; set; }
 
         /// <summary>
         /// The principal’s new login name, usually
