@@ -84,16 +84,14 @@ namespace Esynctraining.AC.Provider
             return group != null ? AddToGroup(principalId, group.PrincipalId) : groups.Status;
         }
 
-        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, PrincipalType type)
         {
             if (principalIds == null)
                 throw new ArgumentNullException(nameof(principalIds));
             if (principalIds.Any(string.IsNullOrWhiteSpace))
                 throw new ArgumentException("All Principal Ids should be non empty", nameof(principalIds));
-            if (string.IsNullOrWhiteSpace(typeName))
-                throw new ArgumentException("Non-empty value expected", nameof(typeName));
 
-            var groups = GetGroupsByType(typeName);
+            var groups = GetGroupsByType(type);
             var group = groups.Values?.FirstOrDefault();
             return group != null ? AddToGroup(principalIds, group.PrincipalId) : groups.Status;
         }
