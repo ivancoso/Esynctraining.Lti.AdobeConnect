@@ -29,20 +29,19 @@
             try
             {
                 return new Principal
-                           {
-                               PrincipalId = xml.SelectAttributeValue("principal-id"),
-                               AccountId = xml.SelectAttributeValue("account-id"),
-                               IsHidden = xml.ParseAttributeBool("is-hidden"),
-                               IsPrimary = xml.ParseAttributeBool("is-primary"),
-                               HasChildren = xml.ParseAttributeBool("has-children"),
-                               Type = xml.SelectAttributeValue("type"),
-                               Login = xml.SelectSingleNodeValue("login/text()"),
-                               Name = xml.SelectSingleNodeValue("name/text()"),
-                               FirstName = xml.SelectSingleNodeValue("first-name/text()"),
-                               LastName = xml.SelectSingleNodeValue("last-name/text()"),
-                               Email = xml.SelectSingleNodeValue("email/text()"),
-                               DisplayId = xml.SelectSingleNodeValue("display-uid/text()")
-                           };
+                {
+                    PrincipalId = xml.SelectAttributeValue("principal-id"),
+                    AccountId = xml.SelectAttributeValue("account-id"),
+                    IsHidden = xml.ParseAttributeBool("is-hidden"),
+                    IsPrimary = xml.ParseAttributeBool("is-primary"),
+                    HasChildren = xml.ParseAttributeBool("has-children"),
+                    Type = xml.SelectAttributeValue("type"),
+                    Login = xml.SelectSingleNodeValue("login/text()"),
+                    Name = xml.SelectSingleNodeValue("name/text()"),
+                    Email = xml.SelectSingleNodeValue("email/text()"),
+                    DisplayId = xml.SelectSingleNodeValue("display-uid/text()"),
+                    Description = xml.SelectSingleNodeValue("description/text()"),
+                };
             }
             catch (Exception ex)
             {

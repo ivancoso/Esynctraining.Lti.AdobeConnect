@@ -25,11 +25,11 @@
             try
             {
                 return new Contact
-                           {
-                               FirstName = xml.SelectSingleNodeValue("first-name/text()"),
-                               LastName = xml.SelectSingleNodeValue("last-name/text()"),
-                               Email = xml.SelectSingleNodeValue("email/text()"),
-                           };
+                {
+                    FirstName = xml.SelectSingleNodeValue("first-name/text()"),
+                    LastName = xml.SelectSingleNodeValue("last-name/text()"),
+                    Email = xml.SelectSingleNodeValue("email/text()"),
+                };
             }
             catch (Exception ex)
             {

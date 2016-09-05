@@ -54,12 +54,12 @@
             }
 
             return new PrincipalInfo
-                       {
-                           Contact = xml.NodeExists(ContactPath) ? ContactParser.Parse(xml.SelectSingleNode(ContactPath)) : null,
-                           PrincipalPreferences = xml.NodeExists(PreferencesPath) ? PrincipalPreferencesParser.Parse(xml.SelectSingleNode(PreferencesPath)) : null,
-                           Principal = PrincipalParser.Parse(xml.SelectSingleNode(PrincipalPath)),
-                           Manager = xml.NodeExists(ManagerPath) ? PrincipalParser.Parse(xml.SelectSingleNode(ManagerPath)) : null,
-                       };
+            {
+                Contact = xml.NodeExists(ContactPath) ? ContactParser.Parse(xml.SelectSingleNode(ContactPath)) : null,
+                PrincipalPreferences = xml.NodeExists(PreferencesPath) ? PrincipalPreferencesParser.Parse(xml.SelectSingleNode(PreferencesPath)) : null,
+                Principal = PrincipalParser.Parse(xml.SelectSingleNode(PrincipalPath)),
+                Manager = xml.NodeExists(ManagerPath) ? PrincipalParser.Parse(xml.SelectSingleNode(ManagerPath)) : null,
+            };
         }
 
         #endregion
