@@ -80,40 +80,7 @@ namespace EdugameCloud.Lti.Sakai
 
             var ret = new List<AnswerDTO>();
 
-            if (q.answersList is JObject)
-            {
-                var answersList = q.answersList as JObject;
-
-                if (answersList["image"] != null)
-                {
-                    var coords = answersList["coord"].ToString();
-                    if (coords.Length < 4)
-                    {
-                        return ret;
-                    }
-                    var image = answersList["image"].ToString();
-                    var fileData = answersList["imageBinary"].ToString();
-
-                    ret.Add(new AnswerDTO()
-                    {
-                        text = coords,
-                        question_text = image,
-                        fileData = fileData
-                    });
-                    return ret;
-                }
-                // todo: this code is not needed anymore, need to check and remove. It was used for 'fill in multiple blanks' question type which has separate parser now
-                var i = 0;
-                foreach (var answer in answersList)
-                {
-                    var dto = ParseFillInBlank(answer.Value, answer.Key, i);
-                    ret.Add(dto);
-                    i++;
-                }
-
-                return ret;
-                // end of code which should be removed
-            }
+            
 
             if (q.variableSets is JObject)
             {
@@ -227,6 +194,41 @@ namespace EdugameCloud.Lti.Sakai
                 return ret;
             }
 
+            if (q.answersList is JObject)
+            {
+                var answersList = q.answersList as JObject;
+
+                if (answersList["image"] != null)
+                {
+                    var coords = answersList["coord"].ToString();
+                    if (coords.Length < 4)
+                    {
+                        return ret;
+                    }
+                    var image = answersList["image"].ToString();
+                    var fileData = answersList["imageBinary"].ToString();
+
+                    ret.Add(new AnswerDTO()
+                    {
+                        text = coords,
+                        question_text = image,
+                        fileData = fileData
+                    });
+                    return ret;
+                }
+                //// todo: this code is not needed anymore, need to check and remove. It was used for 'fill in multiple blanks' question type which has separate parser now
+                //var i = 0;
+                //foreach (var answer in answersList)
+                //{
+                //    var dto = ParseFillInBlank(answer.Value, answer.Key, i);
+                //    ret.Add(dto);
+                //    i++;
+                //}
+
+                return ret;
+                // end of code which should be removed
+            }
+
             if (q.answersList is JContainer)
             {
                 List<string> answers = null;
@@ -276,6 +278,8 @@ namespace EdugameCloud.Lti.Sakai
                 
                 return ret;
             }
+
+            
 
             return new List<AnswerDTO>() { new AnswerDTO() { text = "no answer", weight = 100, id = 0 } };
         }
