@@ -13,8 +13,8 @@ namespace Esynctraining.AdobeConnect
 
         StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);
-        StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName);
-        StatusInfo AddToGroupByType(string principalId, string typeName);
+        StatusInfo AddToGroupByType(IEnumerable<string> principalIds, PrincipalType type);
+        StatusInfo AddToGroupByType(string principalId, PrincipalType type);
         CancelRecordingJobResult CancelRecordingJob(string jobRecordingScoId);
         ScoInfoResult CreateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase;
         StatusInfo DeleteSco(string scoId);
@@ -49,8 +49,8 @@ namespace Esynctraining.AdobeConnect
         //PrincipalResult GetGroupByName(string groupName);
         // PrincipalCollectionResult GetGroupPrincipalUsers(string groupId);
         PrincipalCollectionResult GetGroupPrincipalUsers(string groupId, string principalId);
-        PrincipalCollectionResult GetGroupsByType(string type);
-        PrincipalCollectionResult GetPrimaryGroupsByType(string type);
+        PrincipalCollectionResult GetGroupsByType(PrincipalType type);
+        PrincipalCollectionResult GetPrimaryGroupsByType(PrincipalType type);
         PrincipalCollectionResult GetGroupUsers(string groupId);
         //PermissionCollectionResult GetMeetingHosts(string meetingId);
         //PermissionCollectionResult GetMeetingParticipants(string meetingId);
@@ -104,7 +104,7 @@ namespace Esynctraining.AdobeConnect
         PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError);
         GenericResult PrincipalUpdatePassword(string principalId, string newPassword);
         StatusInfo RemoveFromGroup(string principalId, string groupId);
-        bool RemoveFromGroupByType(string principalId, string typeName);
+        bool RemoveFromGroupByType(string principalId, PrincipalType type);
         //MeetingItemCollectionResult ReportAllMeetings();
         MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);

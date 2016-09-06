@@ -37,7 +37,7 @@ namespace Esynctraining.AdobeConnect
                 String.Join(",", principalIds), groupId);
         }
 
-        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, string typeName)
+        public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, PrincipalType type)
         {
             if (principalIds == null)
                 throw new ArgumentNullException("principalIds");
@@ -50,11 +50,11 @@ namespace Esynctraining.AdobeConnect
             StatusInfo result;
             try
             {
-                result = _provider.AddToGroupByType(principalIds, typeName);
+                result = _provider.AddToGroupByType(principalIds, type);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "PrincipalIds:{0}.TypeName:{1}.", string.Join(";", principalIds), typeName);
+                _logger.ErrorFormat(ex, "PrincipalIds:{0}.TypeName:{1}.", string.Join(";", principalIds), type.ToString());
                 throw new AdobeConnectException("AddToGroupByType exception", ex);
             }
 
@@ -77,7 +77,7 @@ namespace Esynctraining.AdobeConnect
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalIds:{1}.TypeName:{2}.",
                     result.GetErrorInfo(),
                     string.Join(";", principalIds),
-                    typeName);
+                    type.ToString());
                 _logger.Error(msg);
 
                 throw new AdobeConnectException(result);
@@ -86,7 +86,7 @@ namespace Esynctraining.AdobeConnect
             return result;
         }
 
-        public StatusInfo AddToGroupByType(string principalId, string typeName)
+        public StatusInfo AddToGroupByType(string principalId, PrincipalType type)
         {
             //return Execute(() => _provider.AddToGroupByType(principalId, typeName),
             //    principalId, typeName);
@@ -94,11 +94,11 @@ namespace Esynctraining.AdobeConnect
             StatusInfo result;
             try
             {
-                result = _provider.AddToGroupByType(principalId, typeName);
+                result = _provider.AddToGroupByType(principalId, type);
             }
             catch (Exception ex)
             {
-                _logger.ErrorFormat(ex, "PrincipalId:{0}.TypeName:{1}.", principalId, typeName);
+                _logger.ErrorFormat(ex, "PrincipalId:{0}.TypeName:{1}.", principalId, type.ToString());
                 throw new AdobeConnectException("AddToGroupByType exception", ex);
             }
 
@@ -121,7 +121,7 @@ namespace Esynctraining.AdobeConnect
                 string msg = string.Format("[AdobeConnectProxy Error] {0}. PrincipalId:{1}.TypeName:{2}.",
                     result.GetErrorInfo(),
                     principalId,
-                    typeName);
+                    type.ToString());
                 _logger.Error(msg);
 
                 throw new AdobeConnectException(result);
@@ -372,22 +372,16 @@ namespace Esynctraining.AdobeConnect
                 groupId, principalId);
         }
 
-        public PrincipalCollectionResult GetGroupsByType(string type)
+        public PrincipalCollectionResult GetGroupsByType(PrincipalType type)
         {
-            if (string.IsNullOrWhiteSpace(type))
-                throw new ArgumentException("Non-empty value expected", nameof(type));
-
             return Execute(() => { return _provider.GetGroupsByType(type); },
-                type);
+                type.ToString());
         }
 
-        public PrincipalCollectionResult GetPrimaryGroupsByType(string type)
+        public PrincipalCollectionResult GetPrimaryGroupsByType(PrincipalType type)
         {
-            if (string.IsNullOrWhiteSpace(type))
-                throw new ArgumentException("Non-empty value expected", nameof(type));
-
             return Execute(() => { return _provider.GetPrimaryGroupsByType(type); },
-                type);
+                type.ToString());
         }
 
         public PrincipalCollectionResult GetGroupUsers(string groupId)
@@ -644,9 +638,9 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.RemoveFromGroup(principalId, groupId); }, principalId, groupId);
         }
 
-        public bool RemoveFromGroupByType(string principalId, string typeName)
+        public bool RemoveFromGroupByType(string principalId, PrincipalType type)
         {
-            return Execute(() => { return _provider.RemoveFromGroupByType(principalId, typeName); }, principalId, typeName);
+            return Execute(() => { return _provider.RemoveFromGroupByType(principalId, type); }, principalId, type.ToString());
         }
 
         public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
