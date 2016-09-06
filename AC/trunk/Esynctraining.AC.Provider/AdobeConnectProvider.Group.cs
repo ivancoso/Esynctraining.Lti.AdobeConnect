@@ -109,14 +109,12 @@ namespace Esynctraining.AC.Provider
             return status;
         }
 
-        public bool RemoveFromGroupByType(string principalId, string typeName)
+        public bool RemoveFromGroupByType(string principalId, PrincipalType type)
         {
             if (string.IsNullOrWhiteSpace(principalId))
                 throw new ArgumentException("Non-empty value expected", nameof(principalId));
-            if (string.IsNullOrWhiteSpace(typeName))
-                throw new ArgumentException("Non-empty value expected", nameof(typeName));
 
-            var group = GetGroupsByType(typeName).Values?.FirstOrDefault();
+            var group = GetGroupsByType(type).Values?.FirstOrDefault();
             if (group != null)
             {
                 return ResponseIsOk(RemoveFromGroup(principalId, group.PrincipalId));
