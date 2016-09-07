@@ -1522,7 +1522,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         || (lmsCompany.UseSynchronizedUsers && lmsCourseMeeting.EnableDynamicProvisioning)));
 
             // TRICK:  PermissionStringValue acn contains specialpermission value
-            MeetingPermissionInfo publicAccessPermission = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && !string.IsNullOrWhiteSpace(x.PermissionStringValue)) : null;
+            MeetingPermissionInfo publicAccessPermission = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && x.PermissionId != MeetingPermissionId.none) : null;
             string officeHoursString = null;
 
             if (type == LmsMeetingType.OfficeHours)
