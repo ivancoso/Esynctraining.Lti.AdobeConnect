@@ -108,7 +108,7 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null, imageBinary = string.Empty;
+                    string questionText = null, answerText = null, imageBinary = string.Empty, imageName = String.Empty;
 
                     // multiple answer
                     if (answer is JObject)
@@ -125,6 +125,10 @@ namespace EdugameCloud.Lti.Sakai
                             if (option.Key == "imageBinary")
                             {
                                 imageBinary = option.Value.ToString();
+                            }
+                            if (option.Key == "imageName")
+                            {
+                                imageName = option.Value.ToString();
                             }
                         }
                     }
@@ -145,6 +149,7 @@ namespace EdugameCloud.Lti.Sakai
                         question_text = questionText,
                         weight = isCorrect ? 100 : 0,
                         fileData = imageBinary,
+                        imageName = imageName
                     });
                     i++;
                 }

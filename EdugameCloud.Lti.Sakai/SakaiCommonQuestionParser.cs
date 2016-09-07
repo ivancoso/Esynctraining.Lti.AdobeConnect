@@ -214,7 +214,8 @@ namespace EdugameCloud.Lti.Sakai
                     {
                         text = coords,
                         question_text = image,
-                        fileData = fileData
+                        fileData = fileData,
+                        imageName = image
                     });
                     return ret;
                 }
@@ -235,7 +236,7 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null, lmsValue = null, imageBinary = string.Empty;
+                    string questionText = null, answerText = null, lmsValue = null, imageBinary = string.Empty, imageName = String.Empty;
 
                     if (answer is JObject)
                     {
@@ -253,6 +254,10 @@ namespace EdugameCloud.Lti.Sakai
                             if (option.Key == "imageBinary")
                             {
                                 imageBinary = option.Value.ToString();
+                            }
+                            if (option.Key == "imageName")
+                            {
+                                imageName = option.Value.ToString();
                             }
                         }
 
@@ -276,6 +281,7 @@ namespace EdugameCloud.Lti.Sakai
                         order = order,
                         question_text = questionText,
                         fileData = imageBinary,
+                        imageName = imageName,
                         /*weight = i == correctAnswerId ? 100 : 0*/
                         weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
                     });
@@ -284,8 +290,6 @@ namespace EdugameCloud.Lti.Sakai
                 
                 return ret;
             }
-
-            
 
             return new List<AnswerDTO>() { new AnswerDTO() { text = "no answer", weight = 100, id = 0 } };
         }

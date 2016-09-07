@@ -849,9 +849,9 @@
 
                 imageBytes = Convert.FromBase64String(a.fileData);
 
-                var imageName =
+                var imageName = string.IsNullOrEmpty(a.imageName) ?
                     a.question_text.Substring(
-                        a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1);
+                        a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1) : a.imageName;
 
                 var file = distractor.Image != null
                     ? FileModel.GetOneById(distractor.Image.Id).Value
