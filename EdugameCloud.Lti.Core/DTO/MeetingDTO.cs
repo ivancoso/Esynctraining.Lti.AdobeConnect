@@ -57,9 +57,6 @@
         public string office_hours { get; set; }
 
         [DataMember]
-        public bool allow_guests { get; set; }
-
-        [DataMember]
         public bool is_disabled_for_this_course { get; set; }
 
         /// <summary>
@@ -88,12 +85,10 @@
 
         public SpecialPermissionId GetPermissionId()
         {
-            SpecialPermissionId specialPermissionId = string.IsNullOrEmpty(access_level)
-                ? (allow_guests ? SpecialPermissionId.remove : SpecialPermissionId.denied)
-                : "denied".Equals(access_level, StringComparison.OrdinalIgnoreCase)
-                    ? SpecialPermissionId.denied
-                    : ("view_hidden".Equals(access_level, StringComparison.OrdinalIgnoreCase) ? SpecialPermissionId.view_hidden : SpecialPermissionId.remove);
-            return specialPermissionId;
+            if (string.IsNullOrWhiteSpace(access_level))
+                throw new InvalidOperationException("Invalid access_level value " + access_level);
+            SpecialPermissionId value = (SpecialPermissionId)Enum.Parse(typeof(SpecialPermissionId), access_level);
+            return value;
         }
 
         public LmsMeetingType GetMeetingType()

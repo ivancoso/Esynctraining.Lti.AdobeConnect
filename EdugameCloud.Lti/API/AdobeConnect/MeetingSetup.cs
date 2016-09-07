@@ -1591,7 +1591,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 start_timestamp = (long)meetingSco.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timeZone, meetingSco.BeginDate),
                 duration = (meetingSco.EndDate - meetingSco.BeginDate).ToString(@"h\:mm"),
                 access_level = publicAccessPermission != null ? publicAccessPermission.PermissionStringValue : "remove",
-                allow_guests = publicAccessPermission == null || publicAccessPermission.PermissionId == MeetingPermissionId.remove,
                 can_join = canJoin,
                 is_editable = isEditable,
                 type = (int)type,
