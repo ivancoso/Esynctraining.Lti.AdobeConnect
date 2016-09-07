@@ -39,6 +39,8 @@ namespace Esynctraining.AdobeConnect
 
         byte[] GetContent(string scoId, out string error, string format = "zip");
 
+        byte[] GetSourceContent(string urlPath, out string error, string format = "zip");
+
         byte[] GetContentByUrlPath(string urlPath, string format, out string error);
 
         ScoContentCollectionResult GetContentsByScoId(string scoId);

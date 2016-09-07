@@ -773,6 +773,11 @@ namespace Esynctraining.AdobeConnect
             return _provider.GetContent(scoId, out error, format);
         }
 
+        public byte[] GetSourceContent(string urlPath, out string error, string format = "zip")
+        {
+            return _provider.GetSourceContentByUrlPath2(urlPath, format, out error);
+        }
+
         public byte[] GetContentByUrlPath(string urlPath, string format, out string error)
         {
             //TODO:
