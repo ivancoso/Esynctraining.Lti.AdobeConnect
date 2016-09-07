@@ -42,37 +42,44 @@ namespace Esynctraining.AC.Provider
             return null;
         }
 
-        /// <summary>
-        /// The get content by url path.
-        /// </summary>
-        /// <param name="urlPath">
-        /// The url path.
-        /// </param>
-        /// <param name="format">
-        /// The format.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="byte"/>.
-        /// </returns>
         public byte[] GetContentByUrlPath(string urlPath, string format, out string error)
         {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadData(downloadName, format, out error);
+            if (string.IsNullOrEmpty(urlPath))
+                throw new ArgumentException("Non-empty value expected", nameof(urlPath));
+            if (string.IsNullOrEmpty(format))
+                throw new ArgumentException("Non-empty value expected", nameof(format));
+
+            return this.requestProcessor.DownloadData(urlPath, format, out error);
         }
 
         public byte[] GetContentByUrlPath2(string urlPath, string fileName, out string error)
         {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadData2(downloadName, fileName, out error);
+            if (string.IsNullOrEmpty(urlPath))
+                throw new ArgumentException("Non-empty value expected", nameof(urlPath));
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentException("Non-empty value expected", nameof(fileName));
+
+            return this.requestProcessor.DownloadData2(urlPath, fileName, out error);
         }
 
         public byte[] GetSourceContentByUrlPath(string urlPath, string fileName, out string error)
         {
-            var downloadName = urlPath.Trim('/');
-            return this.requestProcessor.DownloadSourceData(downloadName, fileName, out error);
+            if (string.IsNullOrEmpty(urlPath))
+                throw new ArgumentException("Non-empty value expected", nameof(urlPath));
+            if (string.IsNullOrEmpty(fileName))
+                throw new ArgumentException("Non-empty value expected", nameof(fileName));
+
+            return this.requestProcessor.DownloadSourceData(urlPath, fileName, out error);
+        }
+
+        public byte[] GetSourceContentByUrlPath2(string urlPath, string format, out string error)
+        {
+            if (string.IsNullOrEmpty(urlPath))
+                throw new ArgumentException("Non-empty value expected", nameof(urlPath));
+            if (string.IsNullOrEmpty(format))
+                throw new ArgumentException("Non-empty value expected", nameof(format));
+
+            return this.requestProcessor.DownloadSourceData2(urlPath, format, out error);
         }
 
         /// <summary>

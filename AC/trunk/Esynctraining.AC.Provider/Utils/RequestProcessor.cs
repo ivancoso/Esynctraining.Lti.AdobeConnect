@@ -101,13 +101,13 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public byte[] DownloadData(string downloadName, string format, out string error)
+        public byte[] DownloadData(string urlPath, string format, out string error)
         {
             error = null;
             string url = string.Format(
                 "{0}/{1}/output/{1}.{2}?download={2}", 
-                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'), 
-                downloadName, 
+                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                urlPath.Trim('/'),
                 format);
            
               return DownloadData(url, out error);
@@ -119,8 +119,20 @@
             string url = string.Format(
                 "{0}/{1}/output/{2}?download={2}",
                 this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
-                urlPath,
+                urlPath.Trim('/'),
                 fileName);
+
+            return DownloadData(url, out error);
+        }
+
+        public byte[] DownloadSourceData2(string urlPath, string format, out string error)
+        {
+            error = null;
+            string url = string.Format(
+                "{0}/{1}/source/{1}.{2}?download={2}",
+                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                urlPath.Trim('/'),
+                format);
 
             return DownloadData(url, out error);
         }
@@ -131,7 +143,7 @@
             string url = string.Format(
                 "{0}/{1}/source/{2}?download={2}",
                 this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
-                urlPath,
+                urlPath.Trim('/'),
                 fileName);
 
             return DownloadData(url, out error);

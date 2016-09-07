@@ -15,13 +15,10 @@ namespace Esynctraining.AC.Provider
                 throw new ArgumentException("Non-empty value expected", nameof(customFieldName));
 
             // act: "custom-fields"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.CustomField.CustomFields, 
-                string.Format(CommandParams.CustomFields.FilterByName, UrlEncode(customFieldName)),
-                out status);
-
-            return GetResult(doc, status, "//custom-fields/field", ParserSingleton<CustomFieldParser>.Instance);
+            return GetResult(Commands.CustomField.CustomFields,
+                string.Format(CommandParams.CustomFields.FilterByName, UrlEncode(customFieldName)), 
+                "//custom-fields/field",
+                ParserSingleton<CustomFieldParser>.Instance);
         }
 
         public SingleObjectResult<CustomField> CustomFieldUpdate(CustomField value)
@@ -29,13 +26,12 @@ namespace Esynctraining.AC.Provider
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            // action=principal-update
             var commandParams = QueryStringBuilder.EntityToQueryString(value);
 
-            StatusInfo status;
-            var doc = requestProcessor.Process(Commands.CustomField.Update, commandParams, out status);
-
-            return GetResult(doc, status, "//field", ParserSingleton<CustomFieldParser>.Instance);
+            return GetResult(Commands.CustomField.Update,
+                commandParams,
+                "//field",
+                ParserSingleton<CustomFieldParser>.Instance);
         }
 
         public StatusInfo CustomFieldDelete(string customFieldName)
@@ -51,10 +47,8 @@ namespace Esynctraining.AC.Provider
             StatusInfo status;
             var commandParams = string.Format(CommandParams.CustomFields.Delete, UrlEncode(field.Value.FieldId), field.Value.ObjectType.ToString().Replace("_", "-"));
             var doc = requestProcessor.Process(Commands.CustomField.Delete, commandParams, out status);
-
             return status;
         }
-
 
     }
 

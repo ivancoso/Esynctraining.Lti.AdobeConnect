@@ -618,8 +618,11 @@
             return status.Code == StatusCodes.ok;
         }
 
-        private SingleObjectResult<T> GetResult<T>(XmlDocument doc, StatusInfo status, string xPath, IEntityParser<T> parser) where T : class
+        private SingleObjectResult<T> GetResult<T>(string action, string parameters, string xPath, IEntityParser<T> parser) where T : class
         {
+            StatusInfo status;
+            var doc = this.requestProcessor.Process(action, parameters, out status);
+
             if (!ResponseIsOk(doc, status))
                 return new SingleObjectResult<T>(status);
 
