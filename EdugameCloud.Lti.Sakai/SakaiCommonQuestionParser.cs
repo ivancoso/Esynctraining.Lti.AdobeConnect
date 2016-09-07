@@ -255,7 +255,7 @@ namespace EdugameCloud.Lti.Sakai
                             {
                                 imageBinary = option.Value.ToString();
                             }
-                            if (option.Key == "imageName")
+                            if (option.Key == "image")
                             {
                                 imageName = option.Value.ToString();
                             }
