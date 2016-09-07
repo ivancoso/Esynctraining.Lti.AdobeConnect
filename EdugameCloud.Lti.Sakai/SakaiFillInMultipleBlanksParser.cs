@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using EdugameCloud.Lti.DTO;
 using Newtonsoft.Json.Linq;
 
@@ -38,7 +39,61 @@ namespace EdugameCloud.Lti.Sakai
                 i++;
             }
 
+            if (q.variableSets is JObject)
+            {
+                var variableSets = q.variableSets as JObject;
+                foreach (var set in variableSets)
+                {
+                    double tolerance = 0;
+                    double.TryParse(q.tolerance, out tolerance);
+
+                    var quizAnswer = new AnswerDTO()
+                    {
+                        id = 0,
+                        margin = tolerance,
+                        question_text = set.Key,
+                        text = DecodeFormula(q.formula),
+                        weight = 100
+                    };
+
+                    if (set.Value is JObject)
+                    {
+                        foreach (var variable in set.Value as JObject)
+                        {
+                            if (variable.Key.Equals("answer"))
+                            {
+                                quizAnswer.answer = double.Parse(variable.Value.ToString());
+                            }
+                            else
+                            {
+                                quizAnswer.variables.Add(new VariableDTO()
+                                {
+                                    name = variable.Key,
+                                    value = variable.Value.ToString()
+                                });
+                            }
+                        }
+                    }
+
+                    ret.Add(quizAnswer);
+
+                    break;
+                }
+                return ret;
+            }
+
             return ret;
+        }
+
+        private static string DecodeFormula(string formula)
+        {
+            if (formula == null)
+            {
+                return null;
+            }
+            formula = HttpUtility.HtmlDecode(formula);
+            formula = formula.Replace("<mi>", "[").Replace("</mi>", "]");
+            return formula;
         }
 
         protected AnswerDTO ParseFillInBlankAnswer(List<FillInTheBlankAnswer> typedAnswers, string blankName, int blankId)
