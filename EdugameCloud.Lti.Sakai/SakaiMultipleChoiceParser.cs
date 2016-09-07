@@ -68,6 +68,34 @@ namespace EdugameCloud.Lti.Sakai
 
             var ret = new List<AnswerDTO>();
 
+            //if (q.answersList is JObject)
+            //{
+            //    var answersList = q.answersList as JObject;
+
+            //    if (answersList["image"] != null)
+            //    {
+            //        var coords = answersList["coord"].ToString();
+            //        if (coords.Length < 4)
+            //        {
+            //            return ret;
+            //        }
+            //        var image = answersList["image"].ToString();
+            //        var fileData = answersList["imageBinary"].ToString();
+
+            //        ret.Add(new AnswerDTO()
+            //        {
+            //            text = coords,
+            //            question_text = image,
+            //            fileData = fileData
+            //        });
+            //        return ret;
+            //    }
+              
+            //    return ret;
+            //    // end of code which should be removed
+            //}
+
+
             if (q.answersList is JContainer)
             {
                 List<string> answers = null;
@@ -80,7 +108,7 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null;
+                    string questionText = null, answerText = null, imageBinary = string.Empty;
 
                     // multiple answer
                     if (answer is JObject)
@@ -90,6 +118,14 @@ namespace EdugameCloud.Lti.Sakai
                             questionText = option.Key;
                             answerText = option.Value.ToString();
                             break;
+                        }
+
+                        foreach (var option in answer as JObject)
+                        {
+                            if (option.Key == "imageBinary")
+                            {
+                                imageBinary = option.Value.ToString();
+                            }
                         }
                     }
                     // single answer
@@ -107,7 +143,8 @@ namespace EdugameCloud.Lti.Sakai
                         text = answers != null && answers.Count > i ? answers[i] : answerText,
                         order = order,
                         question_text = questionText,
-                        weight = isCorrect ? 100 : 0
+                        weight = isCorrect ? 100 : 0,
+                        fileData = imageBinary,
                     });
                     i++;
                 }

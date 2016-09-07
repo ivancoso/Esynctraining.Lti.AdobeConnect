@@ -32,6 +32,7 @@ namespace EdugameCloud.Lti.Sakai
                     a.text = a.text;
                     //a.text = a.text.ClearName();
                     a.question_text = a.question_text.ClearName();
+                    
                 });
             ret.caseSensitive = ret.answers.Any(x => x.caseSensitive);
 
@@ -194,6 +195,7 @@ namespace EdugameCloud.Lti.Sakai
                 return ret;
             }
 
+            //means it's hotspot
             if (q.answersList is JObject)
             {
                 var answersList = q.answersList as JObject;
@@ -216,15 +218,7 @@ namespace EdugameCloud.Lti.Sakai
                     });
                     return ret;
                 }
-                //// todo: this code is not needed anymore, need to check and remove. It was used for 'fill in multiple blanks' question type which has separate parser now
-                //var i = 0;
-                //foreach (var answer in answersList)
-                //{
-                //    var dto = ParseFillInBlank(answer.Value, answer.Key, i);
-                //    ret.Add(dto);
-                //    i++;
-                //}
-
+               
                 return ret;
                 // end of code which should be removed
             }
@@ -241,7 +235,7 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null, lmsValue = null;
+                    string questionText = null, answerText = null, lmsValue = null, imageBinary = string.Empty;
 
                     if (answer is JObject)
                     {
@@ -251,6 +245,17 @@ namespace EdugameCloud.Lti.Sakai
                             answerText = option.Value.ToString();
                             break;
                         }
+
+                        // parsing answer images
+                        
+                        foreach (var option in answer as JObject)
+                        {
+                            if (option.Key == "imageBinary")
+                            {
+                                imageBinary = option.Value.ToString();
+                            }
+                        }
+
                         var prop = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
                         if (prop != null)
                         {
@@ -270,6 +275,7 @@ namespace EdugameCloud.Lti.Sakai
                         text = answers != null && answers.Count > i ? answers[i] : answerText,
                         order = order,
                         question_text = questionText,
+                        fileData = imageBinary,
                         /*weight = i == correctAnswerId ? 100 : 0*/
                         weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
                     });

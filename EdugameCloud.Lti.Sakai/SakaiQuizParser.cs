@@ -22,6 +22,7 @@ namespace EdugameCloud.Lti.Sakai
             switch (questionType.ToLowerInvariant())
             {
                 case "fill in the blank":
+                case "numerical":
                     //return new SakaiFillInTheBlanksParser();
                 //case "fill in the blank plus":
                     return new SakaiFillInMultipleBlanksParser();

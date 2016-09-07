@@ -112,7 +112,7 @@
         {
             get { return IoC.Resolve<LmsCompanyModel>(); }
         }
-        
+
         /// <summary>
         /// The convert quizzes.
         /// </summary>
@@ -358,11 +358,11 @@
                         case (int)QuestionTypeEnum.SingleMultipleChoiceText:
                             this.QuestionForSingleMultipleChoiceModel.RegisterSave(
                                 new QuestionForSingleMultipleChoice
-                                    {
-                                        Question = question,
-                                        Restrictions = !quizQuestion.is_single && questionType.LmsQuestionTypeName != "Opinion Scale" ? "multi_choice" : null,
-                                        IsMandatory = quizQuestion.is_mandatory
-                                    });
+                                {
+                                    Question = question,
+                                    Restrictions = !quizQuestion.is_single && questionType.LmsQuestionTypeName != "Opinion Scale" ? "multi_choice" : null,
+                                    IsMandatory = quizQuestion.is_mandatory
+                                });
                             break;
                         case (int)QuestionTypeEnum.OpenAnswerSingleLine:
                         case (int)QuestionTypeEnum.OpenAnswerMultiLine:
@@ -376,14 +376,14 @@
                         case (int)QuestionTypeEnum.Rate:
                             this.QuestionForRateModel.RegisterSave(
                                 new QuestionForRate
-                                    {
-                                        Question = question, 
-                                        Restrictions = quizQuestion.is_single ? "single_choice" : string.Empty, 
-                                        AllowOther = false, 
-                                        PageNumber = 0,
-                                        IsAlwaysRateDropdown = true,
-                                        IsMandatory = quizQuestion.is_mandatory
-                                    });
+                                {
+                                    Question = question,
+                                    Restrictions = quizQuestion.is_single ? "single_choice" : string.Empty,
+                                    AllowOther = false,
+                                    PageNumber = 0,
+                                    IsAlwaysRateDropdown = true,
+                                    IsMandatory = quizQuestion.is_mandatory
+                                });
                             break;
                     }
                 }
@@ -453,6 +453,12 @@
                         break;
                     }
             }
+
+            //image processing is done for hotspot separately
+            if (qtypeId != (int) QuestionTypeEnum.Hotspot)
+            {
+                ProcessImagesInDistractors(user, lmsCompany, q, question);
+            }
         }
 
         private string ProcessFillInTheBlankQuestionText(LmsQuestionDTO q, LmsProviderEnum lmsProvider)
@@ -461,9 +467,9 @@
             {
                 case LmsProviderEnum.Canvas:
                 case LmsProviderEnum.Blackboard:
-                return this.ProcessFillInTheBlankQuestionTextCanvas(q);
+                    return this.ProcessFillInTheBlankQuestionTextCanvas(q);
                 case LmsProviderEnum.Moodle:
-                return this.ProcessFillInTheBlankQuestionTextMoodle(q);
+                    return this.ProcessFillInTheBlankQuestionTextMoodle(q);
             }
             return string.Empty;
         }
@@ -634,7 +640,7 @@
             var lmsText = new StringBuilder();
             var keys = new Dictionary<string, int>();
             int textId = 0, optionId = 0;
-            
+
             foreach (var textPart in splitText)
             {
                 if (textPart.StartsWith("[") && textPart.EndsWith("]"))
@@ -653,9 +659,9 @@
                         correct != null ? correct.text : string.Empty,
                         subType,
                         q.caseSensitive ? " caseSensitive=\"true\"" : string.Empty);
-                    
+
                     if (option)
-                    {    
+                    {
                         distractorText.AppendFormat("<options id=\"{0}\">", textId);
                         foreach (var o in options)
                         {
@@ -813,6 +819,51 @@
             }
         }
 
+        private void ProcessImagesInDistractors(
+            User user,
+            LmsCompany lmsCompany,
+            LmsQuestionDTO q,
+            Question question)
+        {
+            foreach (var a in q.answers)
+            {
+                var lmsId = a.id;
+                var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
+                    new Distractor
+                    {
+                        DateCreated = DateTime.Now,
+                        CreatedBy = user,
+                        Question = question,
+                        LmsAnswerId = lmsId
+                    };
+                distractor.DistractorOrder = a.order + 1;
+                distractor.DateModified = DateTime.Now;
+                distractor.ModifiedBy = user;
+                distractor.IsActive = true;
+                distractor.DistractorType = 1;
+                distractor.IsCorrect = true;
+
+                byte[] imageBytes;
+                if (string.IsNullOrEmpty(a.fileData))
+                    return;
+
+                imageBytes = Convert.FromBase64String(a.fileData);
+
+                var imageName =
+                    a.question_text.Substring(
+                        a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1);
+
+                var file = distractor.Image != null
+                    ? FileModel.GetOneById(distractor.Image.Id).Value
+                    : FileModel.CreateFile(user, imageName, DateTime.Now, null, null, null, null);
+                FileModel.SetData(file, imageBytes);
+                file.FileName = imageName;
+                distractor.Image = file;
+
+                this.DistractorModel.RegisterSave(distractor);
+            }
+        }
+
         private void ProcessSequenceDistractors(
             User user,
             LmsQuestionDTO q,
@@ -861,8 +912,8 @@
                 var name = string.Format(
                     "{{\"min\":{0}, \"max\": {1}, \"error\":{2},\"type\":\"{3}\"}}",
 
-                    isRange 
-                    ? a.start.ToString() 
+                    isRange
+                    ? a.start.ToString()
                     : ((string.IsNullOrWhiteSpace(a.text) || isImportedCanvasExact) ? a.exact.ToString() : a.text),
 
                     (string.IsNullOrWhiteSpace(a.text) || isImportedCanvasExact) ? a.end.ToString() : a.text,
@@ -895,10 +946,10 @@
                 case LmsProviderEnum.Canvas:
                 case LmsProviderEnum.Blackboard:
                     this.ProcessCalculatedDistractorsCanvas(user, q, question);
-                break;
+                    break;
                 case LmsProviderEnum.Moodle:
                     this.ProcessCalculatedDistractorsMoodle(user, q, question);
-                break;
+                    break;
             }
         }
 
@@ -989,7 +1040,7 @@
                     {
                         return questionText;
                     }
-            
+
                     foreach (var variable in values.variables)
                     {
                         questionText = questionText.Replace("[" + variable.name + "]", variable.value);
@@ -1010,7 +1061,7 @@
 
                     break;
             }
-            
+
             return questionText;
         }
 
@@ -1022,7 +1073,7 @@
             foreach (var a in q.answers)
             {
                 var lmsId = a.id;
-                var name = a.right != null ? 
+                var name = a.right != null ?
                     string.Format("{0}$${1}", a.text, a.right)
                     : string.Format("{0}$${1}", a.question_text, a.text);
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
@@ -1040,7 +1091,7 @@
                 distractor.IsActive = true;
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = true;
-                
+
                 this.DistractorModel.RegisterSave(distractor);
             }
         }
@@ -1121,7 +1172,7 @@
             distractor.DistractorName = "truefalse";
             distractor.IsActive = true;
             distractor.DistractorType = 1;
-            
+
             var isCorrect = false;
             foreach (var a in q.answers)
             {
