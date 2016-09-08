@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PDFAnnotation.Core.Business.Models;
 
 namespace PDFAnnotation.Core.Domain.Entities
 {
@@ -43,6 +44,23 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// The text items.
         /// </summary>
         private ISet<ATTextItem> textItems = new HashSet<ATTextItem>();
+
+
+        /// <summary>
+        /// The picture items.
+        /// </summary>
+        private ISet<ATPicture> pictures = new HashSet<ATPicture>();
+
+        /// <summary>
+        /// The formula items.
+        /// </summary>
+        private ISet<ATFormula> formulas = new HashSet<ATFormula>();
+
+
+        /// <summary>
+        /// The annotation items.
+        /// </summary>
+        private ISet<ATAnnotation> annotations = new HashSet<ATAnnotation>();
 
         #endregion
 
@@ -125,6 +143,58 @@ namespace PDFAnnotation.Core.Domain.Entities
             set
             {
                 this.textItems = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the text items.
+        /// </summary>
+        public virtual ISet<ATPicture> Pictures
+        {
+            get
+            {
+                return this.pictures;
+            }
+
+            set
+            {
+                this.pictures = value;
+            }
+        }
+
+
+        /// <summary>
+        /// Gets or sets the formulas.
+        /// </summary>
+        public virtual ISet<ATFormula> Formulas
+        {
+            get
+            {
+                return this.formulas;
+            }
+
+            set
+            {
+                this.formulas = value;
+            }
+        }
+
+
+
+        /// <summary>
+        /// Gets or sets the formulas.
+        /// </summary>
+        public virtual ISet<ATAnnotation> Annotations
+        {
+            get
+            {
+                return this.annotations;
+            }
+
+            set
+            {
+                this.annotations = value;
             }
         }
 

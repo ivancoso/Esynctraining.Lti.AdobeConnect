@@ -1,11 +1,13 @@
+using PDFAnnotation.Core.Contracts;
+
 namespace PDFAnnotation.Core.Domain.Entities
 {
     using System;
     using Esynctraining.Core.Domain.Entities;
 
     [Serializable]
-    public partial class ATTextItem : Entity 
-	{
+    public partial class ATTextItem : Entity
+    {
 		#region Private fields
 
 

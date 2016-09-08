@@ -35,6 +35,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Conventions\PropertyNameConvention.cs" />
+    <Compile Include="Mappings\ATAnnotationMap.cs" />
+    <Compile Include="Mappings\ATFormulaMap.cs" />
+    <Compile Include="Mappings\ATPictureMap.cs" />
     <Compile Include="Mappings\CompanyContactMapping\AddressMap.cs" />
     <Compile Include="Mappings\CompanyContactMapping\CompanyContactMap.cs" />
     <Compile Include="Mappings\CompanyContactMapping\CompanyMap.cs" />
@@ -135,10 +138,6 @@
       <HintPath>..\packages\NHibernate.4.0.4.4000\lib\net40\NHibernate.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PDFAnnotation.Core, Version=1.1.0.8, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\PDFAnnotation.Core.1.1.0.8\lib\net45\PDFAnnotation.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data.Services" />
@@ -158,6 +157,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PDFAnnotation.Core\PDFAnnotation.Core.csproj">
+      <Project>{3e05de78-d386-414a-9505-33861ff180f9}</Project>
+      <Name>PDFAnnotation.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,4 +1,5 @@
 ﻿using Esynctraining.NHibernate;
+using PDFAnnotation.Core.Domain.DTO;
 
 namespace PDFAnnotation.Core.Business.Models
 {
@@ -27,7 +28,7 @@ namespace PDFAnnotation.Core.Business.Models
         {
         }
 
- /// <summary>
+        /// <summary>
         /// The get marks by file.
         /// </summary>
         /// <param name="fileId">
@@ -70,17 +71,63 @@ namespace PDFAnnotation.Core.Business.Models
         /// The <see cref="Tuple"/>.
         /// </returns>
 #pragma warning disable 168
-        public Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>, List<ATRotation>> GetMarksForFile(Guid fileId)
+        public ObjectsForMarkDTO GetMarksForFile(Guid fileId)
         {
             // trick to make NHibernate to load all child instances in one roundtrip to db (if db supports it)
-            var result = new Tuple<List<ATShape>, List<ATDrawing>, List<ATHighlightStrikeOut>, List<ATTextItem>, List<ATRotation>>
-                (new List<ATShape>(), new List<ATDrawing>(), new List<ATHighlightStrikeOut>(), new List<ATTextItem>(), new List<ATRotation>());
+            var result = new ObjectsForMarkDTO();
+      
+            // when this is executed, the three queries are executed in one roundtrip
+            var results = GetMarks(fileId);
+            foreach (var joinedMark in results)
+            {
+                foreach (var joinedNote in joinedMark.Shapes)
+                {
+                    result.shapes.Add(joinedNote);
+                }
+                foreach (var joinedDrawing in joinedMark.Drawings)
+                {
+                    result.drawings.Add(joinedDrawing);
+                }
+                foreach (var joinedHighlight in joinedMark.HighlightStrikeOuts)
+                {
+                    result.atHighlightStrikeOuts.Add(joinedHighlight);
+                }
+                foreach (var joinedText in joinedMark.TextItems)
+                {
+                    result.atTextItems.Add(joinedText);
+                }
+                foreach (var rotation in joinedMark.Rotations)
+                {
+                    result.atRotations.Add(rotation);
+                }
+                foreach (var picture in joinedMark.Pictures)
+                {
+                    result.atPictures.Add(picture);
+                }
+                foreach (var formula in joinedMark.Formulas)
+                {
+                    result.atFormulas.Add(formula);
+                }
+                foreach (var annotation in joinedMark.Annotations)
+                {
+                    result.atAnnotations.Add(annotation);
+                }
+            }
+            return result;
+        }
+
+
+        public IEnumerable<ATMark> GetMarks(Guid fileId)
+        {
             ATMark mark = null;
             ATShape note = null;
             ATDrawing atDrawing = null;
             ATHighlightStrikeOut atHighlightStrikeOut = null;
             ATTextItem textItem = null;
             ATRotation rotationItem = null;
+            ATPicture pictureItem = null;
+            ATFormula formulaItem = null;
+            ATAnnotation annotationItem = null;
 
             // Query to load the companies   
             var marks = this.Repository.Session.QueryOver(() => mark).Where(x => x.File.Id == fileId).Fetch(x => x.File).Eager.Future<ATMark>();
@@ -110,32 +157,22 @@ namespace PDFAnnotation.Core.Business.Models
                 .JoinAlias(p => p.Mark, () => mark)
                 .Future<ATRotation>();
 
-            // when this is executed, the three queries are executed in one roundtrip
-            var results = marks.ToList();
-            foreach (var joinedMark in results)
-            {
-                foreach (var joinedNote in joinedMark.Shapes)
-                {
-                    result.Item1.Add(joinedNote);
-                }
-                foreach (var joinedDrawing in joinedMark.Drawings)
-                {
-                    result.Item2.Add(joinedDrawing);
-                }
-                foreach (var joinedHighlight in joinedMark.HighlightStrikeOuts)
-                {
-                    result.Item3.Add(joinedHighlight);
-                }
-                foreach (var joinedText in joinedMark.TextItems)
-                {
-                    result.Item4.Add(joinedText);
-                }
-                foreach (var rotation in joinedMark.Rotations)
-                {
-                    result.Item5.Add(rotation);
-                }
-            }
-            return result;
+            // Query to load the Pictures
+            var pictureItems = this.Repository.Session.QueryOver(() => pictureItem)
+                .JoinAlias(p => p.Mark, () => mark)
+                .Future<ATPicture>();
+
+            // Query to load the Formulas
+            var formulaItems = this.Repository.Session.QueryOver(() => formulaItem)
+                .JoinAlias(p => p.Mark, () => mark)
+                .Future<ATFormula>();
+
+            // Query to load the Formulas
+            var annotationItems = this.Repository.Session.QueryOver(() => annotationItem)
+                .JoinAlias(p => p.Mark, () => mark)
+                .Future<ATAnnotation>();
+
+            return marks.OrderBy(x => x.DateChanged).ToList();
         }
 #pragma warning restore 168
     }

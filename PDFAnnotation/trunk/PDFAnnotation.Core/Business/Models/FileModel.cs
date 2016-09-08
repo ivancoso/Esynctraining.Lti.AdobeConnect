@@ -1,5 +1,8 @@
 ﻿
 
+using Esynctraining.Core.Domain.Entities;
+using PDFAnnotation.Core.Contracts;
+
 namespace PDFAnnotation.Core.Business.Models
 {
     using System;
@@ -103,6 +106,23 @@ namespace PDFAnnotation.Core.Business.Models
         /// </summary>
         private readonly TextItemModel textItemModel;
 
+
+        /// <summary>
+        ///     The picture item model.
+        /// </summary>
+        private readonly PictureModel pictureModel;
+
+        /// <summary>
+        ///     The formula item model.
+        /// </summary>
+        private readonly FormulaModel formulaModel;
+
+        /// <summary>
+        ///     The annotation item model.
+        /// </summary>
+        private readonly AnnotationModel annotationModel;
+
+
         #endregion
 
         #region Constructors and Destructors
@@ -143,6 +163,15 @@ namespace PDFAnnotation.Core.Business.Models
         /// <param name="markModel">
         /// Marks model
         /// </param>
+        /// <param name="pictureModel">
+        /// Pictures model
+        /// </param>
+        /// <param name="formulaModel">
+        /// Formulas model
+        /// </param>
+        /// <param name="annotationModel">
+        /// Annotations model
+        /// </param>
         /// <param name="logger">
         /// The error logger
         /// </param>
@@ -157,7 +186,11 @@ namespace PDFAnnotation.Core.Business.Models
             RotationModel rotationModel, 
 
             PdfProcessorHelper pdfProcessorHelper, 
-			FullTextModel fullTextModel,            MarkModel markModel, 
+			FullTextModel fullTextModel,         
+            MarkModel markModel,
+            PictureModel pictureModel,
+            FormulaModel formulaModel,
+            AnnotationModel annotationModel,
             ILogger logger)
             : base(repository)
         {
@@ -171,6 +204,9 @@ namespace PDFAnnotation.Core.Business.Models
             this.fullTextModel = fullTextModel;
             this.pdfProcessorHelper = pdfProcessorHelper;
             this.markModel = markModel;
+            this.pictureModel = pictureModel;
+            this.formulaModel = formulaModel;
+            this.annotationModel = annotationModel;
             this.logger = logger;
         }
 
@@ -513,7 +549,7 @@ namespace PDFAnnotation.Core.Business.Models
 
             if (date != default(DateTime) && date > SqlDateTime.MinValue && date < SqlDateTime.MaxValue)
             {
-                file.DateCreated = date;
+                file.DateCreated = DateTime.Now;
             }
             else
             {
@@ -986,7 +1022,7 @@ namespace PDFAnnotation.Core.Business.Models
             {
                 byte[] buffer = this.GetPDFData(file);
                 if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
-{
+            {
                     string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture); // based on date
                     var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
                     string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
@@ -995,29 +1031,18 @@ namespace PDFAnnotation.Core.Business.Models
                         lock (GetDictionaryLocker(tmpPDF))
                         {
                             if (!System.IO.File.Exists(tmpPDF))
-                {
-                    IEnumerable<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id);
-                    IEnumerable<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(file.Id);
-                    IEnumerable<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id);
-                    IEnumerable<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id);
-                    IEnumerable<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id);
-                    byte[] resultBuffer = this.pdfModel.DrawOnPDF(
-                        drawings, 
-                        highlights, 
-                        shapes, 
-                        textItems, 
-                        rotations, 
-                        buffer);
+                            {
+                                IEnumerable<ATMark> marks = this.markModel.GetMarks(file.Id);
+                                byte[] resultBuffer = this.pdfModel.DrawOnPDF(marks,buffer);
 
-    using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
+                            using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
                                 {
                                     fs.Write(resultBuffer, 0, resultBuffer.Length);
                                 }
-
-                    return resultBuffer;
-                }
-            }
- }
+                                return resultBuffer;
+                             }
+                        }
+                    }
                     else
                     {
                         return ReadAllBytes(tmpPDF);
@@ -1108,44 +1133,9 @@ namespace PDFAnnotation.Core.Business.Models
                     {
                         if (!System.IO.File.Exists(tmpPDF))
                         {
-                            List<ATDrawing> drawings = this.drawingModel.GetAllForFile(file.Id).ToList();
-                            drawings.Where(o => o.Mark.DateChanged > file.DateModified)
-                                .ToList()
-                                .ForEach(o => this.drawingModel.RegisterDelete(o));
-                            drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+                            IEnumerable<ATMark> marks = this.markModel.GetMarks(file.Id);
 
-                            List<ATHighlightStrikeOut> highlights =
-                                this.highlightStrikeOutModel.GetAllForFile(file.Id).ToList();
-                            highlights.Where(o => o.Mark.DateChanged > file.DateModified)
-                                .ToList()
-                                .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
-                            highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                            List<ATShape> shapes = this.shapeModel.GetAllForFile(file.Id).ToList();
-                            shapes.Where(o => o.Mark.DateChanged > file.DateModified)
-                                .ToList()
-                                .ForEach(o => this.shapeModel.RegisterDelete(o));
-                            shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                            List<ATTextItem> textItems = this.textItemModel.GetAllForFile(file.Id).ToList();
-                            textItems.Where(o => o.Mark.DateChanged > file.DateModified)
-                                .ToList()
-                                .ForEach(o => this.textItemModel.RegisterDelete(o));
-                            textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                            List<ATRotation> rotations = this.rotationModel.GetAllForFile(file.Id).ToList();
-                            rotations.Where(o => o.Mark.DateChanged > file.DateModified)
-                                .ToList()
-                                .ForEach(o => this.rotationModel.RegisterDelete(o));
-                            rotations = rotations.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                            byte[] pdfBuffer = this.pdfModel.DrawOnPDF(
-                                drawings,
-                                highlights,
-                                shapes,
-                                textItems,
-                                rotations,
-                                buffer);
+                            byte[] pdfBuffer = this.pdfModel.DrawOnPDF(marks,buffer);
 
                             using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
                             {
@@ -1239,33 +1229,33 @@ namespace PDFAnnotation.Core.Business.Models
         /// </returns>
         public byte[] GetUpdatedPagedSWFData(File file, int pageIndex, byte[] buffer)
         {
-            if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
-            {
-                string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture); // based on date
-                var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
-                string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
-                string tmpSwfPaged = Path.Combine(baseDir, string.Format("{0}.{1}.swf", tmpName, pageIndex));
-                string tmpSwfPatternPaged = Path.Combine(baseDir, string.Format("{0}.%.swf", tmpName));
-
-                this.CheckAndCreateUpdatedPDFWithLock(tmpPDF, file.Id, file, buffer);
-
-                if (!System.IO.File.Exists(tmpSwfPaged))
+                if (buffer != null && file.DateModified.HasValue && file.DateModified > file.DateCreated)
                 {
-                    lock (GetDictionaryLocker(tmpSwfPatternPaged))
+                    string tmpName = file.DateModified.Value.ToMicroSeconds().ToString(CultureInfo.InvariantCulture);
+                        // based on date
+                    var baseDir = Path.Combine(this.FileStoragePhysicalPath(), file.Id.ToString());
+                    string tmpPDF = Path.Combine(baseDir, tmpName + ".pdf");
+                    string tmpSwfPaged = Path.Combine(baseDir, string.Format("{0}.{1}.swf", tmpName, pageIndex));
+                    string tmpSwfPatternPaged = Path.Combine(baseDir, string.Format("{0}.%.swf", tmpName));
+
+                    if (!System.IO.File.Exists(tmpSwfPaged))
                     {
-                        if (!System.IO.File.Exists(tmpSwfPaged))
+                        this.CheckAndCreateUpdatedPDFWithLock(tmpPDF, file.Id, file, buffer); // change logic
+                        lock (GetDictionaryLocker(tmpSwfPatternPaged))
                         {
-                            var converter = IoC.Resolve<Pdf2SwfConverter>();
-                            converter.Convert(tmpPDF, tmpSwfPatternPaged);
+                            if (!System.IO.File.Exists(tmpSwfPaged))
+                            {
+                                var converter = IoC.Resolve<Pdf2SwfConverter>();
+                                converter.Convert(tmpPDF, tmpSwfPatternPaged);
+                            }
                         }
                     }
-                }
 
-                if (System.IO.File.Exists(tmpSwfPaged))
-                {
-                    return System.IO.File.ReadAllBytes(tmpSwfPaged);
+                    if (System.IO.File.Exists(tmpSwfPaged))
+                    {
+                        return System.IO.File.ReadAllBytes(tmpSwfPaged);
+                    }
                 }
-            }
 
             if (file != null)
             {
@@ -1290,37 +1280,10 @@ namespace PDFAnnotation.Core.Business.Models
                 {
                     if (!System.IO.File.Exists(tmpPDF))
                     {
-                        List<ATDrawing> drawings = this.drawingModel.GetAllForFile(fileId).ToList();
-                        drawings.Where(o => o.Mark.DateChanged > file.DateModified)
-                            .ToList()
-                            .ForEach(o => this.drawingModel.RegisterDelete(o));
-                        drawings = drawings.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
+                       
+                        IEnumerable<ATMark> marks = this.markModel.GetMarks(file.Id);
 
-                        List<ATHighlightStrikeOut> highlights = this.highlightStrikeOutModel.GetAllForFile(fileId).ToList();
-                        highlights.Where(o => o.Mark.DateChanged > file.DateModified)
-                            .ToList()
-                            .ForEach(o => this.highlightStrikeOutModel.RegisterDelete(o));
-                        highlights = highlights.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                        List<ATShape> shapes = this.shapeModel.GetAllForFile(fileId).ToList();
-                        shapes.Where(o => o.Mark.DateChanged > file.DateModified)
-                            .ToList()
-                            .ForEach(o => this.shapeModel.RegisterDelete(o));
-                        shapes = shapes.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                        List<ATTextItem> textItems = this.textItemModel.GetAllForFile(fileId).ToList();
-                        textItems.Where(o => o.Mark.DateChanged > file.DateModified)
-                            .ToList()
-                            .ForEach(o => this.textItemModel.RegisterDelete(o));
-                        textItems = textItems.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                        List<ATRotation> rotations = this.rotationModel.GetAllForFile(fileId).ToList();
-                        rotations.Where(o => o.Mark.DateChanged > file.DateModified)
-                            .ToList()
-                            .ForEach(o => this.rotationModel.RegisterDelete(o));
-                        rotations = rotations.Where(o => o.Mark.DateChanged <= file.DateModified).ToList();
-
-                        byte[] pdfBuffer = this.pdfModel.DrawOnPDF(drawings, highlights, shapes, textItems, rotations, buffer);
+                        byte[] pdfBuffer = this.pdfModel.DrawOnPDF(marks, buffer);
 
                         using (var fs = new FileStream(tmpPDF, FileMode.Create, FileAccess.Write))
                         {
@@ -1344,6 +1307,8 @@ namespace PDFAnnotation.Core.Business.Models
         {
             File newFile = this.GetOneById(newId).Value;
             File originFile = this.GetOneById(originId).Value;
+
+
 
             foreach (ATDrawing o in this.drawingModel.GetAllForFile(originId))
             {
@@ -1450,6 +1415,72 @@ namespace PDFAnnotation.Core.Business.Models
                 this.textItemModel.RegisterSave(@new);
             }
 
+            foreach (ATPicture o in this.pictureModel.GetAllForFile(originId))
+            {
+                o.Mark.File = null;
+                ATMark m = o.Mark.DeepClone();
+                o.Mark.File = originFile;
+
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATMark originMark = o.Mark;
+                o.Mark = null;
+                ATPicture @new = o.DeepClone();
+                o.Mark = originMark;
+
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.pictureModel.RegisterSave(@new);
+            }
+
+
+
+            foreach (ATFormula o in this.formulaModel.GetAllForFile(originId))
+            {
+                o.Mark.File = null;
+                ATMark m = o.Mark.DeepClone();
+                o.Mark.File = originFile;
+
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATMark originMark = o.Mark;
+                o.Mark = null;
+                ATFormula @new = o.DeepClone();
+                o.Mark = originMark;
+
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.formulaModel.RegisterSave(@new);
+            }
+
+
+            foreach (ATAnnotation o in this.annotationModel.GetAllForFile(originId))
+            {
+                o.Mark.File = null;
+                ATMark m = o.Mark.DeepClone();
+                o.Mark.File = originFile;
+
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATMark originMark = o.Mark;
+                o.Mark = null;
+                ATAnnotation @new = o.DeepClone();
+                o.Mark = originMark;
+
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.annotationModel.RegisterSave(@new);
+            }
+
             List<ATDrawing> drawings = this.drawingModel.GetAllForFile(originId).ToList();
             drawings.Where(o => o.Mark.DateChanged > originFile.DateModified)
                 .ToList()
@@ -1475,14 +1506,33 @@ namespace PDFAnnotation.Core.Business.Models
                 .ToList()
                 .ForEach(o => this.rotationModel.RegisterDelete(o));
 
+            List<ATPicture> pictures = this.pictureModel.GetAllForFile(originId).ToList();
+            pictures.Where(o => o.Mark.DateChanged > originFile.DateModified)
+                .ToList()
+                .ForEach(o => this.pictureModel.RegisterDelete(o));
+
+            List<ATFormula> formulas = this.formulaModel.GetAllForFile(originId).ToList();
+            formulas.Where(o => o.Mark.DateChanged > originFile.DateModified)
+                .ToList()
+                .ForEach(o => this.formulaModel.RegisterDelete(o));
+
+            List<ATAnnotation> annotations = this.annotationModel.GetAllForFile(originId).ToList();
+            annotations.Where(o => o.Mark.DateChanged > originFile.DateModified)
+                .ToList()
+                .ForEach(o => this.annotationModel.RegisterDelete(o));
+
             this.drawingModel.Flush();
             this.highlightStrikeOutModel.Flush();
             this.shapeModel.Flush();
             this.textItemModel.Flush();
             this.rotationModel.Flush();
+            this.pictureModel.Flush();
+            this.formulaModel.Flush();
+            this.annotationModel.Flush();
 
             this.markModel.Flush();
         }
+
 
         /// <summary>
         /// The read stream fully.

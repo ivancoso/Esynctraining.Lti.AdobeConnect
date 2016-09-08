@@ -1,5 +1,6 @@
 using Esynctraining.NHibernate;
 using Esynctraining.NHibernate.Queries;
+using PDFAnnotation.Core.Contracts;
 
 namespace PDFAnnotation.Core.Business.Models
 {

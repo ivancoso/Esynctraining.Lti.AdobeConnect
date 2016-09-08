@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>PDFAnnotation.Persistence</id>
-    <version>1.1.0.13</version>
+    <version>1.1.0.20</version>
     <title>PDFAnnotation.Persistence</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -14,7 +14,7 @@
     <tags>pdf annotation persistence</tags>
     <releaseNotes>Removed unused Mail reference</releaseNotes>
     <dependencies>
-      <dependency id="PDFAnnotation.Core" version="1.1.0.8" />
+      <dependency id="PDFAnnotation.Core" version="1.1.0.16" />
       <dependency id="Castle.Windsor" version="3.3.0" />
       <dependency id="Castle.WcfIntegrationFacility" version="3.3.0" />
       <dependency id="Esynctraining.Persistence" version="1.0.0.6" />

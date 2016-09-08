@@ -122,6 +122,23 @@
         public const string Rotation = "rotation";
 
         /// <summary>
+        /// The picture.
+        /// </summary>
+        public const string Picture = "picture";
+
+
+        /// <summary>
+        /// The formula.
+        /// </summary>
+        public const string Formula = "formula";
+
+
+        /// <summary>
+        /// The formula.
+        /// </summary>
+        public const string Annotation = "stickyNote";
+
+        /// <summary>
         /// The stamp.
         /// </summary>
         public const string Stamp = "stamp";
@@ -130,6 +147,12 @@
         /// Page rules (grid in WTS)
         /// </summary>
         public const string PageRules = "pageRules";
+
+
+        /// <summary>
+        /// The highlight line
+        /// </summary>
+        public const string HighlightLine = "highlightLine";
 
         #endregion
 

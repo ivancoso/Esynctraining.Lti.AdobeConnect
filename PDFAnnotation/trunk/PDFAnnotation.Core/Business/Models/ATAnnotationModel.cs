@@ -1,31 +1,23 @@
-﻿using Esynctraining.NHibernate;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Esynctraining.NHibernate;
 using Esynctraining.NHibernate.Queries;
 using PDFAnnotation.Core.Contracts;
 
-namespace PDFAnnotation.Core.Business.Models.Annotation
+namespace PDFAnnotation.Core.Business.Models
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-
-    using Esynctraining.Core.Business;
-    using Esynctraining.Core.Business.Models;
-   // using Esynctraining.Core.Business.Queries;
-
-    using PDFAnnotation.Core.Domain.Entities;
-
-    /// <summary>
-    /// The drawing model.
-    /// </summary>
-    public class DrawingModel : BaseModel<ATDrawing, int>
+    public class AnnotationModel : BaseModel<ATAnnotation, int>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawingModel"/> class.
+        /// Initializes a new instance of the <see cref="ATAnnotation"/> class.
         /// </summary>
         /// <param name="repository">
         /// The repository.
         /// </param>
-        public DrawingModel(IRepository<ATDrawing, int> repository)
+        public AnnotationModel(IRepository<ATAnnotation, int> repository)
             : base(repository)
         {
         }
@@ -39,10 +31,10 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <returns>
         /// The <see cref="IEnumerable"/>.
         /// </returns>
-        public IEnumerable<ATDrawing> GetAllForFile(Guid fileId)
+        public IEnumerable<ATAnnotation> GetAllForFile(Guid fileId)
         {
             var query =
-                new DefaultQueryOver<ATDrawing, int>().GetQueryOver()
+                new DefaultQueryOver<ATAnnotation, int>().GetQueryOver()
                                                     .JoinQueryOver(x => x.Mark)
                                                     .Where(x => x.File.Id == fileId)
                                                     .Fetch(x => x.Mark).Eager;

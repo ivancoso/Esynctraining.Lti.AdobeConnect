@@ -1,4 +1,5 @@
 ﻿using Esynctraining.Core.Extensions;
+using PDFAnnotation.Core.Business.Models;
 
 namespace PDFAnnotation.Core.Domain.DTO
 {
@@ -91,6 +92,65 @@ namespace PDFAnnotation.Core.Domain.DTO
             this.style = shape.Style;
 
             this.text = shape.Text;
+        }
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
+        /// </summary>
+        /// <param name="picture">
+        /// The picture.
+        /// </param>
+        public ATMarkDTO(ATPicture picture) : this(picture.Mark)
+        {
+            this.positionX = picture.PositionX;
+            this.positionY = picture.PositionY;
+            this.width = picture.Width;
+            this.height = picture.Height;
+            this.labelText = picture.LabelText;
+            //this.imageData = picture.Image;
+            this.image = picture.Path;
+            this.labelTextColor = picture.LabelTextColor;
+            this.fontSize = picture.LabelFontSize;
+        }
+
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
+        /// </summary>
+        /// <param name="formula">
+        /// The picture.
+        /// </param>
+        public ATMarkDTO(ATFormula formula) : this(formula.Mark)
+        {
+            this.positionX = formula.PositionX;
+            this.positionY = formula.PositionY;
+            this.text = formula.Equation;
+            this.width = formula.Width;
+            this.height = formula.Height;
+        }
+
+
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ATMarkDTO"/> class.
+        /// </summary>
+        /// <param name="annotation">
+        /// The picture.
+        /// </param>
+        public ATMarkDTO(ATAnnotation annotation) : this(annotation.Mark)
+        {
+            this.positionX = annotation.PositionX;
+            this.positionY = annotation.PositionY;
+            this.text = annotation.Comment;
+            this.width = annotation.Width;
+            this.height = annotation.Height;
+            this.style = annotation.IconName;
+           // this. = annotation.IsOpened;
+            this.color = annotation.Color;
+            this.fillOpacity = annotation.FillOpacity.Value;
         }
 
         /// <summary>
@@ -337,6 +397,18 @@ namespace PDFAnnotation.Core.Domain.DTO
         public string image { get; set; }
 
         /// <summary>
+        /// Gets or sets the image  data.
+        /// </summary>
+        [DataMember]
+        public byte [] imageData{ get; set; }
+
+        /// <summary>
+        /// Gets or sets the equation MathML.
+        /// </summary>
+        [DataMember]
+        public string equation { get; set; }
+
+        /// <summary>
         /// Gets or sets the points.
         /// </summary>
         [DataMember]
@@ -479,6 +551,8 @@ namespace PDFAnnotation.Core.Domain.DTO
             return o;
         }
 
+
+
         /// <summary>
         /// Converts <see cref="ATMarkDTO"/> to requested entity type
         /// </summary>
@@ -519,6 +593,75 @@ namespace PDFAnnotation.Core.Domain.DTO
             o.FontSize = mark.fontSize;
             return o;
         }
+
+
+
+
+        /// <summary>
+        /// Converts <see cref="ATMarkDTO"/> to requested entity type
+        /// </summary>
+        /// <param name="mark">the mark</param>
+        /// <param name="existing">existing item</param>
+        /// <returns>corresponding entity</returns>
+        public ATPicture ToPicture(ATMarkDTO mark, ATPicture existing)
+        {
+            var o = existing ?? new ATPicture();
+            o.Mark = this.ToMark(mark, null != existing ? existing.Mark : null);
+            o.PositionX = mark.positionX;
+            o.PositionY = mark.positionY;
+            o.Height = mark.height;
+            o.Width = mark.width;
+            o.LabelFontSize = mark.fontSize;
+            o.LabelText = mark.labelText;
+            o.LabelTextColor = mark.labelTextColor;
+            o.Image = mark.imageData;
+            o.Path = mark.image;
+            return o;
+        }
+
+
+        /// <summary>
+        /// Converts <see cref="ATMarkDTO"/> to requested entity type
+        /// </summary>
+        /// <param name="mark">the mark</param>
+        /// <param name="existing">existing item</param>
+        /// <returns>corresponding entity</returns>
+        public ATFormula ToFormula(ATMarkDTO mark, ATFormula existing)
+        {
+            var o = existing ?? new ATFormula();
+            o.Mark = this.ToMark(mark, null != existing ? existing.Mark : null);
+            o.PositionX = mark.positionX;
+            o.PositionY = mark.positionY;
+            o.Equation = mark.text;
+            o.Width = mark.width;
+            o.Height = mark.height;
+            return o;
+        }
+
+
+
+        /// <summary>
+        /// Converts <see cref="ATMarkDTO"/> to requested entity type
+        /// </summary>
+        /// <param name="mark">the mark</param>
+        /// <param name="existing">existing item</param>
+        /// <returns>corresponding entity</returns>
+        public ATAnnotation ToAnnotation(ATMarkDTO mark, ATAnnotation existing)
+        {
+            var o = existing ?? new ATAnnotation();
+            o.Mark = this.ToMark(mark, null != existing ? existing.Mark : null);
+            o.PositionX = mark.positionX;
+            o.PositionY = mark.positionY;
+            o.Comment = mark.text;
+            o.Width = mark.width;
+            o.Height = mark.height;
+            o.IconName = mark.style;
+            //o.IsOpened = mark.;
+            o.Color = mark.color;
+            o.FillOpacity = mark.fillOpacity;
+            return o;
+        }
+
 
         /// <summary>
         /// Converts <see cref="ATMarkDTO"/> to requested entity type

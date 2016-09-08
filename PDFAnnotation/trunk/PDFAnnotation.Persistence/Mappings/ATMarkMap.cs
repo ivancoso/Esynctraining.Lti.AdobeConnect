@@ -2,7 +2,7 @@
 {
     using FluentNHibernate.Mapping;
 
-    using PDFAnnotation.Core.Domain.Entities;
+    using Core.Domain.Entities;
 
     /// <summary>
     /// The mark map.
@@ -32,6 +32,9 @@
             this.HasMany(x => x.HighlightStrikeOuts).LazyLoad().Cascade.Delete().Inverse();
             this.HasMany(x => x.TextItems).LazyLoad().Cascade.Delete().Inverse();
             this.HasMany(x => x.Rotations).LazyLoad().Cascade.Delete().Inverse();
+            this.HasMany(x => x.Pictures).LazyLoad().Cascade.Delete().Inverse();
+            this.HasMany(x => x.Formulas).LazyLoad().Cascade.Delete().Inverse();
+            this.HasMany(x => x.Annotations).LazyLoad().Cascade.Delete().Inverse();
         }
 
         #endregion

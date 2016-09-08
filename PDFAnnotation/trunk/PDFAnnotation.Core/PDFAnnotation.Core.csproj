@@ -35,9 +35,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Business\Models\AddressModel.cs" />
+    <Compile Include="Business\Models\ATAnnotationModel.cs" />
+    <Compile Include="Domain\Enums\StickyNoteIconsNames.cs" />
+    <Compile Include="Domain\DTO\ObjectsForMarkDTO.cs" />
+    <Compile Include="Domain\Entities\ATAnnotation.cs" />
     <Compile Include="Business\Models\ATDrawingModel.cs" />
+    <Compile Include="Business\Models\ATFormulaModel.cs" />
     <Compile Include="Business\Models\ATHighlightStrikeOutModel.cs" />
     <Compile Include="Business\Models\ATMarkModel.cs" />
+    <Compile Include="Business\Models\ATPictureModel.cs" />
     <Compile Include="Business\Models\CategoryModel.cs" />
     <Compile Include="Business\Models\CompanyContactModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
@@ -102,8 +108,10 @@
     <Compile Include="Domain\DTO\TabFirstPageWrapper.cs" />
     <Compile Include="Domain\Entities\Address.cs" />
     <Compile Include="Domain\Entities\ATDrawing.cs" />
+    <Compile Include="Domain\Entities\ATFormula.cs" />
     <Compile Include="Domain\Entities\ATHighlightStrikeOut.cs" />
     <Compile Include="Domain\Entities\ATMark.cs" />
+    <Compile Include="Domain\Entities\ATPicture.cs" />
     <Compile Include="Domain\Entities\ATRotation.cs" />
     <Compile Include="Domain\Entities\ATShape.cs" />
     <Compile Include="Domain\Entities\ATTextItem.cs" />
@@ -133,9 +141,11 @@
     <Compile Include="Utils\Point.cs" />
     <Compile Include="Utils\PointsConverter.cs" />
     <Compile Include="Utils\TextSymbolsExtractionStategy.cs" />
+    <Compile Include="Wrappers\CustomPDFDate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="nuget.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
@@ -203,6 +213,12 @@
     <Reference Include="WcfRestContrib, Version=1.7.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\wcfrestcontrib.1.7.14.0\lib\WcfRestContrib.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="WIRIScommon">
+      <HintPath>..\..\WIRISeditor\Bin\WIRIScommon.dll</HintPath>
+    </Reference>
+    <Reference Include="WIRISeditor">
+      <HintPath>..\..\WIRISeditor\Bin\WIRISeditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

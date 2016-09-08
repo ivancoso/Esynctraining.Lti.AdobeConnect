@@ -1,4 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing.Imaging;
+using System.Text.RegularExpressions;
+using System.Web.UI.WebControls;
+using com.wiris.editor.services;
+using PDFAnnotation.Core.Domain.DTO.Enums;
+using PDFAnnotation.Core.Wrappers;
+
 
 namespace PDFAnnotation.Core.Business.Models.Annotation
 {
@@ -150,6 +158,9 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <param name="textItems">
         /// The text items.
         /// </param>
+        /// <param name="pictures">
+        /// The text items.
+        /// </param>
         /// <param name="rotations">
         /// The rotations.
         /// </param>
@@ -159,15 +170,9 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <returns>
         /// The <see cref="byte"/>.
         /// </returns>
-        public byte[] DrawOnPDF(
-            IEnumerable<ATDrawing> drawings,
-            IEnumerable<ATHighlightStrikeOut> highlights,
-            IEnumerable<ATShape> shapes,
-            IEnumerable<ATTextItem> textItems,
-            IEnumerable<ATRotation> rotations,
-            byte[] buffer)
+        public byte[] DrawOnPDF(IEnumerable<ATMark> marks,byte[] buffer)
         {
-            return this.DrawOnPDFOrdered(drawings.ToList().OrderBy(x => x.Mark.DateChanged), highlights.ToList().OrderBy(x => x.Mark.DateChanged), shapes.ToList().OrderBy(x => x.Mark.DateChanged), textItems.ToList().OrderBy(x => x.Mark.DateChanged), rotations.ToList().OrderBy(x => x.Mark.DateChanged), buffer);
+            return this.DrawOnPDFOrdered( marks, buffer);
         }
 
         /// <summary>
@@ -183,38 +188,19 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// </param>
         /// <param name="highlights">the highlights</param>
         /// <param name="shapes">the shapes</param>
+        /// <param name="pictures">the pictures</param>
         /// <returns>
         /// The byte array/>.
         /// </returns>
         /// <exception cref="WcfRestContrib.ServiceModel.Web.Exceptions.WebException">
         /// When something went wrong
         /// </exception>
-        public byte[] DrawOnPDFOrdered(IEnumerable<ATDrawing> drawings, IEnumerable<ATHighlightStrikeOut> highlights, IEnumerable<ATShape> shapes, IEnumerable<ATTextItem> textItems, IEnumerable<ATRotation> rotations, byte[] buffer)
+        public byte[] DrawOnPDFOrdered(IEnumerable<ATMark> marks,byte[] buffer)
         {
             try
             {
-                var shapesList = shapes.ToList();
-                var pageRotations = rotations.ToList();
-                if (pageRotations.Any())
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        var reader = new PdfReader(buffer);
-                        using (var stamper = new PdfStamper(reader, ms))
-                        {
-                            foreach (var pageRotation in pageRotations)
-                            {
-                                var rotationOrigin = reader.GetPageRotation(pageRotation.Mark.PageIndex);
-                                var pageDict = reader.GetPageN(pageRotation.Mark.PageIndex);
-                                int rotation = pageRotation.Mark.Rotation.Return(x => (int)Math.Round(x.Value), 0);
-                                pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + rotation));
-                            }
-                            stamper.Close();
-                        }
-                        ms.Flush();
-                        buffer = ms.ToArray();
-                    }
-                }
+                //var pageRotations = marks.SelectMany(x => x.Rotations).ToList();
+                var shapesList = marks.SelectMany(x => x.Shapes).ToList();
 
                 var pageRules = shapesList.FirstOrDefault(x => x.Mark != null && x.Mark.Type == EntityTypes.PageRules);
 
@@ -239,10 +225,42 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                     var reader = new PdfReader(buffer);
                     using (var stamper = new PdfStamper(reader, ms))
                     {
-                        this.ProcessDrawings(drawings, stamper, reader);
-                        this.ProcessHighlights(highlights, stamper, reader);
-                        this.ProcessShapes(shapesList, stamper, reader);
-                        textItems.ToList().ForEach(item => this.ProcessText(item, stamper, reader));
+                        foreach (var mk in marks)
+                        {
+                            foreach (var drawing in mk.Drawings)
+                            {
+                                this.ProcessDrawings(drawing, stamper, reader);
+                            }
+                            foreach (var highlight in mk.HighlightStrikeOuts)
+                            {
+                                this.ProcessHighlights(highlight, stamper, reader);
+                            }
+                            foreach (var shape in mk.Shapes)
+                            {
+                                this.ProcessShapes(shape, stamper, reader);
+                            }
+                            foreach (var text in mk.TextItems)
+                            {
+                                this.ProcessText(text, stamper, reader);
+                            }
+                            foreach (var picture in mk.Pictures)
+                            {
+                                this.ProcessPicture(picture, stamper, reader);
+                            }
+                            foreach (var formula in mk.Formulas)
+                            {
+                                this.ProcessFormula(formula, stamper, reader);
+                            }
+                            foreach (var rotation in mk.Rotations)
+                            {
+                                this.ProcessRotation(rotation, stamper, reader);
+                            }
+                            foreach (var annotation in mk.Annotations)
+                            {
+                                this.ProcessAnnotation(annotation, stamper, reader);
+                            }
+                        }
+
                         stamper.Close();
                     }
                     ms.Flush();
@@ -353,14 +371,15 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <param name="pdfReader">
         /// The pdf reader.
         /// </param>
-        private void ProcessShapes(IEnumerable<ATShape> shapes, PdfStamper stamper, PdfReader pdfReader)
+        private void ProcessShapes(ATShape dr /* IEnumerable<ATShape> shapes*/, PdfStamper stamper, PdfReader pdfReader)
         {
-            foreach (var dr in shapes)
-            {
+            //foreach (var dr in shapes)
+           // {
                 switch (dr.Mark.Type)
                 {
                     case EntityTypes.PageRules:
-                        continue;
+                        //continue;
+                        break;
                     case EntityTypes.Confidential:
                     case EntityTypes.ConfidentialAttorney:
                     case EntityTypes.HighlyConfidential:
@@ -384,7 +403,8 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                                 this.ProcessStampSolidOutline(dr, stamper, pdfReader, false);
                                 break;
                             default:
-                                continue;
+                                //continue;
+                                break;
                         }
                         break;
                     case EntityTypes.Ellipse:
@@ -398,11 +418,14 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                     case EntityTypes.Drawing:
                         this.ProcessDraw(dr, stamper, pdfReader);
                         break;
+                    case EntityTypes.HighlightLine:
+                        this.ProcessDraw(dr,stamper,pdfReader);
+                        break;
                     default:
                         this.ProcessShape(dr, stamper, pdfReader);
                         break;
                 }
-            }
+            //}
         }
 
         private void ProcessExhibitStamp(ATShape dr, PdfStamper stamper, PdfReader pdfReader)
@@ -642,9 +665,9 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// The stamper.
         /// </param>
         /// <param name="pdfReader">The reader</param>
-        private void ProcessHighlights(IEnumerable<ATHighlightStrikeOut> highlights, PdfStamper stamper, PdfReader pdfReader)
+        private void ProcessHighlights(ATHighlightStrikeOut dr /* IEnumerable<ATHighlightStrikeOut> highlights*/, PdfStamper stamper, PdfReader pdfReader)
         {
-            foreach (var dr in highlights.Where(h => h.HasSelection))
+            //foreach (var dr in highlights.Where(h => h.HasSelection))
             {
                 var pageHeight = pdfReader.GetPageSizeWithRotation(dr.Mark.PageIndex).Height;
 
@@ -694,6 +717,160 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                 }
             }
         }
+
+
+        /// <summary>
+        /// The process pictures.
+        /// </summary>
+        /// <param name="picture">The pictures</param>
+        /// <param name="stamper">The stamper</param>
+        /// <param name="pdfReader">The pdfReader</param>
+        private void ProcessPicture(ATPicture picture /*IEnumerable<ATPicture> pictures*/, PdfStamper stamper, PdfReader pdfReader)
+        {
+            //foreach (var pc in pictures)
+            {
+               PdfContentByte cb = stamper.GetOverContent(picture.Mark.PageIndex);
+                iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(picture.Image);
+                var size = pdfReader.GetPageSizeWithRotation(picture.Mark.PageIndex);
+                // Note: The x,y of the Pdf Matrix is from bottom left corner. 
+                image.SetAbsolutePosition(picture.PositionX, size.Height - picture.PositionY - image.Height);
+                //Note: The PdfGState is required to set the transparency for the layer
+                PdfGState state = new PdfGState();
+                state.FillOpacity = 1.0f;
+                cb.SetGState(state);
+                cb.AddImage(image);
+                // stamper.Close();
+
+                var bc = GetColor(picture.LabelTextColor);
+                cb.SetColorStroke(bc);
+                cb.SetRGBColorFill(bc.R, bc.G, bc.B);
+
+                cb.BeginText(); // Start working with text.
+
+                // Create a font to work with 
+                var fontName =  "Arial";
+                var fontSize = picture.LabelFontSize > 0 ? picture.LabelFontSize : 14;
+                var font = FontFactory.GetFont(fontName, fontSize, Font.NORMAL);
+                var baseFont = font.GetCalculatedBaseFont(false);
+                cb.SetFontAndSize(baseFont, fontSize);
+
+                // Note: The x,y of the Pdf Matrix is from bottom left corner. 
+                // This command tells iTextSharp to write the text at a certain location with a certain angle.
+                // Again, this will angle the text from bottom left corner to top right corner and it will 
+                // place the text in the middle of the page. 
+                var y = size.Height - ((float)picture.PositionY +image.Height + fontSize);
+                foreach (var part in picture.LabelText.Split('\n'))
+                {
+                    cb.ShowTextAligned(
+                        PdfContentByte.ALIGN_CENTER,
+                        part,
+                        (float)picture.PositionX +image.Width/2,
+                        y,
+                        0);
+                    y -= (fontSize + 4);
+                }
+
+                cb.EndText(); // Done working with text
+            }
+        }
+
+
+        /// <summary>
+        /// The process rotation
+        /// </summary>
+        /// <param name="rotation">The rotation</param>
+        /// <param name="stamper">The stamper</param>
+        /// <param name="pdfReader">The pdfReader</param>
+        private void ProcessRotation(ATRotation rt, PdfStamper stamper, PdfReader pdfReader)
+        {
+            var rotationOrigin = pdfReader.GetPageRotation(rt.Mark.PageIndex);
+            var pageDict = pdfReader.GetPageN(rt.Mark.PageIndex);
+            int rotation = rt.Mark.Rotation.Return(x => (int)Math.Round(x.Value), 0);
+            pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + rotation));
+        }
+
+
+        /// <summary>
+        /// The process formula.
+        /// </summary>
+        /// <param name="formula">The formula</param>
+        /// <param name="stamper">The stamper</param>
+        /// <param name="pdfReader">The pdfReader</param>
+        private void ProcessFormula(ATFormula formula, PdfStamper stamper, PdfReader pdfReader)
+        {
+            PdfContentByte cb = stamper.GetOverContent(formula.Mark.PageIndex);
+
+            Dictionary<string, string> request = new Dictionary<string, string>();
+            request["format"] = "png";
+            request["mml"] = formula.Equation;
+            Dictionary<string, string> response = new Dictionary<string, string>();
+            byte[] imageBytes = PublicServices.getInstance().renderPng(formula.Equation, null, request, response);
+            //var svg = PublicServices.getInstance().renderSvg(formula.Equation,null, null, response);
+            int width = int.Parse(response["width"]);
+            int height = int.Parse(response["height"]);
+
+
+            //byte[] imageBytes;
+
+            //using (var client = new WebClient())
+            //{
+            //    var values = new NameValueCollection();
+            //    values["format"] = "png";
+            //    values["mml"] = formula.Equation;
+
+            //    var response = client.UploadValues((string)this.settings.WirisEditorServiceURL, values);
+            //    imageBytes = response;
+            //}
+
+            iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imageBytes);
+            var size = pdfReader.GetPageSizeWithRotation(formula.Mark.PageIndex);
+            // Note: The x,y of the Pdf Matrix is from bottom left corner. 
+            image.SetAbsolutePosition(formula.PositionX, size.Height - formula.PositionY - image.Height);
+            cb.AddImage(image);
+
+        }
+
+
+        /// <summary>
+        /// The process annotation.
+        /// </summary>
+        /// <param name="annotation">The formula</param>
+        /// <param name="stamper">The stamper</param>
+        /// <param name="pdfReader">The pdfReader</param>
+        private void ProcessAnnotation(ATAnnotation annotation, PdfStamper stamper, PdfReader pdfReader)
+        {
+                var size = pdfReader.GetPageSizeWithRotation(annotation.Mark.PageIndex);
+                var defaultColor = "#FFF88A";
+                var color = PdfModel.GetColor(string.IsNullOrWhiteSpace(annotation.Color)?defaultColor:annotation.Color);
+                var border = new Rectangle(annotation.PositionX, size.Height - (annotation.PositionY + annotation.Height), annotation.PositionX + annotation.Width, size.Height - annotation.PositionY);
+                border.Normalize();
+
+                if (Math.Abs(border.Width) > 0 && Math.Abs(border.Height) > 0)
+                {
+                    var markupAnnot = PdfAnnotation.CreateText(
+                        stamper.Writer,
+                        border,
+                        string.Empty, // text for title
+                        annotation.Comment,
+                        annotation.IsOpened,
+                        StickyNoteIconsNames.GetName(annotation.IconName));
+                    if (annotation.FillOpacity.HasValue)
+                    {
+                        markupAnnot.Put(PdfName.CA, new PdfNumber(annotation.FillOpacity.Value));
+                    }
+
+                    markupAnnot.Color = color;
+                    markupAnnot.Title = string.Empty; // text for title
+                    markupAnnot.Put(PdfName.CREATIONDATE, new CustomPDFDate(annotation.Mark.DateCreated));
+                    markupAnnot.Put(PdfName.M, new CustomPDFDate(annotation.Mark.DateChanged));
+
+                    stamper.AddAnnotation(markupAnnot, annotation.Mark.PageIndex);
+                }
+        }
+
+
+        
+
 
         /// <summary>
         /// Splits continuous highlight by rectangles bound to single line parts.
@@ -745,10 +922,10 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <param name="reader">
         /// The reader.
         /// </param>
-        private void ProcessDrawings(IEnumerable<ATDrawing> drawings, PdfStamper stamper, PdfReader reader)
+        private void ProcessDrawings(ATDrawing dr /*IEnumerable<ATDrawing> drawings*/, PdfStamper stamper, PdfReader reader)
         {
-            foreach (var dr in drawings)
-            {
+           // foreach (var dr in drawings)
+           // {
                 PdfContentByte cb = stamper.GetOverContent(dr.Mark.PageIndex);
                 var size = reader.GetPageSizeWithRotation(dr.Mark.PageIndex);
                 var bc = GetColor(dr.Color);
@@ -765,7 +942,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                     }
                     cb.Stroke();
                 }
-            }
+           // }
         }
 
         /// <summary>
@@ -893,6 +1070,135 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
             return buffer;
         }
 
+
+
+        //public byte[] DeletePage(byte[] buffer, int[] pageIndexes)
+        //{
+
+        //    PdfReader currentPDF = new PdfReader(buffer);
+        //    //Create our destination file
+        //    using (FileStream fs = new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+        //    {
+        //        using (Document doc = new Document())
+        //        {
+        //            using (PdfWriter w = PdfWriter.GetInstance(doc, fs))
+        //            {
+        //                //Open the desitination for writing
+        //                doc.Open();
+        //                //Loop through each page that we want to keep
+        //                for (int i = 1; i < currentPDF.NumberOfPages + 1; i++)
+        //                {
+        //                    if (!pageIndexes.Contains(i))
+        //                    {
+        //                        //Add a new blank page to destination document
+        //                        doc.NewPage();
+        //                        //Extract the given page from our reader and add it directly to the destination PDF
+        //                        w.DirectContent.AddTemplate(w.GetImportedPage(currentPDF, i), 0, 0);
+        //                    }
+        //                }
+        //                doc.Close();
+        //            }
+        //        }
+        //    }
+
+
+
+
+
+
+
+
+
+
+
+        //    using (var ms = new MemoryStream())
+        //    {
+        //        var reader = new PdfReader(buffer);
+        //        PdfWriter writer = null;
+        //        Document document = new Document();
+        //        try
+        //        {
+        //            //Step 2: we create a writer that listens to the document
+        //            writer = PdfWriter.GetInstance(document, ms);
+
+
+        //            //Step 3: Open the document
+        //            document.Open();
+
+        //            PdfContentByte cb = writer.DirectContent;
+
+        //            for (int pageNumber = 1; pageNumber < reader.NumberOfPages + 1; pageNumber++)
+        //            {
+        //                document.SetPageSize(reader.GetPageSizeWithRotation(1));
+        //                reader.SelectPages(1);
+
+        //                if (pageNumber != pageIndexes[i])
+        //                {
+
+        //                }
+
+        //            }
+
+
+
+
+        //            for (int pageNumber = 1; pageNumber < reader.NumberOfPages + 1; pageNumber++)
+        //            {
+        //                document.SetPageSize(reader.GetPageSizeWithRotation(1));
+        //                document.NewPage();
+
+        //                //Insert to Destination on the first page
+        //                if (pageNumber == 1)
+        //                {
+        //                    Chunk fileRef = new Chunk(" ");
+        //                    document.Add(fileRef);
+        //                }
+
+        //                PdfImportedPage page = writer.GetImportedPage(reader, pageNumber);
+        //                int rotation = reader.GetPageRotation(pageNumber);
+        //                if (rotation == 90 || rotation == 270)
+        //                {
+        //                    cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pageNumber).Height);
+        //                }
+        //                else
+        //                {
+        //                    cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
+        //                }
+        //            }
+
+        //            // Add a new page to the pdf file
+        //            document.NewPage();
+        //            Paragraph paragraph = new Paragraph();
+        //            Chunk titleChunk = new Chunk(" ");
+        //            paragraph.Add(titleChunk);
+        //            document.Add(paragraph);
+        //        }
+        //        finally
+        //        {
+        //            document.Close();
+        //        }
+
+        //        ms.Flush();
+        //        buffer = ms.ToArray();
+
+        //        if (reader != null)
+        //        {
+        //            reader.Close();
+        //        }
+
+        //        if (writer != null)
+        //        {
+        //            writer.Close();
+        //        }
+        //    }
+
+        //    return buffer;
+        //}
+
+
+
+
+
         /// <summary>
         /// The process ellipse.
         /// </summary>
@@ -931,6 +1237,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
 
             this.ProcessShape(dr, drawAction, stamper);
         }
+
 
         /// <summary>
         /// The process rectangle.
