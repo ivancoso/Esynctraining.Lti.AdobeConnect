@@ -103,6 +103,13 @@
         /// <summary>
         /// The text no question.
         /// </summary>
-        TextNoQuestion = 21
+        TextNoQuestion = 21,
+
+
+
+        /// <summary>
+        /// Multiple choice with checkboxes for multiple answers (Sakai)
+        /// </summary>
+        MultipleAnswer = 23
     }
 }

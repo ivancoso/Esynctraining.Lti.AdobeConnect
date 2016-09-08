@@ -356,6 +356,7 @@
                                 new QuestionForTrueFalse { Question = question, IsMandatory = quizQuestion.is_mandatory });
                             break;
                         case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                        case (int)QuestionTypeEnum.MultipleAnswer:
                             this.QuestionForSingleMultipleChoiceModel.RegisterSave(
                                 new QuestionForSingleMultipleChoice
                                 {
@@ -399,6 +400,7 @@
             {
                 case (int)QuestionTypeEnum.ShortAnswer:
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                case (int)QuestionTypeEnum.MultipleAnswer:
                 case (int)QuestionTypeEnum.Rate:
                     {
                         this.ProcessSingleMultipleChoiceTextDistractors(user, q, question, 1);

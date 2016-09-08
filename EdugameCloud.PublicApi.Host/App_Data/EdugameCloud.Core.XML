@@ -10393,6 +10393,11 @@
             The text no question.
             </summary>
         </member>
+        <member name="F:EdugameCloud.Core.Domain.Entities.QuestionTypeEnum.MultipleAnswer">
+            <summary>
+            Multiple choice with checkboxes for multiple answers (Sakai)
+            </summary>
+        </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.SubscriptionHistoryLog">
             <summary>
                 The subscription history log
