@@ -830,20 +830,23 @@
             foreach (var a in q.answers)
             {
                 var lmsId = a.id;
-                var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
-                    new Distractor
-                    {
-                        DateCreated = DateTime.Now,
-                        CreatedBy = user,
-                        Question = question,
-                        LmsAnswerId = lmsId
-                    };
-                distractor.DistractorOrder = a.order + 1;
-                distractor.DateModified = DateTime.Now;
-                distractor.ModifiedBy = user;
-                distractor.IsActive = true;
-                distractor.DistractorType = 1;
-                distractor.IsCorrect = true;
+                var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value;
+                if (distractor == null)
+                    throw new InvalidOperationException($"There should be a distractor for questionId {question.Id} and lms answer Id {lmsId} ");
+                    //??
+                    //new Distractor
+                    //{
+                    //    DateCreated = DateTime.Now,
+                    //    CreatedBy = user,
+                    //    Question = question,
+                    //    LmsAnswerId = lmsId
+                    //};
+                //distractor.DistractorOrder = a.order + 1;
+                //distractor.DateModified = DateTime.Now;
+                //distractor.ModifiedBy = user;
+                //distractor.IsActive = true;
+                //distractor.DistractorType = 1;
+                //distractor.IsCorrect = true;
 
                 byte[] imageBytes;
                 if (string.IsNullOrEmpty(a.fileData))
