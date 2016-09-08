@@ -11,8 +11,8 @@ namespace EdugameCloud.Lti.Sakai
     {
         private readonly string[] singleQuestionTypes = new[]
         {
-            "Multiple Choice"
-            //, "Opinion Scale"
+            //"Multiple Choice"
+             "Opinion Scale"
         };
 
         public override LmsQuestionDTO ParseQuestion(BBQuestionDTO dto)
