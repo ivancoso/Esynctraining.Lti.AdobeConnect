@@ -845,7 +845,7 @@
 
                 byte[] imageBytes;
                 if (string.IsNullOrEmpty(a.fileData))
-                    return;
+                    continue;
 
                 imageBytes = Convert.FromBase64String(a.fileData);
 
