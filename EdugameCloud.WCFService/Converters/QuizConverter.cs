@@ -832,7 +832,8 @@
                 var lmsId = a.id;
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value;
                 if (distractor == null)
-                    throw new InvalidOperationException($"There should be a distractor for questionId {question.Id} and lms answer Id {lmsId} ");
+                    //throw new InvalidOperationException($"There should be a distractor for questionId {question.Id} and lms answer Id {lmsId} ");
+                    continue;
                     //??
                     //new Distractor
                     //{
