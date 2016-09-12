@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.Moodle
 
             string lmsDomain = lmsCompany.LmsDomain;
             bool useSsl = lmsCompany.UseSSL ?? false;
-            var url = GetTokenUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsDomain, useSsl);
             var xmlDoc = UploadValues(url, pairs);
             string errorMessage = string.Empty;
             string err = string.Empty;
@@ -175,7 +175,7 @@ namespace EdugameCloud.Lti.Moodle
             };
             string lmsDomain = lmsUserParameters.CompanyLms.LmsDomain;
             bool useSsl = lmsUserParameters.CompanyLms.UseSSL ?? false;
-            var url = GetTokenUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsDomain, useSsl);
             var xmlDoc = UploadValues(url, pairs);
 
             string errorMessage = string.Empty;
