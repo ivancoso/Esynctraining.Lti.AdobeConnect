@@ -33,18 +33,18 @@ namespace EdugameCloud.Lti.Moodle
         private IEnumerable<LmsQuizInfoDTO> GetQuizzes(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
         {
             var functionName = isSurvey
-                           ? "local_edugamecloud_get_total_survey_list"
-                           : "local_edugamecloud_get_total_quiz_list";
+                ? "local_edugamecloud_get_total_survey_list"
+                : "local_edugamecloud_get_total_quiz_list";
 
             var pairs = new NameValueCollection
-                        {
-                            { "wsfunction", functionName },
-                            { "wstoken",  token },
-                            { "course", courseId.ToString( CultureInfo.InvariantCulture) }
-                        };
+            {
+                { "wsfunction", functionName },
+                { "wstoken",  token },
+                { "course", courseId.ToString( CultureInfo.InvariantCulture) }
+            };
             string lmsDomain = lmsCompany.LmsDomain;
             bool useSsl = lmsCompany.UseSSL ?? false;
-            var url = GetTokenUrl(lmsDomain, useSsl);
+            var url = GetServicesUrl(lmsDomain, useSsl);
             var xmlDoc = UploadValues(url, pairs);
 
             return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
@@ -88,11 +88,11 @@ namespace EdugameCloud.Lti.Moodle
         private LmsQuizDTO GetQuiz(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
         {
             var pairs = new NameValueCollection
-                            {
-                                { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
-                                { "wstoken",  token },
-                                {  isSurvey ? "surveyId" : "quizId",  courseId.ToString(CultureInfo.InvariantCulture) }
-                            };
+            {
+                { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
+                { "wstoken",  token },
+                {  isSurvey ? "surveyId" : "quizId",  courseId.ToString(CultureInfo.InvariantCulture) }
+            };
 
             string lmsDomain = lmsCompany.LmsDomain;
             bool useSsl = lmsCompany.UseSSL ?? false;
@@ -168,11 +168,11 @@ namespace EdugameCloud.Lti.Moodle
         {
             json = json.Replace("\"", "\"");
             var pairs = new NameValueCollection
-                        {
-                            { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
-                            { "wstoken",  token },
-                            { "reportObject", json }
-                        };
+            {
+                { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
+                { "wstoken",  token },
+                { "reportObject", json }
+            };
             string lmsDomain = lmsUserParameters.CompanyLms.LmsDomain;
             bool useSsl = lmsUserParameters.CompanyLms.UseSSL ?? false;
             var url = GetTokenUrl(lmsDomain, useSsl);
