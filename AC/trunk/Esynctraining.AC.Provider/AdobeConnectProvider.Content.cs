@@ -95,7 +95,7 @@ namespace Esynctraining.AC.Provider
         {
             StatusInfo status;
             this.requestProcessor.ProcessUpload(Commands.Sco.Upload, 
-                string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, uploadScoInfo.summary, uploadScoInfo.title), uploadScoInfo, out status);
+                string.Format(CommandParams.ScoUpload, uploadScoInfo.scoId, UrlEncode(uploadScoInfo.summary), UrlEncode(uploadScoInfo.title)), uploadScoInfo, out status);
             return status;
         }
 
