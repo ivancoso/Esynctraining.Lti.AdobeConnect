@@ -100,7 +100,7 @@ namespace EdugameCloud.WCFService
             string lmsPassword = resultDto.lmsAdminPassword;
             if (!isTransient && string.IsNullOrWhiteSpace(resultDto.lmsAdminPassword))
             {
-                if ((entity.LmsProviderId == (int)LmsProviderEnum.Moodle)
+                if ((entity.LmsProviderId == (int)LmsProviderEnum.Moodle && string.IsNullOrWhiteSpace(entity.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
                 || ((entity.LmsProviderId == (int)LmsProviderEnum.Blackboard) && !resultDto.enableProxyToolMode))
                 {
                     lmsPassword = entity.AdminUser.Password;
