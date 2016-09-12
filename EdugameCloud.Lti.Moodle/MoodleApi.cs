@@ -480,7 +480,7 @@ namespace EdugameCloud.Lti.Moodle
             }
             catch (XmlException)
             {
-                logger.Error($"Can't parse response to XML: {response}");
+                logger.Error($"Can't parse response to XML: {resp}");
                 throw;
             }
         }
