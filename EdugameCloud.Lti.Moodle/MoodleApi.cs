@@ -128,11 +128,11 @@ namespace EdugameCloud.Lti.Moodle
         private List<LmsUserDTO> GetUsers(string token, int courseId, LmsCompany lmsCompany, out string resp)
         {
             var pairs = new NameValueCollection
-                        {
-                            { "wsfunction", "core_enrol_get_enrolled_users" },
-                            { "wstoken", token },
-                            { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
-                        };
+            {
+                { "wsfunction", "core_enrol_get_enrolled_users" },
+                { "wstoken", token },
+                { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
+            };
 
             byte[] response;
             string lmsDomain = lmsCompany.LmsDomain;
@@ -188,7 +188,7 @@ namespace EdugameCloud.Lti.Moodle
         /// The recursive.
         /// </param>
         /// <returns>
-        /// The <see cref="WebserviceWrapper"/>.
+        /// The <see cref="MoodleSession"/>.
         /// </returns>
         private MoodleSession LoginAndCreateAClient(
             out string error, 
@@ -462,7 +462,7 @@ namespace EdugameCloud.Lti.Moodle
         /// <returns>
         /// The <see cref="XmlDocument"/>.
         /// </returns>
-        protected static XmlDocument UploadValues(string url, NameValueCollection pairs)
+        protected XmlDocument UploadValues(string url, NameValueCollection pairs)
         {
             byte[] response;
             using (var client = new WebClient())
@@ -472,12 +472,21 @@ namespace EdugameCloud.Lti.Moodle
 
             string resp = Encoding.UTF8.GetString(response);
 
-            var xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(resp);
-            return xmlDoc;
+            try
+            {
+                var xmlDoc = new XmlDocument();
+                xmlDoc.LoadXml(resp);
+                return xmlDoc;
+            }
+            catch (XmlException)
+            {
+                logger.Error($"Can't parse response to XML: {response}");
+                throw;
+            }
         }
 
         #endregion
 
     }
+
 }
