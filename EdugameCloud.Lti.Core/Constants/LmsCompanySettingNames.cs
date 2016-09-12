@@ -38,7 +38,9 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string EnableAddGuest = nameof(EnableAddGuest);
         public const string EnableSetUserRole = nameof(EnableSetUserRole);
         public const string EnableRemoveUser = nameof(EnableRemoveUser);
-        
+        public const string MoodleCoreServiceToken = nameof(MoodleCoreServiceToken);
+        public const string MoodleQuizServiceToken = nameof(MoodleQuizServiceToken);
+
         public static class Telephony
         {
             public const string ActiveProfile = "Telephony.ActiveProfile";  // None / MeetingOne / Arkadin

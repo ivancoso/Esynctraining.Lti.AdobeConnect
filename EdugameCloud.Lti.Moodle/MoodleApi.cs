@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Moodle
+﻿using EdugameCloud.Lti.Core.Constants;
+
+namespace EdugameCloud.Lti.Moodle
 {
     using System;
     using System.Collections.Generic;
@@ -83,42 +85,30 @@
                     throw new ArgumentNullException("company");
 
                 MoodleSession token = null;
-
+                error = null;
                 var result = new List<LmsUserDTO>();
-                List<LmsUserDTO> enrollmentsResult = this.LoginIfNecessary(
-                    token,
-                    c =>
-                    {
-                        var pairs = new NameValueCollection
+                var moodleServiceToken = company.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                string resp = null;
+                List<LmsUserDTO> enrollmentsResult = !string.IsNullOrEmpty(moodleServiceToken)
+                    ? GetUsers(moodleServiceToken, courseId, company, out resp)
+                    : this.LoginIfNecessary(
+                        token,
+                        c =>
                         {
-                            { "wsfunction", "core_enrol_get_enrolled_users" }, 
-                            { "wstoken", c.Token }, 
-                            { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
-                        };
+                            try
+                            {
+                                var users = GetUsers(c.Token, courseId, company, out resp);
+                                return new Tuple<List<LmsUserDTO>, string>(users, null);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
 
-                        byte[] response;
-                        using (var client = new WebClient())
-                        {
-                            response = client.UploadValues(c.Url, pairs);
-                        }
-
-                        string resp = Encoding.UTF8.GetString(response);
-
-                        try
-                        {
-                            var xmlDoc = new XmlDocument();
-                            xmlDoc.LoadXml(resp);
-                            return new Tuple<List<LmsUserDTO>, string>(MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE")), null);
-                        }
-                        catch (Exception ex)
-                        {
-                            logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse.ResponseParsing] LmsCompanyId:{0}. CourseId:{1}. Response:{2}.", company.Id, courseId, resp);
-
-                            return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
-                        }
-                    },
-                    company,
-                    out error);
+                                return new Tuple<List<LmsUserDTO>, string>(new List<LmsUserDTO>(), string.Format("Error during parsing response: {0}; exception: {1}", resp, ex.With(x => x.Message)));
+                            }
+                        },
+                        company,
+                        out error);
 
                 if (enrollmentsResult == null)
                 {
@@ -133,6 +123,31 @@
                 logger.ErrorFormat(ex, "[MoodleApi.GetUsersForCourse] LmsCompanyId:{0}. CourseId:{1}.", company.Id, courseId);
                 throw;
             }
+        }
+
+        private List<LmsUserDTO> GetUsers(string token, int courseId, LmsCompany lmsCompany, out string resp)
+        {
+            var pairs = new NameValueCollection
+                        {
+                            { "wsfunction", "core_enrol_get_enrolled_users" },
+                            { "wstoken", token },
+                            { "courseid",  courseId.ToString(CultureInfo.InvariantCulture) }
+                        };
+
+            byte[] response;
+            string lmsDomain = lmsCompany.LmsDomain;
+            bool useSsl = lmsCompany.UseSSL ?? false;
+            var url = GetServicesUrl(lmsDomain, useSsl);
+            using (var client = new WebClient())
+            {
+                response = client.UploadValues(url, pairs);
+            }
+
+            resp = Encoding.UTF8.GetString(response);
+
+            var xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(resp);
+            return MoodleLmsUserParser.Parse(xmlDoc.SelectSingleNode("RESPONSE"));
         }
 
         public bool LoginAndCheckSession(
@@ -314,7 +329,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetServicesUrl(string domain, bool useSsl)
+        protected string GetServicesUrl(string domain, bool useSsl)
         {
             var serviceUrl = (string)this.settings.MoodleServiceUrl;
             return this.FixDomain(domain, useSsl) + (serviceUrl.First() == '/' ? serviceUrl.Substring(1) : serviceUrl);
@@ -332,7 +347,7 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        private string GetTokenUrl(string domain, bool useSsl)
+        protected string GetTokenUrl(string domain, bool useSsl)
         {
             var tokenUrl = (string)this.settings.MoodleTokenUrl;
             return this.FixDomain(domain, useSsl) + (tokenUrl.First() == '/' ? tokenUrl.Substring(1) : tokenUrl);

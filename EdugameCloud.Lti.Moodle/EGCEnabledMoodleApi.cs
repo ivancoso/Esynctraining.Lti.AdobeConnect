@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Moodle
+﻿using EdugameCloud.Lti.Core.Constants;
+
+namespace EdugameCloud.Lti.Moodle
 {
     using System;
     using System.Collections.Generic;
@@ -28,28 +30,38 @@
             get { return "edugamecloud"; }
         }
 
+        private IEnumerable<LmsQuizInfoDTO> GetQuizzes(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
+        {
+            var functionName = isSurvey
+                           ? "local_edugamecloud_get_total_survey_list"
+                           : "local_edugamecloud_get_total_quiz_list";
+
+            var pairs = new NameValueCollection
+                        {
+                            { "wsfunction", functionName },
+                            { "wstoken",  token },
+                            { "course", courseId.ToString( CultureInfo.InvariantCulture) }
+                        };
+            string lmsDomain = lmsCompany.LmsDomain;
+            bool useSsl = lmsCompany.UseSSL ?? false;
+            var url = GetTokenUrl(lmsDomain, useSsl);
+            var xmlDoc = UploadValues(url, pairs);
+
+            return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
+        }
         public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
+            error = null;
             try
             {
-                var quizResult = this.LoginIfNecessary(
+                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                    ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
+                    : this.LoginIfNecessary(
                     null,
                     c =>
                     {
-                        var functionName = isSurvey
-                            ? "local_edugamecloud_get_total_survey_list"
-                            : "local_edugamecloud_get_total_quiz_list";
-
-                        var pairs = new NameValueCollection
-                        {
-                            { "wsfunction", functionName },
-                            { "wstoken", c.Token },
-                            { "course", lmsUserParameters.Course.ToString( CultureInfo.InvariantCulture) }
-                        };
-
-                        var xmlDoc = UploadValues(c.Url, pairs);
-
-                        return MoodleQuizInfoParser.Parse(xmlDoc, isSurvey);
+                        return GetQuizzes(c.Token, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms);
                     },
                     out error,
                     lmsUserParameters.LmsUser);
@@ -71,6 +83,24 @@
                 logger.ErrorFormat(ex, "[EGCEnabledMoodleApi.GetItemsInfoForUser] LmsUserParametersId:{0}. IsSurvey:{1}.", lmsUserParameters.Id, isSurvey);
                 throw;
             }
+        }
+
+        private LmsQuizDTO GetQuiz(string token, bool isSurvey, int courseId, LmsCompany lmsCompany)
+        {
+            var pairs = new NameValueCollection
+                            {
+                                { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
+                                { "wstoken",  token },
+                                {  isSurvey ? "surveyId" : "quizId",  courseId.ToString(CultureInfo.InvariantCulture) }
+                            };
+
+            string lmsDomain = lmsCompany.LmsDomain;
+            bool useSsl = lmsCompany.UseSSL ?? false;
+            var url = GetTokenUrl(lmsDomain, useSsl);
+            var xmlDoc = UploadValues(url, pairs);
+            string errorMessage = string.Empty;
+            string err = string.Empty;
+            return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
         }
 
         /// <summary>
@@ -96,25 +126,18 @@
             try
             {
                 var result = new List<LmsQuizDTO>();
-
+                error = null;
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
-                    var quizResult = this.LoginIfNecessary(
+                    var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                    var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                        ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
+                        : this.LoginIfNecessary(
                         null,
                         c =>
                         {
-                            var pairs = new NameValueCollection
-                            {
-                                { "wsfunction", isSurvey ? "local_edugamecloud_get_survey_by_id" : "local_edugamecloud_get_quiz_by_id" },
-                                { "wstoken", c.Token },
-                                {  isSurvey ? "surveyId" : "quizId",  id.ToString(CultureInfo.InvariantCulture) }
-                            };
-
-                            var xmlDoc = UploadValues(c.Url, pairs);
-                            string errorMessage = string.Empty;
-                            string err = string.Empty;
-                            return MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+                            return GetQuiz(c.Token, isSurvey, quizId, lmsUserParameters.CompanyLms);
                         },
                         out error,
                         lmsUserParameters.LmsUser);
@@ -140,6 +163,37 @@
             }
         }
 
+
+        private LmsQuizDTO SendQuiz(string token, bool isSurvey, string json, LmsUserParameters lmsUserParameters)
+        {
+            json = json.Replace("\"", "\"");
+            var pairs = new NameValueCollection
+                        {
+                            { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
+                            { "wstoken",  token },
+                            { "reportObject", json }
+                        };
+            string lmsDomain = lmsUserParameters.CompanyLms.LmsDomain;
+            bool useSsl = lmsUserParameters.CompanyLms.UseSSL ?? false;
+            var url = GetTokenUrl(lmsDomain, useSsl);
+            var xmlDoc = UploadValues(url, pairs);
+
+            string errorMessage = string.Empty;
+            string err = string.Empty;
+            var result = MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
+
+            if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
+            {
+                logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
+                    lmsUserParameters.Id,
+                    isSurvey,
+                    errorMessage,
+                    err,
+                    json);
+            }
+
+            return result;
+        }
         /// <summary>
         /// The send answers.
         /// </summary>
@@ -163,31 +217,7 @@
                     null,
                     c =>
                     {
-                        json = json.Replace("\"", "\"");
-                        var pairs = new NameValueCollection
-                        {
-                            { "wsfunction", isSurvey ? "local_edugamecloud_save_external_survey_report" : "local_edugamecloud_save_external_quiz_report" },
-                            { "wstoken", c.Token },
-                            { "reportObject", json }
-                        };
-
-                        var xmlDoc = UploadValues(c.Url, pairs);
-
-                        string errorMessage = string.Empty;
-                        string err = string.Empty;
-                        var result = MoodleQuizParser.Parse(xmlDoc, ref errorMessage, ref err);
-
-                        if (!string.IsNullOrWhiteSpace(errorMessage) || !string.IsNullOrWhiteSpace(err))
-                        {
-                            logger.ErrorFormat("[EGCEnabledMoodleApi.SendAnswers.Parsing] LmsUserParametersId:{0}. IsSurvey:{1}. ErrorMessage:{2};{3}. JSON:{4}.",
-                                lmsUserParameters.Id, 
-                                isSurvey,
-                                errorMessage,
-                                err,
-                                json);
-                        }
-
-                        return result;
+                        return SendQuiz(c.Token, isSurvey, json, lmsUserParameters);
                     },
                     out error,
                     lmsUserParameters.LmsUser);
