@@ -54,7 +54,7 @@ namespace EdugameCloud.Lti.Moodle
             error = null;
             try
             {
-                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
                 var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                     ? GetQuizzes(moodleServiceToken, isSurvey, lmsUserParameters.Course, lmsUserParameters.CompanyLms)
                     : this.LoginIfNecessary(
@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.Moodle
                 foreach (int quizId in quizIds)
                 {
                     int id = quizId;
-                    var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
+                    var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
                     var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
                         ? GetQuiz(moodleServiceToken, isSurvey, quizId, lmsUserParameters.CompanyLms)
                         : this.LoginIfNecessary(
@@ -212,8 +212,10 @@ namespace EdugameCloud.Lti.Moodle
 
             try
             {
-                // ReSharper disable once UnusedVariable
-                var quizResult = this.LoginIfNecessary(
+                var moodleServiceToken = lmsUserParameters.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
+                var quizResult = !string.IsNullOrEmpty(moodleServiceToken)
+                    ? SendQuiz(moodleServiceToken, isSurvey, json, lmsUserParameters)
+                    : this.LoginIfNecessary(
                     null,
                     c =>
                     {
