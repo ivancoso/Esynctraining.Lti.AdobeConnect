@@ -112,14 +112,22 @@ namespace EdugameCloud.WCFService
                 lmsPassword = resultDto.proxyToolPassword;
             }
 
-            ConnectionInfoDTO lmsConnectionTest = TestConnection(new ConnectionTestDTO
+            ConnectionInfoDTO lmsConnectionTest;
+            if (!string.IsNullOrWhiteSpace(resultDto.moodleCoreServiceToken))
             {
-                domain = resultDto.lmsDomain,
-                enableProxyToolMode = resultDto.enableProxyToolMode,
-                login = resultDto.lmsAdmin,
-                password = lmsPassword,
-                type = resultDto.lmsProvider,
-            });
+                lmsConnectionTest = new ConnectionInfoDTO { status = OkMessage, info = "Test connection is not supported for Moodle Token mode" };
+            }
+            else
+            {
+                lmsConnectionTest = TestConnection(new ConnectionTestDTO
+                {
+                    domain = resultDto.lmsDomain,
+                    enableProxyToolMode = resultDto.enableProxyToolMode,
+                    login = resultDto.lmsAdmin,
+                    password = lmsPassword,
+                    type = resultDto.lmsProvider,
+                });
+            }
 
             string acPassword = (isTransient || !string.IsNullOrWhiteSpace(resultDto.acPassword)) 
                 ? resultDto.acPassword 
