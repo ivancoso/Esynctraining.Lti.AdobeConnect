@@ -1082,19 +1082,16 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var serverCourseMeetings = courseMeetings.Where(
                 cm =>
                 {
-                    var acServer = LmsСompanyModel.GetOneById(cm.LmsCompanyId).Value.AcServer;
+                    var license = LmsСompanyModel.GetOneById(cm.LmsCompanyId).Value;
+                    var acServer = license.AcServer;
                     if (string.IsNullOrWhiteSpace(acServer))
                     {
                         return false;
                     }
 
-                    if (acServer.EndsWith("/"))
-                    {
-                        acServer = acServer.Substring(0, acServer.Length - 1);
-                    }
-                    return acDomain.StartsWith(acServer, StringComparison.InvariantCultureIgnoreCase);
+                    return acDomain.StartsWith(acServer.Trim('/'), StringComparison.InvariantCultureIgnoreCase);
                 })
-                    .ToList();
+                .ToList();
 
             if (!serverCourseMeetings.Any())
             {
@@ -1115,7 +1112,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!paramList.Any())
                 return null;
+
             var userParameter = paramList.OrderByDescending(p => p.LastLoggedIn).First();
+
+            if (userParameter.CompanyLms.LmsProviderId == (int)LmsProviderEnum.Moodle)
+            {
+                if (string.IsNullOrEmpty(userParameter.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken))
+                    && !string.IsNullOrEmpty(userParameter.CompanyLms.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken)))
+                {
+                    Logger.Warn($"MoodleQuizServiceToken is empty. CompanyLmsId:{userParameter.CompanyLms.Id}");
+                    return null;
+                }
+            }
+
             LmsProvider lmsProvider = LmsProviderModel.GetById(userParameter.CompanyLms.LmsProviderId);
             return new LmsUserParametersDTO(userParameter, lmsProvider);
         }

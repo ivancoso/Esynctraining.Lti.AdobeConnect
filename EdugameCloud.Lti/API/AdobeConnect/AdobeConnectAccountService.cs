@@ -139,8 +139,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             LastName = param.lis_person_name_family,
                         }, true);
                 }
-                catch
+                catch (AdobeConnectException ex)
                 {
+                    _logger.Error(ex.Status.GetErrorInfo());
                     throw new Core.WarningMessageException(
                         string.Format(
                             "Error has occured trying to access \"{0} {1}\" account in Adobe Connect. Please check that account used to access has sufficient permissions."

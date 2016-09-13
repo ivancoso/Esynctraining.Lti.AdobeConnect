@@ -76,7 +76,7 @@ namespace EdugameCloud.Lti.Sakai
             try
             {
                 if (company == null)
-                    throw new ArgumentNullException("company");
+                    throw new ArgumentNullException(nameof(company));
 
                 SakaiSession token = null;
 

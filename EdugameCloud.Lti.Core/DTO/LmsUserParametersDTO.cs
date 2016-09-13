@@ -44,72 +44,41 @@
 
         #region Public Properties
 
-        /// <summary>
-        /// Gets or sets the LMS user parameters id.
-        /// </summary>
         [DataMember]
         public int lmsUserParametersId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the AC id.
-        /// </summary>
         [DataMember]
         public string acId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the course.
-        /// </summary>
         [DataMember]
         public int course { get; set; }
 
-        /// <summary>
-        /// Gets or sets the domain.
-        /// </summary>
         [DataMember]
         public string domain { get; set; }
 
-        /// <summary>
-        /// Gets or sets the error details.
-        /// </summary>
         [DataMember]
         public string errorDetails { get; set; }
 
-        /// <summary>
-        /// Gets or sets the error message.
-        /// </summary>
         [DataMember]
         public string errorMessage { get; set; }
 
-        /// <summary>
-        /// Gets or sets the LMS user id.
-        /// </summary>
         [DataMember]
         public int? lmsUserId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the provider.
-        /// </summary>
         [DataMember]
         public string provider { get; set; }
 
-        /// <summary>
-        /// Gets or sets the WS token.
-        /// </summary>
         [DataMember]
         public string wstoken { get; set; }
 
-        /// <summary>
-        /// Gets or sets the user email.
-        /// </summary>
         [DataMember]
         public string userEmail { get; set; }
 
-        /// <summary>
-        /// Gets or sets the course name.
-        /// </summary>
         [DataMember]
         public string courseName { get; set; }
 
         #endregion
+
     }
+
 }

@@ -200,7 +200,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             }
             catch (Exception ex)
             {
-                string errorMessage = GetOutputErrorMessage("ContentApi-DeleteFileOrFolder", lmsCompany, ex);
+                string errorMessage = GetOutputErrorMessage("ContentApi-GetDownloadLink", lmsCompany, ex);
                 return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
             }
         }
