@@ -86,7 +86,7 @@
         public SpecialPermissionId GetPermissionId()
         {
             if (string.IsNullOrWhiteSpace(access_level))
-                throw new InvalidOperationException("Invalid access_level value " + access_level);
+                throw new InvalidOperationException($"Invalid access_level value '{access_level}'.");
             SpecialPermissionId value = (SpecialPermissionId)Enum.Parse(typeof(SpecialPermissionId), access_level);
             return value;
         }
