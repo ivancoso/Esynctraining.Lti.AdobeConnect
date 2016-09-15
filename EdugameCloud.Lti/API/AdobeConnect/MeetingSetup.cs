@@ -118,7 +118,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             IAdobeConnectProxy provider,
             LtiParamDTO param,
             int id,
-            bool removeIfReused = false)
+            bool softDelete = false)
         {
             if (!lmsCompany.CanRemoveMeeting.GetValueOrDefault())
             {
@@ -131,7 +131,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(Resources.Messages.MeetingNotFound);
             }
 
-            if (meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours)
+            if ((meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && softDelete)
             {
                 var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(meeting.OfficeHours.Id);
                 if (coursesWithThisOfficeHours.Any(c => c.Id != meeting.Id))
@@ -142,11 +142,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             //TRICK: before deletion
-            //removeIfReused - means that we should not delete meeting from AC even in case when it is not reused by any other meeting
+            //softDelete - means that we should not delete meeting from AC even in case when it is not reused by any other meeting
+            string meetingScoId = meeting.GetMeetingScoId();
             bool acMeetingIsStillUsed =
                 lmsCompany.EnableMeetingReuse && 
-                    (removeIfReused || 
-                        this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id));
+                    (softDelete || 
+                        this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id));
 
             if (lmsCompany.LmsProviderId == (int) LmsProviderEnum.Sakai &&
                 lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
@@ -166,9 +167,30 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Success();
             }
 
-            var result = provider.DeleteSco(meeting.GetMeetingScoId());
+            var result = provider.DeleteSco(meetingScoId);
             if (result.Code == StatusCodes.ok)
             {
+                // TRICK: remove all references in DB if delete from AC!!
+                var meetings = this.LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id);
+                if (meetings.Any())
+                {
+                    foreach (var m in meetings)
+                    {
+                        if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai &&
+                            lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
+                        {
+                            CalendarEventService.DeleteMeetingEvents(m, param);
+                        }
+                        this.LmsCourseMeetingModel.RegisterDelete(m, flush: false);
+                        if (m.OfficeHours != null)
+                        {
+                            this.OfficeHoursModel.RegisterDelete(m.OfficeHours, flush: false);
+                        }
+                    }
+                    this.LmsCourseMeetingModel.Flush();
+                    this.OfficeHoursModel.Flush();
+                }
+
                 DeleteAudioProfile(lmsCompany, meeting, provider);
 
                 return OperationResult.Success();
@@ -1589,6 +1611,12 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     lmsCourseMeeting.GetMeetingScoId(),
                     lmsCourseMeeting.Id);
                 scoIdReused = lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value;
+            }
+
+            if (!usedByAnotherMeeting && type == LmsMeetingType.OfficeHours)
+            {
+                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(lmsCourseMeeting.OfficeHours.Id);
+                usedByAnotherMeeting = coursesWithThisOfficeHours.Any(c => c.Id != lmsCourseMeeting.Id);
             }
 
             sw.Stop();

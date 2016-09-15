@@ -143,6 +143,7 @@ namespace EdugameCloud.Lti.Controllers
         [HttpPost]
         public virtual JsonResult DeleteMeeting(string lmsProviderName, int meetingId, bool? remove = false)
         {
+            bool? softDelete = remove;
             LmsCompany lmsCompany = null;
             try
             {
@@ -154,7 +155,7 @@ namespace EdugameCloud.Lti.Controllers
                     lmsCompany,
                     this.GetAdobeConnectProvider(lmsCompany),
                     param,
-                    meetingId, remove.GetValueOrDefault());
+                    meetingId, softDelete.GetValueOrDefault());
 
                 return Json(result);
             }
