@@ -67,6 +67,7 @@ namespace EdugameCloud.Lti.DTO
             this.useUserFolder = instance.UseUserFolder.GetValueOrDefault();
             this.canRemoveMeeting = instance.CanRemoveMeeting.GetValueOrDefault();
             this.canEditMeeting = instance.CanEditMeeting.GetValueOrDefault();
+            canStudentCreateStudyGroup = instance.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true);
             this.isSettingsVisible = instance.IsSettingsVisible.GetValueOrDefault();
             this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
             this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
@@ -296,6 +297,9 @@ namespace EdugameCloud.Lti.DTO
         /// </summary>
         [DataMember]
         public bool canEditMeeting { get; set; }
+
+        [DataMember]
+        public bool canStudentCreateStudyGroup { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is settings visible.

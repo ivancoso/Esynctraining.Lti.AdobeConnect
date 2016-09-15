@@ -40,6 +40,7 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string EnableRemoveUser = nameof(EnableRemoveUser);
         public const string MoodleCoreServiceToken = nameof(MoodleCoreServiceToken);
         public const string MoodleQuizServiceToken = nameof(MoodleQuizServiceToken);
+        public const string CanStudentCreateStudyGroup = nameof(CanStudentCreateStudyGroup);
 
         public static class Telephony
         {

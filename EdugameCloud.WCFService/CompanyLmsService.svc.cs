@@ -285,6 +285,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableAddGuest, dto.enableAddGuest);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableSetUserRole, dto.enableSetUserRole);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableRemoveUser, dto.enableRemoveUser);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.CanStudentCreateStudyGroup, dto.canStudentCreateStudyGroup);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleCoreServiceToken, dto.moodleCoreServiceToken);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.MoodleQuizServiceToken, dto.moodleQuizServiceToken);
 

@@ -136,6 +136,9 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "canRemoveMeeting")]
         public bool CanRemoveMeeting { get; set; }
 
+        [DataMember(Name = "canStudentCreateStudyGroup")]
+        public bool CanStudentCreateStudyGroup { get; set; }
+
         [DataMember(Name = "telephony")]
         public TelephonyDto Telephony { get; set; }
 
@@ -169,6 +172,7 @@ namespace EdugameCloud.Lti.DTO
 
                     CanEditMeeting = value.CanEditMeeting.GetValueOrDefault(),
                     CanRemoveMeeting = value.CanRemoveMeeting.GetValueOrDefault(),
+                    CanStudentCreateStudyGroup = value.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true),
 
                     ACUsesEmailAsLogin = value.ACUsesEmailAsLogin ?? false,
                     UseSynchronizedUsers = value.UseSynchronizedUsers,
