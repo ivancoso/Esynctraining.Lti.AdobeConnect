@@ -93,7 +93,9 @@
 
         public LmsMeetingType GetMeetingType()
         {
-            return type > 0 ? (LmsMeetingType)type : LmsMeetingType.Meeting;
+            if (type <= 0)
+                throw new InvalidOperationException($"Invalid meeting type '{type}'");
+            return (LmsMeetingType)type;
         }
 
     }
