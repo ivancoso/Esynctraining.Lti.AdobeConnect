@@ -554,6 +554,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(meetingDTO));
             if (fb == null)
                 throw new ArgumentNullException(nameof(fb));
+            
+            if ((meetingDTO.GetMeetingType() == LmsMeetingType.StudyGroup) 
+                && !UsersSetup.IsTeacher(param)
+                && !lmsCompany.GetSetting<bool>(LmsCompanySettingNames.CanStudentCreateStudyGroup, true))
+            {
+                return OperationResult.Error("Students are not allowed to create Study Groups.");
+            }
 
             var sw = Stopwatch.StartNew();
             
@@ -643,7 +650,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var useLmsUserEmailForSearch = !string.IsNullOrEmpty(param.lis_person_contact_email_primary);
 
-            string meetingFolder = fb.GetMeetingFolder(currentUserPrincipal);   // this.GetMeetingFolder(lmsCompany, provider, currentUserPrincipal, useLmsUserEmailForSearch);
+            string meetingFolder = fb.GetMeetingFolder(currentUserPrincipal);
 
             sw.Stop();
             trace.AppendFormat("SaveMeeting: GetMeetingFolder: time: {0}.", sw.Elapsed.ToString());
