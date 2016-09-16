@@ -1,6 +1,7 @@
 ﻿namespace Esynctraining.AC.Provider.Entities
 {
     using System.Xml.Serialization;
+    using Attributes;
 
     /// <summary>
     /// The sco update item base.
@@ -19,6 +20,7 @@
         /// Gets or sets the type.
         /// </summary>
         [XmlElement("type")]
+        [SkipDuringUpdate]
         public ScoType Type { get; set; }
 
         /// <summary>
