@@ -7,6 +7,7 @@
     using Esynctraining.NHibernate;
     using Esynctraining.NHibernate.Queries;
     using NHibernate;
+    using NHibernate.Criterion;
     using NHibernate.Linq;
     using NHibernate.SqlCommand;
     using NHibernate.Transform;
@@ -58,30 +59,36 @@
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
-            // NOTE: check only licences of the company with the same AC!!
-            var query = from c in this.Repository.Session.Query<LmsCompany>()
-                        where c.CompanyId == lmsCompany.CompanyId
-                        select new { c.Id, c.AcServer };
-            var currentLicenceAc = new Uri(lmsCompany.AcServer);
-            var companyLicenses = query.ToArray().Where(c => new Uri(c.AcServer).Host == currentLicenceAc.Host).Select(c => c.Id).ToArray();
-
-            LmsCourseMeeting x = null;
-            OfficeHours oh = null;
-            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
-                .GetQueryOver(() => x)
-                .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
-                //.Clone()
-                .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
-                .And(() => x.Id != excludedLmsCourseMeetingId)
-                .And(() => 
-                    ((x.ScoId != null) && (x.ScoId == scoId)) ||
-                     (x.OfficeHours != null && oh.ScoId == scoId))
+            var defaultQuery = GetByCompanyAndScoIdQuery(lmsCompany, scoId, excludedLmsCourseMeetingId)
                 .Take(1);
 
             return this.Repository.FindOne(defaultQuery).Value != null;
         }
 
+        public int CountByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("scoId can not be empty", nameof(scoId));
+
+            var defaultQuery = GetByCompanyAndScoIdQuery(lmsCompany, scoId, excludedLmsCourseMeetingId);
+            var rowCountQuery = defaultQuery.ToRowCountQuery();
+            return this.Repository.FindOne<int>(rowCountQuery).Value;
+        }
+
         public IEnumerable<LmsCourseMeeting> GetByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        {
+            if (lmsCompany == null)
+                throw new ArgumentNullException(nameof(lmsCompany));
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("scoId can not be empty", nameof(scoId));
+            
+            var defaultQuery = GetByCompanyAndScoIdQuery(lmsCompany, scoId, excludedLmsCourseMeetingId);
+            return this.Repository.FindAll(defaultQuery);
+        }
+
+        private QueryOver<LmsCourseMeeting, LmsCourseMeeting> GetByCompanyAndScoIdQuery(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -97,7 +104,7 @@
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
-            var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
+            QueryOver<LmsCourseMeeting, LmsCourseMeeting> defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>()
                 .GetQueryOver(() => x)
                 .JoinAlias(() => x.OfficeHours, () => oh, JoinType.LeftOuterJoin)
                 .WhereRestrictionOn(() => x.LmsCompanyId).IsIn(companyLicenses)
@@ -107,7 +114,7 @@
                      (x.OfficeHours != null && oh.ScoId == scoId))
                 .TransformUsing(Transformers.DistinctRootEntity);
 
-            return this.Repository.FindAll(defaultQuery);
+            return defaultQuery;
         }
 
         public IEnumerable<LmsCourseMeeting> GetByCompanyWithAudioProfiles(LmsCompany lmsCompany)
