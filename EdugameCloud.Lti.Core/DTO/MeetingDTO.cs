@@ -67,10 +67,10 @@
         public bool reused { get; set; }
 
         /// <summary>
-        /// Means that there is at least one other meeting in LTI which uses the same SCO-ID as current meeting
+        /// Count of other meetings in LTI which uses the same SCO-ID as current meeting.
         /// </summary>
         [DataMember]
-        public bool reusedByAnotherMeeting { get; set; }
+        public int reusedByAnotherMeeting { get; set; }
 
         [DataMember]
         public string audioProfileId { get; set; }

@@ -131,66 +131,63 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 return OperationResult.Error(Resources.Messages.MeetingNotFound);
             }
 
-            if ((meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && softDelete)
-            {
-                var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(meeting.OfficeHours.Id);
-                if (coursesWithThisOfficeHours.Any(c => c.Id != meeting.Id))
-                {
-                    this.LmsCourseMeetingModel.RegisterDelete(meeting);
-                    return OperationResult.Success();
-                }
-            }
+            //if ((meeting.LmsMeetingType == (int)LmsMeetingType.OfficeHours) && softDelete)
+            //{
+            //    var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(meeting.OfficeHours.Id);
+            //    if (coursesWithThisOfficeHours.Any(c => c.Id != meeting.Id))
+            //    {
+            //        this.LmsCourseMeetingModel.RegisterDelete(meeting);
+            //        return OperationResult.Success();
+            //    }
+            //}
 
             //TRICK: before deletion
             //softDelete - means that we should not delete meeting from AC even in case when it is not reused by any other meeting
             string meetingScoId = meeting.GetMeetingScoId();
-            bool acMeetingIsStillUsed =
-                lmsCompany.EnableMeetingReuse && 
-                    (softDelete || 
-                        this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id));
+            //bool acMeetingIsStillUsed =
+            //    lmsCompany.EnableMeetingReuse && 
+            //        (softDelete || 
+            //            this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id));
+            bool skipRemovingFromAC = softDelete; 
 
             if (lmsCompany.LmsProviderId == (int) LmsProviderEnum.Sakai &&
                 lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
             {
                 CalendarEventService.DeleteMeetingEvents(meeting, param);
             }
-
             this.LmsCourseMeetingModel.RegisterDelete(meeting, flush: true);
+                        
+            if (skipRemovingFromAC)
+            {
+                return OperationResult.Success();
+            }
+            
+            // TRICK: remove ALL(all cources \ all licenses) references in DB if we are going to delete from AC!!
+            var meetings = this.LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id);
+            if (meetings.Any())
+            {
+                foreach (var m in meetings)
+                {
+                    if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai &&
+                        lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
+                    {
+                        CalendarEventService.DeleteMeetingEvents(m, param);
+                    }
+                    this.LmsCourseMeetingModel.RegisterDelete(m, flush: false);
+                }
+                this.LmsCourseMeetingModel.Flush();
+            }
+
             if (meeting.OfficeHours != null)
             {
                 // TODO: test OH delete
                 this.OfficeHoursModel.RegisterDelete(meeting.OfficeHours, flush: true);
             }
-            
-            if (acMeetingIsStillUsed)
-            {
-                return OperationResult.Success();
-            }
+
 
             var result = provider.DeleteSco(meetingScoId);
             if (result.Code == StatusCodes.ok)
             {
-                // TRICK: remove all references in DB if delete from AC!!
-                var meetings = this.LmsCourseMeetingModel.GetByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id);
-                if (meetings.Any())
-                {
-                    foreach (var m in meetings)
-                    {
-                        if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai &&
-                            lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
-                        {
-                            CalendarEventService.DeleteMeetingEvents(m, param);
-                        }
-                        this.LmsCourseMeetingModel.RegisterDelete(m, flush: false);
-                        if (m.OfficeHours != null)
-                        {
-                            this.OfficeHoursModel.RegisterDelete(m.OfficeHours, flush: false);
-                        }
-                    }
-                    this.LmsCourseMeetingModel.Flush();
-                    this.OfficeHoursModel.Flush();
-                }
-
                 DeleteAudioProfile(lmsCompany, meeting, provider);
 
                 return OperationResult.Success();
@@ -999,6 +996,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
 
             // TRICK: before deletion
+
+            // TODO: REVIEW
+
             bool acMeetingIsStillUsed = lmsCompany.EnableMeetingReuse
                 ? this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meeting.GetMeetingScoId(), meeting.Id)
                 : false;
@@ -1604,19 +1604,19 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var sw = Stopwatch.StartNew();
             // HACK: TEST!!!
             bool scoIdReused = false;
-            bool usedByAnotherMeeting = false;
+            int usedByAnotherMeeting = 0;
             if (lmsCompany.EnableMeetingReuse)
             {
-                usedByAnotherMeeting = LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany,
+                usedByAnotherMeeting = LmsCourseMeetingModel.CountByCompanyAndScoId(lmsCompany,
                     lmsCourseMeeting.GetMeetingScoId(),
                     lmsCourseMeeting.Id);
                 scoIdReused = lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value;
             }
 
-            if (!usedByAnotherMeeting && type == LmsMeetingType.OfficeHours)
+            if (usedByAnotherMeeting == 0 && type == LmsMeetingType.OfficeHours)
             {
                 var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(lmsCourseMeeting.OfficeHours.Id);
-                usedByAnotherMeeting = coursesWithThisOfficeHours.Any(c => c.Id != lmsCourseMeeting.Id);
+                usedByAnotherMeeting = coursesWithThisOfficeHours.Count(c => c.Id != lmsCourseMeeting.Id);
             }
 
             sw.Stop();
