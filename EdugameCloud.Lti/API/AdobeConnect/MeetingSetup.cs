@@ -1607,7 +1607,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             int usedByAnotherMeeting = 0;
             if (lmsCompany.EnableMeetingReuse)
             {
-                usedByAnotherMeeting = LmsCourseMeetingModel.CountByCompanyAndScoId(lmsCompany,
+                usedByAnotherMeeting = LmsCourseMeetingModel.CourseCountByCompanyAndScoId(lmsCompany,
                     lmsCourseMeeting.GetMeetingScoId(),
                     lmsCourseMeeting.Id);
                 scoIdReused = lmsCourseMeeting.Reused.HasValue && lmsCourseMeeting.Reused.Value;
@@ -1616,7 +1616,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (usedByAnotherMeeting == 0 && type == LmsMeetingType.OfficeHours)
             {
                 var coursesWithThisOfficeHours = this.LmsCourseMeetingModel.GetAllByOfficeHoursId(lmsCourseMeeting.OfficeHours.Id);
-                usedByAnotherMeeting = coursesWithThisOfficeHours.Count(c => c.Id != lmsCourseMeeting.Id);
+                usedByAnotherMeeting = coursesWithThisOfficeHours.Where(c => c.Id != lmsCourseMeeting.Id).Select(x => x.CourseId).Distinct().Count();
             }
 
             sw.Stop();

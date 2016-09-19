@@ -65,7 +65,7 @@
             return this.Repository.FindOne(defaultQuery).Value != null;
         }
 
-        public int CountByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
+        public int CourseCountByCompanyAndScoId(LmsCompany lmsCompany, string scoId, int excludedLmsCourseMeetingId)
         {
             if (lmsCompany == null)
                 throw new ArgumentNullException(nameof(lmsCompany));
@@ -73,7 +73,11 @@
                 throw new ArgumentException("scoId can not be empty", nameof(scoId));
 
             var defaultQuery = GetByCompanyAndScoIdQuery(lmsCompany, scoId, excludedLmsCourseMeetingId);
-            var rowCountQuery = defaultQuery.ToRowCountQuery();
+
+            var rowCountQuery = defaultQuery
+                .Select(Projections.Distinct(Projections.Property<LmsCourseMeeting>(s => s.CourseId)))
+                .TransformUsing(Transformers.DistinctRootEntity)
+                .ToRowCountQuery();
             return this.Repository.FindOne<int>(rowCountQuery).Value;
         }
 
