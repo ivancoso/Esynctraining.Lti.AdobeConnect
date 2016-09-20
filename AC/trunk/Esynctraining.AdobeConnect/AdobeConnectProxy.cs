@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.Core.Logging;
@@ -6,6 +7,7 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Extensions;
 
 namespace Esynctraining.AdobeConnect
 {
@@ -13,7 +15,7 @@ namespace Esynctraining.AdobeConnect
     {
         private readonly AdobeConnectProvider _provider;
         private readonly ILogger _logger;
-
+        private const int ChunkSize = 50;
 
         public string ApiUrl { get; private set; }
 
@@ -269,9 +271,23 @@ namespace Esynctraining.AdobeConnect
         {
             if (principalIdsToFind == null)
                 throw new ArgumentNullException(nameof(principalIdsToFind));
-
-            return Execute(() => { return _provider.GetAllByPrincipalIds(principalIdsToFind); },
-                string.Join(";", principalIdsToFind));
+            
+            var allItems = new List<Principal>();
+            StatusInfo status = null;
+            foreach (var chunk in principalIdsToFind.Chunk(ChunkSize))
+            {
+                var chunkResult = Execute(() => _provider.GetAllByPrincipalIds(chunk.ToArray()), string.Join(";", chunk));
+                if (!chunkResult.Success)
+                {
+                    var message = $"provider GetAllByPrincipalIds failed for a chunk of users { string.Join(",", principalIdsToFind) }";
+                    throw new InvalidOperationException(message);
+                }
+                var items = chunkResult.Values;
+                allItems.AddRange(items);
+                status = chunkResult.Status;
+            }
+            var result = new PrincipalCollectionResult(status, allItems);
+            return result;
         }
 
         public PrincipalInfoResult GetPrincipalInfo(string principalId)
