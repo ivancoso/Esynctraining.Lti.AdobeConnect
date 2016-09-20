@@ -93,10 +93,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
         private UserInfo TryLogin(IAdobeConnectAccess credentials, out string sessionToken)
         {
             string apiUrl = credentials.Domain + "/api/xml";
-            var connectionDetails = new ConnectionDetails
-            {
-                ServiceUrl = apiUrl,
-            };
+            var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
 
             provider.Logout();

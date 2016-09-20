@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.Entities;
@@ -8,7 +9,10 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.PermissionProviders
     {
         protected bool UserIsSpecialACGroupParticipant(AdobeConnectProvider provider, UserInfo user, string groupType)
         {
-            var group = provider.GetGroupsByType(groupType);
+            var enumGroupType = (PrincipalType)Enum.Parse(typeof(PrincipalType), groupType);
+            if (enumGroupType == null) 
+                throw new InvalidOperationException("Can't parse groupType, should be convertable to PrincipalType");
+            var group = provider.GetGroupsByType(enumGroupType);
             if (group.Item1.Code != StatusCodes.ok)
                 return false;
 
