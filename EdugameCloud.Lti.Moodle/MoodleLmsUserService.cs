@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API;
 using EdugameCloud.Lti.API.Moodle;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.Core.Domain;
@@ -15,6 +16,11 @@ namespace EdugameCloud.Lti.Moodle
         public MoodleLmsUserService(ILogger logger, IMoodleApi moodleApi) : base(logger)
         {
             this.moodleApi = moodleApi;
+        }
+
+        public override bool CanRetrieveUsersFromApiForCompany(LmsCompany lmsCompany)
+        {
+            return lmsCompany.AdminUser != null || !string.IsNullOrEmpty(lmsCompany.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken));
         }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,

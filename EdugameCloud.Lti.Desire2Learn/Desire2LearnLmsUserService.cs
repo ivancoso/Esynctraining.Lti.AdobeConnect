@@ -29,6 +29,30 @@ namespace EdugameCloud.Lti.Desire2Learn
             this.settings = settings;
         }
 
+        public override LmsUserDTO GetUser(LmsCompany lmsCompany, string lmsUserId, int courseId, out string error, object extraData = null)
+        {
+            
+            if (!CanRetrieveUsersFromApiForCompany(lmsCompany))
+            {
+                var param = extraData as LtiParamDTO;
+
+                var isCurrentUserAndAdmin =
+                    param != null
+                    && param.lms_user_id == lmsUserId
+                    && ((param.roles != null && param.roles.Contains("Administrator"))
+                        || (param.ext_d2l_role != null && param.ext_d2l_role.ToLower().Contains("administrator")));
+
+                //if current user is admin but not allowed to call api - process 'error' parameter in call stack
+                if (isCurrentUserAndAdmin)
+                {
+                    error = $"[GetD2LUsers] AdminUser is not set for LmsCompany with id={lmsCompany.Id}";
+                    return null;
+                }
+            }
+
+            return GetUsersOldStyle(lmsCompany, lmsUserId, courseId, out error, extraData)
+                .FirstOrDefault(u => u.id == lmsUserId);
+        }
 
         public override OperationResultWithData<List<LmsUserDTO>> GetUsers(LmsCompany lmsCompany,
             LmsUser lmsUser, int courseId, object extraData = null)

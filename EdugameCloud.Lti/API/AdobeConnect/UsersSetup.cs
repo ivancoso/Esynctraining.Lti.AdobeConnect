@@ -274,6 +274,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;
                 var lmsUserService = LmsFactory.GetUserService((LmsProviderEnum) lmsCompany.LmsProviderId);
+                //d2l service returns not-empty error parameter in some cases, but it's acceptable here
                 LmsUserDTO user = lmsUserService.GetUser(lmsCompany,
                     param.lms_user_id,
                     param.course_id,
