@@ -413,7 +413,7 @@
             //    return new ScoInfoResult(CreateStatusInfo(StatusCodes.invalid, StatusSubCodes.format, new ArgumentNullException("scoUpdateItem", "FolderId must be set to create new item")));
             //}
 
-            var commandParams = QueryStringBuilder.EntityToQueryString(meetingUpdateItem, true);
+            var commandParams = QueryStringBuilder.EntityToQueryString(meetingUpdateItem, isUpdate);
 
             StatusInfo status;
             var doc = this.requestProcessor.Process(Commands.Sco.Update, commandParams, out status);
