@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AdobeConnect.OwinSecurity</id>
-    <version>1.0.0.6</version>
+    <version>1.0.0.7</version>
     <title>Esynctraining.AdobeConnect.OwinSecurity</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -14,7 +14,7 @@
     <tags>ac owin</tags>
     <releaseNotes>fixed Refresh Token Provider(setting of new claim for AC Session)</releaseNotes>
     <dependencies>
-      <dependency id="Esynctraining.AdobeConnect" version="1.0.0.3" />
+      <dependency id="Esynctraining.AdobeConnect" version="1.0.0.33" />
       <dependency id="ConnectExtensions.Services.Client" version="1.0.0.2" />
       <dependency id="Microsoft.Owin.Security.OAuth" version="3.0.1" />
       <dependency id="Microsoft.AspNet.Identity.Core" version="2.2.1" />
