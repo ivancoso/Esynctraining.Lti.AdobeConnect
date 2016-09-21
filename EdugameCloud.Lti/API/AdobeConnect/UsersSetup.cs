@@ -108,7 +108,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         /// </returns>
         public void AddUserToMeetingHostsGroup(IAdobeConnectProxy provider, string principalId)
         {
-            provider.AddToGroupByType(principalId, "live-admins");
+            provider.AddToGroupByType(principalId, PrincipalType.live_admins);
         }
 
         /// <summary>
@@ -127,13 +127,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             if (principalIds.Any())
             {
-                var groupPrincipal = provider.GetGroupsByType("live-admins").Values.Single();
+                var groupPrincipal = provider.GetGroupsByType(PrincipalType.live_admins).Values.Single();
                 var groupParticipants = provider.GetGroupUsers(groupPrincipal.PrincipalId);
                 var usersToAdd = principalIds.Where(x => groupParticipants.Values.All(gp => gp.PrincipalId != x));
                 try
                 {
                     if(usersToAdd.Any())
-                        provider.AddToGroupByType(usersToAdd, "live-admins");
+                        provider.AddToGroupByType(usersToAdd, PrincipalType.live_admins);
                 }
                 catch (AdobeConnectException ex)
                 {
@@ -144,7 +144,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         {
                             try
                             {
-                                provider.AddToGroupByType(principal, "live-admins");
+                                provider.AddToGroupByType(principal, PrincipalType.live_admins);
                             }
                             catch (AdobeConnectException)
                             {

@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.Controllers
 
         private bool IsCurrentUserAcAdministrator(IAdobeConnectProxy ac, string principalId)
         {
-            var grp = ac.GetPrimaryGroupsByType("admins");
+            var grp = ac.GetPrimaryGroupsByType(PrincipalType.admins);
             if (grp.Status.Code != StatusCodes.ok)
             {
                 return false;

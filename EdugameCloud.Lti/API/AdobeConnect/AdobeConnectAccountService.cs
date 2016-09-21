@@ -80,9 +80,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
-            var group = provider.GetGroupsByType("live-admins");
+            var group = provider.GetGroupsByType(PrincipalType.live_admins);
             if (group.Status.Code != StatusCodes.ok)
                 throw new InvalidOperationException("AC.GetGroupsByType error");
 

@@ -176,12 +176,8 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error(Resources.Messages.MeetingNotFound));
                 }
 
-                var seminar = ac.GetScoInfo(meeting.ScoId).ScoInfo;
-                SeminarLicenseSco license = _seminarService.GetSharedOrUserSeminarLicenses(ac).First(x => x.ScoId == seminar.FolderId);
-                
                 seminarSessionDto.seminarRoomId = meeting.ScoId;
-                if (license.QuotaId == "concurrent-user-per-meeting-quota")
-                    seminarSessionDto.ExpectedLoad = license.Quota.Value;
+                ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
 
                 var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;
                 var meetingUpdateResult = _seminarService.SaveSeminarSession(seminarSessionDto, ac, timeZone);
@@ -192,6 +188,26 @@ namespace EdugameCloud.Lti.Controllers
                 string errorMessage = GetOutputErrorMessage("SaveSeminarSession", credentials, ex);
                 return Json(OperationResult.Error(errorMessage));
             }
+        }
+
+        private void ProcessQuota(IAdobeConnectProxy ac, string meetingScoId, SeminarSessionDto seminarSessionDto)
+        {
+            var seminar = ac.GetScoInfo(meetingScoId).ScoInfo;
+            var license = _seminarService.GetSharedSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
+            if (license != null)
+            {
+                if (license.QuotaId == "concurrent-user-per-meeting-quota")
+                    seminarSessionDto.ExpectedLoad = license.Quota.Value;
+                return;
+            }
+
+            // NOTE: it looks like we do not support users licenses for seminars.
+            var userLicense = _seminarService.GetUserSeminarLicenses(ac).FirstOrDefault(x => x.ScoId == seminar.FolderId);
+
+            if (userLicense == null)
+                throw new InvalidOperationException($"Not found seminar license for seminar '{seminar.Name}'({seminar.ScoId}).");
+            if (userLicense.QuotaId == "concurrent-user-per-meeting-quota")
+                seminarSessionDto.ExpectedLoad = userLicense.Quota.Value;
         }
 
         [HttpPost]

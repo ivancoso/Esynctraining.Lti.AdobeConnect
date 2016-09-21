@@ -209,7 +209,7 @@ namespace EdugameCloud.Lti.Controllers
                 Login = login,
                 SendEmail = user.sendEmail,
                 HasChildren = false,
-                Type = PrincipalTypes.user,
+                Type = PrincipalType.user,
                 Password = user.password,
                 //Name = NOTE: name is used for groups ONLY!!
             };

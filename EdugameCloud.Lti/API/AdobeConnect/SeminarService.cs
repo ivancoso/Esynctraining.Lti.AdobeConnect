@@ -18,6 +18,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class SeminarService : Esynctraining.AdobeConnect.SeminarService, ISeminarService
     {
+        //private class LicenseDto
+        //{
+        //    public string ScoId { get; set; }
+
+        //    public string Name { get; set; }
+
+        //}
+
+
         private UsersSetup UsersSetup
         {
             get { return IoC.Resolve<UsersSetup>(); }
@@ -51,8 +60,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var licenseDtos = new List<SeminarLicenseDto>();
 
-            var licenses = GetSharedOrUserSeminarLicenses(acProxy).Where(x => !x.IsExpired);
-            foreach (var license in licenses)
+            //var licenses = new List<LicenseDto>();
+            var sharedLicenses = GetSharedSeminarLicenses(acProxy).Where(x => !x.IsExpired);
+            //licenses.AddRange(sharedLicenses.Select(x => new LicenseDto { ScoId = x.ScoId, Name = x.Name }));
+            //var userLicenses = GetUserSeminarLicenses(acProxy).Where(x => x.Quota != 0);
+            //licenses.AddRange(sharedLicenses.Select(x => new LicenseDto { ScoId = x.ScoId, Name = x.Name }));
+
+            foreach (var license in sharedLicenses)
             {
                 var seminars = GetSeminars(license.ScoId, acProxy);
                 var rooms = new List<SeminarDto>();

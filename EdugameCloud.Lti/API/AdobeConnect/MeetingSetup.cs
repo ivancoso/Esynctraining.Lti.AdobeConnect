@@ -1561,7 +1561,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             // TRICK:  PermissionStringValue acn contains specialpermission value
             // denied!! not in MeetingPermissionId enum
-            MeetingPermissionInfo publicAccessPermission = permission != null ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && !string.IsNullOrWhiteSpace(x.PermissionStringValue)) : null;
+            MeetingPermissionInfo publicAccessPermission = permission != null 
+                ? permission.FirstOrDefault(x => x.PrincipalId == "public-access" && !string.IsNullOrWhiteSpace(x.PermissionStringValue)) 
+                : null;
             string officeHoursString = null;
 
             if (type == LmsMeetingType.OfficeHours)

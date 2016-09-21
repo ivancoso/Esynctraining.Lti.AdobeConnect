@@ -129,7 +129,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 LastName = lastName,
                 Name = login,
                 Login = login,
-                Type = PrincipalTypes.user,
+                Type = PrincipalType.user,
             };
 
             PrincipalResult pu = provider.PrincipalUpdate(setup, false, false);
