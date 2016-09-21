@@ -7,6 +7,8 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlAttribute("permission-id")]
         public PermissionId PermissionId { get; set; }
 
+        public string PermissionStringValue { get; set; }
+
     }
 
 }

@@ -26,7 +26,7 @@ namespace Esynctraining.AC.Provider.Entities
             Name = value.Name;
             Description = value.Description;
 
-            PermissionStringValue = value.PermissionId.ToString();
+            PermissionStringValue = value.PermissionStringValue;
 
             MeetingPermissionId val;
             if (Enum.TryParse<MeetingPermissionId>(PermissionStringValue, out val))

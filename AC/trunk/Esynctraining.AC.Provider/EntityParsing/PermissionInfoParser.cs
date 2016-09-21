@@ -26,15 +26,16 @@
             try
             {
                 return new PermissionInfo
-                           {
-                               PrincipalId = xml.SelectAttributeValue("principal-id"),
-                               PermissionId = EnumReflector.ReflectEnum(xml.SelectAttributeValue("permission-id"), PermissionId.none),
-                               IsPrimary = xml.ParseAttributeBool("is-primary"),
-                               HasChildren = xml.ParseAttributeBool("has-children"),
-                               Login = xml.SelectSingleNodeValue("login/text()"),
-                               Name = xml.SelectSingleNodeValue("name/text()"),
-                               Description = xml.SelectSingleNodeValue("description/text()")
-                           };
+                {
+                    PrincipalId = xml.SelectAttributeValue("principal-id"),
+                    PermissionStringValue = xml.SelectAttributeValue("permission-id"),
+                    PermissionId = EnumReflector.ReflectEnum(xml.SelectAttributeValue("permission-id"), PermissionId.none),
+                    IsPrimary = xml.ParseAttributeBool("is-primary"),
+                    HasChildren = xml.ParseAttributeBool("has-children"),
+                    Login = xml.SelectSingleNodeValue("login/text()"),
+                    Name = xml.SelectSingleNodeValue("name/text()"),
+                    Description = xml.SelectSingleNodeValue("description/text()")
+                };
             }
             catch (Exception ex)
             {
