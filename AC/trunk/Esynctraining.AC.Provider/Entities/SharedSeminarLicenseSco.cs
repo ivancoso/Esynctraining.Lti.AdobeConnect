@@ -8,7 +8,7 @@ namespace Esynctraining.AC.Provider.Entities
     {
         public SharedSeminarLicenseSco()
         {
-            this.Type = ScoType.not_set;
+            //this.Type = ScoType.not_set;
         }
 
         [XmlElement("acl-id")]
@@ -56,8 +56,8 @@ namespace Esynctraining.AC.Provider.Entities
         [XmlElement("sco-id")]
         public string ScoId { get; set; }
 
-        [XmlElement("type")]
-        public ScoType Type { get; set; }
+        //[XmlElement("type")]
+        //public ScoType Type { get; set; }
 
         [XmlElement("url-path")]
         public string UrlPath { get; set; }

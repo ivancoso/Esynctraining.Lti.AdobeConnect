@@ -2,6 +2,7 @@
 using System.Xml;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.Extensions;
+using Esynctraining.AC.Provider.Utils;
 
 namespace Esynctraining.AC.Provider.EntityParsing
 {
@@ -31,7 +32,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                 Quota = xml.ParseNodeInt("quota/text()"),
                 QuotaId = xml.SelectSingleNodeValue("quota-id/text()"),
                 ScoId = xml.SelectSingleNodeValue("sco-id/text()"),
-                Type = xml.ParseAttributeEnum("type", ScoType.not_set),
+                //Type = EnumReflector.ReflectEnum(xml.SelectSingleNodeValue("type/text()"), ScoType.not_set),
                 UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
             };
         }

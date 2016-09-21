@@ -11,7 +11,7 @@ namespace Esynctraining.AC.Provider.Entities
         public int? Quota { get; set; }
         public string QuotaId { get; set; }
         public string ScoId { get; set; }
-        public ScoType Type { get; set; }
+        //public ScoType Type { get; set; } can be  <type>-1</type>
         public string UrlPath { get; set; }
     }
 }
