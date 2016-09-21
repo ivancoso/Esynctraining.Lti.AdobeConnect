@@ -661,7 +661,7 @@
 
             var trios = new List<string>(values.Count());
             var paramBuilder = new StringBuilder();
-            foreach (IPermissionUpdateTrio trio in values)
+            foreach (IPermissionUpdateTrio trio in values.Where(x => x.Permission != PermissionId.none))
             {
                 paramBuilder.Length = 0;
                 paramBuilder.AppendFormat(CommandParams.Permissions.Update, trio.ScoId, trio.PrincipalId, trio.Permission.ToXmlString());

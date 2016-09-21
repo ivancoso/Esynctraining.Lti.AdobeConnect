@@ -17,6 +17,8 @@ namespace Esynctraining.AC.Provider.Entities
             {
                 switch (PermissionId)
                 {
+                    case MeetingPermissionId.none:
+                        return Entities.PermissionId.none;
                     case MeetingPermissionId.host:
                         return Entities.PermissionId.host;
                     case MeetingPermissionId.mini_host:
@@ -32,7 +34,7 @@ namespace Esynctraining.AC.Provider.Entities
                     //case MeetingPermissionId.publish:
                     //    return Entities.PermissionId.publish;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"PermissionId '{PermissionId}' is not supported value.");
                 }
             }
         }
