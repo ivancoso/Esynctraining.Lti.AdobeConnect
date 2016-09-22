@@ -29,7 +29,7 @@ namespace Esynctraining.AC.Provider.Entities
             PermissionStringValue = value.PermissionStringValue;
 
             MeetingPermissionId val;
-            if (Enum.TryParse<MeetingPermissionId>(PermissionStringValue, out val))
+            if (Enum.TryParse<MeetingPermissionId>(PermissionStringValue.Replace("-", "_"), out val))
                 PermissionId = val;
             else
                 PermissionId = MeetingPermissionId.none;
