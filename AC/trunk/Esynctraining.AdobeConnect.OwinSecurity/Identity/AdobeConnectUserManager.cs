@@ -42,10 +42,12 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                 string acDomain = parts[1];
                 string acLogin = parts[2];
 
-                var ceClient = new PublicLicenseServiceProxy();
                 var licenseProductId = int.Parse(ConfigurationManager.AppSettings["LicenseProductId"] as string);
-                string[] acDomains =
-                    ceClient.GetAdobeConnectDomainsByCompanyToken(companyToken, licenseProductId).Result;
+
+                string[] acDomains = licenseProductId == 48 // NOTE: hardcoded in DB MP4 product
+                    ? new CompanySubscriptionServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken).Result
+                    : new PublicLicenseServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken, licenseProductId).Result;
+
                 if (!acDomains.Any(x => x.Equals(acDomain, StringComparison.OrdinalIgnoreCase)))
                 {
                     // TODO: add to log that AC domain is not valid for companyToken!!
