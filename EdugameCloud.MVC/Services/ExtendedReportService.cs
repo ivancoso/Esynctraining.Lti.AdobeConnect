@@ -70,7 +70,7 @@ namespace EdugameCloud.MVC.Services
                                     }
                                     answerRows.Add(distractor.Id, endRow);
                                     ws.Cells[endRow, 3].Value = Convert.ToString((char)answerOrder);
-                                    ws.Cells[endRow++, 4].Value = distractor.DistractorName;
+                                    ws.Cells[endRow++, 4].Value = Regex.Replace(distractor.DistractorName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ");
                                     answerOrder++;
                                 }
                                 break;
