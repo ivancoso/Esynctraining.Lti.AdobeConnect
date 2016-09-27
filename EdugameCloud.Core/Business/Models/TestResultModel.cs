@@ -250,6 +250,7 @@ namespace EdugameCloud.Core.Business.Models
             var dto = new ExtendedReportDto()
             {
                 SubModuleItemType = SubModuleItemType.Quiz
+            };
             
             var qr = GetTestResultsByAcSessionId(acSessionId);
             dto.ReportResults = qr.Select(x => new ExtendedReportResultDto
