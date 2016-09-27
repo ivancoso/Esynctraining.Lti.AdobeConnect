@@ -24,18 +24,18 @@ namespace EdugameCloud.MVC.Services
                 {
                     //Create the worksheet
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add($"Session #{sessionNumber++}");
-                    ws.Cells[1, 1].Value = "Test title";
+                    ws.Cells[1, 1].Value = "Test/Survey title";
                     ws.Cells[1, 2, 1, 4].Merge = true;
 
                     var questionsCount = sessionResult.Questions.Count();
-                    ws.Cells[1, 2].Value = $"{sessionResult.QuizName} - {questionsCount} question{(questionsCount == 1 ? "" : "s")}";
+                    ws.Cells[1, 2].Value = $"{sessionResult.Name} - {questionsCount} question{(questionsCount == 1 ? "" : "s")}";
                     ws.Cells[2, 4].Value = $"{questionsCount} question{(questionsCount == 1 ? "" : "s")}";
                     ws.Cells[2, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
                     //Set Pattern for the background to Solid
                     ws.Cells[2, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
                     int startUserPartColumn = StartUserColumn;
 
-                    foreach (var quizPlayerDTO in sessionResult.QuizResults)
+                    foreach (var quizPlayerDTO in sessionResult.ReportResults)
                     {
                         ws.Cells[2, startUserPartColumn++].Value = quizPlayerDTO.ParticipantName;
                     }
@@ -53,6 +53,7 @@ namespace EdugameCloud.MVC.Services
                         List<int> correctRows = new List<int>();
                         startUserPartColumn = StartUserColumn;
                         int answerOrder = Convert.ToInt32('a');
+                        var answerRows = new Dictionary<int, int>(); //key - distractorid, value - row
                         switch ((QuestionTypeEnum)q.QuestionType.Id)
                         {
                             case QuestionTypeEnum.SingleMultipleChoiceText:
@@ -67,12 +68,13 @@ namespace EdugameCloud.MVC.Services
 
                                         correctRows.Add(endRow);
                                     }
-
+                                    answerRows.Add(distractor.Id, endRow);
                                     ws.Cells[endRow, 3].Value = Convert.ToString((char)answerOrder);
                                     ws.Cells[endRow++, 4].Value = distractor.DistractorName;
                                     answerOrder++;
                                 }
                                 break;
+                            // not used, question types are filtered earlier
                             case QuestionTypeEnum.TrueFalse:
                                 ws.Cells[endRow, 3].Value = Convert.ToString((char)answerOrder);
                                 ws.Cells[endRow++, 4].Value = "true";
@@ -94,33 +96,58 @@ namespace EdugameCloud.MVC.Services
 
                         }
                         ws.Cells[endRow++, 3].Value = "No Answer";
-                        ws.Cells[endRow++, 3].Value = "Score";
-                        if (startUserRowCorrect < startRow)
+                        if (sessionResult.SubModuleItemType == SubModuleItemType.Quiz)
                         {
-                            startUserRowCorrect = endRow - 1; //Score
-                            correctRows.Add(startUserRowCorrect);
+                            ws.Cells[endRow++, 3].Value = "Score";
+                            if (startUserRowCorrect < startRow)
+                            {
+                                startUserRowCorrect = endRow - 1; //Score
+                                correctRows.Add(startUserRowCorrect);
+                            }
                         }
 
-                        foreach (var qr in sessionResult.QuizResults)
+                        foreach (var qr in sessionResult.ReportResults)
                         {
                             var qqr =
                                 qr.Results.FirstOrDefault(x => x.QuestionId == q.Id);
-                            if (qqr != null)
+
+                            switch (sessionResult.SubModuleItemType)
                             {
-                                ws.Cells[startUserRowCorrect, startUserPartColumn].Value = qqr.IsCorrect ? 1 : 0;
-                            }
-                            else
-                            {
-                                ws.Cells[endRow - 2, startUserPartColumn].Value = 0; // No Answer
+                                case SubModuleItemType.Quiz:
+                                    if (qqr != null)
+                                    {
+                                        ws.Cells[startUserRowCorrect, startUserPartColumn].Value = qqr.IsCorrect ? 1 : 0;
+                                    }
+                                    else
+                                    {
+                                        ws.Cells[endRow - 2, startUserPartColumn].Value = 0; // No Answer
+                                    }
+                                    foreach (var correctRow in correctRows)
+                                    {
+                                        ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                        ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
+                                    }
+                                    break;
+                                case SubModuleItemType.Survey:
+                                    if (!qqr.DistractorIds.Any())
+                                    {
+                                        ws.Cells[endRow - 1, startUserPartColumn].Value = "X"; // No Answer
+
+                                    }
+                                    else
+                                    {
+                                        foreach (var distractorId in qqr.DistractorIds)
+                                        {
+                                            if (answerRows.ContainsKey(distractorId))
+                                            {
+                                                ws.Cells[answerRows[distractorId], startUserPartColumn].Value = "X";
+                                            }
+                                        }
+                                    }
+                                    break;
                             }
 
                             startUserPartColumn++;
-
-                            foreach (var correctRow in correctRows)
-                            {
-                                ws.Cells[correctRow, 4].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                ws.Cells[correctRow, 4].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(146, 208, 80));
-                            }
                         }
 
                         ws.Cells[startRow, 1, endRow - 1, 1].Merge = true;
@@ -135,19 +162,23 @@ namespace EdugameCloud.MVC.Services
                         startRow = endRow;
                     }
 
-                    ws.Cells[2, StartUserColumn, 2, StartUserColumn + sessionResult.QuizResults.Count()].AutoFitColumns();
+                    ws.Cells[2, StartUserColumn, 2, StartUserColumn + sessionResult.ReportResults.Count()].AutoFitColumns();
                     ws.Column(4).Width = 70.0;
                     ws.Column(2).Width = 50.0;
 
-                    //footer
-                    startRow++;
-                    ws.Cells[startRow, 4].Value = "# Wrong";
-                    ws.Cells[startRow + 1, 4].Value = "Score";
-
-                    for (var i = 0; i < sessionResult.QuizResults.Count(); i++)
+                    if (sessionResult.SubModuleItemType == SubModuleItemType.Quiz)
                     {
-                        ws.Cells[startRow, StartUserColumn + i].FormulaR1C1 = $"={questionsCount}-SUM(R3C:R[-1]C)";
-                        ws.Cells[startRow + 1, StartUserColumn + i].FormulaR1C1 = $"=ROUNDUP(({questionsCount}-R[-1]C)/{questionsCount}*100, 0)";
+                        //footer
+                        startRow++;
+                        ws.Cells[startRow, 4].Value = "# Wrong";
+                        ws.Cells[startRow + 1, 4].Value = "Score";
+
+                        for (var i = 0; i < sessionResult.ReportResults.Count(); i++)
+                        {
+                            ws.Cells[startRow, StartUserColumn + i].FormulaR1C1 = $"={questionsCount}-SUM(R3C:R[-1]C)";
+                            ws.Cells[startRow + 1, StartUserColumn + i].FormulaR1C1 =
+                                $"=ROUNDUP(({questionsCount}-R[-1]C)/{questionsCount}*100, 0)";
+                        }
                     }
                 }
 

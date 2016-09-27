@@ -995,29 +995,11 @@ namespace EdugameCloud.MVC.Controllers
             return null;
         }
 
-        /// <summary>
-        /// The Quiz report.
-        /// </summary>
-        /// <param name="userId">
-        /// user id
-        /// </param>
-        /// <param name="sessionId">
-        /// session id
-        /// </param>
-        /// <param name="format">
-        /// The format.
-        /// </param>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ActionResult"/>.
-        /// </returns>
         [HttpGet]
         [OutputCache(Duration = 0, NoStore = true, Location = OutputCacheLocation.None)]
         [ActionName("survey-report")]
         [CustomAuthorize]
-        public virtual ActionResult GetSurveyReport(int userId, int? sessionId, string format = "pdf", string type = "full")
+        public virtual ActionResult GetSurveyReport(int userId, int? sessionId, string format = "pdf", string type = "full", bool detailed = false)
         {
             var cu = this.CurrentUser;
             if (cu != null)
@@ -1037,7 +1019,15 @@ namespace EdugameCloud.MVC.Controllers
                 {
                     outputName += DateTime.Today.ToString("MM-dd-yyyy");
                 }
-
+                if (detailed)
+                {
+                    var data = surveyResultModel.GetExtendedReportSurveyReportData(sessionId.Value);
+                    var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
+                    return this.File(
+                        bytes,
+                        "application/vnd.ms-excel",
+                        string.Format("{0}.{1}", outputName, "xlsx"));
+                }
                 var sessionResults = userSessions.ToDictionary(
                     s => s,
                     s => this.surveyResultModel.GetSurveyResultByACSessionId(s.acSessionId, s.subModuleItemId));

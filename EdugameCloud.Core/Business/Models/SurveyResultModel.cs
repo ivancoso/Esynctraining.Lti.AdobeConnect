@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 using EdugameCloud.Core.Domain.DTO;
 using EdugameCloud.Core.Domain.Entities;
@@ -177,6 +179,44 @@ namespace EdugameCloud.Core.Business.Models
             }
 
             return res;
+        }
+
+        public IEnumerable<SurveyResult> GetSurveyResultsByAcSessionId(int adobeConnectSessionId)
+        {
+            var query =
+                new DefaultQueryOver<SurveyResult, int>().GetQueryOver().Where(x => x.ACSessionId == adobeConnectSessionId)
+                //.Fetch(x => x.Quiz).Eager
+                .Fetch(x => x.Results).Eager
+                .TransformUsing(Transformers.DistinctRootEntity);
+            return this.Repository.FindAll(query);
+        }
+
+        public ExtendedReportDto GetExtendedReportSurveyReportData(int acSessionId)
+        {
+            var dto = new ExtendedReportDto()
+            {
+                SubModuleItemType = SubModuleItemType.Survey
+            };
+            IEnumerable<SurveyResult> sr = GetSurveyResultsByAcSessionId(acSessionId);
+            dto.ReportResults = sr.Select(x => new ExtendedReportResultDto
+            {
+                Id = x.Id,
+                ParticipantName = x.ParticipantName,
+                Results = x.Results.Select(r => new QuestionResultDto
+                {
+                    QuestionId = r.QuestionRef.Id,
+                    Answer = String.Join(";", r.Answers.Select(a => a.Value)),
+                    DistractorIds = r.Answers.Select(a => a.SurveyDistractorAnswer.Id)
+                }).ToList()
+            });
+
+            if (sr.Any()) //survey must be the same for all quizResults with the same acSession
+            {
+                dto.Name = sr.First().Survey.SurveyName;
+                dto.Questions = sr.First().Survey.SubModuleItem.Questions;
+            }
+
+            return dto;
         }
 
     }

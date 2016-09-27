@@ -363,7 +363,7 @@ namespace EdugameCloud.MVC.Controllers
             return callInfo;
         }
 
-        public override System.Web.Mvc.ActionResult GetSurveyReport(int userId, int? sessionId, string format, string type)
+        public override System.Web.Mvc.ActionResult GetSurveyReport(int userId, int? sessionId, string format, string type, bool detailed)
         {
             var callInfo = new T4MVC_ActionResult(Area, Name, ActionNames.GetSurveyReport);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "userId", userId);

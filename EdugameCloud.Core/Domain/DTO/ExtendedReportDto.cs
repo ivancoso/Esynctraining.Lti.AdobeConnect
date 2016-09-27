@@ -5,9 +5,10 @@ namespace EdugameCloud.Core.Domain.DTO
 {
     public class ExtendedReportDto
     {
-        public string QuizName { get; set; }
+        public SubModuleItemType SubModuleItemType { get; set; }
+        public string Name { get; set; }
 
-        public IEnumerable<ExtendedReportResultDto> QuizResults { get; set; }
+        public IEnumerable<ExtendedReportResultDto> ReportResults { get; set; }
 
         public IEnumerable<Question> Questions { get; set; }
     }

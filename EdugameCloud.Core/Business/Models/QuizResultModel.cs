@@ -181,9 +181,12 @@
 
         public ExtendedReportDto GetExtendedReportQuizReportData(int acSessionId)
         {
-            var dto = new ExtendedReportDto();
+            var dto = new ExtendedReportDto
+            {
+                SubModuleItemType = SubModuleItemType.Quiz
+            };
             var qr = GetQuizResultsByAcSessionId(acSessionId);
-            dto.QuizResults = qr.Select(x => new ExtendedReportResultDto
+            dto.ReportResults = qr.Select(x => new ExtendedReportResultDto
             {
                 Id = x.Id,
                 ParticipantName = x.ParticipantName,
@@ -196,7 +199,7 @@
 
             if (qr.Any()) //quiz must be the same for all quizResults with the same acSession
             {
-                dto.QuizName = qr.First().Quiz.QuizName;
+                dto.Name = qr.First().Quiz.QuizName;
                 dto.Questions = qr.First().Quiz.SubModuleItem.Questions;
             }
 
