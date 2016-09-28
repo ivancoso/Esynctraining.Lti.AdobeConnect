@@ -1009,7 +1009,7 @@
                 if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
                     bool currentUserIsAdmin = IsAdminRole(param);
-                    if (!currentUserIsAdmin && provider.ToLower() == LmsProviderNames.Brightspace) // todo: review. providerKey is guid
+                    if (!currentUserIsAdmin && provider.ToLower() == LmsProviderNames.Brightspace)
                     {
                         if (!string.IsNullOrEmpty(param.ext_d2l_role))
                         {
