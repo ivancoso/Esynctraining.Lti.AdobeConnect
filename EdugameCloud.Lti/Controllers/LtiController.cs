@@ -243,7 +243,7 @@
                         return this.View("Error");
                     }
 
-                    return AuthCallbackSave(providerKey, token, user.Identifier, username, "Error");
+                    return AuthCallbackSave(providerKey, provider, token, user.Identifier, username, "Error");
                 }
                 else
                 {
@@ -258,7 +258,7 @@
                                     throw new InvalidOperationException("[Canvas Authentication Error]. Please login to Canvas.");
                             }
 
-                            return AuthCallbackSave(providerKey,
+                            return AuthCallbackSave(providerKey, provider,
                                 result.ExtraData.ContainsKey("accesstoken")
                                     ? result.ExtraData["accesstoken"]
                                     : null,
@@ -795,6 +795,7 @@
             }
             catch (Core.WarningMessageException ex)
             {
+                logger.WarnFormat("[WarningMessageException] param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -952,7 +953,7 @@
             }
         }
 
-        private ActionResult AuthCallbackSave(string providerKey, string token, string userId, string username, string viewName)
+        private ActionResult AuthCallbackSave(string providerKey, string provider, string token, string userId, string username, string viewName)
         {
             LmsUser lmsUser = null;
             LmsUserSession session = GetSession(providerKey);
@@ -961,7 +962,7 @@
             if (!string.IsNullOrEmpty(token))
             {
                 string userName = username;
-                if (string.IsNullOrWhiteSpace(username) && (providerKey.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
+                if (string.IsNullOrWhiteSpace(username) && (provider.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
                 {
                     logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
                     LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
@@ -1007,8 +1008,8 @@
             {
                 if (company.AdminUser == null)//this.IsAdminRole(providerKey))
                 {
-                    bool currentUserIsAdmin = false;
-                    if (providerKey.ToLower() == LmsProviderNames.Brightspace) // todo: review. providerKey is guid
+                    bool currentUserIsAdmin = IsAdminRole(param);
+                    if (!currentUserIsAdmin && provider.ToLower() == LmsProviderNames.Brightspace) // todo: review. providerKey is guid
                     {
                         if (!string.IsNullOrEmpty(param.ext_d2l_role))
                         {
@@ -1039,10 +1040,6 @@
                             currentUserIsAdmin = enrollments != null && enrollments.Items != null
                                                  && enrollments.Items.Any(x => x.Role.Name.ToLower().Contains("admin"));
                         }
-                    }
-                    else
-                    {
-                        currentUserIsAdmin = IsAdminRole(param);
                     }
 
                     if (currentUserIsAdmin)
