@@ -74,54 +74,54 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
         //    }
         //}
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetUserContent(string userLogin)
-        {
-            if (string.IsNullOrWhiteSpace(userLogin))
-                throw new ArgumentException("Non-empty value expected", nameof(userLogin));
+        //public async Task<OperationResultWithData<IEnumerable<TDto>>> GetUserContent(string userLogin)
+        //{
+        //    if (string.IsNullOrWhiteSpace(userLogin))
+        //        throw new ArgumentException("Non-empty value expected", nameof(userLogin));
 
-            try
-            {
-                return OperationResultWithData<IEnumerable<TDto>>.Success(_contentService.GetUserContent(userLogin).Select(x => _mapper.Map(x)));
-            }
-            catch (AdobeConnectException ex)
-            {
-                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
-                {
-                    return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
-                }
+        //    try
+        //    {
+        //        return OperationResultWithData<IEnumerable<TDto>>.Success(_contentService.GetUserContent(userLogin).Select(x => _mapper.Map(x)));
+        //    }
+        //    catch (AdobeConnectException ex)
+        //    {
+        //        if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
+        //        {
+        //            return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
+        //        }
 
-                string errorMessage = GetOutputErrorMessage("GetMyContent", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetMyContent", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-        }
+        //        string errorMessage = GetOutputErrorMessage("GetMyContent", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetMyContent", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //}
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetSharedContent()
-        {
-            try
-            {
-                return OperationResultWithData<IEnumerable<TDto>>.Success(_contentService.GetSharedContent().Select(x => _mapper.Map(x)));
-            }
-            catch (AdobeConnectException ex)
-            {
-                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
-                {
-                    return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
-                }
+        //public async Task<OperationResultWithData<IEnumerable<TDto>>> GetSharedContent()
+        //{
+        //    try
+        //    {
+        //        return OperationResultWithData<IEnumerable<TDto>>.Success(_contentService.GetSharedContent().Select(x => _mapper.Map(x)));
+        //    }
+        //    catch (AdobeConnectException ex)
+        //    {
+        //        if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
+        //        {
+        //            return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
+        //        }
 
-                string errorMessage = GetOutputErrorMessage("GetSharedContent", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetSharedContent", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-        }
+        //        string errorMessage = GetOutputErrorMessage("GetSharedContent", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetSharedContent", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //}
 
         public async Task<OperationResultWithData<IEnumerable<TDto>>> GetFolderContent(string folderScoId, IDtoProcessor<TDto> processor)
         {

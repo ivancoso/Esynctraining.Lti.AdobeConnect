@@ -32,51 +32,51 @@ namespace Esynctraining.AdobeConnect.WebApi.Content.Controllers
         }
 
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetMyMeetings()
-        {
-            try
-            {
-                return OperationResultWithData<IEnumerable<TDto>>.Success(_meetingService.GetUserMeetings().Select(x => _mapper.Map(x)));
-            }
-            catch (AdobeConnectException ex)
-            {
-                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
-                {
-                    return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
-                }
+        //public async Task<OperationResultWithData<IEnumerable<TDto>>> GetMyMeetings()
+        //{
+        //    try
+        //    {
+        //        return OperationResultWithData<IEnumerable<TDto>>.Success(_meetingService.GetUserMeetings().Select(x => _mapper.Map(x)));
+        //    }
+        //    catch (AdobeConnectException ex)
+        //    {
+        //        if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
+        //        {
+        //            return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
+        //        }
 
-                string errorMessage = GetOutputErrorMessage("GetMyMeetings", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetMyMeetings", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-        }
+        //        string errorMessage = GetOutputErrorMessage("GetMyMeetings", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetMyMeetings", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //}
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetSharedMeetings()
-        {
-            try
-            {
-                return OperationResultWithData<IEnumerable<TDto>>.Success(_meetingService.GetSharedMeetings().Select(x => _mapper.Map(x)));
-            }
-            catch (AdobeConnectException ex)
-            {
-                if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
-                {
-                    return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
-                }
+        //public async Task<OperationResultWithData<IEnumerable<TDto>>> GetSharedMeetings()
+        //{
+        //    try
+        //    {
+        //        return OperationResultWithData<IEnumerable<TDto>>.Success(_meetingService.GetSharedMeetings().Select(x => _mapper.Map(x)));
+        //    }
+        //    catch (AdobeConnectException ex)
+        //    {
+        //        if (ex.Status.Code == StatusCodes.no_access && ex.Status.SubCode == StatusSubCodes.denied)
+        //        {
+        //            return OperationResultWithData<IEnumerable<TDto>>.Error("You do not have permission to access this item.");
+        //        }
 
-                string errorMessage = GetOutputErrorMessage("GetSharedMeetings", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("GetSharedMeetings", ex);
-                return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
-            }
-        }
+        //        string errorMessage = GetOutputErrorMessage("GetSharedMeetings", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string errorMessage = GetOutputErrorMessage("GetSharedMeetings", ex);
+        //        return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
+        //    }
+        //}
 
         public async Task<OperationResultWithData<IEnumerable<TDto>>> FolderContent(string folderScoId)
         {
