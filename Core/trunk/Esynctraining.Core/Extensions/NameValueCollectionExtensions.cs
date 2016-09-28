@@ -6,11 +6,9 @@
     using System.Collections.Specialized;
     using System.ComponentModel;
     using System.Dynamic;
-    using System.Linq;
-    using System.Web;
 
     /// <summary>
-    ///     The name value collection extensions.
+    /// The name value collection extensions.
     /// </summary>
     public static class NameValueCollectionExtensions
     {
@@ -45,29 +43,7 @@
 
             return false;
         }
-
-        /// <summary>
-        /// The has key.
-        /// </summary>
-        /// <param name="nvc">
-        /// The name value collection.
-        /// </param>
-        /// <param name="key">
-        /// The key.
-        /// </param>
-        /// <returns>
-        /// The <see cref="bool"/>.
-        /// </returns>
-        public static bool HasKey(this HttpCookieCollection nvc, string key)
-        {
-            if (nvc != null && nvc.AllKeys.Length > 0)
-            {
-                return nvc.AllKeys.Any(keyVar => keyVar.Equals(key, StringComparison.InvariantCultureIgnoreCase));
-            }
-
-            return false;
-        }
-
+        
         /// <summary>
         /// Expands nave value collection to a dynamic object.
         /// </summary>

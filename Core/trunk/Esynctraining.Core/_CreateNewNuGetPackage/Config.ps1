@@ -47,7 +47,7 @@ $packOptions = ""
 # Specify $true if the generated .nupkg file should be renamed to include the Configuration and Platform that was used to build the project, $false if not.
 #	e.g. If $true, MyProject.1.1.5.6.nupkg might be renamed to MyProject.1.1.5.6.Debug.AnyCPU.nupkg
 #	e.g. If $true, MyProject.1.1.5.6-beta1.nupkg might re renamed to MyProject.1.1.5.6-beta1.Release.x86.nupkg
-$appendConfigurationAndPlatformToNuGetPackageFileName = $true
+$appendConfigurationAndPlatformToNuGetPackageFileName = $false
 
 
 #------------------------------------------------
@@ -55,10 +55,10 @@ $appendConfigurationAndPlatformToNuGetPackageFileName = $true
 #------------------------------------------------
 
 # The NuGet gallery to upload to. If not provided, the DefaultPushSource in your NuGet.config file is used (typically nuget.org).
-$sourceToUploadTo = ""
+$sourceToUploadTo = "http://192.168.10.59/nuget"
 
 # The API Key to use to upload the package to the gallery. If not provided and a system-level one does not exist for the specified Source, you will be prompted for it.
-$apiKey = ""
+$apiKey = "1a4d6ac5-2fa1-4844-a42d-b95e432f00ee"
 
 # Specify any NuGet Push options to pass to nuget.exe.
 #	e.g. $pushOptions = "-Timeout 120"
