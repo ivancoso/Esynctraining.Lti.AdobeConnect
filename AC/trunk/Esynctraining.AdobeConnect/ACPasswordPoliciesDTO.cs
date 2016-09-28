@@ -20,6 +20,9 @@ namespace Esynctraining.AdobeConnect
         [DataMember(Name = "passwordMaxLength")]
         public int PasswordMaxLength { get; set; }
 
+        [DataMember(Name = "loginSameAsEmail")]
+        public bool LoginSameAsEmail { get; set; }
+
     }
 
 }

@@ -82,8 +82,6 @@ namespace Esynctraining.AdobeConnect
                     _logger.ErrorFormat("GetAccountDetails.GetAclFields. AC error. Code:{0}.SubCode:{1}.", fields.Status.Code, fields.Status.SubCode);
                     return null;
                 }
-
-                //bool loginSameAsEmail = fields.Values.First(x => x.FieldId == "login-same-as-email").Value.Equals("YES", StringComparison.OrdinalIgnoreCase);
                 
                 var dto = new ACDetailsDTO
                 {
@@ -172,6 +170,8 @@ namespace Esynctraining.AdobeConnect
             int passwordMinLength = int.Parse(GetField(fields, "password-min-length") ?? "4");
             int passwordMaxLength = int.Parse(GetField(fields, "password-max-length") ?? "32");
 
+            bool loginSameAsEmail = "YES".Equals(GetField(fields, "login-same-as-email"), StringComparison.OrdinalIgnoreCase);
+            
             return new ACPasswordPoliciesDTO
             {
                 PasswordRequiresDigit = passwordRequiresDigit,
@@ -179,6 +179,7 @@ namespace Esynctraining.AdobeConnect
                 PasswordRequiresSpecialChars = passwordRequiresSpecialChars,
                 PasswordMinLength = passwordMinLength,
                 PasswordMaxLength = passwordMaxLength,
+                LoginSameAsEmail = loginSameAsEmail,
             };
         }
 
