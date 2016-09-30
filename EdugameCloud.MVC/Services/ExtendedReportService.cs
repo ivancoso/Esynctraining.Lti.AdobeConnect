@@ -129,7 +129,7 @@ namespace EdugameCloud.MVC.Services
                                     }
                                     break;
                                 case SubModuleItemType.Survey:
-                                    if (!qqr.DistractorIds.Any())
+                                    if (qqr == null || !qqr.DistractorIds.Any())
                                     {
                                         ws.Cells[endRow - 1, startUserPartColumn].Value = "X"; // No Answer
 

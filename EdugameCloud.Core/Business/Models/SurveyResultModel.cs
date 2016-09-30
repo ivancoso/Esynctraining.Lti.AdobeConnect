@@ -185,8 +185,7 @@ namespace EdugameCloud.Core.Business.Models
         {
             var query =
                 new DefaultQueryOver<SurveyResult, int>().GetQueryOver().Where(x => x.ACSessionId == adobeConnectSessionId)
-                //.Fetch(x => x.Quiz).Eager
-                .Fetch(x => x.Results).Eager
+                .Fetch(x => x.Results[0].Answers).Eager
                 .TransformUsing(Transformers.DistinctRootEntity);
             return this.Repository.FindAll(query);
         }
