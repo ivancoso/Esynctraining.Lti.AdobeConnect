@@ -275,7 +275,7 @@ namespace Esynctraining.AC.Provider
 
         private PrincipalCollectionResult CallPrincipalList(string filter)
         {
-            return DoCallPrincipalList(filter, 0, 20000);
+            return DoCallPrincipalList(filter, 0, Int32.MaxValue);
         }
 
         private PrincipalCollectionResult DoCallPrincipalList(string filter, int startIndex, int limit)
@@ -295,7 +295,7 @@ namespace Esynctraining.AC.Provider
                     int? actualAcLimit = status.TryGetSubCodeAsInt32();
                     if (actualAcLimit.HasValue)
                     {
-                        return DoCallPrincipalList(filter, startIndex, actualAcLimit.Value);
+                        return DoCallPrincipalList(filter + "&sort-principal-id=asc", startIndex, actualAcLimit.Value);
                     }
                 }
                 return new PrincipalCollectionResult(status);
@@ -304,7 +304,7 @@ namespace Esynctraining.AC.Provider
             if (data.Count() < limit)
                 return new PrincipalCollectionResult(status, data);
 
-            PrincipalCollectionResult nextPage = DoCallPrincipalList(filter, startIndex + limit + 1, limit);
+            PrincipalCollectionResult nextPage = DoCallPrincipalList(filter, startIndex + limit, limit);
             if (!nextPage.Success)
                 return nextPage;
 
