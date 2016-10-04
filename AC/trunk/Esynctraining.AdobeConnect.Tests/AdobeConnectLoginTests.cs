@@ -71,5 +71,28 @@ namespace Esynctraining.AdobeConnect.Tests
             var details = service.GetAccountDetails(proxy);
             var t = 1;
         }
+
+        [Test]
+        public void WillTestHowBreezeSessionStored()
+        {
+            //var login = "ssotest";
+            //var password = "Ch@ngeTEST1";
+            var serverAc = "https://fiustg.adobeconnect.com";
+            //var apiUrl = "https://fiustg.adobeconnect.com/api/xml";
+            //var connectionDetails = new ConnectionDetails(apiUrl);
+            //var provider = new AdobeConnectProvider(connectionDetails);
+
+            var acConnect = new AdobeConnectAccountService(new FakeLogger());
+            //var breeze = "na2breez22yvafwxdrmu8ov3";
+            var breeze = "na2breezhcan5ks479qwvmsf";
+            var result = acConnect.GetProvider2(new AdobeConnectAccess2(serverAc,breeze));
+
+            //var userCredentials = new UserCredentials(login, password, "965886535");
+            //LoginResult loginResult = provider.Login(userCredentials);
+            //if (!loginResult.Success)
+            //    throw new InvalidOperationException("Invalid login");
+
+            var commonInfo = result.ReportMyMeetings();
+        }
     }
 }
