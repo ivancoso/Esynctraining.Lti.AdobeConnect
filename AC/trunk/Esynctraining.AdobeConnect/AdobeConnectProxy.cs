@@ -23,9 +23,9 @@ namespace Esynctraining.AdobeConnect
         public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl) 
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (logger == null)
-                throw new ArgumentNullException("logger");
+                throw new ArgumentNullException(nameof(logger));
 
             _provider = provider;
             _logger = logger;
@@ -42,10 +42,10 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo AddToGroupByType(IEnumerable<string> principalIds, PrincipalType type)
         {
             if (principalIds == null)
-                throw new ArgumentNullException("principalIds");
+                throw new ArgumentNullException(nameof(principalIds));
 
             if (!principalIds.Any())
-                throw new ArgumentException("Non empty principal id list required", "principalIds");
+                throw new ArgumentException("Non empty principal id list required", nameof(principalIds));
 
             //return Execute(() => _provider.AddToGroupByType(principalIds, typeName),
             //    string.Join(";", principalIds), typeName);
@@ -143,7 +143,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfoResult CreateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase
         {
             if (scoUpdateItem == null)
-                throw new ArgumentNullException("scoUpdateItem");
+                throw new ArgumentNullException(nameof(scoUpdateItem));
 
             return _provider.CreateSco(scoUpdateItem);
             //return Execute(() => { return _provider.CreateSco(scoUpdateItem); },

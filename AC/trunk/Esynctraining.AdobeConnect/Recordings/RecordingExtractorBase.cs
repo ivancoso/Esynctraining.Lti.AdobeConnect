@@ -7,7 +7,7 @@ namespace Esynctraining.AdobeConnect.Recordings
 {
     public abstract class RecordingExtractorBase
     {
-        protected IAdobeConnectProxy AcProxy { get; private set; }
+        protected IAdobeConnectProxy AcProxy { get; }
 
 
         protected RecordingExtractorBase(IAdobeConnectProxy acProxy)

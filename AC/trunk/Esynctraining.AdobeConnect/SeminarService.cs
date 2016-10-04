@@ -90,9 +90,9 @@ namespace Esynctraining.AdobeConnect
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (seminar == null)
-                throw new ArgumentNullException("seminar");
+                throw new ArgumentNullException(nameof(seminar));
             if (!string.IsNullOrWhiteSpace(seminar.ScoId))
-                throw new ArgumentException("sco-id should be empty.", "seminar");
+                throw new ArgumentException("sco-id should be empty.", nameof(seminar));
 
             ScoInfoResult result = provider.CreateSco(seminar);
             return ProcessResult(result);
@@ -103,10 +103,10 @@ namespace Esynctraining.AdobeConnect
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (seminar == null)
-                throw new ArgumentNullException("seminar");
+                throw new ArgumentNullException(nameof(seminar));
 
             if (string.IsNullOrWhiteSpace(seminar.ScoId))
-                throw new ArgumentException("sco-id can't be empty.", "seminar");
+                throw new ArgumentException("sco-id can't be empty.", nameof(seminar));
 
             if (!string.IsNullOrWhiteSpace(seminar.UrlPath))
                 throw new InvalidOperationException("UrlPath can't be updated.");
@@ -122,9 +122,9 @@ namespace Esynctraining.AdobeConnect
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (sessionItem == null)
-                throw new ArgumentNullException("sessionItem");
+                throw new ArgumentNullException(nameof(sessionItem));
             if (sessionItem.ExpectedLoad <= 0)
-                throw new ArgumentException("ExpectedLoad should have positive value", "sessionItem");
+                throw new ArgumentException("ExpectedLoad should have positive value", nameof(sessionItem));
 
             var isNewSession = string.IsNullOrWhiteSpace(sessionItem.SeminarSessionScoId);
             var session = new SeminarSessionUpdateItem
@@ -169,7 +169,7 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo DeleteSesson(string seminarSessionScoId, IAdobeConnectProxy provider)
         {
             if (string.IsNullOrWhiteSpace(seminarSessionScoId))
-                throw new ArgumentException("Empty sco-id value", "seminarSessionScoId");
+                throw new ArgumentException("Empty sco-id value", nameof(seminarSessionScoId));
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
 
@@ -179,7 +179,7 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo DeleteSeminar(string seminarScoId, IAdobeConnectProxy provider)
         {
             if (string.IsNullOrWhiteSpace(seminarScoId))
-                throw new ArgumentException("Empty sco-id value", "seminarScoId");
+                throw new ArgumentException("Empty sco-id value", nameof(seminarScoId));
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
 
