@@ -12,11 +12,18 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
         private readonly ITokenService _tokenService;
         private readonly ILogger _logger;
 
+
         public SimpleRefreshTokenProvider(ITokenService tokenService, ILogger logger)
         {
+            if (tokenService == null)
+                throw new ArgumentNullException(nameof(tokenService));
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             _tokenService = tokenService;
             _logger = logger;
         }
+
 
         public void Create(AuthenticationTokenCreateContext context)
         {

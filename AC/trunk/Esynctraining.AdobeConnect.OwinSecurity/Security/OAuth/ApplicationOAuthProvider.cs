@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Identity;
-using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -14,24 +13,20 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
     {
         private readonly string _publicClientId;
         private readonly Func<AdobeConnectUserManager> _userManagerFactory;
-        private readonly ILogger _logger;
+
 
         public ApplicationOAuthProvider(string publicClientId, Func<AdobeConnectUserManager> userManagerFactory)
         {
             if (publicClientId == null)
-            {
-                throw new ArgumentNullException("publicClientId");
-            }
+                throw new ArgumentNullException(nameof(publicClientId));
 
             if (userManagerFactory == null)
-            {
-                throw new ArgumentNullException("userManagerFactory");
-            }
+                throw new ArgumentNullException(nameof(userManagerFactory));
 
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;
-            //_logger = logger;
         }
+
 
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
@@ -151,7 +146,6 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
             IDictionary<string, string> data = new Dictionary<string, string>
             {
                 { "userName", userName }
-                //{ "ac", "http://connectdev.esynctraining.com" }
             };
             return new AuthenticationProperties(data);
         }
