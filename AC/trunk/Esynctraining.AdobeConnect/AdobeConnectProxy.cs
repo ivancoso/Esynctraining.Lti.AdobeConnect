@@ -159,7 +159,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfoResult SeminarSessionScoUpdate(SeminarSessionScoUpdateItem item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             return Execute(() => { return _provider.SeminarSessionScoUpdate(item); },
                 item.ScoId, item.Name, true);
@@ -596,7 +596,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalResult PrincipalDelete(PrincipalDelete principalDelete)
         {
             if (principalDelete == null)
-                throw new ArgumentNullException("principalDelete");
+                throw new ArgumentNullException(nameof(principalDelete));
 
             return Execute(() => { return _provider.PrincipalDelete(principalDelete); },
                 principalDelete.PrincipalId);
@@ -605,7 +605,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation = false)
         {
             if (principalSetup == null)
-                throw new ArgumentNullException("principalSetup");
+                throw new ArgumentNullException(nameof(principalSetup));
 
             return Execute(() => { return _provider.PrincipalUpdate(principalSetup, isUpdateOperation); },
                 principalSetup.PrincipalId, principalSetup.Login);
@@ -614,7 +614,7 @@ namespace Esynctraining.AdobeConnect
         public PrincipalResult PrincipalUpdate(PrincipalSetup principalSetup, bool isUpdateOperation, bool throwOnAdobeError)
         {
             if (principalSetup == null)
-                throw new ArgumentNullException("principalSetup");
+                throw new ArgumentNullException(nameof(principalSetup));
 
             PrincipalResult result;
             try
@@ -748,7 +748,7 @@ namespace Esynctraining.AdobeConnect
         public ScoInfoResult UpdateSco<T>(T scoUpdateItem) where T : ScoUpdateItemBase
         {
             if (scoUpdateItem == null)
-                throw new ArgumentNullException("scoUpdateItem");
+                throw new ArgumentNullException(nameof(scoUpdateItem));
 
             return _provider.UpdateSco(scoUpdateItem);
             //return Execute(() => { return _provider.UpdateSco(scoUpdateItem); },

@@ -43,7 +43,7 @@ namespace Esynctraining.AdobeConnect
         public TelephonyProfileInfoResult TelephonyProfileInfo(string profileId)
         {
             if (string.IsNullOrWhiteSpace(profileId))
-                throw new ArgumentException("Non-empty value expected", "profileId");
+                throw new ArgumentException("Non-empty value expected", nameof(profileId));
 
             TelephonyProfileInfoResult result;
             try
@@ -81,7 +81,7 @@ namespace Esynctraining.AdobeConnect
         public StatusInfo TelephonyProfileDelete(string profileId)
         {
             if (string.IsNullOrWhiteSpace(profileId))
-                throw new ArgumentException("Non-empty value expected", "profileId");
+                throw new ArgumentException("Non-empty value expected", nameof(profileId));
 
             StatusInfo result;
             try
