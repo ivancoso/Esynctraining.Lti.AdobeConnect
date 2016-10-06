@@ -18,25 +18,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public class SeminarService : Esynctraining.AdobeConnect.SeminarService, ISeminarService
     {
-        //private class LicenseDto
-        //{
-        //    public string ScoId { get; set; }
-
-        //    public string Name { get; set; }
-
-        //}
-
-
-        private UsersSetup UsersSetup
-        {
-            get { return IoC.Resolve<UsersSetup>(); }
-        }
+        private UsersSetup UsersSetup => IoC.Resolve<UsersSetup>();
 
 
         public SeminarService(ILogger logger)
             : base(logger)
         {
         }
+
 
         public IEnumerable<SeminarLicenseDto> GetLicensesWithContent(IAdobeConnectProxy acProxy,
             IEnumerable<LmsCourseMeeting> seminarRecords,
@@ -60,11 +49,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var licenseDtos = new List<SeminarLicenseDto>();
 
-            //var licenses = new List<LicenseDto>();
             var sharedLicenses = GetSharedSeminarLicenses(acProxy).Where(x => !x.IsExpired);
-            //licenses.AddRange(sharedLicenses.Select(x => new LicenseDto { ScoId = x.ScoId, Name = x.Name }));
-            //var userLicenses = GetUserSeminarLicenses(acProxy).Where(x => x.Quota != 0);
-            //licenses.AddRange(sharedLicenses.Select(x => new LicenseDto { ScoId = x.ScoId, Name = x.Name }));
 
             foreach (var license in sharedLicenses)
             {
@@ -75,7 +60,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     LmsCourseMeeting meetingRecord = seminarRecords.FirstOrDefault(x => x.ScoId == seminar.ScoId);
                     if (meetingRecord == null)
                         continue;
-                    //.Where(x => seminarRecords.Any(sr => sr.ScoId == x.ScoId))
 
                     var sessions = GetSeminarSessions(seminar.ScoId, acProxy);
 

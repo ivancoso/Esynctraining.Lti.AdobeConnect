@@ -214,13 +214,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public List<MeetingDTO> GetMeetings(LmsCompany credentials, LmsUser lmsUser, IAdobeConnectProxy provider, LtiParamDTO param, StringBuilder trace)
         {
             if (credentials == null)
-                throw new ArgumentNullException("credentials");
+                throw new ArgumentNullException(nameof(credentials));
             if (lmsUser == null)
-                throw new ArgumentNullException("lmsUser");
+                throw new ArgumentNullException(nameof(lmsUser));
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (param == null)
-                throw new ArgumentNullException("param");
+                throw new ArgumentNullException(nameof(param));
 
             var ret = new List<MeetingDTO>();
             var t1 = Stopwatch.StartNew();          
@@ -320,7 +320,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 trace.AppendFormat("\t GetMeetings - OfficeHours processing time: {0}\r\n", t1.Elapsed.ToString());
 
             var t3 = Stopwatch.StartNew();
-            var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
+            //var lmsProvider = LmsProviderModel.GetById(credentials.LmsProviderId);
             //var r = new
             //{
             //    meetings = ret,
@@ -1416,7 +1416,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // this method is called after the user has opened the application through LtiController, so there should already be Principal found and saved for the user.
             if (string.IsNullOrWhiteSpace(lmsUser.PrincipalId))
             {
-                throw new InvalidOperationException(string.Format("lmsUser.PrincipalId is empty. LmsUserID: {0}", lmsUser.Id));
+                throw new InvalidOperationException($"lmsUser.PrincipalId is empty. LmsUserID: {lmsUser.Id}");
             }
             
             return (permission != null)
@@ -1535,7 +1535,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             StringBuilder trace = null)
         {
             if (lmsCourseMeeting == null)
-                throw new ArgumentNullException("lmsCourseMeeting");
+                throw new ArgumentNullException(nameof(lmsCourseMeeting));
             
             var psw = Stopwatch.StartNew();
 

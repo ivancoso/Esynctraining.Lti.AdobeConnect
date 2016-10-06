@@ -20,12 +20,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private readonly ISakaiApi _sakaiApiService;
         private readonly ILogger _logger;
 
+
         public CalendarEventService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ISakaiApi sakaiApiService)
         {
+            if (lmsCourseMeetingModel == null)
+                throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+            if (sakaiApiService == null)
+                throw new ArgumentNullException(nameof(sakaiApiService));
+
             _lmsCourseMeetingModel = lmsCourseMeetingModel;
             _logger = logger;
             _sakaiApiService = sakaiApiService;
         }
+
 
         public IEnumerable<CalendarEventDTO> CreateBatch(CreateCalendarEventsBatchDto dto, LtiParamDTO param)
         {
@@ -251,5 +260,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             return result;
         }
+
     }
+
 }

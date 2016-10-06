@@ -1,5 +1,4 @@
-﻿using System;
-using Esynctraining.AC.Provider.Entities;
+﻿using Esynctraining.AC.Provider.Entities;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {

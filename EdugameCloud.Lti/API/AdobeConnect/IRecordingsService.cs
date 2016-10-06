@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AdobeConnect;

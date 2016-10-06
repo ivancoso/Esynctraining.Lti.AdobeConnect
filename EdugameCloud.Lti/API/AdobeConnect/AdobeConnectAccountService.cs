@@ -23,6 +23,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public AdobeConnectAccountService(ILogger logger)
         {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             _logger = logger;
         }
 
@@ -65,9 +68,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public ACDetailsDTO GetAccountDetails(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
         {
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
             if (cache == null)
-                throw new ArgumentNullException("cache");
+                throw new ArgumentNullException(nameof(cache));
 
             var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.ApiUrl), () =>
             {
@@ -123,7 +126,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             bool updateAcUser = true)
         {
             if(registeredUser == null)
-                throw new ArgumentNullException("registeredUser");
+                throw new ArgumentNullException(nameof(registeredUser));
 
             string breezeToken = null;
 

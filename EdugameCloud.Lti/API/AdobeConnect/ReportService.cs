@@ -1,34 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Security;
 using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Lti.Controllers;
-using EdugameCloud.Lti.Core.Business;
-using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Constants;
-using EdugameCloud.Lti.Core.Domain.Entities;
-using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
-using EdugameCloud.Lti.Telephony;
-using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
-using Esynctraining.AdobeConnect;
-using Esynctraining.Core.Caching;
-using Esynctraining.Core.Domain;
-using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
-using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
