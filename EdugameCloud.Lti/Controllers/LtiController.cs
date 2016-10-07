@@ -676,7 +676,7 @@
                             
                             sw = Stopwatch.StartNew();
 
-                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token) || CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                            if (string.IsNullOrWhiteSpace(lmsUser?.Token) || CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                             {
                                 this.StartOAuth2Authentication(provider, key, param);
                                 return null;
@@ -763,7 +763,7 @@
                                     LmsCompany = lmsCompany,
                                     UserId = param.lms_user_id,
                                     Username = GetUserNameOrEmail(param),
-                                    PrincipalId = acPrincipal != null ? acPrincipal.PrincipalId : null,
+                                    PrincipalId = acPrincipal?.PrincipalId,
                                 };
                                 this.lmsUserModel.RegisterSave(lmsUser);
 

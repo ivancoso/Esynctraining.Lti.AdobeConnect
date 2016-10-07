@@ -250,7 +250,6 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                     return OperationResult.Error("Operation is not enabled.");
 
                 var ac = this.GetAdobeConnectProvider(session);
-                var contentService = new ContentService(logger, ac);
                 var helper = new ContentEditControllerHelper(logger, ac);
                 return helper.EditSco(scoId, dto);
             }

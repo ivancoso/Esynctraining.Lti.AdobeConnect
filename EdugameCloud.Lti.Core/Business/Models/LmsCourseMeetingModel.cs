@@ -262,9 +262,9 @@
         public IEnumerable<LmsCourseMeeting> GetAllByCourseId(int companyLmsId, int courseId)
         {
             if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException("companyLmsId");
+                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
             if (courseId == 0)
-                throw new ArgumentOutOfRangeException("courseId");
+                throw new ArgumentOutOfRangeException(nameof(courseId));
 
             int seminars = (int)LmsMeetingType.Seminar;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
@@ -275,9 +275,9 @@
         public IEnumerable<LmsCourseMeeting> GetSeminarsByCourseId(int companyLmsId, int courseId)
         {
             if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException("companyLmsId");
+                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
             if (courseId == 0)
-                throw new ArgumentOutOfRangeException("courseId");
+                throw new ArgumentOutOfRangeException(nameof(courseId));
 
             int seminars = (int)LmsMeetingType.Seminar;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
