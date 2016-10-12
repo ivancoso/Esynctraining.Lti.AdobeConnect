@@ -268,14 +268,17 @@
               </SortExpressions>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="login1">
+                  <Group Name="fullName">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!login.Value</GroupExpression>
+                      <GroupExpression>=Fields!fullName.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!login.Value</Value>
+                      <Value>=Fields!fullName.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!dateTimeEntered.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -382,6 +385,7 @@
                           </BottomBorder>
                         </Style>
                       </Rectangle>
+                      <rd:Selected>true</rd:Selected>
                     </CellContents>
                   </TablixHeader>
                   <TablixMembers>
