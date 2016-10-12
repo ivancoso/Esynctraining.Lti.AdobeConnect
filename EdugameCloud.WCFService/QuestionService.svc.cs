@@ -445,7 +445,9 @@
             instance.QuestionType = this.QuestionTypeModel.GetOneById(q.questionTypeId).Value;
             instance.ModifiedBy = q.modifiedBy.HasValue ? this.UserModel.GetOneById(q.modifiedBy.Value).Value : null;
             instance.CreatedBy = q.createdBy.HasValue ? this.UserModel.GetOneById(q.createdBy.Value).Value : null;
-            instance.RandomizeAnswers = q.randomizeAnswers;
+            instance.RandomizeAnswers = q.randomizeAnswers ?? (q.questionTypeId == (int)QuestionTypeEnum.Sequence
+                                            ? (bool?)true
+                                            : null);
             if (instance.SubModuleItem != null)
             {
                 instance.SubModuleItem.DateModified = DateTime.Now;

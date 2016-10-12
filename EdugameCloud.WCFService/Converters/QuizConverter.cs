@@ -330,7 +330,7 @@
                 question.IsActive = true;
                 question.QuestionOrder = questionOrder++;
                 question.Rows = quizQuestion.rows;
-
+                
 
                 var isTransient = question.Id == 0;
                 if (quizQuestion.files.Count == 1 && !string.IsNullOrEmpty(quizQuestion.files[0].base64Content))
@@ -344,6 +344,9 @@
                     FileModel.SetData(file, imageBytes);
                     question.Image = file;
                 }
+                question.RandomizeAnswers = quizQuestion.randomizeAnswers ?? (question.QuestionType.Id == (int)QuestionTypeEnum.Sequence
+                                            ? (bool?)true
+                                            : null);
 
                 this.QuestionModel.RegisterSave(question);
 
@@ -385,6 +388,13 @@
                                     IsAlwaysRateDropdown = true,
                                     IsMandatory = quizQuestion.is_mandatory
                                 });
+                            break;
+                        case (int)QuestionTypeEnum.Sequence:
+                            if (!question.RandomizeAnswers.GetValueOrDefault() &&
+                                !quizQuestion.randomizeAnswers.HasValue)
+                            {
+                                
+                            }
                             break;
                     }
                 }

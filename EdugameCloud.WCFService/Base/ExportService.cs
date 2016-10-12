@@ -434,6 +434,10 @@
                     {
                         convertedQuestion.Image = questionImage;
                     }
+                    convertedQuestion.RandomizeAnswers =
+                        convertedQuestion.QuestionType.Id == (int) QuestionTypeEnum.Sequence
+                            ? (bool?) true
+                            : null;
 
                     if (subModuleItem != null)
                     {

@@ -81,6 +81,8 @@
 
         public int? rows { get; set; }
 
+        public bool? randomizeAnswers { get; set; } // todo: set to false for Sequence type in BB
+
         #endregion
     }
 }
