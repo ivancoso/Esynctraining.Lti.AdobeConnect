@@ -287,4 +287,10 @@
   <data name="ValidateTitleLength" xml:space="preserve">
     <value>La longitud del titulo debe estar comprendida entre 1 y 60 caracteres.</value>
   </data>
+  <data name="UsersCouldNotBeRemoved" xml:space="preserve">
+    <value>Algunos de los usuarios no puede ser eliminado.</value>
+  </data>
+  <data name="UsersCouldNotBeUpdated" xml:space="preserve">
+    <value>Algunos de los usuarios no se pudo actualizar.</value>
+  </data>
 </root>

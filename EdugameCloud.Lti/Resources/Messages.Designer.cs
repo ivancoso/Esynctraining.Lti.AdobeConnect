@@ -484,6 +484,24 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some of the users could not be removed..
+        /// </summary>
+        public static string UsersCouldNotBeRemoved {
+            get {
+                return ResourceManager.GetString("UsersCouldNotBeRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some of the users could not be updated..
+        /// </summary>
+        public static string UsersCouldNotBeUpdated {
+            get {
+                return ResourceManager.GetString("UsersCouldNotBeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to users with duplicate email exist, .
         /// </summary>
         public static string UsersDuplicateEmail {

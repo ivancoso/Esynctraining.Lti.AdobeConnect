@@ -287,4 +287,10 @@
   <data name="ValidateTitleLength" xml:space="preserve">
     <value>Title must be between 1 and 60 characters long.</value>
   </data>
+  <data name="UsersCouldNotBeRemoved" xml:space="preserve">
+    <value>Some of the users could not be removed.</value>
+  </data>
+  <data name="UsersCouldNotBeUpdated" xml:space="preserve">
+    <value>Some of the users could not be updated.</value>
+  </data>
 </root>
