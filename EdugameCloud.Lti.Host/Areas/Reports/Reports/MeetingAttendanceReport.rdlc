@@ -256,148 +256,135 @@
         <TablixRowHierarchy>
           <TablixMembers>
             <TablixMember>
-              <Group Name="login">
+              <Group Name="fullName">
                 <GroupExpressions>
-                  <GroupExpression>=Fields!login.Value</GroupExpression>
+                  <GroupExpression>=Fields!fullName.Value</GroupExpression>
                 </GroupExpressions>
               </Group>
               <SortExpressions>
                 <SortExpression>
-                  <Value>=Fields!login.Value</Value>
+                  <Value>=Fields!fullName.Value</Value>
                 </SortExpression>
               </SortExpressions>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="fullName">
-                    <GroupExpressions>
-                      <GroupExpression>=Fields!fullName.Value</GroupExpression>
-                    </GroupExpressions>
-                  </Group>
-                  <SortExpressions>
-                    <SortExpression>
-                      <Value>=Fields!fullName.Value</Value>
-                    </SortExpression>
-                    <SortExpression>
-                      <Value>=Fields!dateTimeEntered.Value</Value>
-                    </SortExpression>
-                  </SortExpressions>
-                  <TablixHeader>
-                    <Size>5.62651cm</Size>
-                    <CellContents>
-                      <Rectangle Name="ParticipantRectangle">
-                        <ReportItems>
-                          <Image Name="ACParticipant">
-                            <Source>Embedded</Source>
-                            <Value>ac_participant_32</Value>
-                            <Sizing>FitProportional</Sizing>
-                            <Top>0.03528cm</Top>
-                            <Height>0.5cm</Height>
-                            <Width>0.5cm</Width>
-                            <Style>
-                              <Border>
-                                <Style>None</Style>
-                              </Border>
-                            </Style>
-                          </Image>
-                          <Textbox Name="Textbox47">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=Fields!fullName.Value</Value>
-                                    <Style>
-                                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                                      <FontSize>8pt</FontSize>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style />
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>Textbox47</rd:DefaultName>
-                            <Left>0.57056cm</Left>
-                            <Height>0.6cm</Height>
-                            <Width>5.05595cm</Width>
-                            <ZIndex>1</ZIndex>
-                            <Style>
-                              <Border>
-                                <Style>None</Style>
-                              </Border>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                          <Textbox Name="Textbox48">
-                            <CanGrow>true</CanGrow>
-                            <KeepTogether>true</KeepTogether>
-                            <Paragraphs>
-                              <Paragraph>
-                                <TextRuns>
-                                  <TextRun>
-                                    <Value>=Fields!login.Value</Value>
-                                    <Style>
-                                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                                      <FontSize>8pt</FontSize>
-                                      <TextDecoration>Underline</TextDecoration>
-                                      <Color>SteelBlue</Color>
-                                    </Style>
-                                  </TextRun>
-                                </TextRuns>
-                                <Style />
-                              </Paragraph>
-                            </Paragraphs>
-                            <rd:DefaultName>Textbox48</rd:DefaultName>
-                            <ActionInfo>
-                              <Actions>
-                                <Action>
-                                  <Hyperlink>=Fields!login.Value</Hyperlink>
-                                </Action>
-                              </Actions>
-                            </ActionInfo>
-                            <Top>0.6cm</Top>
-                            <Left>0.57761cm</Left>
-                            <Height>0.46472cm</Height>
-                            <Width>5.0489cm</Width>
-                            <ZIndex>2</ZIndex>
-                            <Style>
-                              <Border>
-                                <Style>None</Style>
-                              </Border>
-                              <PaddingLeft>2pt</PaddingLeft>
-                              <PaddingRight>2pt</PaddingRight>
-                              <PaddingTop>2pt</PaddingTop>
-                              <PaddingBottom>2pt</PaddingBottom>
-                            </Style>
-                          </Textbox>
-                        </ReportItems>
+              <TablixHeader>
+                <Size>5.62651cm</Size>
+                <CellContents>
+                  <Rectangle Name="ParticipantRectangle">
+                    <ReportItems>
+                      <Image Name="ACParticipant">
+                        <Source>Embedded</Source>
+                        <Value>ac_participant_32</Value>
+                        <Sizing>FitProportional</Sizing>
+                        <Top>0.03528cm</Top>
+                        <Height>0.5cm</Height>
+                        <Width>0.5cm</Width>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                        </Style>
+                      </Image>
+                      <Textbox Name="Textbox47">
+                        <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!fullName.Value</Value>
+                                <Style>
+                                  <FontFamily>Lucida Sans Unicode</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox47</rd:DefaultName>
+                        <Left>0.57056cm</Left>
+                        <Height>0.6cm</Height>
+                        <Width>5.05595cm</Width>
+                        <ZIndex>1</ZIndex>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                      <Textbox Name="Textbox48">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!login.Value</Value>
+                                <Style>
+                                  <FontFamily>Lucida Sans Unicode</FontFamily>
+                                  <FontSize>8pt</FontSize>
+                                  <TextDecoration>Underline</TextDecoration>
+                                  <Color>SteelBlue</Color>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox48</rd:DefaultName>
+                        <ActionInfo>
+                          <Actions>
+                            <Action>
+                              <Hyperlink>=Fields!login.Value</Hyperlink>
+                            </Action>
+                          </Actions>
+                        </ActionInfo>
+                        <Top>0.6cm</Top>
+                        <Left>0.57761cm</Left>
+                        <Height>0.46472cm</Height>
+                        <Width>5.0489cm</Width>
                         <ZIndex>2</ZIndex>
                         <Style>
                           <Border>
                             <Style>None</Style>
                           </Border>
-                          <BottomBorder>
-                            <Color>Black</Color>
-                          </BottomBorder>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
                         </Style>
-                      </Rectangle>
-                      <rd:Selected>true</rd:Selected>
-                    </CellContents>
-                  </TablixHeader>
+                      </Textbox>
+                    </ReportItems>
+                    <KeepTogether>true</KeepTogether>
+                    <ZIndex>2</ZIndex>
+                    <Style>
+                      <Border>
+                        <Style>None</Style>
+                      </Border>
+                      <BottomBorder>
+                        <Color>Black</Color>
+                      </BottomBorder>
+                    </Style>
+                  </Rectangle>
+                </CellContents>
+              </TablixHeader>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details" />
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!dateTimeEntered.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
                   <TablixMembers>
-                    <TablixMember>
-                      <KeepWithGroup>After</KeepWithGroup>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="Details" />
-                      <TablixMembers>
-                        <TablixMember />
-                      </TablixMembers>
-                    </TablixMember>
+                    <TablixMember />
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
