@@ -22,6 +22,6 @@ namespace EdugameCloud.Lti.Sakai.Dto
         public string ButtonSource { get; set; }
 
         [DataMember(Name = "events")]
-        public SakaiEventDto[] Events { get; set; }
+        public ExternalEventDto[] Events { get; set; }
     }
 }

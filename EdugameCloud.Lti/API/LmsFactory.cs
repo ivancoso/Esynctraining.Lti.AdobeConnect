@@ -1,4 +1,5 @@
-﻿using Esynctraining.Core.Utils;
+﻿using EdugameCloud.Lti.API.AdobeConnect;
+using Esynctraining.Core.Utils;
 using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.API.Moodle;
@@ -89,6 +90,16 @@ namespace EdugameCloud.Lti.API
             return IoC.Resolve<LmsUserServiceBase>(lmsProvider.ToString());
         }
 
+        public IMeetingSessionService GetMeetingSessionService(LmsProviderEnum lmsId)
+        {
+            switch (lmsId)
+            {
+                case LmsProviderEnum.Sakai:
+                    return IoC.Resolve<IMeetingSessionService>(lmsId.ToString() + "MeetingSessionService");
+            }
+
+            return IoC.Resolve<IMeetingSessionService>();
+        }
         #endregion
     }
 }

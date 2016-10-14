@@ -3,10 +3,10 @@
 namespace EdugameCloud.Lti.DTO
 {
     [DataContract]
-    public class SakaiEventDto
+    public class ExternalEventDto
     {
         [DataMember(Name = "sakaiId")]
-        public string SakaiId { get; set; }
+        public string ExternalId { get; set; }
 
         [DataMember(Name = "egcId")]
         public string EgcId { get; set; }

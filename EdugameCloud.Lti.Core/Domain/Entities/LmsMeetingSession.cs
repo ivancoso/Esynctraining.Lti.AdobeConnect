@@ -4,7 +4,7 @@ using Esynctraining.Core.Domain.Entities;
 
 namespace EdugameCloud.Lti.Core.Domain.Entities
 {
-    public class LmsCalendarEvent : Entity
+    public class LmsMeetingSession : Entity
     {
         public virtual string EventId { get; set; }
 
@@ -15,6 +15,8 @@ namespace EdugameCloud.Lti.Core.Domain.Entities
         public virtual DateTime EndDate { get; set; }
 
         public virtual LmsCourseMeeting LmsCourseMeeting { get; set; }
+
+        public virtual string Summary { get; set; }
 
     }
 }

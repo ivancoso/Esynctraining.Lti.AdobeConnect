@@ -281,6 +281,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.Mp4ServiceWithSubtitlesLicenseKey, dto.mp4ServiceWithSubtitlesLicenseKey);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SeminarsLabel, dto.labelSeminar);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseSakaiEvents, dto.useSakaiEvents);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMeetingSessions, dto.enableMeetingSessions);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMyContent, dto.enableMyContent);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableAddGuest, dto.enableAddGuest);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableSetUserRole, dto.enableSetUserRole);

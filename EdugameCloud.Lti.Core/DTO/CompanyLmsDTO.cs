@@ -123,6 +123,7 @@ namespace EdugameCloud.Lti.DTO
             this.labelSeminar = instance.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel);
             this.enableAuditGuestEntry = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAuditGuestEntry);
             useSakaiEvents = instance.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents);
+            enableMeetingSessions = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions);
             enableMyContent = instance.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent);
             enableAddGuest = instance.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true);
             enableSetUserRole = instance.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true);
@@ -441,6 +442,9 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember]
         public bool enableAuditGuestEntry { get; set; }
+
+        [DataMember]
+        public bool enableMeetingSessions { get; set; }
 
         [DataMember]
         public bool useSakaiEvents { get; set; }

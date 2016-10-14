@@ -58,6 +58,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SakaiCalendarExportService.cs" />
     <Compile Include="SakaiFillInMultipleBlanksParser.cs" />
     <Compile Include="SakaiFillInTheBlanksParser.cs" />
     <Compile Include="SakaiHelper.cs" />

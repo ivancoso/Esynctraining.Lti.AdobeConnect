@@ -97,11 +97,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             get { return IoC.Resolve<IAudioProfilesService>(); }
         }
 
-        private ICalendarEventService CalendarEventService
-        {
-            get { return IoC.Resolve<ICalendarEventService>(); }
-        }
-
         private ILogger Logger
         {
             get { return IoC.Resolve<ILogger>(); }
@@ -150,11 +145,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             //            this.LmsCourseMeetingModel.ContainsByCompanyAndScoId(lmsCompany, meetingScoId, meeting.Id));
             bool skipRemovingFromAC = softDelete; 
 
-            if (lmsCompany.LmsProviderId == (int) LmsProviderEnum.Sakai &&
-                lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
-            {
-                CalendarEventService.DeleteMeetingEvents(meeting, param);
-            }
+            var meetingSessionService =
+                LmsFactory.GetMeetingSessionService((LmsProviderEnum) lmsCompany.LmsProviderId);
+            meetingSessionService.DeleteMeetingSessions(meeting, param);
+
             this.LmsCourseMeetingModel.RegisterDelete(meeting, flush: true);
                         
             if (skipRemovingFromAC)
@@ -168,11 +162,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 foreach (var m in meetings)
                 {
-                    if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai &&
-                        lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
-                    {
-                        CalendarEventService.DeleteMeetingEvents(m, param);
-                    }
+                    meetingSessionService.DeleteMeetingSessions(m, param);
                     this.LmsCourseMeetingModel.RegisterDelete(m, flush: false);
                 }
                 this.LmsCourseMeetingModel.Flush();
@@ -1005,10 +995,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             List<MeetingPermissionInfo> enrollments = this.UsersSetup.GetMeetingAttendees(provider, meeting.GetMeetingScoId());
 
-            if (lmsCompany.LmsProviderId == (int)LmsProviderEnum.Sakai && lmsCompany.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents))
-            {
-                CalendarEventService.DeleteMeetingEvents(meeting, param);
-            }
+            var meetingSessionService =
+                LmsFactory.GetMeetingSessionService((LmsProviderEnum)lmsCompany.LmsProviderId);
+            meetingSessionService.DeleteMeetingSessions(meeting, param);
 
             model.RegisterDelete(meeting, true);
 

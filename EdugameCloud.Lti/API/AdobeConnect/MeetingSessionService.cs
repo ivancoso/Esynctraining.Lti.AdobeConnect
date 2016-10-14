@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DotNetOpenAuth.Messaging;
-using EdugameCloud.Lti.API.Sakai;
 using EdugameCloud.Lti.Core.Business.MeetingNameFormatting;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Domain.Entities;
@@ -14,29 +13,27 @@ using Newtonsoft.Json;
 
 namespace EdugameCloud.Lti.API.AdobeConnect
 {
-    public class CalendarEventService : ICalendarEventService
+    public class MeetingSessionService : IMeetingSessionService
     {
         private readonly LmsCourseMeetingModel _lmsCourseMeetingModel;
-        private readonly ISakaiApi _sakaiApiService;
+        private readonly ICalendarExportService _calendarExportService;
         private readonly ILogger _logger;
 
-
-        public CalendarEventService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ISakaiApi sakaiApiService)
+        public MeetingSessionService(LmsCourseMeetingModel lmsCourseMeetingModel, ILogger logger, ICalendarExportService calendarExportService)
         {
             if (lmsCourseMeetingModel == null)
                 throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
-            if (sakaiApiService == null)
-                throw new ArgumentNullException(nameof(sakaiApiService));
+            if (calendarExportService == null)
+                throw new ArgumentNullException(nameof(calendarExportService));
 
             _lmsCourseMeetingModel = lmsCourseMeetingModel;
             _logger = logger;
-            _sakaiApiService = sakaiApiService;
+            _calendarExportService = calendarExportService;
         }
 
-
-        public IEnumerable<CalendarEventDTO> CreateBatch(CreateCalendarEventsBatchDto dto, LtiParamDTO param)
+        public IEnumerable<MeetingSessionDTO> CreateBatch(CreateMeetingSessionsBatchDto dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(dto.MeetingId).Value;
             FixDateTimeFields(dto);
@@ -63,16 +60,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             int i = 1;
             var latestDateToCheck = startDate.AddDays(dto.Weeks*7);
 
-            var listOfEvents = new List<SakaiEventDto>();
+            var listOfEvents = new List<MeetingSessionDTO>();
             while (startDate < latestDateToCheck)
             {
                 if (dto.DaysOfWeek.Contains(startDate.DayOfWeek))
                 {
-                    var ev = new SakaiEventDto
+                    var ev = new MeetingSessionDTO
                     {
                         Name = meetingName + " #" + i.ToString(),
-                        Description = string.Empty,
-                        EgcId = meetingName + " " + i.ToString(),
+                        Summary = string.Empty,
                         StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
                         EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
                     };
@@ -84,33 +80,36 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 endDate = endDate.AddDays(1);
             }
 
-            var events = _sakaiApiService.SaveEvents(meeting.Id, listOfEvents, param);
-
-            meeting.CalendarEvents.AddRange(events.Select(x => new LmsCalendarEvent
+            if (_calendarExportService != null)
             {
-                EventId = x.SakaiId,
+                listOfEvents = _calendarExportService.SaveEvents(meeting.Id, listOfEvents, param).ToList();
+            }
+
+            meeting.MeetingSessions.AddRange(listOfEvents.Select(x => new LmsMeetingSession
+            {
+                EventId = x.EventId,
                 Name = x.Name,
                 StartDate = DateTime.Parse(x.StartDate),
                 EndDate = DateTime.Parse(x.EndDate),
                 LmsCourseMeeting = meeting
             }));
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
-            return meeting.CalendarEvents.Select(ConvertFromEntity).ToArray();
+            return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
         }
 
-        public IEnumerable<CalendarEventDTO> GetEvents(int meetingId)
+        public IEnumerable<MeetingSessionDTO> GetSessions(int meetingId)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
-            return meeting.CalendarEvents.Select(ConvertFromEntity).ToArray();
+            return meeting.MeetingSessions.Select(ConvertFromEntity).ToArray();
         }
 
-        public CalendarEventDTO CreateEvent(int meetingId, LtiParamDTO param)
+        public MeetingSessionDTO CreateSession(int meetingId, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             MeetingNameInfo nameInfo = string.IsNullOrWhiteSpace(meeting.MeetingNameJson)
                 ? new MeetingNameInfo()
                 : JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
-            var lastEvent = meeting.CalendarEvents.OrderByDescending(x => x.StartDate).FirstOrDefault();
+            var lastEvent = meeting.MeetingSessions.OrderByDescending(x => x.StartDate).FirstOrDefault();
             DateTime startDate = DateTime.UtcNow;
             DateTime endDate = startDate.AddHours(1);
             if (lastEvent != null)
@@ -118,36 +117,40 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 startDate = lastEvent.StartDate.AddDays(1);
                 endDate = lastEvent.EndDate.AddDays(1);
             }
-            var ev = new SakaiEventDto()
+            var ev = new MeetingSessionDTO()
             {
                 Name = nameInfo.meetingName + " #",
-                Description = string.Empty,
-                EgcId = nameInfo.meetingName,
+                Summary = string.Empty,
                 StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
                 EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
             };
 
-            var sakaiEventResult = _sakaiApiService.SaveEvents(meetingId, new SakaiEventDto[] {ev}, param);
-
-            var sakaiEvent = sakaiEventResult.Single();
-            var dbEvent = new LmsCalendarEvent
+            if (_calendarExportService != null)
             {
-                EventId = sakaiEvent.SakaiId,
-                Name = sakaiEvent.Name,
-                StartDate = DateTime.Parse(sakaiEvent.StartDate),
-                EndDate = DateTime.Parse(sakaiEvent.EndDate),
+                var sakaiEventResult = _calendarExportService.SaveEvents(meetingId, new MeetingSessionDTO[] {ev}, param);
+                ev = sakaiEventResult.Single();
+            }
+            var dbEvent = new LmsMeetingSession
+            {
+                EventId = ev.EventId,
+                Name = ev.Name,
+                StartDate = DateTime.Parse(ev.StartDate),
+                EndDate = DateTime.Parse(ev.EndDate),
                 LmsCourseMeeting = meeting
             };
-            meeting.CalendarEvents.Add(dbEvent);
+            meeting.MeetingSessions.Add(dbEvent);
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
             return ConvertFromEntity(dbEvent);
         }
 
-        public CalendarEventDTO SaveEvent(int meetingId, CalendarEventDTO dto, LtiParamDTO param)
+        public MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
-            var dbEvent = meeting.CalendarEvents.Single(x => x.EventId == dto.EventId);
-
+            var dbEvent = !string.IsNullOrEmpty(dto.EventId)
+                ? meeting.MeetingSessions.Single(x => x.EventId == dto.EventId)
+                : (meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
+                   ?? new LmsMeetingSession());
+            
             DateTime startDate;
             DateTime endDate;
             if (!DateTime.TryParse(dto.StartDate, out startDate) || !DateTime.TryParse(dto.EndDate, out endDate))
@@ -156,85 +159,87 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new InvalidOperationException("Start date or End date is not correct.");
             }
 
-            var ev = new SakaiEventDto
+            dto.StartDate = startDate.ToString("yyyy-MM-dd HH:mm");
+            dto.EndDate = endDate.ToString("yyyy-MM-dd HH:mm");
+
+            if (_calendarExportService != null)
             {
-                SakaiId = dto.EventId,
-                Name = dto.Name,
-                Description = string.Empty,
-                EgcId = dto.Name,
-                StartDate = startDate.ToString("yyyy-MM-dd HH:mm"),
-                EndDate = endDate.ToString("yyyy-MM-dd HH:mm"),
-            };
-
-            var sakaiEventResult = _sakaiApiService.SaveEvents(meetingId, new SakaiEventDto[] {ev}, param);
-            var sakaiEvent = sakaiEventResult.Single();
-
-            dbEvent.EventId = sakaiEvent.SakaiId;
-            dbEvent.Name = sakaiEvent.Name;
-            dbEvent.StartDate = DateTime.Parse(sakaiEvent.StartDate);
-            dbEvent.EndDate = DateTime.Parse(sakaiEvent.EndDate);
+                var sakaiEventResult = _calendarExportService.SaveEvents(meetingId, new MeetingSessionDTO[] {dto}, param);
+                dto = sakaiEventResult.Single();
+            }
+            dbEvent.EventId = dto.EventId;
+            dbEvent.Name = dto.Name;
+            dbEvent.Summary = dto.Summary;
+            dbEvent.StartDate = DateTime.Parse(dto.StartDate);
+            dbEvent.EndDate = DateTime.Parse(dto.EndDate);
 
             _lmsCourseMeetingModel.RegisterSave(meeting, true);
             return ConvertFromEntity(dbEvent);
         }
 
-        public void DeleteEvent(int meetingId, string eventId, LtiParamDTO param)
+        public void DeleteSession(int meetingId, string externalId, int id, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = null;
-            LmsCalendarEvent dbEvent = null;
+            LmsMeetingSession dbEvent = null;
             if (meetingId != 0)
             {
                 meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
 
-                dbEvent = meeting.CalendarEvents.FirstOrDefault(x => x.EventId == eventId);
+                dbEvent = !string.IsNullOrEmpty(externalId)
+                    ? meeting.MeetingSessions.FirstOrDefault(x => x.EventId == externalId)
+                    : meeting.MeetingSessions.FirstOrDefault(x => x.Id == id);
 
                 if (dbEvent == null)
                 {
                     //todo: try to remove from sakai ?
                     throw new InvalidOperationException(
-                        $"Could not find event in database. MeetingId={meetingId}, EventId={eventId}");
+                        $"Could not find event in database. MeetingId={meetingId}, EventId={externalId}, Id={id}");
                 }
             }
 
-            var deleteResult = _sakaiApiService.DeleteEvents(new[] {dbEvent.EventId}, param).Single();
-
-
-            if (!string.IsNullOrWhiteSpace(deleteResult)
-                && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
+            if (_calendarExportService != null)
             {
-                //todo: logging
-                throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                var deleteResult = _calendarExportService.DeleteEvents(new[] {dbEvent.EventId}, param).Single();
+                if (!string.IsNullOrWhiteSpace(deleteResult)
+                && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    //todo: logging
+                    throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                }
             }
 
             if (meetingId != 0)
             {
-                meeting.CalendarEvents.Remove(dbEvent);
+                meeting.MeetingSessions.Remove(dbEvent);
                 _lmsCourseMeetingModel.RegisterSave(meeting, true);
             }
         }
 
-        public void DeleteMeetingEvents(LmsCourseMeeting meeting, LtiParamDTO param)
+        public void DeleteMeetingSessions(LmsCourseMeeting meeting, LtiParamDTO param)
         {
-            if (meeting.CalendarEvents.Any())
+            if (meeting.MeetingSessions.Any())
             {
-                var events = new HashSet<string>(meeting.CalendarEvents.Select(x => x.EventId));
+                var events = new HashSet<string>(meeting.MeetingSessions.Select(x => x.EventId));
 
-
-                var deleteResultIds = _sakaiApiService.DeleteEvents(events, param);
-                
-                if (!events.SetEquals(deleteResultIds))
+                if (_calendarExportService != null)
                 {
-                    _logger.Error($"List of all calendar events { string.Join(",", events) }, response is  {string.Join(",", deleteResultIds.ToArray())} ");
-                    throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                    var deleteResultIds = _calendarExportService.DeleteEvents(events, param);
+
+                    if (!events.SetEquals(deleteResultIds))
+                    {
+                        _logger.Error(
+                            $"List of all calendar events {string.Join(",", events)}, response is  {string.Join(",", deleteResultIds.ToArray())} ");
+                        throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
+                    }
                 }
 
-                meeting.CalendarEvents.Clear();
+                meeting.MeetingSessions.Clear();
                 _lmsCourseMeetingModel.RegisterSave(meeting);
             }
         }
 
 
-        private static void FixDateTimeFields(CreateCalendarEventsBatchDto dto)
+        private static void FixDateTimeFields(CreateMeetingSessionsBatchDto dto)
         {
             if (dto.StartTime != null)
             {
@@ -248,14 +253,15 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        private CalendarEventDTO ConvertFromEntity(LmsCalendarEvent entity)
+        private MeetingSessionDTO ConvertFromEntity(LmsMeetingSession entity)
         {
-            var result = new CalendarEventDTO
+            var result = new MeetingSessionDTO
             {
                 Name = entity.Name,
                 EventId = entity.EventId,
                 StartDate = entity.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
-                EndDate = entity.EndDate.ToString("MM/dd/yyyy hh:mm tt")
+                EndDate = entity.EndDate.ToString("MM/dd/yyyy hh:mm tt"),
+                Summary = entity.Summary
             };
 
             return result;

@@ -76,6 +76,9 @@ namespace EdugameCloud.Lti.DTO
         [DataMember(Name = "useSakaiEvents")]
         public bool UseSakaiEvents { get; set; }
 
+        [DataMember(Name = "enableMeetingSessions")]
+        public bool EnableMeetingSessions { get; set; }
+
         [DataMember(Name = "enableMeetingReuse")]
         public bool EnableMeetingReuse { get; set; }
 
@@ -180,6 +183,7 @@ namespace EdugameCloud.Lti.DTO
                     UseMP4 = value.UseMP4,
                     EnableMultipleMeetings = value.EnableMultipleMeetings,
                     UseSakaiEvents = value.GetSetting<bool>(LmsCompanySettingNames.UseSakaiEvents),
+                    EnableMeetingSessions = value.GetSetting<bool>(LmsCompanySettingNames.EnableMeetingSessions),
                     SupportPageHtml = value.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml),
 
                     EnableMeetingReuse = value.EnableMeetingReuse,

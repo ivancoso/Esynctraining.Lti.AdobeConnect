@@ -199,7 +199,7 @@
     <Compile Include="Domain\Entities\ACConnectionMode.cs" />
     <Compile Include="Domain\Entities\AcRole.cs" />
     <Compile Include="Domain\Entities\ILmsLicense.cs" />
-    <Compile Include="Domain\Entities\LmsCalendarEvent.cs" />
+    <Compile Include="Domain\Entities\LmsMeetingSession.cs" />
     <Compile Include="Domain\Entities\LmsCompany.cs" />
     <Compile Include="Domain\Entities\LmsCompanyRoleMapping.cs" />
     <Compile Include="Domain\Entities\LmsCompanySetting.cs" />
@@ -230,8 +230,8 @@
     <Compile Include="DTO\ACSessionReportDTO.cs" />
     <Compile Include="DTO\AnnouncementDTO.cs" />
     <Compile Include="DTO\AnswerDTO.cs" />
-    <Compile Include="DTO\CalendarEventDTO.cs" />
-    <Compile Include="DTO\CreateCalendarEventsBatchDto.cs" />
+    <Compile Include="DTO\MeetingSessionDTO.cs" />
+    <Compile Include="DTO\CreateMeetingSessionsBatchDto.cs" />
     <Compile Include="DTO\TelephonyDTO.cs" />
     <Compile Include="DTO\CompanyLmsDTO.cs" />
     <Compile Include="DTO\ConnectionInfoDTO.cs" />

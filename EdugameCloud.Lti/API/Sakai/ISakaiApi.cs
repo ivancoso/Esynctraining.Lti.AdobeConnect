@@ -5,7 +5,5 @@ namespace EdugameCloud.Lti.API.Sakai
 {
     public interface ISakaiApi : IEGCEnabledSakaiApi
     {
-        IEnumerable<string> DeleteEvents(IEnumerable<string> eventIds, LtiParamDTO param);
-        IEnumerable<SakaiEventDto> SaveEvents(int meetingId, IEnumerable<SakaiEventDto> eventDtos, LtiParamDTO param);
     }
 }

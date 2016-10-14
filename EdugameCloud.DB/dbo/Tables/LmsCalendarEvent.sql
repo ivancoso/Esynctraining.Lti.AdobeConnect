@@ -5,6 +5,7 @@ CREATE TABLE [dbo].[LmsCalendarEvent](
 	[startDate] [datetime2](7) NOT NULL,
 	[endDate] [datetime2](7) NOT NULL,
 	[lmsCourseMeetingId] [int] NOT NULL,
+	[summary] [nvarchar](200) NULL,
 CONSTRAINT [PK_LmsCalendarEvent] PRIMARY KEY CLUSTERED ([lmsCalendarEventId] ASC),
 CONSTRAINT [FK_LmsCalendarEvent_LmsCourseMeeting] FOREIGN KEY([lmsCourseMeetingId]) REFERENCES [dbo].[LmsCourseMeeting] ([lmsCourseMeetingId])
 );

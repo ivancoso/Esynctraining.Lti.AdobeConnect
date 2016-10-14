@@ -81,11 +81,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             get { return IoC.Resolve<IAudioProfilesService>(); }
         }
 
-        private ICalendarEventService CalendarEventService
-        {
-            get { return IoC.Resolve<ICalendarEventService>(); }
-        }
-
         private ILogger Logger
         {
             get { return IoC.Resolve<ILogger>(); }

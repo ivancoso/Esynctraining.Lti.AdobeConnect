@@ -6,8 +6,11 @@ namespace EdugameCloud.Lti.DTO
     /// The calendar event DTO.
     /// </summary>
     [DataContract]
-    public class CalendarEventDTO
+    public class MeetingSessionDTO
     {
+        [DataMember(Name = "id")]
+        public int Id { get; set; }
+
         [DataMember(Name = "eventId")]
         public string EventId { get; set; }
 
@@ -19,5 +22,8 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "endDate")]
         public string EndDate { get; set; }
+
+        [DataMember(Name = "summary")]
+        public string Summary { get; set; }
     }
 }

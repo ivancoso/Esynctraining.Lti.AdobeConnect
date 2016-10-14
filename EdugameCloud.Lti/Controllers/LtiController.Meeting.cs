@@ -33,11 +33,6 @@ namespace EdugameCloud.Lti.Controllers
             get { return IoC.Resolve<UsersSetup>(); }
         }
 
-        private ICalendarEventService CalendarEventService
-        {
-            get { return IoC.Resolve<ICalendarEventService>(); }
-        }
-
         #endregion
 
         [HttpPost]

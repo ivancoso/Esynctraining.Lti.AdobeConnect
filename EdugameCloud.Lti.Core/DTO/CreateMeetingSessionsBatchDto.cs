@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace EdugameCloud.Lti.Core.DTO
 {
     [DataContract]
-    public class CreateCalendarEventsBatchDto
+    public class CreateMeetingSessionsBatchDto
     {
         [DataMember(Name = "meetingId")]
         public int MeetingId { get; set; }
