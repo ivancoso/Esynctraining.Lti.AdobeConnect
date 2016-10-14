@@ -81,6 +81,9 @@
         [DataMember]
         public IDictionary<string, string> telephonyProfileFields { get; set; }
 
+        [DataMember]
+        public IEnumerable<MeetingSessionDTO> sessions { get; set; }
+
         #endregion
 
         public SpecialPermissionId GetPermissionId()
