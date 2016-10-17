@@ -1609,6 +1609,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 sessions = lmsCourseMeeting.MeetingSessions.Select(x => new MeetingSessionDTO
                 {
+                    Id = x.Id,
                     Name = x.Name,
                     EventId = x.EventId,
                     StartDate = x.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
