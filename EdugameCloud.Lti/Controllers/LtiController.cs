@@ -1069,13 +1069,14 @@
 
             var action = form["lti_action"];
             var ltiId = form["lti_id"];
-            var eventId = form["sakai_id"];
+            var sakaiId = form["sakai_id"];
+            int? eventId = null;
+            int meetingId;
             string tab = null;
             if (!string.IsNullOrEmpty(action))
             {
                 if (action == "join")
                 {
-                    int meetingId;
                     if (int.TryParse(ltiId, out meetingId))
                     {
                         return JoinMeeting(session.Id.ToString("n"), meetingId);
@@ -1092,6 +1093,16 @@
 
             var primaryColor = session.LmsUser.PrimaryColor;
             primaryColor = !string.IsNullOrWhiteSpace(primaryColor) ? primaryColor : (session.LmsCompany.PrimaryColor ?? string.Empty);
+
+            if (!string.IsNullOrEmpty(sakaiId) && int.TryParse(ltiId, out meetingId))
+            {
+                var meeting = LmsCourseMeetingModel.GetOneById(meetingId).Value;
+                var meetingSession = meeting?.MeetingSessions.SingleOrDefault(x => x.EventId == sakaiId);
+                if (meetingSession != null)
+                {
+                    eventId = meetingSession.Id;
+                }
+            }
 
             return RedirectToAction("GetExtJsPage", "Lti", new
             {

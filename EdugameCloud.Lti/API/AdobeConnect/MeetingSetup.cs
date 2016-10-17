@@ -1611,7 +1611,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 {
                     Id = x.Id,
                     Name = x.Name,
-                    EventId = x.EventId,
                     StartDate = x.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
                     EndDate = x.EndDate.ToString("MM/dd/yyyy hh:mm tt"),
                     Summary = x.Summary

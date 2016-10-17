@@ -11,7 +11,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         IEnumerable<MeetingSessionDTO> GetSessions(int meetingId);
         MeetingSessionDTO CreateSession(int meetingId, LtiParamDTO param);
         MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO ev, LtiParamDTO param);
-        void DeleteSession(int meetingId, string externalId, int id, LtiParamDTO param);
+        void DeleteSession(int meetingId, int id, LtiParamDTO param);
         void DeleteMeetingSessions(LmsCourseMeeting meeting, LtiParamDTO param);
     }
 }

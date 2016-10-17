@@ -143,12 +143,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public MeetingSessionDTO SaveSession(int meetingId, MeetingSessionDTO dto, LtiParamDTO param)
         {
-            LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
-            var dbEvent = !string.IsNullOrEmpty(dto.EventId)
-                ? meeting.MeetingSessions.Single(x => x.EventId == dto.EventId)
-                : (meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
-                   ?? new LmsMeetingSession());
-            
             DateTime startDate;
             DateTime endDate;
             if (!DateTime.TryParse(dto.StartDate, out startDate) || !DateTime.TryParse(dto.EndDate, out endDate))
@@ -160,12 +154,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             dto.StartDate = startDate.ToString("yyyy-MM-dd HH:mm");
             dto.EndDate = endDate.ToString("yyyy-MM-dd HH:mm");
 
+            LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
+            var dbEvent = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
+                   ?? new LmsMeetingSession();
+
+            if (dbEvent.Id == 0)
+            {
+                meeting.MeetingSessions.Add(dbEvent);
+            }
+
             if (_calendarExportService != null)
             {
+                dto.EventId = dbEvent.EventId;
                 var sakaiEventResult = _calendarExportService.SaveEvents(meetingId, new MeetingSessionDTO[] {dto}, param);
                 dto = sakaiEventResult.Single();
             }
-            dbEvent.EventId = dto.EventId;
             dbEvent.Name = dto.Name;
             dbEvent.Summary = dto.Summary;
             dbEvent.StartDate = DateTime.Parse(dto.StartDate);
@@ -175,7 +178,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return ConvertFromEntity(dbEvent);
         }
 
-        public void DeleteSession(int meetingId, string externalId, int id, LtiParamDTO param)
+        public void DeleteSession(int meetingId, int id, LtiParamDTO param)
         {
             LmsCourseMeeting meeting = null;
             LmsMeetingSession dbEvent = null;
@@ -183,27 +186,21 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
 
-                dbEvent = !string.IsNullOrEmpty(externalId)
-                    ? meeting.MeetingSessions.FirstOrDefault(x => x.EventId == externalId)
-                    : meeting.MeetingSessions.FirstOrDefault(x => x.Id == id);
+                dbEvent = meeting.MeetingSessions.FirstOrDefault(x => x.Id == id);
 
                 if (dbEvent == null)
                 {
-                    //todo: try to remove from sakai ?
                     throw new InvalidOperationException(
-                        $"Could not find event in database. MeetingId={meetingId}, EventId={externalId}, Id={id}");
+                        $"Could not find meeting session in database. MeetingId={meetingId}, Id={id}");
                 }
             }
 
-            if (_calendarExportService != null)
-            {
-                var deleteResult = _calendarExportService.DeleteEvents(new[] {dbEvent.EventId}, param).Single();
-                if (!string.IsNullOrWhiteSpace(deleteResult)
+            var deleteResult = _calendarExportService?.DeleteEvents(new[] {dbEvent.EventId}, param).Single();
+            if (!string.IsNullOrWhiteSpace(deleteResult)
                 && !dbEvent.EventId.Equals(deleteResult, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    //todo: logging
-                    throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
-                }
+            {
+                //todo: logging
+                throw new InvalidOperationException("Some events could not be removed from Sakai calendar.");
             }
 
             if (meetingId != 0)
@@ -257,7 +254,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             {
                 Id = entity.Id,
                 Name = entity.Name,
-                EventId = entity.EventId,
                 StartDate = entity.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
                 EndDate = entity.EndDate.ToString("MM/dd/yyyy hh:mm tt"),
                 Summary = entity.Summary

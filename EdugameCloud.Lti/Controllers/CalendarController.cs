@@ -96,14 +96,14 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteEvent(int meetingId, string eventId, int? id, string lmsProviderName)
+        public ActionResult DeleteEvent(int meetingId, int? id, string lmsProviderName)
         {
             try
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
-                meetingSessionService.DeleteSession(meetingId, eventId, id.GetValueOrDefault(), param);
+                meetingSessionService.DeleteSession(meetingId, id.GetValueOrDefault(), param);
                 return Json(OperationResult.Success());
             }
             catch (Exception ex)
