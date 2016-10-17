@@ -72,6 +72,7 @@ namespace EdugameCloud.Lti.Core.Constants
 
         }
 
+        public static string IsPdfMeetingUrl = nameof(IsPdfMeetingUrl);
     }
 
 }
