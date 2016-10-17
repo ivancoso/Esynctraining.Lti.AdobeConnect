@@ -4,7 +4,9 @@ using EdugameCloud.Lti.API.BlackBoard;
 using EdugameCloud.Lti.API.Canvas;
 using EdugameCloud.Lti.API.Moodle;
 using EdugameCloud.Lti.API.Sakai;
+using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
+using Esynctraining.Core.Logging;
 
 namespace EdugameCloud.Lti.API
 {
@@ -92,13 +94,16 @@ namespace EdugameCloud.Lti.API
 
         public IMeetingSessionService GetMeetingSessionService(LmsProviderEnum lmsId)
         {
+            var lmsCourseMeetingModel = IoC.Resolve<LmsCourseMeetingModel>();
+            var logger = IoC.Resolve<ILogger>();
             switch (lmsId)
             {
                 case LmsProviderEnum.Sakai:
-                    return IoC.Resolve<IMeetingSessionService>(lmsId.ToString() + "MeetingSessionService");
+                    var calendarExportService = IoC.Resolve<ICalendarExportService>("SakaiCalendarExportService");
+                    return new MeetingSessionService(lmsCourseMeetingModel, logger, calendarExportService);
             }
 
-            return IoC.Resolve<IMeetingSessionService>();
+            return new MeetingSessionService(lmsCourseMeetingModel, logger, null);
         }
         #endregion
     }

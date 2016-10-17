@@ -29,10 +29,7 @@ namespace EdugameCloud.Lti
             container.Register(Component.For<IRecordingsService>().ImplementedBy<RecordingsService>());
             container.Register(Component.For<IAudioProfilesService>().ImplementedBy<AudioProfilesService>());
             container.Register(Component.For<ISeminarService>().ImplementedBy<SeminarService>());
-            container.Register(Component.For<IMeetingSessionService>().ImplementedBy<MeetingSessionService>()
-                .DynamicParameters((k, d) => d.Add("calendarExportService", null)));
-            container.Register(Component.For<IMeetingSessionService>().ImplementedBy<MeetingSessionService>().Named("SakaiMeetingSessionService")
-                .DynamicParameters((k, d) => d.Add("calendarExportService", k.Resolve<ICalendarExportService>("SakaiCalendarExportService"))));
+
             container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
             
             container.Install(

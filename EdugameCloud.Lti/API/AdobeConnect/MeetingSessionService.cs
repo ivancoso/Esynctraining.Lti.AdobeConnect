@@ -25,8 +25,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 throw new ArgumentNullException(nameof(lmsCourseMeetingModel));
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
-            if (calendarExportService == null)
-                throw new ArgumentNullException(nameof(calendarExportService));
 
             _lmsCourseMeetingModel = lmsCourseMeetingModel;
             _logger = logger;
