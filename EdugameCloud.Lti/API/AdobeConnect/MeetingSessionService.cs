@@ -255,6 +255,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         {
             var result = new MeetingSessionDTO
             {
+                Id = entity.Id,
                 Name = entity.Name,
                 EventId = entity.EventId,
                 StartDate = entity.StartDate.ToString("MM/dd/yyyy hh:mm tt"),
