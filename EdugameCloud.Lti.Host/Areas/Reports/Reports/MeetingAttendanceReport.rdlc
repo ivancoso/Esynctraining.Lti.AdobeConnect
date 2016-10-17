@@ -1495,7 +1495,7 @@
               <ActionInfo>
                 <Actions>
                   <Action>
-                    <Hyperlink>=Parameters!ACMeetingUrl.Value</Hyperlink>
+                    <Hyperlink>=IIF(Parameters!IsShowMeetingTitle.Value = true, Parameters!ACMeetingUrl.Value, Nothing)</Hyperlink>
                   </Action>
                 </Actions>
               </ActionInfo>
@@ -1756,6 +1756,10 @@
     </ReportParameter>
     <ReportParameter Name="LocalDate">
       <DataType>String</DataType>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="IsShowMeetingTitle">
+      <DataType>Boolean</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>

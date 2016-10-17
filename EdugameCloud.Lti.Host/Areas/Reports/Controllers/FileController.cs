@@ -15,6 +15,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
+using EdugameCloud.Lti.Host.Dtos;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -88,6 +89,8 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     participants = tempParticipants.Select(x => new ACSessionParticipantReportDTO(x, timezoneOffset)).ToList();
                 }
 
+                bool isShowMeetingTitle = false;
+                bool.TryParse(Settings.IsPdfReportContainsMeetingTitleLink, out isShowMeetingTitle);
                 string mimeType;
                 var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
 
@@ -97,7 +100,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var reportRenderedBytes = this.GenerateReportBytes(format, "MeetingAttendanceReport", participants,
                     out mimeType, parametersList);
 
@@ -167,7 +170,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate));
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
                     {
@@ -269,7 +272,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var acMeetingUrl = acServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(format, company, session, acMeetingUrl, acMeetingTitle, localDate);
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate));
 
                 var reportRenderedBytes = GenerateReportBytes(format, "RecordingAttendanceReport", participants,
                     out mimeType, parametersList);
@@ -486,29 +489,30 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             return new List<string> { "IMAGE", "PDF", "EXCEL" };
         }
 
-        private IEnumerable<ReportParameter> GetReportParameters(string format, Company company, LmsUserSession userSession, string acMeetingUrl, string acMeetingTitle, DateTime localDate)
+        private IEnumerable<ReportParameter> GetReportParameters(ReportParamsDto paramsDto)
         {
-            if (company == null)
-                throw new ArgumentNullException(nameof(company));
-            if (userSession == null)
-                throw new ArgumentNullException(nameof(userSession));
-            if (acMeetingUrl == null)
-                throw new ArgumentNullException(nameof(acMeetingUrl));
-            if (acMeetingTitle == null)
-                throw new ArgumentNullException(nameof(acMeetingTitle));
+            if (paramsDto.company == null)
+                throw new ArgumentNullException(nameof(paramsDto.company));
+            if (paramsDto.userSession == null)
+                throw new ArgumentNullException(nameof(paramsDto.userSession));
+            if (paramsDto.acMeetingUrl == null)
+                throw new ArgumentNullException(nameof(paramsDto.acMeetingUrl));
+            if (paramsDto.acMeetingTitle == null)
+                throw new ArgumentNullException(nameof(paramsDto.acMeetingTitle));
 
-            var companyName = company.CompanyName;
-            var companyLogo = this.GetCompanyLogoUrl(company);
-            var isExcelFormat = (format.ToUpper() == "EXCEL").ToString();
-            var courseName = userSession.LtiSession.LtiParam.context_title ?? string.Empty;
+            var companyName = paramsDto.company.CompanyName;
+            var companyLogo = this.GetCompanyLogoUrl(paramsDto.company);
+            var isExcelFormat = (paramsDto.format.ToUpper() == "EXCEL").ToString();
+            var courseName = paramsDto.userSession.LtiSession.LtiParam.context_title ?? string.Empty;
 
-            var acMeetingUrlParam = new ReportParameter("ACMeetingUrl", acMeetingUrl);
-            var acMeetingTitleParam = new ReportParameter("ACMeetingTitle", acMeetingTitle);
+            var acMeetingUrlParam = new ReportParameter("ACMeetingUrl", paramsDto.acMeetingUrl);
+            var acMeetingTitleParam = new ReportParameter("ACMeetingTitle", paramsDto.acMeetingTitle);
             var companyNameParam = new ReportParameter("CompanyName", companyName);
             var companyLogoParam = new ReportParameter("CompanyLogo", companyLogo);
             var isExcelParam = new ReportParameter("IsExcelFormat", isExcelFormat);
             var courseNameParam = new ReportParameter("CourseName", courseName);
-            var localDateParam = new ReportParameter("LocalDate", String.Format("{0:F}", localDate));
+            var localDateParam = new ReportParameter("LocalDate", String.Format("{0:F}", paramsDto.localDate));
+            var isShowMeetingTitle = new ReportParameter("IsShowMeetingTitle", paramsDto.isShowMeetingTitle.ToString());
 
             var parametersList = new List<ReportParameter>
             {
@@ -518,7 +522,8 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 courseNameParam,
                 acMeetingUrlParam,
                 acMeetingTitleParam,
-                localDateParam
+                localDateParam,
+                isShowMeetingTitle
             };
             return parametersList;
         }
