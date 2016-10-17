@@ -156,7 +156,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             LmsCourseMeeting meeting = _lmsCourseMeetingModel.GetOneById(meetingId).Value;
             var dbEvent = meeting.MeetingSessions.SingleOrDefault(x => x.Id == dto.Id)
-                   ?? new LmsMeetingSession();
+                   ?? new LmsMeetingSession { LmsCourseMeeting = meeting};
 
             if (dbEvent.Id == 0)
             {
