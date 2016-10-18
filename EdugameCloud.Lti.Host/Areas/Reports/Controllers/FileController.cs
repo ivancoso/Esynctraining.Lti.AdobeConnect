@@ -12,6 +12,7 @@ using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.Extensions;
@@ -90,7 +91,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 }
 
                 bool isShowMeetingTitle = false;
-                bool.TryParse(Settings.IsPdfReportContainsMeetingTitleLink, out isShowMeetingTitle);
+                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
                 string mimeType;
                 var company = this.companyModel.GetOneById(session.LmsCompany.CompanyId).Value;
 

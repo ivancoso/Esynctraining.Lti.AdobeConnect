@@ -402,7 +402,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>6099</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/lti</IISUrl>
+          <IISUrl>https://dev.edugamecloud.com/lti</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
