@@ -283,6 +283,7 @@
     <Compile Include="Extensions\AdobeConnectProxyExtensions.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="JsonNetResult.cs" />
+    <Compile Include="LmsAuthorizeAttribute.cs" />
     <Compile Include="LtiWindsorInstaller.cs" />
     <Compile Include="Models\ProxyToolPasswordModel.cs" />
     <Compile Include="OAuth\Canvas\CanvasAuthResponse.cs" />

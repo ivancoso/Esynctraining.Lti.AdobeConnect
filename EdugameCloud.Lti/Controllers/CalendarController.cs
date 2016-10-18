@@ -25,11 +25,11 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateBatch(CreateMeetingSessionsBatchDto dto, string lmsProviderName)
+        [LmsAuthorize]
+        public ActionResult CreateBatch(CreateMeetingSessionsBatchDto dto, LmsUserSession session)
         {
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var result = meetingSessionService.CreateBatch(dto, param);
@@ -60,11 +60,11 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateEvent(int meetingId, string lmsProviderName)
+        [LmsAuthorize]
+        public ActionResult CreateEvent(int meetingId, LmsUserSession session)
         {
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var eve = meetingSessionService.CreateSession(meetingId, param);
@@ -78,11 +78,11 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult SaveEvent(MeetingSessionDTO ev, int meetingId, string lmsProviderName)
+        [LmsAuthorize]
+        public ActionResult SaveEvent(MeetingSessionDTO ev, int meetingId, LmsUserSession session)
         {
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 var eve = meetingSessionService.SaveSession(meetingId, ev, param);
@@ -96,11 +96,11 @@ namespace EdugameCloud.Lti.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteEvent(int meetingId, int? id, string lmsProviderName)
+        [LmsAuthorize]
+        public ActionResult DeleteEvent(int meetingId, int? id, LmsUserSession session)
         {
             try
             {
-                var session = GetReadOnlySession(lmsProviderName);
                 LtiParamDTO param = session.LtiSession.LtiParam;
                 var meetingSessionService = lmsFactory.GetMeetingSessionService((LmsProviderEnum)session.LmsCompany.LmsProviderId);
                 meetingSessionService.DeleteSession(meetingId, id.GetValueOrDefault(), param);
