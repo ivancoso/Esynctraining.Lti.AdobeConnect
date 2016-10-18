@@ -171,7 +171,9 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                     return null;
                 }
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate));
+                bool isShowMeetingTitle = false;
+                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
                 var subreports = new Dictionary<string, KeyValuePair<string, SubreportProcessingEventHandler>>
                 {
                     {
@@ -273,7 +275,9 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
                 var acMeetingUrl = acServer + acMeeting.ScoInfo.UrlPath;
                 var acMeetingTitle = acMeeting.ScoInfo.Name;
                 var localDate = GetLocalDate(timezoneOffset);
-                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate));
+                bool isShowMeetingTitle;
+                bool.TryParse(credentials.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl), out isShowMeetingTitle);
+                var parametersList = GetReportParameters(new ReportParamsDto(format, company, session, acMeetingUrl, acMeetingTitle, localDate, isShowMeetingTitle));
 
                 var reportRenderedBytes = GenerateReportBytes(format, "RecordingAttendanceReport", participants,
                     out mimeType, parametersList);
