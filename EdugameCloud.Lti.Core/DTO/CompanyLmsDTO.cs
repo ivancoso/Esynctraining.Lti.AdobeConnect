@@ -130,7 +130,7 @@ namespace EdugameCloud.Lti.DTO
             enableRemoveUser = instance.GetSetting<bool>(LmsCompanySettingNames.EnableRemoveUser, true);
             moodleCoreServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleCoreServiceToken);
             moodleQuizServiceToken = instance.GetSetting<string>(LmsCompanySettingNames.MoodleQuizServiceToken);
-            isPdfMeetingUrl = instance.GetSetting<string>(LmsCompanySettingNames.IsPdfMeetingUrl);
+            isPdfMeetingUrl = instance.GetSetting<bool>(LmsCompanySettingNames.IsPdfMeetingUrl);
             Telephony = new TelephonyDTO(instance);
         }
 
@@ -474,7 +474,7 @@ namespace EdugameCloud.Lti.DTO
         public string moodleQuizServiceToken { get; set; }
 
         [DataMember]
-        public string isPdfMeetingUrl { get; set; }
+        public bool isPdfMeetingUrl { get; set; }
     }
 
 }
