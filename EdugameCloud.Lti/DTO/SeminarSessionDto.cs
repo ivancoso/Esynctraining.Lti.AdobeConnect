@@ -37,6 +37,7 @@ namespace EdugameCloud.Lti.DTO
         
         public int ExpectedLoad { get; set; }
 
+        public string ScoId { get; set; }
     }
 
 }

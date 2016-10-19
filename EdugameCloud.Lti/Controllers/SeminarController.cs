@@ -176,7 +176,7 @@ namespace EdugameCloud.Lti.Controllers
                     return Json(OperationResult.Error(Resources.Messages.MeetingNotFound));
                 }
 
-                seminarSessionDto.seminarRoomId = meeting.ScoId;
+                seminarSessionDto.ScoId = meeting.ScoId;
                 ProcessQuota(ac, meeting.ScoId, seminarSessionDto);
 
                 var timeZone = AcAccountService.GetAccountDetails(ac, IoC.Resolve<ICache>()).TimeZoneInfo;

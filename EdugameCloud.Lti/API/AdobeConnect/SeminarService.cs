@@ -107,7 +107,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var updateItem = new Esynctraining.AdobeConnect.SeminarSessionDto
             {
                 Name = seminarSessionDto.name,
-                SeminarScoId = seminarSessionDto.seminarRoomId,
+                Summary = seminarSessionDto.summary,
+                SeminarScoId = seminarSessionDto.ScoId,
                 ExpectedLoad = seminarSessionDto.ExpectedLoad, 
             };
 
