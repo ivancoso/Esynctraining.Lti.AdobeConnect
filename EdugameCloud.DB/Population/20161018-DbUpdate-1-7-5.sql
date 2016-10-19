@@ -10,7 +10,7 @@ update questionforsinglemultiplechoice set restrictions='multi_choice' where que
 	(select qfs.questionid from
 		questionforsinglemultiplechoice qfs
 		inner join question q on qfs.questionid=q.questionid
-		inner join distractor d on d.questionid=q.questionid
+		inner join distractor d on d.questionid=q.questionid and d.isCorrect=1
 		inner join submoduleitem smi on q.submoduleitemid=smi.submoduleitemid
 		inner join submodulecategory smc on smi.submodulecategoryid=smc.submodulecategoryid
 	where smc.companylmsid is null
