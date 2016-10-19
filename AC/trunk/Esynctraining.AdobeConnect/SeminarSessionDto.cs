@@ -16,6 +16,7 @@ namespace Esynctraining.AdobeConnect
 
         public int ExpectedLoad { get; set; }
 
+        public string Summary { get; set; }
     }
 
 }

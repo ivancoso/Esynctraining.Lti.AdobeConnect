@@ -133,6 +133,7 @@ namespace Esynctraining.AdobeConnect
                 FolderId = sessionItem.SeminarScoId,
                 Type = ScoType.seminarsession,
                 Name = sessionItem.Name,
+                Description = sessionItem.Summary
             };
 
             ScoInfoResult sessionScoResult = isNewSession ? provider.CreateSco(session) : provider.UpdateSco(session);
