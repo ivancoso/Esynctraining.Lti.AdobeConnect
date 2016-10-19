@@ -5,6 +5,8 @@ sp_rename 'FK_LmsCalendarEvent_LmsCourseMeeting', 'FK_LmsMeetingSession_LmsCours
 
 alter table LmsMeetingSession
   alter column eventId nvarchar(50) null;
+alter table LmsMeetingSession 
+  add summary nvarchar(2000);
 
 update questionforsinglemultiplechoice set restrictions='multi_choice' where questionid in
 	(select qfs.questionid from
