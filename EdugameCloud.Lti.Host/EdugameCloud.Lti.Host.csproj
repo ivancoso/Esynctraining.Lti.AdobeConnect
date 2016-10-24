@@ -294,6 +294,7 @@
     <Compile Include="Areas\Reports\Controllers\BaseController.cs" />
     <Compile Include="Areas\Reports\Controllers\FileController.cs" />
     <Compile Include="Areas\Reports\ReportsAreaRegistration.cs" />
+    <Compile Include="CustomAttributes\AcSessionAttribute.cs" />
     <Compile Include="Dtos\ReportParamsDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
