@@ -88,12 +88,7 @@ namespace EdugameCloud.Lti.Host.Areas.Reports.Controllers
             IAdobeConnectProxy provider = null;
             if (lmsCompany != null)
             {
-                //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                //if (provider == null)
-                {
-                    provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
-                   // this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-                }
+                provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
             }
 
             return provider;

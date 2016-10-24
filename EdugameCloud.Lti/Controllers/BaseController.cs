@@ -116,12 +116,12 @@ namespace EdugameCloud.Lti.Controllers
             IAdobeConnectProxy provider = null;
             if (lmsCompany != null)
             {
-                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                if (provider == null)
-                {
+                //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
+                //if (provider == null)
+                //{
                     provider = acAccountService.GetProvider(lmsCompany);
                     this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-                }
+                //}
             }
 
             return provider;
