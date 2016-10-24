@@ -1,21 +1,22 @@
 ﻿@{
-	Layout = null;
+    Layout = null;
 
-	string errorMessage = string.Empty;
+    string errorMessage = string.Empty;
+    string returnUrl = string.Empty;
 
-	if (string.IsNullOrWhiteSpace(ViewBag.Message))
-	{
-		errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
-			? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
-			: EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
-	}
-	else
-	{
-		errorMessage = ViewBag.Message;
-	}
+    if (string.IsNullOrWhiteSpace(ViewBag.Message))
+    {
+        errorMessage = string.IsNullOrWhiteSpace(ViewBag.DebugError)
+            ? EdugameCloud.Lti.Resources.Messages.ExceptionMessage
+            : EdugameCloud.Lti.Resources.Messages.ErrorOccured + ViewBag.DebugError;
+    }
+    else
+    {
+        errorMessage = ViewBag.Message;
+    }
 
-	string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
-	if ((errorMessage.Length > 80) && (height == "24px")) { height = "48px"; }
+    string height = string.IsNullOrWhiteSpace(ViewBag.DebugError) ? "24px" : "324px";
+    if ((errorMessage.Length > 80 || !string.IsNullOrEmpty(ViewBag.ReturnUrl)) && (height == "24px")) { height = "48px"; }
 }
 <!DOCTYPE html>
 <html class="x-viewport">
@@ -79,9 +80,16 @@
 											<div id="fieldset-1023-innerCt" data-ref="innerCt" style="" class="x-autocontainer-innerCt" role="presentation">
 												<div class="x-container  x-container-default x-box-layout-ct" style="padding: 10px; width: 670px; background: rgb(238, 238, 238);" id="meeting-item-1177">
 													<div id="meeting-item-1177-innerCt" data-ref="innerCt" role="presentation" class="x-box-inner" style="width: 650px; height: @height;">
-														<div id="meeting-item-1177-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
-															<label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178" for="">@Html.Raw(errorMessage)</label>
-														</div>
+													    <div id="meeting-item-1177-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
+													        <label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178" for="">@Html.Raw(errorMessage)</label>
+													    </div>
+                                                        @if (!string.IsNullOrEmpty(ViewBag.ReturnUrl))
+                                                        {
+                                                            <div id="meeting-item-1177-1-targetEl" data-ref="targetEl" class="x-box-target" role="presentation" style="width: 650px;">
+                                                                <label class="x-component  x-box-item x-component-default" style="margin: 0px; right: auto; left: 0px; width: 565px; top: 4px;" id="label-1178-1" for="">Click to return to the LMS page: </label>
+                                                                <br/><a href="@ViewBag.ReturnUrl">@ViewBag.ReturnUrl</a>
+                                                            </div>
+                                                        }
 													</div>
 												</div>
 											</div>

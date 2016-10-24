@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using System.Linq;
+
+namespace EdugameCloud.Lti.DTO
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -115,7 +117,25 @@
         /// Gets or sets the LIS person name family.
         /// </summary>
         public string lis_person_name_family { get; set; }
+                    
+        // splitting according to recomendations https://www.imsglobal.org/wiki/step-3-are-all-required-parameters-present
+        public string PersonNameFamily
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(lis_person_name_family))
+                    return lis_person_name_family;
+                if (!string.IsNullOrEmpty(lis_person_name_full))
+                {
+                    if (lis_person_name_full.Contains("@")) // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
+                        return lis_person_name_full.Split('@')[0];
+                    var splitted = lis_person_name_full.Split(' ');
+                    return splitted.Last();
+                }
 
+                return null;
+            }
+        }
         /// <summary>
         /// Gets or sets the LIS person name full.
         /// </summary>
@@ -125,6 +145,22 @@
         /// Gets or sets the LIS person name given.
         /// </summary>
         public string lis_person_name_given { get; set; }
+
+        public string PersonNameGiven
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(lis_person_name_given))
+                    return lis_person_name_given;
+                if (!string.IsNullOrEmpty(lis_person_name_full))
+                {
+                    var splitted = lis_person_name_full.Split(' ');
+                    return splitted[0];
+                }
+
+                return null;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the LIS person source ID.
@@ -264,6 +300,8 @@
         /// Gets or sets the user id.
         /// </summary>
         public string user_id { get; set; }
+
+        public string lti_version { get; set; }
 
         [AllowHtml]
         public string resource_link_description { get; set; }
@@ -409,7 +447,7 @@
         {
             int result = 0;
 
-            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("sakai"), false))
+            if (this.tool_consumer_info_product_family_code.Return(x => x.ToLowerInvariant().Contains("sakai") || x.ToLowerInvariant().Contains("imsglc"), false))
             {
                 Guid guid;
                 if (Guid.TryParse(this.context_id, out guid))

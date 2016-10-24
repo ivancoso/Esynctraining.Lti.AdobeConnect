@@ -138,8 +138,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         new PrincipalSetup
                         {
                             PrincipalId = registeredUser.PrincipalId,
-                            FirstName = param.lis_person_name_given,
-                            LastName = param.lis_person_name_family,
+                            FirstName = param.PersonNameGiven,
+                            LastName = param.PersonNameFamily,
                         }, true);
                 }
                 catch (AdobeConnectException ex)
@@ -148,8 +148,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     throw new Core.WarningMessageException(
                         string.Format(
                             "Error has occured trying to access \"{0} {1}\" account in Adobe Connect. Please check that account used to access has sufficient permissions."
-                            , param.lis_person_name_given
-                            , param.lis_person_name_family));
+                            , param.PersonNameGiven
+                            , param.PersonNameFamily));
                 }
             }
             var userProvider = this.GetProvider(lmsCompany, false); // separate provider for user not to lose admin logging in

@@ -32,6 +32,7 @@ namespace EdugameCloud.Lti
 
             container.Register(Component.For<TestConnectionService>().ImplementedBy<TestConnectionService>());
             container.Register(Component.For<LmsRoleService>().ImplementedBy<LmsRoleService>());
+            container.Register(Component.For<LmsUserServiceBase>().ImplementedBy<ImsUserService>().Named("Ims"));
             
             container.Install(
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.Windsor.xml"))

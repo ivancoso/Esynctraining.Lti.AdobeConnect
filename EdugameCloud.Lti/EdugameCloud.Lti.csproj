@@ -113,8 +113,20 @@
       <HintPath>..\packages\FluentValidation.6.2.1.0\lib\Net45\FluentValidation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.9.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.9\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <HintPath>..\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LtiLibrary.AspNet, Version=1.6.5950.20017, Culture=neutral, PublicKeyToken=29bc1a5355265575, processorArchitecture=MSIL">
+      <HintPath>..\packages\LtiLibrary.AspNet.1.6.1\lib\net45\LtiLibrary.AspNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="LtiLibrary.Core, Version=1.6.5950.20017, Culture=neutral, PublicKeyToken=c5ccbabd6fc153fd, processorArchitecture=MSIL">
+      <HintPath>..\packages\LtiLibrary.Core.1.6.1\lib\net45\LtiLibrary.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -152,6 +164,10 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http.Primitives, Version=4.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Primitives.dll</HintPath>
       <Private>True</Private>
@@ -162,6 +178,14 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -222,6 +246,7 @@
     <Compile Include="API\AdobeConnect\RecordingsService.cs" />
     <Compile Include="API\AdobeConnect\SeminarRecordingDtoBuilder.cs" />
     <Compile Include="API\AdobeConnect\SeminarService.cs" />
+    <Compile Include="API\ImsUserService.cs" />
     <Compile Include="API\Sakai\IEGCEnabledSakaiApi.cs" />
     <Compile Include="API\ISynchronizationUserService.cs" />
     <Compile Include="API\LmsRoleService.cs" />
@@ -281,6 +306,7 @@
     <Compile Include="DTO\SeminarLicenseDto.cs" />
     <Compile Include="DTO\SeminarSessionDto.cs" />
     <Compile Include="Extensions\AdobeConnectProxyExtensions.cs" />
+    <Compile Include="Extensions\HttpRequestBaseExtensions.cs" />
     <Compile Include="Extensions\MoodleParserExtensions.cs" />
     <Compile Include="JsonNetResult.cs" />
     <Compile Include="LmsAuthorizeAttribute.cs" />

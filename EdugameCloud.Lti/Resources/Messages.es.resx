@@ -293,4 +293,10 @@
   <data name="UsersCouldNotBeUpdated" xml:space="preserve">
     <value>Algunos de los usuarios no se pudo actualizar.</value>
   </data>
+  <data name="LtiValidationWrongSignature" xml:space="preserve">
+    <value>Parámetro Signature no válida.</value>
+  </data>
+  <data name="LtiValidationWrongVersion" xml:space="preserve">
+    <value>Parámetro LTI Version no válida.</value>
+  </data>
 </root>

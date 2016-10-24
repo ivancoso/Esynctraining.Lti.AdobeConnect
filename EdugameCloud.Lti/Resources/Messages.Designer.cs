@@ -160,7 +160,7 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Review LTI integration. Possible you have invalid External Tool URL..
+        ///   Looks up a localized string similar to Review LTI integration. Possibly you have invalid consumer key or External Tool URL..
         /// </summary>
         public static string LtiExternalToolUrl {
             get {
@@ -223,11 +223,29 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your Adobe Connect integration is not set up..
+        ///   Looks up a localized string similar to Your Adobe Connect integration is not set up for provided consumer key..
         /// </summary>
         public static string LtiValidationNoSetup {
             get {
                 return ResourceManager.GetString("LtiValidationNoSetup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid signature parameter..
+        /// </summary>
+        public static string LtiValidationWrongSignature {
+            get {
+                return ResourceManager.GetString("LtiValidationWrongSignature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid LTI Version parameter.
+        /// </summary>
+        public static string LtiValidationWrongVersion {
+            get {
+                return ResourceManager.GetString("LtiValidationWrongVersion", resourceCulture);
             }
         }
         

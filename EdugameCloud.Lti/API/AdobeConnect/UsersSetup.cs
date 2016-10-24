@@ -269,7 +269,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         public string GetParamLogin(LtiParamDTO param, LmsCompany lmsCompany)
         {
             var login = param.lms_user_login;
-            if (string.IsNullOrWhiteSpace(login))
+            if (string.IsNullOrWhiteSpace(login) && !string.IsNullOrEmpty(param.lms_user_id))
             {
                 // TODO: for D2L more effective would be to get WhoIAm and UserInfo information from their API
                 string error;

@@ -152,7 +152,7 @@
     <value>The password you provided is incorrect. Please try again.</value>
   </data>
   <data name="LtiExternalToolUrl" xml:space="preserve">
-    <value>Review LTI integration. Possible you have invalid External Tool URL.</value>
+    <value>Review LTI integration. Possibly you have invalid consumer key or External Tool URL.</value>
   </data>
   <data name="LtiInvalidRequest" xml:space="preserve">
     <value>Invalid LTI request</value>
@@ -173,7 +173,7 @@
     <value>LMS License is not active. Please contact administrator.</value>
   </data>
   <data name="LtiValidationNoSetup" xml:space="preserve">
-    <value>Your Adobe Connect integration is not set up.</value>
+    <value>Your Adobe Connect integration is not set up for provided consumer key.</value>
   </data>
   <data name="MeetingCantFindPrincipal" xml:space="preserve">
     <value>Cannot find Adobe Connect user with email {0} or login {1}</value>
@@ -292,5 +292,11 @@
   </data>
   <data name="UsersCouldNotBeUpdated" xml:space="preserve">
     <value>Some of the users could not be updated.</value>
+  </data>
+  <data name="LtiValidationWrongSignature" xml:space="preserve">
+    <value>Invalid signature parameter.</value>
+  </data>
+  <data name="LtiValidationWrongVersion" xml:space="preserve">
+    <value>Invalid LTI Version parameter.</value>
   </data>
 </root>

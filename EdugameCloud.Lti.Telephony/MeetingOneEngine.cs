@@ -63,8 +63,8 @@ namespace EdugameCloud.Lti.Telephony
                     Host = new Host
                     {
                         Email = param.lis_person_contact_email_primary,
-                        FirstName = param.lis_person_name_given,
-                        LastName = param.lis_person_name_family,
+                        FirstName = param.PersonNameGiven,
+                        LastName = param.PersonNameFamily,
                         MailingAddress = param.lis_person_contact_email_primary,
                     },
                 };

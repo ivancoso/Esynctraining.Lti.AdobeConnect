@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using LtiLibrary.Core.Common;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -585,18 +587,23 @@
                 //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("es");
                 //throw new InvalidOperationException("trick test");
 
+                // Parse and validate the request
+                Request.CheckForRequiredLtiParameters();
+
                 string lmsProvider = param.GetLtiProviderName(provider);
                 LmsProvider providerInstance = IoC.Resolve<LmsProviderModel>().GetByName(lmsProvider);
                 if (providerInstance == null)
                 {
-                    logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.", lmsProvider, param.oauth_consumer_key);
+                    logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.",
+                        lmsProvider, param.oauth_consumer_key);
                     this.ViewBag.Error = Resources.Messages.LtiExternalToolUrl;
                     return this.View("Error");
                 }
 
                 if (lmsProvider.ToLower() == LmsProviderNames.Brightspace && !string.IsNullOrEmpty(param.user_id))
                 {
-                    logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.", param.user_id, param.oauth_consumer_key);
+                    logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.",
+                        param.user_id, param.oauth_consumer_key);
                     var parsedIdArray = param.user_id.Split('_');
                     // temporary fix
                     if (parsedIdArray.Length > 1)
@@ -604,14 +611,22 @@
                         param.user_id = parsedIdArray.Last();
                     }
                 }
-                
+
                 var sw = Stopwatch.StartNew();
 
-                LmsCompany lmsCompany = this.lmsCompanyModel.GetOneByProviderAndConsumerKey(providerInstance.Id, param.oauth_consumer_key).Value;
+                LmsCompany lmsCompany =
+                    this.lmsCompanyModel.GetOneByProviderAndConsumerKey(providerInstance.Id, param.oauth_consumer_key)
+                        .Value;
 
                 if (lmsCompany != null)
                 {
-                    System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode);
+                    System.Threading.Thread.CurrentThread.CurrentUICulture =
+                        new System.Globalization.CultureInfo(LanguageModel.GetById(lmsCompany.LanguageId).TwoLetterCode);
+                }
+                else
+                {
+                    logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+                    throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationNoSetup}");
                 }
 
                 string validationError = ValidateLmsLicense(lmsCompany, param);
@@ -622,10 +637,21 @@
                 }
 
                 sw.Stop();
-                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
+                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n",
+                    sw.Elapsed.ToString());
 
+                if (!IsDebug &&
+                    !BltiProviderHelper.VerifyBltiRequest(lmsCompany,
+                        () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
+                {
+                    logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                    throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
+                }
 
-                
+                ValidateLtiVersion(param);
+
+                ValidateIntegrationRequiredParameters(lmsCompany, param);
+
                 sw = Stopwatch.StartNew();
 
                 var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);
@@ -636,7 +662,7 @@
                 sw = Stopwatch.StartNew();
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
-                param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); ; // NOTE: is saved in session!
+                param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
 
                 sw.Stop();
                 trace.AppendFormat("GetParamLogin: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -660,142 +686,148 @@
                 sw.Stop();
                 trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
+                sw.Stop();
+                trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
+                sw = Stopwatch.StartNew();
 
-                if (BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)) || this.IsDebug)
+                Principal acPrincipal = null;
+
+                switch (lmsProvider.ToLower())
                 {
+                    case LmsProviderNames.Canvas:
 
-                    sw.Stop();
-                    trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
-                    sw = Stopwatch.StartNew();
+                        sw = Stopwatch.StartNew();
 
-                    Principal acPrincipal = null;
+                        if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
+                            CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                        {
+                            this.StartOAuth2Authentication(provider, key, param);
+                            return null;
+                        }
 
-                    switch (lmsProvider.ToLower())
-                    {
-                        case LmsProviderNames.Canvas:
-                            
-                            sw = Stopwatch.StartNew();
+                        sw.Stop();
+                        trace.AppendFormat("CanvasApi.IsTokenExpired: time: {0}.\r\n", sw.Elapsed.ToString());
+                        sw = Stopwatch.StartNew();
 
-                            if (string.IsNullOrWhiteSpace(lmsUser?.Token) || CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
+                        if (lmsCompany.AdminUser == null)
+                        {
+                            this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                            this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
+                            return this.View("~/Views/Lti/LtiError.cshtml");
+                        }
+
+                        sw.Stop();
+                        trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.\r\n", sw.Elapsed.ToString());
+                        sw = Stopwatch.StartNew();
+
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.PersonNameGiven,
+                            param.PersonNameFamily,
+                            lmsCompany);
+
+                        sw.Stop();
+                        trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n",
+                            sw.Elapsed.ToString());
+                        sw = Stopwatch.StartNew();
+
+                        break;
+                    case LmsProviderNames.Brightspace:
+                        //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
+                        if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
+                        {
+                            string schema = Request.GetScheme();
+
+                            var d2lService = IoC.Resolve<IDesire2LearnApiService>();
+                            string returnUrl = this.Url.AbsoluteAction(
+                                "callback",
+                                "Lti",
+                                new {__provider__ = provider},
+                                schema);
+                            Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
+                            return Redirect(
+                                d2lService
+                                    .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
+                                    .AbsoluteUri);
+                        }
+
+                        if (lmsCompany.AdminUser == null)
+                        {
+                            this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                            this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
+                            return this.View("~/Views/Lti/LtiError.cshtml");
+                        }
+
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.PersonNameGiven,
+                            param.PersonNameFamily,
+                            lmsCompany);
+                        break;
+                    case LmsProviderNames.BrainHoney:
+                    case LmsProviderNames.Blackboard:
+                    case LmsProviderNames.Moodle:
+                    case LmsProviderNames.Sakai:
+//                    case LmsProviderNames.IMS:
+                        acPrincipal = acUserService.GetOrCreatePrincipal(
+                            adobeConnectProvider,
+                            param.lms_user_login,
+                            param.lis_person_contact_email_primary,
+                            param.PersonNameGiven,
+                            param.PersonNameFamily,
+                            lmsCompany);
+                        if (lmsUser == null)
+                        {
+                            lmsUser = new LmsUser
                             {
-                                this.StartOAuth2Authentication(provider, key, param);
-                                return null;
-                            }
+                                LmsCompany = lmsCompany,
+                                UserId = param.lms_user_id,
+                                Username = GetUserNameOrEmail(param),
+                                PrincipalId = acPrincipal?.PrincipalId,
+                            };
+                            this.lmsUserModel.RegisterSave(lmsUser);
 
-                            sw.Stop();
-                            trace.AppendFormat("CanvasApi.IsTokenExpired: time: {0}.\r\n", sw.Elapsed.ToString());
-                            sw = Stopwatch.StartNew();
+                            // TRICK: save lmsUser to session
+                            SaveSessionUser(session, lmsUser);
+                        }
 
-                            if (lmsCompany.AdminUser == null)
-                            {
-                                this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
-                                this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
-                                return this.View("~/Views/Lti/LtiError.cshtml");
-                            }
-
-                            sw.Stop();
-                            trace.AppendFormat("lmsCompany.AdminUser == null: time: {0}.\r\n", sw.Elapsed.ToString());
-                            sw = Stopwatch.StartNew();
-
-                            acPrincipal = acUserService.GetOrCreatePrincipal(
-                                adobeConnectProvider,
-                                param.lms_user_login,
-                                param.lis_person_contact_email_primary,
-                                param.lis_person_name_given,
-                                param.lis_person_name_family,
-                                lmsCompany);
-
-                            sw.Stop();
-                            trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n", sw.Elapsed.ToString());
-                            sw = Stopwatch.StartNew();
-
-                            break;
-                        case LmsProviderNames.Brightspace:
-                            //todo: review. Probably we need to redirect to auth url everytime for overwriting tokens if user logs in under different roles
-                            if (lmsUser == null || string.IsNullOrWhiteSpace(lmsUser.Token))
-                            {
-                                string schema = Request.GetScheme();
-
-                                var d2lService = IoC.Resolve<IDesire2LearnApiService>();
-                                string returnUrl = this.Url.AbsoluteAction(
-                                    "callback",
-                                    "Lti",
-                                    new { __provider__ = provider },
-                                    schema);
-                                Response.Cookies.Add(new HttpCookie(ProviderKeyCookieName, key));
-                                return Redirect(
-                                    d2lService
-                                        .GetTokenRedirectUrl(new Uri(returnUrl), param.lms_domain, lmsCompany)
-                                        .AbsoluteUri);
-                            }
-
-                            if (lmsCompany.AdminUser == null)
-                            {
-                                this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
-                                this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
-                                return this.View("~/Views/Lti/LtiError.cshtml");
-                            }
-
-                            acPrincipal = acUserService.GetOrCreatePrincipal(
-                                adobeConnectProvider,
-                                param.lms_user_login,
-                                param.lis_person_contact_email_primary,
-                                param.lis_person_name_given,
-                                param.lis_person_name_family,
-                                lmsCompany);
-                            break;
-                        case LmsProviderNames.BrainHoney:
-                        case LmsProviderNames.Blackboard:
-                        case LmsProviderNames.Moodle:
-                        case LmsProviderNames.Sakai:
-                            
-                            acPrincipal = acUserService.GetOrCreatePrincipal(
-                                adobeConnectProvider,
-                                param.lms_user_login,
-                                param.lis_person_contact_email_primary,
-                                param.lis_person_name_given,
-                                param.lis_person_name_family,
-                                lmsCompany);
-                            if (lmsUser == null)
-                            {
-                                lmsUser = new LmsUser
-                                {
-                                    LmsCompany = lmsCompany,
-                                    UserId = param.lms_user_id,
-                                    Username = GetUserNameOrEmail(param),
-                                    PrincipalId = acPrincipal?.PrincipalId,
-                                };
-                                this.lmsUserModel.RegisterSave(lmsUser);
-
-                                // TRICK: save lmsUser to session
-                                SaveSessionUser(session, lmsUser);
-                            }
-
-                            break;
-                    }
-
-                    if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
-                    {
-                        lmsUser.PrincipalId = acPrincipal.PrincipalId;
-                        this.lmsUserModel.RegisterSave(lmsUser);
-                    }
-
-                    if (acPrincipal == null)
-                    {
-                        this.logger.ErrorFormat("[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", lmsCompany.Id, lmsUser.Id, param.lms_user_login);
-                        throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
-                    }
-                    
-                    return this.RedirectToExtJs(session, lmsUser, key, trace);
+                        break;
                 }
 
-                logger.ErrorFormat("Invalid LTI request. oauth_consumer_key:{0}.", param.oauth_consumer_key);
-                this.ViewBag.Error = Resources.Messages.LtiInvalidRequest;
-                return this.View("Error");
+                if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
+                {
+                    lmsUser.PrincipalId = acPrincipal.PrincipalId;
+                    this.lmsUserModel.RegisterSave(lmsUser);
+                }
+
+                if (acPrincipal == null)
+                {
+                    this.logger.ErrorFormat(
+                        "[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.",
+                        lmsCompany.Id, lmsUser.Id, param.lms_user_login);
+                    throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
+                }
+
+                return this.RedirectToExtJs(session, lmsUser, key, trace);
+            }
+            catch (LtiException ex)
+            {
+                logger.Error("Lti exception", ex);
+                ViewBag.Message = $"Invalid LTI request. {ex.Message}";
+                if (!string.IsNullOrEmpty(param.launch_presentation_return_url))
+                {
+                    ViewBag.ReturnUrl = param.launch_presentation_return_url;
+                }
+                return View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Core.WarningMessageException ex)
             {
-                logger.WarnFormat("[WarningMessageException] param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+                logger.WarnFormat("[WarningMessageException] param:{0}.",
+                    JsonConvert.SerializeObject(param, Formatting.Indented));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -809,7 +841,7 @@
             {
                 methodTime.Stop();
                 var time = methodTime.Elapsed;
-                if (time > TimeSpan.FromSeconds(int.Parse((string)Settings.Monitoring_MaxLoginTime)))
+                if (time > TimeSpan.FromSeconds(int.Parse((string) Settings.Monitoring_MaxLoginTime)))
                 {
                     var monitoringLog = IoC.Resolve<ILogger>("Monitoring");
 
@@ -853,35 +885,70 @@
 
         #region Methods
 
-        private string ValidateLmsLicense(ILmsLicense lmsCompany, LtiParamDTO param)
+        private string ValidateLmsLicense(ILmsLicense lmsLicense, LtiParamDTO param)
         {
-            if (lmsCompany != null)
-            {
-                if (!string.IsNullOrWhiteSpace(lmsCompany.LmsDomain) && !lmsCompany.HasLmsDomain(param.lms_domain))
+//            if (lmsLicense != null)
+//            {
+                if (!string.IsNullOrWhiteSpace(lmsLicense.LmsDomain) && !lmsLicense.HasLmsDomain(param.lms_domain))
                 {
                     logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationDifferentDomain;
                 }
 
-                if (!lmsCompany.IsActive)
+                if (!lmsLicense.IsActive)
                 {
                     logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationInactiveLmsLicense;
                 }
                 
-                if (!CompanyModel.IsActive(lmsCompany.CompanyId))
+                if (!CompanyModel.IsActive(lmsLicense.CompanyId))
                 {
                     logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationInactiveCompanyLicense;
                 }
-            }
-            else
-            {
-                logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
-                return string.Format(Resources.Messages.LtiValidationNoSetup);
-            }
+//            }
+//            else
+//            {
+//                logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+//                return string.Format(Resources.Messages.LtiValidationNoSetup);
+//            }
 
             return null;
+        }
+
+        private void ValidateLtiVersion(LtiParamDTO param)
+        {
+            // in case when client supports v2.0 - just warn, for our AC integration all necessary functionality should be supported
+            if (param.lti_version == "")
+            {
+                logger.Warn($"[LtiVersion - 2.0] ConsumerKey={param.oauth_consumer_key}");
+            }
+            //version should match "LTI-1p0" for v1.0, v1.1, v1.2
+            else if (param.lti_version != LtiConstants.LtiVersion)
+            {
+                logger.ErrorFormat("Invalid LTI request. Invalid LTI version. oauth_consumer_key:{0}, lti_version:{1}", param.oauth_consumer_key, param.lti_version);
+                throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
+            }
+        }
+
+        private void ValidateIntegrationRequiredParameters(LmsCompany lmsCompany, LtiParamDTO param)
+        {
+            var missingIntegrationRequiredFields = new HashSet<string>();
+            if (string.IsNullOrEmpty(param.context_id))
+                missingIntegrationRequiredFields.Add(LtiConstants.ContextIdParameter);
+            if (string.IsNullOrEmpty(param.user_id))
+                missingIntegrationRequiredFields.Add(LtiConstants.UserIdParameter);
+            if (string.IsNullOrEmpty(param.PersonNameGiven))
+                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonNameGivenParameter);
+            if (string.IsNullOrEmpty(param.PersonNameFamily))
+                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonNameFamilyParameter);
+            if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault() && string.IsNullOrEmpty(param.lis_person_contact_email_primary))
+                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonContactEmailPrimaryParameter);
+
+            if (missingIntegrationRequiredFields.Any())
+            {
+                throw new LtiException("The following parameters are required for AC integration: " + string.Join(", ", missingIntegrationRequiredFields.ToArray()));
+            }
         }
 
         /// <summary>
@@ -987,8 +1054,8 @@
                                 this.GetAdobeConnectProvider(company),
                                 param.lms_user_login,
                                 param.lis_person_contact_email_primary,
-                                param.lis_person_name_given,
-                                param.lis_person_name_family ?? param.lis_person_name_full?.Split('@').FirstOrDefault(), // canvas can return empty lis_person_name_family in case when user was created only with email, lis_person_name_full is filled
+                                param.PersonNameGiven,
+                                param.PersonNameFamily,
                                 company);
                 if (acPrincipal != null && !acPrincipal.PrincipalId.Equals(lmsUser.PrincipalId))
                 {
@@ -1177,7 +1244,7 @@
             //TRICK: we calc shift on serverside
             acSettings.SetTimezoneShift(null);
 
-            string userFullName = param.lis_person_name_full;
+            string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
             var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
 
             string version = typeof(LtiController).Assembly.GetName().Version.ToString();
