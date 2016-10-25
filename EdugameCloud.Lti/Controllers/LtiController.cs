@@ -641,8 +641,7 @@ namespace EdugameCloud.Lti.Controllers
                     sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
                 
-                if (!IsDebug &&
-                    !BltiProviderHelper.VerifyBltiRequest(lmsCompany,
+                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
                 {
                     logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
