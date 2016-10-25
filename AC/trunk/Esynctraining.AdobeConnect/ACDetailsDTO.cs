@@ -156,6 +156,8 @@ namespace Esynctraining.AdobeConnect
         [DataMember(Name = "customization")]
         public CustomizationDTO Customization { get; set; }
 
+        [DataMember(Name = "sessionTimeout")]
+        public int SessionTimeout { get; set; }
 
         public ACDetailsDTO()
         {

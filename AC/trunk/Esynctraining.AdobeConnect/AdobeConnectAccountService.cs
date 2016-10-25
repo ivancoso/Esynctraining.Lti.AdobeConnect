@@ -90,6 +90,9 @@ namespace Esynctraining.AdobeConnect
                     Customization = ParseCustomization(fields, provider),
                 };
                 var timeZone = GetTimeZone(commonInfo.CommonInfo);
+                int session;
+                int.TryParse(GetField(fields, "web-session-timeout-minutes"), out session);
+                dto.SessionTimeout = session;
                 dto.SetTimeZone(timeZone);
                 return dto;
             }
