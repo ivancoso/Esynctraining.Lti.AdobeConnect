@@ -293,6 +293,7 @@
     <Compile Include="Routes\LtiRoutes.cs" />
     <Compile Include="Routes\RoutesExtensions.cs" />
     <Compile Include="Utils\AESGCM.cs" />
+    <Compile Include="Utils\CacheKeyUtil.cs" />
     <Compile Include="Utils\Constants.cs" />
     <Compile Include="WarningMessageException.cs" />
   </ItemGroup>

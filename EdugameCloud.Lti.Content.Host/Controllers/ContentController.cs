@@ -13,6 +13,7 @@ using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Content.Host.Dto;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -36,7 +37,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
     [EnableCors(origins: "*", headers: "*", methods: "post")]
     public class ContentController : BaseController
     {
-        private readonly ObjectCache _cache = MemoryCache.Default;
+        
         private readonly LmsUserModel _lmsUserModel;
 
 
@@ -355,55 +356,24 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
         }
 
 
-        private Esynctraining.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
-        {
-            string cacheKey = $"LMC_{session.LmsCompany.Id}_{session.LtiSession.LtiParam.lms_user_id}_AC";
-            
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
+        //private Esynctraining.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
+        //{
+        //    string cacheKey = CacheKeyUtil.GetKey(session);
+        //    Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
 
-            if (provider == null)
-            {
-                string breezeSession = LoginCurrentUser(session);
-                provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
+        //    if (provider == null)
+        //    {
+        //        string breezeSession = LoginCurrentUser(session);
+        //        provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
 
-                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout;
-                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
-            }
+        //        var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+        //        _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+        //    }
 
-            return provider;
-        }
+        //    return provider;
+        //}
 
-        private string LoginCurrentUser(LmsUserSession session)
-        {
-            LmsCompany lmsCompany = null;
-            try
-            {
-                lmsCompany = session.LmsCompany;
-                var param = session.LtiSession.LtiParam;
-                var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
-                if (lmsUser == null)
-                {
-                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
-                }
-
-                if (lmsUser.PrincipalId == null)
-                {
-                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
-                }
-
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
-                var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
-
-                string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, ac);
-
-                return breezeToken;
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", lmsCompany, ex);
-                throw;
-            }
-        }
+        
 
         //[HttpGet]
         //[Route("uploading-test")]

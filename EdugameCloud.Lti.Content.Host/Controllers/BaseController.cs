@@ -1,19 +1,26 @@
 ﻿using System;
+using System.Runtime.Caching;
 using System.Web.Http;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
+using IAdobeConnectAccountService = Esynctraining.AdobeConnect.IAdobeConnectAccountService;
+using IAdobeConnectProxy = Esynctraining.AdobeConnect.IAdobeConnectProxy;
 
 namespace EdugameCloud.Lti.Content.Host.Controllers
 {
     public abstract class BaseController : ApiController
     {
         #region Fields
+
+        protected readonly ObjectCache _cache = MemoryCache.Default;
 
         private static bool? isDebug;
 
@@ -80,11 +87,61 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
         {
-            IAdobeConnectProxy provider = null;
-            provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+            //IAdobeConnectProxy provider = null;
+            //string cacheKey = CacheKeyUtil.GetKey(session);
+            //Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
+            //provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+            //return provider;
+            
+            string cacheKey = CacheKeyUtil.GetKey(session);
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
+
+            if (provider == null)
+            {
+                string breezeSession = LoginCurrentUser(session);
+                provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
+
+                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
+            }
+
             return provider;
+        }
+
+        private string LoginCurrentUser(LmsUserSession session)
+        {
+            LmsCompany lmsCompany = null;
+            try
+            {
+                lmsCompany = session.LmsCompany;
+                var param = session.LtiSession.LtiParam;
+                var LmsUserModel = IoC.Resolve<LmsUserModel>();
+                var lmsUser = LmsUserModel.GetOneByUserIdAndCompanyLms(param.lms_user_id, lmsCompany.Id).Value;
+                if (lmsUser == null)
+                {
+                    throw new Core.WarningMessageException($"No user with id {param.lms_user_id} found in the database.");
+                }
+
+                if (lmsUser.PrincipalId == null)
+                {
+                    throw new Core.WarningMessageException("User doesn't have account in Adobe Connect.");
+                }
+
+                var ac = this.GetAdobeConnectProvider(session);
+                var registeredUser = ac.GetOneByPrincipalId(lmsUser.PrincipalId).PrincipalInfo.Principal;
+
+                var MeetingSetup = IoC.Resolve<MeetingSetup>();
+                string breezeToken = MeetingSetup.ACLogin(lmsCompany, param, lmsUser, registeredUser, ac);
+
+                return breezeToken;
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = GetOutputErrorMessage("ContentApi-LoginCurrentUser", lmsCompany, ex);
+                throw;
+            }
         }
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)
