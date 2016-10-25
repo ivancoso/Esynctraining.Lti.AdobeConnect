@@ -366,8 +366,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 string breezeSession = LoginCurrentUser(session);
                 provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
 
-                // TODO: can we check session timeout value from AC??
-                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(20));
+                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout;
+                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
             return provider;

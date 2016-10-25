@@ -83,7 +83,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.AdobeConnect, Version=1.0.0.35, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.35\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
+      <HintPath>..\packages\Esynctraining.AdobeConnect.1.0.0.36\lib\net45\Esynctraining.AdobeConnect.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.Core, Version=1.0.0.24, Culture=neutral, processorArchitecture=MSIL">
