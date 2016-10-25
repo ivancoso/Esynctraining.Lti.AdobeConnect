@@ -8,7 +8,7 @@ using Esynctraining.Core.Domain;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public partial class LtiController : Controller
+    public partial class LtiController
     {
         [HttpPost]
         public virtual ActionResult UpdateUser(string lmsProviderName, LmsUserDTO[] users, int meetingId)

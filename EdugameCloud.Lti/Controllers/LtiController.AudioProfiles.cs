@@ -13,7 +13,7 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.Controllers
 {
-    public partial class LtiController : Controller
+    public partial class LtiController
     {
         private IAudioProfilesService AudioProfileService
         {

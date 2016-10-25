@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Controllers
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
 
-    public partial class LtiController : Controller
+    public partial class LtiController : BaseController
     {
         private const string ProviderKeyCookieName = "providerKey";
 
@@ -109,8 +109,9 @@ namespace EdugameCloud.Lti.Controllers
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
             IAdobeConnectUserService acUserService,
+            IAdobeConnectAccountService acAccountService,
             ILogger logger,
-            ICache cache)
+            ICache cache) :base(userSessionModel, acAccountService, settings, logger)
         {
             this.lmsCompanyModel = lmsCompanyModel;
             this.userSessionModel = userSessionModel;
@@ -1346,17 +1347,17 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        private API.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
-        {
-            API.AdobeConnect.IAdobeConnectProxy provider = null;
-            //if (forceReCreate)
-            {
-                provider = AdobeConnectAccountService.GetProvider(lmsCompany);
-                //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-            }
+        //private API.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
+        //{
+        //    API.AdobeConnect.IAdobeConnectProxy provider = null;
+        //    //if (forceReCreate)
+        //    {
+        //        provider = AdobeConnectAccountService.GetProvider(lmsCompany);
+        //        //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
+        //    }
             
-            return provider;
-        }
+        //    return provider;
+        //}
         
         /// <summary>
         ///     The regenerate id.

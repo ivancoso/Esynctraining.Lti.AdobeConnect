@@ -24,7 +24,7 @@ namespace EdugameCloud.Lti.Controllers
         public bool mergeUsers { get; set; }
     }
 
-    public partial class LtiController : Controller
+    public partial class LtiController
     {
         #region Properties
         

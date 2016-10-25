@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Caching;
 using System.Web.Mvc;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
@@ -8,6 +9,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Providers;
 using EdugameCloud.Core.Business.Models;
+using EdugameCloud.Lti.Core.Utils;
 using Esynctraining.Core.Utils;
 using Esynctraining.Core;
 
@@ -17,10 +19,12 @@ namespace EdugameCloud.Lti.Controllers
     {
         #region Fields
 
+        protected readonly ObjectCache _cache = MemoryCache.Default;
+
         private static bool? isDebug;
 
         private readonly LmsUserSessionModel userSessionModel;
-        
+
         #endregion
 
         /// <summary>
@@ -56,8 +60,8 @@ namespace EdugameCloud.Lti.Controllers
 
         public BaseController(
             LmsUserSessionModel userSessionModel,
-            IAdobeConnectAccountService acAccountService, 
-            ApplicationSettingsProvider settings, 
+            IAdobeConnectAccountService acAccountService,
+            ApplicationSettingsProvider settings,
             ILogger logger)
         {
             this.userSessionModel = userSessionModel;
@@ -111,7 +115,7 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
         {
             IAdobeConnectProxy provider = null;
             if (lmsCompany != null)
@@ -121,9 +125,8 @@ namespace EdugameCloud.Lti.Controllers
                 //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
                 //if (provider == null)
                 //{
-                    provider = acAccountService.GetProvider(lmsCompany);
-                    
-                    //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
+                provider = acAccountService.GetProvider(lmsCompany);
+                //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
                 //}
             }
 

@@ -59,7 +59,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var session = GetReadOnlySession(input.LmsProviderName);
                 lmsCompany = session.LmsCompany;
                 var param = session.LtiSession.LtiParam;
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdobeConnectProvider(session);
 
                 Func<IRoomTypeFactory> getRoomTypeFactory =
                     () => new RoomTypeFactory(ac, (LmsMeetingType)int.Parse(input.LmsMeetingType), IoC.Resolve<API.AdobeConnect.ISeminarService>());

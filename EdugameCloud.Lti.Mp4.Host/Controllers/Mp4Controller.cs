@@ -110,7 +110,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var session = GetReadOnlySession(input.LmsProviderName);
                 lmsCompany = session.LmsCompany;
 
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdobeConnectProvider(session);
                 string breezeToken;
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
@@ -152,7 +152,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, logger, this).AccessVttFile(scoId,
@@ -178,7 +178,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, logger, this).GetVttFile(principal.PrincipalId, fileScoId);
@@ -201,7 +201,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 lmsCompany = session.LmsCompany;
 
                 string breezeToken;
-                var ac = this.GetAdobeConnectProvider(lmsCompany);
+                var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
                 return new SubtitleUtility(ac, logger, this).GetVttFile(principal.PrincipalId, fileScoId);
@@ -220,7 +220,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             var session = GetReadOnlySession(lmsProviderName);
             var lmsCompany = session.LmsCompany;
 
-            var ac = this.GetAdobeConnectProvider(lmsCompany);
+            var ac = this.GetAdobeConnectProvider(session);
 
             return new SubtitleUtility(ac, logger, this).PostVttFile(fileScoId);
         }

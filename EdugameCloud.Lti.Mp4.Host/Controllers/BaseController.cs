@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Runtime.Caching;
 using System.Web.Http;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Core.Business.Models;
+using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -14,6 +17,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     public abstract class BaseController : ApiController
     {
         #region Fields
+
+        protected readonly ObjectCache _cache = MemoryCache.Default;
 
         private static bool? isDebug;
 
@@ -83,12 +88,17 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
         {
-            IAdobeConnectProxy provider = null;
-            if (lmsCompany != null)
+            string cacheKey = CacheKeyUtil.GetKey(session);
+            
+            Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
+            var lmsCompany = session.LmsCompany;
+            if (provider == null && lmsCompany != null)
             {
                 provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+                var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
+                _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
             return provider;
