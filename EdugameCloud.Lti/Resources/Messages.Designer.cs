@@ -223,11 +223,38 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing parameters:.
+        /// </summary>
+        public static string LtiValidationMissingParameters {
+            get {
+                return ResourceManager.GetString("LtiValidationMissingParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is no LIS context role provided in request..
+        /// </summary>
+        public static string LtiValidationNoContextRole {
+            get {
+                return ResourceManager.GetString("LtiValidationNoContextRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Your Adobe Connect integration is not set up for provided consumer key..
         /// </summary>
         public static string LtiValidationNoSetup {
             get {
                 return ResourceManager.GetString("LtiValidationNoSetup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The following parameters are required for AC integration:.
+        /// </summary>
+        public static string LtiValidationRequiredACParameters {
+            get {
+                return ResourceManager.GetString("LtiValidationRequiredACParameters", resourceCulture);
             }
         }
         
@@ -241,7 +268,7 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid LTI Version parameter.
+        ///   Looks up a localized string similar to Invalid LTI Version parameter..
         /// </summary>
         public static string LtiValidationWrongVersion {
             get {

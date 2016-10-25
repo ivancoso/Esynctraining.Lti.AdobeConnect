@@ -575,7 +575,7 @@ namespace EdugameCloud.Lti.Controllers
                 return Json(OperationResult.Error(errorMessage));
             }
         }
-        
+
         [ActionName("login")]
         [OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
         public virtual ActionResult LoginWithProvider(string provider, LtiParamDTO param)
@@ -639,7 +639,8 @@ namespace EdugameCloud.Lti.Controllers
                 sw.Stop();
                 trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n",
                     sw.Elapsed.ToString());
-
+                sw = Stopwatch.StartNew();
+                
                 if (!IsDebug &&
                     !BltiProviderHelper.VerifyBltiRequest(lmsCompany,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
@@ -647,6 +648,9 @@ namespace EdugameCloud.Lti.Controllers
                     logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
                 }
+
+                sw.Stop();
+                trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
 
                 ValidateLtiVersion(param);
 
@@ -685,11 +689,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 sw.Stop();
                 trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.\r\n", sw.Elapsed.ToString());
-                sw = Stopwatch.StartNew();
-                sw.Stop();
-                trace.AppendFormat("VerifyBltiRequest: time: {0}.\r\n", sw.Elapsed.ToString());
-                sw = Stopwatch.StartNew();
-
+               
                 Principal acPrincipal = null;
 
                 switch (lmsProvider.ToLower())
@@ -731,7 +731,6 @@ namespace EdugameCloud.Lti.Controllers
                         sw.Stop();
                         trace.AppendFormat("acUserService.GetOrCreatePrincipal: time: {0}.\r\n",
                             sw.Elapsed.ToString());
-                        sw = Stopwatch.StartNew();
 
                         break;
                     case LmsProviderNames.Brightspace:
@@ -927,7 +926,7 @@ namespace EdugameCloud.Lti.Controllers
             else if (param.lti_version != LtiConstants.LtiVersion)
             {
                 logger.ErrorFormat("Invalid LTI request. Invalid LTI version. oauth_consumer_key:{0}, lti_version:{1}", param.oauth_consumer_key, param.lti_version);
-                throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
+                throw new LtiException(Resources.Messages.LtiValidationWrongVersion);
             }
         }
 
@@ -947,8 +946,35 @@ namespace EdugameCloud.Lti.Controllers
 
             if (missingIntegrationRequiredFields.Any())
             {
-                throw new LtiException("The following parameters are required for AC integration: " + string.Join(", ", missingIntegrationRequiredFields.ToArray()));
+                throw new LtiException($"{Resources.Messages.LtiValidationRequiredACParameters} {string.Join(", ", missingIntegrationRequiredFields.ToArray())}");
             }
+        }
+
+        private IEnumerable<LtiLibrary.Core.Lti1.Role> GetContextRoles(string roleParam)
+        {
+            var roles = new List<LtiLibrary.Core.Lti1.Role>();
+            var roleNames = roleParam.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (string.IsNullOrWhiteSpace(roleParam))
+            {
+                throw new LtiException();
+            }
+
+            foreach (var roleName in roleNames)
+            {
+                LtiLibrary.Core.Lti1.Role role;
+                if (Enum.TryParse(roleName, true, out role))
+                {
+                    roles.Add(role);
+                }
+                else
+                {
+                    if (LtiConstants.RoleUrns.ContainsKey(roleName))
+                    {
+                        roles.Add(LtiConstants.RoleUrns[roleName]);
+                    }
+                }
+            }
+            return roles;
         }
 
         /// <summary>

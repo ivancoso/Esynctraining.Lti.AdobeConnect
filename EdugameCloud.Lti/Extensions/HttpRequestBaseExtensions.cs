@@ -117,7 +117,7 @@ namespace EdugameCloud.Lti.Extensions
         {
             if (!request.IsAuthenticatedWithLti())
             {
-                throw new LtiException("Invalid LTI request.");
+                throw new LtiException();
             }
 
             // Make sure the request contains all the required parameters
@@ -148,7 +148,7 @@ namespace EdugameCloud.Lti.Extensions
 
             if (missing.Count > 0)
             {
-                throw new LtiException("Missing parameters: " + string.Join(", ", missing.ToArray()));
+                throw new LtiException($"{Resources.Messages.LtiValidationMissingParameters} {string.Join(", ", missing.ToArray())}");
             }
         }
     }

@@ -299,4 +299,13 @@
   <data name="LtiValidationWrongVersion" xml:space="preserve">
     <value>Invalid LTI Version parameter.</value>
   </data>
+  <data name="LtiValidationMissingParameters" xml:space="preserve">
+    <value>Missing parameters:</value>
+  </data>
+  <data name="LtiValidationNoContextRole" xml:space="preserve">
+    <value>There is no LIS context role provided in request.</value>
+  </data>
+  <data name="LtiValidationRequiredACParameters" xml:space="preserve">
+    <value>The following parameters are required for AC integration:</value>
+  </data>
 </root>

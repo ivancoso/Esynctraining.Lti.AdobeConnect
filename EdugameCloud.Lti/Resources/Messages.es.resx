@@ -299,4 +299,13 @@
   <data name="LtiValidationWrongVersion" xml:space="preserve">
     <value>Parámetro LTI Version no válida.</value>
   </data>
+  <data name="LtiValidationMissingParameters" xml:space="preserve">
+    <value>Parámetros que faltan:</value>
+  </data>
+  <data name="LtiValidationNoContextRole" xml:space="preserve">
+    <value>No hay papel contexto LIS proporcionada en la solicitud.</value>
+  </data>
+  <data name="LtiValidationRequiredACParameters" xml:space="preserve">
+    <value>Se requieren los siguientes parámetros para la integración de AC:</value>
+  </data>
 </root>
