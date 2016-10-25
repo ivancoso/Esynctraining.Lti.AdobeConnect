@@ -1948,26 +1948,26 @@ namespace EdugameCloud.MVC.Controllers
         }
 
         // lti reports
-        private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
-        {
-            IAdobeConnectProxy provider = null;
-            if (lmsCompany != null)
-            {
-                provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                if (provider == null)
-                {
-                    provider = adobeConnectAccountService.GetProvider(lmsCompany);
-                    this.SetAdobeConnectProvider(lmsCompany.Id, provider);
-                }
-            }
+        //private IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
+        //{
+        //    IAdobeConnectProxy provider = null;
+        //    if (lmsCompany != null)
+        //    {
+        //        provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
+        //        if (provider == null)
+        //        {
+        //            provider = adobeConnectAccountService.GetProvider(lmsCompany);
+        //            this.SetAdobeConnectProvider(lmsCompany.Id, provider);
+        //        }
+        //    }
 
-            return provider;
-        }
+        //    return provider;
+        //}
         
-        private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
-        {
-            this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
-        }
+        //private void SetAdobeConnectProvider(int key, IAdobeConnectProxy acp)
+        //{
+        //    this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, key)] = acp;
+        //}
         
         #endregion
 

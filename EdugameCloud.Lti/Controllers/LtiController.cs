@@ -1324,11 +1324,10 @@ namespace EdugameCloud.Lti.Controllers
         private API.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
         {
             API.AdobeConnect.IAdobeConnectProxy provider = null;
-            if (forceReCreate ||
-                ((provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as API.AdobeConnect.IAdobeConnectProxy) == null))
+            //if (forceReCreate)
             {
                 provider = AdobeConnectAccountService.GetProvider(lmsCompany);
-                this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
+                //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
             }
             
             return provider;
