@@ -9,9 +9,12 @@ namespace EdugameCloud.Lti.API
     {
         private readonly dynamic settings;
 
-        public LmsRoleService(
-            ApplicationSettingsProvider settings)
+
+        public LmsRoleService(ApplicationSettingsProvider settings)
         {
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
+
             this.settings = settings;
         }
 

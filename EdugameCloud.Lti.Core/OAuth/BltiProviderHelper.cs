@@ -11,6 +11,7 @@
     using EdugameCloud.Lti.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Utils;
+
     /// <summary>
     /// The BLTI provider helper.
     /// </summary>
@@ -56,57 +57,43 @@
         /// <returns>
         /// "true" if the request is valid, otherwise "false"
         /// </returns>
-        public static bool VerifyBltiRequest(LmsCompany credentials, Func<bool> validateLmsCaller)
+        public static bool VerifyBltiRequest(LmsCompany credentials, HttpRequestBase request, Func<bool> validateLmsCaller)
         {
             if (credentials == null)
-                throw new ArgumentNullException("credentials");
-
-            if (HttpContext.Current == null)
-            {
-                logger.Warn("[BltiProviderHelper] HttpContext.Current == null");
-                return false;
-            }
-            var request = HttpContext.Current.Request;
+                throw new ArgumentNullException(nameof(credentials));
             if (request == null)
-            {
-                logger.Warn("[BltiProviderHelper] HttpContext.Current.Request == null");
-                return false;
-            }
-            if (request.Unvalidated() == null)
+                throw new ArgumentNullException(nameof(request));
+
+            var requestValues = request.Unvalidated();
+            if (requestValues == null)
             {
                 logger.Warn("[BltiProviderHelper] request.Unvalidated() == null");
                 return false;
             }
-            if (request.Unvalidated().Form == null)
+            if (requestValues.Form == null)
             {
                 logger.Warn("[BltiProviderHelper] request.Unvalidated().Form == null");
                 return false;
             }
 
-            FormCollection form = new FormCollection(request.Unvalidated().Form);
+            var form = new FormCollection(requestValues.Form);
             if (form == null)
             {
                 logger.Warn("[BltiProviderHelper] form == null");
                 return false;
             }
-            if (form["oauth_nonce"] == null)
+
+            string nonce = form["oauth_nonce"];
+            if (nonce == null)
             {
                 logger.Warn("[BltiProviderHelper] form[oauth_nonce] == null");
                 return false;
             }
-
-            //if (usedNonsenses == null)
-            //{
-            //    logger.Warn("[BltiProviderHelper] usedNonsenses == null");
-            //    return false;
-            //}
-
-            string nonce = form["oauth_nonce"];
-            NonceCache.AddOrUpdateStatus nonceStatus = usedNonsenses.AddIfNotExist(nonce, () => new NonceData(form["oauth_nonce"], DateTime.UtcNow));
             
+            NonceCache.AddOrUpdateStatus nonceStatus = usedNonsenses.AddIfNotExist(nonce, () => new NonceData(nonce, DateTime.UtcNow));
             if (nonceStatus == NonceCache.AddOrUpdateStatus.Exists)
             {
-                logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", form["oauth_nonce"]);
+                logger.WarnFormat("[BltiProviderHelper] This nonce has already been used so the request is invalid, oauth_nonce:{0}.", nonce);
                 return false;
             }
             // NOTE: clean only if it is valid nonce - is it OK for us?
@@ -122,13 +109,13 @@
                 return false;
             }
 
-            if (request.GetScheme() == null)
+            string schema = request.GetScheme();
+            if (schema == null)
             {
                 logger.Warn("[BltiProviderHelper] request.GetScheme() == null");
                 return false;
             }
-            string schema = request.GetScheme();
-            
+                        
             // Generate the normalized URL
             // Note that the scheme and authority must be lowercase...HttpRequestBase.Url.Scheme and HttpRequestBase.Url.Host in C# are always lowercase
             string normalizedUrl = string.Format("{0}://{1}", schema, request.Url.Host);
@@ -167,32 +154,32 @@
                 return false;
             }
 
-            // Create the signature base
-            var signatureBase = new StringBuilder();
-            signatureBase.AppendFormat("{0}&{1}&{2}"
+            // Create the signature base : string.Format("{0}&{1}&{2}"
+            var signatureBase = string.Join("&"
                 ,request.HttpMethod.ToUpper()
                 ,normalizedUrl.OAuthUrlEncode().Replace("%3a80", string.Empty)
                 ,normalizedRequestParameters.OAuthUrlEncode());
-            
-            if (request["oauth_consumer_key"] == null)
+
+            string consumerKey = request["oauth_consumer_key"];
+            if (string.IsNullOrWhiteSpace(consumerKey))
             {
-                logger.Warn("[BltiProviderHelper] request[oauth_consumer_key] == null");
+                logger.Warn("[BltiProviderHelper] request[oauth_consumer_key] IsNullOrWhiteSpace");
                 return false;
             }
 
             // Look up the secret using oauth_consumer_key
-            string secret = RetrieveSecretForKey(request["oauth_consumer_key"], credentials);
-
+            string secret = RetrieveSecretForKey(consumerKey, credentials);
             if (string.IsNullOrWhiteSpace(secret))
             {
-                logger.ErrorFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", request["oauth_consumer_key"]);
+                logger.ErrorFormat("[BltiProviderHelper] Look up the secret using oauth_consumer_key failed, oauth_consumer_key:{0}.", consumerKey);
                 return false;
             }
 
             var hmacsha1 = new HMACSHA1();
-            hmacsha1.Key = Encoding.ASCII.GetBytes(string.Format("{0}&{1}", secret.OAuthUrlEncode(), string.Empty /*tokenSecret not used in BLTI*/));
+            //string.Format("{0}&{1}"
+            hmacsha1.Key = Encoding.ASCII.GetBytes(string.Join("&", secret.OAuthUrlEncode(), string.Empty /*tokenSecret not used in BLTI*/));
             
-            string signature = Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.ASCII.GetBytes(signatureBase.ToString())));
+            string signature = Convert.ToBase64String(hmacsha1.ComputeHash(Encoding.ASCII.GetBytes(signatureBase)));
 
             // Check to make sure the signature matches what was passed in oauth_signature
             if (signature == form["oauth_signature"])
@@ -211,7 +198,7 @@
         #region Methods
 
         /// <summary>
-        /// The retrieve secret for key.
+        /// Retrieves secret for key.
         /// </summary>
         /// <param name="key">
         ///     The key.
@@ -222,9 +209,6 @@
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        /// <exception cref="InvalidOperationException">
-        /// If secret is not associated with the key
-        /// </exception>
         private static string RetrieveSecretForKey(string key, LmsCompany credentials)
         {
             // Use this method to return back the secret associated with this key.

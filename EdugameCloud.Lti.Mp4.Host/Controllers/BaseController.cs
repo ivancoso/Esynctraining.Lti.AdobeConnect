@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Runtime.Caching;
 using System.Web.Http;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.Core.Business.Models;
-using EdugameCloud.Lti.Core.Utils;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core;
-using Esynctraining.Core.Caching;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
@@ -18,22 +17,18 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     {
         #region Fields
 
-        protected readonly ObjectCache _cache = MemoryCache.Default;
-
         private static bool? isDebug;
 
+        private readonly ObjectCache _cache = MemoryCache.Default;
         private readonly LmsUserSessionModel userSessionModel;
 
         #endregion
 
-        /// <summary>
-        ///   Gets the settings.
-        /// </summary>
-        public dynamic Settings { get; private set; }
+        protected dynamic Settings { get; }
 
-        protected ILogger logger { get; private set; }
+        protected ILogger Logger { get; }
 
-        protected IAdobeConnectAccountService acAccountService { get; private set; }
+        protected IAdobeConnectAccountService acAccountService { get; }
 
         protected bool IsDebug
         {
@@ -45,7 +40,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 }
 
                 bool val;
-                isDebug = bool.TryParse(this.Settings.IsDebug, out val) && val;
+                isDebug = bool.TryParse(Settings.IsDebug, out val) && val;
                 return isDebug.Value;
             }
         }
@@ -66,7 +61,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             this.userSessionModel = userSessionModel;
             this.acAccountService = acAccountService;
             this.Settings = settings;
-            this.logger = logger;
+            this.Logger = logger;
         }
 
         #endregion
@@ -79,7 +74,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
             if (session == null)
             {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
@@ -90,11 +85,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         protected IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
         {
-            string cacheKey = CacheKeyUtil.GetKey(session);
-            
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
             var lmsCompany = session.LmsCompany;
-            if (provider == null && lmsCompany != null)
+            string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
+
+            var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
+            if (provider == null)
             {
                 provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
                 var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
@@ -106,7 +101,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)
         {
-            logger.Error(methodName, ex);
+            Logger.Error(methodName, ex);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
@@ -114,7 +109,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         protected string GetOutputErrorMessage(string originalErrorMessage)
         {
-            logger.Error(originalErrorMessage);
+            Logger.Error(originalErrorMessage);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + originalErrorMessage
                 : Resources.Messages.ExceptionMessage;
@@ -126,7 +121,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
                 : string.Empty;
 
-            logger.Error(methodName + lmsInfo, ex);
+            Logger.Error(methodName + lmsInfo, ex);
 
             var forcePassMessage = ex as IUserMessageException;
             if (forcePassMessage != null)

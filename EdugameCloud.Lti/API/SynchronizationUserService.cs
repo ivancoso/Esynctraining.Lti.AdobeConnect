@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
-using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.Domain.Entities;
@@ -10,22 +8,13 @@ using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.API
 {
     public class SynchronizationUserService : ISynchronizationUserService
     {
-//        public static int SyncUsersCountLimit
-//        {
-//            get
-//            {
-//                int limit = Lti.Core.Utils.Constants.SyncUsersCountLimit;
-//                int.TryParse(ConfigurationManager.AppSettings["SyncUsersCountLimit"], out limit);
-//                return limit;
-//            }
-//        }
-
         private readonly LmsFactory lmsFactory;
         private readonly IAdobeConnectAccountService acAccountService;
         private readonly UsersSetup usersSetup;
@@ -33,6 +22,7 @@ namespace EdugameCloud.Lti.API
         private readonly LmsCourseMeetingModel lmsCourseMeetingModel;
         private readonly IAdobeConnectUserService acUserService;
         private readonly ILogger logger;
+
 
         public SynchronizationUserService(LmsFactory lmsFactory, IAdobeConnectAccountService acAccountService, UsersSetup usersSetup,
             LmsUserModel lmsUserModel, LmsCourseMeetingModel lmsCourseMeetingModel, IAdobeConnectUserService acUserService, ILogger logger)
@@ -45,6 +35,7 @@ namespace EdugameCloud.Lti.API
             this.acUserService = acUserService;
             this.logger = logger;
         }
+
 
         public void SynchronizeUsers(LmsCompany lmsCompany, bool syncACUsers, IEnumerable<int> meetingIds = null)
         {

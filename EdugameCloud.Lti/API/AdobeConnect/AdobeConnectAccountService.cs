@@ -173,27 +173,33 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return breezeToken;
         }
 
-        /// <summary>
-        /// The get templates.
-        /// </summary>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
-        /// <param name="templateFolder">
-        /// The template folder.
-        /// </param>
-        /// <returns>
-        /// The <see cref="List{TemplateDTO}"/>.
-        /// </returns>
-        public IEnumerable<TemplateDTO> GetTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, string templateFolder)
+        public IEnumerable<TemplateDTO> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache)
         {
-            ScoContentCollectionResult result = provider.GetContentsByScoId(templateFolder);
-            if (result.Values == null)
-            {
-                return new List<TemplateDTO>();
-            }
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+            if (cache == null)
+                throw new ArgumentNullException(nameof(cache));
 
-            return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
+            var item = CacheUtility.GetCachedItem<IEnumerable<TemplateDTO>>(cache, CachePolicies.Keys.SharedMeetingTemplates(provider.ApiUrl), () =>
+            {
+                ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
+                if (!sharedTemplates.Success)
+                {
+                    _logger.ErrorFormat("get shared-meeting-templates. AC error. {0}.", sharedTemplates.Status.GetErrorInfo());
+                    return Enumerable.Empty<TemplateDTO>();
+                }
+
+                ScoContentCollectionResult result = provider.GetContentsByScoId(sharedTemplates.ScoId);
+                if (result.Values == null)
+                {
+                    _logger.ErrorFormat("get shared-meeting-templates. AC error. {0}.", result.Status.GetErrorInfo());
+                    return Enumerable.Empty<TemplateDTO>();
+                }
+
+                return result.Values.Select(v => new TemplateDTO { id = v.ScoId, name = v.Name }).ToList();
+            });
+
+            return item;
         }
         
     }

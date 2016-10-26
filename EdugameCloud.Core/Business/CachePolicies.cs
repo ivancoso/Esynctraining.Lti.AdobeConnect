@@ -86,6 +86,11 @@ namespace EdugameCloud.Core.Business
                 return apiUrl;
             }
 
+            public static string SharedMeetingTemplates(string apiUrl)
+            {
+                return string.Concat("SMT_", apiUrl);
+            }
+
             public static string IsActiveCompany(int companyId)
             {
                 return string.Concat("C_", companyId.ToString());
@@ -94,6 +99,16 @@ namespace EdugameCloud.Core.Business
             public static string CompanyLmsSettings(int companyLmsId)
             {
                 return string.Concat("LMS_", companyLmsId.ToString());
+            }
+
+            public static string CompanyLmsAdobeConnectProxy(int companyLmsId)
+            {
+                return string.Concat("LMS_AC_", companyLmsId.ToString());
+            }
+
+            public static string UserAdobeConnectProxy(int companyLmsId, string lmsUserId)
+            {
+                return $"LMC_{companyLmsId}_{lmsUserId}_AC";
             }
 
             public static string LmsProviders()

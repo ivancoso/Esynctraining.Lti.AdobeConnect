@@ -196,11 +196,11 @@
         public IFutureValue<LmsCourseMeeting> GetOneByUserAndType(int companyLmsId, string userId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException("companyLmsId");
+                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
             if (string.IsNullOrWhiteSpace(userId))
-                throw new ArgumentException("userId can not be empty", "userId");
+                throw new ArgumentException("userId can not be empty", nameof(userId));
             if (type <= 0)
-                throw new ArgumentOutOfRangeException("type");
+                throw new ArgumentOutOfRangeException(nameof(type));
 
             int typeValue = (int)type;
             LmsCourseMeeting x = null;
@@ -235,11 +235,11 @@
         public IFutureValue<LmsCourseMeeting> GetOneByCourseAndType(int companyLmsId, int courseId, LmsMeetingType type)
         {
             if (companyLmsId <= 0)
-                throw new ArgumentOutOfRangeException("companyLmsId");
+                throw new ArgumentOutOfRangeException(nameof(companyLmsId));
             if (courseId == 0)
-                throw new ArgumentOutOfRangeException("courseId");
+                throw new ArgumentOutOfRangeException(nameof(courseId));
             if (type <= 0)
-                throw new ArgumentOutOfRangeException("type");
+                throw new ArgumentOutOfRangeException(nameof(type));
 
             int typeValue = (int)type;
             var defaultQuery = new DefaultQueryOver<LmsCourseMeeting, int>().GetQueryOver()
@@ -297,7 +297,7 @@
         public IEnumerable<LmsCourseMeeting> GetAllByMeetingId(string meetingScoId)
         {
             if (string.IsNullOrWhiteSpace(meetingScoId))
-                throw new ArgumentException("meetingId can not be empty", "meetingScoId");
+                throw new ArgumentException("meetingId can not be empty", nameof(meetingScoId));
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;
@@ -321,7 +321,7 @@
         public IEnumerable<LmsCourseMeeting> GetAllByOfficeHoursId(int officeHoursId)
         {
             if (officeHoursId <= 0)
-                throw new ArgumentOutOfRangeException("officeHoursId");
+                throw new ArgumentOutOfRangeException(nameof(officeHoursId));
 
             LmsCourseMeeting x = null;
             OfficeHours oh = null;

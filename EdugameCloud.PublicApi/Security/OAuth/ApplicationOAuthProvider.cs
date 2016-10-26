@@ -18,14 +18,9 @@ namespace EdugameCloud.PublicApi.Security.OAuth
         public ApplicationOAuthProvider(string publicClientId, Func<EdugameCloudUserManager> userManagerFactory)
         {
             if (publicClientId == null)
-            {
-                throw new ArgumentNullException("publicClientId");
-            }
-
+                throw new ArgumentNullException(nameof(publicClientId));
             if (userManagerFactory == null)
-            {
-                throw new ArgumentNullException("userManagerFactory");
-            }
+                throw new ArgumentNullException(nameof(userManagerFactory));
 
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Caching;
 using System.Web.Http;
+using EdugameCloud.Core.Business;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
@@ -89,14 +90,8 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
 
         protected IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
         {
-            //IAdobeConnectProxy provider = null;
-            //string cacheKey = CacheKeyUtil.GetKey(session);
-            //Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
-            //provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
-            //return provider;
-            
-            string cacheKey = CacheKeyUtil.GetKey(session);
-            Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
+            string cacheKey = CachePolicies.Keys.UserAdobeConnectProxy(session.LmsCompany.Id, session.LtiSession.LtiParam.lms_user_id);
+            var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
 
             if (provider == null)
             {
@@ -143,23 +138,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 throw;
             }
         }
-
-        protected string GetOutputErrorMessage(string methodName, Exception ex)
-        {
-            logger.Error(methodName, ex);
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + ex.ToString()
-                : Resources.Messages.ExceptionMessage;
-        }
-
-        protected string GetOutputErrorMessage(string originalErrorMessage)
-        {
-            logger.Error(originalErrorMessage);
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + originalErrorMessage
-                : Resources.Messages.ExceptionMessage;
-        }
-
+        
         protected string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
         {
             string lmsInfo = (credentials != null)

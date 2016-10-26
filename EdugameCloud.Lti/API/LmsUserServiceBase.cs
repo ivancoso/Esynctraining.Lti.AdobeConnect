@@ -12,10 +12,15 @@ namespace EdugameCloud.Lti.API
     {
         protected ILogger logger { get; private set; }
 
+
         protected LmsUserServiceBase(ILogger logger)
         {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             this.logger = logger;
         }
+
 
         /// <param name="currentUser">When we get all users for course, we use admin's token (currentUser.token)</param>
         /// <param name="lmsUserId">User Id we want to retrieve information for from LMS. Can be different from currentUser</param>
@@ -79,5 +84,7 @@ namespace EdugameCloud.Lti.API
 
             return new List<LmsUserDTO>();
         }
+
     }
+
 }

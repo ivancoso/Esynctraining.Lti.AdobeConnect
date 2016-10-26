@@ -100,7 +100,7 @@
                 throw new InvalidOperationException($"Invalid meeting type '{type}'");
             return (LmsMeetingType)type;
         }
-
+        
     }
 
 }

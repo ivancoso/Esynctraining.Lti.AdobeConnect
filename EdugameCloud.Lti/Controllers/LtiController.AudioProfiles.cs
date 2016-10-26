@@ -32,7 +32,7 @@ namespace EdugameCloud.Lti.Controllers
                 TelephonyProfileOption option = lmsCompany.GetTelephonyOption((LmsMeetingType)meetingType);
                 if (option != TelephonyProfileOption.ReuseExistingProfile)
                 {
-                    logger.Error($"TelephonyProfileOption {option} is not ReuseExistingProfile");
+                    Logger.Error($"TelephonyProfileOption {option} is not ReuseExistingProfile");
                     return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
                 }
 
@@ -40,7 +40,7 @@ namespace EdugameCloud.Lti.Controllers
                 if (((LmsMeetingType)meetingType != LmsMeetingType.OfficeHours)
                     && (lmsCompany.GetSetting<string>(LmsCompanySettingNames.Telephony.ActiveProfile) != TelephonyDTO.SupportedProfiles.None))
                 {
-                    logger.Error($"Meeting type {meetingType} is not supported for audio-profile reuse");
+                    Logger.Error($"Meeting type {meetingType} is not supported for audio-profile reuse");
                     return Json(OperationResultWithData<IEnumerable<LmsAudioProfileDTO>>.Success(Enumerable.Empty<LmsAudioProfileDTO>()));
                 }
 

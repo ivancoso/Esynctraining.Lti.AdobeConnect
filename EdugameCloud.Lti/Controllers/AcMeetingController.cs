@@ -12,6 +12,7 @@ using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -33,8 +34,8 @@ namespace EdugameCloud.Lti.Controllers
             IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings,
             IAdobeConnectUserService acUserService,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
             this.acUserService = acUserService;
         }
@@ -107,7 +108,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 catch (Exception e)
                 {
-                    logger.Error($"User provider error. server={lmsCompany.AcServer}, login={registeredUser.Login}", e);
+                    Logger.Error($"User provider error. server={lmsCompany.AcServer}, login={registeredUser.Login}", e);
                     if (userProvider == null && generatedPassword == null && lmsUser.AcConnectionMode == AcConnectionMode.Overwrite)
                     {
                         // trying to login with new generated password (in case, for example, when user changed his AC password manually)

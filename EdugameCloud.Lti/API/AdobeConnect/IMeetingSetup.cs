@@ -9,7 +9,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 {
     public interface IMeetingSetup
     {
-        void SetupFolders(LmsCompany credentials, IAdobeConnectProxy provider);
+        //void SetupFolders(LmsCompany credentials, IAdobeConnectProxy provider);
 
         OperationResult SaveMeeting(
             LmsCompany lmsCompany,

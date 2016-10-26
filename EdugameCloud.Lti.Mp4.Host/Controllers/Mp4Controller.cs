@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4,
                     input.RecordingId.ToString(),
-                    logger).ConfigureAwait(false);
+                    Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -87,7 +87,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     Guid.Parse(licenseKey),
                     MP4Service.Contract.Client.LicenseType.MP4WithSubtitles,
                     input.RecordingId.ToString(),
-                    logger).ConfigureAwait(false);
+                    Logger).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -114,7 +114,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 string breezeToken;
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
-                OperationResultWithData<string> result = new SubtitleUtility(ac, logger, this).AccessMp4File(scoId,
+                OperationResultWithData<string> result = new SubtitleUtility(ac, Logger, this).AccessMp4File(scoId,
                     lmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
@@ -133,7 +133,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, input.LmsProviderName);
+                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, input.LmsProviderName);
 
                 return OperationResultWithData<string>.Error(IsDebug 
                     ? (ex.Message + ex.StackTrace) 
@@ -155,14 +155,14 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, scoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, logger, this).AccessVttFile(scoId,
+                return new SubtitleUtility(ac, Logger, this).AccessVttFile(scoId,
                     lmsCompany.AcServer,
                     principal.PrincipalId,
                     breezeToken);
             }
             catch (Exception ex)
             {
-                logger.Error("GetVttFile", ex);
+                Logger.Error("GetVttFile", ex);
                 throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
         }
@@ -181,11 +181,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, logger, this).GetVttFile(principal.PrincipalId, fileScoId);
+                return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
             catch (Exception ex)
             {
-                logger.Error("GetVttFile", ex);
+                Logger.Error("GetVttFile", ex);
                 throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
         }
@@ -204,11 +204,11 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 var ac = this.GetAdobeConnectProvider(session);
                 Principal principal = GetPrincipal(lmsCompany, session.LtiSession.LtiParam, fileScoId, ac, out breezeToken);
 
-                return new SubtitleUtility(ac, logger, this).GetVttFile(principal.PrincipalId, fileScoId);
+                return new SubtitleUtility(ac, Logger, this).GetVttFile(principal.PrincipalId, fileScoId);
             }
             catch (Exception ex)
             {
-                logger.Error("GetVttFile", ex);
+                Logger.Error("GetVttFile", ex);
                 throw new HttpResponseException(HttpStatusCode.InternalServerError);
             }
         }
@@ -222,7 +222,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
             var ac = this.GetAdobeConnectProvider(session);
 
-            return new SubtitleUtility(ac, logger, this).PostVttFile(fileScoId);
+            return new SubtitleUtility(ac, Logger, this).PostVttFile(fileScoId);
         }
 
  

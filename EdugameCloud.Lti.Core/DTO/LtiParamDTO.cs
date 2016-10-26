@@ -339,6 +339,12 @@ namespace EdugameCloud.Lti.DTO
                 }
             }
 
+            //if (externalProvider != null
+            //    && externalProvider.Equals(LmsProviderNames.DialogEdu, StringComparison.OrdinalIgnoreCase))
+            //{
+            //    providerName = LmsProviderNames.DialogEdu;
+            //}
+
             // TRICK: for supporting old licenses
             if (providerName == "desire2learn")
                 providerName = LmsProviderNames.Brightspace;

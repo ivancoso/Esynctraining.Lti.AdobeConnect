@@ -14,6 +14,10 @@
 
         public const string Brightspace = "brightspace";
 
+        //public const string DialogEdu = "dialogedu";
+
+        //public const string Bridge = "bridge";
+
     }
 
 }

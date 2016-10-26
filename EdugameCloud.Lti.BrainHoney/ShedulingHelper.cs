@@ -9,7 +9,9 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
 using Esynctraining.AC.Provider;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Extensions;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.Lti.BrainHoney
 {
@@ -122,6 +124,8 @@ namespace EdugameCloud.Lti.BrainHoney
         {
             var errors = new List<string>();
             DlapAPI api = _dlapApi;
+
+            var cache = IoC.Resolve<ICache>();
             
             foreach (LmsCompany brainHoneyCompany in brainHoneyCompanies)
             {
@@ -150,10 +154,7 @@ namespace EdugameCloud.Lti.BrainHoney
                     }
 
                     IAdobeConnectProxy adobeConnectProvider = _acAccountService.GetProvider(brainHoneyCompany);
-                    this._meetingSetup.SetupFolders(brainHoneyCompany, adobeConnectProvider);
-                    IEnumerable<TemplateDTO> templates = _acAccountService.GetTemplates(
-                        adobeConnectProvider,
-                        brainHoneyCompany.ACTemplateScoId);
+                    IEnumerable<TemplateDTO> templates = _acAccountService.GetSharedMeetingTemplates(adobeConnectProvider, cache);
                     if (!templates.Any())
                     {
                         error = "No templates found for " + brainHoneyCompany.LmsDomain;

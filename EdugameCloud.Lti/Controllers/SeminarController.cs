@@ -12,7 +12,6 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 using Esynctraining.Core.Extensions;
-using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Caching;
 
 namespace EdugameCloud.Lti.Controllers
@@ -44,8 +43,8 @@ namespace EdugameCloud.Lti.Controllers
             LmsUserSessionModel userSessionModel,
             IAdobeConnectAccountService acAccountService, 
             ApplicationSettingsProvider settings,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
             _seminarService = seminarService;
         }

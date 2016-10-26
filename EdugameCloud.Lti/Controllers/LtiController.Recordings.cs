@@ -41,8 +41,8 @@ namespace EdugameCloud.Lti.Controllers
             LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
         }
 
@@ -460,7 +460,7 @@ namespace EdugameCloud.Lti.Controllers
 
         private ActionResult RecordingsError(string method, string sessionId, Exception ex)
         {
-            logger.ErrorFormat(ex, "{0} exception. sessionId:{1}.", method, sessionId);
+            Logger.ErrorFormat(ex, "{0} exception. sessionId:{1}.", method, sessionId);
             this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
             return this.View("~/Views/Lti/LtiError.cshtml");
         }

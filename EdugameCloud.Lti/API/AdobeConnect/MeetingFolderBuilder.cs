@@ -88,16 +88,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 meetingsFolderName, out meetingFolderScoId);
             return meetingFolderScoId;
         }
-
-        /// <summary>
-        /// The setup shared meetings folder.
-        /// </summary>
-        /// <param name="credentials">
-        /// The credentials.
-        /// </param>
-        /// <param name="provider">
-        /// The provider.
-        /// </param>
+        
         private static void SetupSharedMeetingsFolder(LmsCompany credentials, LmsProvider lmsProvider, IAdobeConnectProxy provider)
         {
             string ltiFolderSco = null;

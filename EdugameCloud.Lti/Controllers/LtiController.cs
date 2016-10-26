@@ -1,6 +1,4 @@
-﻿using LtiLibrary.Core.Common;
-
-namespace EdugameCloud.Lti.Controllers
+﻿namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -19,7 +17,6 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.API.AdobeConnect;
     using EdugameCloud.Lti.API.Canvas;
     using EdugameCloud.Lti.API.Desire2Learn;
-    using EdugameCloud.Lti.Constants;
     using EdugameCloud.Lti.Core.Business.Models;
     using EdugameCloud.Lti.Core.Constants;
     using EdugameCloud.Lti.Core.OAuth;
@@ -30,13 +27,13 @@ namespace EdugameCloud.Lti.Controllers
     using EdugameCloud.Lti.OAuth.Canvas;
     using EdugameCloud.Lti.OAuth.Desire2Learn;
     using Esynctraining.AC.Provider.Entities;
-    using Esynctraining.Core;
     using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
     using Esynctraining.Core.Utils;
+    using LtiLibrary.Core.Common;
     using Microsoft.Web.WebPages.OAuth;
     using Newtonsoft.Json;
 
@@ -46,16 +43,15 @@ namespace EdugameCloud.Lti.Controllers
 
         #region Fields
 
-        private static bool? isDebug;
-
         private readonly LmsCompanyModel lmsCompanyModel;
         private readonly LmsUserSessionModel userSessionModel;
         private readonly LmsUserModel lmsUserModel;
         private readonly MeetingSetup meetingSetup;
         private readonly UsersSetup usersSetup;
-        private readonly ILogger logger;
         private readonly IAdobeConnectUserService acUserService;
-        private readonly ICache _cache;
+
+        /// NOTE: use property only, not this field
+        private LmsProviderModel _lmsProviderModel;
 
         #endregion
 
@@ -84,14 +80,14 @@ namespace EdugameCloud.Lti.Controllers
             get { return IoC.Resolve<CompanyModel>(); }
         }
 
-        private API.AdobeConnect.IAdobeConnectAccountService AdobeConnectAccountService
+        private IAdobeConnectAccountService AdobeConnectAccountService
         {
-            get { return IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>(); }
+            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
         }
-
+        
         private LmsProviderModel LmsProviderModel
         {
-            get { return IoC.Resolve<LmsProviderModel>(); }
+            get { return _lmsProviderModel ?? (_lmsProviderModel = IoC.Resolve<LmsProviderModel>()); }
         }
 
         private LmsCourseMeetingModel LmsCourseMeetingModel
@@ -111,60 +107,18 @@ namespace EdugameCloud.Lti.Controllers
             IAdobeConnectUserService acUserService,
             IAdobeConnectAccountService acAccountService,
             ILogger logger,
-            ICache cache) :base(userSessionModel, acAccountService, settings, logger)
+            ICache cache) :base(userSessionModel, acAccountService, settings, logger, cache)
         {
             this.lmsCompanyModel = lmsCompanyModel;
             this.userSessionModel = userSessionModel;
             this.lmsUserModel = lmsUserModel;
             this.meetingSetup = meetingSetup;
-            this.Settings = settings;
             this.usersSetup = usersSetup;
-            this.logger = logger;
             this.acUserService = acUserService;
-            _cache = cache;
         }
 
         #endregion
-
-        #region Properties
-
-        /// <summary>
-        ///   Gets the settings.
-        /// </summary>
-        public dynamic Settings { get; private set; }
-
-        /// <summary>
-        ///     Gets a value indicating whether is debug.
-        /// </summary>
-        private bool IsDebug
-        {
-            get
-            {
-                if (isDebug.HasValue)
-                {
-                    return isDebug.Value;
-                }
-
-                bool val;
-                isDebug = bool.TryParse(this.Settings.IsDebug, out val) && val;
-                return isDebug.Value;
-            }
-        }
-
-        #endregion
-
-        protected override JsonResult Json(object data, string contentType,
-                System.Text.Encoding contentEncoding, JsonRequestBehavior behavior)
-        {
-            return new JsonNetResult
-            {
-                Data = data,
-                ContentType = contentType,
-                ContentEncoding = contentEncoding,
-                JsonRequestBehavior = behavior,
-            };
-        }
-
+        
         #region Public Methods and Operators
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1309:FieldNamesMustNotBeginWithUnderscore", Justification = "Reviewed. Suppression is OK here."),
@@ -179,12 +133,11 @@ namespace EdugameCloud.Lti.Controllers
             string state = null,
             string providerKey = null)
         {
-
             try
             {
                 if (string.IsNullOrEmpty(__provider__))
                 {
-                    logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
+                    Logger.Error("[AuthenticationCallback] __provider__ parameter value is null or empty");
                     this.ViewBag.Error = Resources.Messages.NoLmsInformation;
                     return this.View("Error");
                 }
@@ -197,7 +150,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     else
                     {
-                        logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
+                        Logger.Error("[AuthenticationCallback] providerKey parameter value is null and there is no cookie with such name");
                         this.ViewBag.Error = Resources.Messages.NoSessionInformation;
                         return this.View("Error");
                     }
@@ -221,8 +174,7 @@ namespace EdugameCloud.Lti.Controllers
                     if (string.IsNullOrEmpty(user.UniqueName))
                     {
                         var userInfo = d2lService.GetApiObjects<UserData>(Request.Url, hostUrl,
-                            String.Format(d2lService.GetUserUrlFormat, (string)Settings.BrightspaceApiVersion,
-                                user.Identifier), company);
+                            string.Format(d2lService.GetUserUrlFormat, (string)Settings.BrightspaceApiVersion, user.Identifier), company);
                         if (userInfo != null)
                         {
                             username = userInfo.UserName;
@@ -241,7 +193,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     else
                     {
-                        logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
+                        Logger.ErrorFormat("[AuthenticationCallback] UserId:{0}, UserKey:{1}", userId, userKey);
                         this.ViewBag.Error = Resources.Messages.CanSaveToDb;
                         return this.View("Error");
                     }
@@ -290,27 +242,18 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Core.WarningMessageException ex)
             {
-                logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
+                Logger.ErrorFormat(ex, "[AuthenticationCallback] exception. SessionKey:{0}.", providerKey);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
-
-        /// <summary>
-        /// The save settings.
-        /// </summary>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <returns>
-        /// The <see cref="JsonResult"/>.
-        /// </returns>
+        
         [HttpPost]
         public virtual JsonResult SaveSettings(LmsUserSettingsDTO settings)
         {
@@ -399,11 +342,6 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        //public virtual ActionResult GetHtmlPage(string path)
-        //{
-        //    return new FilePathResult(path, "text/html");
-        //}
-
         public virtual ActionResult GetExtJsPage(string primaryColor, string lmsProviderName, int acConnectionMode, bool disableCacheBuster = true)
         {
             LtiViewModelDto model = TempData["lti-index-model"] as LtiViewModelDto;
@@ -461,13 +399,6 @@ namespace EdugameCloud.Lti.Controllers
             }
         }
         
-        //[OutputCache(NoStore = true, Duration = 0, VaryByParam = "None")]
-        //public virtual ActionResult Index(LtiParamDTO model)
-        //{
-        //    string providerName = model.tool_consumer_info_product_family_code;
-        //    return this.LoginWithProvider(providerName, model);
-        //}
-        
         public virtual ActionResult JoinMeeting(string lmsProviderName, int meetingId)
         {
             LmsCompany credentials = null;
@@ -491,7 +422,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}. SessionID: {1}.", meetingId, lmsProviderName);
+                Logger.ErrorFormat(ex, "JoinMeeting exception. Id:{0}. SessionID: {1}.", meetingId, lmsProviderName);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -529,7 +460,7 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     var message = string.Format(
                         Resources.Messages.NoUserByPrincipalIdFound, lmsUser.PrincipalId ?? string.Empty);
-                    logger.Error(message);
+                    Logger.Error(message);
                     throw new Core.WarningMessageException(message);
                 }
 
@@ -585,17 +516,15 @@ namespace EdugameCloud.Lti.Controllers
             var trace = new StringBuilder();
             try
             {
-                //System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("es");
-                //throw new InvalidOperationException("trick test");
-
                 // Parse and validate the request
                 Request.CheckForRequiredLtiParameters();
 
                 string lmsProvider = param.GetLtiProviderName(provider);
-                LmsProvider providerInstance = IoC.Resolve<LmsProviderModel>().GetByName(lmsProvider);
+
+                LmsProvider providerInstance = LmsProviderModel.GetByName(lmsProvider);
                 if (providerInstance == null)
                 {
-                    logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.",
+                    Logger.ErrorFormat("Invalid LMS provider name. LMS Provider Name:{0}. oauth_consumer_key:{1}.",
                         lmsProvider, param.oauth_consumer_key);
                     this.ViewBag.Error = Resources.Messages.LtiExternalToolUrl;
                     return this.View("Error");
@@ -603,7 +532,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (lmsProvider.ToLower() == LmsProviderNames.Brightspace && !string.IsNullOrEmpty(param.user_id))
                 {
-                    logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.",
+                    Logger.InfoFormat("[D2L login attempt]. Original user_id: {0}. oauth_consumer_key:{1}.",
                         param.user_id, param.oauth_consumer_key);
                     var parsedIdArray = param.user_id.Split('_');
                     // temporary fix
@@ -626,7 +555,7 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 else
                 {
-                    logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
+                    Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.", JsonConvert.SerializeObject(param, Formatting.Indented));
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationNoSetup}");
                 }
 
@@ -638,14 +567,13 @@ namespace EdugameCloud.Lti.Controllers
                 }
 
                 sw.Stop();
-                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n",
-                    sw.Elapsed.ToString());
+                trace.AppendFormat("GetOneByProviderAndConsumerKey and ValidateLmsLicense: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
                 
-                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany,
+                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, Request,
                         () => this.ValidateLMSDomainAndSaveIfNeeded(param, lmsCompany)))
                 {
-                    logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                    Logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                     throw new LtiException($"{Resources.Messages.LtiInvalidRequest}. {Resources.Messages.LtiValidationWrongSignature}");
                 }
 
@@ -657,12 +585,10 @@ namespace EdugameCloud.Lti.Controllers
                 ValidateIntegrationRequiredParameters(lmsCompany, param);
 
                 sw = Stopwatch.StartNew();
-
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);
-                // NOTE: save in GetAdobeConnectProvider already this.SetAdobeConnectProvider(lmsCompany.Id, adobeConnectProvider);
-
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
                 sw.Stop();
                 trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
+
                 sw = Stopwatch.StartNew();
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
@@ -685,7 +611,7 @@ namespace EdugameCloud.Lti.Controllers
                 trace.AppendFormat("SaveSession: time: {0}.\r\n", sw.Elapsed.ToString());
                 sw = Stopwatch.StartNew();
 
-                this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
+                // NOTE: not in use - read during license save. this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
 
                 sw.Stop();
                 trace.AppendFormat("meetingSetup.SetupFolders: time: {0}.\r\n", sw.Elapsed.ToString());
@@ -711,7 +637,7 @@ namespace EdugameCloud.Lti.Controllers
 
                         if (lmsCompany.AdminUser == null)
                         {
-                            this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                            Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
                             this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
                             return this.View("~/Views/Lti/LtiError.cshtml");
                         }
@@ -754,7 +680,7 @@ namespace EdugameCloud.Lti.Controllers
 
                         if (lmsCompany.AdminUser == null)
                         {
-                            this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
+                            Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", lmsCompany.Id);
                             this.ViewBag.Message = Resources.Messages.LtiNoLmsAdmin;
                             return this.View("~/Views/Lti/LtiError.cshtml");
                         }
@@ -805,7 +731,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (acPrincipal == null)
                 {
-                    this.logger.ErrorFormat(
+                    Logger.ErrorFormat(
                         "[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.",
                         lmsCompany.Id, lmsUser.Id, param.lms_user_login);
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
@@ -815,7 +741,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (LtiException ex)
             {
-                logger.Error("Lti exception", ex);
+                Logger.Error("Lti exception", ex);
                 ViewBag.Message = $"Invalid LTI request. {ex.Message}";
                 if (!string.IsNullOrEmpty(param.launch_presentation_return_url))
                 {
@@ -825,14 +751,14 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Core.WarningMessageException ex)
             {
-                logger.WarnFormat("[WarningMessageException] param:{0}.",
+                Logger.WarnFormat("[WarningMessageException] param:{0}.",
                     JsonConvert.SerializeObject(param, Formatting.Indented));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                Logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
@@ -840,7 +766,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 methodTime.Stop();
                 var time = methodTime.Elapsed;
-                if (time > TimeSpan.FromSeconds(int.Parse((string) Settings.Monitoring_MaxLoginTime)))
+                if (time > TimeSpan.FromSeconds(int.Parse((string)Settings.Monitoring_MaxLoginTime)))
                 {
                     var monitoringLog = IoC.Resolve<ILogger>("Monitoring");
 
@@ -890,19 +816,19 @@ namespace EdugameCloud.Lti.Controllers
 //            {
                 if (!string.IsNullOrWhiteSpace(lmsLicense.LmsDomain) && !lmsLicense.HasLmsDomain(param.lms_domain))
                 {
-                    logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                    Logger.ErrorFormat("LTI integration is already set for different domain. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationDifferentDomain;
                 }
 
                 if (!lmsLicense.IsActive)
                 {
-                    logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                    Logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationInactiveLmsLicense;
                 }
                 
                 if (!CompanyModel.IsActive(lmsLicense.CompanyId))
                 {
-                    logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                    Logger.ErrorFormat("Company doesn't have any active license. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                     return Resources.Messages.LtiValidationInactiveCompanyLicense;
                 }
 //            }
@@ -920,12 +846,12 @@ namespace EdugameCloud.Lti.Controllers
             // in case when client supports v2.0 - just warn, for our AC integration all necessary functionality should be supported
             if (param.lti_version == "")
             {
-                logger.Warn($"[LtiVersion - 2.0] ConsumerKey={param.oauth_consumer_key}");
+                Logger.Warn($"[LtiVersion - 2.0] ConsumerKey={param.oauth_consumer_key}");
             }
             //version should match "LTI-1p0" for v1.0, v1.1, v1.2
             else if (param.lti_version != LtiConstants.LtiVersion)
             {
-                logger.ErrorFormat("Invalid LTI request. Invalid LTI version. oauth_consumer_key:{0}, lti_version:{1}", param.oauth_consumer_key, param.lti_version);
+                Logger.ErrorFormat("Invalid LTI request. Invalid LTI version. oauth_consumer_key:{0}, lti_version:{1}", param.oauth_consumer_key, param.lti_version);
                 throw new LtiException(Resources.Messages.LtiValidationWrongVersion);
             }
         }
@@ -1006,6 +932,7 @@ namespace EdugameCloud.Lti.Controllers
         {
             if (string.IsNullOrWhiteSpace(credentials.LmsDomain))
             {
+                // NOTE: e.g. we do not setup domain for Canvas license
                 credentials.LmsDomain = param.lms_domain;
                 this.lmsCompanyModel.RegisterSave(credentials, true);
                 return true;
@@ -1057,7 +984,7 @@ namespace EdugameCloud.Lti.Controllers
                 string userName = username;
                 if (string.IsNullOrWhiteSpace(username) && (provider.ToLower() == LmsProviderNames.Canvas) && (param.lms_user_login == "$Canvas.user.loginId"))
                 {
-                    logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
+                    Logger.Warn("[Canvas Auth Issue]. lms_user_login == '$Canvas.user.loginId'");
                     LmsUserDTO user = CanvasApi.GetUser(company.LmsDomain, token, userId);
                     if (user != null)
                         userName = user.login_id;
@@ -1092,7 +1019,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (acPrincipal == null)
                 {
-                    this.logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
+                    Logger.ErrorFormat("[AuthCallbackSave] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.", company.Id, lmsUser.Id, param.lms_user_login);
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
                 }
             }
@@ -1142,7 +1069,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     else
                     {
-                        this.logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
+                        Logger.ErrorFormat("LMS Admin is not set. LmsCompany ID: {0}.", company.Id);
                         throw new Core.WarningMessageException(Resources.Messages.LtiNoLmsAdmin);
                     }
                 }
@@ -1156,9 +1083,8 @@ namespace EdugameCloud.Lti.Controllers
 
         private ActionResult RedirectToExtJs(LmsUserSession session, LmsUser lmsUser, string providerName, StringBuilder trace = null)
         {
-            var request = System.Web.HttpContext.Current.Request;
-
-            FormCollection form = new FormCollection(request.Unvalidated().Form);
+            var request = Request;
+            var form = new FormCollection(request.Unvalidated().Form);
 
             var action = form["lti_action"];
             var ltiId = form["lti_id"];
@@ -1219,8 +1145,7 @@ namespace EdugameCloud.Lti.Controllers
             var acProvider = this.GetAdobeConnectProvider(credentials);
 
             sw.Stop();
-            if (trace != null)
-                trace.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
+            trace?.AppendFormat("GetAdobeConnectProvider: time: {0}.\r\n", sw.Elapsed.ToString());
             sw = Stopwatch.StartNew();
 
             var meetings = meetingSetup.GetMeetings(
@@ -1231,14 +1156,12 @@ namespace EdugameCloud.Lti.Controllers
                 trace);
 
             sw.Stop();
-            if (trace != null)
-                trace.AppendFormat("GetMeetings SUMMARY: time: {0}.\r\n", sw.Elapsed.ToString());
+            trace?.AppendFormat("GetMeetings SUMMARY: time: {0}.\r\n", sw.Elapsed.ToString());
 
             sw = Stopwatch.StartNew();
-            var acSettings = IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(acProvider, _cache);
+            var acSettings = IoC.Resolve<API.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(acProvider, Cache);
             sw.Stop();
-            if (trace != null)
-                trace.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
+            trace?.AppendFormat("AC - GetPasswordPolicies: time: {0}.\r\n", sw.Elapsed.ToString());
 
             IEnumerable<SeminarLicenseDto> seminars = null;
             string seminarsMessage = null;
@@ -1257,21 +1180,19 @@ namespace EdugameCloud.Lti.Controllers
                 catch (InvalidOperationException ex)
                 {
                     // NOTE: a little bit tricky to catch InvalidOperationException
-                    logger.Error("BuildModel.GetLicensesWithContent", ex);
+                    Logger.Error("BuildModel.GetLicensesWithContent", ex);
                     seminarsMessage = "Seminars are not enabled for admin user set in the license.";
                 }
 
                 sw.Stop();
-                if (trace != null)
-                    trace.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
-
+                trace?.AppendFormat("AC - GetSeminars: time: {0}.\r\n", sw.Elapsed.ToString());
             }
 
             //TRICK: we calc shift on serverside
             acSettings.SetTimezoneShift(null);
 
             string userFullName = param.lis_person_name_full ?? param.lis_person_name_given + " " + param.lis_person_name_family;
-            var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), _cache);
+            var settings = LicenceSettingsDto.Build(credentials, LanguageModel.GetById(credentials.LanguageId), Cache);
 
             string version = typeof(LtiController).Assembly.GetName().Version.ToString();
             version = version.Substring(0, version.LastIndexOf('.'));
@@ -1315,112 +1236,6 @@ namespace EdugameCloud.Lti.Controllers
             return param.roles.Contains("Administrator");
         }
         
-        private LmsUserSession GetSession(string key)
-        {
-            Guid uid;
-            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
-            
-            if (session == null)
-            {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
-            }
-
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
-
-            return session;
-        }
-
-        private LmsUserSession GetReadOnlySession(string key)
-        {
-            Guid uid;
-            var session = Guid.TryParse(key, out uid) ? this.userSessionModel.GetByIdWithRelated(uid).Value : null;
-
-            if (session == null)
-            {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
-                throw new Core.WarningMessageException(Resources.Messages.SessionTimeOut);
-            }
-
-            System.Threading.Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(LanguageModel.GetById(session.LmsCompany.LanguageId).TwoLetterCode);
-
-            return session;
-        }
-
-        //private API.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
-        //{
-        //    API.AdobeConnect.IAdobeConnectProxy provider = null;
-        //    //if (forceReCreate)
-        //    {
-        //        provider = AdobeConnectAccountService.GetProvider(lmsCompany);
-        //        //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-        //    }
-            
-        //    return provider;
-        //}
-        
-        /// <summary>
-        ///     The regenerate id.
-        /// </summary>
-        // ReSharper disable once UnusedMember.Local
-        //private void RegenerateId()
-        //{
-        //    HttpContext httpContext = System.Web.HttpContext.Current;
-        //    var manager = new SessionIDManager();
-        //    string oldId = manager.GetSessionID(httpContext);
-        //    string newId = manager.CreateSessionID(httpContext);
-
-        //    bool isAdd, isRedirected;
-        //    manager.SaveSessionID(httpContext, newId, out isRedirected, out isAdd);
-        //    HttpApplication application = httpContext.ApplicationInstance;
-        //    HttpModuleCollection modules = application.Modules;
-        //    var ssm = (SessionStateModule)modules.Get("Session");
-        //    FieldInfo[] fields = ssm.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
-        //    SessionStateStoreProviderBase store = null;
-        //    FieldInfo requiredIdField = null, requiredLockIdField = null, requiredStateNotFoundField = null;
-        //    foreach (FieldInfo field in fields)
-        //    {
-        //        if (field.Name.Equals("_store"))
-        //        {
-        //            store = (SessionStateStoreProviderBase)field.GetValue(ssm);
-        //        }
-
-        //        if (field.Name.Equals("_rqId"))
-        //        {
-        //            requiredIdField = field;
-        //        }
-
-        //        if (field.Name.Equals("_rqLockId"))
-        //        {
-        //            requiredLockIdField = field;
-        //        }
-
-        //        if (field.Name.Equals("_rqSessionStateNotFound"))
-        //        {
-        //            requiredStateNotFoundField = field;
-        //        }
-        //    }
-
-        //    if (requiredLockIdField != null)
-        //    {
-        //        object lockId = requiredLockIdField.GetValue(ssm);
-        //        if (lockId != null && oldId != null && store != null)
-        //        {
-        //            store.ReleaseItemExclusive(httpContext, oldId, lockId);
-        //        }
-        //    }
-
-        //    if (requiredStateNotFoundField != null)
-        //    {
-        //        requiredStateNotFoundField.SetValue(ssm, true);
-        //    }
-
-        //    if (requiredIdField != null)
-        //    {
-        //        requiredIdField.SetValue(ssm, newId);
-        //    }
-        //}
-
         private LmsUserSession SaveSession(LmsCompany company, LtiParamDTO param, LmsUser lmsUser)
         {
             var session = (lmsUser == null) ? null : this.userSessionModel.GetOneByCompanyAndUserAndCourse(lmsUser.Id, param.course_id).Value;
@@ -1454,23 +1269,7 @@ namespace EdugameCloud.Lti.Controllers
 
             return this.View("LoginToAC");
         }
-
-        private string GetOutputErrorMessage(string methodName, LmsCompany credentials, Exception ex)
-        {
-            string lmsInfo = (credentials != null)
-                ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
-                : string.Empty;
-
-            logger.Error(methodName + lmsInfo, ex);
-
-            if (ex is IUserMessageException)
-                return ex.Message;
-
-            return IsDebug
-                ? Resources.Messages.ExceptionOccured + ex.ToString()
-                : Resources.Messages.ExceptionMessage;
-        }
-
+        
         #endregion
 
     }

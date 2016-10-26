@@ -32,20 +32,20 @@ namespace EdugameCloud.Lti.Controllers
                 }
                 else
                 {
-                    logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.",
+                    Logger.ErrorFormat("Adobe Connect integration is not set up. param:{0}.",
                         JsonConvert.SerializeObject(param, Formatting.Indented));
                     throw new LtiException(Resources.Messages.LtiValidationNoSetup);
                 }
 
                 if (!lmsCompany.IsActive)
                 {
-                    logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
+                    Logger.ErrorFormat("LMS license is not active. Request's lms_domain:{0}. oauth_consumer_key:{1}.", param.lms_domain, param.oauth_consumer_key);
                     throw new LtiException(Resources.Messages.LtiValidationInactiveLmsLicense);
                 }
 
-                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, () => true))
+                if (!BltiProviderHelper.VerifyBltiRequest(lmsCompany, Request, () => true))
                 {
-                    logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.",
+                    Logger.ErrorFormat("Invalid LTI request. Invalid signature. oauth_consumer_key:{0}.",
                         param.oauth_consumer_key);
                     throw new LtiException(Resources.Messages.LtiValidationWrongSignature);
                 }
@@ -58,7 +58,7 @@ namespace EdugameCloud.Lti.Controllers
                 if(!contextRoles.Any())
                     throw new LtiException(Resources.Messages.LtiValidationNoContextRole);
 
-                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany, forceReCreate: true);
+                var adobeConnectProvider = this.GetAdobeConnectProvider(lmsCompany);
 
                 // TRICK: if LMS don't return user login - try to call lms' API to fetch user's info using user's LMS-ID.
                 param.ext_user_username = usersSetup.GetParamLogin(param, lmsCompany); // NOTE: is saved in session!
@@ -68,7 +68,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsUserSession session = this.SaveSession(lmsCompany, param, lmsUser);
                 var key = session.Id.ToString();
 
-                this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
+                //this.meetingSetup.SetupFolders(lmsCompany, adobeConnectProvider);
 
                 Principal acPrincipal = null;
 
@@ -102,7 +102,7 @@ namespace EdugameCloud.Lti.Controllers
 
                 if (acPrincipal == null)
                 {
-                    this.logger.ErrorFormat(
+                    Logger.ErrorFormat(
                         "[LoginWithProvider] Unable to create AC account. LmsCompany ID: {0}. LmsUserID: {1}. lms_user_login: {2}.",
                         lmsCompany.Id, lmsUser.Id, param.lms_user_login);
                     throw new Core.WarningMessageException(Resources.Messages.LtiNoAcAccount);
@@ -112,7 +112,7 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (LtiException ex)
             {
-                logger.Error("Lti exception", ex);
+                Logger.Error("Lti exception", ex);
                 ViewBag.Message = $"Invalid LTI request. {ex.Message}";
                 if (!string.IsNullOrEmpty(param.launch_presentation_return_url))
                 {
@@ -122,17 +122,19 @@ namespace EdugameCloud.Lti.Controllers
             }
             catch (Core.WarningMessageException ex)
             {
-                logger.WarnFormat("[WarningMessageException] param:{0}.",
+                Logger.WarnFormat("[WarningMessageException] param:{0}.",
                     JsonConvert.SerializeObject(param, Formatting.Indented));
                 this.ViewBag.Message = ex.Message;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
             catch (Exception ex)
             {
-                logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.", param.oauth_consumer_key);
+                Logger.ErrorFormat(ex, "LoginWithProvider exception. oauth_consumer_key:{0}.", param.oauth_consumer_key);
                 this.ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
                 return this.View("~/Views/Lti/LtiError.cshtml");
             }
         }
+
     }
+
 }

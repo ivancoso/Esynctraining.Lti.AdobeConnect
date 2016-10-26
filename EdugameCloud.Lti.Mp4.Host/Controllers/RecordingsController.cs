@@ -93,7 +93,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 List<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
                     mp4,
                     mp4Subtitles,
-                    logger);
+                    Logger);
 
                 return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Success(result);
             }
@@ -127,7 +127,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId.ToString(),
                         mp4,
                         mp4Subtitles,
-                        logger);
+                        Logger);
                 }
 
                 return OperationResultWithData<Mp4TaskStatusDto>.Error("No MP4 license found");

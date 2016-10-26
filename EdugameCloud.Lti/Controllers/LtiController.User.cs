@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.Controllers
 
                     if (!string.IsNullOrEmpty(error))
                     {
-                        logger.Error($"[UpdateUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
+                        Logger.Error($"[UpdateUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
                         lastError = error;
                     }
                     else
@@ -68,7 +68,7 @@ namespace EdugameCloud.Lti.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("UpdateUsers", credentials, ex);
-                    logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     if (!string.IsNullOrEmpty(error))
                     {
-                        logger.Error($"[RemoveUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
+                        Logger.Error($"[RemoveUsers] {error}. UserId={user.id}, MeetingId={meetingId}");
                         lastError = error;
                     }
                     else
@@ -139,7 +139,7 @@ namespace EdugameCloud.Lti.Controllers
                 catch (Exception ex)
                 {
                     lastError = GetOutputErrorMessage("RemoveUsers", credentials, ex);
-                    logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
+                    Logger.Error($"[RemoveUsers] UserId={user.id}, MeetingId={meetingId}, {lastError}", ex);
                 }
             }
 

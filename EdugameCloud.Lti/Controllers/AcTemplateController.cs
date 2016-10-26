@@ -5,6 +5,7 @@ using EdugameCloud.Lti.API.AdobeConnect;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -17,12 +18,13 @@ namespace EdugameCloud.Lti.Controllers
             LmsUserSessionModel userSessionModel,
             IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
         }
 
 
+        // TODO: Add caching
         [HttpPost]
         public virtual JsonResult GetTemplates(string lmsProviderName)
         {
@@ -31,9 +33,7 @@ namespace EdugameCloud.Lti.Controllers
             {
                 var session = GetReadOnlySession(lmsProviderName);
                 credentials = session.LmsCompany;
-                IEnumerable<TemplateDTO> templates = acAccountService.GetTemplates(
-                    this.GetAdobeConnectProvider(session.LmsCompany),
-                    session.LmsCompany.ACTemplateScoId);
+                IEnumerable<TemplateDTO> templates = acAccountService.GetSharedMeetingTemplates(this.GetAdobeConnectProvider(credentials), Cache);
 
                 return Json(OperationResultWithData<IEnumerable<TemplateDTO>>.Success(templates));
             }

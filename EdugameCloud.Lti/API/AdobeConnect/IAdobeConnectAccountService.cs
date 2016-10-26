@@ -19,7 +19,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         IEnumerable<PrincipalReportDto> GetMeetingHostReport(Esynctraining.AdobeConnect.IAdobeConnectProxy provider);
 
-        IEnumerable<TemplateDTO> GetTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, string templateFolder);
+        IEnumerable<TemplateDTO> GetSharedMeetingTemplates(Esynctraining.AdobeConnect.IAdobeConnectProxy provider, ICache cache);
 
         string LoginIntoAC(
             LmsCompany lmsCompany,

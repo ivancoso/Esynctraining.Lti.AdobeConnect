@@ -28,13 +28,14 @@ namespace EdugameCloud.Lti.Domain.Entities
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the AC SCO id.
+        /// Folder in AC where meetings are stored.
         /// </summary>
         public virtual string ACScoId { get; set; }
 
         /// <summary>
-        /// Gets or sets the AC template SCO id.
+        /// sco-id of shared-meeting-templates folder (not longer used)
         /// </summary>
+        [Obsolete]
         public virtual string ACTemplateScoId { get; set; }
 
         /// <summary>
@@ -396,7 +397,7 @@ namespace EdugameCloud.Lti.Domain.Entities
             get
             {
                 bool useSynchronizedUsers = false;
-                LmsCompanySetting setting = Settings.SingleOrDefault(x => String.Compare(x.Name, LmsCompanySettingNames.UseSynchronizedUsers, true) == 0);
+                LmsCompanySetting setting = Settings.SingleOrDefault(x => string.Compare(x.Name, LmsCompanySettingNames.UseSynchronizedUsers, true) == 0);
                 return setting != null && bool.TryParse(setting.Value, out useSynchronizedUsers) && useSynchronizedUsers;
             }
         }

@@ -3,15 +3,15 @@ using System.Runtime.Caching;
 using System.Web.Mvc;
 using Esynctraining.Core.Logging;
 using EdugameCloud.Lti.API.AdobeConnect;
-using EdugameCloud.Lti.Constants;
 using EdugameCloud.Lti.Core;
 using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Domain.Entities;
 using Esynctraining.Core.Providers;
 using EdugameCloud.Core.Business.Models;
-using EdugameCloud.Lti.Core.Utils;
 using Esynctraining.Core.Utils;
 using Esynctraining.Core;
+using Esynctraining.Core.Caching;
+using EdugameCloud.Core.Business;
 
 namespace EdugameCloud.Lti.Controllers
 {
@@ -19,22 +19,20 @@ namespace EdugameCloud.Lti.Controllers
     {
         #region Fields
 
-        protected readonly ObjectCache _cache = MemoryCache.Default;
-
+        private static readonly ObjectCache _acCache = MemoryCache.Default;
         private static bool? isDebug;
 
         private readonly LmsUserSessionModel userSessionModel;
 
         #endregion
+        
+        protected dynamic Settings { get; }
 
-        /// <summary>
-        ///   Gets the settings.
-        /// </summary>
-        public dynamic Settings { get; private set; }
+        protected ILogger Logger { get; }
 
-        protected ILogger logger { get; private set; }
+        protected ICache Cache { get; }
 
-        protected IAdobeConnectAccountService acAccountService { get; private set; }
+        protected IAdobeConnectAccountService acAccountService { get; }
 
         protected bool IsDebug
         {
@@ -62,12 +60,14 @@ namespace EdugameCloud.Lti.Controllers
             LmsUserSessionModel userSessionModel,
             IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
+            ILogger logger,
+            ICache cache)
         {
             this.userSessionModel = userSessionModel;
             this.acAccountService = acAccountService;
-            this.Settings = settings;
-            this.logger = logger;
+            Settings = settings;
+            Logger = logger;
+            Cache = cache;
         }
 
         #endregion
@@ -92,7 +92,7 @@ namespace EdugameCloud.Lti.Controllers
 
             if (session == null)
             {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
@@ -106,7 +106,7 @@ namespace EdugameCloud.Lti.Controllers
 
             if (session == null)
             {
-                logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
+                Logger.WarnFormat("LmsUserSession not found. Key: {0}.", key);
                 throw new WarningMessageException(Resources.Messages.SessionTimeOut);
             }
 
@@ -115,22 +115,19 @@ namespace EdugameCloud.Lti.Controllers
             return session;
         }
 
-        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany, bool forceReCreate = false)
+        protected IAdobeConnectProxy GetAdobeConnectProvider(ILmsLicense lmsCompany)
         {
-            IAdobeConnectProxy provider = null;
-            if (lmsCompany != null)
+            string cacheKey = CachePolicies.Keys.CompanyLmsAdobeConnectProxy(lmsCompany.Id);
+            var provider = _acCache.Get(cacheKey) as IAdobeConnectProxy;
+            if (provider == null)
             {
-                //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                //if (provider == null)
-                //provider = this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] as IAdobeConnectProxy;
-                //if (provider == null)
-                //{
-                provider = acAccountService.GetProvider(lmsCompany);
-                //this.Session[string.Format(LtiSessionKeys.ProviderSessionKeyPattern, lmsCompany.Id)] = provider;
-                //}
+                provider = acAccountService.GetProvider(lmsCompany, login: true);
+                var sessionTimeout = acAccountService.GetAccountDetails(provider, Cache).SessionTimeout - 1; //-1 is to be sure 
+                _acCache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }
 
             return provider;
+
         }
 
         protected string GetOutputErrorMessage(string methodName, Exception ex)
@@ -138,7 +135,7 @@ namespace EdugameCloud.Lti.Controllers
             if (ex is IUserMessageException)
                 return ex.Message;
 
-            logger.Error(methodName, ex);
+            Logger.Error(methodName, ex);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
@@ -146,7 +143,7 @@ namespace EdugameCloud.Lti.Controllers
 
         protected string GetOutputErrorMessage(string originalErrorMessage)
         {
-            logger.Error(originalErrorMessage);
+            Logger.Error(originalErrorMessage);
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + originalErrorMessage
                 : Resources.Messages.ExceptionMessage;
@@ -158,7 +155,7 @@ namespace EdugameCloud.Lti.Controllers
                 ? string.Format(" LmsCompany ID: {0}. Lms License Title: {1}. Lms Domain: {2}. AC Server: {3}.", credentials.Id, credentials.Title, credentials.LmsDomain, credentials.AcServer)
                 : string.Empty;
 
-            logger.Error(methodName + lmsInfo, ex);
+            Logger.Error(methodName + lmsInfo, ex);
 
             if (ex is IUserMessageException)
                 return ex.Message;
@@ -166,14 +163,6 @@ namespace EdugameCloud.Lti.Controllers
             return IsDebug
                 ? Resources.Messages.ExceptionOccured + ex.ToString()
                 : Resources.Messages.ExceptionMessage;
-        }
-
-        // TODO: check!!
-        private void RedirectToError(string errorText)
-        {
-            this.Response.Clear();
-            this.Response.Write(string.Format("{{ \"isSuccess\": \"false\", \"message\": \"{0}\" }}", errorText));
-            this.Response.End();
         }
 
     }

@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Mvc;
 using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
@@ -242,6 +243,35 @@ namespace EdugameCloud.SocialStream.Host.Controllers
             return AbsoluteAction(url, callInfo.Action, callInfo.Controller, roteValues, schema);
         }
 
+    }
+
+    public static class HttpContextExtensions
+    {
+        #region Public Methods and Operators
+
+        public static string GetIPAddress()
+        {
+            HttpContext context = HttpContext.Current;
+            return context.GetIPAddress();
+        }
+
+        //public static string GetIPAddress(this HttpContext context)
+        //{
+        //    string address = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+        //    if (!string.IsNullOrEmpty(address))
+        //    {
+        //        string[] addresses = address.Split(',');
+        //        if (addresses.Length != 0)
+        //        {
+        //            return addresses[0];
+        //        }
+        //    }
+
+        //    return context.Request.ServerVariables["REMOTE_ADDR"];
+        //}
+
+        #endregion
     }
 
 }

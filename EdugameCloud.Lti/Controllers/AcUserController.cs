@@ -13,6 +13,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
 using Esynctraining.Core.Logging;
@@ -52,8 +53,8 @@ namespace EdugameCloud.Lti.Controllers
             ApplicationSettingsProvider settings, 
             UsersSetup usersSetup,
             IAdobeConnectUserService acUserService,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
             this.lmsUserModel = lmsUserModel;
             this.usersSetup = usersSetup;

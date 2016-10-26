@@ -257,7 +257,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             catch (Exception ex)
             {
                 string errorMessage = GetOutputErrorMessage("ContentApi-EditFile", lmsCompany, ex);
-                return OperationResultWithData<IEnumerable<ScoContentDto>>.Error(errorMessage);
+                return OperationResult.Error(errorMessage);
             }
         }
 
@@ -354,38 +354,6 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
                 throw;
             }
         }
-
-
-        //private Esynctraining.AdobeConnect.IAdobeConnectProxy GetAdobeConnectProvider(LmsUserSession session)
-        //{
-        //    string cacheKey = CacheKeyUtil.GetKey(session);
-        //    Esynctraining.AdobeConnect.IAdobeConnectProxy provider = _cache.Get(cacheKey) as Esynctraining.AdobeConnect.IAdobeConnectProxy;
-
-        //    if (provider == null)
-        //    {
-        //        string breezeSession = LoginCurrentUser(session);
-        //        provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
-
-        //        var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
-        //        _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
-        //    }
-
-        //    return provider;
-        //}
-
-        
-
-        //[HttpGet]
-        //[Route("uploading-test")]
-        //public async Task<HttpResponseMessage> Test()
-        //{
-        //    string output = JsonConvert.SerializeObject(OperationResultWithData<ScoContentDto>.Success(new ScoContentDto { }));
-        //    //return Request.CreateResponse(HttpStatusCode.OK, output, "text/html");
-        //    var response = new HttpResponseMessage();
-        //    response.Content = new StringContent(output);
-        //    response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-        //    return response;
-        //}
 
     }
 

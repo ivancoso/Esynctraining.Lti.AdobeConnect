@@ -7,6 +7,7 @@ using EdugameCloud.Lti.Core.Business.Models;
 using EdugameCloud.Lti.Core.DTO;
 using EdugameCloud.Lti.Domain.Entities;
 using EdugameCloud.Lti.DTO;
+using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Providers;
@@ -18,8 +19,8 @@ namespace EdugameCloud.Lti.Controllers
         private readonly LmsFactory lmsFactory;
 
         public CalendarController(LmsUserSessionModel userSessionModel, IAdobeConnectAccountService acAccountService,
-            ApplicationSettingsProvider settings, ILogger logger, LmsFactory lmsFactory)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ApplicationSettingsProvider settings, ILogger logger, LmsFactory lmsFactory, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
             this.lmsFactory = lmsFactory;
         }

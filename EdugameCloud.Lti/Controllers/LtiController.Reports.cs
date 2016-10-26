@@ -7,6 +7,7 @@
     using Core.Business.Models;
     using EdugameCloud.Lti.Domain.Entities;
     using EdugameCloud.Lti.DTO;
+    using Esynctraining.Core.Caching;
     using Esynctraining.Core.Domain;
     using Esynctraining.Core.Logging;
     using Esynctraining.Core.Providers;
@@ -28,8 +29,8 @@
             LmsUserSessionModel userSessionModel,
             API.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
-            : base(userSessionModel, acAccountService, settings, logger)
+            ILogger logger, ICache cache)
+            : base(userSessionModel, acAccountService, settings, logger, cache)
         {
             this.meetingSetup = meetingSetup;
         }
