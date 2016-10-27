@@ -245,6 +245,7 @@
     <Content Include="Views\LtiProxyTool\ProxyToolRegistrationSucceeded.cshtml" />
     <Content Include="Views\Lti\Error.cshtml" />
     <Content Include="Views\Lti\Redirect.cshtml" />
+    <Content Include="Views\Lti\Outcomes.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

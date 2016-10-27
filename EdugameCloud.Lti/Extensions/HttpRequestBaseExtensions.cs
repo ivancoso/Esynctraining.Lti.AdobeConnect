@@ -94,8 +94,8 @@ namespace EdugameCloud.Lti.Extensions
             return request.HttpMethod.Equals(WebRequestMethods.Http.Post)
                    && (
                        messageType.Equals(LtiConstants.BasicLaunchLtiMessageType, StringComparison.OrdinalIgnoreCase)
-                       || messageType.Equals(LtiConstants.ContentItemSelectionRequestLtiMessageType, StringComparison.OrdinalIgnoreCase)
-                       || messageType.Equals("ContentItemSelectionResponse", StringComparison.OrdinalIgnoreCase)
+//                       || messageType.Equals(LtiConstants.ContentItemSelectionRequestLtiMessageType, StringComparison.OrdinalIgnoreCase)
+//                       || messageType.Equals("ContentItemSelectionResponse", StringComparison.OrdinalIgnoreCase)
                        );
         }
 
@@ -117,7 +117,7 @@ namespace EdugameCloud.Lti.Extensions
         {
             if (!request.IsAuthenticatedWithLti())
             {
-                throw new LtiException();
+                throw new LtiException("Invalid request method or LTI message type.");
             }
 
             // Make sure the request contains all the required parameters

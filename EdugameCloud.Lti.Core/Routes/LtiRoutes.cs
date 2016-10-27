@@ -86,6 +86,7 @@
             routes.MapLowercaseRoute("LtiOAuthLogin", "{provider}-login", new { controller = "Lti", action = "login" });
             routes.MapLowercaseRoute("LtiOAuthCallback", "oauth-callback", new { controller = "Lti", action = "callback" });
             routes.MapLowercaseRoute("ImsLogin", "ims", new { controller = "Lti", action = "ims" });
+            routes.MapLowercaseRoute("Outcomes", "outcomes", new { controller = "Lti", action = "outcomes" });
 
             // ??? routes.MapLowercaseRoute("DefaultLti", "", new { controller = "Lti", action = "Index" });
             // ??? routes.MapLowercaseRoute("DefaultLtitabbed", "Lti/tabbed", new { controller = "Lti", action = "Index" });

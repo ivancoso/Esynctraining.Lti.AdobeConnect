@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Controllers
+﻿using EdugameCloud.Lti.Constants;
+
+namespace EdugameCloud.Lti.Controllers
 {
     using System;
     using System.Collections.Generic;
@@ -860,15 +862,15 @@
         {
             var missingIntegrationRequiredFields = new HashSet<string>();
             if (string.IsNullOrEmpty(param.context_id))
-                missingIntegrationRequiredFields.Add(LtiConstants.ContextIdParameter);
+                missingIntegrationRequiredFields.Add(LtiParameterFriendlyNames.CourseId);
             if (string.IsNullOrEmpty(param.user_id))
-                missingIntegrationRequiredFields.Add(LtiConstants.UserIdParameter);
+                missingIntegrationRequiredFields.Add(LtiParameterFriendlyNames.UserId);
             if (string.IsNullOrEmpty(param.PersonNameGiven))
-                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonNameGivenParameter);
+                missingIntegrationRequiredFields.Add(LtiParameterFriendlyNames.FirstName);
             if (string.IsNullOrEmpty(param.PersonNameFamily))
-                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonNameFamilyParameter);
+                missingIntegrationRequiredFields.Add(LtiParameterFriendlyNames.LastName);
             if (lmsCompany.ACUsesEmailAsLogin.GetValueOrDefault() && string.IsNullOrEmpty(param.lis_person_contact_email_primary))
-                missingIntegrationRequiredFields.Add(LtiConstants.LisPersonContactEmailPrimaryParameter);
+                missingIntegrationRequiredFields.Add(LtiParameterFriendlyNames.Email);
 
             if (missingIntegrationRequiredFields.Any())
             {
@@ -882,7 +884,7 @@
             var roleNames = roleParam.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             if (string.IsNullOrWhiteSpace(roleParam))
             {
-                throw new LtiException();
+                throw new LtiException("Missing parameter: roles");
             }
 
             foreach (var roleName in roleNames)

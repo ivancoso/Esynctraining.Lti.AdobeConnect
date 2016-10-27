@@ -296,6 +296,7 @@ namespace EdugameCloud.Lti.DTO
         /// </summary>
         public string lis_outcome_service_url { get; set; }
 
+        public string lis_result_sourcedid { get; set; }
         /// <summary>
         /// Gets or sets the user id.
         /// </summary>

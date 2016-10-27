@@ -269,10 +269,12 @@
     <Compile Include="API\Sakai\ISakaiApi.cs" />
     <Compile Include="API\SynchronizationUserService.cs" />
     <Compile Include="API\TestConnectionService.cs" />
+    <Compile Include="Constants\LtiParameterFriendlyNames.cs" />
     <Compile Include="Constants\LtiSessionKeys.cs" />
     <Compile Include="Controllers\AcTemplateController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\LtiController.ImsLogin.cs" />
+    <Compile Include="Models\OutcomeModel.cs" />
     <Compile Include="Controllers\SeminarController.cs" />
     <Compile Include="Controllers\AcMeetingController.cs" />
     <Compile Include="Controllers\AcUserController.cs" />
