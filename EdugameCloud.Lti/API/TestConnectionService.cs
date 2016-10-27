@@ -14,6 +14,7 @@ using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.Core.Utils;
 using Esynctraining.AdobeConnect;
+using EdugameCloud.Lti.Domain.Entities;
 
 namespace EdugameCloud.Lti.API
 {
@@ -60,22 +61,22 @@ namespace EdugameCloud.Lti.API
                     bool loginSameAsEmail;
                     success = this.TestACConnection(test, out info, out loginSameAsEmail);
                     break;
-                case "brainhoney":
+                case LmsProviderNames.BrainHoney:
                     success = this.TestBrainHoneyConnection(test, out info);
                     break;
-                case "blackboard":
+                case LmsProviderNames.Blackboard:
                     success = this.TestBlackBoardConnection(test, out info);
                     break;
-                case "moodle":
+                case LmsProviderNames.Moodle:
                     success = this.TestMoodleConnection(test, out info);
                     break;
-                case "sakai":
+                case LmsProviderNames.Sakai:
                     success = this.TestSakaiConnection(test, out info);
                     break;
-                case "canvas":
+                case LmsProviderNames.Canvas:
                     success = TestCanvasConnection(test, out info);
                     break;
-                case "brightspace":
+                case LmsProviderNames.Brightspace:
                     success = TestBrightspaceConnection(test, out info);
                     break;
             }
@@ -149,13 +150,21 @@ namespace EdugameCloud.Lti.API
             return success;
         }
 
-        public bool TestACConnection(ConnectionTestDTO test, out string info, out bool loginSameAsEmail)
+        public bool TestACConnection(ConnectionTestDTO test, out string info, 
+            out bool loginSameAsEmail)
         {
             if (test == null)
-                throw new ArgumentNullException("test");
-
+                throw new ArgumentNullException(nameof(test));
+            
             loginSameAsEmail = false;
+            //sharedTemplatesFolderScoId = null;
             info = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(test.password))
+            {
+                info = "Password is required";
+                return false;
+            }
 
             if (!TestDomainFormat(test, out info))
                 return false;
@@ -194,6 +203,16 @@ namespace EdugameCloud.Lti.API
                     info = fields.Status.GetErrorInfo();
                     return false;
                 }
+
+                //ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
+                //if (!sharedTemplates.Success)
+                //{
+                //    logger.ErrorFormat("GetPasswordPolicies.get shared-meeting-templates. AC error. {0}.", sharedTemplates.Status.GetErrorInfo());
+                //    info = sharedTemplates.Status.GetErrorInfo();
+                //    return false;
+                //}
+
+                //sharedTemplatesFolderScoId = sharedTemplates.ScoId;
 
                 string setting = GetField(fields, "login-same-as-email");
                 loginSameAsEmail = string.IsNullOrEmpty(setting) || "YES".Equals(setting, StringComparison.OrdinalIgnoreCase);
