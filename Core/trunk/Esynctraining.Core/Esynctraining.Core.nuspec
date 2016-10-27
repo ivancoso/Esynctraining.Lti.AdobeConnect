@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Esynctraining.Core.Only</id>
-        <version>1.0.0.26</version>
+        <version>1.0.0.27</version>
         <title>Esynctraining.Core.Only</title>
         <authors>eSyncTraining.com</authors>
         <owners>eSyncTraining.com</owners>
@@ -10,7 +10,7 @@
         <iconUrl>http://dotnet.esynctraining.com:2399/esync128.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Provides core functionality for eSyncTraining projects. Core library only</description>
-        <releaseNotes>Added EnumerableExtensions.Chunk</releaseNotes>
+        <releaseNotes>Added ToSuccessResult extension</releaseNotes>
         <copyright>Copyright © 2013-2016 eSyncTraining.com</copyright>
         <tags>core</tags>
         <dependencies>

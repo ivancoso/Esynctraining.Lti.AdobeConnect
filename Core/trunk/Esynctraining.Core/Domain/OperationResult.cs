@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Esynctraining.Core.Domain
 {
@@ -10,7 +11,7 @@ namespace Esynctraining.Core.Domain
 
         [DataMember(Name = "message")]
         public string Message { get; set; }
-        
+
 
         public static OperationResult Error(string errorMessage)
         {
@@ -29,7 +30,7 @@ namespace Esynctraining.Core.Domain
                 Message = string.Empty,
             };
         }
-        
+
     }
 
     [DataContract]
@@ -48,6 +49,7 @@ namespace Esynctraining.Core.Domain
             };
         }
 
+        [Obsolete("Consider ToSuccessResult extension")]
         public static OperationResultWithData<T> Success(T data)
         {
             return new OperationResultWithData<T>
@@ -66,6 +68,18 @@ namespace Esynctraining.Core.Domain
                 Message = message,
                 Data = data,
             };
+        }
+
+    }
+
+    public static class OperationResultExtensions
+    {
+        public static OperationResultWithData<T> ToSuccessResult<T>(this T data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            return OperationResultWithData<T>.Success(data);
         }
 
     }
