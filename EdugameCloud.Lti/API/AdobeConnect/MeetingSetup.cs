@@ -265,6 +265,9 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var sett = lmsCompany.Settings.ToList();
             var resultCollection = new List<MeetingInfo>();
             object localLockObject = new object();
+
+            var lmsUserPrincipalId = lmsUser.PrincipalId;
+            var lmsCompanyId = lmsCompany.Id;
             Parallel.ForEach<LmsCourseMeeting, List<MeetingInfo>>(
                   meetings,
                   () => new List<MeetingInfo>(),
@@ -272,8 +275,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                   {
                       MeetingInfo info = GetAcMeetingInfo(
                         provider,
-                        lmsUser,
-                        lmsCompany,
+                        lmsUserPrincipalId,
+                        lmsCompanyId,
                         meeting,
                         trace);
                       localList.Add(info);
@@ -1487,8 +1490,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         
 
         private MeetingInfo GetAcMeetingInfo(IAdobeConnectProxy provider,
-            LmsUser lmsUser,
-            LmsCompany lmsCompany,
+            string lmsUserPrincipalId,
+            int lmsCompanyId,
             LmsCourseMeeting lmsCourseMeeting,
             StringBuilder trace = null)
         {
@@ -1504,7 +1507,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (!scoResult.Success || scoResult.ScoInfo == null)
             {
-                Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", lmsCourseMeeting.GetMeetingScoId(), lmsCompany.Id);
+                Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", lmsCourseMeeting.GetMeetingScoId(), lmsCompanyId);
                 return info;
             }
 
@@ -1513,7 +1516,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             psw = Stopwatch.StartNew();
             bool meetingExistsInAC;
             IEnumerable<MeetingPermissionInfo> permission = provider.GetMeetingPermissions(scoResult.ScoInfo.ScoId,
-                new List<string> { "public-access", lmsUser.PrincipalId },
+                new List<string> { "public-access", lmsUserPrincipalId },
                 out meetingExistsInAC).Values;
 
             psw.Stop();
