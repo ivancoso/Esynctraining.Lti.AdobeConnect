@@ -787,8 +787,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TODO: optimize - we have result.ScoInfo already!!
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
-                           lmsUser,
-                           lmsCompany,
+                           lmsUser.PrincipalId,
+                           lmsCompany.Id,
                            meeting,
                            null);
             MeetingDTO updatedMeeting = this.BuildDto(
@@ -946,8 +946,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             // TODO: optimize - we have meetingSco.ScoInfo already!!
             MeetingInfo info = this.GetAcMeetingInfo(
                            provider,
-                           lmsUser,
-                           credentials,
+                           lmsUser.PrincipalId,
+                           credentials.Id,
                            meeting,
                            null);
             MeetingDTO updatedMeeting = this.BuildDto(
