@@ -224,7 +224,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var meetings = this.LmsCourseMeetingModel.GetAllByCourseId(lmsCompany.Id, param.course_id).ToList();
             sw.Stop();
             trace?.AppendFormat("\t GetMeetings - LmsCourseMeetingModel.GetAllByCourseId time: {0}\r\n", sw.Elapsed.ToString());
-            
+
             // NOTE: add office hours meeting, if it exists for the user, but not in current course
             bool addedOfficeHoursFromOtherCourse = false;
             if (lmsCompany.EnableOfficeHours.GetValueOrDefault() && !meetings.Any(m => m.LmsMeetingType == (int)LmsMeetingType.OfficeHours))
@@ -245,7 +245,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             LmsMeetingType = (int)LmsMeetingType.OfficeHours,
                             LmsCompanyId = lmsCompany.Id,
                             CourseId = param.course_id,
-                        };                        
+                        };
                     }
                 }
 
@@ -310,8 +310,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             if (addedOfficeHoursFromOtherCourse)
             {
-                var ohDto = ret.First(m => m.type == (int)LmsMeetingType.OfficeHours);
-                ohDto.is_disabled_for_this_course = true;
+                var ohDto = ret.FirstOrDefault(m => m.type == (int)LmsMeetingType.OfficeHours);
+                // NOTE: can be NULL if OH meeting not found in AC
+                if (ohDto != null)
+                    ohDto.is_disabled_for_this_course = true;
             }
             return ret;
         }
