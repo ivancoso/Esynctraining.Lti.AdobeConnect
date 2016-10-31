@@ -135,7 +135,7 @@
         /// Gets or sets the transcript id.
         /// </summary>
         [ScriptIgnore]
-        public int transcriptId { get; set; }
+        public string transcriptId { get; set; }
 
         #endregion
 
