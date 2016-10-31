@@ -1716,7 +1716,7 @@
         </Field>
         <Field Name="transcriptId">
           <DataField>transcriptId</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.Int64</rd:TypeName>
         </Field>
       </Fields>
       <rd:DataSetInfo>

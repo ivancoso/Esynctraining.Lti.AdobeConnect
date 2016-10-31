@@ -55,7 +55,7 @@ namespace EdugameCloud.Lti.Core.DTO
         }
         public string firstName { get; set; }
         public string lastName { get; set; }
-        public int transcriptId { get; set; }
+        public long transcriptId { get; set; }
 
         #endregion
 
