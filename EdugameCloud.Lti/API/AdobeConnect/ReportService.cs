@@ -172,7 +172,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
                             // TODO: REVIEW!!! HACK
                             durationInHours = (float)us.Duration.TotalHours,
-                            transcriptId = us.TranscriptId,
+                            transcriptId = long.Parse(us.TranscriptId),
                         }).OrderByDescending(x => x.dateTimeEntered).ToList();
                 
             }
@@ -214,7 +214,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             dateTimeLeft = attendee.DateEnd.FixACValue(),
                             durationInHours =
                                 (float) attendee.Duration.TotalHours,
-                            transcriptId = attendee.TranscriptId,
+                            transcriptId = long.Parse(attendee.TranscriptId),
                         });
                     if (String.IsNullOrEmpty(session.meetingName))
                     {
@@ -247,7 +247,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             dateTimeLeft = attendee.DateEnd.FixACValue(),
                             durationInHours =
                                 (float)attendee.Duration.TotalHours,
-                            transcriptId = attendee.TranscriptId,
+                            transcriptId = long.Parse(attendee.TranscriptId),
                         }).ToList(),
                         meetingName = ua.First().ScoName
                     });
@@ -322,7 +322,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                             dateTimeLeft = us.DateEnd.FixACValue(),
                             durationInHours =
                                 (float) us.Duration.TotalHours,
-                            transcriptId = us.TranscriptId,
+                            transcriptId = long.Parse(us.TranscriptId),
                         };
 
                         session.meetingName = us.ScoName;
