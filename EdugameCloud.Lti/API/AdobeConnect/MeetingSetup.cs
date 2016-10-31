@@ -277,6 +277,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         provider,
                         lmsUserPrincipalId,
                         lmsCompanyId,
+                        meeting.GetMeetingScoId(),
                         meeting,
                         trace);
                       localList.Add(info);
@@ -789,6 +790,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                            provider,
                            lmsUser.PrincipalId,
                            lmsCompany.Id,
+                           meeting.GetMeetingScoId(),
                            meeting,
                            null);
             MeetingDTO updatedMeeting = this.BuildDto(
@@ -948,6 +950,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                            provider,
                            lmsUser.PrincipalId,
                            credentials.Id,
+                           meeting.GetMeetingScoId(),
                            meeting,
                            null);
             MeetingDTO updatedMeeting = this.BuildDto(
@@ -1492,6 +1495,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private MeetingInfo GetAcMeetingInfo(IAdobeConnectProxy provider,
             string lmsUserPrincipalId,
             int lmsCompanyId,
+            string meetingScoId,
             LmsCourseMeeting lmsCourseMeeting,
             StringBuilder trace = null)
         {
@@ -1501,13 +1505,13 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             };
 
             var psw = Stopwatch.StartNew();
-            ScoInfoResult scoResult = provider.GetScoInfo(lmsCourseMeeting.GetMeetingScoId());
+            ScoInfoResult scoResult = provider.GetScoInfo(meetingScoId);
             psw.Stop();
-            trace?.AppendFormat("\t GetMeetings - AC GetScoInfo time: {0}. MeetingSCO-ID: {1}\r\n", psw.Elapsed.ToString(), lmsCourseMeeting.GetMeetingScoId());
+            trace?.AppendFormat("\t GetMeetings - AC GetScoInfo time: {0}. MeetingSCO-ID: {1}\r\n", psw.Elapsed.ToString(), meetingScoId);
 
             if (!scoResult.Success || scoResult.ScoInfo == null)
             {
-                Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", lmsCourseMeeting.GetMeetingScoId(), lmsCompanyId);
+                Logger.WarnFormat("Meeting not found in AC. Meeting sco-id: {0}. CompanyLmsId: {1}.", meetingScoId, lmsCompanyId);
                 return info;
             }
 
