@@ -2,6 +2,10 @@
 
 @{
     ViewBag.Title = "Outcomes";
+    if(System.Web.Helpers.AntiForgeryConfig.SuppressXFrameOptionsHeader == false)
+    {
+        System.Web.Helpers.AntiForgeryConfig.SuppressXFrameOptionsHeader = true;
+    }
 }
 
 
@@ -22,7 +26,7 @@
     @using (Html.BeginForm("Outcomes", "Lti", FormMethod.Post))
     {
         
-@*    @Html.AntiForgeryToken()*@
+    @Html.AntiForgeryToken()
         
     <p>
         Grade to send to the Tool Consumer:
