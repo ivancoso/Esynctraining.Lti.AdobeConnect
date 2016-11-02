@@ -269,7 +269,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             var lmsUserPrincipalId = lmsUser.PrincipalId;
             var lmsCompanyId = lmsCompany.Id;
             // TRICK: not to have DB calls from Parallel.ForEach 
-            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId()));
+            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId())).ToList();
             Parallel.ForEach<Tuple<LmsCourseMeeting, string>, List<MeetingInfo>>(
                   input,
                   () => new List<MeetingInfo>(),
