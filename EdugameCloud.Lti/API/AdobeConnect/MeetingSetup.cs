@@ -268,8 +268,10 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
             var lmsUserPrincipalId = lmsUser.PrincipalId;
             var lmsCompanyId = lmsCompany.Id;
-            Parallel.ForEach<LmsCourseMeeting, List<MeetingInfo>>(
-                  meetings,
+            // TRICK: not to have DB calls from Parallel.ForEach 
+            var input = meetings.Select(x => new Tuple<LmsCourseMeeting, string>(x, x.GetMeetingScoId()));
+            Parallel.ForEach<Tuple<LmsCourseMeeting, string>, List<MeetingInfo>>(
+                  input,
                   () => new List<MeetingInfo>(),
                   (meeting, state, localList) =>
                   {
@@ -277,8 +279,8 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                         provider,
                         lmsUserPrincipalId,
                         lmsCompanyId,
-                        meeting.GetMeetingScoId(),
-                        meeting,
+                        meeting.Item2,
+                        meeting.Item1,
                         trace);
                       localList.Add(info);
                       return localList;
