@@ -1,7 +1,11 @@
 sp_rename 'LmsCalendarEvent', 'LmsMeetingSession';
+GO
 sp_rename 'LmsMeetingSession.lmsCalendarEventId', 'lmsMeetingSessionId', 'COLUMN';
+GO
 sp_rename 'PK_LmsCalendarEvent', 'PK_LmsMeetingSession';
+GO
 sp_rename 'FK_LmsCalendarEvent_LmsCourseMeeting', 'FK_LmsMeetingSession_LmsCourseMeeting';
+GO
 
 alter table LmsMeetingSession
   alter column eventId nvarchar(50) null;
