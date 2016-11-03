@@ -644,7 +644,7 @@
                 };
             }
 
-            result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c, LmsProviderModel.GetById(c.LmsProviderId)), Settings).ToArray();
+            result.companyLms = companyLms.Select(c => new CompanyLmsDTO(c, LmsProviderModel.GetById(c.LmsProviderId), Settings)).ToArray();
 
             return result;
         }
