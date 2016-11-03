@@ -1224,7 +1224,7 @@ namespace EdugameCloud.Lti.Controllers
                 LmsProviderName = lmsProvider.LmsProviderName,
                 UserGuideLink = !string.IsNullOrEmpty(lmsProvider.UserGuideFileUrl)
                     ? lmsProvider.UserGuideFileUrl
-                    : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"/Content/lti-instructions/{lmsProvider.ShortName}.pdf").ToString(),
+                    : new Uri(new Uri((string)Settings.BasePath, UriKind.Absolute), $"content/lti-instructions/{lmsProvider.ShortName}.pdf").ToString(),
             };
         }
         
