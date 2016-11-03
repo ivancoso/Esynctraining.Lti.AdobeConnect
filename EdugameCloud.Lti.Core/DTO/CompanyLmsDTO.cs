@@ -37,12 +37,14 @@ namespace EdugameCloud.Lti.DTO
         /// <param name="instance">
         /// The instance.
         /// </param>
-        public CompanyLmsDTO(LmsCompany instance, LmsProvider provider)
+        public CompanyLmsDTO(LmsCompany instance, LmsProvider provider, dynamic settings)
         {
             if (instance == null)
                 throw new ArgumentNullException(nameof(instance));
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
+            if (settings == null)
+                throw new ArgumentNullException(nameof(settings));
 
             this.id = instance.Id;
             this.useFLV = instance.UseFLV;
@@ -77,10 +79,8 @@ namespace EdugameCloud.Lti.DTO
             this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
             this.userFolderName = instance.UserFolderName;
 
-            this.setupUrl = provider != null ?
-                (!string.IsNullOrWhiteSpace(provider.ConfigurationUrl) ? provider.ConfigurationUrl
-                : provider.ShortName != null ? string.Format("/Content/lti-config/{0}.xml", provider.ShortName) : null)
-                : null;
+            Uri portalUrl = new Uri((string)settings.PortalUrl, UriKind.Absolute);
+            this.setupUrl = new Uri(portalUrl, $"/Content/lti-config/{provider.ShortName}.xml").ToString();
 
             this.enableProxyToolMode = instance.EnableProxyToolMode ?? false;
             this.proxyToolPassword = instance.ProxyToolSharedPassword;
