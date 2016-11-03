@@ -143,14 +143,11 @@ namespace EdugameCloud.WCFService
                     {
                         var pdto = new LmsProviderDTO(p)
                         {
-                            configUrl =
-                            string.IsNullOrWhiteSpace(p.ConfigurationUrl)
-                            ? //string.Format("{0}content/lti-config/{1}.xml", (string)this.Settings.PortalUrl, p.ShortName)
-                            new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-config/{p.ShortName}.xml").ToString()
-                            : p.ConfigurationUrl,
+                            configUrl = string.IsNullOrWhiteSpace(p.ConfigurationUrl)
+                                ? new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-config/{p.ShortName}.xml").ToString()
+                                : p.ConfigurationUrl,
 
-                            //instructionsUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, p.ShortName),
-                            instructionsUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-instructions/{p.ShortName}.pdf").ToString(),
+                            instructionsUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{p.ShortName}.pdf").ToString(),
 
                             defaultRoleMapping = LmsCompanyRoleMappingModel.GetDefaultMapping(p.Id).ToArray(),
                         };
@@ -564,7 +561,7 @@ namespace EdugameCloud.WCFService
         {
             var result = new FileDownloadDTO();
 
-            result.downloadUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-instructions/{name}.pdf").ToString();
+            result.downloadUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"content/lti-instructions/{name}.pdf").ToString();
 
             result.fileName = string.Format("{0}.pdf", name);
             result.title = "User Guide";
@@ -602,7 +599,7 @@ namespace EdugameCloud.WCFService
             var result = new FileDownloadDTO();
 
             Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
-            result.downloadUrl = new Uri(portalUrl, "/Content/lti-files/OfficeHoursPod.zip").ToString();
+            result.downloadUrl = new Uri(portalUrl, "content/lti-files/OfficeHoursPod.zip").ToString();
 
             result.fileName = "OfficeHoursPod.zip";
             result.title = "Office Hours Pod";
@@ -621,7 +618,7 @@ namespace EdugameCloud.WCFService
             // 1.0.25
             string version = (string)this.Settings.BlackBoardJarVersion;
             Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
-            result.downloadUrl = new Uri(portalUrl, $"/Content/lti-files/edugame-cloud-ws-{version}.jar").ToString();
+            result.downloadUrl = new Uri(portalUrl, $"content/lti-files/edugame-cloud-ws-{version}.jar").ToString();
             result.fileName = string.Format("edugame-cloud-ws-{0}.jar", version);
             result.title = "Blackboard EGC Web Service";
 
@@ -639,8 +636,7 @@ namespace EdugameCloud.WCFService
             // 1.0.25
             string version = (string)this.Settings.MoodleZipVersion;
             Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
-            result.downloadUrl = new Uri(portalUrl, $"/Content/lti-files/edugamecloud_{version}.zip").ToString();
-            //string.Format("{0}content/lti-files/edugamecloud_{1}.zip", (string)this.Settings.PortalUrl, version);
+            result.downloadUrl = new Uri(portalUrl, $"content/lti-files/edugamecloud_{version}.zip").ToString();
             result.fileName = string.Format("edugamecloud_{0}.zip", version);
             result.title = "Moodle EGC Web Service";
 
