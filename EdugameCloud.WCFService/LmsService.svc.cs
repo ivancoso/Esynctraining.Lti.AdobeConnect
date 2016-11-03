@@ -145,10 +145,13 @@ namespace EdugameCloud.WCFService
                         {
                             configUrl =
                             string.IsNullOrWhiteSpace(p.ConfigurationUrl)
-                            ? string.Format("{0}content/lti-config/{1}.xml", (string)this.Settings.PortalUrl, p.ShortName)
+                            ? //string.Format("{0}content/lti-config/{1}.xml", (string)this.Settings.PortalUrl, p.ShortName)
+                            new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-config/{p.ShortName}.xml").ToString()
                             : p.ConfigurationUrl,
 
-                            instructionsUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, p.ShortName),
+                            //instructionsUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, p.ShortName),
+                            instructionsUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-instructions/{p.ShortName}.pdf").ToString(),
+
                             defaultRoleMapping = LmsCompanyRoleMappingModel.GetDefaultMapping(p.Id).ToArray(),
                         };
 
@@ -561,11 +564,12 @@ namespace EdugameCloud.WCFService
         {
             var result = new FileDownloadDTO();
 
-            result.downloadUrl = string.Format("{0}content/lti-instructions/{1}.pdf", (string)this.Settings.PortalUrl, name);
+            result.downloadUrl = new Uri(new Uri((string)Settings.PortalUrl, UriKind.Absolute), $"/content/lti-instructions/{name}.pdf").ToString();
+
             result.fileName = string.Format("{0}.pdf", name);
             result.title = "User Guide";
 
-            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-instructions/{0}.pdf", name));
+            string path = HttpContext.Current.Server.MapPath($"~/../Content/lti-instructions/{name}.pdf");
             var file = new FileInfo(path);
             result.lastModifyDate = file.CreationTimeUtc;
             result.sizeInBytes = file.Length;
@@ -597,7 +601,9 @@ namespace EdugameCloud.WCFService
         {
             var result = new FileDownloadDTO();
 
-            result.downloadUrl = string.Format("{0}content/lti-files/OfficeHoursPod.zip", (string)this.Settings.PortalUrl);
+            Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
+            result.downloadUrl = new Uri(portalUrl, "/Content/lti-files/OfficeHoursPod.zip").ToString();
+
             result.fileName = "OfficeHoursPod.zip";
             result.title = "Office Hours Pod";
 
@@ -614,11 +620,12 @@ namespace EdugameCloud.WCFService
             var result = new FileDownloadDTO();
             // 1.0.25
             string version = (string)this.Settings.BlackBoardJarVersion;
-            result.downloadUrl = string.Format("{0}content/lti-files/edugame-cloud-ws-{1}.jar", (string)this.Settings.PortalUrl, version);
+            Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
+            result.downloadUrl = new Uri(portalUrl, $"/Content/lti-files/edugame-cloud-ws-{version}.jar").ToString();
             result.fileName = string.Format("edugame-cloud-ws-{0}.jar", version);
             result.title = "Blackboard EGC Web Service";
 
-            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-files/edugame-cloud-ws-{0}.jar", version));
+            string path = HttpContext.Current.Server.MapPath($"~/../Content/lti-files/edugame-cloud-ws-{version}.jar");
             var file = new FileInfo(path);
             result.lastModifyDate = file.CreationTimeUtc;
             result.sizeInBytes = file.Length;
@@ -631,11 +638,13 @@ namespace EdugameCloud.WCFService
             var result = new FileDownloadDTO();
             // 1.0.25
             string version = (string)this.Settings.MoodleZipVersion;
-            result.downloadUrl = string.Format("{0}content/lti-files/edugamecloud_{1}.zip", (string)this.Settings.PortalUrl, version);
+            Uri portalUrl = new Uri((string)Settings.PortalUrl, UriKind.Absolute);
+            result.downloadUrl = new Uri(portalUrl, $"/Content/lti-files/edugamecloud_{version}.zip").ToString();
+            //string.Format("{0}content/lti-files/edugamecloud_{1}.zip", (string)this.Settings.PortalUrl, version);
             result.fileName = string.Format("edugamecloud_{0}.zip", version);
             result.title = "Moodle EGC Web Service";
 
-            string path = HttpContext.Current.Server.MapPath(string.Format("~/../Content/lti-files/edugamecloud_{0}.zip", version));
+            string path = HttpContext.Current.Server.MapPath($"~/../Content/lti-files/edugamecloud_{version}.zip");
             var file = new FileInfo(path);
             result.lastModifyDate = file.CreationTimeUtc;
             result.sizeInBytes = file.Length;

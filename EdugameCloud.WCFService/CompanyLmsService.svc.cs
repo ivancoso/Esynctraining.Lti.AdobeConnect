@@ -18,6 +18,7 @@ namespace EdugameCloud.WCFService
     using EdugameCloud.WCFService.Base;
     using EdugameCloud.WCFService.Contracts;
     using EdugameCloud.WCFService.DTO;
+    using Esynctraining.AC.Provider.DataObjects.Results;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Extensions;
     using Esynctraining.Core.Utils;
@@ -183,7 +184,7 @@ namespace EdugameCloud.WCFService
             LmsProvider lmsProvider = LmsProviderModel.GetById(entity.LmsProviderId);
             return new CompanyLmsOperationDTO
             {
-                companyLmsVO = new CompanyLmsDTO(entity, lmsProvider),
+                companyLmsVO = new CompanyLmsDTO(entity, lmsProvider, Settings),
                 message = licenseTestResultMessage,
             };
         }

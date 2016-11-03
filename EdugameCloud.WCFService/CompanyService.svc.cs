@@ -406,7 +406,7 @@ namespace EdugameCloud.WCFService
         {
             return this.LmsCompanyModel.GetAllByCompanyId(companyId).Select(x =>
             {
-                return new CompanyLmsDTO(x, LmsProviderModel.GetById(x.LmsProviderId));
+                return new CompanyLmsDTO(x, LmsProviderModel.GetById(x.LmsProviderId), Settings);
             }).ToArray();
         }
 
@@ -550,7 +550,7 @@ namespace EdugameCloud.WCFService
             else
             {
                 LmsProvider lmsProvider = LmsProviderModel.GetById(lms.LmsProviderId);
-                dtoResult.lmsVO = new CompanyLmsDTO(lms, lmsProvider);
+                dtoResult.lmsVO = new CompanyLmsDTO(lms, lmsProvider, Settings);
             }
             return dtoResult;
         }
