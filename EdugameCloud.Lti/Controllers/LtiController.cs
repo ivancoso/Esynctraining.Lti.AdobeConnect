@@ -1015,8 +1015,9 @@ namespace EdugameCloud.Lti.Controllers
 
                 // TRICK: call it if U R sure that GetOrCreatePrincipal will not fail!!
                 // NHibernate error could occur instead
+                bool isTransientUser = lmsUser.IsTransient();
                 this.lmsUserModel.RegisterSave(lmsUser);
-                if (lmsUser.IsTransient())
+                if (isTransientUser)
                 {
                     this.SaveSessionUser(session, lmsUser);
                 }
