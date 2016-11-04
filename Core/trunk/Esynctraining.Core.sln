@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mvc", "Esynctraining.Mvc\Esynctraining.Mvc.csproj", "{EF355DBF-24AF-451F-A112-116B83E9843B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi", "Esynctraining.WebApi\Esynctraining.WebApi.csproj", "{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.SystemWeb", "Esynctraining.Core.SystemWeb\Esynctraining.Core.SystemWeb.csproj", "{85975C13-EE15-4831-AB3F-AB624D7D851E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +71,10 @@ Global
 		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E055DD8-4D62-4F7D-9A3C-5E364FAFEA74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
