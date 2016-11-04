@@ -12465,7 +12465,7 @@
         </member>
         <member name="T:EdugameCloud.Core.Domain.Entities.User">
             <summary>
-                The user.
+            The user.
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.User.ACSessions">

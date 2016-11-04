@@ -208,7 +208,7 @@ namespace EdugameCloud.Web
                         IoC.Resolve<ILogger>().Error("FormsAuthentication_OnAuthenticate", ex);
                     }
                 }
-                else if (FormsAuthentication.CookiesSupported && Request.Cookies.HasKey(FormsAuthentication.FormsCookieName))
+                else if (FormsAuthentication.CookiesSupported && HasKey(Request.Cookies, FormsAuthentication.FormsCookieName))
                 {
                     var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
                     FormsAuthenticationTicket ticket = null;
@@ -265,6 +265,17 @@ namespace EdugameCloud.Web
         {
             // Code that runs when an unhandled error occurs
             IoC.Resolve<ILogger>().Error("Unhandled exception: ", this.Server.GetLastError());
+        }
+
+
+        private static bool HasKey(HttpCookieCollection nvc, string key)
+        {
+            if (nvc != null && nvc.AllKeys.Length > 0)
+            {
+                return nvc.AllKeys.Any(keyVar => keyVar.Equals(key, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            return false;
         }
 
     }

@@ -2,16 +2,14 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Runtime.Serialization;
     using Esynctraining.Core.Business.Models;
     using Esynctraining.Core.Domain.Entities;
     using Esynctraining.Core.Utils;
-    using Iesi.Collections.Generic;
 
     /// <summary>
-    ///     The user.
+    /// The user.
     /// </summary>
     [DataContract]
     public class User : Entity

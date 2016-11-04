@@ -75,8 +75,8 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.27\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.Mp4Service.Tasks.Client, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.Mp4Service.Tasks.Client.1.0.0.4\lib\net45\Esynctraining.Mp4Service.Tasks.Client.dll</HintPath>
+    <Reference Include="Esynctraining.Mp4Service.Tasks.Client, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Mp4Service.Tasks.Client.1.0.0.2\lib\net45\Esynctraining.Mp4Service.Tasks.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Esynctraining.NHibernate, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
