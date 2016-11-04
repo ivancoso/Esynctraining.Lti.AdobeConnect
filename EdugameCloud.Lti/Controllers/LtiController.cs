@@ -999,11 +999,7 @@ namespace EdugameCloud.Lti.Controllers
                     ?? new LmsUser { UserId = userId, LmsCompany = company, Username = userName };
                 lmsUser.Username = userName;
                 lmsUser.Token = token;
-                if (lmsUser.IsTransient())
-                {
-                    this.SaveSessionUser(session, lmsUser);
-                }
-
+                
                 // TRICK: during loginwithprovider we redirect to Oauth before we create AC principal - so we need to do it here
                 Principal acPrincipal = acUserService.GetOrCreatePrincipal(
                                 this.GetAdobeConnectProvider(company),
@@ -1017,7 +1013,13 @@ namespace EdugameCloud.Lti.Controllers
                     lmsUser.PrincipalId = acPrincipal.PrincipalId;
                 }
 
+                // TRICK: call it if U R sure that GetOrCreatePrincipal will not fail!!
+                // NHibernate error could occur instead
                 this.lmsUserModel.RegisterSave(lmsUser);
+                if (lmsUser.IsTransient())
+                {
+                    this.SaveSessionUser(session, lmsUser);
+                }
 
                 if (acPrincipal == null)
                 {
