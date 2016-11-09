@@ -325,7 +325,8 @@ namespace EdugameCloud.WCFService.Converters
                             var imageBinary = quiz.Images[title];
                             var theFile = FileModel.GetOneByUniqueName(title).Value;
                             var newOrUpdatedFile = theFile != null ? FileModel.SetData(theFile, imageBinary) : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
-                            var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
+                            //var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
+                            var newFileUrl = "/file/get?id=" + newOrUpdatedFile.Id;
                             htmlText = htmlText.Replace(title, newFileUrl);
                         }
                     }
