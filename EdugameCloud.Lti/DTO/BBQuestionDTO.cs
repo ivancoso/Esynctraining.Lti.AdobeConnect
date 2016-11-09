@@ -19,6 +19,11 @@ namespace EdugameCloud.Lti.DTO
         public string text { get; set; }
 
         /// <summary>
+        /// Gets or sets the text.
+        /// </summary>
+        public string htmlText { get; set; }
+
+        /// <summary>
         /// Gets or sets the title.
         /// </summary>
         public string title { get; set; }

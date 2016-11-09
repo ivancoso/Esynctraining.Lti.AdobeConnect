@@ -45,6 +45,11 @@
         public string question_text { get; set; }
 
         /// <summary>
+        /// Html text of question
+        /// </summary>
+        public string htmlText { get; set; }
+
+        /// <summary>
         /// Gets or sets the question type.
         /// </summary>
         public string question_type { get; set; }

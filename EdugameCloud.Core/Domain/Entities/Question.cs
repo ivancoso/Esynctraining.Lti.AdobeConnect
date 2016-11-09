@@ -73,6 +73,11 @@
         public virtual string QuestionName { get; set; }
 
         /// <summary>
+        /// Gets or sets the question name.
+        /// </summary>
+        public virtual string HtmlText { get; set; }
+
+        /// <summary>
         /// Gets or sets the question order.
         /// </summary>
         public virtual int QuestionOrder { get; set; }

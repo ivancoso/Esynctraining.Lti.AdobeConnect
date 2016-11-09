@@ -29,5 +29,8 @@
         /// Gets or sets the questions.
         /// </summary>
         public BBQuestionDTO[] questions { get; set; }
+
+        public object images { get; set; }
+        
     }
 }

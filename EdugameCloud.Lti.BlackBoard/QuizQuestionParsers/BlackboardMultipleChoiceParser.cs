@@ -21,5 +21,9 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             }
             return lmsQuestion;
         }
+
+        public BlackboardMultipleChoiceParser(BBAssessmentDTO td) : base(td)
+        {
+        }
     }
 }

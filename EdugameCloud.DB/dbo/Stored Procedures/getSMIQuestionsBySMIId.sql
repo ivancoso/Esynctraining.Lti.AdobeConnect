@@ -12,6 +12,7 @@ BEGIN
 
 SELECT   Q.questionId,
 		 Q.question,
+		 Q.htmlText,
 		 Q.questionOrder,
 		 Q.questionTypeId,
 		 Q.instruction,

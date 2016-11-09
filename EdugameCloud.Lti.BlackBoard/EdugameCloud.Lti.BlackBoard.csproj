@@ -81,6 +81,7 @@
     <Compile Include="EGCEnabledBlackboardApi.cs" />
     <Compile Include="QuizQuestionParsers\BlackboardFillInTheBlanksParser.cs" />
     <Compile Include="QuizQuestionParsers\BlackboardMultipleChoiceParser.cs" />
+    <Compile Include="QuizQuestionParsers\FillInTheBlankAnswer.cs" />
     <Compile Include="QuizQuestionParsers\IBlackboardQuestionParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SoapBlackBoardApi.cs" />

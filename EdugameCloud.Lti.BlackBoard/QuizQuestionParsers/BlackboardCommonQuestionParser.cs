@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Web;
 using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
@@ -9,9 +10,21 @@ using Newtonsoft.Json.Linq;
 namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
 {
     // todo: split this class to smaller parts for different question types
-    internal class BlackboardCommonQuestionParser : IBlackboardQuestionParser
+    public class BlackboardCommonQuestionParser : IBlackboardQuestionParser
     {
         private readonly string[] singleQuestionTypes = new[] {"Multiple Choice", "Opinion Scale"};
+        private Func<Dictionary<string, byte[]>> images;
+
+        public BlackboardCommonQuestionParser(BBAssessmentDTO td)
+        {
+            images = () =>
+            {
+                var tdImages = td.images as JToken;
+                if (tdImages == null) return null;
+                var t = tdImages.ToObject<Dictionary<string, string>>();
+                return t.ToDictionary(x => x.Key, x => Encoding.UTF8.GetBytes(x.Value));
+            };
+        }
 
         public virtual LmsQuestionDTO ParseQuestion(BBQuestionDTO dto)
         {
@@ -26,6 +39,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 rows = dto.rows,
                 answers = ParseAnswers(dto)
             };
+            ret.htmlText = dto.htmlText;
             ret.answers.ForEach(
                 a =>
                 {
@@ -79,13 +93,15 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         return ret;
                     }
                     var image = answersList["image"].ToString();
-                    var fileData = answersList["imageBinary"].ToString();
+                    //var fileData = answersList["imageBinary"].ToString();
+                    var lazyLoadImages = images();
+                    var fileData = lazyLoadImages[image];
 
                     ret.Add(new AnswerDTO()
                     {
                         text = coords,
                         question_text = image,
-                        fileData = fileData
+                        fileData = Encoding.UTF8.GetString(fileData)
                     });
                     return ret;
                 }

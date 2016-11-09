@@ -23,5 +23,9 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             var dto = ParseFillInBlankAnswer((q.answersList as JToken).ToObject<List<FillInTheBlankAnswer>>(), BlankName, 0);
             return new List<AnswerDTO> {dto};
         }
+
+        public BlackboardFillInTheBlanksParser(BBAssessmentDTO td) : base(td)
+        {
+        }
     }
 }

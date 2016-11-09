@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using EdugameCloud.Lti.DTO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using EdugameCloud.Lti.BlackBoard;
 
 namespace EdugameCloud.Lti.Tests
 {
@@ -38,5 +40,25 @@ namespace EdugameCloud.Lti.Tests
             JsonConvert.DeserializeObject<BBQuestionDTO>(response);
 
         }
+
+        [Test]
+        public void WillTestFibOnDeserialization()
+        {
+            //var fibAnswer = @"{[]}";
+            var fibAnswer = @"[   {      ""text"": ""Christopher Columbus""    },    {      ""subType"": ""EXACT""    },    {      ""caseSensitive"": ""true""    } ] ";
+            //var fibAnswer = @"{ Prop : value  } ";
+            //var testData = @"{ ""questions"": [{  ""answersList"" : ""{[ ]}""}] }";
+            var testData = @"{ ""questions"": [{  ""answersList"" : " + fibAnswer + "}] }";
+            var deserializedObject = JsonConvert.DeserializeObject<BBAssessmentDTO>(testData);
+            var bbQuestionDto = deserializedObject.questions[0];
+            var jToken = (bbQuestionDto.answersList as JToken);
+            //var parsedAnswer = jToken.ToObject<TestClass[]>();
+            var parsedAnswer = jToken.ToObject<List<EdugameCloud.Lti.BlackBoard.QuizQuestionParsers.FillInTheBlankAnswer>>();
+        }
+    }
+
+    public class TestClass
+    {
+        public string Prop { get; set; }
     }
 }

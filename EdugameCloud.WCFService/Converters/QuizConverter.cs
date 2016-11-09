@@ -300,6 +300,7 @@
                 }
 
                 var lmsQuestionId = quizQuestion.id;
+                string htmlText = quizQuestion.htmlText;
 
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
                         new Question
@@ -307,7 +308,8 @@
                             SubModuleItem = submodule,
                             DateCreated = DateTime.Now,
                             CreatedBy = user,
-                            LmsQuestionId = lmsQuestionId
+                            LmsQuestionId = lmsQuestionId,
+                            HtmlText = htmlText
                         };
 
                 string questionText = quizQuestion.question_text;

@@ -21,6 +21,7 @@
     [lmsProviderId]    INT              NULL,
     [randomizeAnswers] BIT              NULL,
 	[rows]			   INT				NULL,
+    [htmlText] NVARCHAR(2000) NULL, 
     CONSTRAINT [PK_Question] PRIMARY KEY CLUSTERED ([questionId] ASC),
     CONSTRAINT [FK_Question_Image] FOREIGN KEY ([imageId]) REFERENCES [dbo].[File] ([fileId]),
     CONSTRAINT [FK_Question_LmsProvider] FOREIGN KEY ([lmsProviderId]) REFERENCES [dbo].[LmsProvider] ([lmsProviderId]),

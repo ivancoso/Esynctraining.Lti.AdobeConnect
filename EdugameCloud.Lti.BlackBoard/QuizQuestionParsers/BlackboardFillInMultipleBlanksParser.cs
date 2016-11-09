@@ -6,14 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
 {
-    internal class BlackboardFillInMultipleBlanksParser : BlackboardCommonQuestionParser
+    public class BlackboardFillInMultipleBlanksParser : BlackboardCommonQuestionParser
     {
-        protected class FillInTheBlankAnswer
-        {
-            public string text { get; set; }
-            public string subType { get; set; }
-            public bool caseSensitive { get; set; }
-        }
+        
 
         protected override List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
@@ -42,6 +37,10 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             };
 
             return dto;
+        }
+
+        public BlackboardFillInMultipleBlanksParser(BBAssessmentDTO td) : base(td)
+        {
         }
     }
 }
