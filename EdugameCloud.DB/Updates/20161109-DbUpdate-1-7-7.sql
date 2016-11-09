@@ -1,4 +1,9 @@
-﻿
+﻿alter table Question
+add htmlText nvarchar(2000)
+
+GO
+
+
 -- =============================================
 -- Author:		Eugene Baranovsky
 -- Create date: 08.30.2013
@@ -6,7 +11,7 @@
 -- Description:	is used to get a list of question for 
 --				current quiz by subModuleItemId.
 -- =============================================
-CREATE PROCEDURE [dbo].[getSMIQuestionsBySMIId]
+alter PROCEDURE [dbo].[getSMIQuestionsBySMIId]
 	@subModuleItemId int = null
 AS
 BEGIN

@@ -29,6 +29,8 @@
         /// </summary>
         public List<AnswerDTO> answers { get; set; }
 
+        public List<string> answersImageLinks { get; set; }
+
         /// <summary>
         /// Gets or sets the id.
         /// </summary>

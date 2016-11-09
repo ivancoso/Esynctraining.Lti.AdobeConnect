@@ -1,4 +1,7 @@
-﻿namespace EdugameCloud.WCFService.Converters
+﻿using System.Text.RegularExpressions;
+using Esynctraining.Core.Providers;
+
+namespace EdugameCloud.WCFService.Converters
 {
     using System;
     using System.Collections.Generic;
@@ -23,6 +26,14 @@
     /// </summary>
     public sealed class QuizConverter
     {
+        /// <summary>
+        ///   Gets the settings.
+        /// </summary>
+        public dynamic Settings
+        {
+            get { return IoC.Resolve<ApplicationSettingsProvider>(); }
+        }
+
         private QuizModel QuizModel
         {
             get { return IoC.Resolve<QuizModel>(); }
@@ -302,17 +313,37 @@
                 var lmsQuestionId = quizQuestion.id;
                 string htmlText = quizQuestion.htmlText;
 
+                // add/edit images in htmlText
+                {
+                    var pattern = @"(@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d]+)";
+                    var match = Regex.Match(quizQuestion.htmlText, pattern);
+                    if (match.Success)
+                    {
+                        var titles = match.Groups.Cast<Group>().Select(x => x.Value).Distinct();
+                        foreach (var title in titles)
+                        {
+                            var imageBinary = quiz.Images[title];
+                            var theFile = FileModel.GetOneByUniqueName(title).Value;
+                            var newOrUpdatedFile = theFile != null ? FileModel.SetData(theFile, imageBinary) : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
+                            var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
+                            htmlText = htmlText.Replace(title, newFileUrl);
+                        }
+                    }
+                }
+
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
                         new Question
                         {
                             SubModuleItem = submodule,
                             DateCreated = DateTime.Now,
                             CreatedBy = user,
-                            LmsQuestionId = lmsQuestionId,
-                            HtmlText = htmlText
+                            LmsQuestionId = lmsQuestionId
                         };
+                question.HtmlText = htmlText;
 
                 string questionText = quizQuestion.question_text;
+
+
 
                 if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
@@ -332,7 +363,7 @@
                 question.IsActive = true;
                 question.QuestionOrder = questionOrder++;
                 question.Rows = quizQuestion.rows;
-                
+
 
                 var isTransient = question.Id == 0;
                 if (quizQuestion.files.Count == 1 && !string.IsNullOrEmpty(quizQuestion.files[0].base64Content))
@@ -395,17 +426,17 @@
                             if (!question.RandomizeAnswers.GetValueOrDefault() &&
                                 !quizQuestion.randomizeAnswers.HasValue)
                             {
-                                
+
                             }
                             break;
                     }
                 }
 
-                this.ProcessDistractors(user, companyLms, questionType.QuestionTypeId, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProviderId);
+                this.ProcessDistractors(user, companyLms, questionType.QuestionTypeId, quizQuestion, question, (LmsProviderEnum)companyLms.LmsProviderId, quiz);
             }
         }
 
-        private void ProcessDistractors(User user, LmsCompany lmsCompany, int qtypeId, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider)
+        private void ProcessDistractors(User user, LmsCompany lmsCompany, int qtypeId, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider, LmsQuizDTO quiz)
         {
             var disctarctorModel = this.DistractorModel;
             switch (qtypeId)
@@ -469,9 +500,9 @@
             }
 
             //image processing is done for hotspot separately
-            if (qtypeId != (int) QuestionTypeEnum.Hotspot)
+            if (qtypeId != (int)QuestionTypeEnum.Hotspot)
             {
-                ProcessImagesInDistractors(user, lmsCompany, q, question);
+                ProcessImagesInDistractors(user, lmsCompany, q, question, quiz);
             }
         }
 
@@ -833,43 +864,33 @@
             }
         }
 
-        private void ProcessImagesInDistractors(
-            User user,
-            LmsCompany lmsCompany,
-            LmsQuestionDTO q,
-            Question question)
+        private void ProcessImagesInDistractors(User user, LmsCompany lmsCompany, LmsQuestionDTO lmsQuestionDto, Question question, LmsQuizDTO quiz)
         {
-            foreach (var a in q.answers)
+            for (var i = 0; i< lmsQuestionDto.answers.Count; i++)
             {
-                var lmsId = a.id;
+                var answer = lmsQuestionDto.answers[i];
+                var lmsId = answer.id;
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value;
-                if (distractor == null)
-                    //throw new InvalidOperationException($"There should be a distractor for questionId {question.Id} and lms answer Id {lmsId} ");
+                if (distractor == null || lmsQuestionDto.answersImageLinks == null || lmsQuestionDto.answersImageLinks.Count <= i)
                     continue;
-                    //??
-                    //new Distractor
-                    //{
-                    //    DateCreated = DateTime.Now,
-                    //    CreatedBy = user,
-                    //    Question = question,
-                    //    LmsAnswerId = lmsId
-                    //};
-                //distractor.DistractorOrder = a.order + 1;
-                //distractor.DateModified = DateTime.Now;
-                //distractor.ModifiedBy = user;
-                //distractor.IsActive = true;
-                //distractor.DistractorType = 1;
-                //distractor.IsCorrect = true;
 
+                var imageLink = lmsQuestionDto.answersImageLinks[i];
+                if (string.IsNullOrEmpty(imageLink))
+                    continue;
+                byte[] image;
+                var getResult = quiz.Images.TryGetValue(imageLink, out image);
+
+                if (!getResult)
+                    continue;
                 byte[] imageBytes;
-                if (string.IsNullOrEmpty(a.fileData))
+                if (image == null)
                     continue;
 
-                imageBytes = Convert.FromBase64String(a.fileData);
+                imageBytes = Convert.FromBase64String(Encoding.UTF8.GetString(image));
 
-                var imageName = string.IsNullOrEmpty(a.imageName) ?
-                    a.question_text.Substring(
-                        a.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1) : a.imageName;
+                var imageName = string.IsNullOrEmpty(imageLink) ?
+                    answer.question_text.Substring(
+                        answer.question_text.LastIndexOf("/", StringComparison.InvariantCultureIgnoreCase) + 1) : imageLink;
 
                 var file = distractor.Image != null
                     ? FileModel.GetOneById(distractor.Image.Id).Value

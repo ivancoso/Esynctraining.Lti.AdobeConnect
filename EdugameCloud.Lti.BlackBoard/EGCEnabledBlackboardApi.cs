@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using BbWsClient;
 using BbWsClient.Content;
@@ -11,6 +12,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Extensions;
 using Esynctraining.Core.Providers;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.BlackBoard
 {
@@ -110,6 +112,12 @@ namespace EdugameCloud.Lti.BlackBoard
                             {
                                 var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(testData);
                                 lqd.question_list = BlackboardQuizParser.ParseQuestions(td, testData);
+                                var repoImages = td.images as JToken;
+                                if (repoImages != null)
+                                {
+                                    var temp = repoImages.ToObject<Dictionary<string, string>>();
+                                    lqd.Images = temp.ToDictionary(x => x.Key, x => Encoding.UTF8.GetBytes(x.Value));
+                                } 
                             }
                             quizDTO.Add(lqd);
                         }

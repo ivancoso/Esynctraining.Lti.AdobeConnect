@@ -112,6 +112,13 @@
             return this.Repository.FindOne(queryOver);
         }
 
+
+        public virtual IFutureValue<File> GetOneByUniqueName(string name)
+        {
+            var queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver().Where(x => x.FileName == name).Take(1);
+            return this.Repository.FindOne(queryOver);
+        }
+
         /// <summary>
         /// The complete file.
         /// </summary>

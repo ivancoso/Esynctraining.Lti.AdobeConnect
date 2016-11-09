@@ -9033,6 +9033,11 @@
             Gets or sets the question.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO.htmlText">
+            <summary>
+            Gets or sets html of a question.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuestionFromStoredProcedureDTO.questionId">
             <summary>
             Gets or sets the question id.

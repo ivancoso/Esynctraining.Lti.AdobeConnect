@@ -97,6 +97,12 @@
         public string question { get; set; }
 
         /// <summary>
+        /// Gets or sets html of a question.
+        /// </summary>
+        [DataMember]
+        public string htmlText { get; set; }
+
+        /// <summary>
         /// Gets or sets the question id.
         /// </summary>
         [DataMember]

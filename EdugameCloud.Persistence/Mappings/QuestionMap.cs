@@ -19,6 +19,7 @@
         public QuestionMap()
         {
             this.Map(x => x.QuestionName).Length(2000).Not.Nullable();
+            this.Map(x => x.HtmlText).Length(2000).Nullable();
             this.Map(x => x.QuestionOrder).Not.Nullable();
             this.Map(x => x.Instruction).Nullable();
             this.Map(x => x.CorrectMessage).Nullable();

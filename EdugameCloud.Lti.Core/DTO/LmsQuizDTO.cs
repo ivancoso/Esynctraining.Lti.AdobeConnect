@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.DTO
+﻿using System.Collections.Generic;
+
+namespace EdugameCloud.Lti.DTO
 {
     /// <summary>
     /// The quiz DTO.
@@ -31,6 +33,11 @@
         /// Gets or sets the quiz_type.
         /// </summary>
         public string quiz_type { get; set; }
+
+        /// <summary>
+        /// All images for a quiz
+        /// </summary>
+        public Dictionary<string, byte[]> Images { get; set; }
 
         #endregion
     }
