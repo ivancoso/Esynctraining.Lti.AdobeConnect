@@ -12143,6 +12143,11 @@
             Gets or sets the question name.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.Entities.Question.HtmlText">
+            <summary>
+            Gets or sets the question name.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.Entities.Question.QuestionOrder">
             <summary>
             Gets or sets the question order.
