@@ -4,7 +4,7 @@
     <IncludeCompositeObjects>True</IncludeCompositeObjects>
     <TargetDatabaseName>EduGameCloud.Logging</TargetDatabaseName>
     <DeployScriptFileName>Esynctraining.LogViewer.Db.sql</DeployScriptFileName>
-    <TargetConnectionString>Data Source=192.168.10.151;Persist Security Info=True;User ID=edugame;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</TargetConnectionString>
+    <TargetConnectionString>Data Source=192.168.10.151;Persist Security Info=True;User ID=sa;pwd=`12345tgB;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</TargetConnectionString>
     <ProfileVersionNumber>1</ProfileVersionNumber>
     <BlockOnPossibleDataLoss>True</BlockOnPossibleDataLoss>
     <CreateNewDatabase>True</CreateNewDatabase>
