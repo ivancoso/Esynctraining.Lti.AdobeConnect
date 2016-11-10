@@ -315,14 +315,18 @@ namespace EdugameCloud.WCFService.Converters
 
                 // add/edit images in htmlText
                 {
-                    var pattern = @"(@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d]+)";
-                    var match = Regex.Match(quizQuestion.htmlText, pattern);
-                    if (match.Success)
+                    var pattern = @"@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d\.]+";
+                    var regex = new Regex(pattern);
+                    
+                    if (regex.IsMatch(quizQuestion.htmlText))
                     {
-                        var titles = match.Groups.Cast<Group>().Select(x => x.Value).Distinct();
+                        var match = regex.Matches(quizQuestion.htmlText);
+                        var titles = match.Cast<Match>().Select(x => x.Value).Distinct();
                         foreach (var title in titles)
                         {
-                            var imageBinary = quiz.Images[title];
+                            byte[] imageBinary;
+                            var result = quiz.Images.TryGetValue(title, out imageBinary);
+                            if (!result) continue;
                             var theFile = FileModel.GetOneByUniqueName(title).Value;
                             var newOrUpdatedFile = theFile != null ? FileModel.SetData(theFile, imageBinary) : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
                             //var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
