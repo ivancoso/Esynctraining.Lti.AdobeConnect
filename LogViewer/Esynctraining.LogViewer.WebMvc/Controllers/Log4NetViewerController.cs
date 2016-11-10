@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Esynctraining.LogViewer.MvcWeb.Models;
 using Esynctraining.LogViewer.MvcWeb.Extensions;
+using Esynctraining.LogViewer.MvcWeb.Models;
 using StackExchange.Profiling;
 using StackExchange.Profiling.Data;
-using System.Data.Common;
 
 namespace Esynctraining.LogViewer.WebMvc.Controllers
 {
