@@ -9,5 +9,6 @@
     <BlockOnPossibleDataLoss>True</BlockOnPossibleDataLoss>
     <CreateNewDatabase>True</CreateNewDatabase>
     <ScriptDatabaseOptions>False</ScriptDatabaseOptions>
+    <CommentOutSetVarDeclarations>True</CommentOutSetVarDeclarations>
   </PropertyGroup>
 </Project>
