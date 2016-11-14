@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Lti.Sakai
+﻿using System.Linq;
+
+namespace EdugameCloud.Lti.Sakai
 {
     using System;
     using System.Collections.Generic;
@@ -115,15 +117,33 @@
                     string fullName = member.XPathSelectElement("person_name_full")
                         .Return(x => x.Value, firstName + " " + lastName);
                     string userId = member.XPathSelectElement("user_id").With(x => x.Value);
-                    result.Add(
+
+                    List<string> groupNames = new List<string>();
+                    var groupsCollection = member.XPathSelectElement("groups");
+                    if (groupsCollection != null)
+                    {
+                        var groups = groupsCollection.XPathSelectElements("group");
+                        foreach (var group in groups)
+                        {
+                            string groupName = group.XPathSelectElement("title").With(x => x.Value);
+                            groupNames.Add(groupName);
+                        }
+                    }
+                    if(!groupNames.Any())
+                        groupNames.Add(role);
+
+                    foreach (var groupName in groupNames)
+                    {
+                        result.Add(
                         new LmsUserDTO
-                            {
-                                lms_role = role, 
-                                primary_email = email, 
-                                login_id = userName, 
-                                id = userId, 
-                                name = fullName, 
-                            });
+                        {
+                            lms_role = groupName,
+                            primary_email = email,
+                            login_id = userName,
+                            id = userId,
+                            name = fullName,
+                        });
+                    }
                 }
             }
             catch (Exception ex)
