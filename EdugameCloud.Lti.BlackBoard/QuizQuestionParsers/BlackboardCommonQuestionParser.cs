@@ -30,7 +30,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
         {
             var ret = new LmsQuestionDTO()
             {
-                question_text = dto.text.ClearName(),
+                //question_text = dto.text.ClearName(),
                 question_type = dto.type,
                 is_single = singleQuestionTypes.Any(
                     x => dto.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
@@ -39,7 +39,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 rows = dto.rows,
                 answers = ParseAnswers(dto)
             };
-            ret.htmlText = dto.htmlText;
+            ret.question_text = dto.htmlText;
             var imageLinks = dto.answersImageLinks as JToken;
             ret.answersImageLinks = imageLinks != null ? imageLinks.ToObject<List<string>>() : null;
             ret.answers.ForEach(
