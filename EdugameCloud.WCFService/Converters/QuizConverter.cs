@@ -348,7 +348,7 @@ namespace EdugameCloud.WCFService.Converters
 
                 string questionText = quizQuestion.htmlText;
 
-
+                quizQuestion.question_text = htmlText;
 
                 if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
