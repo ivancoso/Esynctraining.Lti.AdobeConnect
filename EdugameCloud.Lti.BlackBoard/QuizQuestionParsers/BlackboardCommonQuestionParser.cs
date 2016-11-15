@@ -40,6 +40,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 answers = ParseAnswers(dto)
             };
             ret.question_text = dto.htmlText;
+            ret.htmlText = dto.htmlText;
             var imageLinks = dto.answersImageLinks as JToken;
             ret.answersImageLinks = imageLinks != null ? imageLinks.ToObject<List<string>>() : null;
             ret.answers.ForEach(
