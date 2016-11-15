@@ -321,9 +321,8 @@ namespace EdugameCloud.WCFService.Converters
                             CreatedBy = user,
                             LmsQuestionId = lmsQuestionId
                         };
-                //question.HtmlText = htmlText;
 
-                string questionText = quizQuestion.htmlText;
+                string questionText = quizQuestion.question_text;
 
                 if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
                     || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
@@ -361,6 +360,7 @@ namespace EdugameCloud.WCFService.Converters
                     }
                 }
 
+                question.HtmlText = quizQuestion.htmlText;
                 question.QuestionName = htmlText;
                 question.QuestionType = this.QuestionTypeModel.GetOneById(questionType.QuestionTypeId).Value;
                 question.DateModified = DateTime.Now;
