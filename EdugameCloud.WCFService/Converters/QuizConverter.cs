@@ -311,13 +311,38 @@ namespace EdugameCloud.WCFService.Converters
                 }
 
                 var lmsQuestionId = quizQuestion.id;
-                string htmlText = quizQuestion.htmlText;
+                
 
+                var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
+                        new Question
+                        {
+                            SubModuleItem = submodule,
+                            DateCreated = DateTime.Now,
+                            CreatedBy = user,
+                            LmsQuestionId = lmsQuestionId
+                        };
+                //question.HtmlText = htmlText;
+
+                string questionText = quizQuestion.htmlText;
+
+                if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
+                    || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
+                {
+                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
+                }
+                else if (questionType.QuestionTypeId == (int)QuestionTypeEnum.Calculated
+                    || questionType.QuestionTypeId == (int)QuestionTypeEnum.CalculatedMultichoice)
+                {
+                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
+                }
+
+                string htmlText = questionText;
+                //quizQuestion.question_text = htmlText;
                 // add/edit images in htmlText
                 {
                     var pattern = @"@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d\.]+";
                     var regex = new Regex(pattern);
-                    
+
                     if (regex.IsMatch(quizQuestion.htmlText))
                     {
                         var match = regex.Matches(quizQuestion.htmlText);
@@ -336,32 +361,7 @@ namespace EdugameCloud.WCFService.Converters
                     }
                 }
 
-                var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
-                        new Question
-                        {
-                            SubModuleItem = submodule,
-                            DateCreated = DateTime.Now,
-                            CreatedBy = user,
-                            LmsQuestionId = lmsQuestionId
-                        };
-                question.HtmlText = htmlText;
-
-                string questionText = quizQuestion.htmlText;
-
-                quizQuestion.question_text = htmlText;
-
-                if (questionType.QuestionTypeId == (int)QuestionTypeEnum.MultipleDropdowns
-                    || questionType.QuestionTypeId == (int)QuestionTypeEnum.FillInTheBlank)
-                {
-                    questionText = this.ProcessFillInTheBlankQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
-                }
-                else if (questionType.QuestionTypeId == (int)QuestionTypeEnum.Calculated
-                    || questionType.QuestionTypeId == (int)QuestionTypeEnum.CalculatedMultichoice)
-                {
-                    questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
-                }
-
-                question.QuestionName = questionText;
+                question.QuestionName = htmlText;
                 question.QuestionType = this.QuestionTypeModel.GetOneById(questionType.QuestionTypeId).Value;
                 question.DateModified = DateTime.Now;
                 question.ModifiedBy = user;
