@@ -346,7 +346,7 @@ namespace EdugameCloud.WCFService.Converters
                         };
                 question.HtmlText = htmlText;
 
-                string questionText = quizQuestion.question_text;
+                string questionText = quizQuestion.htmlText;
 
 
 
