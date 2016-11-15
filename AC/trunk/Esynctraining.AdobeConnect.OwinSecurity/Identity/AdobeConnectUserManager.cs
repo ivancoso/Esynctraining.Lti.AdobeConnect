@@ -7,6 +7,7 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AdobeConnect.OwinSecurity.DomainValidation;
 using Esynctraining.AdobeConnect.OwinSecurity.PermissionProviders;
 using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
@@ -15,25 +16,45 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 {
     public sealed class AdobeConnectUserManager : UserManager<AdobeConnectUser>
     {
-        private IUserGroupPermissionProvider _userGroupPermissionProvider;
-        private ILogger _logger;
+        private readonly IAcDomainValidator _acDomainValidator;
+        private readonly IUserGroupPermissionProvider _userGroupPermissionProvider;
+        private readonly ILogger _logger;
 
-        public AdobeConnectUserManager() : this(null, null, null)
+
+        //public AdobeConnectUserManager() 
+        //    : this(new DefaultUserGroupPermissionProvider(), new EdugameCloudUserStore<AdobeConnectUser>(), null)
+        //{
+        //}
+
+        public AdobeConnectUserManager(
+            IAcDomainValidator acDomainValidator,
+            IUserGroupPermissionProvider userGroupPermissionProvider,
+            IUserStore<AdobeConnectUser> userStore, 
+            ILogger logger)
+            : base(userStore)
         {
+            if (acDomainValidator == null)
+                throw new ArgumentNullException(nameof(acDomainValidator));
+            if (userGroupPermissionProvider == null)
+                throw new ArgumentNullException(nameof(userGroupPermissionProvider));
+            if (userStore == null)
+                throw new ArgumentNullException(nameof(userStore));
 
-        }
-
-        public AdobeConnectUserManager(IUserGroupPermissionProvider userGroupPermissionProvider,
-            IUserStore<AdobeConnectUser> userStore, ILogger logger) : base(userStore ?? new EdugameCloudUserStore<AdobeConnectUser>())
-        {
             //We can retrieve Old System Hash Password and can encypt or decrypt old password using custom approach. 
             //When we want to reuse old system password as it would be difficult for all users to initiate pwd change as per Idnetity Core hashing. 
             //this.PasswordHasher = new EdugameCloudPasswordHasher();
-            _userGroupPermissionProvider = userGroupPermissionProvider ?? new DefaultUserGroupPermissionProvider();
+            _acDomainValidator = acDomainValidator;
+            _userGroupPermissionProvider = userGroupPermissionProvider;
             _logger = logger;
         }
 
-        public override System.Threading.Tasks.Task<AdobeConnectUser> FindAsync(string userName, string password)
+
+        //public static IUserGroupPermissionProvider DefaultUserGroupPermissionProvider()
+        //{
+        //    return new DefaultUserGroupPermissionProvider();
+        //}
+
+        public override Task<AdobeConnectUser> FindAsync(string userName, string password)
         {
             Task<AdobeConnectUser> taskInvoke = Task.Run(async () =>
             {
@@ -42,16 +63,9 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                 string acDomain = parts[1];
                 string acLogin = parts[2];
 
-                var licenseProductId = int.Parse(ConfigurationManager.AppSettings["LicenseProductId"] as string);
-
-                string[] acDomains = licenseProductId == 48 // NOTE: hardcoded in DB MP4 product
-                    ? new CompanySubscriptionServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken).Result
-                    : new PublicLicenseServiceProxy().GetAdobeConnectDomainsByCompanyToken(companyToken, licenseProductId).Result;
-
-                if (!acDomains.Any(x => x.Equals(acDomain, StringComparison.OrdinalIgnoreCase)))
+                if (!_acDomainValidator.IsValid(companyToken, acDomain))
                 {
-                    // TODO: add to log that AC domain is not valid for companyToken!!
-                    //                    _logger?.Warn($"[UserManager.FindAsync] AC domain is not valid for companyToken. AcDomain={acDomain}");
+                    //    _logger?.Warn($"[UserManager.FindAsync] AC domain is not valid for companyToken. AcDomain={acDomain}");
                     return null;
                 }
 

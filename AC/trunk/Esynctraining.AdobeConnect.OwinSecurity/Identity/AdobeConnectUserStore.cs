@@ -4,7 +4,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 {
-    public sealed class EdugameCloudUserStore<T> : IUserStore<T>, IUserPasswordStore<T> where T : AdobeConnectUser, new()
+    public sealed class AdobeConnectUserStore<T> : IUserStore<T>, IUserPasswordStore<T> where T : AdobeConnectUser, new()
     {
         //private UserModel UserModel
         //{

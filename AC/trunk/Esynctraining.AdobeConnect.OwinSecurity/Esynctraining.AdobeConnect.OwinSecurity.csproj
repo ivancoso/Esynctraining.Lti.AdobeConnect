@@ -82,6 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DomainValidation\IAcDomainValidator.cs" />
     <Compile Include="Identity\AdobeConnectUser.cs" />
     <Compile Include="Identity\AdobeConnectUserManager.cs" />
     <Compile Include="Identity\AdobeConnectUserStore.cs" />

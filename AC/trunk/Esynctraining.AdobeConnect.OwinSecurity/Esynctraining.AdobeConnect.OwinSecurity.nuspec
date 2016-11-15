@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Esynctraining.AdobeConnect.OwinSecurity</id>
-    <version>1.0.0.9</version>
+    <version>1.0.0.10</version>
     <title>Esynctraining.AdobeConnect.OwinSecurity</title>
     <authors>eSyncTraining.com</authors>
     <owners>eSyncTraining.com</owners>
@@ -12,7 +12,7 @@
     <description>TBD</description>
     <copyright>Copyright © 2016 eSyncTraining.com</copyright>
     <tags>ac owin</tags>
-    <releaseNotes>fixed for MP4</releaseNotes>
+    <releaseNotes>Added IAcDomainValidator to check companyToken+AcDomain pair</releaseNotes>
     <dependencies>
       <dependency id="Esynctraining.AdobeConnect" version="1.0.0.33" />
       <dependency id="ConnectExtensions.Services.Client" version="1.0.0.2" />
