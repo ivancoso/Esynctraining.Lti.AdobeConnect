@@ -21,7 +21,7 @@
         /// </returns>
         public static string ClearName(this string name)
         {
-            return Regex.Replace(name ?? string.Empty, "<(?!img).*?>", string.Empty).Replace("&nbsp;", " ");
+            return Regex.Replace(name ?? string.Empty, @"<(?!(img|\/img)).*?>", string.Empty).Replace("&nbsp;", " ");
         }
 
         /// <summary>
