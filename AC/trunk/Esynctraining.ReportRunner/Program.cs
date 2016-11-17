@@ -14,6 +14,7 @@ namespace Esynctraining.ReportRunner
             var report = new CalcReportTests();
             report.Init();
             report.WillGetRecordingsStatsForCCA("https://cca.acms.com/api/xml", "developer@esynctraining.com", "Welcome1");
+            
         }
     }
 }

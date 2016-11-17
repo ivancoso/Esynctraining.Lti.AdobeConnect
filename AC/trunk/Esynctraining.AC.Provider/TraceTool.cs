@@ -152,28 +152,29 @@ namespace Esynctraining.AC.Provider
         /// </returns>
         public static string GetExceptionInfo(Exception ex)
         {
-            var exceptionStack = new StringBuilder();
-
-            if (!string.IsNullOrEmpty(ex.StackTrace))
-            {
-                exceptionStack.AppendFormat("{0}\n{1}\n", ex.Message, ex.StackTrace);
-            }
-            else
-            {
-                exceptionStack.AppendFormat("{0}\n", ex.Message);
-            }
-
-            if (ex.InnerException != null)
-            {
-                RetriveStackRecursively(ex.InnerException);
-            }
-
             lock (Locker)
             {
-                exceptionStack.Append(StackTrace);
-            }
+                var exceptionStack = new StringBuilder();
 
-            return exceptionStack.ToString();
+                if (!string.IsNullOrEmpty(ex.StackTrace))
+                {
+                    exceptionStack.AppendFormat("{0}\n{1}\n", ex.Message, ex.StackTrace);
+                }
+                else
+                {
+                    exceptionStack.AppendFormat("{0}\n", ex.Message);
+                }
+
+                if (ex.InnerException != null)
+                {
+                    RetriveStackRecursively(ex.InnerException);
+                }
+
+
+                exceptionStack.Append(StackTrace);
+
+                return exceptionStack.ToString();
+            }
         }
 
         /// <summary>

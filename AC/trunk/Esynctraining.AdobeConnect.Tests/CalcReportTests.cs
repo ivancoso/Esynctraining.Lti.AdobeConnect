@@ -30,7 +30,7 @@ namespace Esynctraining.AdobeConnect.Tests
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
             XmlConfigurator.Configure();
-            
+
             _logger = IoC.Resolve<ILogger>();
         }
 
@@ -149,12 +149,14 @@ namespace Esynctraining.AdobeConnect.Tests
             var result = DurationParser.Parse(duration);
 
             var recIdentity = new RecIdentity(scoId, scoInfo.ScoInfo.FolderId);
-            
-            var addOperationResult =_recStorage.TryAdd(recIdentity, result.TotalMinutes);
+
+            var addOperationResult = _recStorage.TryAdd(recIdentity, result.TotalMinutes);
             if (!addOperationResult) return 0;
 
-            _logger.Info($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
-            Console.WriteLine($"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
+            _logger.Info(
+                $"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
+            Console.WriteLine(
+                $"folderId {scoInfo.ScoInfo.FolderId} sco-id {scoId}, incoming duration string {duration}, duration totalMins {result.TotalMinutes}");
             return result.TotalMinutes;
         }
 
@@ -182,47 +184,55 @@ namespace Esynctraining.AdobeConnect.Tests
                         _logger.Error("sco-id should not be empty");
                         return;
                     }
-                    var recDuration = GetDurationOfSingleRec(rec.ScoId);
-                    duration += recDuration;
-                    if (recDuration > 10 * 60)
+                    try
                     {
-                        counter10hours++;
-                        counter10hoursDur += recDuration;
-                    }
-                    if ((recDuration > 3 * 60) && (recDuration < 10 * 60))
-                    {
-                        counter3to10hours++;
-                        counter3to10hoursDur += recDuration;
-                    }
-                    if (recDuration > biggestDuration)
-                    {
-                        biggestDuration = recDuration;
-                        biggestRecSco = rec.ScoId;
-                    }
+                        var recDuration = GetDurationOfSingleRec(rec.ScoId);
+                        duration += recDuration;
+                        if (recDuration > 10 * 60)
+                        {
+                            counter10hours++;
+                            counter10hoursDur += recDuration;
+                        }
+                        if ((recDuration > 3 * 60) && (recDuration < 10 * 60))
+                        {
+                            counter3to10hours++;
+                            counter3to10hoursDur += recDuration;
+                        }
+                        if (recDuration > biggestDuration)
+                        {
+                            biggestDuration = recDuration;
+                            biggestRecSco = rec.ScoId;
+                        }
 
-                    var scoInfo = _provider.ReportScoViews(rec.ScoId);
-                    if (scoInfo.Values == null)
-                    {
-                        _logger.Warn($"sco-info values are null {rec.ScoId}");
-                        return;
-                    }
-                    if (scoInfo.Values.Count() > 1)
-                    {
-                        _logger.Error($"sco-info values more than 1 {rec.ScoId}");
-                        return;
-                    }
-                    var content = scoInfo.Values.ToList()[0];
+                        var scoInfo = _provider.ReportScoViews(rec.ScoId);
+                        if (scoInfo.Values == null)
+                        {
+                            _logger.Warn($"sco-info values are null {rec.ScoId}");
+                            return;
+                        }
+                        if (scoInfo.Values.Count() > 1)
+                        {
+                            _logger.Error($"sco-info values more than 1 {rec.ScoId}");
+                            return;
+                        }
+                        var content = scoInfo.Values.ToList()[0];
 
-                    if (content.Views == 0 && rec.DateCreated < new DateTime(pivotDate.Year - 1, pivotDate.Month, pivotDate.Day))
-                    {
-                        noViewCounter++;
-                        noViewDur += GetDurationOfSingleRec(rec.ScoId);
+                        if (content.Views == 0 && rec.DateCreated < new DateTime(pivotDate.Year - 1, pivotDate.Month, pivotDate.Day))
+                        {
+                            noViewCounter++;
+                            noViewDur += GetDurationOfSingleRec(rec.ScoId);
+                        }
+                        // 2nd report > 2 year, views >= 1
+                        if (content.Views > 0 && content.LastViewedDate < new DateTime(pivotDate.Year - 2, pivotDate.Month, pivotDate.Day))
+                        {
+                            year2Count++;
+                            year2Dur += GetDurationOfSingleRec(rec.ScoId);
+                        }
                     }
-                    // 2nd report > 2 year, views >= 1
-                    if (content.Views > 0 && content.LastViewedDate < new DateTime(pivotDate.Year - 2, pivotDate.Month, pivotDate.Day))
+                    catch (Exception exception)
                     {
-                        year2Count++;
-                        year2Dur += GetDurationOfSingleRec(rec.ScoId);
+                        _logger.ErrorFormat("error getting rec duration", exception);
+                        Console.WriteLine($"Rec with id {rec.ScoId} was skipped, coz when getting duration there was an error");
                     }
 
                 });
