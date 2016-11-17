@@ -12,7 +12,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
     // todo: split this class to smaller parts for different question types
     public class BlackboardCommonQuestionParser : IBlackboardQuestionParser
     {
-        private readonly string[] singleQuestionTypes = new[] {"Multiple Choice", "Opinion Scale"};
+        private readonly string[] singleQuestionTypes = new[] { "Multiple Choice", "Opinion Scale" };
         private Func<Dictionary<string, byte[]>> images;
 
         public BlackboardCommonQuestionParser(BBAssessmentDTO td)
@@ -56,7 +56,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
         protected virtual List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
             var correctAnswerId = 0;
-            
+
             if (!string.IsNullOrEmpty(q.answer))
             {
                 if (q.answers == null && q.answersList == null)
@@ -97,15 +97,19 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                     }
                     var image = answersList["image"].ToString();
                     //var fileData = answersList["imageBinary"].ToString();
+                    byte[] fileData = null;
                     var lazyLoadImages = images();
-                    var fileData = lazyLoadImages[image];
+                    lazyLoadImages.TryGetValue(image, out fileData);
 
-                    ret.Add(new AnswerDTO()
+                    var answerDto = new AnswerDTO()
                     {
                         text = coords,
                         question_text = image,
-                        fileData = Encoding.UTF8.GetString(fileData)
-                    });
+                        //fileData = Encoding.UTF8.GetString(fileData)
+                    };
+                    if (fileData != null)
+                        answerDto.fileData = Encoding.UTF8.GetString(fileData);
+                    ret.Add(answerDto);
                     return ret;
                 }
                 // todo: this code is not needed anymore, need to check and remove. It was used for 'fill in multiple blanks' question type which has separate parser now
@@ -246,6 +250,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 {
                     int order = 0;
                     string questionText = null, answerText = null, lmsValue = null;
+                    byte[] matchingImage = null;
 
                     if (answer is JObject)
                     {
@@ -255,11 +260,36 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                             answerText = option.Value.ToString();
                             break;
                         }
-                        var prop = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
-                        if (prop != null)
+                        var propIndex = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
+                        if (propIndex != null)
                         {
-                            lmsValue = prop.Value.ToString();
+                            lmsValue = propIndex.Value.ToString();
+                            int propIndexInt;
+                            var isIndexInt = int.TryParse(lmsValue, out propIndexInt);
+                            if (isIndexInt)
+                            {
+                                if (propIndexInt % 2 == 0)
+                                {
+                                    var leftImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "leftImageLink");
+                                    if (leftImage != null)
+                                    {
+                                        var lazyLoadImages = images();
+                                        lazyLoadImages.TryGetValue(leftImage.ToString(), out matchingImage);
+                                    }
+                                }
+                                else
+                                {
+                                    var rightImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "rightImageLink");
+                                    if (rightImage != null)
+                                    {
+                                        var lazyLoadImages = images();
+                                        lazyLoadImages.TryGetValue(rightImage.ToString(), out matchingImage);
+                                    }
+                                }
+                            }
+
                         }
+
                     }
                     else
                     {
@@ -267,7 +297,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         int.TryParse(answerText, out order);
                     }
 
-                    ret.Add(new AnswerDTO()
+                    var answerDto = new AnswerDTO()
                     {
                         id = i,
                         match_id = lmsValue,
@@ -276,10 +306,14 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         question_text = questionText,
                         /*weight = i == correctAnswerId ? 100 : 0*/
                         weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
-                    });
+                    };
+                    if (matchingImage != null)
+                        answerDto.fileData = Encoding.UTF8.GetString(matchingImage);
+                    ret.Add(answerDto);
+
                     i++;
                 }
-                
+
                 return ret;
             }
 
