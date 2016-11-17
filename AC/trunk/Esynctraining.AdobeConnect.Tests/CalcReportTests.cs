@@ -58,7 +58,27 @@ namespace Esynctraining.AdobeConnect.Tests
         }
 
         [TestCase("https://rhi.adobeconnect.com/api/xml", "mike@esynctraining.com", "Esync321", 0)]
-        public void WillGetRecordingsStatsForVerizon(string apiUrl, string login, string password, int totalObjCount = 0)
+        public void WillGetRecordingsStatsForRHI(string apiUrl, string login, string password, int totalObjCount = 0)
+        {
+            _connectionDetails = new ConnectionDetails(apiUrl);
+            _provider = new AdobeConnectProvider(_connectionDetails);
+            var provider = _provider;
+            LoginResult loginResult = provider.Login(new UserCredentials(login, password));
+            if (!loginResult.Success)
+                throw new InvalidOperationException("Invalid login");
+            var recordings = provider.ReportRecordingsPaged(totalObjCount);
+
+            var reports = GetRecLengthStats(recordings);
+            foreach (var rec in _recStorage)
+            {
+                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            }
+            LogRecStats(reports);
+
+        }
+
+        [TestCase("https://cca.acms.com/api/xml", "developer@esynctraining.com", "Welcome1", 0)]
+        public void WillGetRecordingsStatsForCCA(string apiUrl, string login, string password, int totalObjCount = 0)
         {
             _connectionDetails = new ConnectionDetails(apiUrl);
             _provider = new AdobeConnectProvider(_connectionDetails);

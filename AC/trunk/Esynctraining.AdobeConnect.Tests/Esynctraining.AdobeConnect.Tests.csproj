@@ -87,6 +87,7 @@
     <Compile Include="AdobeConnectProxy.cs" />
     <Compile Include="AdobeConnectProxyTests.cs" />
     <Compile Include="CalcReportTests.cs" />
+    <Compile Include="ChunkLengthIssueTests.cs" />
     <Compile Include="ConcurrentDictionaryTests.cs" />
     <Compile Include="DIConfig.cs" />
     <Compile Include="DurationParser.cs" />
