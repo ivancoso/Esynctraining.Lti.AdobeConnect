@@ -274,7 +274,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                                     if (leftImage != null)
                                     {
                                         var lazyLoadImages = images();
-                                        lazyLoadImages.TryGetValue(leftImage.ToString(), out matchingImage);
+                                        lazyLoadImages.TryGetValue(leftImage.Value.ToString(), out matchingImage);
                                     }
                                 }
                                 else
@@ -283,7 +283,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                                     if (rightImage != null)
                                     {
                                         var lazyLoadImages = images();
-                                        lazyLoadImages.TryGetValue(rightImage.ToString(), out matchingImage);
+                                        lazyLoadImages.TryGetValue(rightImage.Value.ToString(), out matchingImage);
                                     }
                                 }
                             }
