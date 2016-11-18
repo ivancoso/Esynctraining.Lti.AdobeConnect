@@ -113,6 +113,8 @@
         public string html { get; set; }
 
         public string fileData { get; set; }
+        public string leftImageName { get; set; }
+        public string rightImageName { get; set; }
 
         /// <summary>
         /// Indicates whether answer should be checked for case sensitivity. Default value is false.

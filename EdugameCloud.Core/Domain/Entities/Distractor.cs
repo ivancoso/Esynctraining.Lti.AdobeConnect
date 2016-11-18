@@ -45,6 +45,8 @@
         /// Gets or sets the File.
         /// </summary>
         public virtual File Image { get; set; }
+        public virtual File LeftImage { get; set; }
+        public virtual File RightImage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether is active.

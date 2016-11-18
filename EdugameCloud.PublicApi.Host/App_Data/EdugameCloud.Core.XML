@@ -8406,6 +8406,16 @@
             Gets or sets the image vo.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.leftImageVO">
+            <summary>
+            Gets or sets the image vo.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.rightImageVO">
+            <summary>
+            Gets or sets the image vo.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.dateCreated">
             <summary>
             Gets or sets the date created. (Unix Timestamp value)
@@ -8432,6 +8442,16 @@
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.imageId">
+            <summary>
+            Gets or sets the image id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.leftImageId">
+            <summary>
+            Gets or sets the image id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorDTO.rightImageId">
             <summary>
             Gets or sets the image id.
             </summary>
@@ -8923,7 +8943,27 @@
             Gets or sets the image id.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.leftImageId">
+            <summary>
+            Gets or sets the image id.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.rightImageId">
+            <summary>
+            Gets or sets the image id.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.imageVO">
+            <summary>
+            Gets or sets the image vo.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.leftImageVO">
+            <summary>
+            Gets or sets the image vo.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.DistractorFromStoredProcedureDTO.rightImageVO">
             <summary>
             Gets or sets the image vo.
             </summary>

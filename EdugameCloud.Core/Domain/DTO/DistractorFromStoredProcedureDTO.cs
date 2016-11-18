@@ -49,10 +49,34 @@
         public virtual Guid? imageId { get; set; }
 
         /// <summary>
+        /// Gets or sets the image id.
+        /// </summary>
+        [DataMember]
+        public virtual Guid? leftImageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image id.
+        /// </summary>
+        [DataMember]
+        public virtual Guid? rightImageId { get; set; }
+
+        /// <summary>
         /// Gets or sets the image vo.
         /// </summary>
         [DataMember]
         public virtual FileDTO imageVO { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image vo.
+        /// </summary>
+        [DataMember]
+        public virtual FileDTO leftImageVO { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image vo.
+        /// </summary>
+        [DataMember]
+        public virtual FileDTO rightImageVO { get; set; }
 
         /// <summary>
         /// Gets or sets the is correct.

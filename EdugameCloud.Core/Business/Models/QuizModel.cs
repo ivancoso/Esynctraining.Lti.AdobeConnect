@@ -175,19 +175,39 @@
         /// </returns>
         public IEnumerable<DistractorFromStoredProcedureDTO> GetQuizDistractorsBySMIId(int smiId)
         {
-            List<DistractorFromStoredProcedureDTO> distructors =
+            List<DistractorFromStoredProcedureDTO> distractorsBySmiId =
                 this.distractorModel.GetDistractorsBySMIId(smiId).ToList();
-            List<Guid> imageIds = distructors.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
+            List<Guid> imageIds = distractorsBySmiId.Where(x => x.imageId.HasValue).Select(x => x.imageId.Value).ToList();
             if (imageIds.Any())
             {
                 List<File> files = this.fileModel.GetAllByIds(imageIds).ToList();
-                foreach (DistractorFromStoredProcedureDTO dto in distructors.Where(x => x.imageId.HasValue))
+                foreach (DistractorFromStoredProcedureDTO dto in distractorsBySmiId.Where(x => x.imageId.HasValue))
                 {
                     dto.imageVO = new FileDTO(files.FirstOrDefault(x => x.Id == dto.imageId.Value));
                 }
             }
 
-            return distructors;
+            List<Guid> leftImageIds = distractorsBySmiId.Where(x => x.leftImageId.HasValue).Select(x => x.leftImageId.Value).ToList();
+            if (leftImageIds.Any())
+            {
+                List<File> files = this.fileModel.GetAllByIds(leftImageIds).ToList();
+                foreach (DistractorFromStoredProcedureDTO dto in distractorsBySmiId.Where(x => x.leftImageId.HasValue))
+                {
+                    dto.leftImageVO = new FileDTO(files.FirstOrDefault(x => x.Id == dto.leftImageId.Value));
+                }
+            }
+
+            List<Guid> rightImageIds = distractorsBySmiId.Where(x => x.rightImageId.HasValue).Select(x => x.rightImageId.Value).ToList();
+            if (rightImageIds.Any())
+            {
+                List<File> files = this.fileModel.GetAllByIds(rightImageIds).ToList();
+                foreach (DistractorFromStoredProcedureDTO dto in distractorsBySmiId.Where(x => x.rightImageId.HasValue))
+                {
+                    dto.rightImageVO = new FileDTO(files.FirstOrDefault(x => x.Id == dto.rightImageId.Value));
+                }
+            }
+
+            return distractorsBySmiId;
         }
 
         /// <summary>

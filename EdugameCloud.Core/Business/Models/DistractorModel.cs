@@ -53,7 +53,7 @@ namespace EdugameCloud.Core.Business.Models
             var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver();
             var rowCountQuery = queryOver.ToRowCountQuery();
             totalCount = this.Repository.FindOne<int>(rowCountQuery).Value;
-            var pagedQuery = queryOver.Fetch(x => x.Image).Eager.Take(pageSize).Skip((pageIndex - 1) * pageSize);
+            var pagedQuery = queryOver.Fetch(x => x.Image).Eager.Fetch(x => x.LeftImage).Eager.Fetch(x => x.RightImage).Eager.Take(pageSize).Skip((pageIndex - 1) * pageSize);
             return this.Repository.FindAll(pagedQuery);
         }
 
@@ -65,7 +65,7 @@ namespace EdugameCloud.Core.Business.Models
         /// </returns>
         public override IEnumerable<Distractor> GetAll()
         {
-            var defaultQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().Fetch(x => x.Image).Eager;
+            var defaultQuery = new DefaultQueryOver<Distractor, int>().GetQueryOver().Fetch(x => x.Image).Eager.Fetch(x => x.LeftImage).Eager.Fetch(x => x.RightImage).Eager;
             return this.Repository.FindAll(defaultQuery);
         }
 
@@ -80,7 +80,7 @@ namespace EdugameCloud.Core.Business.Models
         /// </returns>
         public override IFutureValue<Distractor> GetOneById(int id)
         {
-            var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver().Where(x => x.Id == id).Fetch(x => x.Image).Eager;
+            var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver().Where(x => x.Id == id).Fetch(x => x.Image).Eager.Fetch(x => x.LeftImage).Eager.Fetch(x => x.RightImage).Eager;
             return this.Repository.FindOne(queryOver);
         }
 
@@ -103,7 +103,9 @@ namespace EdugameCloud.Core.Business.Models
                 .Where(x => x.CreatedBy != null && x.CreatedBy.Id == userId)
                 .JoinQueryOver(x => x.Question)
                 .Where(q => q.SubModuleItem.Id == subModuleItemId)
-                .Fetch(x => x.Image).Eager;
+                .Fetch(x => x.Image).Eager
+                .Fetch(x => x.LeftImage).Eager
+                .Fetch(x => x.RightImage).Eager;
             return this.Repository.FindAll(queryOver);
         }
 
@@ -126,7 +128,7 @@ namespace EdugameCloud.Core.Business.Models
                 .Where(x => x.CreatedBy != null && x.CreatedBy.Id == userId)
                 .JoinQueryOver(x => x.Question)
                 .Where(q => q.Id == questionId)
-                .Fetch(x => x.Image).Eager;
+                .Fetch(x => x.Image).Eager.Fetch(x => x.LeftImage).Eager.Fetch(x => x.RightImage).Eager;
             return this.Repository.FindAll(queryOver);
         }
 
@@ -144,7 +146,7 @@ namespace EdugameCloud.Core.Business.Models
         /// </returns>
         public IFutureValue<Distractor> GetOneByQuestionIdAndLmsId(int questionId, int lmsId)
         {
-            var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver().Where(x => x.Question.Id == questionId && x.LmsAnswerId == lmsId).Fetch(x => x.Image).Eager;
+            var queryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver().Where(x => x.Question.Id == questionId && x.LmsAnswerId == lmsId).Fetch(x => x.Image).Eager.Fetch(x => x.LeftImage).Eager.Fetch(x => x.RightImage).Eager;
             return this.Repository.FindOne(queryOver);
         }
 
@@ -190,11 +192,15 @@ namespace EdugameCloud.Core.Business.Models
 		    Question q = null;
 		    SubModuleItem smi = null;
 		    File f = null;
+		    File leftf = null;
+		    File rightf = null;
 		    DistractorFromStoredProcedureDTO dto = null;
 			var qieryOver = new DefaultQueryOver<Distractor, int>().GetQueryOver(()=>d)
 				.JoinQueryOver(x=>x.Question, ()=>q, JoinType.InnerJoin)
 				.JoinQueryOver(()=>q.SubModuleItem, ()=>smi, JoinType.InnerJoin)
                 .JoinQueryOver(() => d.Image, () => f, JoinType.LeftOuterJoin)
+                .JoinQueryOver(() => d.LeftImage, () => leftf, JoinType.LeftOuterJoin)
+                .JoinQueryOver(() => d.RightImage, () => rightf, JoinType.LeftOuterJoin)
 				.Where(()=>q.SubModuleItem.Id == smiId && q.IsActive == true && d.IsActive == true)
 				.SelectList(res=>
 					res.Select(Projections.Distinct(Projections.ProjectionList()
@@ -205,6 +211,8 @@ namespace EdugameCloud.Core.Business.Models
 						.Add(Projections.Property(() => d.DistractorOrder))
 						.Add(Projections.Property(() => d.IsCorrect))
 						.Add(Projections.Property(() => d.Image.Id))
+						.Add(Projections.Property(() => d.LeftImage.Id))
+						.Add(Projections.Property(() => d.RightImage.Id))
 						.Add(Projections.Property(() => f.X))
 						.Add(Projections.Property(() => f.Y))
 						.Add(Projections.Property(() => f.Height))
@@ -225,7 +233,11 @@ namespace EdugameCloud.Core.Business.Models
 				.WithAlias(()=>dto.isCorrect)
 				.Select(()=>d.Image.Id)
 				.WithAlias(()=>dto.imageId)
-				.Select(()=>f.X)
+                .Select(() => d.LeftImage.Id)
+                .WithAlias(() => dto.leftImageId)
+                .Select(() => d.RightImage.Id)
+                .WithAlias(() => dto.rightImageId)
+                .Select(()=>f.X)
 				.WithAlias(()=>dto.x)
 				.Select(()=>f.Y)
 				.WithAlias(()=>dto.y)

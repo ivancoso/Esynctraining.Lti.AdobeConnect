@@ -33,6 +33,8 @@
             this.distractorId = distractor.Id;
             this.questionId = distractor.Question.Return(x => x.Id, (int?)null);
             this.imageId = distractor.Image.Return(x => x.Id, (Guid?)null);
+            this.leftImageId = distractor.LeftImage.Return(x => x.Id, (Guid?)null);
+            this.rightImageId = distractor.RightImage.Return(x => x.Id, (Guid?)null);
             this.distractor = distractor.DistractorName;
             this.distractorOrder = distractor.DistractorOrder;
             this.score = distractor.Score;
@@ -43,6 +45,8 @@
             this.dateModified = distractor.DateModified.ConvertToUnixTimestamp();
             this.isActive = distractor.IsActive;
             this.imageVO = distractor.Image.Return(x => new FileDTO(x), null);
+            this.leftImageVO = distractor.LeftImage.Return(x => new FileDTO(x), null);
+            this.rightImageVO = distractor.RightImage.Return(x => new FileDTO(x), null);
             this.distractorType = distractor.DistractorType;
         }
 
@@ -67,6 +71,18 @@
         /// </summary>
         [DataMember]
         public FileDTO imageVO { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image vo.
+        /// </summary>
+        [DataMember]
+        public FileDTO leftImageVO { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image vo.
+        /// </summary>
+        [DataMember]
+        public FileDTO rightImageVO { get; set; }
 
         /// <summary>
         /// Gets or sets the date created. (Unix Timestamp value)
@@ -103,6 +119,18 @@
         /// </summary>
         [DataMember]
         public Guid? imageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image id.
+        /// </summary>
+        [DataMember]
+        public Guid? leftImageId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the image id.
+        /// </summary>
+        [DataMember]
+        public Guid? rightImageId { get; set; }
 
         /// <summary>
         /// Gets or sets the is active.

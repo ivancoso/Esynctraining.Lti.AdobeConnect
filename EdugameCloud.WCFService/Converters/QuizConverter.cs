@@ -311,7 +311,7 @@ namespace EdugameCloud.WCFService.Converters
                 }
 
                 var lmsQuestionId = quizQuestion.id;
-                
+
 
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
                         new Question
@@ -335,30 +335,7 @@ namespace EdugameCloud.WCFService.Converters
                     questionText = this.ProcessCalculatedQuestionText(quizQuestion, (LmsProviderEnum)companyLms.LmsProviderId);
                 }
 
-                string htmlText = questionText;
-                //quizQuestion.question_text = htmlText;
-                // add/edit images in htmlText
-                {
-                    var pattern = @"@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d\.]+";
-                    var regex = new Regex(pattern);
-
-                    if (regex.IsMatch(quizQuestion.htmlText))
-                    {
-                        var match = regex.Matches(quizQuestion.htmlText);
-                        var titles = match.Cast<Match>().Select(x => x.Value).Distinct();
-                        foreach (var title in titles)
-                        {
-                            byte[] imageBinary;
-                            var result = quiz.Images.TryGetValue(title, out imageBinary);
-                            if (!result) continue;
-                            var theFile = FileModel.GetOneByUniqueName(title).Value;
-                            var newOrUpdatedFile = theFile != null ? FileModel.SetData(theFile, imageBinary) : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
-                            //var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
-                            var newFileUrl = "/file/get?id=" + newOrUpdatedFile.Id;
-                            htmlText = htmlText.Replace(title, newFileUrl);
-                        }
-                    }
-                }
+                var htmlText = ReplaceImageConstant(quiz, user, quizQuestion, questionText);
 
                 question.HtmlText = quizQuestion.htmlText;
                 question.QuestionName = htmlText;
@@ -441,6 +418,32 @@ namespace EdugameCloud.WCFService.Converters
             }
         }
 
+        private string ReplaceImageConstant(LmsQuizDTO quiz, User user, LmsQuestionDTO quizQuestion, string htmlText)
+        {
+            var pattern = @"@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d\.]+";
+            var regex = new Regex(pattern);
+
+            if (regex.IsMatch(quizQuestion.htmlText))
+            {
+                var match = regex.Matches(quizQuestion.htmlText);
+                var titles = match.Cast<Match>().Select(x => x.Value).Distinct();
+                foreach (var title in titles)
+                {
+                    byte[] imageBinary;
+                    var result = quiz.Images.TryGetValue(title, out imageBinary);
+                    if (!result) continue;
+                    var theFile = FileModel.GetOneByUniqueName(title).Value;
+                    var newOrUpdatedFile = theFile != null
+                        ? FileModel.SetData(theFile, imageBinary)
+                        : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
+                    //var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
+                    var newFileUrl = "/file/get?id=" + newOrUpdatedFile.Id;
+                    htmlText = htmlText.Replace(title, newFileUrl);
+                }
+            }
+            return htmlText;
+        }
+
         private void ProcessDistractors(User user, LmsCompany lmsCompany, int qtypeId, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider, LmsQuizDTO quiz)
         {
             var disctarctorModel = this.DistractorModel;
@@ -463,17 +466,17 @@ namespace EdugameCloud.WCFService.Converters
 
                 case (int)QuestionTypeEnum.MultipleDropdowns:
                     {
-                        this.ProcessFillInTheBlankDistractors(user, q, question, true, lmsProvider);
+                        this.ProcessFillInTheBlankDistractors(user, q, question, true, lmsProvider, quiz);
                         break;
                     }
                 case (int)QuestionTypeEnum.FillInTheBlank:
                     {
-                        this.ProcessFillInTheBlankDistractors(user, q, question, false, lmsProvider);
+                        this.ProcessFillInTheBlankDistractors(user, q, question, false, lmsProvider, quiz);
                         break;
                     }
                 case (int)QuestionTypeEnum.Matching:
                     {
-                        this.ProcessMatchingDistractors(user, q, question);
+                        this.ProcessMatchingDistractors(user, q, question, quiz);
                         break;
                     }
                 case (int)QuestionTypeEnum.TrueFalse:
@@ -557,12 +560,7 @@ namespace EdugameCloud.WCFService.Converters
             return questionText;
         }
 
-        private void ProcessFillInTheBlankDistractors(
-            User user,
-            LmsQuestionDTO q,
-            Question question,
-            bool option,
-            LmsProviderEnum lmsProvider)
+        private void ProcessFillInTheBlankDistractors(User user, LmsQuestionDTO q, Question question, bool option, LmsProviderEnum lmsProvider, LmsQuizDTO quiz)
         {
             switch (lmsProvider)
             {
@@ -571,18 +569,18 @@ namespace EdugameCloud.WCFService.Converters
                     {
                         throw new WarningMessageException("Unable to import. Fill In Multiple Blanks questions should have possible answers.");
                     }
-                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option, quiz);
                     break;
 
                 case LmsProviderEnum.Blackboard:
-                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option, quiz);
                     break;
 
                 case LmsProviderEnum.Moodle:
                     this.ProcessFillInTheBlankDistractorsMoodle(user, q, question, option);
                     break;
                 case LmsProviderEnum.Sakai:
-                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option);
+                    this.ProcessFillInTheBlankDistractorsCanvas(user, q, question, option, quiz);
                     break;
 
             }
@@ -660,14 +658,11 @@ namespace EdugameCloud.WCFService.Converters
             this.DistractorModel.RegisterSave(distractor);
         }
 
-        private void ProcessFillInTheBlankDistractorsCanvas(
-            User user,
-            LmsQuestionDTO q,
-            Question question,
-            bool option)
+        private void ProcessFillInTheBlankDistractorsCanvas(User user, LmsQuestionDTO q, Question question, bool option, LmsQuizDTO quiz)
         {
             var splitText = new List<string>();
-            var questionText = q.question_text.ClearName();
+            var questionText = ReplaceImageConstant(quiz, user, q, q.question_text.ClearName());
+
             while (questionText.Length > 0)
             {
                 int nextPlaceholderStart = questionText.IndexOf("[");
@@ -871,7 +866,7 @@ namespace EdugameCloud.WCFService.Converters
 
         private void ProcessImagesInDistractors(User user, LmsCompany lmsCompany, LmsQuestionDTO lmsQuestionDto, Question question, LmsQuizDTO quiz)
         {
-            for (var i = 0; i< lmsQuestionDto.answers.Count; i++)
+            for (var i = 0; i < lmsQuestionDto.answers.Count; i++)
             {
                 var answer = lmsQuestionDto.answers[i];
                 var lmsId = answer.id;
@@ -1112,7 +1107,7 @@ namespace EdugameCloud.WCFService.Converters
         private void ProcessMatchingDistractors(
             User user,
             LmsQuestionDTO q,
-            Question question)
+            Question question, LmsQuizDTO quiz)
         {
             foreach (var a in q.answers)
             {
@@ -1136,8 +1131,37 @@ namespace EdugameCloud.WCFService.Converters
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = true;
 
+                if (!string.IsNullOrEmpty(a.leftImageName))
+                {
+                    var fileName = a.leftImageName;
+                    var leftImg = MatchingSetImage(user, quiz, fileName, distractor);
+                    distractor.LeftImage = leftImg;
+                }
+                if (!string.IsNullOrEmpty(a.rightImageName))
+                {
+                    var fileName = a.rightImageName;
+                    var rightImg = MatchingSetImage(user, quiz, fileName, distractor);
+                    distractor.RightImage = rightImg;
+                }
+
                 this.DistractorModel.RegisterSave(distractor);
             }
+        }
+
+        private File MatchingSetImage(User user, LmsQuizDTO quiz, string fileName, Distractor distractor)
+        {
+            byte[] binary;
+            var hasImage = quiz.Images.TryGetValue(fileName, out binary);
+            if (hasImage)
+            {
+                var file = distractor.Image != null
+                    ? FileModel.GetOneById(distractor.Image.Id).Value
+                    : FileModel.CreateFile(user, fileName, DateTime.Now, null, null, null, null);
+                FileModel.SetData(file, binary);
+                file.FileName = fileName;
+                return file;
+            }
+            return null;
         }
 
         private void ProcessSingleMultipleChoiceTextDistractors(

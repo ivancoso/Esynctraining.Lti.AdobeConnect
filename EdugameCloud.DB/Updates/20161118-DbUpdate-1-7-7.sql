@@ -1,4 +1,18 @@
-﻿-- =============================================
+﻿alter table dbo.Distractor
+add leftImageId UNIQUEIDENTIFIER NULL
+
+alter table dbo.Distractor
+add rightImageId UNIQUEIDENTIFIER NULL
+
+alter table dbo.Distractor
+add CONSTRAINT [FK_Distractor_LeftImage] FOREIGN KEY (leftImageId) REFERENCES [dbo].[File] ([fileId])
+
+alter table dbo.Distractor
+add CONSTRAINT [FK_Distractor_RightImage] FOREIGN KEY (rightImageId) REFERENCES [dbo].[File] ([fileId])
+
+
+GO
+-- =============================================
 -- Author:		Eugene Baranovsky
 -- Create date: 08.30.2013
 -- Usage:		Public
@@ -6,7 +20,7 @@
 --				for each question of current quiz 
 --				by subModuleItemId.
 -- =============================================
-create PROCEDURE [dbo].[getSMIDistractorsBySMIId]
+alter PROCEDURE [dbo].[getSMIDistractorsBySMIId]
 	@subModuleItemId int = null
 AS
 BEGIN

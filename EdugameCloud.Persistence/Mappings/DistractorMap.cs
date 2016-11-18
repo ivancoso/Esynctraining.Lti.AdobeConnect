@@ -30,6 +30,8 @@
 
             this.References(x => x.Question).Nullable();
             this.References(x => x.Image).Column("imageId").Nullable();
+            this.References(x => x.LeftImage).Column("leftImageId").Nullable();
+            this.References(x => x.RightImage).Column("rightImageId").Nullable();
             this.References(x => x.CreatedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Distractor>(x => x.CreatedBy)));
             this.References(x => x.ModifiedBy).Nullable().LazyLoad().Column(Inflector.Uncapitalize(Lambda.Property<Distractor>(x => x.ModifiedBy)));
         }

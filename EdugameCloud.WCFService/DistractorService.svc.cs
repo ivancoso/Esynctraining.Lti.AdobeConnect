@@ -244,6 +244,8 @@ namespace EdugameCloud.WCFService
 
             instance.DateModified = DateTime.Now;
             instance.Image = q.imageId.HasValue ? fileModel.GetOneById(q.imageId.Value).Value : null;
+            instance.LeftImage = q.leftImageId.HasValue ? fileModel.GetOneById(q.leftImageId.Value).Value : null;
+            instance.RightImage = q.rightImageId.HasValue ? fileModel.GetOneById(q.rightImageId.Value).Value : null;
             instance.Question = q.questionId.HasValue ? questionModel.GetOneById(q.questionId.Value).Value : null;
             instance.ModifiedBy = q.modifiedBy.HasValue ? userModel.GetOneById(q.modifiedBy.Value).Value : null;
             instance.CreatedBy = q.createdBy.HasValue ? userModel.GetOneById(q.createdBy.Value).Value : null;

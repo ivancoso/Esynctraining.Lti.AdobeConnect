@@ -251,6 +251,8 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                     int order = 0;
                     string questionText = null, answerText = null, lmsValue = null;
                     byte[] matchingImage = null;
+                    string leftMatchingImageText = string.Empty;
+                    string rightMatchingImageText = string.Empty;
 
                     if (answer is JObject)
                     {
@@ -268,24 +270,23 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                             var isIndexInt = int.TryParse(lmsValue, out propIndexInt);
                             if (isIndexInt)
                             {
-                                if (propIndexInt % 2 == 0)
+
+                                var leftImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "leftImageLink");
+                                if (leftImage != null)
                                 {
-                                    var leftImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "leftImageLink");
-                                    if (leftImage != null)
-                                    {
-                                        var lazyLoadImages = images();
-                                        lazyLoadImages.TryGetValue(leftImage.Value.ToString(), out matchingImage);
-                                    }
+                                    //var lazyLoadImages = images();
+                                    //lazyLoadImages.TryGetValue(leftImage.Value.ToString(), out matchingImage);
+                                    leftMatchingImageText = leftImage.Value.ToString();
                                 }
-                                else
+
+                                var rightImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "rightImageLink");
+                                if (rightImage != null)
                                 {
-                                    var rightImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "rightImageLink");
-                                    if (rightImage != null)
-                                    {
-                                        var lazyLoadImages = images();
-                                        lazyLoadImages.TryGetValue(rightImage.Value.ToString(), out matchingImage);
-                                    }
+                                    //var lazyLoadImages = images();
+                                    //lazyLoadImages.TryGetValue(rightImage.Value.ToString(), out matchingImage);
+                                    rightMatchingImageText = rightImage.Value.ToString();
                                 }
+
                             }
 
                         }
@@ -307,8 +308,10 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         /*weight = i == correctAnswerId ? 100 : 0*/
                         weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
                     };
-                    if (matchingImage != null)
-                        answerDto.fileData = Encoding.UTF8.GetString(matchingImage);
+                    if (!string.IsNullOrEmpty(leftMatchingImageText))
+                        answerDto.leftImageName = leftMatchingImageText;
+                    if (!string.IsNullOrEmpty(rightMatchingImageText))
+                        answerDto.rightImageName = rightMatchingImageText;
                     ret.Add(answerDto);
 
                     i++;
