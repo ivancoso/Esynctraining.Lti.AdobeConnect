@@ -429,10 +429,12 @@ namespace EdugameCloud.WCFService.Converters
                 var titles = match.Cast<Match>().Select(x => x.Value).Distinct();
                 foreach (var title in titles)
                 {
-                    byte[] imageBinary;
-                    var result = quiz.Images.TryGetValue(title, out imageBinary);
+                    //var fileName = title.Replace(@"@X@EmbeddedFile.requestUrlStub@X@", String.Empty);
+                    string imageBase64;
+                    var result = quiz.Images.TryGetValue(title, out imageBase64);
                     if (!result) continue;
                     var theFile = FileModel.GetOneByUniqueName(title).Value;
+                    var imageBinary = Convert.FromBase64String(imageBase64);
                     var newOrUpdatedFile = theFile != null
                         ? FileModel.SetData(theFile, imageBinary)
                         : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
@@ -877,16 +879,15 @@ namespace EdugameCloud.WCFService.Converters
                 var imageLink = lmsQuestionDto.answersImageLinks[i];
                 if (string.IsNullOrEmpty(imageLink))
                     continue;
-                byte[] image;
-                var getResult = quiz.Images.TryGetValue(imageLink, out image);
+                string imageBase64;
+                var getResult = quiz.Images.TryGetValue(imageLink, out imageBase64);
 
                 if (!getResult)
                     continue;
-                byte[] imageBytes;
-                if (image == null)
+                if (imageBase64 == null)
                     continue;
 
-                imageBytes = Convert.FromBase64String(Encoding.UTF8.GetString(image));
+                var imageBytes = Convert.FromBase64String(imageBase64);
 
                 var imageName = string.IsNullOrEmpty(imageLink) ?
                     answer.question_text.Substring(
@@ -1150,10 +1151,11 @@ namespace EdugameCloud.WCFService.Converters
 
         private File MatchingSetImage(User user, LmsQuizDTO quiz, string fileName, Distractor distractor)
         {
-            byte[] binary;
-            var hasImage = quiz.Images.TryGetValue(fileName, out binary);
+            string imageBase64;
+            var hasImage = quiz.Images.TryGetValue(fileName, out imageBase64);
             if (hasImage)
             {
+                var binary = Convert.FromBase64String(imageBase64);
                 var file = distractor.Image != null
                     ? FileModel.GetOneById(distractor.Image.Id).Value
                     : FileModel.CreateFile(user, fileName, DateTime.Now, null, null, null, null);

@@ -116,7 +116,7 @@ namespace EdugameCloud.Lti.BlackBoard
                                 if (repoImages != null)
                                 {
                                     var temp = repoImages.ToObject<Dictionary<string, string>>();
-                                    lqd.Images = temp.ToDictionary(x => x.Key, x => Encoding.UTF8.GetBytes(x.Value));
+                                    lqd.Images = temp.ToDictionary(x => x.Key, x => x.Value);
                                 } 
                             }
                             quizDTO.Add(lqd);

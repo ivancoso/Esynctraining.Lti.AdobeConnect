@@ -37,7 +37,7 @@ namespace EdugameCloud.Lti.DTO
         /// <summary>
         /// All images for a quiz
         /// </summary>
-        public Dictionary<string, byte[]> Images { get; set; }
+        public Dictionary<string, string> Images { get; set; }
 
         #endregion
     }

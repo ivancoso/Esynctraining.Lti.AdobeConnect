@@ -13,7 +13,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
     public class BlackboardCommonQuestionParser : IBlackboardQuestionParser
     {
         private readonly string[] singleQuestionTypes = new[] { "Multiple Choice", "Opinion Scale" };
-        private Func<Dictionary<string, byte[]>> images;
+        private Func<Dictionary<string, string>> images;
 
         public BlackboardCommonQuestionParser(BBAssessmentDTO td)
         {
@@ -22,7 +22,7 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                 var tdImages = td.images as JToken;
                 if (tdImages == null) return null;
                 var t = tdImages.ToObject<Dictionary<string, string>>();
-                return t.ToDictionary(x => x.Key, x => Encoding.UTF8.GetBytes(x.Value));
+                return t.ToDictionary(x => x.Key, x => x.Value);
             };
         }
 
@@ -97,9 +97,9 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                     }
                     var image = answersList["image"].ToString();
                     //var fileData = answersList["imageBinary"].ToString();
-                    byte[] fileData = null;
+                    string fileDataBase64 = null;
                     var lazyLoadImages = images();
-                    lazyLoadImages.TryGetValue(image, out fileData);
+                    lazyLoadImages.TryGetValue(image, out fileDataBase64);
 
                     var answerDto = new AnswerDTO()
                     {
@@ -107,8 +107,8 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
                         question_text = image,
                         //fileData = Encoding.UTF8.GetString(fileData)
                     };
-                    if (fileData != null)
-                        answerDto.fileData = Encoding.UTF8.GetString(fileData);
+                    if (fileDataBase64 != null)
+                        answerDto.fileData = fileDataBase64;
                     ret.Add(answerDto);
                     return ret;
                 }
