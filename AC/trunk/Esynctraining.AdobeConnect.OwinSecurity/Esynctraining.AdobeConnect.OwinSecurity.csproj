@@ -89,6 +89,7 @@
     <Compile Include="Identity\IEdugameCloudUserStore.cs" />
     <Compile Include="PermissionProviders\ConfigurationUserGroupPermissionProvider.cs" />
     <Compile Include="PermissionProviders\DefaultUserGroupPermissionProvider.cs" />
+    <Compile Include="PermissionProviders\IUserAuthorizationProvider.cs" />
     <Compile Include="PermissionProviders\IUserGroupPermissionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Security\OAuth\ApplicationOAuthProvider.cs" />

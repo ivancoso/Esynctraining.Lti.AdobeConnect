@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Identity;
@@ -56,6 +57,14 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 oAuthIdentity.AddClaim(new Claim("c_token", user.CompanyToken));
                 oAuthIdentity.AddClaim(new Claim("ac_domain", user.AcDomain));
                 oAuthIdentity.AddClaim(new Claim("ac_session", user.AcSessionToken));
+                if (user.Roles != null)
+                {
+                    foreach (var role in user.Roles)
+                    {
+                        var roleClaim = new Claim(ClaimTypes.Role, role);
+                        oAuthIdentity.AddClaim(roleClaim);
+                    }
+                }
 
                 // cookie: ClaimsIdentity cookiesIdentity = await userManager.CreateIdentityAsync(user,
                 // cookie: CookieAuthenticationDefaults.AuthenticationType);
@@ -132,10 +141,24 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 return;
             }
             // check for existing claim and remove it
-            var existingClaim = identity.FindFirst("ac_session");
-            if (existingClaim != null)
+//            var existingClaim = identity.FindFirst("ac_session");
+//            if (existingClaim != null)
+            var existingClaims = identity.Claims.Where(x => x.Type == "ac_session" || x.Type == ClaimTypes.Role);
+            foreach (var existingClaim in existingClaims)
+            {
                 identity.RemoveClaim(existingClaim);
+            }
+
             identity.AddClaim(new Claim("ac_session", user.AcSessionToken));
+
+            if (user.Roles != null)
+            {
+                foreach (var role in user.Roles)
+                {
+                    var roleClaim = new Claim(ClaimTypes.Role, role);
+                    identity.AddClaim(roleClaim);
+                }
+            }
             context.Validated(context.Ticket);
 //            _logger?.Info($"[GrantRefreshToken] PrincipalId={user.Id}, ACSession={context.Ticket.Identity.FindFirst("ac_session")}");
             //            return Task.FromResult<object>(null);

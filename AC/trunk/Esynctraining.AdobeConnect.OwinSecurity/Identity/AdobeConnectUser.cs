@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNet.Identity;
 
 namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 {
@@ -13,6 +14,8 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
         public string AcDomain { get; set; }
 
         public string AcSessionToken { get; set; }
+
+        public IEnumerable<string> Roles { get; set; }
 
     }
 

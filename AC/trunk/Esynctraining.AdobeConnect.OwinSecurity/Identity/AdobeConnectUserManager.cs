@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ConnectExtensions.Services.Client;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
@@ -18,6 +16,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
     {
         private readonly IAcDomainValidator _acDomainValidator;
         private readonly IUserGroupPermissionProvider _userGroupPermissionProvider;
+        private readonly IUserAuthorizationProvider _userAuthorizationProvider;
         private readonly ILogger _logger;
 
 
@@ -30,7 +29,9 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             IAcDomainValidator acDomainValidator,
             IUserGroupPermissionProvider userGroupPermissionProvider,
             IUserStore<AdobeConnectUser> userStore, 
-            ILogger logger)
+            ILogger logger,
+            IUserAuthorizationProvider userAuthorizationProvider = null
+            )
             : base(userStore)
         {
             if (acDomainValidator == null)
@@ -45,6 +46,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             //this.PasswordHasher = new EdugameCloudPasswordHasher();
             _acDomainValidator = acDomainValidator;
             _userGroupPermissionProvider = userGroupPermissionProvider;
+            _userAuthorizationProvider = userAuthorizationProvider;
             _logger = logger;
         }
 
@@ -70,13 +72,22 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                 }
 
                 string sessionToken;
-                UserInfo acPrincipal = TryLogin(new AdobeConnectAccess(acDomain, acLogin, password), out sessionToken);
+                string apiUrl = acDomain + "/api/xml";
+                var connectionDetails = new ConnectionDetails(apiUrl);
+                var provider = new AdobeConnectProvider(connectionDetails);
+                UserInfo acPrincipal = TryLogin(provider, new AdobeConnectAccess(acDomain, acLogin, password), out sessionToken);
 //                _logger?.Info($"[UserManager.FindAsync] ACSession={sessionToken}");
 
                 if (acPrincipal == null)
                 {
 //                    _logger?.Warn($"[UserManager.FindAsync] Principal not found. AcDomain={acDomain}, AcLogin={acLogin}");
                     return null;
+                }
+
+                var roles = new List<string>();
+                if (_userAuthorizationProvider != null)
+                {
+                    roles.AddRange(_userAuthorizationProvider.GetUserPermissions(provider, acPrincipal));
                 }
 
                 var applicationUser = new AdobeConnectUser
@@ -87,6 +98,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                     CompanyToken = companyToken,
                     AcDomain = acDomain,
                     AcSessionToken = sessionToken,
+                    Roles = roles
                 };
                 var store = Store as IEdugameCloudUserStore<AdobeConnectUser>;
                 if (store != null)
@@ -106,12 +118,8 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             return taskInvoke;
         }
 
-        private UserInfo TryLogin(IAdobeConnectAccess credentials, out string sessionToken)
+        private UserInfo TryLogin(AdobeConnectProvider provider, IAdobeConnectAccess credentials, out string sessionToken)
         {
-            string apiUrl = credentials.Domain + "/api/xml";
-            var connectionDetails = new ConnectionDetails(apiUrl);
-            var provider = new AdobeConnectProvider(connectionDetails);
-
             provider.Logout();
             LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
             if (!result.Success)
