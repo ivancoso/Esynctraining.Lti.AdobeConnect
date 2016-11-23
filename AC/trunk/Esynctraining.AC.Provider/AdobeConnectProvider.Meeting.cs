@@ -43,12 +43,12 @@
         //{
         //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.Host);
         //}
-        
+
         //public PermissionCollectionResult GetMeetingPresenters(string meetingId)
         //{
         //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.MiniHost);
         //}
-        
+
         //public PermissionCollectionResult GetMeetingParticipants(string meetingId)
         //{
         //    return this.GetPermissionsInfo(meetingId, null, CommandParams.Permissions.Filter.PermissionId.View);
@@ -57,6 +57,23 @@
         /// <summary>
         /// Returns ALL meeting participants (hosts, presenters and participans)
         /// </summary>
+
+        public PermissionCollectionResult GetScoPermissionsByPermissionId(string scoId, IEnumerable<PermissionId> permissionsFilter)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("SCO can't be empty", nameof(scoId));
+            if (permissionsFilter == null)
+                throw new ArgumentNullException(nameof(scoId));
+
+            var filter = string.Join("&",
+                permissionsFilter.Select(
+                    x =>
+                        string.Format(CommandParams.Permissions.Filter.PermissionId.Format,
+                            x.ToString().Replace("-", "_"))));
+
+            return GetPermissionsInfo(scoId, filter);
+        }
+
         public MeetingPermissionCollectionResult GetAllMeetingEnrollments(string meetingId)
         {
             if (string.IsNullOrWhiteSpace(meetingId))

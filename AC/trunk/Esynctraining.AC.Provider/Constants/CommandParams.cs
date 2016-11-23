@@ -270,6 +270,8 @@
                 /// </summary>
                 internal static class PermissionId
                 {
+                    public const string Format = "filter-permission-id={0}";
+                    
                     /// <summary>
                     /// The host.
                     /// </summary>
