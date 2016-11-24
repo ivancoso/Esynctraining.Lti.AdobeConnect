@@ -1,92 +1,14 @@
-using Esynctraining.AC.Provider.Constants;
-
 namespace Esynctraining.AC.Provider
 {
     using System;
     using System.IO;
-    using System.Net;
     using System.Text;
 
     /// <summary>
     /// The http utils internal.
     /// </summary>
-    internal class HttpUtilsInternal
+    internal static class HttpUtilsInternal
     {
-        /// <summary>
-        /// Retrieves remote http contents
-        /// </summary>
-        /// <param name="url">Url to the source</param>
-        /// <param name="accessCredentials">optional Credentials</param>
-        /// <param name="proxyUrl">option proxy Url</param>
-        /// <returns>Http Contents.</returns>
-        public static string HttpGetContents(string url, NetworkCredential accessCredentials, string proxyUrl)
-        {
-            var httpWebRequest = WebRequest.Create(url) as HttpWebRequest;
-
-            if (httpWebRequest == null)
-            {
-                return null;
-            }
-
-            httpWebRequest.Credentials = accessCredentials ?? CredentialCache.DefaultCredentials;
-
-            if (!string.IsNullOrEmpty(proxyUrl))
-            {
-                httpWebRequest.Proxy = new WebProxy(proxyUrl, true)
-                                           {
-                                               Credentials = accessCredentials ?? CredentialCache.DefaultCredentials
-                                           };
-            }
-
-            httpWebRequest.Timeout = AdobeConnectProviderConstants.DefaultHttpContentRequestTimeout;
-            httpWebRequest.Accept = "*/*";
-            httpWebRequest.KeepAlive = false;
-            httpWebRequest.CookieContainer = new CookieContainer();
-
-            HttpWebResponse httpWebResponse = null;
-
-            try
-            {
-                ServicePointManager.ServerCertificateValidationCallback = delegate
-                {
-                    return true;
-                };
-
-                httpWebResponse = httpWebRequest.GetResponse() as HttpWebResponse;
-
-                if (httpWebResponse == null)
-                {
-                    return null;
-                }
-
-                var receiveStream = httpWebResponse.GetResponseStream();
-
-                if (receiveStream == null)
-                {
-                    return null;
-                }
-
-                using (var readStream = new StreamReader(receiveStream, Encoding.UTF8))
-                {
-                    return readStream.ReadToEnd();
-                }
-            }
-            catch (Exception ex)
-            {
-                httpWebRequest.Abort();
-                TraceTool.TraceException(ex);
-            }
-            finally
-            {
-                if (httpWebResponse != null)
-                {
-                    httpWebResponse.Close();
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// The url encode.
         /// </summary>
@@ -101,6 +23,7 @@ namespace Esynctraining.AC.Provider
             return UrlEncode(text, Encoding.UTF8);
         }
 
+
         /// <summary>
         /// The url encode.
         /// </summary>
@@ -113,7 +36,7 @@ namespace Esynctraining.AC.Provider
         /// <returns>
         /// The <see cref="string"/>.
         /// </returns>
-        public static string UrlEncode(string text, Encoding encoding)
+        private static string UrlEncode(string text, Encoding encoding)
         {
             if (text == null)
             {
@@ -128,68 +51,6 @@ namespace Esynctraining.AC.Provider
             var bytes = encoding.GetBytes(text);
 
             return Encoding.ASCII.GetString(UrlEncodeToBytes(bytes, 0, bytes.Length));
-        }
-
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <returns>
-        /// The bytes.
-        /// </returns>
-        public static byte[] UrlEncodeToBytes(string text)
-        {
-            return UrlEncodeToBytes(text, Encoding.UTF8);
-        }
-
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <param name="encoding">
-        /// The encoding.
-        /// </param>
-        /// <returns>
-        /// The bytes.
-        /// </returns>
-        public static byte[] UrlEncodeToBytes(string text, Encoding encoding)
-        {
-            if (text == null)
-            {
-                return null;
-            }
-
-            if (text == string.Empty)
-            {
-                return new byte[0];
-            }
-
-            var bytes = encoding.GetBytes(text);
-
-            return UrlEncodeToBytes(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="bytes">
-        /// The bytes.
-        /// </param>
-        /// <returns>
-        /// The encoded bytes.
-        /// </returns>
-        public static byte[] UrlEncodeToBytes(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                return null;
-            }
-
-            return bytes.Length == 0 ? new byte[0] : UrlEncodeToBytes(bytes, 0, bytes.Length);
         }
 
         /// <summary>
@@ -210,7 +71,7 @@ namespace Esynctraining.AC.Provider
         /// <exception cref="ArgumentOutOfRangeException">
         /// on invalid offset or count
         /// </exception>
-        public static byte[] UrlEncodeToBytes(byte[] bytes, int offset, int count)
+        private static byte[] UrlEncodeToBytes(byte[] bytes, int offset, int count)
         {
             if (bytes == null)
             {
@@ -243,20 +104,6 @@ namespace Esynctraining.AC.Provider
             }
 
             return result.ToArray();
-        }
-
-        /// <summary>
-        /// The url encode unicode.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string UrlEncodeUnicode(string text)
-        {
-            return text == null ? null : Encoding.ASCII.GetString(UrlEncodeUnicodeToBytes(text));
         }
 
         /// <summary>
@@ -364,5 +211,7 @@ namespace Esynctraining.AC.Provider
 
             return result.ToArray();
         }
+
     }
+
 }
