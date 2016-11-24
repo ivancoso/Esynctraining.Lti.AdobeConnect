@@ -64,8 +64,13 @@ namespace Esynctraining.AdobeConnect
         //RecordingJobResult GetRecordingJob(string jobId);
         //RecordingJobCollectionResult GetRecordingJobsList(string folderId);
         RecordingCollectionResult GetRecordingsList(string folderId);
+        
+        RecordingCollectionResult GetRecordingsList(string folderId,
+            int startIndex, int limit,
+            string propertySortBy, SortOrder order,
+            bool excludeMp4 = false,
+            string scoId = null);
 
-        RecordingCollectionResult GetRecordingsList(string folderId, int skip, int take, string propertySortBy, SortOrder order, bool excludeMp4 = false);
 
         ScoInfoResult GetScoByUrl(string scoUrl);
         ScoContentResult GetScoContent(string scoId);
@@ -77,6 +82,9 @@ namespace Esynctraining.AdobeConnect
         ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria);
 
         ScoInfoResult GetScoInfo(string scoId);
+
+        CollectionResult<ScoNav> GetScoNavigation(string scoId);
+
         PermissionCollectionResult GetScoPublicAccessPermissions(string scoId);
 
         /// <summary>
@@ -122,6 +130,11 @@ namespace Esynctraining.AdobeConnect
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
+
+        IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null);
+
+        ReportScoViewsContentCollectionResult ReportScoViews(string scoId);
+
         RecordingJobResult ScheduleRecordingJob(string recordingScoId);
         //ScoContentCollectionResult SearchScoByDescription(string description);
         ScoContentCollectionResult SearchScoByName(string name);

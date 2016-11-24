@@ -436,9 +436,9 @@ namespace Esynctraining.AdobeConnect
                 folderId);
         }
 
-        public RecordingCollectionResult GetRecordingsList(string folderId, int skip, int take, string propertySortBy, SortOrder order, bool excludeMp4 = false)
+        public RecordingCollectionResult GetRecordingsList(string folderId, int skip, int take, string propertySortBy, SortOrder order, bool excludeMp4 = false, string scoId = null)
         {
-            return Execute(() => { return _provider.GetRecordingsList(folderId, skip, take, propertySortBy, order, excludeMp4); },
+            return Execute(() => { return _provider.GetRecordingsList(folderId, skip, take, propertySortBy, order, excludeMp4, scoId); },
                 folderId);
         }
 
@@ -510,6 +510,22 @@ namespace Esynctraining.AdobeConnect
             //}
 
             return result;
+        }
+
+        public CollectionResult<ScoNav> GetScoNavigation(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            try
+            {
+                return _provider.GetScoNavigation(scoId);
+            }
+            catch (Exception ex)
+            {
+                _logger.ErrorFormat(ex, "scoId:{0}.", scoId);
+                throw new AdobeConnectException("GetScoNavigation exception", ex);
+            }
         }
 
         public PermissionCollectionResult GetScoPublicAccessPermissions(string scoId)
@@ -699,6 +715,19 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportMyMeetings(permission, startIndex, limit); });
         }
 
+        public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
+        {
+            return Execute(() => { return _provider.ReportRecordingsPaged(totalLimit, filter, sort); });
+        }
+
+        public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            return Execute(() => { return _provider.ReportScoViews(scoId); });
+        }
+
         public RecordingJobResult ScheduleRecordingJob(string recordingScoId)
         {
             return Execute(() => { return _provider.ScheduleRecordingJob(recordingScoId); },
@@ -830,7 +859,7 @@ namespace Esynctraining.AdobeConnect
 
             if (typeof(T) == typeof(StatusInfo))
             {
-                StatusInfo status = result as StatusInfo;
+                var status = result as StatusInfo;
                 if (status.Code != StatusCodes.ok)
                 {
                     string errorInfo = status.GetErrorInfo();
@@ -839,7 +868,7 @@ namespace Esynctraining.AdobeConnect
                 }
             }
 
-            ResultBase acResult = result as ResultBase;
+            var acResult = result as ResultBase;
             if ((acResult != null) && !acResult.Success)
             {
                 string errorInfo = acResult.Status.GetErrorInfo();

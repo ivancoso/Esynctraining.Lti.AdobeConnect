@@ -111,13 +111,13 @@ namespace Esynctraining.AC.Provider
         public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
         {
             // act: "report-bulk-objects" paged by 10K
-            StatusInfo status = new StatusInfo();
+            var status = new StatusInfo();
             var responseIsOk = false;
             var iteration = 1;
             var limit = 10000;
             if (totalLimit < limit && totalLimit != 0)
                 limit = totalLimit;
-            ScoContentCollectionResult scoContentCollectionResult = new ScoContentCollectionResult(status);
+            var scoContentCollectionResult = new ScoContentCollectionResult(status);
             var result = new List<ScoContentCollectionResult>();
             do
             {
@@ -131,7 +131,10 @@ namespace Esynctraining.AC.Provider
                     result.Add(scoContentCollectionResult);
                 }
                 iteration++;
-            } while (scoContentCollectionResult.Success && scoContentCollectionResult.Values != null && scoContentCollectionResult.Values.Any() && (totalLimit == 0 || totalLimit > 0 && (iteration - 1) * limit < totalLimit));
+            } while (scoContentCollectionResult.Success 
+                && scoContentCollectionResult.Values != null
+                && scoContentCollectionResult.Values.Any() 
+                && (totalLimit == 0 || totalLimit > 0 && (iteration - 1) * limit < totalLimit));
 
 
             return result;

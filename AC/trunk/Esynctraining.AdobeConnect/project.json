@@ -1,5 +1,5 @@
 {
-	"version": "1.0.1.0",
+	"version": "1.0.1.1",
 	"title": "Esynctraining.AdobeConnect",
 	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
 	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
@@ -9,7 +9,7 @@
 		"requireLicenseAcceptance": false,
 		"tags": [ "AC", "AdobeConnect" ],
 		"owners": [ "eSyncTraining.com" ],
-		"releaseNotes": "moved to .net core project (4.5 + 4.6.1)"
+		"releaseNotes": "added api used by migration projects"
 	},
 
 	"buildOptions": {
