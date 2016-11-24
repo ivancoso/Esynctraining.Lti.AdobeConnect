@@ -1,0 +1,22 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5": {},
+    ".NETFramework,Version=v4.6.1": {}
+  },
+  "libraries": {},
+  "projectFileDependencyGroups": {
+    "": [],
+    ".NETFramework,Version=v4.5": [
+      "System.Net.Http",
+      "System.Xml"
+    ],
+    ".NETFramework,Version=v4.6.1": [
+      "System.Net.Http",
+      "System.Xml"
+    ]
+  },
+  "tools": {},
+  "projectFileToolGroups": {}
+}

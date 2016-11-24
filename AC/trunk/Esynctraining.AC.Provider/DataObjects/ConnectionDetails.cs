@@ -12,7 +12,7 @@ namespace Esynctraining.AC.Provider.DataObjects
         public int HttpRequestTimeout { get; private set; }
         public int HttpContentRequestTimeout { get; private set; }
         
-        public ProxyCredentials Proxy { get; set; }
+        //public ProxyCredentials Proxy { get; set; }
 
 
         public ConnectionDetails(string serviceUrl,

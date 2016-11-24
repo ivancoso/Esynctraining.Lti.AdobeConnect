@@ -448,13 +448,6 @@
                 status.Code = StatusCodes.invalid;
                 status.SubCode = StatusSubCodes.format;
                 status.UnderlyingExceptionInfo = ex;
-
-                // delete meeting
-                // [DD]: why would you do that?!..
-                // if (meetingDetail != null && !string.IsNullOrEmpty(meetingDetail.scoId))
-                // {
-                // this.DeleteSco(meetingDetail.scoId);
-                // }
             }
 
             return new ScoInfoResult(status, meetingDetail);

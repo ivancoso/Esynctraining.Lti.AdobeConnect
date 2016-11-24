@@ -459,17 +459,17 @@
         {
             try
             {
-                if (connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
-                {
-                    if (!string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Login)
-                        && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
-                    {
-                        request.Proxy = new WebProxy(this.connectionDetails.Proxy.Url, true)
-                        {
-                            Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
-                        };
-                    }
-                }
+                //if (connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
+                //{
+                //    if (!string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Login)
+                //        && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
+                //    {
+                //        request.Proxy = new WebProxy(this.connectionDetails.Proxy.Url, true)
+                //        {
+                //            Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
+                //        };
+                //    }
+                //}
             }
             catch (Exception ex)
             {

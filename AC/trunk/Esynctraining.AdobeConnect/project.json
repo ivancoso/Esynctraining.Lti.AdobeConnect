@@ -1,0 +1,64 @@
+{
+	"version": "1.0.1.0",
+	"title": "Esynctraining.AdobeConnect",
+	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
+	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
+	"authors": [ "eSyncTraining.com" ],
+
+	"packOptions": {
+		"requireLicenseAcceptance": false,
+		"tags": [ "AC", "AdobeConnect" ],
+		"owners": [ "eSyncTraining.com" ],
+		"releaseNotes": "moved to .net core project (4.5 + 4.6.1)"
+	},
+
+	"buildOptions": {
+			"embed": [
+				"Windsor.xml"
+			]
+	},
+
+  "dependencies": {
+    "Esynctraining.AC.Provider": "1.0.2.0",
+    "Esynctraining.Core.Only": "1.0.0.27",
+    "NodaTime": "1.3.2"
+    //"NETStandard.Library": "1.6.0"
+  },
+
+	"frameworks": {
+		"net45": {
+					"frameworkAssemblies": {
+						"System.Runtime.Serialization": ""
+						//"System.Net.Http": "",
+						//"System.Xml": ""
+					}
+		},
+		"net461": {
+					"frameworkAssemblies": {
+						"System.Runtime.Serialization": ""
+						//"System.Net.Http": "",
+						//"System.Xml": ""
+					}
+		}
+
+
+		//"netstandard1.6": {
+		//	"imports": "dnxcore50",
+		//			"dependencies": {
+		//				"System.Net.Requests": "4.3.0",
+		//				"System.Xml.XmlSerializer": "4.3.0",
+		//				"System.Xml.XmlDocument": "4.3.0",
+		//				"system.xml.xpath.xmldocument": "4.3.0",
+		//				"System.Diagnostics.StackTrace": "4.3.0",
+		//				"system.net.http.winhttphandler": "4.3.0"
+		//			}
+		//}
+	},
+
+	"scripts": {
+		"postcompile": [
+			"dotnet pack --no-build --configuration %compile:Configuration%"
+		]
+	}
+
+}
