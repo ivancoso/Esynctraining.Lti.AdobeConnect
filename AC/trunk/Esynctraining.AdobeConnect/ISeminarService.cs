@@ -8,6 +8,7 @@ namespace Esynctraining.AdobeConnect
         IEnumerable<ScoContent> GetAllSeminarLicenses(IAdobeConnectProxy provider);
 
         IEnumerable<SharedSeminarLicenseSco> GetSharedSeminarLicenses(IAdobeConnectProxy provider);
+
         IEnumerable<UserSeminarLicenseSco> GetUserSeminarLicenses(IAdobeConnectProxy provider);
 
         IEnumerable<ScoContent> GetSeminars(string seminarLicenseScoId, IAdobeConnectProxy provider);

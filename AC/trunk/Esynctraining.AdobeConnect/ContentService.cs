@@ -50,6 +50,7 @@ namespace Esynctraining.AdobeConnect
             return shortcuts.Where(s => typeName.Contains(s.Type));
         }
 
+        [Obsolete] //??
         public IEnumerable<ScoContent> GetMyContent()
         {
             var shortcut = _provider.GetShortcutByType("my-content");
@@ -62,6 +63,7 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
+        [Obsolete] //??
         public ScoContent GetUserContentFolder(string userLogin)
         {
             if (string.IsNullOrWhiteSpace(userLogin))
@@ -87,6 +89,7 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
+        [Obsolete] //??
         public IEnumerable<ScoContent> GetSharedContent()
         {
             var shortcut = _provider.GetShortcutByType("content");
@@ -148,15 +151,6 @@ namespace Esynctraining.AdobeConnect
             }
 
             return sco.ScoInfo;
-        }
-
-        private static string GetDownloadLink(string acServer, string urlPath, string fileNameWithExtention)
-        {
-            return string.Format(
-                "{0}/{1}/output/{2}?download={2}",
-                acServer.Replace(@"api/xml", string.Empty).Trim('/'),
-                urlPath,
-                fileNameWithExtention);
         }
 
     }

@@ -148,6 +148,7 @@ namespace Esynctraining.AdobeConnect
             }
         }
 
+        [IgnoreDataMember]
         public TimeZoneInfo TimeZoneInfo { get; set; }
 
         [DataMember(Name = "passwordPolicies")]
