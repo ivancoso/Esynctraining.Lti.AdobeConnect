@@ -9,6 +9,7 @@
     using Esynctraining.AC.Provider.Entities;
     using Esynctraining.AC.Provider.EntityParsing;
     using Esynctraining.AC.Provider.Utils;
+    using Extensions;
 
     /// <summary>
     /// The adobe connect provider.
@@ -194,6 +195,19 @@
             //    throw new ArgumentException("Non-empty value expected", nameof(name));
 
             var filter = string.Format(CommandParams.ScoName, scoId, UrlEncode(name));
+            return CallScoExpandedContent(scoId, filter);
+        }
+
+        public ScoContentCollectionResult GetScoExpandedContentByIcon(string scoId, string icon, int start = 0, int rows = 0)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (string.IsNullOrWhiteSpace(icon))
+                throw new ArgumentException("Non-empty value expected", nameof(icon));
+
+            var filter = string.Format(CommandParams.ScoIcon, scoId, UrlEncode(icon))
+                .AppendPagingIfNeeded(start, rows)
+                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending);
             return CallScoExpandedContent(scoId, filter);
         }
 
