@@ -312,7 +312,6 @@ namespace EdugameCloud.WCFService.Converters
 
                 var lmsQuestionId = quizQuestion.id;
 
-
                 var question = this.QuestionModel.GetOneBySubmoduleItemIdAndLmsId(submodule.Id, lmsQuestionId).Value ??
                         new Question
                         {
@@ -345,7 +344,6 @@ namespace EdugameCloud.WCFService.Converters
                 question.IsActive = true;
                 question.QuestionOrder = questionOrder++;
                 question.Rows = quizQuestion.rows;
-
 
                 var isTransient = question.Id == 0;
                 if (quizQuestion.files.Count == 1 && !string.IsNullOrEmpty(quizQuestion.files[0].base64Content))
@@ -418,8 +416,10 @@ namespace EdugameCloud.WCFService.Converters
             }
         }
 
-        private string ReplaceImageConstant(LmsQuizDTO quiz, User user, LmsQuestionDTO quizQuestion, string htmlText)
+        private string ReplaceImageConstant(LmsQuizDTO quiz, User user, LmsQuestionDTO quizQuestion, string questionText)
         {
+            if (string.IsNullOrEmpty(quizQuestion.htmlText))
+                return questionText;
             var pattern = @"@X@EmbeddedFile\.requestUrlStub@X@[A-Za-z\/\-_\+\d\.]+";
             var regex = new Regex(pattern);
 
@@ -440,10 +440,10 @@ namespace EdugameCloud.WCFService.Converters
                         : FileModel.CreateFile(user, title, DateTime.Now, null, null, null, null);
                     //var newFileUrl = Settings.BaseServiceUrl.ToString().TrimEnd('/') + "/file/get?id=" + newOrUpdatedFile.Id;
                     var newFileUrl = "/file/get?id=" + newOrUpdatedFile.Id;
-                    htmlText = htmlText.Replace(title, newFileUrl);
+                    questionText = questionText.Replace(title, newFileUrl);
                 }
             }
-            return htmlText;
+            return questionText;
         }
 
         private void ProcessDistractors(User user, LmsCompany lmsCompany, int qtypeId, LmsQuestionDTO q, Question question, LmsProviderEnum lmsProvider, LmsQuizDTO quiz)
@@ -522,6 +522,7 @@ namespace EdugameCloud.WCFService.Converters
             {
                 case LmsProviderEnum.Canvas:
                 case LmsProviderEnum.Blackboard:
+                case LmsProviderEnum.Sakai:
                     return this.ProcessFillInTheBlankQuestionTextCanvas(q);
                 case LmsProviderEnum.Moodle:
                     return this.ProcessFillInTheBlankQuestionTextMoodle(q);
@@ -1075,6 +1076,7 @@ namespace EdugameCloud.WCFService.Converters
             {
                 case LmsProviderEnum.Canvas:
                 case LmsProviderEnum.Blackboard:
+                case LmsProviderEnum.Sakai:
                     var values = q.answers.FirstOrDefault();
                     if (values == null)
                     {

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using EdugameCloud.Lti.DTO;
 //using EdugameCloud.Lti.BlackBoard.QuizQuestionParsers;
 
@@ -8,13 +9,18 @@ namespace EdugameCloud.Lti.Sakai
     {
         public static LmsQuestionDTO[] ParseQuestions(BBAssessmentDTO td, string jsonData)
         {
-            var ret = td.questions == null
-                ? new LmsQuestionDTO[] {}
-                : td.questions.Select(
-                    q => GetParserByQuestionType(q.type).ParseQuestion(q))
-                    .ToArray();
+            var result = new List<LmsQuestionDTO>();
+            if (td.questions == null)
+                return result.ToArray();
+            foreach (var question in td.questions)
+            {
+                if (question == null) continue;
+                var questionType = GetParserByQuestionType(question.type);
+                var parsedQuestion = questionType.ParseQuestion(question);
+                result.Add(parsedQuestion);
+            }
 
-            return ret;
+            return result.ToArray();
         }
 
         public static ISakaiQuestionParser GetParserByQuestionType(string questionType)
@@ -24,7 +30,7 @@ namespace EdugameCloud.Lti.Sakai
                 case "fill in the blank":
                 case "numerical":
                     //return new SakaiFillInTheBlanksParser();
-                //case "fill in the blank plus":
+                    //case "fill in the blank plus":
                     return new SakaiFillInMultipleBlanksParser();
 
 
