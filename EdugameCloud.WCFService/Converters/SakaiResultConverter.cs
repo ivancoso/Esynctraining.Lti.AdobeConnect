@@ -134,6 +134,7 @@ namespace EdugameCloud.WCFService.Converters
                     return this.GetTrueFalseStringAnswer(question, answer);
                 }
                 case (int)QuestionTypeEnum.SingleMultipleChoiceText:
+                case (int)QuestionTypeEnum.MultipleAnswer:
                 {
                     //var isSingle = this.IsSingleAnswer(question);
                     //if (isSingle)
