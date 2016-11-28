@@ -464,6 +464,19 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
+        public ScoContentCollectionResult GetScoExpandedContent(string scoId, ScoType scoType)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            var filters = new[]
+            {
+                $"sco-id={scoId}",
+                $"filter-type={scoType.ToString().Replace("_", "-")}"
+            };
+            return Execute(() => { return _provider.CallScoExpandedContent(scoId, string.Join("&", filters)); },
+                scoId);
+        }
+
         public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
         {
             if (string.IsNullOrWhiteSpace(scoId))
@@ -490,6 +503,22 @@ namespace Esynctraining.AdobeConnect
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
             return Execute(() => { return _provider.GetScoExpandedContentByNameLike(scoId, nameLikeCriteria); },
+                scoId, nameLikeCriteria);
+        }
+
+        public ScoContentCollectionResult SearchMeetingsByNameLike(string scoId, string nameLikeCriteria)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            var filters = new[]
+            {
+                $"sco-id={scoId}",
+                $"filter-type={ScoType.meeting.ToString().Replace("_", "-")}",
+                $"filter-like-name={Uri.EscapeDataString(nameLikeCriteria)}"
+            };
+            
+            return Execute(() => { return _provider.CallScoExpandedContent(scoId, string.Join("&", filters)); },
                 scoId, nameLikeCriteria);
         }
 

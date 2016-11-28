@@ -36,7 +36,7 @@
 
         public PermissionCollectionResult GetScoPermissions(string scoId, string principalId)
         {
-            return this.GetPermissionsInfo(scoId, String.Format(CommandParams.PrincipalId, principalId));
+            return this.GetPermissionsInfo(scoId, String.Format(CommandParams.PrincipalByPrincipalId, principalId));
         }
 
         /// The server defines a special principal, public-access, which combines with values of permission-id to create special access permissions to meetings.

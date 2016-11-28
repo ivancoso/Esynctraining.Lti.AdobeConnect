@@ -76,12 +76,11 @@ namespace Esynctraining.AdobeConnect
         ScoContentResult GetScoContent(string scoId);
 
         ScoContentCollectionResult GetScoExpandedContent(string scoId);
-
+        ScoContentCollectionResult GetScoExpandedContent(string scoId, ScoType scoType);
         ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name);
-
         ScoContentCollectionResult GetScoExpandedContentByIcon(string scoId, string icon, int start = 0, int rows = 0);
-
         ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria);
+        ScoContentCollectionResult SearchMeetingsByNameLike(string scoId, string nameLikeCriteria);
 
         ScoInfoResult GetScoInfo(string scoId);
 
