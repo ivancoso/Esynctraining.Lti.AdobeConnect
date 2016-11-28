@@ -168,6 +168,7 @@
                 : new ScoContentResult(status);
         }
 
+        //todo: move GetScoExpandedContent{By} methods to AdobeConnect proxy
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>
@@ -223,16 +224,7 @@
             return CallScoExpandedContent(scoId, filter);
         }
 
-        public CollectionResult<ScoNav> GetScoNavigation(string scoId)
-        {
-            if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("Non-empty value expected", nameof(scoId));
-
-            return GetCollection(Commands.Sco.ScoNav, "sco-id=" + scoId, ScoNavHome, "//sco",
-                ScoNavParser.Parse);
-        }
-
-        private ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
+        public ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
         {
             StatusInfo status;
 
@@ -246,6 +238,14 @@
                 : new ScoContentCollectionResult(status);
         }
 
+        public CollectionResult<ScoNav> GetScoNavigation(string scoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            return GetCollection(Commands.Sco.ScoNav, "sco-id=" + scoId, ScoNavHome, "//sco",
+                ScoNavParser.Parse);
+        }
 
         #region Write
 

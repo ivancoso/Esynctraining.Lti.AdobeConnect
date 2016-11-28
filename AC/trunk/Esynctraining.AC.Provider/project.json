@@ -1,16 +1,16 @@
 {
-	"version": "1.0.2.1",
+	"version": "1.0.2.2",
 	"title": "Esynctraining.AC.Provider",
 	"description": "Provides Adobe Connect functionality for eSyncTraining projects",
 	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
 	"authors": ["eSyncTraining.com"],
 
-	"packOptions": {
-		"requireLicenseAcceptance": false,
-			"tags": [ "core", "AC", "AdobeConnect" ],
-			"owners": ["eSyncTraining.com"],
-		"releaseNotes": "moved to .net core project (4.5 + 4.6.1)"
-	},
+  "packOptions": {
+    "requireLicenseAcceptance": false,
+    "tags": [ "core", "AC", "AdobeConnect" ],
+    "owners": [ "eSyncTraining.com" ],
+    "releaseNotes": "made CallScoExpandedContent public"
+  },
 
 	"dependencies": {
 		//"NETStandard.Library": "1.6.0"
