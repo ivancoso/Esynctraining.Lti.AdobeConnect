@@ -50,7 +50,7 @@ namespace EdugameCloud.Lti.Core.Business
             }
             else if (role.Contains("ta") || role.Contains("designer") || role.Contains("author")
                      || role.Contains("teaching assistant") || role.Contains("course builder")
-                     || role.Contains("evaluator") || role == "advisor")
+                     || role.Contains("grader") || role == "advisor")
             {
                 u.ac_role = AcRole.Presenter.Id;
                 permission = MeetingPermissionId.mini_host;

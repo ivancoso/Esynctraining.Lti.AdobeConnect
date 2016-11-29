@@ -63,32 +63,32 @@
 		}
 	],
 
-	"4": [
-		{
-			"lmsRoleName": "Instructor",
-			"acRole": 1
-		},
-		{
-			"lmsRoleName": "Course Builder",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Evaluator",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Teaching Assistant",
-			"acRole": 2
-		},
-		{
-			"lmsRoleName": "Learner",
-			"acRole": 3
-		},
-		{
-			"lmsRoleName": "Guest",
-			"acRole": 3
-		}
-	],
+  "4": [
+    {
+      "lmsRoleName": "Instructor",
+      "acRole": 1
+    },
+    {
+      "lmsRoleName": "Course Builder",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Grader",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Teaching Assistant",
+      "acRole": 2
+    },
+    {
+      "lmsRoleName": "Student",
+      "acRole": 3
+    },
+    {
+      "lmsRoleName": "Guest",
+      "acRole": 3
+    }
+  ],
 
 	"5": [
 		{
