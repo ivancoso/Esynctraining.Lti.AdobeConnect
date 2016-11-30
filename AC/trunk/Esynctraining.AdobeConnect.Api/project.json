@@ -1,0 +1,42 @@
+﻿{
+	"version": "1.0.0.1",
+
+	"title": "Esynctraining.Provider.Api",
+	"description": "Provides Adobe Connect high-level DTO and services",
+	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
+	"authors": [ "eSyncTraining.com" ],
+
+	"packOptions": {
+		"requireLicenseAcceptance": false,
+		"tags": [ "AC", "AdobeConnect" ],
+		"owners": [ "eSyncTraining.com" ],
+		"releaseNotes": ""
+	},
+
+
+	"dependencies": {
+		"Esynctraining.AdobeConnect": "1.0.1.3"
+	},
+
+	"frameworks": {
+		"net45": {
+			"frameworkAssemblies": {
+				"System.Configuration": "",
+				"System.ComponentModel.DataAnnotations": ""
+			}
+		},
+		"net461": {
+			"frameworkAssemblies": {
+				"System.Configuration": "",
+				"System.ComponentModel.DataAnnotations": ""
+			}
+		}
+	},
+
+	"scripts": {
+		"postcompile": [
+			"dotnet pack --no-build --configuration %compile:Configuration%"
+		]
+	}
+
+}
