@@ -3,11 +3,8 @@ namespace Esynctraining.Core.Providers
     using System;
     using System.Collections.Generic;
     using System.Collections.Specialized;
-    using System.Configuration;
     using System.Dynamic;
-
-    using Esynctraining.Core.Extensions;
-
+    
     /// <summary>
     /// The application settings provider.
     /// </summary>
@@ -15,8 +12,6 @@ namespace Esynctraining.Core.Providers
     {
         private readonly NameValueCollection collection;
         private readonly string defaultUILanguage = "en-US";
-        private readonly string connectionString = string.Empty;
-
 
         #region Constructors and Destructors
 
@@ -31,12 +26,7 @@ namespace Esynctraining.Core.Providers
             if (collection == null)
                 throw new ArgumentNullException(nameof(collection));
 
-            this.connectionString = ConfigurationManager.ConnectionStrings["Database"].With(x => x.ConnectionString);
             var extended = new NameValueCollection(collection);
-            foreach (var pair in new[] { new KeyValuePair<string, string>("ConnectionString", this.connectionString) })
-            {
-                extended.Add(pair.Key, pair.Value);
-            }
             this.collection = extended;
         }
 
@@ -54,18 +44,7 @@ namespace Esynctraining.Core.Providers
                 return this.defaultUILanguage;
             }
         }
-
-        /// <summary>
-        ///     Gets connection string.
-        /// </summary>
-        public string ConnectionString
-        {
-            get
-            {
-                return this.connectionString;
-            }
-        }
-
+        
         #endregion
 
         #region Public Methods and Operators

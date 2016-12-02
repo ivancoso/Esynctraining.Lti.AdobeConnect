@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.csproj", "{454CA615-9F14-4A1F-ADAC-1F1C400E257D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Mail", "Esynctraining.Mail\Esynctraining.Mail.csproj", "{873245BF-8C4A-423A-9EA0-31811C2F660C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.NHibernate", "Esynctraining.NHibernate\Esynctraining.NHibernate.csproj", "{8C3CE318-AE62-4BD4-99F4-7E6535ABF169}"
@@ -25,16 +23,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.WebApi", "Esy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.Core.SystemWeb", "Esynctraining.Core.SystemWeb\Esynctraining.Core.SystemWeb.csproj", "{85975C13-EE15-4831-AB3F-AB624D7D851E}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Esynctraining.Core", "Esynctraining.Core\Esynctraining.Core.xproj", "{C6E558BE-D1CB-46C0-88F2-F6701579CD6F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{454CA615-9F14-4A1F-ADAC-1F1C400E257D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{873245BF-8C4A-423A-9EA0-31811C2F660C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,6 +71,10 @@ Global
 		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85975C13-EE15-4831-AB3F-AB624D7D851E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6E558BE-D1CB-46C0-88F2-F6701579CD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6E558BE-D1CB-46C0-88F2-F6701579CD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6E558BE-D1CB-46C0-88F2-F6701579CD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6E558BE-D1CB-46C0-88F2-F6701579CD6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -340,46 +340,5 @@
 
         #endregion
     }
-    // ReSharper restore InconsistentNaming
 
-    /// <summary>
-    /// The object ext cache.
-    /// </summary>
-    /// <typeparam name="T">
-    /// Any object to clone
-    /// </typeparam>
-    public static class ObjectExtCache<T> where T : new()
-    {
-        /// <summary>
-        /// The cloner.
-        /// </summary>
-        private static readonly Func<T, T> Cloner;
-
-        /// <summary>
-        /// Initializes static members of the ObjectExtCache class.
-        /// </summary>
-        static ObjectExtCache()
-        {
-            var param = Expression.Parameter(typeof(T), "in");
-            var bindings = from prop in typeof(T).GetProperties()
-                           where prop.CanRead && prop.CanWrite
-                           select (MemberBinding)Expression.Bind(prop, Expression.Property(param, prop));
-
-            Cloner = Expression.Lambda<Func<T, T>>(Expression.MemberInit(Expression.New(typeof(T)), bindings), param).Compile();
-        }
-
-        /// <summary>
-        /// Clones object using compiled expression.
-        /// </summary>
-        /// <param name="obj">
-        /// The object to clone.
-        /// </param>
-        /// <returns>
-        /// The <see cref="T"/> cloned instance.
-        /// </returns>
-        public static T Clone(T obj)
-        {
-            return Cloner(obj);
-        }
-    }
 }

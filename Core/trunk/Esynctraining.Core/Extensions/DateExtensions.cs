@@ -96,22 +96,7 @@
 
             return dt;
         }
-
-        /// <summary>
-        /// The to EST.
-        /// </summary>
-        /// <param name="dateTime">
-        /// The date time.
-        /// </param>
-        /// <returns>
-        /// The <see cref="DateTime"/>.
-        /// </returns>
-        public static DateTime ToEst(this DateTime dateTime)
-        {
-            TimeZoneInfo easternZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
-            return TimeZoneInfo.ConvertTimeFromUtc(dateTime.ToUniversalTime(), easternZone);
-        }
-
+        
         /// <summary>
         /// The from micro seconds.
         /// </summary>
