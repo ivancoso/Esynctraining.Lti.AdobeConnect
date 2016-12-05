@@ -17,7 +17,7 @@ namespace EdugameCloud.Lti.Core.DTO
             summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
             BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
-            duration = GetDurationWithoutMilliseconds(recording.Duration);
+            duration = GetDurationWithoutMilliseconds(recording.GetDuration());
             url = GenerateJoinLink(recording.UrlPath);
             status = GetRecordingStatus(recording.JobStatus);
             is_mp4 = recording.Icon == "mp4-archive";
@@ -30,8 +30,8 @@ namespace EdugameCloud.Lti.Core.DTO
             name = recording.Name;
             summary = recording.Description;
             begin_date = recording.BeginDate.ToString("MM/dd/yy h:mm:ss tt");
-            BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp();
-            duration = ConvertSecondsToTimeFormat(recording.Duration) + (long)GetTimezoneShift(timezone, recording.BeginDate);
+            BeginAt = (long)recording.BeginDate.ConvertToUnixTimestamp() + (long)GetTimezoneShift(timezone, recording.BeginDate);
+            duration = ConvertSecondsToTimeFormat(recording.Duration);
             url = GenerateJoinLink(recording.UrlPath);
             is_mp4 = recording.Icon == "mp4-archive";
             download_url = this.is_mp4 ? GenerateDownloadLink(accountUrl, recording.UrlPath, recording.Name) : null;
@@ -39,23 +39,23 @@ namespace EdugameCloud.Lti.Core.DTO
         }
 
         public RecordingDTO() { }
-        
+
 
         /// <summary>
         /// Gets or sets a recording url for download. Available only for mp4.
         /// </summary>
         [DataMember]
         public string download_url { get; set; }
-        
+
         /// <summary>
         /// Gets or sets a recording status.
         /// </summary>
         [DataMember]
         public string status { get; set; }
-        
+
         [DataMember]
         public bool is_mp4 { get; set; }
-        
+
         [DataMember]
         [ScriptIgnore]
         public string begin_date { get; set; }
@@ -71,10 +71,10 @@ namespace EdugameCloud.Lti.Core.DTO
 
         //[DataMember]
         //public string end_date { get; set; }
-        
+
         [DataMember(Name = "id")]
         public string Id { get; set; }
-        
+
         [DataMember]
         public string name { get; set; }
 
@@ -83,7 +83,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         [DataMember]
         public string url { get; set; }
-        
+
         [DataMember(Name = "is_public")]
         public bool IsPublic { get; set; }
 
@@ -92,7 +92,7 @@ namespace EdugameCloud.Lti.Core.DTO
 
         [DataMember(Name = "published")]
         public bool Published { get; set; }
-        
+
         #region methods
 
         private static string GetRecordingStatus(string jobStatus)
@@ -173,4 +173,35 @@ namespace EdugameCloud.Lti.Core.DTO
 
     }
 
+    public static class ACExtensions //todo: move to lib
+    {
+        //returns milliseconds
+        //public static long GetDuration(this Recording recording)
+        //{
+        //    return
+        //        GetMillisecondsFromTimeFormat(string.IsNullOrEmpty(recording.RecordingEditedDuration)
+        //            ? (string.IsNullOrEmpty(recording.AfRecordingDuration) ? recording.Duration : recording.AfRecordingDuration)
+        //            : recording.RecordingEditedDuration);
+        //}
+
+        public static string GetDuration(this Recording recording)
+        {
+            return
+                string.IsNullOrEmpty(recording.RecordingEditedDuration)
+                    ? (string.IsNullOrEmpty(recording.AfRecordingDuration) ? recording.Duration : recording.AfRecordingDuration)
+                    : recording.RecordingEditedDuration;
+        }
+
+        //private static long GetMillisecondsFromTimeFormat(string timeFormat)
+        //{
+        //    if (string.IsNullOrEmpty(timeFormat))
+        //        throw new ArgumentNullException(nameof(timeFormat));
+
+        //    TimeSpan ts = TimeSpan.Parse(timeFormat);
+        //    double totalMilliseconds = ts.TotalMilliseconds;
+        //    return (long)totalMilliseconds;
+        //}
+
+    }
+    
 }
