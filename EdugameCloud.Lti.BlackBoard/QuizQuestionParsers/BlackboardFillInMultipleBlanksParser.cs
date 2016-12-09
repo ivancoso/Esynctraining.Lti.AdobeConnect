@@ -8,7 +8,9 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
 {
     public class BlackboardFillInMultipleBlanksParser : BlackboardCommonQuestionParser
     {
-        
+        public BlackboardFillInMultipleBlanksParser(BBAssessmentDTO td) : base(td)
+        {
+        }
 
         protected override List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
@@ -39,8 +41,6 @@ namespace EdugameCloud.Lti.BlackBoard.QuizQuestionParsers
             return dto;
         }
 
-        public BlackboardFillInMultipleBlanksParser(BBAssessmentDTO td) : base(td)
-        {
-        }
+        
     }
 }

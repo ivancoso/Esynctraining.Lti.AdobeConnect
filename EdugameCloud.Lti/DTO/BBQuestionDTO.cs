@@ -24,6 +24,11 @@ namespace EdugameCloud.Lti.DTO
         public string htmlText { get; set; }
 
         /// <summary>
+        /// Question text for FIB Sakai
+        /// </summary>
+        public string questionText { get; set; }
+
+        /// <summary>
         /// Gets or sets the title.
         /// </summary>
         public string title { get; set; }

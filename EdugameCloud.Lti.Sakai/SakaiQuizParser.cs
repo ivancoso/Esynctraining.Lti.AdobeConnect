@@ -15,7 +15,7 @@ namespace EdugameCloud.Lti.Sakai
             foreach (var question in td.questions)
             {
                 if (question == null) continue;
-                var questionType = GetParserByQuestionType(question.type);
+                var questionType = GetParserByQuestionType(td, question.type);
                 var parsedQuestion = questionType.ParseQuestion(question);
                 result.Add(parsedQuestion);
             }
@@ -23,7 +23,7 @@ namespace EdugameCloud.Lti.Sakai
             return result.ToArray();
         }
 
-        public static ISakaiQuestionParser GetParserByQuestionType(string questionType)
+        public static ISakaiQuestionParser GetParserByQuestionType(BBAssessmentDTO td, string questionType)
         {
             switch (questionType.ToLowerInvariant())
             {
@@ -31,14 +31,14 @@ namespace EdugameCloud.Lti.Sakai
                 case "numerical":
                     //return new SakaiFillInTheBlanksParser();
                     //case "fill in the blank plus":
-                    return new SakaiFillInMultipleBlanksParser();
+                    return new SakaiFillInMultipleBlanksParser(td);
 
 
                 case "multiple choice":
                 case "multiple answer":
-                    return new SakaiMultipleChoiceParser();
+                    return new SakaiMultipleChoiceParser(td);
                 default:
-                    return new SakaiCommonQuestionParser();
+                    return new SakaiCommonQuestionParser(td);
             }
         }
     }

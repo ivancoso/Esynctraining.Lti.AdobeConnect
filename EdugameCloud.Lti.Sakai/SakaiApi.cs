@@ -8,6 +8,7 @@ using EdugameCloud.Lti.DTO;
 using EdugameCloud.Lti.Sakai.Dto;
 using Esynctraining.Core.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace EdugameCloud.Lti.Sakai
 {
@@ -22,7 +23,7 @@ namespace EdugameCloud.Lti.Sakai
 
         public IEnumerable<LmsQuizInfoDTO> GetItemsInfoForUser(LmsUserParameters lmsUserParameters, bool isSurvey, out string error)
         {
-            
+
 
             var quizDtos = GetItemsForUser(lmsUserParameters, isSurvey, null, out error);
 
@@ -35,7 +36,7 @@ namespace EdugameCloud.Lti.Sakai
                 lastModifiedLMS = q.lastModifiedLMS,
                 isPublished = q.published
             });
-            
+
             return result;
         }
 
@@ -104,9 +105,14 @@ namespace EdugameCloud.Lti.Sakai
                 {
                     var td = JsonConvert.DeserializeObject<BBAssessmentDTO>(resp);
                     lqd.question_list = SakaiQuizParser.ParseQuestions(td, resp);
+                    var repoImages = td.images as JToken;
+                    if (repoImages != null)
+                    {
+                        var temp = repoImages.ToObject<Dictionary<string, string>>();
+                        lqd.Images = temp.ToDictionary(x => x.Key, x => x.Value);
+                    }
                 }
                 quizDto.Add(lqd);
-                
             }
             error = string.Empty;
             return quizDto.ToList();
@@ -123,7 +129,7 @@ namespace EdugameCloud.Lti.Sakai
                 $@"http://sakai11.esynctraining.com/egcint/service/?lti_message_type=egc_submit_results2" +
                 $"&contentId={json }&sourcedid={ lmsUserParameters.CourseName }&lti_version=LTI-1p0&oauth_consumer_key=esynctraining.com" +
                 $"&secret=07951-BAUER-41481-CRLSHM&ext_sakai_provider_eid={ lmsUserParameters.LmsUser.Username }&user_id={ lmsUserParameters.LmsUser.UserId }";
-            
+
             //stud = @"[\"false\", \"test\", \"2\"]"
 
             var resultsJson = JsonConvert.SerializeObject(answers);

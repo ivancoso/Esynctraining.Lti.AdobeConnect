@@ -10,6 +10,11 @@ namespace EdugameCloud.Lti.Sakai
         private const string BlankName = "x";
         private const string BlankFormat = "[{0}]";
 
+        public SakaiFillInTheBlanksParser(BBAssessmentDTO td) :base(td)
+        {
+
+        }
+
         public override LmsQuestionDTO ParseQuestion(BBQuestionDTO dto)
         {
             var ret = base.ParseQuestion(dto);
@@ -20,7 +25,7 @@ namespace EdugameCloud.Lti.Sakai
 
         protected override List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
         {
-            var dto = ParseFillInBlankAnswer((q.answersList as JToken).ToObject<List<FillInTheBlankAnswer>>(), BlankName, 0);
+            var dto = ParseFillInBlankAnswer((q.answersList as JToken).ToObject<List<string>>(), BlankName, 0);
             return new List<AnswerDTO> { dto };
         }
     }

@@ -9,6 +9,11 @@ namespace EdugameCloud.Lti.Sakai
 {
     internal sealed class SakaiMultipleChoiceParser : SakaiCommonQuestionParser
     {
+        public SakaiMultipleChoiceParser(BBAssessmentDTO td):base(td)
+        {
+            
+        }
+
         private readonly string[] singleQuestionTypes = new[]
         {
             "Multiple Choice"

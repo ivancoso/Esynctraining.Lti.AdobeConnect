@@ -11,13 +11,25 @@ namespace EdugameCloud.Lti.Sakai
     // todo: split this class to smaller parts for different question types
     internal class SakaiCommonQuestionParser : ISakaiQuestionParser
     {
+        protected Func<Dictionary<string, string>> images;
+        public SakaiCommonQuestionParser(BBAssessmentDTO td)
+        {
+            images = () =>
+            {
+                var tdImages = td.images as JToken;
+                if (tdImages == null) return null;
+                var t = tdImages.ToObject<Dictionary<string, string>>();
+                return t.ToDictionary(x => x.Key, x => x.Value);
+            };
+        }
+
         private readonly string[] singleQuestionTypes = new[] {"Multiple Choice", "Opinion Scale"};
 
         public virtual LmsQuestionDTO ParseQuestion(BBQuestionDTO dto)
         {
             var ret = new LmsQuestionDTO()
             {
-                question_text = dto.text.ClearName(),
+                //question_text = dto.text.ClearName(),
                 question_type = dto.type,
                 is_single = singleQuestionTypes.Any(
                     x => dto.type.Equals(x, StringComparison.InvariantCultureIgnoreCase)),
@@ -26,28 +38,33 @@ namespace EdugameCloud.Lti.Sakai
                 rows = dto.rows,
                 answers = ParseAnswers(dto)
             };
+            ret.question_text = dto.htmlText.ClearName();
+            ret.htmlText = dto.htmlText;
+            var imageLinks = dto.answersImageLinks as JToken;
+            ret.answersImageLinks = imageLinks != null ? imageLinks.ToObject<List<string>>() : null;
+
             ret.answers.ForEach(
                 a =>
                 {
-                    a.text = a.text;
+                    a.text = a.text.ClearName();
                     //a.text = a.text.ClearName();
                     a.question_text = a.question_text.ClearName();
                     
                 });
             ret.caseSensitive = ret.answers.Any(x => x.caseSensitive);
 
-            var lmsQuestion = ret;
-            if (!string.IsNullOrEmpty(dto.questionImageBinary))
-            {
-                var fileDto = new LmsQuestionFileDTO
-                {
-                    fileName = !string.IsNullOrEmpty(dto.questionImageLink) ? dto.questionImageLink.Split('/').Last() : string.Empty,
-                    fileUrl = dto.questionImageLink,
-                    base64Content = dto.questionImageBinary
-                };
-                lmsQuestion.files.Add(0, fileDto);
-            }
-            return lmsQuestion;
+            //var lmsQuestion = ret;
+            //if (!string.IsNullOrEmpty(dto.questionImageBinary))
+            //{
+            //    var fileDto = new LmsQuestionFileDTO
+            //    {
+            //        fileName = !string.IsNullOrEmpty(dto.questionImageLink) ? dto.questionImageLink.Split('/').Last() : string.Empty,
+            //        fileUrl = dto.questionImageLink,
+            //        base64Content = dto.questionImageBinary
+            //    };
+            //    lmsQuestion.files.Add(0, fileDto);
+            //}
+            return ret;
         }
 
         protected virtual List<AnswerDTO> ParseAnswers(BBQuestionDTO q)
@@ -208,15 +225,23 @@ namespace EdugameCloud.Lti.Sakai
                         return ret;
                     }
                     var image = answersList["image"].ToString();
-                    var fileData = answersList["imageBinary"].ToString();
+                    //var fileData = answersList["imageBinary"] != null ? answersList["imageBinary"].ToString() : null;
 
-                    ret.Add(new AnswerDTO()
+                    string fileDataBase64 = null;
+                    var lazyLoadImages = images();
+                    lazyLoadImages.TryGetValue(image, out fileDataBase64);
+
+                    var answerDto = new AnswerDTO()
                     {
                         text = coords,
                         question_text = image,
-                        fileData = fileData,
+                        //fileData = fileData,
                         imageName = image
-                    });
+                    };
+                    ret.Add(answerDto);
+
+                    if (fileDataBase64 != null)
+                        answerDto.fileData = fileDataBase64;
                     return ret;
                 }
                
