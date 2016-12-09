@@ -1112,12 +1112,12 @@ namespace EdugameCloud.WCFService.Converters
             LmsQuestionDTO q,
             Question question, LmsQuizDTO quiz)
         {
-            foreach (var a in q.answers)
+            foreach (var answerDto in q.answers)
             {
-                var lmsId = a.id;
-                var name = a.right != null ?
-                    string.Format("{0}$${1}", a.text, a.right)
-                    : string.Format("{0}$${1}", a.question_text, a.text);
+                var lmsId = answerDto.id;
+                var name = answerDto.right != null ?
+                    string.Format("{0}$${1}", answerDto.text, answerDto.right)
+                    : string.Format("{0}$${1}", answerDto.question_text, answerDto.text);
                 var distractor = this.DistractorModel.GetOneByQuestionIdAndLmsId(question.Id, lmsId).Value ??
                     new Distractor
                     {
@@ -1126,7 +1126,7 @@ namespace EdugameCloud.WCFService.Converters
                         Question = question,
                         LmsAnswerId = lmsId
                     };
-                distractor.LmsAnswer = a.match_id;
+                distractor.LmsAnswer = answerDto.match_id;
                 distractor.DateModified = DateTime.Now;
                 distractor.ModifiedBy = user;
                 distractor.DistractorName = name;
@@ -1134,15 +1134,15 @@ namespace EdugameCloud.WCFService.Converters
                 distractor.DistractorType = 1;
                 distractor.IsCorrect = true;
 
-                if (!string.IsNullOrEmpty(a.leftImageName))
+                if (!string.IsNullOrEmpty(answerDto.leftImageName))
                 {
-                    var fileName = a.leftImageName;
+                    var fileName = answerDto.leftImageName;
                     var leftImg = MatchingSetImage(user, quiz, fileName, distractor);
                     distractor.LeftImage = leftImg;
                 }
-                if (!string.IsNullOrEmpty(a.rightImageName))
+                if (!string.IsNullOrEmpty(answerDto.rightImageName))
                 {
-                    var fileName = a.rightImageName;
+                    var fileName = answerDto.rightImageName;
                     var rightImg = MatchingSetImage(user, quiz, fileName, distractor);
                     distractor.RightImage = rightImg;
                 }

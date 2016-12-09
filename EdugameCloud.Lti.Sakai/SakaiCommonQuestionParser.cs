@@ -261,7 +261,10 @@ namespace EdugameCloud.Lti.Sakai
                 foreach (var answer in answersList)
                 {
                     int order = 0;
-                    string questionText = null, answerText = null, lmsValue = null, imageBinary = string.Empty, imageName = String.Empty;
+                    string questionText = null, answerText = null, lmsValue = null;
+                    byte[] matchingImage = null;
+                    string leftMatchingImageText = string.Empty;
+                    string rightMatchingImageText = string.Empty;
 
                     if (answer is JObject)
                     {
@@ -271,26 +274,35 @@ namespace EdugameCloud.Lti.Sakai
                             answerText = option.Value.ToString();
                             break;
                         }
-
-                        // parsing answer images
-                        
-                        foreach (var option in answer as JObject)
+                        var propIndex = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
+                        if (propIndex != null)
                         {
-                            if (option.Key == "imageBinary")
+                            lmsValue = propIndex.Value.ToString();
+                            int propIndexInt;
+                            var isIndexInt = int.TryParse(lmsValue, out propIndexInt);
+                            if (isIndexInt)
                             {
-                                imageBinary = option.Value.ToString();
+
+                                var leftImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "leftImageLink");
+                                if (leftImage != null)
+                                {
+                                    //var lazyLoadImages = images();
+                                    //lazyLoadImages.TryGetValue(leftImage.Value.ToString(), out matchingImage);
+                                    leftMatchingImageText = leftImage.Value.ToString();
+                                }
+
+                                var rightImage = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "rightImageLink");
+                                if (rightImage != null)
+                                {
+                                    //var lazyLoadImages = images();
+                                    //lazyLoadImages.TryGetValue(rightImage.Value.ToString(), out matchingImage);
+                                    rightMatchingImageText = rightImage.Value.ToString();
+                                }
+
                             }
-                            if (option.Key == "image")
-                            {
-                                imageName = option.Value.ToString();
-                            }
+
                         }
 
-                        var prop = (answer as JObject).Properties().FirstOrDefault(x => x.Name == "index");
-                        if (prop != null)
-                        {
-                            lmsValue = prop.Value.ToString();
-                        }
                     }
                     else
                     {
@@ -298,18 +310,22 @@ namespace EdugameCloud.Lti.Sakai
                         int.TryParse(answerText, out order);
                     }
 
-                    ret.Add(new AnswerDTO()
+                    var answerDto = new AnswerDTO()
                     {
                         id = i,
                         match_id = lmsValue,
                         text = answers != null && answers.Count > i ? answers[i] : answerText,
                         order = order,
                         question_text = questionText,
-                        fileData = imageBinary,
-                        imageName = imageName,
                         /*weight = i == correctAnswerId ? 100 : 0*/
                         weight = q.type.Equals("Fill in the blank", StringComparison.OrdinalIgnoreCase) ? 100 : i == correctAnswerId ? 100 : 0
-                    });
+                    };
+                    if (!string.IsNullOrEmpty(leftMatchingImageText))
+                        answerDto.leftImageName = leftMatchingImageText;
+                    if (!string.IsNullOrEmpty(rightMatchingImageText))
+                        answerDto.rightImageName = rightMatchingImageText;
+                    ret.Add(answerDto);
+
                     i++;
                 }
                 
