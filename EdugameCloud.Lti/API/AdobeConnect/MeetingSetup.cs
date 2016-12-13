@@ -22,6 +22,7 @@ using EdugameCloud.Lti.Telephony;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AdobeConnect;
+//using Esynctraining.AdobeConnect.WebApi.Meeting;
 using Esynctraining.Core.Caching;
 using Esynctraining.Core.Domain;
 using Esynctraining.Core.Extensions;
@@ -841,8 +842,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             MeetingReuseDTO dto,
             bool retrieveLmsUsers)
         {
-            // var param = session.LtiSession.With(x => x.LtiParam);
-
             ScoInfoResult meetingSco = provider.GetScoInfo(dto.sco_id);
             if (!meetingSco.Success)
             {
@@ -983,15 +982,14 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     return OperationResult.Error(Resources.Messages.CantRetrieveLmsUsers);
                 }
 
-                return OperationResultWithData<MeetingAndLmsUsersDTO>.Success(
-                    new MeetingAndLmsUsersDTO
+                return new MeetingAndLmsUsersDTO
                     {
                         meeting = updatedMeeting,
                         lmsUsers = users,
-                    });
+                    }.ToSuccessResult();
             }
 
-            return OperationResultWithData<MeetingDTO>.Success(updatedMeeting);
+            return updatedMeeting.ToSuccessResult();
         }
 
         public List<string> DeleteMeeting(
@@ -1239,10 +1237,17 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     MeetingNameInfo currentMeetingName = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
                     currentMeetingName.reusedMeetingName = meetingDTO.name;
                     meeting.MeetingNameJson = JsonConvert.SerializeObject(currentMeetingName);
-                    LmsCourseMeetingModel.RegisterSave(meeting);
+                    LmsCourseMeetingModel.RegisterSave(meeting);  // not required for current ?
                 }
                 else
                 {
+                    if (meeting.Reused.GetValueOrDefault())
+                    {
+                        MeetingNameInfo currentMeetingName = JsonConvert.DeserializeObject<MeetingNameInfo>(meeting.MeetingNameJson);
+                        currentMeetingName.reusedMeetingName = meetingDTO.name;
+                        meeting.MeetingNameJson = JsonConvert.SerializeObject(currentMeetingName);
+                    }
+
                     string acMeetingName = formatter.UpdateName(meeting, meetingDTO.name);
                     updateItem.Name = acMeetingName;
                 }
