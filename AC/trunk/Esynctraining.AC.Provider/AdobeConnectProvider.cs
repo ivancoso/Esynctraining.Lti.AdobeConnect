@@ -241,14 +241,10 @@
         /// </returns>
         public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
         {
+            var filter = string.Empty.AppendSortingIfNeeded("date-begin", SortOrder.Descending); //default sorting in AC, otherwise paging might be incorrect 
+            filter = filter.AppendPagingIfNeeded(startIndex, limit).TrimStart('&');
             // act: "report-my-meetings"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, string.Empty.AppendPagingIfNeeded(startIndex, limit).TrimStart('&'), out status);
-
-            return ResponseIsOk(doc, status)
-                ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
-                : new MeetingItemCollectionResult(status);
+            return CallReportMyMeetings(filter);
         }
 
         public MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0)
@@ -266,10 +262,16 @@
                     filter = CommandParams.Permissions.Filter.PermissionId.View;
                     break;
             }
+            filter = filter.AppendSortingIfNeeded("date-begin", SortOrder.Descending); //default sorting in AC, otherwise paging might be incorrect
+            filter = filter.AppendPagingIfNeeded(startIndex, limit);
             // act: "report-my-meetings"
-            StatusInfo status;
+            return CallReportMyMeetings(filter);
+        }
 
-            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, filter.AppendPagingIfNeeded(startIndex, limit), out status);
+        public MeetingItemCollectionResult CallReportMyMeetings(string filter)
+        {
+            StatusInfo status;
+            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, filter, out status);
 
             return ResponseIsOk(doc, status)
                 ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))

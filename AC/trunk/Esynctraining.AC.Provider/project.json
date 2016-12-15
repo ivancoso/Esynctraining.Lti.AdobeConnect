@@ -1,5 +1,5 @@
 {
-	"version": "1.0.2.2",
+	"version": "1.0.2.3",
 	"title": "Esynctraining.AC.Provider",
 	"description": "Provides Adobe Connect functionality for eSyncTraining projects",
 	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
@@ -9,7 +9,7 @@
     "requireLicenseAcceptance": false,
     "tags": [ "core", "AC", "AdobeConnect" ],
     "owners": [ "eSyncTraining.com" ],
-    "releaseNotes": "made CallScoExpandedContent public"
+    "releaseNotes": "added default sorting for ReportMyMeetings"
   },
 
 	"dependencies": {
