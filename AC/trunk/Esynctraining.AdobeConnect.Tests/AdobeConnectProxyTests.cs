@@ -11,6 +11,20 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     public class AdobeConnectProxyTests
     {
+
+        [Test]
+        public void WillReportUserTrainingsTaken()
+        {
+            var principalId = "1004370065";
+            var acApiUrl = "http://rhi.adobeconnect.com/api/xml";
+            var con = new ConnectionDetails(acApiUrl);
+            var acProvider = new AdobeConnectProvider(con);
+            var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
+            //proxy.report
+            proxy.Login(new UserCredentials("mike@esynctraining.com", "e$ync123RHI"));//admin
+            var result = proxy.ReportUserTrainingsTaken(principalId);
+        }
+
         [Test]
         public void WillGetAllByPrincipalIds()
         {

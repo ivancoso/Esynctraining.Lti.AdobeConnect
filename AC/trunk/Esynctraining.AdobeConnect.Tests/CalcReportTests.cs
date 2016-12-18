@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -12,20 +13,29 @@ using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;
 using Esynctraining.Windsor;
 using log4net.Config;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
 namespace Esynctraining.AdobeConnect.Tests
 {
+    [TestFixture]
     public class CalcReportTests
     {
         private ConnectionDetails _connectionDetails;
         private AdobeConnectProvider _provider;
         private ILogger _logger;
         private ConcurrentDictionary<RecIdentity, double> _recStorage = new ConcurrentDictionary<RecIdentity, double>();
+        static public IConfigurationRoot Configuration { get; set; }
 
         [SetUp]
         public void Init()
         {
+            //var builder = new ConfigurationBuilder()
+            //    .SetBasePath(Directory.GetCurrentDirectory())
+           //.AddJsonFile("appsettings.json");
+
+            //Configuration = builder.Build();
+
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);

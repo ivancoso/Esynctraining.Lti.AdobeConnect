@@ -1,0 +1,253 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2876C57D-D520-4E00-971D-176F0C0F0EE8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Esynctraining.AC.Provider</RootNamespace>
+    <AssemblyName>Esynctraining.AC.Provider</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AdobeConnectProvider.CustomFields.cs" />
+    <Compile Include="AdobeConnectProvider.Meeting.cs" />
+    <Compile Include="AdobeConnectProvider.Content.cs" />
+    <Compile Include="AdobeConnectProvider.Internal.cs" />
+    <Compile Include="AdobeConnectProvider.Group.cs" />
+    <Compile Include="AdobeConnectProvider.Permission.cs" />
+    <Compile Include="AdobeConnectProvider.Sco.cs" />
+    <Compile Include="AdobeConnectProvider.Report.cs" />
+    <Compile Include="AdobeConnectProvider.Telephony.cs" />
+    <Compile Include="AdobeConnectProvider.Seminar.cs" />
+    <Compile Include="AdobeConnectProvider.Principal.cs" />
+    <Compile Include="AdobeConnectProvider.Guest.cs" />
+    <Compile Include="AdobeConnectProvider.RecordingJob.cs" />
+    <Compile Include="Attributes\SkipAttribute.cs" />
+    <Compile Include="Attributes\SkipDuringUpdateAttribute.cs" />
+    <Compile Include="Constants\AdobeConnectProviderConstants.cs" />
+    <Compile Include="Constants\Commands.cs" />
+    <Compile Include="Constants\CommandParams.cs" />
+    <Compile Include="DataObjects\ConnectionDetails.cs" />
+    <Compile Include="DataObjects\Results\CancelRecordingJobResult.cs" />
+    <Compile Include="DataObjects\Results\CommonInfoResult.cs" />
+    <Compile Include="DataObjects\Results\CurriculumTakerCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\FieldCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\FieldResult.cs" />
+    <Compile Include="DataObjects\Results\GeneratedRecordingJobCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\LearningPathCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ReportScoViewsContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ReportUserTrainingsTakenCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\SingleObjectResult.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProfileInfoResult.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProviderCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\UserCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\PrincipalInfoResult.cs" />
+    <Compile Include="DataObjects\Results\CurriculumContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingJobCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\RecordingJobResult.cs" />
+    <Compile Include="DataObjects\Results\TelephonyProfilesCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\MeetingSessionCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\QuizResponseCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ScoContentResult.cs" />
+    <Compile Include="DataObjects\Results\MeetingAttendeeCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\GenericResult.cs" />
+    <Compile Include="DataObjects\Results\PrincipalResult.cs" />
+    <Compile Include="DataObjects\Results\TransactionCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\PrincipalCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ScoInfoResult.cs" />
+    <Compile Include="DataObjects\Results\PermissionCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\ScoContentCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\MeetingItemCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\EventCollectionResult.cs" />
+    <Compile Include="DataObjects\Results\GenericCollectionResultBase.cs" />
+    <Compile Include="DataObjects\Results\LoginResult.cs" />
+    <Compile Include="DataObjects\Results\ResultBase.cs" />
+    <Compile Include="DataObjects\UploadScoInfo.cs" />
+    <Compile Include="DataObjects\UserCredentials.cs" />
+    <Compile Include="DataObjects\ProxyCredentials.cs" />
+    <Compile Include="Entities\CommonInfo.cs" />
+    <Compile Include="Entities\Contact.cs" />
+    <Compile Include="Entities\ContentUpdateItem.cs" />
+    <Compile Include="Entities\CurriculumTaker.cs" />
+    <Compile Include="Entities\GeneratedRecordingJob.cs" />
+    <Compile Include="Entities\Field.cs" />
+    <Compile Include="Entities\IPermissionUpdateTrio.cs" />
+    <Compile Include="Entities\ITelephonyProfileProviderFields.cs" />
+    <Compile Include="Entities\LearningPathItem.cs" />
+    <Compile Include="Entities\FolderUpdateItem.cs" />
+    <Compile Include="Entities\CurriculumContent.cs" />
+    <Compile Include="Entities\CurriculumUpdateItem.cs" />
+    <Compile Include="Entities\AclFieldUpdateTrio.cs" />
+    <Compile Include="Entities\MeetingPermissionUpdateTrio.cs" />
+    <Compile Include="Entities\PermissionBase.cs" />
+    <Compile Include="Entities\MeetingPermissionInfo.cs" />
+    <Compile Include="Entities\CustomField.cs" />
+    <Compile Include="Entities\ReportScoViewContent.cs" />
+    <Compile Include="Entities\ScoNav.cs" />
+    <Compile Include="Entities\ScoShortcutType.cs" />
+    <Compile Include="Entities\SharedSeminarLicenseSco.cs" />
+    <Compile Include="Entities\SeminarSessionScoUpdateItem.cs" />
+    <Compile Include="Entities\SeminarSessionUpdateItem.cs" />
+    <Compile Include="Entities\SeminarUpdateItem.cs" />
+    <Compile Include="Entities\PrincipalPredefinedFields.cs" />
+    <Compile Include="Entities\TelephonyProvider.cs" />
+    <Compile Include="Entities\TelephonyProfileUpdateItem.cs" />
+    <Compile Include="Entities\User.cs" />
+    <Compile Include="Entities\PermissionUpdateTrio.cs" />
+    <Compile Include="Entities\Recording.cs" />
+    <Compile Include="Entities\RecordingJob.cs" />
+    <Compile Include="Entities\TelephonyProfile.cs" />
+    <Compile Include="Entities\MeetingSession.cs" />
+    <Compile Include="Entities\QuizResponse.cs" />
+    <Compile Include="Entities\RecordingUpdateItem.cs" />
+    <Compile Include="Entities\MeetingAttendee.cs" />
+    <Compile Include="Entities\PrincipalDelete.cs" />
+    <Compile Include="Entities\PrincipalPreferences.cs" />
+    <Compile Include="Entities\PrincipalDetail.cs" />
+    <Compile Include="Entities\PrincipalInfo.cs" />
+    <Compile Include="Entities\Enums.cs" />
+    <Compile Include="Entities\PrincipalSetup.cs" />
+    <Compile Include="Entities\ScoInfo.cs" />
+    <Compile Include="Entities\EventUpdateItem.cs" />
+    <Compile Include="Entities\ScoContent.cs" />
+    <Compile Include="Entities\EventInfo.cs" />
+    <Compile Include="Entities\MeetingItem.cs" />
+    <Compile Include="Entities\MeetingUpdateItem.cs" />
+    <Compile Include="Entities\PermissionInfo.cs" />
+    <Compile Include="Entities\Principal.cs" />
+    <Compile Include="Entities\ScoShortcut.cs" />
+    <Compile Include="Entities\ScoUpdateItemBase.cs" />
+    <Compile Include="Entities\StatusInfo.cs" />
+    <Compile Include="Entities\TransactionInfo.cs" />
+    <Compile Include="Entities\UserInfo.cs" />
+    <Compile Include="Entities\UserSeminarLicenseSco.cs" />
+    <Compile Include="Entities\UserTrainingsTaken.cs" />
+    <Compile Include="EntityParsing\CommonInfoParser.cs" />
+    <Compile Include="EntityParsing\ContactParser.cs" />
+    <Compile Include="EntityParsing\CurriculumTakerCollectionParser.cs" />
+    <Compile Include="EntityParsing\CurriculumTakerParser.cs" />
+    <Compile Include="EntityParsing\FieldParser.cs" />
+    <Compile Include="EntityParsing\GeneratedRecordingJobCollectionParser.cs" />
+    <Compile Include="EntityParsing\GeneratedRecordingJobParser.cs" />
+    <Compile Include="EntityParsing\FieldValueParser.cs" />
+    <Compile Include="EntityParsing\FieldCollectionParser.cs" />
+    <Compile Include="EntityParsing\GenericCollectionParser.cs" />
+    <Compile Include="EntityParsing\IEntityParser.cs" />
+    <Compile Include="EntityParsing\LearningPathItemParser.cs" />
+    <Compile Include="EntityParsing\LearningPathCollectionParser.cs" />
+    <Compile Include="EntityParsing\CustomFieldParser.cs" />
+    <Compile Include="EntityParsing\ReportScoViewContentParser.cs" />
+    <Compile Include="EntityParsing\ReportScoViewParser.cs" />
+    <Compile Include="EntityParsing\ReportUserTrainingsTakenCollectionParser.cs" />
+    <Compile Include="EntityParsing\ReportUserTrainingsTakenContentParser.cs" />
+    <Compile Include="EntityParsing\ScoNavParser.cs" />
+    <Compile Include="EntityParsing\SharedSeminarLicenseScoParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProviderParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProviderCollectionParser.cs" />
+    <Compile Include="EntityParsing\UserParser.cs" />
+    <Compile Include="EntityParsing\UserCollectionParser.cs" />
+    <Compile Include="EntityParsing\PrincipalInfoParser.cs" />
+    <Compile Include="EntityParsing\PrincipalPreferencesParser.cs" />
+    <Compile Include="EntityParsing\CurriculumContentCollectionParser.cs" />
+    <Compile Include="EntityParsing\CurriculumContentParser.cs" />
+    <Compile Include="EntityParsing\RecordingCollectionParser.cs" />
+    <Compile Include="EntityParsing\RecordingJobCollectionParser.cs" />
+    <Compile Include="EntityParsing\RecordingJobParser.cs" />
+    <Compile Include="EntityParsing\RecordingParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProfileParser.cs" />
+    <Compile Include="EntityParsing\TelephonyProfilesCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoSearchByFieldParser.cs" />
+    <Compile Include="EntityParsing\MeetingAttendeeParser.cs" />
+    <Compile Include="EntityParsing\MeetingAttendeeCollectionParser.cs" />
+    <Compile Include="EntityParsing\MeetingSessionCollectionParser.cs" />
+    <Compile Include="EntityParsing\MeetingSessionParser.cs" />
+    <Compile Include="EntityParsing\QuizResponseCollectionParser.cs" />
+    <Compile Include="EntityParsing\QuizResponseParser.cs" />
+    <Compile Include="EntityParsing\ScoRecordingCollectionParser.cs" />
+    <Compile Include="EntityParsing\TransactionInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\TransactionInfoParser.cs" />
+    <Compile Include="EntityParsing\PrincipalParser.cs" />
+    <Compile Include="EntityParsing\PrincipalCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoInfoParser.cs" />
+    <Compile Include="EntityParsing\PermissionInfoParser.cs" />
+    <Compile Include="EntityParsing\PermissionInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\ScoContentParser.cs" />
+    <Compile Include="EntityParsing\ScoContentCollectionParser.cs" />
+    <Compile Include="EntityParsing\ShortcutCollectionParser.cs" />
+    <Compile Include="EntityParsing\ShortcutParser.cs" />
+    <Compile Include="EntityParsing\EventInfoCollectionParser.cs" />
+    <Compile Include="EntityParsing\EventInfoParser.cs" />
+    <Compile Include="EntityParsing\MeetingItemCollectionParser.cs" />
+    <Compile Include="EntityParsing\MeetingItemParser.cs" />
+    <Compile Include="EntityParsing\UserInfoParser.cs" />
+    <Compile Include="EntityParsing\UserSeminarLicenseScoParser.cs" />
+    <Compile Include="Extensions\XmlNodeExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="DataObjects\Account.cs" />
+    <Compile Include="AdobeConnectProvider.cs" />
+    <Compile Include="HttpUtilsInternal.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SortOrder.cs" />
+    <Compile Include="TraceTool.cs" />
+    <Compile Include="Utils\EnumReflector.cs" />
+    <Compile Include="Utils\QueryStringBuilder.cs" />
+    <Compile Include="Utils\RequestProcessorAsync.cs" />
+    <Compile Include="Utils\RequestProcessor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Esynctraining.AC.Provider.nuspec">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>REM Create a NuGet package for this project and place the .nupkg file in the project's output directory.
+REM If you see this in Visual Studio's Error List window, check the Output window's Build tab for the actual error.
+ECHO Creating NuGet package in Post-Build event...
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "&amp; '$(ProjectDir)_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1' -ProjectFilePath '$(ProjectPath)' -OutputDirectory '$(TargetDir)' -BuildConfiguration '$(ConfigurationName)' -BuildPlatform '$(PlatformName)'"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

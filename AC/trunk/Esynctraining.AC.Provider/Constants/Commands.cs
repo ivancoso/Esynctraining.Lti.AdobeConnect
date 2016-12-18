@@ -59,6 +59,8 @@
 
         public const string ReportScoViews = "report-sco-views";
 
+        public const string ReportUserTrainingsTaken = "report-user-trainings-taken";
+
         internal static class Telephony
         {
             public const string ProviderList = "telephony-provider-list";

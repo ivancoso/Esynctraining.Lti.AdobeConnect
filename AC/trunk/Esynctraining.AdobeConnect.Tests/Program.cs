@@ -16,13 +16,14 @@ using NUnit.Framework;
 
 namespace Esynctraining.AdobeConnect.Tests
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            var tests = new CalcReportTests();
-            tests.Init();
-            tests.WillGetRecordingsStats("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123");
+            var tests = new AdobeConnectProxyTests();
+            tests.WillReportUserTrainingsTaken();
+            //tests.Init();
+            //tests.WillGetRecordingsStats("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123");
 
             //RunUmdRecordingsReport();
             //var container = new WindsorContainer();
@@ -82,17 +83,17 @@ namespace Esynctraining.AdobeConnect.Tests
 
             string apiUrl = "https://webmeeting.umd.edu/api/xml";
 
-            var connectionDetails = new ConnectionDetails(apiUrl)
-            {
-                //ServiceUrl = apiUrl,
-                //EventMaxParticipants = 10,
-                Proxy =
-                new ProxyCredentials(string.Empty, string.Empty)
-                {
-                    Domain = string.Empty,
-                    Url = string.Empty,
-                },
-            };
+            var connectionDetails = new ConnectionDetails(apiUrl);
+            //{
+            //    //ServiceUrl = apiUrl,
+            //    //EventMaxParticipants = 10,
+            //    Proxy =
+            //    new ProxyCredentials(string.Empty, string.Empty)
+            //    {
+            //        Domain = string.Empty,
+            //        Url = string.Empty,
+            //    },
+            //};
             string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             LoginResult loginResult = provider.Login(new UserCredentials("mike+umd@esynctraining.com", "e$ync123UMD"));

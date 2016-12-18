@@ -155,6 +155,22 @@ namespace Esynctraining.AC.Provider
                 ? new ReportScoViewsContentCollectionResult(status, ReportScoViewCollectionParser.Parse(doc), scoId)
                 : new ReportScoViewsContentCollectionResult(status);
         }
+
+        public ReportUserTrainingsTakenCollectionResult ReportUserTrainingTaken(string principalId)
+        {
+            if (string.IsNullOrWhiteSpace(principalId))
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
+
+            // act: "report-sco-views"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportUserTrainingsTaken,
+                string.Format(CommandParams.PrincipalId, principalId), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new ReportUserTrainingsTakenCollectionResult(status, ReportUserTrainingsTakenCollectionParser.Parse(doc), principalId)
+                : new ReportUserTrainingsTakenCollectionResult(status);
+        }
         
     }
 

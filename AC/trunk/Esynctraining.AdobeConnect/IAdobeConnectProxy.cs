@@ -168,5 +168,7 @@ namespace Esynctraining.AdobeConnect
         RecordingCollectionResult GetSeminarSessionRecordingsList(string seminarId, string seminarSessionId);
         string GetAclField(string scoId, string aclId);
         CustomField GetCustomField(string name);
+
+        ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId);
     }
 }

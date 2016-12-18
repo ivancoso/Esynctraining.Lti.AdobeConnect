@@ -225,6 +225,15 @@ namespace Esynctraining.AdobeConnect
             return fieldName;
         }
 
+        public ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId)
+        {
+            if (string.IsNullOrEmpty(principalId))
+                throw new ArgumentException("principalId");
+
+            return Execute(() => { return _provider.ReportUserTrainingTaken(principalId); },
+               principalId);
+        }
+
         public PrincipalCollectionResult GetAllByEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))

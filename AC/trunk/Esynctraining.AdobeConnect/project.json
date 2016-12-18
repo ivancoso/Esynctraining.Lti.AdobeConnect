@@ -1,5 +1,5 @@
 ﻿{
-	"version": "1.0.1.3",
+	"version": "1.0.1.5",
 	"title": "Esynctraining.AdobeConnect",
 	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
 	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
@@ -19,7 +19,7 @@
 	},
 
   "dependencies": {
-    "Esynctraining.AC.Provider": "1.0.2.2",
+    "Esynctraining.AC.Provider": "1.0.2.4",
     "Esynctraining.Core.Only": "1.0.0.27",
     "NodaTime": "1.3.2"
     //"NETStandard.Library": "1.6.0"

@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System.Collections.Generic;
+using System.Configuration;
 using Castle.Core.Resource;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
@@ -23,8 +24,12 @@ namespace Esynctraining.AdobeConnect.Tests
                 Castle.Windsor.Installer.Configuration.FromXml(new AssemblyResource("assembly://Esynctraining.AdobeConnect/Esynctraining.AdobeConnect.Windsor.xml"))
             );
 
+            //container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
+            //        .DynamicParameters((k, d) => d.Add("collection", ConfigurationManager.AppSettings))
+            //        .LifeStyle.Singleton);
+
             container.Register(Component.For<ApplicationSettingsProvider>().ImplementedBy<ApplicationSettingsProvider>()
-                    .DynamicParameters((k, d) => d.Add("collection", ConfigurationManager.AppSettings))
+                    .DynamicParameters((k, d) => d.Add("collection", new List<string>()))
                     .LifeStyle.Singleton);
         }
 

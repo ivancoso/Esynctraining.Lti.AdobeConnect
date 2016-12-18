@@ -24,7 +24,7 @@
           "lib/net35-Client/NodaTime.dll": {}
         }
       },
-      "Esynctraining.AC.Provider/1.0.2.2": {
+      "Esynctraining.AC.Provider/1.0.2.3": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
         "frameworkAssemblies": [
@@ -61,7 +61,7 @@
           "lib/net35-Client/NodaTime.dll": {}
         }
       },
-      "Esynctraining.AC.Provider/1.0.2.2": {
+      "Esynctraining.AC.Provider/1.0.2.3": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.6.1",
         "frameworkAssemblies": [
@@ -101,7 +101,7 @@
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1/NodaTime.xml"
       ]
     },
-    "Esynctraining.AC.Provider/1.0.2.2": {
+    "Esynctraining.AC.Provider/1.0.2.3": {
       "type": "project",
       "path": "../Esynctraining.AC.Provider/project.json",
       "msbuildProject": "../Esynctraining.AC.Provider/Esynctraining.AC.Provider.xproj"

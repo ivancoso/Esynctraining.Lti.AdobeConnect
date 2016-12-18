@@ -51,8 +51,8 @@
       <Project>{88098e87-4b3a-42c0-84d2-9235ebdef659}</Project>
       <Name>Esynctraining.AC.Provider.Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Esynctraining.AdobeConnect.Tests\Esynctraining.AdobeConnect.Tests.csproj">
-      <Project>{505D0266-BDD7-4B4F-B1D9-49337EE0BDF9}</Project>
+    <ProjectReference Include="..\Esynctraining.AdobeConnect.Tests\Esynctraining.AdobeConnect.Tests.xproj">
+      <Project>{505d0266-bdd7-4b4f-b1d9-49337ee0bdf9}</Project>
       <Name>Esynctraining.AdobeConnect.Tests</Name>
     </ProjectReference>
   </ItemGroup>

@@ -27,5 +27,4 @@ namespace Esynctraining.AC.Provider.Entities
         public DateTime LastViewedDate { get; set; }
 
     }
-
 }
