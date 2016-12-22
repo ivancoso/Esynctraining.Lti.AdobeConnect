@@ -25,6 +25,7 @@ namespace PDFAnnotation.Persistence.Mappings
                 this.Map(x => x.IsOpened).Nullable();
                 this.Map(x => x.Color).Nullable();
                 this.Map(x => x.FillOpacity).Nullable();
+                this.Map(x => x.CreatedBy).Nullable();
                 this.References(x => x.Mark).Not.Nullable();
             }
 

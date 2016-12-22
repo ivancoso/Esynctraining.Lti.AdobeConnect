@@ -63,7 +63,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="nuget.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="PDFAnnotation.Persistence.nuspec">
       <SubType>Designer</SubType>
     </None>

@@ -243,6 +243,17 @@ namespace PDFAnnotation.Core.Domain.Entities
         /// </summary>
         public virtual float? Rotation { get; set; }
 
+
+        /// <summary>
+        /// Gets or sets the created by.
+        /// </summary>
+        public virtual string CreatedBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets the updated by.
+        /// </summary>
+        public virtual string UpdatedBy { get; set; }
+
         #endregion
 
         #region Public Methods and Operators

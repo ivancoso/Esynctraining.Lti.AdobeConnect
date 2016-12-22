@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PDFAnnotation.Core.Domain.Entities
 {
@@ -9,7 +10,8 @@ namespace PDFAnnotation.Core.Domain.Entities
     /// <summary>
     ///     The case
     /// </summary>
- //   [FullTextEnabled]
+    //   [FullTextEnabled]
+    [Serializable]
     public class Category : Entity
     {
         /// <summary>

@@ -35,11 +35,18 @@
             this.Map(x => x.NumberOfPages).Nullable();
             this.Map(x => x.UploadFileStatus).Not.Nullable().CustomType<UploadFileStatus>().Default("1");
 
+            this.Map(x => x.BreakoutRoomId).Length(255).Nullable();
+            this.References(x => x.ParentFile).Column("parentFileId").Nullable();
+
+
             this.Map(x => x.UserId).Column("userId").Nullable();
             this.References(x => x.Topic).Column("topicId").Nullable();
             this.References(x => x.Category).Column("categoryId").Nullable();
 
             this.HasMany(x => x.Marks).Cascade.Delete().Inverse().ExtraLazyLoad();
+            this.HasMany(x => x.ChildrenFiles).KeyColumn("parentFileId").Cascade.Delete().Inverse().ExtraLazyLoad();
+
+
         }
 
         #endregion

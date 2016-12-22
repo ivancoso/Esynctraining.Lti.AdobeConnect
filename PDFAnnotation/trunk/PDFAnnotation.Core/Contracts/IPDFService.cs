@@ -204,6 +204,16 @@ namespace PDFAnnotation.Core.Contracts
         [OperationContract]
         [FaultContract(typeof(Error))]
         void ClearUnsavedMarks(string fileId);
+
+
+        /// <summary>
+        /// Delete pages
+        /// </summary>
+        /// <param name="fileId">The file id</param>
+        /// <param name="pageIndexes">page indexes</param>
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        void DeletePages(string fileId, int[] pageIndexes);
         #endregion
     }
 }

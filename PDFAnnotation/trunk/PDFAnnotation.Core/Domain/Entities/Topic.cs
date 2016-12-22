@@ -12,7 +12,8 @@ namespace PDFAnnotation.Core.Domain.Entities
     /// <summary>
     /// The Topic.
     /// </summary>
-  //  [FullTextEnabled]
+    //  [FullTextEnabled]
+    [Serializable]
     public class Topic : Entity
     {
 

@@ -24,7 +24,9 @@
             this.Map(x => x.DateCreated).Not.Nullable();
             this.Map(x => x.DateChanged).Not.Nullable();
             this.Map(x => x.Rotation).Nullable();
-            
+            this.Map(x => x.UpdatedBy).Nullable();
+            this.Map(x => x.CreatedBy).Nullable();
+
             this.References(x => x.File).Not.Nullable();
 
             this.HasMany(x => x.Shapes).LazyLoad().Cascade.Delete().Inverse();

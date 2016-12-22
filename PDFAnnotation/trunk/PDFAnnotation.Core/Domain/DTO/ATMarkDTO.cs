@@ -42,6 +42,8 @@ namespace PDFAnnotation.Core.Domain.DTO
             this.@readonly = mark.IsReadonly;
             this.type = mark.Type;
             this.rotation = mark.Rotation;
+            this.createdBy = mark.CreatedBy;
+            this.updatedBy = mark.UpdatedBy;
         } 
 
         /// <summary>
@@ -150,6 +152,7 @@ namespace PDFAnnotation.Core.Domain.DTO
             this.style = annotation.IconName;
            // this. = annotation.IsOpened;
             this.color = annotation.Color;
+            this.createdBy = annotation.CreatedBy;
             this.fillOpacity = annotation.FillOpacity.Value;
         }
 
@@ -348,6 +351,18 @@ namespace PDFAnnotation.Core.Domain.DTO
         [DataMember]
         public bool @readonly { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value created by.
+        /// </summary>
+        [DataMember]
+        public string createdBy { get; set; }
+
+        /// <summary>
+        /// Gets or sets a updated by.
+        /// </summary>
+        [DataMember]
+        public string updatedBy { get; set; }
+
         #endregion
 
         #region BoxedMarkDTO 
@@ -517,6 +532,8 @@ namespace PDFAnnotation.Core.Domain.DTO
             o.DisplayFormat = mark.displayFormat;
             o.Type = mark.type;
             o.Rotation = mark.rotation;
+            o.UpdatedBy = mark.updatedBy;
+            o.CreatedBy = mark.createdBy;
             return o;
         }
 
@@ -658,6 +675,7 @@ namespace PDFAnnotation.Core.Domain.DTO
             o.IconName = mark.style;
             //o.IsOpened = mark.;
             o.Color = mark.color;
+            o.CreatedBy = mark.createdBy;
             o.FillOpacity = mark.fillOpacity;
             return o;
         }

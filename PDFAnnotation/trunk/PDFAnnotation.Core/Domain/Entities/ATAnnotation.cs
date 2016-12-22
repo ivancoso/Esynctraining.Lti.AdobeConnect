@@ -65,6 +65,11 @@ namespace PDFAnnotation.Core.Business.Models
         /// </summary>
         public virtual float? FillOpacity { get; set; }
 
+        /// <summary>
+        /// Gets or sets createdBy.
+        /// </summary>
+        public virtual string CreatedBy { get; set; }
+
         #endregion
 
     }

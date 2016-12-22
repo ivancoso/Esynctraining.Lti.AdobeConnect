@@ -219,13 +219,12 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                         buffer = ms.ToArray();
                     }
                 }
-
-                using (var ms = new MemoryStream())
+                foreach (var mk in marks)
                 {
-                    var reader = new PdfReader(buffer);
-                    using (var stamper = new PdfStamper(reader, ms))
+                    using (var ms = new MemoryStream())
                     {
-                        foreach (var mk in marks)
+                        var reader = new PdfReader(buffer);
+                        using (var stamper = new PdfStamper(reader, ms))
                         {
                             foreach (var drawing in mk.Drawings)
                             {
@@ -251,20 +250,24 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                             {
                                 this.ProcessFormula(formula, stamper, reader);
                             }
-                            foreach (var rotation in mk.Rotations)
-                            {
-                                this.ProcessRotation(rotation, stamper, reader);
-                            }
+                            //foreach (var rotation in mk.Rotations)
+                            //{
+                            //    this.ProcessRotation(rotation, stamper, reader);
+                            //}
                             foreach (var annotation in mk.Annotations)
                             {
                                 this.ProcessAnnotation(annotation, stamper, reader);
                             }
-                        }
+                            if (mk.Type == EntityTypes.Rotation)
+                            {
+                                this.ProcessRotation(mk, stamper, reader);
+                            }
 
-                        stamper.Close();
+                            stamper.Close();
+                        }
+                        ms.Flush();
+                        buffer = ms.ToArray();
                     }
-                    ms.Flush();
-                    buffer = ms.ToArray();
                 }
 
                 return buffer;
@@ -274,6 +277,7 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                 throw new WebException(HttpStatusCode.InternalServerError, ex.ToString());
             }
         }
+
 
         /// <summary>
         /// Gets all symbol positions and values from file buffer
@@ -781,12 +785,12 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <param name="rotation">The rotation</param>
         /// <param name="stamper">The stamper</param>
         /// <param name="pdfReader">The pdfReader</param>
-        private void ProcessRotation(ATRotation rt, PdfStamper stamper, PdfReader pdfReader)
+        private void ProcessRotation(ATMark mk, /*ATRotation rt,*/ PdfStamper stamper, PdfReader pdfReader)
         {
-            var rotationOrigin = pdfReader.GetPageRotation(rt.Mark.PageIndex);
-            var pageDict = pdfReader.GetPageN(rt.Mark.PageIndex);
-            int rotation = rt.Mark.Rotation.Return(x => (int)Math.Round(x.Value), 0);
-            pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + rotation));
+            var rotationOrigin = pdfReader.GetPageRotation(mk.PageIndex);
+            var pageDict = pdfReader.GetPageN(mk.PageIndex);
+            int rotation = mk.Rotation.Return(x => (int)Math.Round(x.Value), 0);
+            pageDict.Put(PdfName.ROTATE, new PdfNumber(rotationOrigin + 90));
         }
 
 
@@ -839,33 +843,42 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
         /// <param name="pdfReader">The pdfReader</param>
         private void ProcessAnnotation(ATAnnotation annotation, PdfStamper stamper, PdfReader pdfReader)
         {
-                var size = pdfReader.GetPageSizeWithRotation(annotation.Mark.PageIndex);
-                var defaultColor = "#FFF88A";
-                var color = PdfModel.GetColor(string.IsNullOrWhiteSpace(annotation.Color)?defaultColor:annotation.Color);
-                var border = new Rectangle(annotation.PositionX, size.Height - (annotation.PositionY + annotation.Height), annotation.PositionX + annotation.Width, size.Height - annotation.PositionY);
-                border.Normalize();
+            var size = pdfReader.GetPageSizeWithRotation(annotation.Mark.PageIndex);
+            var defaultColor = "#FFF88A";
+            //var color = PdfModel.GetColor(string.IsNullOrWhiteSpace(annotation.Color)?defaultColor:annotation.Color); // Temporary comment out
+            var border = new Rectangle(annotation.PositionX, size.Height - (annotation.PositionY + annotation.Height),
+                    annotation.PositionX + annotation.Width, size.Height - annotation.PositionY);
 
-                if (Math.Abs(border.Width) > 0 && Math.Abs(border.Height) > 0)
-                {
-                    var markupAnnot = PdfAnnotation.CreateText(
-                        stamper.Writer,
-                        border,
-                        string.Empty, // text for title
-                        annotation.Comment,
-                        annotation.IsOpened,
-                        StickyNoteIconsNames.GetName(annotation.IconName));
-                    if (annotation.FillOpacity.HasValue)
-                    {
-                        markupAnnot.Put(PdfName.CA, new PdfNumber(annotation.FillOpacity.Value));
-                    }
+            
+    
+            border.Normalize();
+            if (Math.Abs(border.Width) > 0 && Math.Abs(border.Height) > 0) {
+                var markupAnnot = PdfAnnotation.CreateText(
+                    stamper.Writer,
+                    border,
+                    annotation.CreatedBy,  // string.Empty, // text for title
+                    annotation.Comment,
+                    annotation.IsOpened,
+                        //StickyNoteIconsNames.GetName(annotation.IconName)
+                    "Comment"
+                    );
+                    //if (annotation.FillOpacity.HasValue)
+                    //{
+                    //    markupAnnot.Put(PdfName.CA, new PdfNumber(annotation.FillOpacity.Value));
+                    //}
 
-                    markupAnnot.Color = color;
-                    markupAnnot.Title = string.Empty; // text for title
-                    markupAnnot.Put(PdfName.CREATIONDATE, new CustomPDFDate(annotation.Mark.DateCreated));
-                    markupAnnot.Put(PdfName.M, new CustomPDFDate(annotation.Mark.DateChanged));
+               markupAnnot.Put(PdfName.CA, new PdfNumber(100));
+               markupAnnot.Color = PdfModel.GetColor(defaultColor); //color;
+                 //   markupAnnot.Title = annotation.CreatedBy;      //string.Empty; // text for title
+               markupAnnot.Put(PdfName.CREATIONDATE, new CustomPDFDate(annotation.Mark.DateCreated));
+               markupAnnot.Put(PdfName.M, new CustomPDFDate(annotation.Mark.DateChanged));
 
-                    stamper.AddAnnotation(markupAnnot, annotation.Mark.PageIndex);
-                }
+                  //  PdfGState state = new PdfGState();
+                 //   state.FillOpacity = 1.0f;
+                 //   cb.SetGState(state);
+
+               stamper.AddAnnotation(markupAnnot, annotation.Mark.PageIndex);
+            }
         }
 
 
@@ -999,11 +1012,12 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
             cb.RestoreState();
         }
 
-        public byte[] AddNewPage(byte[] buffer)
+        public byte[] AddNewPage(byte[] buffer, byte[] redredContent)
         {
             using (var ms = new MemoryStream())
             {
                 var reader = new PdfReader(buffer);
+                var readerRenderedContent = new PdfReader(redredContent);
                 PdfWriter writer = null;
                 Document document = new Document();
                 try
@@ -1030,7 +1044,9 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                         }
 
                         PdfImportedPage page = writer.GetImportedPage(reader, pageNumber);
-                        int rotation = reader.GetPageRotation(pageNumber);
+                        int rotation = reader.GetPageRotation(pageNumber);                    
+
+  
                         if (rotation == 90 || rotation == 270)
                         {
                             cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pageNumber).Height);
@@ -1041,8 +1057,9 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
                         }
                     }
 
-                    // Add a new page to the pdf file
+                    document.SetPageSize(readerRenderedContent.GetPageSizeWithRotation(readerRenderedContent.NumberOfPages));
                     document.NewPage();
+
                     Paragraph paragraph = new Paragraph();
                     Chunk titleChunk = new Chunk(" ");
                     paragraph.Add(titleChunk);
@@ -1072,131 +1089,83 @@ namespace PDFAnnotation.Core.Business.Models.Annotation
 
 
 
-        //public byte[] DeletePage(byte[] buffer, int[] pageIndexes)
-        //{
-
-        //    PdfReader currentPDF = new PdfReader(buffer);
-        //    //Create our destination file
-        //    using (FileStream fs = new FileStream(destinationFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-        //    {
-        //        using (Document doc = new Document())
-        //        {
-        //            using (PdfWriter w = PdfWriter.GetInstance(doc, fs))
-        //            {
-        //                //Open the desitination for writing
-        //                doc.Open();
-        //                //Loop through each page that we want to keep
-        //                for (int i = 1; i < currentPDF.NumberOfPages + 1; i++)
-        //                {
-        //                    if (!pageIndexes.Contains(i))
-        //                    {
-        //                        //Add a new blank page to destination document
-        //                        doc.NewPage();
-        //                        //Extract the given page from our reader and add it directly to the destination PDF
-        //                        w.DirectContent.AddTemplate(w.GetImportedPage(currentPDF, i), 0, 0);
-        //                    }
-        //                }
-        //                doc.Close();
-        //            }
-        //        }
-        //    }
+        public byte[] DeletePage(byte[] buffer, int[] pageIndexes)
+        {
+            using (var ms = new MemoryStream()) //
+            {
+                var reader = new PdfReader(buffer);//
+                PdfWriter writer = null;//
+                Document document = new Document();//
+                try
+                {
+                    //Step 2: we create a writer that listens to the document
+                    writer = PdfWriter.GetInstance(document, ms);//
 
 
+                    //Step 3: Open the document
+                    document.Open();//
 
+                    PdfContentByte cb = writer.DirectContent;//
 
+                    for (int pageNumber = 1; pageNumber < reader.NumberOfPages+1; pageNumber++)//
+                    {
+                        if (!pageIndexes.Contains(pageNumber))
+                        {
+                            document.SetPageSize(reader.GetPageSizeWithRotation(1));
+                            document.NewPage();
 
+                            //Insert to Destination on the first page
+                            if (pageNumber == 1)
+                            {
+                                Chunk fileRef = new Chunk(" ");
+                                document.Add(fileRef);
+                            }
 
+                            PdfImportedPage page = writer.GetImportedPage(reader, pageNumber);
+                            int rotation = reader.GetPageRotation(pageNumber);
+                            if (rotation == 90 || rotation == 270)
+                            {
+                                cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pageNumber).Height);
+                            }
+                            else
+                            {
+                                cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
+                            }
+                        }
+                    }
 
+                    // Add a new page to the pdf file
+                   // document.NewPage();
+                //    Paragraph paragraph = new Paragraph();
+                 //   Chunk titleChunk = new Chunk(" ");
+                 //   paragraph.Add(titleChunk);
+                 //   document.Add(paragraph);
+                }
+                finally
+                {
+                    document.Close();
+                }
 
+                ms.Flush();
+                buffer = ms.ToArray();
 
+                if (reader != null)
+                {
+                    reader.Close();
+                }
 
+                if (writer != null)
+                {
+                    writer.Close();
+                }
+            }
 
-        //    using (var ms = new MemoryStream())
-        //    {
-        //        var reader = new PdfReader(buffer);
-        //        PdfWriter writer = null;
-        //        Document document = new Document();
-        //        try
-        //        {
-        //            //Step 2: we create a writer that listens to the document
-        //            writer = PdfWriter.GetInstance(document, ms);
+            return buffer;
+        }
 
-
-        //            //Step 3: Open the document
-        //            document.Open();
-
-        //            PdfContentByte cb = writer.DirectContent;
-
-        //            for (int pageNumber = 1; pageNumber < reader.NumberOfPages + 1; pageNumber++)
-        //            {
-        //                document.SetPageSize(reader.GetPageSizeWithRotation(1));
-        //                reader.SelectPages(1);
-
-        //                if (pageNumber != pageIndexes[i])
-        //                {
-
-        //                }
-
-        //            }
-
-
-
-
-        //            for (int pageNumber = 1; pageNumber < reader.NumberOfPages + 1; pageNumber++)
-        //            {
-        //                document.SetPageSize(reader.GetPageSizeWithRotation(1));
-        //                document.NewPage();
-
-        //                //Insert to Destination on the first page
-        //                if (pageNumber == 1)
-        //                {
-        //                    Chunk fileRef = new Chunk(" ");
-        //                    document.Add(fileRef);
-        //                }
-
-        //                PdfImportedPage page = writer.GetImportedPage(reader, pageNumber);
-        //                int rotation = reader.GetPageRotation(pageNumber);
-        //                if (rotation == 90 || rotation == 270)
-        //                {
-        //                    cb.AddTemplate(page, 0, -1f, 1f, 0, 0, reader.GetPageSizeWithRotation(pageNumber).Height);
-        //                }
-        //                else
-        //                {
-        //                    cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
-        //                }
-        //            }
-
-        //            // Add a new page to the pdf file
-        //            document.NewPage();
-        //            Paragraph paragraph = new Paragraph();
-        //            Chunk titleChunk = new Chunk(" ");
-        //            paragraph.Add(titleChunk);
-        //            document.Add(paragraph);
-        //        }
-        //        finally
-        //        {
-        //            document.Close();
-        //        }
-
-        //        ms.Flush();
-        //        buffer = ms.ToArray();
-
-        //        if (reader != null)
-        //        {
-        //            reader.Close();
-        //        }
-
-        //        if (writer != null)
-        //        {
-        //            writer.Close();
-        //        }
-        //    }
-
-        //    return buffer;
-        //}
-
-
-
+        // ВЫБРАТЬ ВСЕ МАРКИ
+        // УДАЛИТЬ ВСЕ МАРКИ ДЛЯ УКАЗАННЫХ СТРАНИЦ
+        // ПОМЕНЯТЬ НУМИРАЦИЮ ДЛЯ ВСЕХ МАРОК
 
 
         /// <summary>

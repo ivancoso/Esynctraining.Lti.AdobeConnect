@@ -16,14 +16,19 @@
         #region Fields
 
         /// <summary>
-        ///     The state.
+        ///     The status.
         /// </summary>
         private FileStatus? status = FileStatus.Created;
 
         /// <summary>
-        ///     The ACSessions.
+        ///     The marks.
         /// </summary>
         private ISet<ATMark> marks = new HashSet<ATMark>();
+
+        /// <summary>
+        ///     The children files.
+        /// </summary>
+        private ISet<File> childrenFiles = new HashSet<File>();
 
         /// <summary>
         /// The date created.
@@ -124,12 +129,12 @@
         public virtual string TopicName { get; set; }
 
         /// <summary>
-        /// Gets or sets the Topic.
+        /// Gets or sets the description.
         /// </summary>
         public virtual string Description { get; set; }
 
         /// <summary>
-        ///     Gets or sets the state.
+        ///     Gets or sets the file status.
         /// </summary>
         public virtual FileStatus? Status
         {
@@ -150,14 +155,40 @@
         public virtual UploadFileStatus UploadFileStatus { get; set; }
 
         /// <summary>
-        /// Gets or sets the event.
+        /// Gets or sets the topic.
         /// </summary>
         public virtual Topic Topic { get; set; }
 
         /// <summary>
-        /// Gets or sets the event.
+        /// Gets or sets the category.
         /// </summary>
         public virtual Category Category { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parent file
+        /// </summary>
+        public virtual File ParentFile { get; set; }
+
+        /// <summary>
+        /// Gets or sets the parent file
+        /// </summary>
+        public virtual ISet<File> ChildrenFiles
+        {
+            get
+            {
+                return this.childrenFiles;
+            }
+
+            set
+            {
+                this.childrenFiles = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the breakout room id
+        /// </summary>
+        public virtual string BreakoutRoomId { get; set;}
 
         /// <summary>
         ///     Gets or sets the user.
@@ -165,13 +196,13 @@
         public virtual int? UserId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the event's unique name.
+        ///     Gets or sets the display name.
         /// </summary>
         [FullTextIndexed(2)]
         public virtual string DisplayName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the event's unique number.
+        ///     Gets or sets the file number.
         /// </summary>
         [FullTextIndexed(3)]
         public virtual int? FileNumber { get; set; }
@@ -182,7 +213,7 @@
         public virtual bool? IsShared { get; set; }
 
         /// <summary>
-        /// Gets or sets the is shared.
+        /// Gets or sets the is original.
         /// </summary>
         public virtual bool? IsOriginal { get; set; }
 

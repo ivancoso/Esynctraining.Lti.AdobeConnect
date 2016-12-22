@@ -483,11 +483,12 @@ namespace PDFAnnotation.Core.Business.Models
                 }
 
                 System.IO.File.Copy(fileTemp, permanentFileName);
-              //  this.ClearDirectoryAndRemoveItSafely(folderName);
+                //  this.ClearDirectoryAndRemoveItSafely(folderName);
                 file.UploadFileStatus = UploadFileStatus.Rendering;
                 this.RegisterSave(file, true);
                 return true;
             }
+
 
             return false;
         }
@@ -530,9 +531,19 @@ namespace PDFAnnotation.Core.Business.Models
             Category category = null, 
             Topic topic = null, 
             int? userId = null,
-            byte[] content = null)
+            byte[] content = null,
+            File parent = null,
+            string breakoutRoomId = null,
+            bool copy = false)
         {
             var file = new File { FileName = name.Replace(" ", "_"), FileSize = size, TopicName = deponent };
+
+            if (parent != null && !string.IsNullOrWhiteSpace(breakoutRoomId))
+            {
+                file.ParentFile = parent;
+                file.BreakoutRoomId = breakoutRoomId;
+            }
+
 
             if (string.IsNullOrWhiteSpace(file.TopicName))
             {
@@ -561,6 +572,16 @@ namespace PDFAnnotation.Core.Business.Models
             file.UserId = userId;
             file.Status = FileStatus.Created;
             file.UploadFileStatus = UploadFileStatus.Uploading;
+            file.DisplayName = name;
+
+            if (parent != null)
+            {
+                file.NumberOfPages = parent.NumberOfPages;
+                file.IsOriginal = parent.IsOriginal;
+                file.Status = parent.Status;
+                file.UploadFileStatus = parent.UploadFileStatus;
+                file.FileNumber = parent.FileNumber;
+            }
 
             this.RegisterSave(file, true);
 
@@ -870,6 +891,117 @@ namespace PDFAnnotation.Core.Business.Models
             return null;
         }
 
+
+
+        public File Clone(Guid id, string name)
+        {
+            File origin = this.GetOneById(id).Value;
+            var baseDir = Path.Combine(FileStoragePhysicalPath(), origin.Id.ToString());
+            DirectoryInfo dir = new DirectoryInfo(baseDir);
+            if (dir.Exists)
+            {
+                lock (GetDictionaryLocker(id.ToString()))
+                {
+                        var newFile = this.CopyFile(origin, name);
+                        if (this.CopyDirectory(dir, newFile.Id, origin.FileName, name))
+                        {
+                            this.CopyMarksToNewFile(origin.Id, newFile.Id);
+                            return newFile;
+                        }
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// The get or create child file for the breakout room
+        /// </summary>
+        /// <param name="parentFileId"></param>
+        /// <param name="breakoutRoomId"></param>
+        /// <param name="category"></param>
+        /// <param name="topic"></param>
+        /// <returns></returns>
+        public File GetOrCreateChild(string parentFileId, string breakoutRoomId, string name)
+        {
+            Guid idGuid;
+            if (Guid.TryParse(parentFileId, out idGuid))
+            {
+                try
+                {
+                    lock (GetDictionaryLocker(parentFileId))
+                    {
+                        File origin = this.GetOneById(idGuid).Value;
+                        var baseDir = Path.Combine(FileStoragePhysicalPath(), origin.Id.ToString());
+
+                        DirectoryInfo dir = new DirectoryInfo(baseDir);
+                        if (dir.Exists)
+                        {
+                            var child = this.GetOneByBreakoutRoomAndParent(idGuid, breakoutRoomId).Value;
+                            if (child != null)
+                            {
+                                return child;
+                            }
+
+                            var newFile = this.CopyFile(origin,
+                                origin.FileName.Replace(".pdf", "_") + name + ".pdf", 
+                                breakoutRoomId);
+                            if (this.CopyDirectory(dir, newFile.Id, origin.FileName, newFile.FileName))
+                            {
+                                this.CopyMarksToNewFile(origin.Id, newFile.Id);
+                                origin.ChildrenFiles.Add(newFile);
+                                this.RegisterSave(origin, true);
+                                return newFile;
+                            }
+                        }
+                        this.logger.Error("Directory doesn't find");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.logger.Error("Unexpected error:" + ex);
+                }
+            }
+            return null;
+        }
+
+        private File CopyFile(File origin, string newName, string breakoutRoomId = null)
+        {
+            var file = new File { FileName = newName, FileSize = origin.FileSize, TopicName = origin.TopicName };
+            file.DateCreated = DateTime.Now;
+            file.DateCreated = DateTime.Now;
+            file.Category = origin.Category;
+            file.Topic = origin.Topic;
+            file.UserId = origin.UserId;
+            file.Status = FileStatus.UploadCompleted;
+            file.UploadFileStatus = UploadFileStatus.Converted;
+            file.DisplayName = newName;
+            file.NumberOfPages = origin.NumberOfPages;
+            file.IsOriginal = origin.IsOriginal;
+            file.FileNumber = origin.FileNumber;
+            if (!string.IsNullOrWhiteSpace(breakoutRoomId))
+            {
+                file.ParentFile = origin;
+                file.BreakoutRoomId = breakoutRoomId;
+            }
+
+            this.RegisterSave(file, true);
+            return file;
+        }
+
+
+        /// <summary>
+        /// The get one by breakout room and parent file id
+        /// </summary>
+        /// <param name="idGuid"> The file id</param>
+        /// <param name="breakoutRoomId">The breakout room</param>
+        /// <returns></returns>
+        public virtual IFutureValue<File> GetOneByBreakoutRoomAndParent(Guid idGuid, string breakoutRoomId)
+        {
+            QueryOver<File> queryOver = new DefaultQueryOver<File, Guid>().GetQueryOver()
+                .Where(x => x.ParentFile.Id == idGuid && x.ParentFile.Id != null && x.BreakoutRoomId == breakoutRoomId).Take(1);
+            return this.Repository.FindOne(queryOver);
+        } 
+        
         /// <summary>
         /// The get one by name.
         /// </summary>
@@ -947,6 +1079,32 @@ namespace PDFAnnotation.Core.Business.Models
             }
 
             return string.Empty;
+        }
+
+
+        /// <summary>
+        /// Delete all swf files
+        /// </summary>
+        /// <param name="path">path to the file</param>
+        public void DeleteAllSWFFiles(string path)
+        {
+            try
+            {
+                if (String.IsNullOrWhiteSpace(path) != null)
+                {
+                    var fi = new FileInfo(path);
+                    FileInfo[] files = fi.Directory.GetFiles("*" + "swf");
+                    foreach (FileInfo file in files)
+                    {
+                        this.RemoveFileSafely(file.FullName);
+                    }
+                }
+            }
+            catch
+            {
+                
+            }
+
         }
 
         /// <summary>
@@ -1294,6 +1452,160 @@ namespace PDFAnnotation.Core.Business.Models
             }
         }
 
+        public void CopyMarksToNewFile(Guid originId, Guid newId)
+        {
+            File newFile = this.GetOneById(newId).Value;
+
+            foreach (ATDrawing o in this.drawingModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATDrawing @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.drawingModel.RegisterSave(@new);
+            }
+
+
+            foreach (ATRotation o in this.rotationModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATRotation @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.rotationModel.RegisterSave(@new);
+            }
+
+            foreach (ATHighlightStrikeOut o in this.highlightStrikeOutModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATHighlightStrikeOut @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.highlightStrikeOutModel.RegisterSave(@new);
+            }
+
+            foreach (ATShape o in this.shapeModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATShape @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.shapeModel.RegisterSave(@new);
+            }
+
+            foreach (ATTextItem o in this.textItemModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATTextItem @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.textItemModel.RegisterSave(@new);
+            }
+
+            foreach (ATPicture o in this.pictureModel.GetAllForFile(originId))
+            {
+                ATMark mark = new ATMark();
+
+                mark.Id = Guid.NewGuid();
+                mark.CreatedBy = o.Mark.CreatedBy;
+                mark.UpdatedBy = o.Mark.UpdatedBy;
+                mark.DateCreated = DateTime.Now;
+                mark.DateChanged = DateTime.Now;
+                mark.File = newFile;
+                mark.IsReadonly = o.Mark.IsReadonly;
+                mark.Type = o.Mark.Type;
+                mark.DisplayFormat = o.Mark.DisplayFormat;
+                mark.PageIndex = o.Mark.PageIndex;
+                mark.Rotation = o.Mark.Rotation;
+
+                ATPicture picture  = new ATPicture();
+                picture.Id = default(int);
+                picture.Mark = mark;
+                picture.Height = o.Height;
+                picture.Image = o.Image;
+                picture.LabelFontSize = o.LabelFontSize;
+                picture.LabelText = o.LabelText;
+                picture.LabelTextColor = o.LabelTextColor;
+                picture.Path = o.Path;
+                picture.PositionX = o.PositionX;
+                picture.PositionY = o.PositionY;
+                picture.Width = o.Width;
+
+                mark.Pictures.Add(picture);
+
+                this.markModel.RegisterSave(mark);
+                this.pictureModel.RegisterSave(picture);
+            }
+
+
+
+            foreach (ATFormula o in this.formulaModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATFormula @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.formulaModel.RegisterSave(@new);
+            }
+
+
+            foreach (ATAnnotation o in this.annotationModel.GetAllForFile(originId))
+            {
+                ATMark m = o.Mark.DeepClone();
+                m.Id = Guid.NewGuid();
+                m.File = newFile;
+
+                ATAnnotation @new = o.DeepClone();
+                @new.Id = default(int);
+                @new.Mark = m;
+
+                this.markModel.RegisterSave(m);
+                this.annotationModel.RegisterSave(@new);
+            }
+
+            this.drawingModel.Flush();
+            this.highlightStrikeOutModel.Flush();
+            this.shapeModel.Flush();
+            this.textItemModel.Flush();
+            this.rotationModel.Flush();
+            this.pictureModel.Flush();
+            this.formulaModel.Flush();
+            this.annotationModel.Flush();
+
+            this.markModel.Flush();
+        }
+
+
         /// <summary>
         /// Get file data as image.
         /// </summary>
@@ -1307,8 +1619,6 @@ namespace PDFAnnotation.Core.Business.Models
         {
             File newFile = this.GetOneById(newId).Value;
             File originFile = this.GetOneById(originId).Value;
-
-
 
             foreach (ATDrawing o in this.drawingModel.GetAllForFile(originId))
             {
@@ -2010,6 +2320,40 @@ namespace PDFAnnotation.Core.Business.Models
             }
             System.IO.File.WriteAllBytes(physicalFilePath, content);
             return filePath.Replace(@"\", "/");
+        }
+
+
+        private bool CopyDirectory(DirectoryInfo sourceDir, Guid newFile, string parentName, string newName)
+        {
+            var newPah = Path.Combine(this.FileStoragePhysicalPath(), newFile.ToString());
+            if (!sourceDir.Exists)
+            {
+                throw new DirectoryNotFoundException(
+                    "Source directory does not exist or could not be found: "
+                    + sourceDir.Name);
+                return false;
+            }
+
+            if (!Directory.Exists(newPah))
+            {
+                Directory.CreateDirectory(newPah);
+            }
+
+            FileInfo[] files = sourceDir.GetFiles();
+            foreach (FileInfo file in files)
+            {
+                string temppath = null;
+                if (file.Name == parentName)
+                {
+                    temppath = Path.Combine(newPah, newName);
+                }
+                else
+                {
+                    temppath = Path.Combine(newPah, file.Name);
+                }
+                file.CopyTo(temppath, false);
+            }
+            return true;
         }
 
         /// <summary>

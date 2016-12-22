@@ -37,6 +37,8 @@
         public FileDTO(File file)
         {
             this.fileId = file.Id.ToString();
+            this.parentFileId = file.ParentFile.With(x => x.Id.ToString());
+            this.breakoutRoomId = file.BreakoutRoomId;
             this.dateCreated = file.DateCreated.With(x => x.ConvertToUnixTimestamp()); ;
             this.fileName = file.FileName;
             this.fileSize = file.FileSize;
@@ -174,6 +176,18 @@
         /// </summary>
         [DataMember]
         public int? categoryId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the case id.
+        /// </summary>
+        [DataMember]
+        public string breakoutRoomId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the case id.
+        /// </summary>
+        [DataMember]
+        public string parentFileId { get; set; }
 
         /// <summary>
         /// Gets or sets the Topic id.
