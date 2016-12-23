@@ -1,4 +1,4 @@
-﻿{
+{
 	"version": "1.0.1.5",
 	"title": "Esynctraining.AdobeConnect",
 	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
@@ -27,18 +27,20 @@
 
 	"frameworks": {
 		"net45": {
-					"frameworkAssemblies": {
-						"System.Runtime.Serialization": ""
-						//"System.Net.Http": "",
-						//"System.Xml": ""
-					}
+      "frameworkAssemblies": {
+        "System.IO.Compression": "",
+        "System.Runtime.Serialization": ""
+        //"System.Net.Http": "",
+        //"System.Xml": ""
+      }
 		},
 		"net461": {
-					"frameworkAssemblies": {
-						"System.Runtime.Serialization": ""
-						//"System.Net.Http": "",
-						//"System.Xml": ""
-					}
+      "frameworkAssemblies": {
+        "System.IO.Compression": "",
+        "System.Runtime.Serialization": ""
+        //"System.Net.Http": "",
+        //"System.Xml": ""
+      }
 		}
 
 

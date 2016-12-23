@@ -44,6 +44,9 @@ namespace Esynctraining.AdobeConnect
         byte[] GetContentByUrlPath(string urlPath, string format, out string error);
 
         ScoContentCollectionResult GetContentsByScoId(string scoId);
+
+        ScoContentCollectionResult GetContentsByScoIdSourceScoId(string scoId, string filterSourceScoId);
+
         ScoContentCollectionResult GetContentsByType(string type);
         //GeneratedRecordingJobCollectionResult GetConvertedRecordingsList(string recordingScoId);
         //CurriculumContentCollectionResult GetCurriculumContentsByScoId(string scoId);

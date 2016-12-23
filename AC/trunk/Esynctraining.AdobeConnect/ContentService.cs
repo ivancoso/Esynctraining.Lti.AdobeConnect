@@ -109,6 +109,17 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
+        public IEnumerable<ScoContent> GetFolderContent(string folderScoId, string sourceScoId)
+        {
+            if (string.IsNullOrWhiteSpace(folderScoId))
+                throw new ArgumentException("Folder's sco-id should have value", nameof(folderScoId));
+            if (string.IsNullOrWhiteSpace(folderScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(sourceScoId));
+
+            ScoContentCollectionResult result = _provider.GetContentsByScoIdSourceScoId(folderScoId, sourceScoId);
+            return result.Values;
+        }
+
         public string GetDownloadAsZipLink(string scoId, string breezeToken)
         {
             if (string.IsNullOrWhiteSpace(scoId))

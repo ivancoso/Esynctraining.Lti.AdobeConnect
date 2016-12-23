@@ -143,7 +143,25 @@
                 ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
                 : new ScoContentCollectionResult(status);
         }
-        
+
+        public ScoContentCollectionResult GetContentsByScoIdSourceScoId(string scoId, string sourceScoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (string.IsNullOrWhiteSpace(sourceScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(sourceScoId));
+
+            StatusInfo status;
+
+            var scos = this.requestProcessor.Process(Commands.Sco.Contents,
+                string.Format(CommandParams.ScoIdSourceScoId, scoId, sourceScoId),
+                out status);
+
+            return ResponseIsOk(scos, status)
+                ? new ScoContentCollectionResult(status, ScoContentCollectionParser.Parse(scos), scoId)
+                : new ScoContentCollectionResult(status);
+        }
+
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>

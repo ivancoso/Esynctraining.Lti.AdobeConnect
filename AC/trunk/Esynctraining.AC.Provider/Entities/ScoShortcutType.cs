@@ -48,6 +48,8 @@
         /// </summary>
         courses,
 
+        chat_transcripts,
+
     }
 
     //public static class ScoShortcutTypes

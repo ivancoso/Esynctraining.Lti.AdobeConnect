@@ -37,6 +37,8 @@
         /// </summary>
         public const string SourceScoId = "source-sco-id={0}";
 
+        public const string ScoIdSourceScoId = "sco-id={0}&source-sco-id={1}";
+
         /// <summary>
         /// The SCO upload id.
         /// </summary>

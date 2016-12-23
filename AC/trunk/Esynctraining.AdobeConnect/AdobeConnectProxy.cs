@@ -377,6 +377,17 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
+        public ScoContentCollectionResult GetContentsByScoIdSourceScoId(string scoId, string filterSourceScoId)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (string.IsNullOrWhiteSpace(filterSourceScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(filterSourceScoId));
+
+            return Execute(() => { return _provider.GetContentsByScoIdSourceScoId(scoId, filterSourceScoId); },
+                scoId, filterSourceScoId);
+        }
+
         public ScoContentCollectionResult GetContentsByType(string type)
         {
             if (string.IsNullOrWhiteSpace(type))
