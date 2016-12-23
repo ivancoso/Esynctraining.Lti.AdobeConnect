@@ -16,6 +16,9 @@ namespace Esynctraining.AdobeConnect
 
         public SeminarService(ILogger logger)
         {
+            if (logger == null)
+                throw new ArgumentNullException(nameof(logger));
+
             _logger = logger;
         }
 

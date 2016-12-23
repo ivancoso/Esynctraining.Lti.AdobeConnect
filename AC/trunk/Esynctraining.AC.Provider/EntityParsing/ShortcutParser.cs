@@ -26,12 +26,14 @@
             }
 
             return new ScoShortcut
-                       {
-                           ScoId = xml.SelectAttributeValue("sco-id"),
-                           TreeId = xml.ParseAttributeLong("tree-id"),
-                           Type = xml.SelectAttributeValue("type"),
-                           DomainName = xml.SelectSingleNodeValue("domain-name/text()")
-                       };
+            {
+                ScoId = xml.SelectAttributeValue("sco-id"),
+                TreeId = xml.ParseAttributeLong("tree-id"),
+                Type = xml.SelectAttributeValue("type"),
+                DomainName = xml.SelectSingleNodeValue("domain-name/text()"),
+            };
         }
+
     }
+
 }
