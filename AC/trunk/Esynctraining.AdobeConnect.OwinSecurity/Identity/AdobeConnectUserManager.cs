@@ -67,7 +67,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
 
                 if (!_acDomainValidator.IsValid(companyToken, acDomain))
                 {
-                    //    _logger?.Warn($"[UserManager.FindAsync] AC domain is not valid for companyToken. AcDomain={acDomain}");
+                    _logger?.Warn($"[UserManager.FindAsync] AC domain is not valid for companyToken. AcDomain={acDomain}");
                     return null;
                 }
 
@@ -76,11 +76,11 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                 var connectionDetails = new ConnectionDetails(apiUrl);
                 var provider = new AdobeConnectProvider(connectionDetails);
                 UserInfo acPrincipal = TryLogin(provider, new AdobeConnectAccess(acDomain, acLogin, password), out sessionToken);
-//                _logger?.Info($"[UserManager.FindAsync] ACSession={sessionToken}");
+                _logger?.Info($"[UserManager.FindAsync] ACSession={sessionToken}");
 
                 if (acPrincipal == null)
                 {
-//                    _logger?.Warn($"[UserManager.FindAsync] Principal not found. AcDomain={acDomain}, AcLogin={acLogin}");
+                    _logger?.Warn($"[UserManager.FindAsync] Principal not found. AcDomain={acDomain}, AcLogin={acLogin}");
                     return null;
                 }
 
@@ -107,7 +107,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                         acDomain);
                     if (user == null)
                     {
-                        //_logger?.Warn($"[UserManager.FindAsync] UserStore.CreateAsync. PrincipalId={applicationUser.Id}");
+                        _logger?.Warn($"[UserManager.FindAsync] UserStore.CreateAsync. PrincipalId={applicationUser.Id}");
                         await store.CreateAsync(applicationUser, password);
                     }
                 }
@@ -124,14 +124,14 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
             LoginResult result = provider.Login(new UserCredentials(credentials.Login, credentials.Password));
             if (!result.Success)
             {
-//                _logger?.Error(
-//                    $"[UserManager.TryLogin] Login failed. Login={credentials.Login}, Status={result.Status.GetErrorInfo()}");
+                _logger?.Error(
+                    $"[UserManager.TryLogin] Login failed. Login={credentials.Login}, Status={result.Status.GetErrorInfo()}");
                 sessionToken = null;
                 return null;
             }
 
             sessionToken = result.Status.SessionInfo;
-//            _logger?.Info($"[UserManager.TryLogin] Success. Login={credentials.Login}, sessionToken={sessionToken}");
+            _logger?.Info($"[UserManager.TryLogin] Success. Login={credentials.Login}, sessionToken={sessionToken}");
 
             return _userGroupPermissionProvider.UserHasGroupPermission(provider, result.User) ? result.User : null;
         }
@@ -139,7 +139,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
         public async Task<AdobeConnectUser> RefreshSession(string userId, string companyToken, string domain,
             string userName)
         {
-//            _logger?.Info($"[UserManager.RefreshSession] PrincipalId={userId}, Domain={domain}");
+            _logger?.Info($"[UserManager.RefreshSession] PrincipalId={userId}, Domain={domain}");
 
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException(nameof(userId));

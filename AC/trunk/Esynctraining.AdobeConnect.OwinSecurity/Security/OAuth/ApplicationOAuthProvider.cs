@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Esynctraining.AdobeConnect.OwinSecurity.Identity;
+using Esynctraining.Core.Logging;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
@@ -14,9 +15,10 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
     {
         private readonly string _publicClientId;
         private readonly Func<AdobeConnectUserManager> _userManagerFactory;
+        private readonly ILogger _logger;
 
 
-        public ApplicationOAuthProvider(string publicClientId, Func<AdobeConnectUserManager> userManagerFactory)
+        public ApplicationOAuthProvider(string publicClientId, Func<AdobeConnectUserManager> userManagerFactory, ILogger logger)
         {
             if (publicClientId == null)
                 throw new ArgumentNullException(nameof(publicClientId));
@@ -26,6 +28,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
 
             _publicClientId = publicClientId;
             _userManagerFactory = userManagerFactory;
+            _logger = logger;
         }
 
 
@@ -72,7 +75,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 AuthenticationProperties properties = CreateProperties(user.UserName);
                 AuthenticationTicket ticket = new AuthenticationTicket(oAuthIdentity, properties);
                 context.Validated(ticket);
-//                _logger.Info($"[GrantResourceOwnerCredentials] PrincipalId={user.Id}, ACSession={context.Ticket.Identity.FindFirst("ac_session")}");
+                _logger.Info($"[GrantResourceOwnerCredentials] PrincipalId={user.Id}, ACSession={context.Ticket.Identity.FindFirst("ac_session")}");
                 // cookie: context.Request.Context.Authentication.SignIn(cookiesIdentity);
             }
         }
@@ -125,7 +128,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 try
                 {
                     user = await userManager.RefreshSession(id, companyToken.Value, domain.Value, identity.Name);
-//                    _logger?.Info($"[GrantRefreshToken.AfterLogin] ACSession={user.AcSessionToken}");
+                    _logger?.Info($"[GrantRefreshToken.AfterLogin] ACSession={user.AcSessionToken}");
                 }
                 catch (Exception ex)
                 {
@@ -141,8 +144,6 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 return;
             }
             // check for existing claim and remove it
-//            var existingClaim = identity.FindFirst("ac_session");
-//            if (existingClaim != null)
             var existingClaims = identity.Claims.Where(x => x.Type == "ac_session" || x.Type == ClaimTypes.Role);
             foreach (var existingClaim in existingClaims)
             {
@@ -160,7 +161,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
                 }
             }
             context.Validated(context.Ticket);
-//            _logger?.Info($"[GrantRefreshToken] PrincipalId={user.Id}, ACSession={context.Ticket.Identity.FindFirst("ac_session")}");
+            _logger?.Info($"[GrantRefreshToken.Success] PrincipalId={user.Id}, ACSession={context.Ticket.Identity.FindFirst("ac_session")}");
             //            return Task.FromResult<object>(null);
         }
 

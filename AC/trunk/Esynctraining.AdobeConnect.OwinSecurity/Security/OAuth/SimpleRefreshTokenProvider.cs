@@ -44,7 +44,7 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
             if (saved)
             {
                 context.SetToken(refreshTokenId.ToString("n"));
-//                _logger.Info($"[TokenProvider.CreateAsync] Id={id}, SetToken={refreshTokenId}");
+                _logger.Info($"[TokenProvider.CreateAsync] Id={id}, SetToken={refreshTokenId}");
             }
             else
             {
@@ -59,13 +59,13 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Security.OAuth
 
         public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-//            _logger.Info($"[TokenProvider.ReceiveAsync] Incoming token={context.Token}");
+            _logger.Info($"[TokenProvider.ReceiveAsync] Incoming token={context.Token}");
             var token = new Guid(context.Token);
             var protectedTicket = await _tokenService.GetProtectedTicket(token);
             if (!string.IsNullOrEmpty(protectedTicket))
             {
                 context.DeserializeTicket(protectedTicket);
-//                _logger.Info($"[TokenRefresh] ACSession={context.Ticket.Identity.FindFirst(x => x.Type == "ac_session")}");
+                _logger.Info($"[TokenRefresh] ACSession={context.Ticket.Identity.FindFirst(x => x.Type == "ac_session")}");
                 await _tokenService.Delete(token);
             }
         }
