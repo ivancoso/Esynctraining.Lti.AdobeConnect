@@ -56,6 +56,7 @@
     <Compile Include="Formatting\MultipartFormDataMemoryStreamProvider.cs" />
     <Compile Include="ServiceLocatorControllerActivator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebApiExceptionLogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
