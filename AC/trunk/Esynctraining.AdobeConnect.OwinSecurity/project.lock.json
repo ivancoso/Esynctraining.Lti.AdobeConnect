@@ -1,0 +1,415 @@
+{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5": {
+      "ConnectExtensions.Services.Client/1.0.0.7": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.AdobeConnect": "1.0.0.2"
+        },
+        "compile": {
+          "lib/net45/ConnectExtensions.Services.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net45/ConnectExtensions.Services.Client.dll": {}
+        }
+      },
+      "Esynctraining.Core.Only/1.0.0.27": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Identity.Core/2.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Microsoft.AspNet.Identity.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.AspNet.Identity.Core.dll": {}
+        }
+      },
+      "Microsoft.Owin/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.1",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security.OAuth/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.1",
+          "Microsoft.Owin.Security": "3.0.1",
+          "Newtonsoft.Json": "6.0.4",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.OAuth.dll": {}
+        }
+      },
+      "Newtonsoft.Json/6.0.4": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "NodaTime/1.3.2": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net35-Client/NodaTime.dll": {}
+        },
+        "runtime": {
+          "lib/net35-Client/NodaTime.dll": {}
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
+        }
+      },
+      "Esynctraining.AC.Provider/1.0.2.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "frameworkAssemblies": [
+          "System.Net.Http",
+          "System.Xml"
+        ],
+        "compile": {
+          "net45/Esynctraining.AC.Provider.dll": {}
+        },
+        "runtime": {
+          "net45/Esynctraining.AC.Provider.dll": {}
+        }
+      },
+      "Esynctraining.AdobeConnect/1.0.1.5": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "Esynctraining.AC.Provider": "1.0.2.4",
+          "Esynctraining.Core.Only": "1.0.0.27",
+          "NodaTime": "1.3.2"
+        },
+        "frameworkAssemblies": [
+          "System.IO.Compression",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "net45/Esynctraining.AdobeConnect.dll": {}
+        },
+        "runtime": {
+          "net45/Esynctraining.AdobeConnect.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.6.1": {
+      "ConnectExtensions.Services.Client/1.0.0.7": {
+        "type": "package",
+        "dependencies": {
+          "Esynctraining.AdobeConnect": "1.0.0.2"
+        },
+        "compile": {
+          "lib/net45/ConnectExtensions.Services.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net45/ConnectExtensions.Services.Client.dll": {}
+        }
+      },
+      "Esynctraining.Core.Only/1.0.0.27": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Esynctraining.Core.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Identity.Core/2.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Microsoft.AspNet.Identity.Core.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.AspNet.Identity.Core.dll": {}
+        }
+      },
+      "Microsoft.Owin/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.1",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security.OAuth/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.1",
+          "Microsoft.Owin.Security": "3.0.1",
+          "Newtonsoft.Json": "6.0.4",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.OAuth.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.OAuth.dll": {}
+        }
+      },
+      "Newtonsoft.Json/6.0.4": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "NodaTime/1.3.2": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "System.Xml"
+        ],
+        "compile": {
+          "lib/net35-Client/NodaTime.dll": {}
+        },
+        "runtime": {
+          "lib/net35-Client/NodaTime.dll": {}
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
+        }
+      },
+      "Esynctraining.AC.Provider/1.0.2.4": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6.1",
+        "frameworkAssemblies": [
+          "System.Net.Http",
+          "System.Xml"
+        ],
+        "compile": {
+          "net461/Esynctraining.AC.Provider.dll": {}
+        },
+        "runtime": {
+          "net461/Esynctraining.AC.Provider.dll": {}
+        }
+      },
+      "Esynctraining.AdobeConnect/1.0.1.5": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.6.1",
+        "dependencies": {
+          "Esynctraining.AC.Provider": "1.0.2.4",
+          "Esynctraining.Core.Only": "1.0.0.27",
+          "NodaTime": "1.3.2"
+        },
+        "frameworkAssemblies": [
+          "System.IO.Compression",
+          "System.Runtime.Serialization"
+        ],
+        "compile": {
+          "net461/Esynctraining.AdobeConnect.dll": {}
+        },
+        "runtime": {
+          "net461/Esynctraining.AdobeConnect.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ConnectExtensions.Services.Client/1.0.0.7": {
+      "sha512": "Ewe/vxtQRIXUDDlDxnWK6AkyoZZLHPcpNXeCLdnvJAFpRx+fO+413txGXK+jX9gFvdQWyHmYpz7CyFWikzgWDA==",
+      "type": "package",
+      "path": "ConnectExtensions.Services.Client/1.0.0.7",
+      "files": [
+        "ConnectExtensions.Services.Client.1.0.0.7.nupkg.sha512",
+        "ConnectExtensions.Services.Client.nuspec",
+        "lib/net45/ConnectExtensions.Services.Client.dll"
+      ]
+    },
+    "Esynctraining.Core.Only/1.0.0.27": {
+      "sha512": "W5PwkAkGty57GgFk7eFO/YP0u2XNf3m9L8kasRamFGGP/Y1DXMLcyZedsvMzM5VjIa0VpWwwaPjQWRlIoL+OCw==",
+      "type": "package",
+      "path": "Esynctraining.Core.Only/1.0.0.27",
+      "files": [
+        "Esynctraining.Core.Only.1.0.0.27.nupkg.sha512",
+        "Esynctraining.Core.Only.nuspec",
+        "lib/net45/Esynctraining.Core.dll"
+      ]
+    },
+    "Microsoft.AspNet.Identity.Core/2.2.1": {
+      "sha512": "jjurNglpmcv0SLBd4Fmar8ZoJ2yqfTf6iuP3p8wVH7Nvanfo8l3qTBzq3qRQz2BQlb6iXJiDWPjcnIImVz512g==",
+      "type": "package",
+      "path": "Microsoft.AspNet.Identity.Core/2.2.1",
+      "files": [
+        "Microsoft.AspNet.Identity.Core.2.2.1.nupkg.sha512",
+        "Microsoft.AspNet.Identity.Core.nuspec",
+        "lib/net45/Microsoft.AspNet.Identity.Core.dll",
+        "lib/net45/Microsoft.AspNet.Identity.Core.xml"
+      ]
+    },
+    "Microsoft.Owin/3.0.1": {
+      "sha512": "64yZsGN9uRnXNVAyAT4F6KWmdDUJ6yX4uqzxKTdGANKH1oMt0IKZ7THRRa3mXIOo8iSu4tq/DCBUycUY9pXZzw==",
+      "type": "package",
+      "path": "Microsoft.Owin/3.0.1",
+      "files": [
+        "Microsoft.Owin.3.0.1.nupkg.sha512",
+        "Microsoft.Owin.nuspec",
+        "lib/net45/Microsoft.Owin.XML",
+        "lib/net45/Microsoft.Owin.dll"
+      ]
+    },
+    "Microsoft.Owin.Security/3.0.1": {
+      "sha512": "LPoUxaTKzmjs97wDCTtBIoRwp30Jkq9UFnoj+EfMFJv+XxjcvHE/D573LRomA568WhvXoI2cUiwhZFvqfbLMVg==",
+      "type": "package",
+      "path": "Microsoft.Owin.Security/3.0.1",
+      "files": [
+        "Microsoft.Owin.Security.3.0.1.nupkg.sha512",
+        "Microsoft.Owin.Security.nuspec",
+        "lib/net45/Microsoft.Owin.Security.XML",
+        "lib/net45/Microsoft.Owin.Security.dll"
+      ]
+    },
+    "Microsoft.Owin.Security.OAuth/3.0.1": {
+      "sha512": "wttlhNSijhsrF7iwxYzxhTr8AYxXI6qoiw3b6dhVhqXOYCDp8OQ5yhHFtWlst+65l7VHduXassspZ974rtLMaw==",
+      "type": "package",
+      "path": "Microsoft.Owin.Security.OAuth/3.0.1",
+      "files": [
+        "Microsoft.Owin.Security.OAuth.3.0.1.nupkg.sha512",
+        "Microsoft.Owin.Security.OAuth.nuspec",
+        "lib/net45/Microsoft.Owin.Security.OAuth.XML",
+        "lib/net45/Microsoft.Owin.Security.OAuth.dll"
+      ]
+    },
+    "Newtonsoft.Json/6.0.4": {
+      "sha512": "FyQLmEpjsCrEP+znauLDGAi+h6i9YnaMkITlfIoiM4RYyX3nki306bTHsr/0okiIvIc7BJhQTbOAIZVocccFUw==",
+      "type": "package",
+      "path": "Newtonsoft.Json/6.0.4",
+      "files": [
+        "Newtonsoft.Json.6.0.4.nupkg.sha512",
+        "Newtonsoft.Json.nuspec",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netcore45/Newtonsoft.Json.dll",
+        "lib/netcore45/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
+        "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81/Newtonsoft.Json.xml",
+        "tools/install.ps1"
+      ]
+    },
+    "NodaTime/1.3.2": {
+      "sha512": "iIV8xtLH7JhElTag7wMzP8YkZcSvFUcHZfGZhl3npzVz7V7y0T1JJOeqS/UcY3epq9480jcuUO2jzo8ewhQmlg==",
+      "type": "package",
+      "path": "NodaTime/1.3.2",
+      "files": [
+        "NodaTime.1.3.2.nupkg.sha512",
+        "NodaTime.nuspec",
+        "lib/net35-Client/NodaTime.dll",
+        "lib/net35-Client/NodaTime.xml",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1/NodaTime.dll",
+        "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1+XamariniOS1/NodaTime.xml"
+      ]
+    },
+    "Owin/1.0.0": {
+      "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
+      "type": "package",
+      "path": "Owin/1.0.0",
+      "files": [
+        "Owin.1.0.0.nupkg.sha512",
+        "Owin.nuspec",
+        "lib/net40/Owin.dll"
+      ]
+    },
+    "Esynctraining.AC.Provider/1.0.2.4": {
+      "type": "project",
+      "path": "d:\\Development\\esync\\esynctraining\\libraries\\trunk\\csharp\\AC\\trunk\\Esynctraining.AC.Provider\\project.json",
+      "msbuildProject": "d:\\Development\\esync\\esynctraining\\libraries\\trunk\\csharp\\AC\\trunk\\Esynctraining.AC.Provider\\Esynctraining.AC.Provider.xproj"
+    },
+    "Esynctraining.AdobeConnect/1.0.1.5": {
+      "type": "project",
+      "path": "d:\\Development\\esync\\esynctraining\\libraries\\trunk\\csharp\\AC\\trunk\\Esynctraining.AdobeConnect\\project.json",
+      "msbuildProject": "d:\\Development\\esync\\esynctraining\\libraries\\trunk\\csharp\\AC\\trunk\\Esynctraining.AdobeConnect\\Esynctraining.AdobeConnect.xproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "ConnectExtensions.Services.Client >= 1.0.0.7",
+      "Esynctraining.AdobeConnect >= 1.0.1.5",
+      "Microsoft.AspNet.Identity.Core >= 2.2.1",
+      "Microsoft.Owin.Security.OAuth >= 3.0.1"
+    ],
+    ".NETFramework,Version=v4.5": [
+      "System.Configuration"
+    ],
+    ".NETFramework,Version=v4.6.1": [
+      "System.Configuration"
+    ]
+  },
+  "tools": {},
+  "projectFileToolGroups": {}
+}

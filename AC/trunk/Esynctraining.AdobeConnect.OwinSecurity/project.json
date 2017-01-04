@@ -1,0 +1,45 @@
+﻿{
+	"version": "1.0.0.13",
+
+	"title": "Esynctraining.AdobeConnect.OwinSecurity",
+	"description": "TBD",
+	"copyright": "Copyright © 2013-2017 eSyncTraining.com",
+	"authors": [ "eSyncTraining.com" ],
+
+	"packOptions": {
+		"requireLicenseAcceptance": false,
+		"tags": [ "AC", "AdobeConnect", "owin" ],
+		"owners": [ "eSyncTraining.com" ],
+		"releaseNotes": ""
+	},
+
+
+	"dependencies": {
+		"ConnectExtensions.Services.Client": "1.0.0.7",
+		"Esynctraining.AdobeConnect": "1.0.1.5",
+		"Microsoft.Owin.Security.OAuth": "3.0.1",
+		"Microsoft.AspNet.Identity.Core": "2.2.1"
+	},
+
+	"frameworks": {
+		"net45": {
+			"frameworkAssemblies": {
+				"System.Configuration": ""
+				//"System.ComponentModel.DataAnnotations": ""
+			}
+		},
+		"net461": {
+			"frameworkAssemblies": {
+				"System.Configuration": ""
+				//"System.ComponentModel.DataAnnotations": ""
+			}
+		}
+	},
+
+	"scripts": {
+		"postcompile": [
+			"dotnet pack --no-build --configuration %compile:Configuration%"
+		]
+	}
+
+}

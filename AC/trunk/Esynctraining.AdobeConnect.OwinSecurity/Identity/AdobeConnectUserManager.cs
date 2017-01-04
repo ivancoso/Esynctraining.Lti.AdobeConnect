@@ -72,10 +72,9 @@ namespace Esynctraining.AdobeConnect.OwinSecurity.Identity
                 }
 
                 string sessionToken;
-                string apiUrl = acDomain + "/api/xml";
-                var connectionDetails = new ConnectionDetails(apiUrl);
+                var connectionDetails = new ConnectionDetails(new Uri(acDomain));
                 var provider = new AdobeConnectProvider(connectionDetails);
-                UserInfo acPrincipal = TryLogin(provider, new AdobeConnectAccess(acDomain, acLogin, password), out sessionToken);
+                UserInfo acPrincipal = TryLogin(provider, new AdobeConnectAccess(new Uri(acDomain), acLogin, password), out sessionToken);
                 _logger?.Info($"[UserManager.FindAsync] ACSession={sessionToken}");
 
                 if (acPrincipal == null)
