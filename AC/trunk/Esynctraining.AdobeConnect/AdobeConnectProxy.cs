@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.Core.Logging;
@@ -13,23 +12,31 @@ namespace Esynctraining.AdobeConnect
 {
     public partial class AdobeConnectProxy : IAdobeConnectProxy
     {
-        private readonly AdobeConnectProvider _provider;
-        private readonly ILogger _logger;
         private const int ChunkSize = 50;
 
-        public string ApiUrl { get; private set; }
+        private readonly AdobeConnectProvider _provider;
+        private readonly ILogger _logger;
+        
+
+        public Uri AdobeConnectRoot { get; }
 
 
-        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, string apiUrl) 
+        public AdobeConnectProxy(AdobeConnectProvider provider, ILogger logger, Uri adobeConnectRoot) 
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));
             if (logger == null)
                 throw new ArgumentNullException(nameof(logger));
+            if (adobeConnectRoot == null)
+                throw new ArgumentNullException(nameof(adobeConnectRoot));
+            if (!adobeConnectRoot.IsAbsoluteUri)
+                throw new ArgumentException("Absolute Uri expected", nameof(adobeConnectRoot));
+            if (!adobeConnectRoot.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) && !adobeConnectRoot.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"HTTP and HTTPS only", nameof(adobeConnectRoot));
 
             _provider = provider;
             _logger = logger;
-            ApiUrl = apiUrl;
+            AdobeConnectRoot = adobeConnectRoot;
         }
 
 
@@ -337,7 +344,7 @@ namespace Esynctraining.AdobeConnect
                     string msg = string.Format("[AdobeConnectProxy Error] {0}. Meeting not found. meetingId:{1}. AC: {2}.",
                         result.Status.GetErrorInfo(),
                         meetingId,
-                        ApiUrl);
+                        AdobeConnectRoot);
                     _logger.Warn(msg);
                     meetingExistsInAC = false;
                 }
@@ -761,7 +768,7 @@ namespace Esynctraining.AdobeConnect
 
         public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0)
         {
-            return Execute(() => { return _provider.ReportMettingSessions(scoId, startIndex, limit); },
+            return Execute(() => { return _provider.ReportMeetingSessions(scoId, startIndex, limit); },
                 scoId);
         }
 

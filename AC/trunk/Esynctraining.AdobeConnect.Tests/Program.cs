@@ -16,23 +16,45 @@ using NUnit.Framework;
 
 namespace Esynctraining.AdobeConnect.Tests
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            var tests = new AdobeConnectProxyTests();
-            tests.WillReportUserTrainingsTaken();
+            var d = new DateTime(1482489280536);
+
+            //var tests = new CalcReportTests();
             //tests.Init();
-            //tests.WillGetRecordingsStats("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123");
+            //tests.WillGetRecordingsStats("https://connect.fiu.edu", "mkollen", "e$ync123");
 
             //RunUmdRecordingsReport();
-            //var container = new WindsorContainer();
-            //WindsorIoC.Initialize(container);
-            //DIConfig.RegisterComponents(container);
+            var container = new WindsorContainer();
+            WindsorIoC.Initialize(container);
+            DIConfig.RegisterComponents(container);
 
-            //var logger = IoC.Resolve<ILogger>();
+            var logger = IoC.Resolve<ILogger>();
             //var accountService = new AdobeConnectAccountService(logger);
-            //IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("https://connect.esynctraining.com", "sergeyi@esynctraining.com", "Qrazy123"), true);
+            //IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("http://connectdev.esynctraining.com", "sergeyi@esynctraining.com", "e$ync123"), true);
+            
+            //var chatService = new ChatTranscriptService(ac, new ContentService(logger, ac), logger);
+            //var lastSession = ac.ReportMeetingSessions("458536").Values.Last();
+
+            //ChatTranscript chat = chatService.GetMeetingChatTranscript("458536", "7", lastSession.DateCreated, lastSession.DateEnd);
+            //var publicChat = chat.GetPublicChat();
+            //var privateChatGroups = chat.GetPrivateChatGroups();
+            //int re = 43;
+
+            var connectionDetails = new ConnectionDetails(new Uri("http://connectdev.esynctraining.com"));
+            var provider = new AdobeConnectProvider(connectionDetails);
+            var userCredentials = new UserCredentials("sergeyi@esynctraining.com", "pwd");
+            LoginResult result = provider.Login(userCredentials);
+            var meetingScoId = 458536;
+            var res = provider.ReportAssetResponseInfo(meetingScoId, 458583);
+            var rr2 = provider.ReportQuizQuestionResponse(meetingScoId);
+            var rr3 = provider.ReportQuizInteractions(meetingScoId);
+            var rr4 = provider.ReportQuizQuestionDistribution(meetingScoId);
+
+            int rr = 4;
+
 
             //var seminarService = new SeminarService(logger);
             //var licenses = seminarService.GetAllSeminarLicenses(ac);
@@ -81,20 +103,9 @@ namespace Esynctraining.AdobeConnect.Tests
             var accountService = new AdobeConnectAccountService(logger);
             //            IAdobeConnectProxy ac = accountService.GetProvider(new AdobeConnectAccess("https://webmeeting.umd.edu/", "mike+umd@esynctraining.com", "e$ync123UMD"), true);
 
-            string apiUrl = "https://webmeeting.umd.edu/api/xml";
+            var apiUrl = new Uri("https://webmeeting.umd.edu");
 
             var connectionDetails = new ConnectionDetails(apiUrl);
-            //{
-            //    //ServiceUrl = apiUrl,
-            //    //EventMaxParticipants = 10,
-            //    Proxy =
-            //    new ProxyCredentials(string.Empty, string.Empty)
-            //    {
-            //        Domain = string.Empty,
-            //        Url = string.Empty,
-            //    },
-            //};
-            string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             LoginResult loginResult = provider.Login(new UserCredentials("mike+umd@esynctraining.com", "e$ync123UMD"));
 

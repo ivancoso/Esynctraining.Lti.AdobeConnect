@@ -4,37 +4,41 @@ namespace Esynctraining.AdobeConnect
 {
     public interface IAdobeConnectAccess
     {
-        string Domain { get; set; }
+        Uri Domain { get; }
 
-        string Login { get; set; }
+        string Login { get; }
 
-        string Password { get; set; }
+        string Password { get; }
     }
 
     public interface IAdobeConnectAccess2
     {
-        string Domain { get; set; }
+        Uri Domain { get; }
 
-        string SessionToken { get; set; }
+        string SessionToken { get; }
     }
 
     public class AdobeConnectAccess : IAdobeConnectAccess
     {
-        public string Domain { get; set; }
+        public Uri Domain { get; }
 
-        public string Login { get; set; }
+        public string Login { get; }
 
-        public string Password { get; set; }
+        public string Password { get; }
 
 
-        public AdobeConnectAccess(string domain, string login, string password)
+        public AdobeConnectAccess(Uri domain, string login, string password)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-                throw new ArgumentException("Domain can't be empty", "domain");
-            if (string.IsNullOrWhiteSpace(domain))
-                throw new ArgumentException("Login can't be empty", "login");
-            if (string.IsNullOrWhiteSpace(domain))
-                throw new ArgumentException("Password can't be empty", "password");
+            if (domain == null)
+                throw new ArgumentNullException(nameof(domain));
+            if (!domain.IsAbsoluteUri)
+                throw new ArgumentException("Absolute Uri expected", nameof(domain));
+            if (!domain.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) && !domain.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"HTTP and HTTPS only", nameof(domain));
+            if (string.IsNullOrWhiteSpace(login))
+                throw new ArgumentException("Login can't be empty", nameof(login));
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password can't be empty", nameof(password));
 
             Domain = domain;
             Login = login;
@@ -45,17 +49,21 @@ namespace Esynctraining.AdobeConnect
 
     public class AdobeConnectAccess2 : IAdobeConnectAccess2
     {
-        public string Domain { get; set; }
+        public Uri Domain { get; }
 
-        public string SessionToken { get; set; }
+        public string SessionToken { get; }
 
 
-        public AdobeConnectAccess2(string domain, string sessionToken)
+        public AdobeConnectAccess2(Uri domain, string sessionToken)
         {
-            if (string.IsNullOrWhiteSpace(domain))
-                throw new ArgumentException("Domain can't be empty", "domain");
-            if (string.IsNullOrWhiteSpace(domain))
-                throw new ArgumentException("SessionToken can't be empty", "sessionToken");
+            if (domain == null)
+                throw new ArgumentNullException(nameof(domain));
+            if (!domain.IsAbsoluteUri)
+                throw new ArgumentException("Absolute Uri expected", nameof(domain));
+            if (!domain.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) && !domain.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"HTTP and HTTPS only", nameof(domain));
+            if (string.IsNullOrWhiteSpace(sessionToken))
+                throw new ArgumentException("SessionToken can't be empty", nameof(sessionToken));
 
             Domain = domain;
             SessionToken = sessionToken;

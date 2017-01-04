@@ -111,7 +111,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Meeting, out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
+                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, null))
                        : new MeetingItemCollectionResult(status);
         }
 
@@ -123,7 +123,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, parameters, out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, null))
+                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, null))
                        : new MeetingItemCollectionResult(status);
         }
 
@@ -150,7 +150,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl, returnCurrentUsers))
+                       ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, returnCurrentUsers))
                        : new MeetingAttendeeCollectionResult(status);
         }
 
@@ -181,7 +181,7 @@
         /// <returns>
         /// The <see cref="MeetingSessionCollectionResult"/>.
         /// </returns>
-        public MeetingSessionCollectionResult ReportMettingSessions(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-objects"
             StatusInfo status;
@@ -189,7 +189,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc, this.requestProcessor.ServiceUrl))
+                       ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc))
                        : new MeetingSessionCollectionResult(status);
         }
 
@@ -274,7 +274,7 @@
             var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, filter, out status);
 
             return ResponseIsOk(doc, status)
-                ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, string.Empty, "//my-meetings/meeting"))
+                ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, null, "//my-meetings/meeting"))
                 : new MeetingItemCollectionResult(status);
         }
 

@@ -8,21 +8,26 @@ namespace Esynctraining.AC.Provider.DataObjects
     /// </summary>
     public class ConnectionDetails
     {
-        public string ServiceUrl { get; private set; }
-        public int HttpRequestTimeout { get; private set; }
-        public int HttpContentRequestTimeout { get; private set; }
+        public Uri AdobeConnectRoot { get; }
+
+        public int HttpRequestTimeout { get; }
+
+        public int HttpContentRequestTimeout { get; }
         
-        //public ProxyCredentials Proxy { get; set; }
 
-
-        public ConnectionDetails(string serviceUrl,
+        public ConnectionDetails(Uri adobeConnectRoot,
             int requestTimeout = AdobeConnectProviderConstants.DefaultHttpRequestTimeout,
             int contentTimout = AdobeConnectProviderConstants.DefaultHttpContentRequestTimeout)
         {
-            if (string.IsNullOrWhiteSpace(serviceUrl))
-                throw new ArgumentException("Non-empty value expected", nameof(serviceUrl));
+            if (adobeConnectRoot == null)
+                throw new ArgumentNullException(nameof(adobeConnectRoot));
+            if (!adobeConnectRoot.IsAbsoluteUri)
+                throw new ArgumentException("Absolute Uri expected", nameof(adobeConnectRoot));
+            if (!adobeConnectRoot.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) && !adobeConnectRoot.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"HTTP and HTTPS only", nameof(adobeConnectRoot));
 
-            ServiceUrl = serviceUrl;
+
+            AdobeConnectRoot = adobeConnectRoot;
             HttpRequestTimeout = requestTimeout;
             HttpContentRequestTimeout = contentTimout;
         }

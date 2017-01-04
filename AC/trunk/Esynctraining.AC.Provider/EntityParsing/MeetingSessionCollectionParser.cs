@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.AC.Provider.EntityParsing
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml;
@@ -20,9 +21,8 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingSession> Parse(XmlNode xml, string serviceUrl)
+        public static IEnumerable<MeetingSession> Parse(XmlNode xml)
         {
             if (xml == null || !xml.NodeListExists(Path))
             {

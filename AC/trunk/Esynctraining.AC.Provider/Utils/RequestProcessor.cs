@@ -20,11 +20,7 @@
         #region Fields
 
         private readonly ConnectionDetails connectionDetails;
-
-        /// <summary>
-        /// The session cookie.
-        /// </summary>
-        protected Cookie sessionCookie;
+        private Cookie sessionCookie;
 
         #endregion
 
@@ -35,23 +31,17 @@
             if (details == null)
                 throw new ArgumentNullException(nameof(details));
 
-            this.connectionDetails = details;
-            this.SetSessionId(null);
+            connectionDetails = details;
+            SetSessionId(null);
         }
 
         #endregion
 
         #region Public Properties
 
-        /// <summary>
-        /// Gets the service url.
-        /// </summary>
-        public string ServiceUrl
+        public Uri AdobeConnectRoot
         {
-            get
-            {
-                return this.connectionDetails != null ? this.connectionDetails.ServiceUrl : null;
-            }
+            get { return connectionDetails.AdobeConnectRoot; }
         }
 
         #endregion
@@ -61,7 +51,7 @@
         /// <summary>
         ///     Gets a value indicating whether is logged in.
         /// </summary>
-        protected bool IsLoggedIn
+        private bool IsLoggedIn
         {
             // TODO: check if session is not expired!
             get
@@ -73,40 +63,26 @@
         /// <summary>
         ///     Gets a value indicating whether is session cookie valid.
         /// </summary>
-        protected bool IsSessionCookieValid
+        private bool IsSessionCookieValid
         {
             get
             {
-                return this.sessionCookie != null && !string.IsNullOrWhiteSpace(this.sessionCookie.Value)
-                       && !string.IsNullOrWhiteSpace(this.sessionCookie.Domain);
+                return this.sessionCookie != null 
+                    && !string.IsNullOrWhiteSpace(this.sessionCookie.Value)
+                    && !string.IsNullOrWhiteSpace(this.sessionCookie.Domain);
             }
         }
 
         #endregion
 
         #region Public Methods and Operators
-
-        /// <summary>
-        /// The get download pattern.
-        /// </summary>
-        /// <param name="downloadName">
-        /// The download Name.
-        /// </param>
-        /// <param name="format">
-        /// The format.
-        /// </param>
-        /// <param name="error">
-        /// The error.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
+        
         public byte[] DownloadData(string urlPath, string format, out string error)
         {
             error = null;
             string url = string.Format(
                 "{0}/{1}/output/{1}.{2}?download={2}", 
-                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
                 urlPath.Trim('/'),
                 format);
            
@@ -118,7 +94,7 @@
             error = null;
             string url = string.Format(
                 "{0}/{1}/output/{2}?download={2}",
-                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
                 urlPath.Trim('/'),
                 fileName);
 
@@ -130,7 +106,7 @@
             error = null;
             string url = string.Format(
                 "{0}/{1}/source/{1}.{2}?download={2}",
-                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
                 urlPath.Trim('/'),
                 format);
 
@@ -142,7 +118,7 @@
             error = null;
             string url = string.Format(
                 "{0}/{1}/source/{2}?download={2}",
-                this.connectionDetails.ServiceUrl.Replace(@"api/xml", string.Empty).Trim('/'),
+                connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/'),
                 urlPath.Trim('/'),
                 fileName);
 
@@ -252,7 +228,7 @@
             try
             {
                 HttpResponseMessage response = null;
-                var url = $"{connectionDetails.ServiceUrl}?action={action}&{parameters}&session={sessionCookie.Value}";
+                var url = BuildUrl(action, parameters) + $"&session={sessionCookie.Value}";
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 var form = new MultipartFormDataContent();
                 form.Add(new ByteArrayContent(uploadData.fileBytes, 0, uploadData.fileBytes.Length), "file",
@@ -322,32 +298,30 @@
         //    }
         //}
 
-        /// <summary>
-        /// The set session cookie.
-        /// </summary>
-        /// <param name="sessionId">
-        /// The session id.
-        /// </param>
         public void SetSessionId(string sessionId)
         {
             this.sessionCookie = new Cookie(
                 AdobeConnectProviderConstants.SessionCookieName, 
                 sessionId, 
                 "/", 
-                new Uri(this.connectionDetails.ServiceUrl).Host);
+                connectionDetails.AdobeConnectRoot.Host);
         }
 
         #endregion
 
         #region Methods
-        
+
+        private string BuildUrl(string action, string parameters)
+        {
+            var url = $"{connectionDetails.AdobeConnectRoot.ToString().TrimEnd('/')}/api/xml?action={action}&{parameters}";
+            return url;
+        }
+
         protected HttpWebRequest CreateWebRequest(string action, string parameters)
         {
-            var request =
-                WebRequest.Create(
-                    this.connectionDetails.ServiceUrl + string.Format(@"?action={0}&{1}", action, parameters)) as
-                HttpWebRequest;
-
+            //this.connectionDetails.AdobeConnectRoot + string.Format(@"api/xml?action={0}&{1}", action, parameters)
+            var url = BuildUrl(action, parameters);
+            var request = WebRequest.Create(url ) as HttpWebRequest;
             return ProcessRequest(request);
         }
         
@@ -457,24 +431,24 @@
         
         private HttpWebRequest ProcessRequest(HttpWebRequest request, bool contentRequest = false)
         {
-            try
-            {
-                //if (connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
-                //{
-                //    if (!string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Login)
-                //        && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
-                //    {
-                //        request.Proxy = new WebProxy(this.connectionDetails.Proxy.Url, true)
-                //        {
-                //            Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
-                //        };
-                //    }
-                //}
-            }
-            catch (Exception ex)
-            {
-                TraceTool.TraceException(ex);
-            }
+            //try
+            //{
+            //    //if (connectionDetails.Proxy != null && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Url))
+            //    //{
+            //    //    if (!string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Login)
+            //    //        && !string.IsNullOrWhiteSpace(this.connectionDetails.Proxy.Password))
+            //    //    {
+            //    //        request.Proxy = new WebProxy(this.connectionDetails.Proxy.Url, true)
+            //    //        {
+            //    //            Credentials = new NetworkCredential(this.connectionDetails.Proxy.Login,  this.connectionDetails.Proxy.Password, this.connectionDetails.Proxy.Domain)
+            //    //        };
+            //    //    }
+            //    //}
+            //}
+            //catch (Exception ex)
+            //{
+            //    TraceTool.TraceException(ex);
+            //}
 
             // 20 sec. timeout: A Domain Name System (DNS) query may take up to 15 seconds to return or time out.
             request.Timeout = contentRequest ? connectionDetails.HttpContentRequestTimeout : connectionDetails.HttpRequestTimeout;

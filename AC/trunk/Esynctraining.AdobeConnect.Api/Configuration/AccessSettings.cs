@@ -48,7 +48,7 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
                 Uri url;
                 if (!Uri.TryCreate(str, UriKind.Absolute, out url))
                 {
-                    throw new ConfigurationErrorsException($"apiUrl value '{str}' is not valid (Absolute URL expected)");
+                    throw new ConfigurationErrorsException($"Domain value '{str}' is not valid (Absolute URL expected)");
                 }
 
                 if (!url.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) &&
@@ -86,7 +86,7 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
 
         public AdobeConnectAccess Build()
         {
-            return new AdobeConnectAccess(Domain, AdminCredentials.UserName, AdminCredentials.Password);
+            return new AdobeConnectAccess(new Uri(Domain), AdminCredentials.UserName, AdminCredentials.Password);
         }
 
         public class Credentials : ICredentials

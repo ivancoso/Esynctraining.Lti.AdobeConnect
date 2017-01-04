@@ -1,5 +1,6 @@
 ﻿namespace Esynctraining.AC.Provider.EntityParsing
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Xml;
@@ -20,9 +21,9 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
+        /// <param name="adobeConnectUrl">AdobeConnect Root Url.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingItem> Parse(XmlNode xml, string serviceUrl, string path)
+        public static IEnumerable<MeetingItem> Parse(XmlNode xml, Uri adobeConnectUrl, string path)
         {
             path = path ?? Path;
             if (xml == null || !xml.NodeListExists(path))
@@ -33,7 +34,7 @@
             }
 
             return xml.SelectNodes(path).Cast<XmlNode>()
-                .Select(node => MeetingItemParser.Parse(node, serviceUrl))
+                .Select(node => MeetingItemParser.Parse(node, adobeConnectUrl))
                 .Where(item => item != null)
                 .ToArray();
         }

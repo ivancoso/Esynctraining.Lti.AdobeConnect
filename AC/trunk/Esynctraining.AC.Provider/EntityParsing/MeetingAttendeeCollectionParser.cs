@@ -20,9 +20,8 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
         /// <returns>Collection of Meeting Items.</returns>
-        public static IEnumerable<MeetingAttendee> Parse(XmlNode xml, string serviceUrl, bool returnCurrentUsers = false)
+        public static IEnumerable<MeetingAttendee> Parse(XmlNode xml, bool returnCurrentUsers = false)
         {
             if (xml == null || !xml.NodeListExists(Path))
             {

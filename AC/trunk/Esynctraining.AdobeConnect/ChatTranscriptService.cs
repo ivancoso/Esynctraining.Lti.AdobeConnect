@@ -47,16 +47,25 @@ namespace Esynctraining.AdobeConnect
         }
 
 
-        public ChatTranscript GetMeetingChatTranscript(string meetingScoId, string accountId)
+        public ChatTranscript GetMeetingChatTranscript(string accountId, string meetingScoId, DateTime sessionDateCreated, DateTime sessionDateEnd)
         {
             ScoShortcut chatsFolder = GetChatTranscriptsFolder(accountId);
 
             IEnumerable<ScoContent> chatScoList = _contentService.GetFolderContent(chatsFolder.ScoId, meetingScoId);
 
-            if (chatScoList.Count() != 1)
-                throw new NotImplementedException();
+            // HACK: 
+            //if (chatScoList.Count() != 1)
+            //    throw new NotImplementedException();
 
-            var chatFileScoId = chatScoList.Single().ScoId;
+            //(StartA <= EndB) and (EndA >= StartB)
+
+            var chatFileScoId = chatScoList.Where(x => x.BeginDate <= sessionDateEnd && x.EndDate >= sessionDateCreated).Last().ScoId;
+
+
+            // HACK: 
+            //var chatFileScoId = chatScoList.Single().ScoId;
+            //var chatFileScoId = chatScoList.Last().ScoId;
+
             string err;
             byte[] zipContent = _proxy.GetContent(chatFileScoId, out err);
 
@@ -92,7 +101,7 @@ namespace Esynctraining.AdobeConnect
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error parsing chat transcription. MeetingScoId:'{meetingScoId}'. {_proxy.ApiUrl}.", ex);
+                    _logger.Error($"Error parsing chat transcription. MeetingScoId:'{meetingScoId}'. {_proxy.AdobeConnectRoot}.", ex);
                     throw new InvalidOperationException("Error parsing chat transcription.", ex);
                 }
             }

@@ -15,9 +15,9 @@
         /// Parses the specified XML.
         /// </summary>
         /// <param name="xml">The XML.</param>
-        /// <param name="serviceUrl">The service URL.</param>
+        /// <param name="adobeConnectRoot">AC root URL.</param>
         /// <returns>Meeting Item or null if it's a folder.</returns>
-        public static MeetingItem Parse(XmlNode xml, string serviceUrl)
+        public static MeetingItem Parse(XmlNode xml, Uri adobeConnectRoot)
         {
             if (xml == null || xml.Attributes == null)
             {
@@ -45,11 +45,9 @@
                     item.UrlPath = xml.SelectSingleNodeValue("url-path/text()");
                 }
 
-                if (!string.IsNullOrEmpty(item.UrlPath) && !string.IsNullOrEmpty(serviceUrl))
+                if (!string.IsNullOrEmpty(item.UrlPath) && adobeConnectRoot != null)
                 {
-                    var u = new Uri(serviceUrl);
-
-                    item.FullUrl = "https://" + u.GetComponents(UriComponents.Host, UriFormat.SafeUnescaped) + item.UrlPath;
+                    item.FullUrl = adobeConnectRoot.ToString().TrimEnd('/') + item.UrlPath;
                 }
 
                 item.Duration = item.DateEnd.Subtract(item.DateBegin);

@@ -44,13 +44,15 @@ namespace Esynctraining.AdobeConnect.Tests
             _logger = IoC.Resolve<ILogger>();
         }
 
-        //[TestCase("http://connectdev.esynctraining.com/api/xml", "anton@esynctraining.com", "Welcome1")]
-        //[TestCase("https://webmeeting.umd.edu/api/xml", "mike+umd@esynctraining.com", "e$ync123UMD")]
-        //[TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123")]
-        [TestCase("http://connect.uthsc.edu/api/xml", "itsadmin", "Memphis2016", 0)]
+        //[TestCase("https://middlebury.adobeconnect.com", "mike+wtu@esynctraining.com", "2016", 0)]
+        //[TestCase("https://caminos.adobeconnect.com", "mesync", "user123", 0)]
+        //[TestCase("http://connectdev.esynctraining.com", "anton@esynctraining.com", "Welcome1")]
+        //[TestCase("https://webmeeting.umd.edu", "mike+umd@esynctraining.com", "e$ync123UMD")]
+        //[TestCase("https://connect.fiu.edu", "mkollen", "e$ync123")]
+        //[TestCase("http://connect.uthsc.edu", "itsadmin", "Memphis2016", 0)]
         public void WillGetRecordingsStats(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(apiUrl);
+            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));
@@ -64,13 +66,12 @@ namespace Esynctraining.AdobeConnect.Tests
                 _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
             }
             LogRecStats(reports);
-
         }
 
-        [TestCase("https://rhi.adobeconnect.com/api/xml", "mike@esynctraining.com", "Esync321", 0)]
+        [TestCase("https://rhi.adobeconnect.com", "mike@esynctraining.com", "Esync321", 0)]
         public void WillGetRecordingsStatsForRHI(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(apiUrl);
+            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));
@@ -87,10 +88,10 @@ namespace Esynctraining.AdobeConnect.Tests
 
         }
 
-        [TestCase("https://cca.acms.com/api/xml", "developer@esynctraining.com", "Welcome1", 0)]
+        [TestCase("https://cca.acms.com", "developer@esynctraining.com", "Welcome1", 0)]
         public void WillGetRecordingsStatsForCCA(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(apiUrl);
+            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));
@@ -117,10 +118,10 @@ namespace Esynctraining.AdobeConnect.Tests
             }
         }
 
-        [TestCase("https://connect.fiu.edu/api/xml", "mkollen", "e$ync123", "17131049")]
+        [TestCase("https://connect.fiu.edu", "mkollen", "e$ync123", "17131049")]
         public void WillParseDurationForSco(string apiUrl, string login, string password, string sco)
         {
-            _connectionDetails = new ConnectionDetails(apiUrl);
+            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
             _provider = new AdobeConnectProvider(_connectionDetails);
             var provider = _provider;
             LoginResult loginResult = provider.Login(new UserCredentials(login, password));

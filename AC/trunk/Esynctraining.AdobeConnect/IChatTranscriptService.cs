@@ -1,8 +1,10 @@
-﻿namespace Esynctraining.AdobeConnect
+﻿using System;
+
+namespace Esynctraining.AdobeConnect
 {
     public interface IChatTranscriptService
     {
-        ChatTranscript GetMeetingChatTranscript(string meetingScoId, string accountId);
+        ChatTranscript GetMeetingChatTranscript(string accountId, string meetingScoId, DateTime sessionDateCreated, DateTime sessionDateEnd);
 
     }
 

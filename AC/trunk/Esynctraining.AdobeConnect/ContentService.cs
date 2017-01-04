@@ -129,7 +129,7 @@ namespace Esynctraining.AdobeConnect
 
             ScoInfo scoInfo = DoGetSco(scoId);
 
-            string acDomain = _provider.ApiUrl.Replace(@"api/xml", string.Empty).Trim('/');
+            string acDomain = _provider.AdobeConnectRoot.ToString().TrimEnd('/');
             string cleanUrlPath = scoInfo.UrlPath.Trim('/');
             string fileExtention = "zip";// $".{scoInfo.Icon}"; ppt\pptx?
             

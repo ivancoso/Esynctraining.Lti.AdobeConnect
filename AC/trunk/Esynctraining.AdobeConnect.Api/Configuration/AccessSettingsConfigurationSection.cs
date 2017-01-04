@@ -46,7 +46,7 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
 
         public AdobeConnectAccess Build()
         {
-            return new AdobeConnectAccess(Domain, Admin.UserName, Admin.Password);
+            return new AdobeConnectAccess(new Uri(Domain), Admin.UserName, Admin.Password);
         }
 
     }

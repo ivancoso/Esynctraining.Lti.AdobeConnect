@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.AC.Provider.Tests", "Esynctraining.AC.Provider.Tests\Esynctraining.AC.Provider.Tests.csproj", "{88098E87-4B3A-42C0-84D2-9235EBDEF659}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.AdobeConnect.OwinSecurity", "Esynctraining.AdobeConnect.OwinSecurity\Esynctraining.AdobeConnect.OwinSecurity.csproj", "{1151E3BC-F747-41BB-9511-8F124EAA4638}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.ReportRunner", "Esynctraining.ReportRunner\Esynctraining.ReportRunner.csproj", "{57C85F6A-638E-48A2-8ADC-E16419E1F245}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Esynctraining.AC.Provider", "Esynctraining.AC.Provider\Esynctraining.AC.Provider.xproj", "{AEA6B024-5EFC-494E-AF51-6FB013C18437}"
@@ -16,6 +14,8 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Esynctraining.AdobeConnect.Api", "Esynctraining.AdobeConnect.Api\Esynctraining.AdobeConnect.Api.xproj", "{C79F14B3-ED4A-4C77-8547-7E9F02A31F49}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Esynctraining.AdobeConnect.Tests", "Esynctraining.AdobeConnect.Tests\Esynctraining.AdobeConnect.Tests.xproj", "{505D0266-BDD7-4B4F-B1D9-49337EE0BDF9}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Esynctraining.AdobeConnect.OwinSecurity", "Esynctraining.AdobeConnect.OwinSecurity\Esynctraining.AdobeConnect.OwinSecurity.xproj", "{FB2F06A7-8054-4B38-9A54-97E1C405AD98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +27,6 @@ Global
 		{88098E87-4B3A-42C0-84D2-9235EBDEF659}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88098E87-4B3A-42C0-84D2-9235EBDEF659}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88098E87-4B3A-42C0-84D2-9235EBDEF659}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1151E3BC-F747-41BB-9511-8F124EAA4638}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1151E3BC-F747-41BB-9511-8F124EAA4638}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1151E3BC-F747-41BB-9511-8F124EAA4638}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1151E3BC-F747-41BB-9511-8F124EAA4638}.Release|Any CPU.Build.0 = Release|Any CPU
 		{57C85F6A-638E-48A2-8ADC-E16419E1F245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{57C85F6A-638E-48A2-8ADC-E16419E1F245}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57C85F6A-638E-48A2-8ADC-E16419E1F245}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -51,6 +47,10 @@ Global
 		{505D0266-BDD7-4B4F-B1D9-49337EE0BDF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{505D0266-BDD7-4B4F-B1D9-49337EE0BDF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{505D0266-BDD7-4B4F-B1D9-49337EE0BDF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB2F06A7-8054-4B38-9A54-97E1C405AD98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB2F06A7-8054-4B38-9A54-97E1C405AD98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB2F06A7-8054-4B38-9A54-97E1C405AD98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB2F06A7-8054-4B38-9A54-97E1C405AD98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

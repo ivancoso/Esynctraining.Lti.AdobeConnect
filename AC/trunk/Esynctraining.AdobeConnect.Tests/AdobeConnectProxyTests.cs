@@ -16,7 +16,7 @@ namespace Esynctraining.AdobeConnect.Tests
         public void WillReportUserTrainingsTaken()
         {
             var principalId = "1004370065";
-            var acApiUrl = "http://rhi.adobeconnect.com/api/xml";
+            var acApiUrl = new Uri("http://rhi.adobeconnect.com");
             var con = new ConnectionDetails(acApiUrl);
             var acProvider = new AdobeConnectProvider(con);
             var proxy = new AdobeConnectProxy(acProvider, new FakeLogger(), acApiUrl, String.Empty);
@@ -30,7 +30,7 @@ namespace Esynctraining.AdobeConnect.Tests
         {
             //var proxy = Substitute.For<IAdobeConnectProxy>();
             var ids = new List<string>();
-            var apiUrl = "https://fiustg.adobeconnect.com/api/xml";
+            var apiUrl = new Uri("https://fiustg.adobeconnect.com");
             var connectionDetails = new ConnectionDetails(apiUrl);
             var login = "ssotest";
             var password = "Ch@ngeTEST1";

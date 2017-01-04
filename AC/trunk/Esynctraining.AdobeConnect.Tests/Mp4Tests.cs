@@ -23,7 +23,7 @@ namespace Esynctraining.AdobeConnect.Tests
             XmlConfigurator.Configure();
 
             var logger = IoC.Resolve<ILogger>();
-            var serviceUrl = "http://connectdev.esynctraining.com/api/xml";
+            var serviceUrl = new Uri("http://connectdev.esynctraining.com");
             var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(serviceUrl)), logger, serviceUrl, string.Empty  );
             var loginResult = proxy.Login(new UserCredentials("anton@esynctraining.com", "NEp2NV44Sj"));
             var getFieldValue = proxy.GetAclField("44636", "x-385564");

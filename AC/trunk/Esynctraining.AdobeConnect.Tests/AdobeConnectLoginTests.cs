@@ -8,14 +8,13 @@ namespace Esynctraining.AdobeConnect.Tests
 {
     public class AdobeConnectLoginTests
     {
-
         [Test]
         public void WillConnectWithMultipleAcc()// using Thomas creds
         {
 
             var login = "tbarrene";
             var password = "NEp2NV44Sj";
-            var apiUrl = "https://fiustg.adobeconnect.com/api/xml";
+            var apiUrl = new Uri("https://fiustg.adobeconnect.com");
             var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
 
@@ -33,7 +32,7 @@ namespace Esynctraining.AdobeConnect.Tests
             // !! User should be an admin!
             var login = "ssotest";
             var password = "Ch@ngeTEST1";
-            var apiUrl = "https://fiustg.adobeconnect.com/api/xml";
+            var apiUrl = new Uri("https://fiustg.adobeconnect.com");
             var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
 
@@ -55,7 +54,7 @@ namespace Esynctraining.AdobeConnect.Tests
         {
             var login = "mkollen";
             var password = "e$yncFIU2016";
-            var apiUrl = "https://connect.fiu.edu/api/xml";
+            var apiUrl = new Uri("https://connect.fiu.edu");
             var connectionDetails = new ConnectionDetails(apiUrl);
             var provider = new AdobeConnectProvider(connectionDetails);
 
@@ -77,15 +76,15 @@ namespace Esynctraining.AdobeConnect.Tests
         {
             //var login = "ssotest";
             //var password = "Ch@ngeTEST1";
-            var serverAc = "https://fiustg.adobeconnect.com";
-            //var apiUrl = "https://fiustg.adobeconnect.com/api/xml";
+            var serverAc = new Uri("https://fiustg.adobeconnect.com");
+            //var apiUrl = "https://fiustg.adobeconnect.com";
             //var connectionDetails = new ConnectionDetails(apiUrl);
             //var provider = new AdobeConnectProvider(connectionDetails);
 
             var acConnect = new AdobeConnectAccountService(new FakeLogger());
             //var breeze = "na2breez22yvafwxdrmu8ov3";
             var breeze = "na2breezhcan5ks479qwvmsf";
-            var result = acConnect.GetProvider2(new AdobeConnectAccess2(serverAc,breeze));
+            var result = acConnect.GetProvider2(new AdobeConnectAccess2(serverAc, breeze));
 
             //var userCredentials = new UserCredentials(login, password, "965886535");
             //LoginResult loginResult = provider.Login(userCredentials);

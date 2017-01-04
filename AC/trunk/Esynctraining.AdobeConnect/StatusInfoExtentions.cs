@@ -9,9 +9,9 @@ namespace Esynctraining.AdobeConnect
         public static string GetErrorInfo(this StatusInfo value)
         {
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             if (value.Code == StatusCodes.ok)
-                throw new ArgumentException("Error status expected", "value");
+                throw new ArgumentException("Error status expected", nameof(value));
 
             var msg = new StringBuilder(80);
             msg.AppendFormat("Status.Code: {0}. Status.SubCode: {1}. ", value.Code, value.SubCode);

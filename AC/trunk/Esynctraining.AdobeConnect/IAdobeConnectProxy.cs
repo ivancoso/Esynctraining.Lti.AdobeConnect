@@ -9,7 +9,7 @@ namespace Esynctraining.AdobeConnect
 {
     public interface IAdobeConnectProxy
     {
-        string ApiUrl { get; }
+        Uri AdobeConnectRoot { get; }
 
         StatusInfo AddToGroup(IEnumerable<string> principalIds, string groupId);
         //StatusInfo AddToGroup(string principalId, string groupId);

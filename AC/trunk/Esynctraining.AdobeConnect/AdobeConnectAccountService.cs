@@ -24,9 +24,10 @@ namespace Esynctraining.AdobeConnect
 
         public IAdobeConnectProxy GetProvider(IAdobeConnectAccess credentials, bool login)
         {
-            string apiUrl = credentials.Domain + "/api/xml";
+            if (credentials == null)
+                throw new ArgumentNullException(nameof(credentials));
 
-            var connectionDetails = new ConnectionDetails(apiUrl);
+            var connectionDetails = new ConnectionDetails(credentials.Domain);
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
             {
@@ -39,14 +40,12 @@ namespace Esynctraining.AdobeConnect
                 }
             }
 
-            return new AdobeConnectProxy(provider, _logger, apiUrl);
+            return new AdobeConnectProxy(provider, _logger, credentials.Domain);
         }
 
         public IAdobeConnectProxy GetProvider2(IAdobeConnectAccess2 credentials)
         {
-            string apiUrl = credentials.Domain + "/api/xml";
-
-            var connectionDetails = new ConnectionDetails(apiUrl);
+            var connectionDetails = new ConnectionDetails(credentials.Domain);
             var provider = new AdobeConnectProvider(connectionDetails);
             {
                 LoginResult result = provider.LoginWithSessionId(credentials.SessionToken);
@@ -57,7 +56,7 @@ namespace Esynctraining.AdobeConnect
                 }
             }
 
-            return new AdobeConnectProxy(provider, _logger, apiUrl);
+            return new AdobeConnectProxy(provider, _logger, credentials.Domain);
         }
 
         public ACDetailsDTO GetAccountDetails(IAdobeConnectProxy provider)
@@ -150,9 +149,7 @@ namespace Esynctraining.AdobeConnect
 
         private static CustomizationDTO ParseCustomization(FieldCollectionResult fields, IAdobeConnectProxy provider)
         {
-            string domain = provider.ApiUrl.Replace("/api/xml", string.Empty);
-            var root = new Uri(domain);
-            var logo = new Uri(root, "webappBanner/custom/images/logos/banner_logo.png");
+            var logo = new Uri(provider.AdobeConnectRoot, "/webappBanner/custom/images/logos/banner_logo.png");
             return new CustomizationDTO
             {
                 AccountBannerColor = GetField(fields, "account-banner-color") ?? "FFFFFF",
