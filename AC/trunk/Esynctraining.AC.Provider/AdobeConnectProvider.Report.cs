@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
@@ -171,7 +172,90 @@ namespace Esynctraining.AC.Provider
                 ? new ReportUserTrainingsTakenCollectionResult(status, ReportUserTrainingsTakenCollectionParser.Parse(doc), principalId)
                 : new ReportUserTrainingsTakenCollectionResult(status);
         }
-        
+
+        /// <summary>
+        /// This API returns a list of all of the possible answers for a question in a quiz, including the response selection item and its description. 
+        /// You can also filter the responses to focus on a particular response.
+        /// </summary>
+        /// <param name="meetingScoId">SCO ID of a training.</param>
+        /// <param name="interactionId">Filters by a specific question ID (Interaction ID). 
+        /// An interaction is a combination of one question and all of the possible answers.</param>
+        public CollectionResult<AssetResponseInfo> ReportAssetResponseInfo(long meetingScoId, long interactionId)
+        {
+            // act: "report-asset-response-info"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportAssetResponseInfo,
+                string.Format(CommandParams.ScoIdInteractionId, meetingScoId.ToString(), interactionId.ToString()), out status);
+
+            const string path = "//results/report-asset-responses/response";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<AssetResponseInfo>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(AssetResponseInfoParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<AssetResponseInfo>(status);
+        }
+
+        public CollectionResult<QuizQuestionResponseItem> ReportQuizQuestionResponse(long meetingScoId)
+        {
+            // act: "report-quiz-question-response"
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportQuizQuestionResponse,
+                string.Format(CommandParams.ScoId, meetingScoId.ToString()), out status);
+
+            const string path = "//results/report-quiz-question-response/row";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<QuizQuestionResponseItem>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(QuizQuestionResponseItemParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<QuizQuestionResponseItem>(status);
+        }
+
+        public CollectionResult<QuizInteractionItem> ReportQuizInteractions(long meetingScoId)
+        {
+            // act: "report-quiz-interactions
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportQuizInteractions,
+                string.Format(CommandParams.ScoId, meetingScoId.ToString()), out status);
+
+            const string path = "//results/report-quiz-interactions/row";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<QuizInteractionItem>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(QuizInteractionItemParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<QuizInteractionItem>(status);
+        }
+
+        public CollectionResult<QuizQuestionDistributionItem> ReportQuizQuestionDistribution(long meetingScoId)
+        {
+            // act: "report-quiz-interactions
+            StatusInfo status;
+
+            var doc = this.requestProcessor.Process(Commands.ReportQuizQuestionDistribution,
+                string.Format(CommandParams.ScoId, meetingScoId.ToString()), out status);
+
+            const string path = "//results/report-quiz-question-distribution/row";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<QuizQuestionDistributionItem>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(QuizQuestionDistributionItemParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<QuizQuestionDistributionItem>(status);
+        }
+
     }
 
 }

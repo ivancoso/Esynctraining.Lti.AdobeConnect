@@ -61,6 +61,12 @@
 
         public const string ReportUserTrainingsTaken = "report-user-trainings-taken";
 
+        public const string ReportAssetResponseInfo = "report-asset-response-info";
+
+        public const string ReportQuizQuestionResponse = "report-quiz-question-response";
+
+        public const string ReportQuizQuestionDistribution = "report-quiz-question-distribution";
+
         internal static class Telephony
         {
             public const string ProviderList = "telephony-provider-list";
