@@ -3,7 +3,7 @@
 
 	"title": "Esynctraining.Provider.Api",
 	"description": "Provides Adobe Connect high-level DTO and services",
-	"copyright": "Copyright © 2013-2016 eSyncTraining.com",
+	"copyright": "Copyright © 2016-2017 eSyncTraining.com",
 	"authors": [ "eSyncTraining.com" ],
 
 	"packOptions": {
@@ -15,7 +15,7 @@
 
 
 	"dependencies": {
-		"Esynctraining.AdobeConnect": "1.0.1.5"
+		"Esynctraining.AdobeConnect": "1.0.1.6"
 	},
 
 	"frameworks": {
