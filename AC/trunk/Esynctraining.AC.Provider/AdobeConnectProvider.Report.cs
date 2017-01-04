@@ -180,7 +180,7 @@ namespace Esynctraining.AC.Provider
         /// <param name="meetingScoId">SCO ID of a training.</param>
         /// <param name="interactionId">Filters by a specific question ID (Interaction ID). 
         /// An interaction is a combination of one question and all of the possible answers.</param>
-        public CollectionResult<AssetResponseInfo> ReportAssetResponseInfo(long meetingScoId, long interactionId)
+        public CollectionResult<AssetResponseInfo> ReportAssetResponseInfo(string meetingScoId, string interactionId)
         {
             // act: "report-asset-response-info"
             StatusInfo status;
@@ -199,7 +199,7 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<AssetResponseInfo>(status);
         }
 
-        public CollectionResult<QuizQuestionResponseItem> ReportQuizQuestionResponse(long meetingScoId)
+        public CollectionResult<QuizQuestionResponseItem> ReportQuizQuestionResponse(string meetingScoId)
         {
             // act: "report-quiz-question-response"
             StatusInfo status;
@@ -218,7 +218,7 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<QuizQuestionResponseItem>(status);
         }
 
-        public CollectionResult<QuizInteractionItem> ReportQuizInteractions(long meetingScoId)
+        public CollectionResult<QuizInteractionItem> ReportQuizInteractions(string meetingScoId)
         {
             // act: "report-quiz-interactions
             StatusInfo status;
@@ -237,7 +237,7 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<QuizInteractionItem>(status);
         }
 
-        public CollectionResult<QuizQuestionDistributionItem> ReportQuizQuestionDistribution(long meetingScoId)
+        public CollectionResult<QuizQuestionDistributionItem> ReportQuizQuestionDistribution(string meetingScoId)
         {
             // act: "report-quiz-interactions
             StatusInfo status;

@@ -119,6 +119,9 @@ namespace Esynctraining.AdobeConnect
         GenericResult PrincipalUpdatePassword(string principalId, string newPassword);
         StatusInfo RemoveFromGroup(string principalId, string groupId);
         bool RemoveFromGroupByType(string principalId, PrincipalType type);
+
+        #region Reports
+
         //MeetingItemCollectionResult ReportAllMeetings();
         MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
@@ -127,11 +130,17 @@ namespace Esynctraining.AdobeConnect
         TransactionCollectionResult ReportRecordingTransactions(IEnumerable<string> recordingScoIdList, int startIndex = 0, int limit = 0);
 
         TransactionCollectionResult ReportMeetingTransactionsForPrincipal(string principalId, int startIndex = 0, int limit = 0);
+
         MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
+
         MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0);
+
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
+
         MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0);
+
         MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0);
+        
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
 
@@ -139,9 +148,23 @@ namespace Esynctraining.AdobeConnect
 
         ReportScoViewsContentCollectionResult ReportScoViews(string scoId);
 
+        ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId);
+
+        CollectionResult<AssetResponseInfo> ReportAssetResponseInfo(string meetingScoId, string interactionId);
+
+        CollectionResult<QuizQuestionResponseItem> ReportQuizQuestionResponse(string meetingScoId);
+
+        CollectionResult<QuizInteractionItem> ReportQuizInteractions(string meetingScoId);
+
+        CollectionResult<QuizQuestionDistributionItem> ReportQuizQuestionDistribution(string meetingScoId);
+
+        #endregion Reports
+
         RecordingJobResult ScheduleRecordingJob(string recordingScoId);
         //ScoContentCollectionResult SearchScoByDescription(string description);
         ScoContentCollectionResult SearchScoByName(string name);
+
+        #region Telephony
 
         TelephonyProviderCollectionResult TelephonyProviderList(string principalId);
         TelephonyProfilesCollectionResult TelephonyProfileList(string principalId);
@@ -150,6 +173,7 @@ namespace Esynctraining.AdobeConnect
 
         StatusInfo TelephonyProfileDelete(string profileId);
 
+        #endregion Telephony
 
         StatusInfo UpdateAclField(string aclId, AclFieldId fieldId, string value);
         //StatusInfo UpdateMeetingFeature(string accountId, MeetingFeatureId featureId, bool enable);
@@ -172,6 +196,5 @@ namespace Esynctraining.AdobeConnect
         string GetAclField(string scoId, string aclId);
         CustomField GetCustomField(string name);
 
-        ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId);
     }
 }
