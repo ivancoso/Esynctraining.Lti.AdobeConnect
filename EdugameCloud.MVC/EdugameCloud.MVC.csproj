@@ -224,6 +224,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Services\ReportServiceFactory.cs" />
     <Compile Include="ErrorController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
@@ -240,7 +241,9 @@
     <Compile Include="ModelBinders\BaseModelBinder.cs" />
     <Compile Include="ModelBinders\TimeSpanModelBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ExtendedReportService.cs" />
+    <Compile Include="Services\MngQuizReportService.cs" />
+    <Compile Include="Services\MngSurveyReportService.cs" />
+    <Compile Include="Services\HFExtendedReportService.cs" />
     <Compile Include="Resources\WebResources.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

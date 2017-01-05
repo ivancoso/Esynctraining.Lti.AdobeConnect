@@ -52,7 +52,6 @@ namespace EdugameCloud.MVC.Controllers
         
         private readonly AuthenticationModel authenticationModel;
         private readonly VCFModel vcfModel;
-        private readonly IExtendedReportService reportService;
         private readonly QuizResultModel quizResultModel;
         private readonly TestResultModel testResultModel;
 
@@ -74,7 +73,6 @@ namespace EdugameCloud.MVC.Controllers
             IAdobeConnectAccountService adobeAccountService, 
             LmsUserSessionModel userSessionModel,
             ILogger logger,
-            IExtendedReportService reportService,
             QuizResultModel quizResultModel,
             TestResultModel testResultModel)
             : base(settings)
@@ -91,7 +89,6 @@ namespace EdugameCloud.MVC.Controllers
             this.adobeConnectAccountService = adobeAccountService;
             this.userSessionModel = userSessionModel;
             this.logger = logger;
-            this.reportService = reportService;
             this.quizResultModel = quizResultModel;
             this.testResultModel = testResultModel;
         }
@@ -862,6 +859,11 @@ namespace EdugameCloud.MVC.Controllers
                 if (detailed)
                 {
                     var data = quizResultModel.GetExtendedReportQuizReportData(sessionId.Value);
+                    int intType;
+                    if (!int.TryParse(type, out intType))
+                        throw new InvalidOperationException($"Invalid detailed report type: {type}");
+                    var reportService = ReportServiceFactory.GetReportService(SubModuleItemType.Quiz, intType);
+
                     var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
                     return this.File(
                         bytes,
@@ -1022,6 +1024,10 @@ namespace EdugameCloud.MVC.Controllers
                 if (detailed)
                 {
                     var data = surveyResultModel.GetExtendedReportSurveyReportData(sessionId.Value);
+                    int intType;
+                    if(!int.TryParse(type, out intType))
+                        throw new InvalidOperationException($"Invalid detailed report type: {type}");
+                    var reportService = ReportServiceFactory.GetReportService(SubModuleItemType.Survey, intType);
                     var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
                     return this.File(
                         bytes,
@@ -1239,7 +1245,11 @@ namespace EdugameCloud.MVC.Controllers
                 if (detailed)
                 {
                     var data = testResultModel.GetExtendedReportQuizReportData(sessionId.Value);
-                    var bytes = new ExtendedReportService().GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
+                    int intType;
+                    if (!int.TryParse(type, out intType))
+                        throw new InvalidOperationException($"Invalid detailed report type: {type}");
+                    var reportService = ReportServiceFactory.GetReportService(SubModuleItemType.Test, intType);
+                    var bytes = reportService.GetExcelExtendedReportBytes(new ExtendedReportDto[] { data });
                     return this.File(
                         bytes,
                         "application/vnd.ms-excel",

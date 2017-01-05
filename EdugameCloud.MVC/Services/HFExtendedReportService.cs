@@ -10,7 +10,10 @@ using OfficeOpenXml.Style;
 
 namespace EdugameCloud.MVC.Services
 {
-    public class ExtendedReportService : IExtendedReportService
+    /// <summary>
+    /// report template for Helmsley Fraser
+    /// </summary>
+    public class HFExtendedReportService : IExtendedReportService
     {
         public const int StartUserColumn = 5;
         // Helmsley Fraser report
