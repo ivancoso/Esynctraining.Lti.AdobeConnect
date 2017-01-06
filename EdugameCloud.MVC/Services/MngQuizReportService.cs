@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -27,6 +26,9 @@ namespace EdugameCloud.MVC.Services
                     //Create the worksheet
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add($"{sessionResult.Name}");
                     ws.Cells[1, 1].Value = "Name";
+                    ws.Cells[1, 1].Style.Font.Bold = true;
+                    ws.Cells[1, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells[1, 1].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(217, 217, 217));
                     ws.Column(1).Width = 40;
                     int startUserRow = 2;
 
@@ -41,17 +43,26 @@ namespace EdugameCloud.MVC.Services
                     foreach (var q in questions)
                     {
                         var internalDict = new Dictionary<int, int>();
+                        List<string> correctAnswers = new List<string>();
                         foreach (var distractor in q.Distractors)
                         {
                             internalDict.Add(distractor.Id, 0);
+                            if (distractor.IsCorrect.GetValueOrDefault())
+                            {
+                                correctAnswers.Add(Regex.Replace(distractor.DistractorName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "));
+                            }
                         }
                         startUserRow = 2;
                         string questionTitle =
-                            $"Question {questionOrder++} - {Regex.Replace(q.QuestionName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ")}";
+                            $"Question {questionOrder++} - {Regex.Replace(q.QuestionName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ")}" 
+                            + $"(correct answer(s): {string.Join(",", correctAnswers)})";
                         //correct answer - B
                         startQuestionColumn = startQuestionColumn + 1;
                         ws.Column(startQuestionColumn).Width = 30;
                         ws.Cells[1, startQuestionColumn].Value = questionTitle;
+                        ws.Cells[1, startQuestionColumn].Style.Font.Bold = true;
+                        ws.Cells[1, startQuestionColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        ws.Cells[1, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(217,217,217));
 
                         foreach (var qr in sessionResult.ReportResults)
                         {
@@ -65,15 +76,12 @@ namespace EdugameCloud.MVC.Services
                                 case SubModuleItemType.Test:
                                     if (qqr == null)
                                     {
-                                        ws.Cells[startUserRow++, startQuestionColumn].Value = "no answer"; // No Answer
+                                        ws.Cells[startUserRow, startQuestionColumn].Value = "N/A"; // No Answer
                                         ws.Cells[startUserRow, startQuestionColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                         ws.Cells[startUserRow, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                     }
                                     else
                                     {
-//                                        var firstDistractor = qqr.DistractorIds.First();
-//                                        internalDict[firstDistractor] += 1;
-//                                        var answer = qqr.Answer;
                                         ws.Cells[startUserRow, startQuestionColumn].Value = qqr.IsCorrect? "Correct" : "Incorrect";
                                         if (!qqr.IsCorrect)
                                         {
@@ -81,29 +89,18 @@ namespace EdugameCloud.MVC.Services
                                             ws.Cells[startUserRow, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
                                         }
                                     }
+                                    ws.Cells[startUserRow, startQuestionColumn].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                                     startUserRow++;
                                     break;
                             }
-
-
                         }
-//                        startUserRow++;
-//                        ws.Cells[startUserRow, startQuestionColumn].Value = "Answer";
-//                        ws.Cells[startUserRow++, startQuestionColumn + 1].Value = "Number";
-//
-//                        foreach (var d in q.Distractors)
-//                        {
-//                            ws.Cells[startUserRow, startQuestionColumn].Value = Regex.Replace(d.DistractorName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ");
-//                            ws.Cells[startUserRow++, startQuestionColumn+1].Value = internalDict[d.Id];
-//                        }
-//                        ws.Cells[startUserRow, startQuestionColumn].Value = "Grand Total";
-//                        ws.Cells[startUserRow++, startQuestionColumn + 1].Value = internalDict.Values.Sum();
-
                     }
-
-//                    ws.Cells[2, StartUserColumn, 2, StartUserColumn + sessionResult.ReportResults.Count()].AutoFitColumns();
-//                    ws.Column(4).Width = 70.0;
-//                    ws.Column(2).Width = 50.0;
+                    startQuestionColumn++;
+                    ws.Cells[1, startQuestionColumn].Value = "Attestation";
+                    ws.Cells[1, startQuestionColumn].Style.Font.Bold = true;
+                    ws.Cells[1, startQuestionColumn].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    ws.Cells[1, startQuestionColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells[1, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(217, 217, 217));
                 }
 
                 result = pck.GetAsByteArray();
