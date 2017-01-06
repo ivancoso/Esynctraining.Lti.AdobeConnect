@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -44,18 +45,21 @@ namespace EdugameCloud.MVC.Services
                     {
                         var internalDict = new Dictionary<int, int>();
                         List<string> correctAnswers = new List<string>();
-                        foreach (var distractor in q.Distractors)
+                        int answerOrder = Convert.ToInt32('a');
+
+                        foreach (var distractor in q.Distractors.OrderBy(x => x.DistractorOrder))
                         {
                             internalDict.Add(distractor.Id, 0);
                             if (distractor.IsCorrect.GetValueOrDefault())
                             {
-                                correctAnswers.Add(Regex.Replace(distractor.DistractorName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " "));
+                                correctAnswers.Add(Convert.ToString((char)answerOrder));
                             }
+
+                            answerOrder++;
                         }
                         startUserRow = 2;
                         string questionTitle =
-                            $"Question {questionOrder++} - {Regex.Replace(q.QuestionName, "<[^>]*(>|$)", string.Empty).Replace("&nbsp;", " ")}" 
-                            + $"(correct answer(s): {string.Join(",", correctAnswers)})";
+                            $"Question {questionOrder++} - (correct answer{(correctAnswers.Count > 1 ? "s" :"")} {string.Join(",", correctAnswers)})";
                         //correct answer - B
                         startQuestionColumn = startQuestionColumn + 1;
                         ws.Column(startQuestionColumn).Width = 30;

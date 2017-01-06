@@ -24,6 +24,7 @@ namespace EdugameCloud.MVC.Services
                     ExcelWorksheet ws = pck.Workbook.Worksheets.Add($"{sessionResult.Name}");
                     ws.Cells[1, 1].Value = "Attendee";
                     ws.Cells[1, 1].AutoFilter = true;
+                    ws.Cells[1, 1].Style.Font.Bold = true;
                     ws.Column(1).Width = 40;
                     int startUserRow = 2;
 
@@ -50,6 +51,7 @@ namespace EdugameCloud.MVC.Services
                         ws.Column(startQuestionColumn).Width = 30;
                         ws.Cells[1, startQuestionColumn].Value = questionTitle;
                         ws.Cells[1, startQuestionColumn].AutoFilter = true;
+                        ws.Cells[1, startQuestionColumn].Style.Font.Bold = true;
 
                         foreach (var qr in sessionResult.ReportResults)
                         {
