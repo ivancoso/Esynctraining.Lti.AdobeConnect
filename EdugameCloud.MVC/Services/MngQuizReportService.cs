@@ -99,12 +99,6 @@ namespace EdugameCloud.MVC.Services
                             }
                         }
                     }
-                    startQuestionColumn++;
-                    ws.Cells[1, startQuestionColumn].Value = "Attestation";
-                    ws.Cells[1, startQuestionColumn].Style.Font.Bold = true;
-                    ws.Cells[1, startQuestionColumn].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    ws.Cells[1, startQuestionColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    ws.Cells[1, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.FromArgb(217, 217, 217));
                 }
 
                 result = pck.GetAsByteArray();
