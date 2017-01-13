@@ -2,9 +2,6 @@
 
 namespace EdugameCloud.Lti.DTO
 {
-    /// <summary>
-    /// The calendar event DTO.
-    /// </summary>
     [DataContract]
     public class MeetingSessionDTO
     {
@@ -25,5 +22,7 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "summary")]
         public string Summary { get; set; }
+
     }
+
 }

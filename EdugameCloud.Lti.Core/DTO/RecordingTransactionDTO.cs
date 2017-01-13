@@ -8,7 +8,7 @@
     [DataContract]
     public class RecordingTransactionDTO
     {
-        //[DataMember]
+        [IgnoreDataMember]
         [ScriptIgnore]
         public DateTime DateClosed { get; set; }
 
@@ -26,7 +26,7 @@
             }
         }
 
-        //[DataMember]
+        [IgnoreDataMember]
         [ScriptIgnore]
 
         public DateTime DateCreated { get; set; }
