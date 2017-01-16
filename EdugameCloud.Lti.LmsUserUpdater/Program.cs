@@ -46,7 +46,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     }
                     else if (parameters.ContainsKey(ConsumerKeyOutParameterName))
                     {
-                        companies = companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyParameterName]).ToList();
+                        companies = companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyOutParameterName]).ToList();
                     }
 
                     companies = companies.Where(x => !LicenseExpired(x) 
