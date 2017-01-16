@@ -8,6 +8,7 @@ using Esynctraining.NHibernate;
 using Esynctraining.NHibernate.Queries;
 using NHibernate;
 using NHibernate.SqlCommand;
+using NHibernate.Transform;
 
 namespace EdugameCloud.Lti.Core.Business.Models
 {
@@ -153,8 +154,8 @@ namespace EdugameCloud.Lti.Core.Business.Models
                 .JoinAlias(() => lc.Settings, () => lcs, JoinType.InnerJoin)
                 .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
                 .JoinAlias(() => lc.LmsCourseMeetings, () => lcm, JoinType.InnerJoin)
-                .JoinAlias(() => lc.AdminUser, () => u, JoinType.LeftOuterJoin);
-
+                .JoinAlias(() => lc.AdminUser, () => u, JoinType.LeftOuterJoin)
+                .TransformUsing(Transformers.DistinctRootEntity);
             return this.Repository.FindAll(defaultQuery).ToList();
         }
 
