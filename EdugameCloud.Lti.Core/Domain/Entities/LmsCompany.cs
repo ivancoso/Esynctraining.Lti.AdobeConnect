@@ -453,6 +453,7 @@ namespace EdugameCloud.Lti.Domain.Entities
         public LmsCompany()
         {
             RoleMappings = new List<LmsCompanyRoleMapping>();
+            LmsCourseMeetings = new List<LmsCourseMeeting>();
         }
 
 

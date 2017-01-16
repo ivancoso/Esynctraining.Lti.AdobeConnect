@@ -44,30 +44,25 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                         companies = companies.Where(x => x.ConsumerKey == parameters[ConsumerKeyParameterName]).ToList();
                     }
 
-                    companies = companies.Where(x => x.IsActive && !LicenseExpired(x)).ToList();
+                    companies = companies.Where(x => !LicenseExpired(x) 
+                        && x.LmsCourseMeetings.Any(y => y.LmsMeetingType != (int)LmsMeetingType.OfficeHours)).ToList();
                     var groupedByCompany = companies.GroupBy(x => x.LmsProviderId);//.ToDictionary(x => x.Key, y => y.SelectMany(z=>z.LmsCourseMeetings).GroupBy(c => new CourseCompany { CourseId = c.CourseId, LmsCompanyId = c.LmsCompany.Id }));
 
                     //todo: Task for each lms if possible
                     foreach (var group in groupedByCompany)
                     {
                         var service = lmsFactory.GetUserService((LmsProviderEnum)group.Key);
-                        if (service != null)
+                        foreach (var lmsCompany in group)
                         {
-                            foreach (var lmsCompany in group)
+                            if (service.CanRetrieveUsersFromApiForCompany(lmsCompany))
                             {
-                                if (lmsCompany.UseSynchronizedUsers &&
-                                    service.CanRetrieveUsersFromApiForCompany(lmsCompany)
-                                    && lmsCompany.LmsCourseMeetings != null &&
-                                    lmsCompany.LmsCourseMeetings.Any(x => x.LmsMeetingType != (int) LmsMeetingType.OfficeHours))
+                                try
                                 {
-                                    try
-                                    {
-                                        syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        logger.ErrorFormat(ex, "Unexpected error during execution for LmsCompanyId: {0}.", lmsCompany.Id);
-                                    }
+                                    syncService.SynchronizeUsers(lmsCompany, syncACUsers: true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    logger.ErrorFormat(ex, "Unexpected error during execution for LmsCompanyId: {0}.", lmsCompany.Id);
                                 }
                             }
                         }

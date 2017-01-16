@@ -145,11 +145,14 @@ namespace EdugameCloud.Lti.Core.Business.Models
         {
             LmsCompany lc = null;
             LmsCompanySetting lcs = null;
+            IList<LmsCourseMeeting> lcm = null;
             LmsUser u = null;
             var defaultQuery = new DefaultQueryOver<LmsCompany, int>()
                 .GetQueryOver(() => lc)
+                .Where(x => x.IsActive)
                 .JoinAlias(() => lc.Settings, () => lcs, JoinType.InnerJoin)
                 .Where(() => lcs.Name == LmsCompanySettingNames.UseSynchronizedUsers && lcs.Value == "True")
+                .JoinAlias(() => lc.LmsCourseMeetings, () => lcm, JoinType.InnerJoin)
                 .JoinAlias(() => lc.AdminUser, () => u, JoinType.LeftOuterJoin);
 
             return this.Repository.FindAll(defaultQuery).ToList();

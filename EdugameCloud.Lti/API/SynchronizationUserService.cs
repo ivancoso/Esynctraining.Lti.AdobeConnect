@@ -57,7 +57,7 @@ namespace EdugameCloud.Lti.API
                 .GroupBy(y => y.CourseId);
             foreach (var courseGroup in groupedMeetings)
             {
-                logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}; MeetingIds:{3}",
+               logger.InfoFormat("Retrieving users for LmsCompanyId={0}, LmsProvider={1}, CourseId={2}; MeetingIds:{3}",
                     lmsCompany.Id, (LmsProviderEnum)lmsCompany.LmsProviderId, courseGroup.Key, String.Join(",", courseGroup.Select(x=>x.Id)));
                 try
                 {
@@ -154,8 +154,7 @@ namespace EdugameCloud.Lti.API
                 catch (Exception e)
                 {
                     var message = String.Format(
-                        "Error happened when tried to update users for LmsCompany with id={0}",
-                        lmsCompany.Id);
+                        $"Error happened when tried to update users for LmsCompany with id={lmsCompany.Id}, lmsCourseId={courseGroup.Key}");
                     logger.Error(message, e);
                 }
             }
@@ -188,14 +187,14 @@ namespace EdugameCloud.Lti.API
                     dbUser = new LmsUser
                     {
                         LmsCompany = lmsCompany,
-                        Username = login,
+                        Username = login.Substring(0,50), // hack: to escape GenericADOException when name>50 //todo: review lmsUserDto.GetLogin() and lmsUser.Username usage
                         UserId = lmsUserDto.lti_id ?? lmsUserDto.id,
-                        PrincipalId = principal != null ? principal.PrincipalId : null,
+                        PrincipalId = principal?.PrincipalId,
                     };
                     newUsers.Add(dbUser);
                     logger.InfoFormat(
-                        "New user to DB: lmsCompanyId={0}, UserId={1}",
-                        lmsCompany.Id, dbUser.UserId);
+                        "New user to DB: lmsCompanyId={0}, UserId={1}, Username={2}, Name={3}, Email={4}",
+                        lmsCompany.Id, dbUser.UserId, login, lmsUserDto.name, lmsUserDto.primary_email);
                     lmsUserModel.RegisterSave(dbUser);
                 }
                 dbUser.Name = lmsUserDto.name;
