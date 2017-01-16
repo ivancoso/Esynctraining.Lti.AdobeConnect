@@ -16,6 +16,7 @@ namespace EdugameCloud.Lti.LmsUserUpdater
         static void Main(string[] args)
         {
             const string ConsumerKeyParameterName = "consumerkey";
+            const string ConsumerKeyOutParameterName = "consumerkeyout";
             const string neMutexName = "EdugameCloud.Lti.LmsUserUpdater.BackgroundMutexName";
             var parameters = ParseArgumentList(args);
             // prevent two instances from running
@@ -42,6 +43,10 @@ namespace EdugameCloud.Lti.LmsUserUpdater
                     if (parameters.ContainsKey(ConsumerKeyParameterName))
                     {
                         companies = companies.Where(x => x.ConsumerKey == parameters[ConsumerKeyParameterName]).ToList();
+                    }
+                    else if (parameters.ContainsKey(ConsumerKeyOutParameterName))
+                    {
+                        companies = companies.Where(x => x.ConsumerKey != parameters[ConsumerKeyParameterName]).ToList();
                     }
 
                     companies = companies.Where(x => !LicenseExpired(x) 
