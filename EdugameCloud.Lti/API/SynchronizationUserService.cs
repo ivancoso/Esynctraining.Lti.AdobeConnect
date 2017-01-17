@@ -184,10 +184,13 @@ namespace EdugameCloud.Lti.API
                     {
                         logger.Error("SyncUsers - GetOrCreatePrincipal", ex);
                     }
+
+                    var loginLength = login.Length > 50 ? 50 : login.Length;
+
                     dbUser = new LmsUser
                     {
                         LmsCompany = lmsCompany,
-                        Username = login.Substring(0,50), // hack: to escape GenericADOException when name>50 //todo: review lmsUserDto.GetLogin() and lmsUser.Username usage
+                        Username = login.Substring(0, loginLength), // hack: to escape GenericADOException when name>50 //todo: review lmsUserDto.GetLogin() and lmsUser.Username usage
                         UserId = lmsUserDto.lti_id ?? lmsUserDto.id,
                         PrincipalId = principal?.PrincipalId,
                     };
