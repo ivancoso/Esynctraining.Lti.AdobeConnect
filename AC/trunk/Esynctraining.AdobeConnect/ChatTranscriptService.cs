@@ -59,8 +59,12 @@ namespace Esynctraining.AdobeConnect
 
             //(StartA <= EndB) and (EndA >= StartB)
 
-            var chatFileScoId = chatScoList.Where(x => x.BeginDate <= sessionDateEnd && x.EndDate >= sessionDateCreated).Last().ScoId;
+            var chatFile = chatScoList.Where(x => x.BeginDate <= sessionDateEnd && x.EndDate >= sessionDateCreated).SingleOrDefault();
+            if (chatFile == null)
+                //TODO: what to do
+                return null;
 
+            var chatFileScoId = chatFile.ScoId;
 
             // HACK: 
             //var chatFileScoId = chatScoList.Single().ScoId;

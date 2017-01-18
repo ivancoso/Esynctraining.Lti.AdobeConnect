@@ -175,7 +175,7 @@ namespace Esynctraining.AdobeConnect
         public CollectionResult<SharedSeminarLicenseSco> GetSharedSeminarLicenses(string scoId)
         {
             if (string.IsNullOrEmpty(scoId))
-                throw new ArgumentException("scoId");
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
             return Execute(() => { return _provider.GetSharedSeminarLicenses(scoId); },
                 scoId);
@@ -184,7 +184,7 @@ namespace Esynctraining.AdobeConnect
         public CollectionResult<UserSeminarLicenseSco> GetUserSeminarLicenses(string scoId)
         {
             if (string.IsNullOrEmpty(scoId))
-                throw new ArgumentException("scoId");
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
             return Execute(() => { return _provider.GetUserSeminarLicenses(scoId); },
                 scoId);
@@ -198,6 +198,9 @@ namespace Esynctraining.AdobeConnect
 
         public StatusInfo DeleteSco(string scoId)
         {
+            if (string.IsNullOrEmpty(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             return Execute(() => { return _provider.DeleteSco(scoId); },
                 scoId);
         }
@@ -210,6 +213,9 @@ namespace Esynctraining.AdobeConnect
 
         public string GetAclField(string scoId, string aclId)
         {
+            if (string.IsNullOrEmpty(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
             var result = Execute(() => _provider.GetAclField(scoId, aclId),
                 aclId);
             if (!result.Success)
@@ -235,7 +241,7 @@ namespace Esynctraining.AdobeConnect
         public ReportUserTrainingsTakenCollectionResult ReportUserTrainingsTaken(string principalId)
         {
             if (string.IsNullOrEmpty(principalId))
-                throw new ArgumentException("principalId");
+                throw new ArgumentException("Non-empty value expected", nameof(principalId));
 
             return Execute(() => { return _provider.ReportUserTrainingTaken(principalId); },
                principalId);
@@ -742,6 +748,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.RemoveFromGroupByType(principalId, type); }, principalId, type.ToString());
         }
 
+        public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
+        {
+            return Execute(() => { return _provider.ReportAllMeetings(filter, startIndex, limit); } );
+        }
+
         public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportMeetingsByName(nameLikeCriteria, startIndex, limit); },
@@ -766,9 +777,9 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
-        public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0)
         {
-            return Execute(() => { return _provider.ReportMeetingSessions(scoId, startIndex, limit); },
+            return Execute(() => { return _provider.ReportMeetingSessions(scoId, filter: filter, startIndex: startIndex, limit: limit); },
                 scoId);
         }
 

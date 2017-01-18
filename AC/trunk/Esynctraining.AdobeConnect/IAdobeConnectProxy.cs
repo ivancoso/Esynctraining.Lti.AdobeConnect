@@ -122,8 +122,15 @@ namespace Esynctraining.AdobeConnect
 
         #region Reports
 
-        //MeetingItemCollectionResult ReportAllMeetings();
+        /// <summary>
+        /// NOTE: can return too much data and take a lot of time to complete.
+        /// Consider using filter.
+        /// Sorts by sco-id.
+        /// </summary>
+        MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0);
+
         MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0);
+
         //CurriculumTakerCollectionResult ReportCurriculumTaker(string scoId, string principalId);
         //TransactionCollectionResult ReportMeetingTransactions(string meetingId, int startIndex = 0, int limit = 0);
 
@@ -133,7 +140,7 @@ namespace Esynctraining.AdobeConnect
 
         MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false);
 
-        MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0);
+        MeetingSessionCollectionResult ReportMeetingSessions(string scoId, string filter = null, int startIndex = 0, int limit = 0);
 
         //EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0);
 
