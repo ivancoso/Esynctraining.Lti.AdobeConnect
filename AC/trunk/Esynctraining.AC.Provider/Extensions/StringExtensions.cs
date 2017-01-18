@@ -80,13 +80,22 @@
             return parameters;
         }
 
+        public static string AppendFilter(this string parameters, string filter)
+        {
+            if (string.IsNullOrWhiteSpace(filter))
+            {
+                return parameters;
+            }
+            
+            return parameters + "&" + filter;
+        }
+
         public static string AppendSortingIfNeeded(this string parameters, string propertySortBy, SortOrder order)
         {
             if (order == SortOrder.Unspecified)
                 return parameters;
-
             if (string.IsNullOrWhiteSpace(propertySortBy))
-                throw new ArgumentException("Non-empty property name expected", "propertySortBy");
+                throw new ArgumentException("Non-empty property name expected", nameof(propertySortBy));
 
             //sort-name=asc 
             //sort-date=desc

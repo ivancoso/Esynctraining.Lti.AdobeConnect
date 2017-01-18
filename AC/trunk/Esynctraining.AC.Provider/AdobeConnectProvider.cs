@@ -97,51 +97,29 @@
         #region Read
 
         /// <summary>
-        /// List all meetings on the server
+        /// List all meetings on the server. Internal paging logic to return ALL meetings without too-much-data error.
         /// </summary>
         /// <returns>
         /// <see cref="MeetingItem">Meeting list</see>
         /// *Note: all dates are GMT
         /// </returns>
-        public MeetingItemCollectionResult ReportAllMeetings()
+        public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
         {
             // act: "report-bulk-objects"
-            StatusInfo status;
-
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Meeting, out status);
-
-            return ResponseIsOk(doc, status)
-                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, null))
-                       : new MeetingItemCollectionResult(status);
+            // "&sort-sco-id=asc" - to have valid paging!
+            return DoCallMeetingItemList(Commands.ReportBulkObjects, 
+                CommandParams.ReportBulkObjectsFilters.Meeting
+                .AppendFilter(filter)
+                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending), // TODO: better sorting??
+                null, 0, int.MaxValue);
         }
 
         public MeetingItemCollectionResult ReportMeetingsByName(string nameLikeCriteria, int startIndex = 0, int limit = 0)
         {
-            // act: "report-bulk-objects"
-            StatusInfo status;
-            string parameters = string.Format(CommandParams.ReportBulkObjectsFilters.MeetingByNameLike, nameLikeCriteria).AppendPagingIfNeeded(startIndex, limit);
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, parameters, out status);
-
-            return ResponseIsOk(doc, status)
-                       ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, null))
-                       : new MeetingItemCollectionResult(status);
+            string filter = string.Format(CommandParams.ReportBulkObjectsFilters.ByNameLike, nameLikeCriteria);
+            return ReportAllMeetings(filter, startIndex, limit);
         }
-
-        /// <summary>
-        /// List all meeting's attendance
-        /// </summary>
-        /// <param name="scoId">
-        /// The SCO Id.
-        /// </param>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="MeetingAttendeeCollectionResult"/>.
-        /// </returns>
+        
         public MeetingAttendeeCollectionResult ReportMeetingAttendance(string scoId, int startIndex = 0, int limit = 0, bool returnCurrentUsers = false)
         {
             // act: "report-meeting-attendance"
@@ -150,8 +128,8 @@
             var doc = this.requestProcessor.Process(Commands.ReportMeetingAttendance, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, returnCurrentUsers))
-                       : new MeetingAttendeeCollectionResult(status);
+                ? new MeetingAttendeeCollectionResult(status, MeetingAttendeeCollectionParser.Parse(doc, returnCurrentUsers))
+                : new MeetingAttendeeCollectionResult(status);
         }
 
         //public QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0)
@@ -181,35 +159,25 @@
         /// <returns>
         /// The <see cref="MeetingSessionCollectionResult"/>.
         /// </returns>
-        public MeetingSessionCollectionResult ReportMeetingSessions(string scoId, int startIndex = 0, int limit = 0)
+        public MeetingSessionCollectionResult ReportMeetingSessions(string meetingScoId, string filter = null, int startIndex = 0, int limit = 0)
         {
-            // act: "report-bulk-objects"
+            if (string.IsNullOrWhiteSpace(meetingScoId))
+                throw new ArgumentException("Non-empty value expected", nameof(meetingScoId));
+
+            // act: "report-meeting-sessions"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions, string.Format(CommandParams.ScoId, scoId).AppendPagingIfNeeded(startIndex, limit), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportMeetingSessions,
+                string.Format(CommandParams.ScoId, meetingScoId)
+                    .AppendFilter(filter)
+                    .AppendPagingIfNeeded(startIndex, limit), 
+                out status);
 
             return ResponseIsOk(doc, status)
-                       ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc))
-                       : new MeetingSessionCollectionResult(status);
+                ? new MeetingSessionCollectionResult(status, MeetingSessionCollectionParser.Parse(doc))
+                : new MeetingSessionCollectionResult(status);
         }
-
-        ///// <summary>
-        ///// Provides information about each event the current user has attended or is scheduled to attend.
-        ///// The user can be either a host or a participant in the event. The events returned are those in the
-        ///// user’s my-events folder.
-        ///// To obtain information about all events on your Enterprise Server or in your Enterprise Hosted
-        ///// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
-        ///// with the SCO id to list all events.
-        ///// </summary>
-        ///// <param name="startIndex">
-        ///// The start Index.
-        ///// </param>
-        ///// <param name="limit">
-        ///// The limit.
-        ///// </param>
-        ///// <returns>
-        ///// <see cref="EventInfo">EventInfo array</see>
-        ///// </returns>
+        
         //public EventCollectionResult ReportMyEvents(int startIndex = 0, int limit = 0)
         //{
         //    // act: "report-my-events"
@@ -222,29 +190,9 @@
         //        : new EventCollectionResult(status);
         //}
 
-        /// <summary>
-        /// Provides information about each event the current user has attended or is scheduled to attend.
-        /// The user can be either a host or a participant in the event. The events returned are those in the
-        /// user’s my-events folder.
-        /// To obtain information about all events on your Enterprise Server or in your Enterprise Hosted
-        /// account, call SCO shortcuts to get the SCO id of the events folder. Then, call SCO contents
-        /// with the SCO id to list all events.
-        /// </summary>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// <see cref="EventInfo">EventInfo array</see>
-        /// </returns>
         public MeetingItemCollectionResult ReportMyMeetings(int startIndex = 0, int limit = 0)
         {
-            var filter = string.Empty.AppendSortingIfNeeded("date-begin", SortOrder.Descending); //default sorting in AC, otherwise paging might be incorrect 
-            filter = filter.AppendPagingIfNeeded(startIndex, limit).TrimStart('&');
-            // act: "report-my-meetings"
-            return CallReportMyMeetings(filter);
+            return CallReportMyMeetings(string.Empty, startIndex, limit);
         }
 
         public MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0)
@@ -262,20 +210,47 @@
                     filter = CommandParams.Permissions.Filter.PermissionId.View;
                     break;
             }
-            filter = filter.AppendSortingIfNeeded("date-begin", SortOrder.Descending); //default sorting in AC, otherwise paging might be incorrect
-            filter = filter.AppendPagingIfNeeded(startIndex, limit);
-            // act: "report-my-meetings"
-            return CallReportMyMeetings(filter);
+            return CallReportMyMeetings(filter, startIndex, limit);
         }
 
-        public MeetingItemCollectionResult CallReportMyMeetings(string filter)
+
+        private MeetingItemCollectionResult CallReportMyMeetings(string filter, int startIndex = 0, int limit = 0)
+        {
+            filter = filter
+                .AppendSortingIfNeeded("date-begin", SortOrder.Descending) //default sorting in AC, otherwise paging might be incorrect 
+                .AppendPagingIfNeeded(startIndex, limit);
+
+            return DoCallMeetingItemList(Commands.ReportMyMeetings, filter, "//my-meetings/meeting", 0, int.MaxValue);
+        }
+
+        private MeetingItemCollectionResult DoCallMeetingItemList(string action, string filter, string xPath, int startIndex, int limit)
         {
             StatusInfo status;
-            var doc = this.requestProcessor.Process(Commands.ReportMyMeetings, filter, out status);
+            var doc = this.requestProcessor.Process(action, filter.AppendPagingIfNeeded(startIndex, limit), out status);
+            var data = MeetingItemCollectionParser.Parse(doc, this.requestProcessor.AdobeConnectRoot, xPath);
+            bool okResponse = ResponseIsOk(doc, status);
 
-            return ResponseIsOk(doc, status)
-                ? new MeetingItemCollectionResult(status, MeetingItemCollectionParser.Parse(doc, null, "//my-meetings/meeting"))
-                : new MeetingItemCollectionResult(status);
+            if (!okResponse)
+            {
+                if (status.Code == StatusCodes.operation_size_error)
+                {
+                    int? actualAcLimit = status.TryGetSubCodeAsInt32();
+                    if (actualAcLimit.HasValue)
+                    {
+                        return DoCallMeetingItemList(action, filter, xPath, startIndex, actualAcLimit.Value);
+                    }
+                }
+                return new MeetingItemCollectionResult(status);
+            }
+
+            if (data.Count() < limit)
+                return new MeetingItemCollectionResult(status, data);
+
+            MeetingItemCollectionResult nextPage = DoCallMeetingItemList(action, filter, xPath, startIndex + limit, limit);
+            if (!nextPage.Success)
+                return nextPage;
+
+            return new MeetingItemCollectionResult(status, data.Concat(nextPage.Values));
         }
 
         ///// <summary>

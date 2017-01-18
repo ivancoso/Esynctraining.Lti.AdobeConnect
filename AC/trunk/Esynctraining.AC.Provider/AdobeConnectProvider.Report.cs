@@ -186,7 +186,7 @@ namespace Esynctraining.AC.Provider
             StatusInfo status;
 
             var doc = this.requestProcessor.Process(Commands.ReportAssetResponseInfo,
-                string.Format(CommandParams.ScoIdInteractionId, meetingScoId.ToString(), interactionId.ToString()), out status);
+                string.Format(CommandParams.ScoIdInteractionId, meetingScoId, interactionId), out status);
 
             const string path = "//results/report-asset-responses/response";
 
