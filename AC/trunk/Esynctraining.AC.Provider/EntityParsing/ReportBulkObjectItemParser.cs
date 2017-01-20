@@ -16,8 +16,8 @@ namespace Esynctraining.AC.Provider.EntityParsing
 
             return new ReportBulkObjectItem
             {
-                ScoId = xml.SelectAttributeValue("sco-id/text()"),
-                Icon = xml.SelectAttributeValue("icon/text()"),
+                ScoId = xml.SelectAttributeValue("sco-id"),
+                Icon = xml.SelectAttributeValue("icon"),
                 Url = xml.SelectSingleNodeValue("url/text()"),
                 Name = xml.SelectSingleNodeValue("name/text()"),
                 DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
