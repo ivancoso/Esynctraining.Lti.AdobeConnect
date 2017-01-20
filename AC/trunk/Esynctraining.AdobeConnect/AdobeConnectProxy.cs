@@ -748,6 +748,24 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.RemoveFromGroupByType(principalId, type); }, principalId, type.ToString());
         }
 
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(IEnumerable<string> scoIds)
+        {
+            if (scoIds == null)
+                throw new ArgumentNullException(nameof(scoIds));
+
+            var result = new List<ReportBulkObjectItem>();
+            foreach (var chunk in scoIds.Chunk(50))
+            {
+                var filter = string.Join("&", chunk.Select(x => string.Format("filter-sco-id={0}", x)));
+                var chunkResult = Execute(() => { return _provider.ReportBulkObjects(filter); }, filter);
+                if (!chunkResult.Success)
+                    return chunkResult;
+                result.AddRange(chunkResult.Values);
+            }
+
+            return new CollectionResult<ReportBulkObjectItem>(new StatusInfo { Code = StatusCodes.ok }, result);
+        }
+
         public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportAllMeetings(filter, startIndex, limit); } );

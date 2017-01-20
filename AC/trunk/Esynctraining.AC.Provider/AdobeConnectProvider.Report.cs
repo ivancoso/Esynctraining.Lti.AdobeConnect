@@ -55,7 +55,9 @@ namespace Esynctraining.AC.Provider
             // act: "report-bulk-consolidated-transactions"
             StatusInfo status;
 
-            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions, string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId).AppendPagingIfNeeded(startIndex, limit), out status);
+            var doc = this.requestProcessor.Process(Commands.ReportBulkConsolidatedTransactions, 
+                string.Format(CommandParams.ReportBulkConsolidatedTransactionsFilters.MeetingScoId, meetingId).AppendPagingIfNeeded(startIndex, limit),
+                out status);
 
             return ResponseIsOk(doc, status)
                 ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
@@ -256,6 +258,22 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<QuizQuestionDistributionItem>(status);
         }
 
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter)
+        {
+            StatusInfo status;
+            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, filter, out status);
+
+            const string path = "//results/report-bulk-objects/row";
+
+            return ResponseIsOk(doc, status)
+                ? new CollectionResult<ReportBulkObjectItem>(status,
+                    doc.SelectNodes(path).Cast<XmlNode>()
+                    .Select(ReportBulkObjectItemParser.Parse)
+                    .Where(item => item != null)
+                    .ToArray())
+                : new CollectionResult<ReportBulkObjectItem>(status);
+        }
+            
     }
 
 }

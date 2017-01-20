@@ -122,6 +122,8 @@ namespace Esynctraining.AdobeConnect
 
         #region Reports
 
+        CollectionResult<ReportBulkObjectItem> ReportBulkObjects(IEnumerable<string> scoIds);
+
         /// <summary>
         /// NOTE: can return too much data and take a lot of time to complete.
         /// Consider using filter.
