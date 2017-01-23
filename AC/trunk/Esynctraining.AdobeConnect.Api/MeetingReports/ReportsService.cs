@@ -45,7 +45,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
                     .GroupBy(v => v.AssetId, v => v)
                     .ToDictionary(g => g.Key, g => g.ToList());
 
-                var sessions = ac.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
+                var sessions = ac.ReportMeetingSessions(meetingId, startIndex: startIndex, limit: limit).Values.ToList();
 
                 var sessionList =
                     (from asset in userSessions.Keys.Except(sessions.ConvertAll(s => s.AssetId))
@@ -149,7 +149,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports
         private List<ACSessionDto> GetSessionsWithParticipantsBySessionTime(string meetingId, List<MeetingAttendee> meetingAttendees,
             IAdobeConnectProxy acp, TimeZoneInfo timeZone, int startIndex = 0, int limit = 0)
         {
-            List<MeetingSession> sessions = acp.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
+            List<MeetingSession> sessions = acp.ReportMeetingSessions(meetingId, startIndex: startIndex, limit: limit).Values.ToList();
             var result = sessions.Select(sco => new ACSessionDto(sco, timeZone)).ToList();
 
             var unprocessedAttendees = new List<MeetingAttendee>();

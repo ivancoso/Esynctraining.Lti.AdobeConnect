@@ -13,7 +13,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
                 throw new ArgumentNullException(nameof(source));
             if (timeZone == null)
                 throw new ArgumentNullException(nameof(timeZone));
-
+            
             participantName = source.ParticipantName;
             sessionName = source.SessionName;
             login = source.Login;
@@ -79,7 +79,8 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
             return string.Compare(this.loginOrFullName, other.loginOrFullName, StringComparison.Ordinal);
         }
 
-        private DateTime? FixACValue(DateTime? dt, TimeZoneInfo timeZone)
+
+        private static DateTime? FixACValue(DateTime? dt, TimeZoneInfo timeZone)
         {
             if (dt.HasValue)
             {
@@ -88,7 +89,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
             return null;
         }
 
-        private DateTime? FixACValue(DateTime dt, TimeZoneInfo timeZone)
+        private static DateTime? FixACValue(DateTime dt, TimeZoneInfo timeZone)
         {
             var tmp = dt < dt1951 ? (DateTime?)null : new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, DateTimeKind.Utc);
 
@@ -99,7 +100,7 @@ namespace Esynctraining.AdobeConnect.Api.MeetingReports.Dto
             return null;
         }
 
-        private readonly DateTime dt1951 = new DateTime(1951, 1, 1);
+        private static readonly DateTime dt1951 = new DateTime(1951, 1, 1);
 
     }
 

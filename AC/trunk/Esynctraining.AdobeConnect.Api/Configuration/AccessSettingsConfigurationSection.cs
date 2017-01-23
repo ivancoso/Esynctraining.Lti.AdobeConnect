@@ -5,14 +5,6 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
 {
     public class AccessSettingsConfigurationSection : ConfigurationSection, IAccessSettings
     {
-        public string ApiUrl
-        {
-            get
-            {
-                return new Uri(new Uri(Domain), "api/xml").ToString();
-            }
-        }
-
         [ConfigurationProperty("domain", IsRequired = true, Options = ConfigurationPropertyOptions.IsRequired)]
         public string Domain
         {

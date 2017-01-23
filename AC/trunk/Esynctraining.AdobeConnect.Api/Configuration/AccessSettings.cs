@@ -27,13 +27,6 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
     {
         private string _domain;
 
-        public string ApiUrl
-        {
-            get
-            {
-                return new Uri(new Uri(Domain), "api/xml").ToString();
-            }
-        }
 
         public string Domain
         {
@@ -53,22 +46,19 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
 
                 if (!url.Scheme.Equals("HTTPS", StringComparison.OrdinalIgnoreCase) &&
                     !url.Scheme.Equals("HTTP", StringComparison.OrdinalIgnoreCase))
-                    throw new ConfigurationErrorsException($"apiUrl value '{str}' is not valid (HTTP and HTTPS only)");
+                    throw new ConfigurationErrorsException($"Domain value '{str}' is not valid (HTTP and HTTPS only)");
 
                 _domain = url.ToString().TrimEnd('/');
             }
         }
-
-
+        
         public Credentials AdminCredentials { get; set; }
 
         ICredentials IAccessSettings.AdminCredentials
         {
-            get
-            {
-                return AdminCredentials;
-            }
+            get { return AdminCredentials; }
         }
+
 
         public AccessSettings() { }
 
@@ -76,6 +66,7 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
         {
             if (source == null)
                 throw new ArgumentNullException(nameof(source));
+
             this.Domain = source.Domain;
             this.AdminCredentials = new Credentials
             {
@@ -83,6 +74,7 @@ namespace Esynctraining.AdobeConnect.Api.Configuration
                 Password = source.AdminCredentials.Password,
             };
         }
+
 
         public AdobeConnectAccess Build()
         {

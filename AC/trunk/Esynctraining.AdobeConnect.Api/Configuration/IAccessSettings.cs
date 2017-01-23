@@ -1,12 +1,8 @@
-﻿using System;
-
-namespace Esynctraining.AdobeConnect.Api.Configuration
+﻿namespace Esynctraining.AdobeConnect.Api.Configuration
 {
     public interface IAccessSettings
     {
         string Domain { get; }
-
-        string ApiUrl { get; }
 
         ICredentials AdminCredentials { get; }
 
