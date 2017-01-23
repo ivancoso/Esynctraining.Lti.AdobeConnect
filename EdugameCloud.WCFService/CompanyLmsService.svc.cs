@@ -300,12 +300,12 @@ namespace EdugameCloud.WCFService
             LmsCompanyModel.UpdateCompanySetting(instance, LmsCompanySettingNames.ShowAudioProfile, dto.showAudioProfile.ToString());
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.AudioProfileUnique, dto.audioProfileUnique.ToString());
 
-            //D2L only options
-            if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn)
+            //OAuth options
+            if (lmsProvider.Id == (int) LmsProviderEnum.Desire2Learn || lmsProvider.Id == (int)LmsProviderEnum.Canvas)
             {
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsD2LSandbox, dto.isSandbox);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppId, dto.d2lAppId);
-                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.D2LAppKey, dto.d2lAppKey);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.IsOAuthSandbox, dto.isSandbox);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.OAuthAppId, dto.oAuthAppId);
+                UpdateOrDeleteSetting(instance, LmsCompanySettingNames.OAuthAppKey, dto.oAuthAppKey);
             }
             else if (lmsProvider.Id == (int)LmsProviderEnum.Blackboard)
             {

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Esynctraining.Core.Logging;
 using D2L.Extensibility.AuthSdk;
 using D2L.Extensibility.AuthSdk.Restsharp;
+using EdugameCloud.Lti.OAuth;
 using EdugameCloud.Lti.API.Desire2Learn;
 using EdugameCloud.Lti.Core.Constants;
 using EdugameCloud.Lti.Domain.Entities;
@@ -14,7 +16,7 @@ namespace EdugameCloud.Lti.Desire2Learn
     public class Desire2LearnApiService : IDesire2LearnApiService
     {
         private readonly ILogger logger;
-        private readonly ApplicationSettingsProvider settings;
+        private readonly dynamic settings;
 
         public string WhoAmIUrlFormat { get { return "/d2l/api/lp/{0}/users/whoami"; } }
         public string GetUserUrlFormat { get { return "/d2l/api/lp/{0}/users/{1}"; } }
@@ -31,22 +33,22 @@ namespace EdugameCloud.Lti.Desire2Learn
         public Uri GetTokenRedirectUrl(Uri returnUrl, string hostUrl, LmsCompany company)
         {
             var m_valenceHost = new HostSpec("https", hostUrl, 443);
-            var appSettings = GetAppSettings(company);
-            var context = InitializeAppContext(appSettings);
+            var oAuthSettings = GetOAuthSettings(company);
+            var context = InitializeAppContext(oAuthSettings);
             return context.CreateUrlForAuthentication(m_valenceHost, returnUrl);
         }
 
         public T GetApiObjects<T>(Uri urlWithAuthParams, string hostUrl, string apiUrl, LmsCompany company) where T : new()
         {
-            var appSettings = GetAppSettings(company);
-            var userContext = GetUserContext(appSettings, urlWithAuthParams, hostUrl);
+            var oAuthSettings = GetOAuthSettings(company);
+            var userContext = GetUserContext(oAuthSettings, urlWithAuthParams, hostUrl);
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
         public T GetApiObjects<T>(string userId, string userKey, string hostUrl, string apiUrl, LmsCompany company) where T : new()
         {
-            var appSettings = GetAppSettings(company);
-            var userContext = GetUserContext(appSettings, userId, userKey, hostUrl);
+            var oAuthSettings = GetOAuthSettings(company);
+            var userContext = GetUserContext(oAuthSettings, userId, userKey, hostUrl);
             return MakeApiCall<T>(userContext, hostUrl, apiUrl);
         }
 
@@ -65,55 +67,40 @@ namespace EdugameCloud.Lti.Desire2Learn
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 logger.InfoFormat("[D2L API call] Url: {0}, Status: {1}-{2}, ErrorMessage:{3}, Content:{4}",
-                    apiUrl, (int) response.StatusCode, response.StatusDescription, response.ErrorMessage,
+                    apiUrl, (int)response.StatusCode, response.StatusDescription, response.ErrorMessage,
                     response.Content);
             }
 
             return response.Data;
         }
 
-        private ID2LUserContext GetUserContext(Tuple<string, string> appSettings, Uri url, string hostUrl)
+        private ID2LUserContext GetUserContext(KeyValuePair<string, string> appSettings, Uri url, string hostUrl)
         {
             var host = new HostSpec("https", hostUrl, 443);
             var context = InitializeAppContext(appSettings);
             return context.CreateUserContext(url, host);
         }
 
-        private ID2LUserContext GetUserContext(Tuple<string, string> appSettings, string userId, string userKey, string hostUrl)
+        private ID2LUserContext GetUserContext(KeyValuePair<string, string> appSettings, string userId, string userKey, string hostUrl)
         {
             var host = new HostSpec("https", hostUrl, 443);
             var context = InitializeAppContext(appSettings);
             return context.CreateUserContext(userId, userKey, host);
         }
 
-        private ID2LAppContext InitializeAppContext(Tuple<string, string> appSettings)
+        private ID2LAppContext InitializeAppContext(KeyValuePair<string, string> oAuthSettings)
         {
-            if (string.IsNullOrEmpty(appSettings.Item1) || string.IsNullOrEmpty(appSettings.Item2))
+            if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
             {
                 throw new InvalidOperationException("D2L keys are not set"); // todo: log lmsCompanyId
             }
 
-            return new D2LAppContextFactory().Create(appSettings.Item1, appSettings.Item2);
+            return new D2LAppContextFactory().Create(oAuthSettings.Key, oAuthSettings.Value);
         }
 
-        private Tuple<string, string> GetAppSettings(LmsCompany lmsCompany)
+        private KeyValuePair<string, string> GetOAuthSettings(LmsCompany company)
         {
-            string appId = null;
-            string appKey = null;
-            var isSandbox = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.IsD2LSandbox);
-            if (isSandbox)
-            {
-                appId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
-                appKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
-                return new Tuple<string, string>(appId, appKey);
-            }
-            else
-            {
-                appId = ((dynamic) settings).BrightspaceAppId;
-                appKey = ((dynamic)settings).BrightspaceAppKey;
-            }
-
-            return new Tuple<string, string>(appId, appKey);
+            return OAuthWebSecurityWrapper.GetOAuthSettings(company, (string)settings.BrightspaceAppId, (string)settings.BrightspaceAppKey);
         }
     }
 }

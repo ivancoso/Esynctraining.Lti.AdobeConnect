@@ -81,11 +81,6 @@ namespace EdugameCloud.Lti.Controllers
         {
             get { return IoC.Resolve<CompanyModel>(); }
         }
-
-        private IAdobeConnectAccountService AdobeConnectAccountService
-        {
-            get { return IoC.Resolve<IAdobeConnectAccountService>(); }
-        }
         
         private LmsProviderModel LmsProviderModel
         {
@@ -206,7 +201,17 @@ namespace EdugameCloud.Lti.Controllers
                 {
                     try
                     {
-                        AuthenticationResult result = OAuthWebSecurityWrapper.VerifyAuthentication(provider, this.Settings);
+                        AuthenticationResult result;
+                        if (param.GetLtiProviderName(provider) == LmsProviderNames.Canvas)
+                        {
+                            var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(session.LmsCompany, Settings.CanvasClientId, Settings.CanvasClientSecret);
+                            result = OAuthWebSecurityWrapper.VerifyLtiAuthentication(HttpContext, oAuthSettings);
+                        }
+                        else
+                        {
+                            result = OAuthWebSecurity.VerifyAuthentication();
+                        }
+
                         if (result.IsSuccessful)
                         {
                             if (provider.ToLower() == LmsProviderNames.Canvas)
@@ -629,7 +634,7 @@ namespace EdugameCloud.Lti.Controllers
                         if (string.IsNullOrWhiteSpace(lmsUser?.Token) ||
                             CanvasApi.IsTokenExpired(lmsCompany.LmsDomain, lmsUser.Token))
                         {
-                            this.StartOAuth2Authentication(provider, key, param);
+                            this.StartOAuth2Authentication(lmsCompany, provider, key, param);
                             return null;
                         }
 
@@ -947,7 +952,7 @@ namespace EdugameCloud.Lti.Controllers
             //return param.lms_domain.ToLower().Replace("www.", string.Empty).Equals(credentials.LmsDomain.Replace("www.", string.Empty), StringComparison.OrdinalIgnoreCase);
         }
 
-        private void StartOAuth2Authentication(string provider, string providerKey, LtiParamDTO model)
+        private void StartOAuth2Authentication(LmsCompany lmsCompany, string provider, string providerKey, LtiParamDTO model)
         {
             string schema = Request.GetScheme();
 
@@ -963,14 +968,16 @@ namespace EdugameCloud.Lti.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
-                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, Settings.CanvasClientId, Settings.CanvasClientSecret);
+                    OAuthWebSecurityWrapper.RequestAuthentication(HttpContext, oAuthSettings, returnUrl);
                     break;
-                case LmsProviderNames.Brightspace:
-                    UriBuilderExtensions.AddQueryStringParameter(
-                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
-
-                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
-                    break;
+                    // not used
+//                case LmsProviderNames.Brightspace:
+//                    UriBuilderExtensions.AddQueryStringParameter(
+//                        returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
+//
+//                    OAuthWebSecurity.RequestAuthentication(provider, returnUrl);
+//                    break;
 
             }
         }

@@ -1,4 +1,8 @@
-﻿namespace EdugameCloud.Lti.OAuth
+﻿using System.Collections.Generic;
+using EdugameCloud.Lti.Core.Constants;
+using EdugameCloud.Lti.Domain.Entities;
+
+namespace EdugameCloud.Lti.OAuth
 {
     using System;
     using System.Reflection;
@@ -15,47 +19,20 @@
     /// <summary>
     /// The OAUTH web security wrapper.
     /// </summary>
-    internal static class OAuthWebSecurityWrapper
+    public static class OAuthWebSecurityWrapper
     {
-        #region Public Methods and Operators
-
-        /// <summary>
-        /// The verify authentication.
-        /// </summary>
-        /// <param name="providerName">
-        /// The provider name.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AuthenticationResult"/>.
-        /// </returns>
-        public static AuthenticationResult VerifyAuthentication(string providerName, ApplicationSettingsProvider settings)
+        public static AuthenticationResult VerifyLtiAuthentication(HttpContextBase context, KeyValuePair<string, string> appIdWithSecret)
         {
-            if (string.IsNullOrEmpty(providerName))
-            {
-                return AuthenticationResult.Failed;
-            }
-
-            var context = (HttpContextBase)new HttpContextWrapper(HttpContext.Current);
-            providerName = providerName.ToLower();
-            return providerName.Contains("canvas") ? VerifyLtiAuthentication(context, settings) : OAuthWebSecurity.VerifyAuthentication();
+            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value);
+            return new LtiOpenAuthSecurityManager(context, canvasClient, GetProvider(typeof(OAuthWebSecurity))).VerifyAuthentication(null);
         }
 
-        #endregion
+        public static void RequestAuthentication(HttpContextBase context, KeyValuePair<string, string> appIdWithSecret, string returnUrl)
+        {
+            var canvasClient = new CanvasClient(appIdWithSecret.Key, appIdWithSecret.Value);
+            new LtiOpenAuthSecurityManager(context, canvasClient, GetProvider(typeof(OAuthWebSecurity))).RequestAuthentication(returnUrl);
+        }
 
-        #region Methods
-
-        /// <summary>
-        /// The get provider.
-        /// </summary>
-        /// <param name="type">
-        /// The type.
-        /// </param>
-        /// <returns>
-        /// The <see cref="IOpenAuthDataProvider"/>.
-        /// </returns>
         private static IOpenAuthDataProvider GetProvider(Type type)
         {
             var field = type.GetField("OAuthDataProvider", BindingFlags.Static | BindingFlags.NonPublic);
@@ -69,25 +46,26 @@
             }
         }
 
-        /// <summary>
-        /// The verify lti authentication.
-        /// </summary>
-        /// <param name="context">
-        /// The context.
-        /// </param>
-        /// <param name="settings">
-        /// The settings.
-        /// </param>
-        /// <returns>
-        /// The <see cref="AuthenticationResult"/>.
-        /// </returns>
-        private static AuthenticationResult VerifyLtiAuthentication(HttpContextBase context, dynamic settings)
+        //todo: move to companyLms/settings service?
+        public static KeyValuePair<string, string> GetOAuthSettings(LmsCompany lmsCompany, string globalAppId, string globalAppKey)
         {
-            var canvasClient = new CanvasClient((string)settings.CanvasClientId, (string)settings.CanvasClientSecret);
+            string appId = null;
+            string appKey = null;
+            var isSandbox = lmsCompany.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
+            if (isSandbox)
+            {
+                appId = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
+                appKey = lmsCompany.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
+            }
+            else
+            {
+                appId = globalAppId;
+                appKey = globalAppKey;
+            }
 
-            return new LtiOpenAuthSecurityManager(context, canvasClient, GetProvider(typeof(OAuthWebSecurity))).VerifyAuthentication(null);
+            return new KeyValuePair<string, string>(appId, appKey);
         }
 
-        #endregion
+
     }
 }

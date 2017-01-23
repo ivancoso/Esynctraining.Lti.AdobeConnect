@@ -92,9 +92,9 @@ namespace EdugameCloud.Lti.DTO
             this.useSynchronizedUsers = instance.UseSynchronizedUsers;
             this.meetingNameFormatterId = instance.MeetingNameFormatterId;
             this.roleMapping = instance.RoleMappings.Select(x => new LmsCompanyRoleMappingDTO(x.LmsRoleName, x.AcRole, x.IsDefaultLmsRole)).ToArray();
-            this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsD2LSandbox);
-            this.d2lAppId = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppId);
-            this.d2lAppKey = instance.GetSetting<string>(LmsCompanySettingNames.D2LAppKey);
+            this.isSandbox = instance.GetSetting<bool>(LmsCompanySettingNames.IsOAuthSandbox);
+            this.oAuthAppId = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppId);
+            this.oAuthAppKey = instance.GetSetting<string>(LmsCompanySettingNames.OAuthAppKey);
             this.supportPageHtml = instance.GetSetting<string>(LmsCompanySettingNames.SupportPageHtml);
             this.isActive = instance.IsActive;
 
@@ -381,10 +381,10 @@ namespace EdugameCloud.Lti.DTO
         public bool? isSandbox { get; set; }
 
         [DataMember]
-        public string d2lAppId { get; set; }
+        public string oAuthAppId { get; set; }
 
         [DataMember]
-        public string d2lAppKey { get; set; }
+        public string oAuthAppKey { get; set; }
 
         [DataMember]
         public string supportPageHtml { get; set; }
