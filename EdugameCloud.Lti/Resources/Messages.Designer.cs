@@ -196,6 +196,15 @@ namespace EdugameCloud.Lti.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid OAuth parameters. Application Id and Application Key cannot be empty..
+        /// </summary>
+        public static string LtiOauthInvalidParameters {
+            get {
+                return ResourceManager.GetString("LtiOauthInvalidParameters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This LTI integration is already set for different domain..
         /// </summary>
         public static string LtiValidationDifferentDomain {

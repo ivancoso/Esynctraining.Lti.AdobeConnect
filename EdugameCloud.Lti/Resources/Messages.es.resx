@@ -308,4 +308,7 @@
   <data name="LtiValidationRequiredACParameters" xml:space="preserve">
     <value>Se requieren los siguientes parámetros para la integración de AC:</value>
   </data>
+  <data name="LtiOauthInvalidParameters" xml:space="preserve">
+    <value>Parámetros OAuth no válidos. Application Id y Application Key no pueden estar vacíos.</value>
+  </data>
 </root>

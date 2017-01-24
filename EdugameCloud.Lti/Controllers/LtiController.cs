@@ -204,7 +204,7 @@ namespace EdugameCloud.Lti.Controllers
                         AuthenticationResult result;
                         if (param.GetLtiProviderName(provider) == LmsProviderNames.Canvas)
                         {
-                            var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(session.LmsCompany, Settings.CanvasClientId, Settings.CanvasClientSecret);
+                            var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(session.LmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
                             result = OAuthWebSecurityWrapper.VerifyLtiAuthentication(HttpContext, oAuthSettings);
                         }
                         else
@@ -241,7 +241,10 @@ namespace EdugameCloud.Lti.Controllers
                     }
                     catch (ApplicationException ex)
                     {
-                        this.ViewBag.Error = ex.ToString();
+                        Logger.ErrorFormat(ex, "[AuthenticationCallback] Application exception. SessionKey:{0}, Message:{1}", providerKey, ex.Message);
+                        ViewBag.DebugError = IsDebug ? (ex.Message + ex.StackTrace) : string.Empty;
+                        ViewBag.Message = ex.Message;
+                        return this.View("~/Views/Lti/LtiError.cshtml");
                     }
                 }
 
@@ -968,7 +971,12 @@ namespace EdugameCloud.Lti.Controllers
                         returnUrl, Core.Utils.Constants.ReturnUriExtensionQueryParameterName, HttpScheme.Https + model.lms_domain);
 
                     returnUrl = CanvasClient.AddProviderKeyToReturnUrl(returnUrl, providerKey);
-                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, Settings.CanvasClientId, Settings.CanvasClientSecret);
+                    var oAuthSettings = OAuthWebSecurityWrapper.GetOAuthSettings(lmsCompany, (string)Settings.CanvasClientId, (string)Settings.CanvasClientSecret);
+                    if (string.IsNullOrEmpty(oAuthSettings.Key) || string.IsNullOrEmpty(oAuthSettings.Value))
+                    {
+                        var message = Resources.Messages.LtiOauthInvalidParameters;
+                        throw new LtiException(message);
+                    }
                     OAuthWebSecurityWrapper.RequestAuthentication(HttpContext, oAuthSettings, returnUrl);
                     break;
                     // not used
