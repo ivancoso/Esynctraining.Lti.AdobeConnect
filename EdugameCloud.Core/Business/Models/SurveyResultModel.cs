@@ -205,7 +205,7 @@ namespace EdugameCloud.Core.Business.Models
                 {
                     QuestionId = r.QuestionRef.Id,
                     Answer = String.Join(";", r.Answers.Select(a => a.Value)),
-                    DistractorIds = r.Answers.Select(a => a.SurveyDistractorAnswer.Id)
+                    DistractorIds = r.Answers.Select(a => a.SurveyDistractorAnswer.Id) // for likert there will be two types of distractors! a.SurveryDistractor
                 }).ToList()
             });
 

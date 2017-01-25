@@ -116,6 +116,7 @@
     <Compile Include="Business\Models\CompanyThemeModel.cs" />
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
+    <Compile Include="Business\Models\QuizQuestionResultAnswerModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="Domain\Entities\CompanyTheme.cs" />
     <Compile Include="Domain\Entities\EmailHistory.cs" />
     <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
+    <Compile Include="Domain\Entities\QuizQuestionResultAnswer.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />

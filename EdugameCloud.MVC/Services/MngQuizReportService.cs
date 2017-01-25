@@ -43,13 +43,11 @@ namespace EdugameCloud.MVC.Services
 
                     foreach (var q in questions)
                     {
-                        var internalDict = new Dictionary<int, int>();
                         List<string> correctAnswers = new List<string>();
                         int answerOrder = Convert.ToInt32('a');
 
                         foreach (var distractor in q.Distractors.OrderBy(x => x.DistractorOrder))
                         {
-                            internalDict.Add(distractor.Id, 0);
                             if (distractor.IsCorrect.GetValueOrDefault())
                             {
                                 correctAnswers.Add(Convert.ToString((char)answerOrder));
@@ -86,13 +84,34 @@ namespace EdugameCloud.MVC.Services
                                     }
                                     else
                                     {
-                                        ws.Cells[startUserRow, startQuestionColumn].Value = qqr.IsCorrect? "Correct" : "Incorrect";
-                                        if (!qqr.IsCorrect)
+                                        string answerResultCellValue;
+                                        if (qqr.IsCorrect)
+                                        {
+                                            answerResultCellValue = "Correct";
+                                        }
+                                        else
                                         {
                                             ws.Cells[startUserRow, startQuestionColumn].Style.Fill.PatternType = ExcelFillStyle.Solid;
                                             ws.Cells[startUserRow, startQuestionColumn].Style.Fill.BackgroundColor.SetColor(Color.Yellow);
+                                            answerOrder = Convert.ToInt32('a');
+                                            var incorrectAnswers = new List<string>();
+                                            if(qqr.DistractorIds != null)
+                                            foreach (var distractor in q.Distractors.OrderBy(x => x.DistractorOrder))
+                                            {
+                                                if (qqr.DistractorIds.Any(x => x == distractor.Id))
+                                                {
+                                                    incorrectAnswers.Add(Convert.ToString((char)answerOrder));
+                                                }
+
+                                                answerOrder++;
+                                            }
+
+                                            answerResultCellValue = "Incorrect; " + string.Join(",", incorrectAnswers);
                                         }
+
+                                        ws.Cells[startUserRow, startQuestionColumn].Value = answerResultCellValue;
                                     }
+
                                     ws.Cells[startUserRow, startQuestionColumn].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                                     startUserRow++;
                                     break;

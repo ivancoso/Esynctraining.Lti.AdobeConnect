@@ -19,6 +19,8 @@
             this.References(x => x.QuizResult).Not.Nullable();
             this.References(x => x.QuestionRef).Not.Nullable();
             this.References(x => x.QuestionType).Not.Nullable();
+            this.HasMany(x => x.Answers).Cascade.Delete().ExtraLazyLoad().Inverse();
+
         }
 
         #endregion

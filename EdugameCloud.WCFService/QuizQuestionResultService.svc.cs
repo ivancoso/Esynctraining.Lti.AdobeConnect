@@ -1,4 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
+
+using System;
+
 namespace EdugameCloud.WCFService
 {
     using System.Collections.Generic;
@@ -83,6 +86,14 @@ namespace EdugameCloud.WCFService
             get
             {
                 return IoC.Resolve<LmsUserParametersModel>();
+            }
+        }
+
+        private QuizQuestionResultAnswerModel QuizQuestionResultAnswerModel
+        {
+            get
+            {
+                return IoC.Resolve<QuizQuestionResultAnswerModel>();
             }
         }
 
@@ -176,6 +187,12 @@ namespace EdugameCloud.WCFService
                                                                 resultDto.quizQuestionResultId).Value;
                 quizQuestionResult = this.ConvertDto(resultDto, quizQuestionResult);
                 quizQuestionResultModel.RegisterSave(quizQuestionResult);
+                if (isTransient && resultDto.answers != null && resultDto.answers.Any())
+                {
+                    var answers = this.CreateAnswers(resultDto, quizQuestionResult);
+                    foreach (var answ in answers)
+                        quizQuestionResult.Answers.Add(answ);
+                }
                 return new QuizQuestionResultDTO(quizQuestionResult);
             }
 
@@ -212,6 +229,12 @@ namespace EdugameCloud.WCFService
                                                               appletResultDTO.quizQuestionResultId).Value;
                     appletResult = this.ConvertDto(appletResultDTO, appletResult);
                     sessionModel.RegisterSave(appletResult);
+                    if (isTransient && appletResultDTO.answers != null && appletResultDTO.answers.Any())
+                    {
+                        var answers = this.CreateAnswers(appletResultDTO, appletResult);
+                        foreach (var answ in answers)
+                            appletResult.Answers.Add(answ);
+                    }
                     created.Add(appletResult);
                 }
                 else
@@ -289,6 +312,60 @@ namespace EdugameCloud.WCFService
             instance.QuizResult = this.QuizResultModel.GetOneById(resultDTO.quizResultId).Value;
             instance.QuestionRef = this.QuestionModel.GetOneById(resultDTO.questionId).Value;
             return instance;
+        }
+
+        private List<QuizQuestionResultAnswer> CreateAnswers(QuizQuestionResultDTO dto, QuizQuestionResult result)
+        {
+            var created = new List<QuizQuestionResultAnswer>();
+            foreach (var answerString in dto.answers)
+            {
+                var answer = new QuizQuestionResultAnswer();
+                try
+                {
+                    answer.QuizQuestionResult = result;
+                    answer.Value = answerString;
+
+                    switch (result.QuestionType.Id)
+                    {
+                        case (int) QuestionTypeEnum.SingleMultipleChoiceText:
+                            int distractorId;
+                            if (int.TryParse(answerString, out distractorId))
+                            {
+                                var distractor = result.QuestionRef.Distractors.FirstOrDefault(x => x.Id == distractorId);
+                                if (distractor != null)
+                                {
+                                    answer.QuizDistractorAnswer = distractor;
+                                    answer.Value = distractor.DistractorName;
+                                }
+                                else
+                                {
+                                    answer.Value = answerString;
+                                }
+                            }
+                            else
+                            {
+                                answer.Value = answerString;
+                            }
+
+                            break;
+                        default:
+                            answer.Value = answerString;
+                            break;
+                    }
+
+                    QuizQuestionResultAnswerModel.RegisterSave(answer);
+                }
+                catch (Exception ex)
+                {
+                    Logger.ErrorFormat("Saving answers:" + ex);
+                }
+                finally
+                {
+                    created.Add(answer);
+                }
+            }
+
+            return created;
         }
 
         #endregion

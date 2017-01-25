@@ -1,4 +1,6 @@
-﻿namespace EdugameCloud.Core.Domain.Entities
+﻿using System.Collections.Generic;
+
+namespace EdugameCloud.Core.Domain.Entities
 {
     using Esynctraining.Core.Domain.Entities;
 
@@ -7,6 +9,11 @@
     /// </summary>
     public class QuizQuestionResult : Entity
     {
+        public QuizQuestionResult()
+        {
+            Answers = new List<QuizQuestionResultAnswer>();
+        }
+
         #region Public Properties
 
         /// <summary>
@@ -34,6 +41,7 @@
         /// </summary>
         public virtual QuizResult QuizResult { get; set; }
 
+        public virtual IList<QuizQuestionResultAnswer> Answers { get; protected set; }
         #endregion
     }
 }
