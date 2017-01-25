@@ -154,7 +154,7 @@
             StatusInfo status;
 
             var scos = this.requestProcessor.Process(Commands.Sco.Contents,
-                string.Format(CommandParams.ScoIdSourceScoId, scoId, sourceScoId),
+                string.Format(CommandParams.ScoIdFilterSourceScoId, scoId, sourceScoId),
                 out status);
 
             return ResponseIsOk(scos, status)
