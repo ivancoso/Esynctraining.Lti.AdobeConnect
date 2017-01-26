@@ -1,15 +1,15 @@
 {
-	"version": "1.0.2.9",
+	"version": "1.0.2.10",
 	"title": "Esynctraining.AC.Provider",
 	"description": "Provides Adobe Connect functionality for eSyncTraining projects",
 	"copyright": "Copyright © 2013-2017 eSyncTraining.com",
-	"authors": ["eSyncTraining.com"],
+	"authors": [ "eSyncTraining.com" ],
 
 	"packOptions": {
 		"requireLicenseAcceptance": false,
 		"tags": [ "core", "AC", "AdobeConnect" ],
 		"owners": [ "eSyncTraining.com" ],
-		"releaseNotes": "GetContentsByScoIdSourceScoId fix"
+		"releaseNotes": ""
 	},
 
 	"dependencies": {

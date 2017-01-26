@@ -201,8 +201,22 @@
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
-            var filter = string.Format(CommandParams.ScoId, scoId);
-            return CallScoExpandedContent(scoId, filter);
+            return GetScoExpandedContent(scoId, null);
+        }
+
+        public ScoContentCollectionResult GetScoExpandedContent(string scoId, string filter, int start = 0, int rows = 0)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+
+            var flt = string.Format(CommandParams.ScoId, scoId);
+            if (!string.IsNullOrWhiteSpace(filter))
+                flt += "&" + filter;
+
+            flt = flt
+                .AppendPagingIfNeeded(start, rows)
+                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending);
+            return CallScoExpandedContent(scoId, flt);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByName(string scoId, string name)
@@ -213,8 +227,8 @@
             //if (string.IsNullOrWhiteSpace(name))
             //    throw new ArgumentException("Non-empty value expected", nameof(name));
 
-            var filter = string.Format(CommandParams.ScoName, scoId, UrlEncode(name));
-            return CallScoExpandedContent(scoId, filter);
+            var filter = string.Format(CommandParams.FilterName, UrlEncode(name));
+            return GetScoExpandedContent(scoId, filter);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByIcon(string scoId, string icon, int start = 0, int rows = 0)
@@ -224,25 +238,20 @@
             if (string.IsNullOrWhiteSpace(icon))
                 throw new ArgumentException("Non-empty value expected", nameof(icon));
 
-            var filter = string.Format(CommandParams.ScoIcon, scoId, UrlEncode(icon))
-                .AppendPagingIfNeeded(start, rows)
-                .AppendSortingIfNeeded("sco-id", SortOrder.Ascending);
-            return CallScoExpandedContent(scoId, filter);
+            var filter = string.Format(CommandParams.FilterIcon, UrlEncode(icon));
+            return GetScoExpandedContent(scoId, filter, start, rows);
         }
 
         public ScoContentCollectionResult GetScoExpandedContentByNameLike(string scoId, string nameLikeCriteria)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
-            // ???
-            //if (string.IsNullOrWhiteSpace(nameLikeCriteria))
-            //    throw new ArgumentException("Non-empty value expected", nameof(nameLikeCriteria));
 
-            var filter = string.Format(CommandParams.ScoNameLike, scoId, UrlEncode(nameLikeCriteria)); ;
-            return CallScoExpandedContent(scoId, filter);
+            var filter = string.Format(CommandParams.FilterNameLike, UrlEncode(nameLikeCriteria));
+            return GetScoExpandedContent(scoId, filter);
         }
 
-        public ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
+        private ScoContentCollectionResult CallScoExpandedContent(string scoId, string filter)
         {
             StatusInfo status;
 
