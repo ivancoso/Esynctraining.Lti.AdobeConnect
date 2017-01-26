@@ -48,10 +48,10 @@ namespace Esynctraining.AdobeConnect.Tests
             var userCredentials = new UserCredentials("sergeyi@esynctraining.com", "pwd");
             LoginResult result = provider.Login(userCredentials);
             var meetingScoId = 458536;
-            var res = provider.ReportAssetResponseInfo(meetingScoId, 458583);
-            var rr2 = provider.ReportQuizQuestionResponse(meetingScoId);
-            var rr3 = provider.ReportQuizInteractions(meetingScoId);
-            var rr4 = provider.ReportQuizQuestionDistribution(meetingScoId);
+            var res = provider.ReportAssetResponseInfo(meetingScoId.ToString(), "458583");
+            var rr2 = provider.ReportQuizQuestionResponse(meetingScoId.ToString());
+            var rr3 = provider.ReportQuizInteractions(meetingScoId.ToString());
+            var rr4 = provider.ReportQuizQuestionDistribution(meetingScoId.ToString());
 
             int rr = 4;
 

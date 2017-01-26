@@ -95,7 +95,7 @@ namespace Esynctraining.AdobeConnect.Tests
         {
             try
             {
-                _connectionDetails = new ConnectionDetails(apiUrl);
+                _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
                 _provider = new AdobeConnectProvider(_connectionDetails);
                 var provider = _provider;
                 LoginResult loginResult = provider.Login(new UserCredentials(login, password));
@@ -114,6 +114,7 @@ namespace Esynctraining.AdobeConnect.Tests
             {
                 _smtpSender.SendEmail("General uncaught error", e.Message + e.StackTrace);
             }
+            _smtpSender.SendEmail("Report processing is finished!", "Don't forget to look in the logs to inspect errors during processing!");
         }
 
         private void LogRecStats<T>(T report34)
