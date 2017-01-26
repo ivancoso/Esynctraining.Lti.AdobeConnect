@@ -25,14 +25,15 @@ namespace Esynctraining.AdobeConnect.Tests
         private AdobeConnectProvider _provider;
         private ILogger _logger;
         private ConcurrentDictionary<RecIdentity, double> _recStorage = new ConcurrentDictionary<RecIdentity, double>();
-        static public IConfigurationRoot Configuration { get; set; }
+        private SmtpSender _smtpSender;
+        //static public IConfigurationRoot Configuration { get; set; }
 
         [SetUp]
-        public void Init()
+        public void Init(SmtpSettings smtpSettings)
         {
             //var builder = new ConfigurationBuilder()
             //    .SetBasePath(Directory.GetCurrentDirectory())
-           //.AddJsonFile("appsettings.json");
+            //.AddJsonFile("appsettings.json");
 
             //Configuration = builder.Build();
 
@@ -42,6 +43,7 @@ namespace Esynctraining.AdobeConnect.Tests
             XmlConfigurator.Configure();
 
             _logger = IoC.Resolve<ILogger>();
+            _smtpSender = new SmtpSender(smtpSettings, _logger);
         }
 
         //[TestCase("https://middlebury.adobeconnect.com", "mike+wtu@esynctraining.com", "2016", 0)]
@@ -88,24 +90,30 @@ namespace Esynctraining.AdobeConnect.Tests
 
         }
 
-        [TestCase("https://cca.acms.com", "developer@esynctraining.com", "Welcome1", 0)]
+        [TestCase("https://cca.acms.com/api/xml", "developer@esynctraining.com", "e$ync123CCA", 0)]
         public void WillGetRecordingsStatsForCCA(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
-            _provider = new AdobeConnectProvider(_connectionDetails);
-            var provider = _provider;
-            LoginResult loginResult = provider.Login(new UserCredentials(login, password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException("Invalid login");
-            var recordings = provider.ReportRecordingsPaged(totalObjCount);
-
-            var reports = GetRecLengthStats(recordings);
-            foreach (var rec in _recStorage)
+            try
             {
-                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
-            }
-            LogRecStats(reports);
+                _connectionDetails = new ConnectionDetails(apiUrl);
+                _provider = new AdobeConnectProvider(_connectionDetails);
+                var provider = _provider;
+                LoginResult loginResult = provider.Login(new UserCredentials(login, password));
+                if (!loginResult.Success)
+                    throw new InvalidOperationException("Invalid login");
+                var recordings = provider.ReportRecordingsPaged(totalObjCount);
 
+                var reports = GetRecLengthStats(recordings);
+                foreach (var rec in _recStorage)
+                {
+                    _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+                }
+                LogRecStats(reports);
+            }
+            catch (Exception e)
+            {
+                _smtpSender.SendEmail("General uncaught error", e.Message + e.StackTrace);
+            }
         }
 
         private void LogRecStats<T>(T report34)
@@ -244,6 +252,7 @@ namespace Esynctraining.AdobeConnect.Tests
                     {
                         _logger.ErrorFormat("error getting rec duration", exception);
                         Console.WriteLine($"Rec with id {rec.ScoId} was skipped, coz when getting duration there was an error");
+                        _smtpSender.SendEmail("Processing report error", exception.Message + exception.StackTrace);
                     }
 
                 });
