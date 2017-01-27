@@ -26,8 +26,7 @@ namespace Esynctraining.AdobeConnect.Tests
                 mail.To.Add(_smtpSettings.ToEmail);
                 mail.Subject = subj;
                 mail.Body = text;
-
-                SmtpServer.Port = 587;
+                
                 SmtpServer.Credentials = new System.Net.NetworkCredential(_smtpSettings.Username, _smtpSettings.Password);
                 SmtpServer.EnableSsl = true;
 
