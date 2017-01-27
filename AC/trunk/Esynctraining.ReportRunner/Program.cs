@@ -26,7 +26,7 @@ namespace Esynctraining.ReportRunner
             var report = new CalcReportTests();
             var smtpSettings = new SmtpSettings(config["email:host"], config["email:username"], config["email:password"], config["email:sendFrom"], config["email:sendTo"]);
             report.Init(smtpSettings);
-            report.WillGetRecordingsStatsForCCA(acUrl, login, pass, 100);
+            report.WillGetRecordingsStatsForCCA(acUrl, login, pass);
         }
     }
 }
