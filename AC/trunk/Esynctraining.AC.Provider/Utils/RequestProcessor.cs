@@ -130,6 +130,10 @@
             error = null;            
             var request = WebRequest.Create(url) as HttpWebRequest;
             request = ProcessRequest(request, contentRequest: true);
+
+            // TRICK: Empty value causes 500 error for 'http://connect.uthsc.edu/' during File Download
+            request.UserAgent = @"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+
             if (request != null)
             {
                 HttpWebResponse webResponse = null;
@@ -455,6 +459,8 @@
             request.Accept = "*/*";
             request.KeepAlive = false;
             request.CookieContainer = new CookieContainer();
+            //// Empty value causes 500 error for 'http://connect.uthsc.edu/' during File Download
+            //request.UserAgent = @"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
 
             if (this.IsLoggedIn)
             {
