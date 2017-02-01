@@ -206,7 +206,8 @@
     <Build Include="dbo\Stored Procedures\getTestResultByACSessionIdAcEmail.sql" />
     <Build Include="dbo\Tables\LmsCourseMeetingRecording.sql" />
     <Build Include="dbo\Tables\LmsMeetingSession.sql" />
-    <None Include="Updates\20170125-DbUpdate-1-7-7.sql" />
+    <Build Include="dbo\Tables\School.sql" />
+    <Build Include="dbo\Tables\QuizQuestionResultAnswer.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />
@@ -217,8 +218,7 @@
     <None Include="Schema-To-LocalDev.scmp" />
     <None Include="Updates\AddRowsIntoFileTable.sql" />
     <None Include="Updates\returnRowsAlterSp.sql" />
-    <None Include="Updates\20161109-DbUpdate-1-7-7.sql" />
-    <None Include="Updates\20161118-DbUpdate-1-7-7.sql" />
     <None Include="Updates\20161210-DbUpdate-1-7-7.sql" />
+    <None Include="Updates\20170125-DbUpdate-1-8-0.sql" />
   </ItemGroup>
 </Project>
