@@ -99,15 +99,15 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
 
         [HttpPost]
         [Route("file/{scoId:long:min(1)}")]
-        public virtual OperationResultWithData<string> AccessMp4File(string scoId, FileAccessRequestDto input)
+        public virtual OperationResultWithData<string> AccessMp4File(string scoId, [FromUri]string lmsProviderName)
         {
-            if (input == null)
-                throw new ArgumentNullException("input");
+            if (lmsProviderName == null)
+                throw new ArgumentNullException(nameof(lmsProviderName));
 
             LmsCompany lmsCompany = null;
             try
             {
-                var session = GetReadOnlySession(input.LmsProviderName);
+                var session = GetReadOnlySession(lmsProviderName);
                 lmsCompany = session.LmsCompany;
 
                 var ac = this.GetAdobeConnectProvider(session);
@@ -133,7 +133,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             }
             catch (Exception ex)
             {
-                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, input.LmsProviderName);
+                Logger.ErrorFormat(ex, "Mp4Video exception. sco-id:{0}. SessionID: {1}.", scoId, lmsProviderName);
 
                 return OperationResultWithData<string>.Error(IsDebug 
                     ? (ex.Message + ex.StackTrace) 

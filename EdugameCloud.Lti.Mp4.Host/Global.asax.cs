@@ -68,6 +68,14 @@ namespace EdugameCloud.Lti.Mp4.Host
                 .If(type => type.Name.EndsWith("Model"))
                 .WithService.Self().Configure(c => c.LifestyleTransient()));
 
+            container.Register(Component.For<IMp4LinkBuilder>()
+                .UsingFactoryMethod(() => new AdobeConnectFileAccessLinkBuilder(ConfigurationManager.AppSettings["BaseUrl"].TrimEnd('/') + "/" + ConfigurationManager.AppSettings["Mp4FileAccess_Mp4"].TrimStart('/')))
+                .LifestyleSingleton());
+
+            container.Register(Component.For<IVttLinkBuilder>()
+                .UsingFactoryMethod(() => new AdobeConnectFileAccessLinkBuilder(ConfigurationManager.AppSettings["BaseUrl"].TrimEnd('/') + "/" + ConfigurationManager.AppSettings["Mp4FileAccess_Vtt"].TrimStart('/')))
+                .LifestyleSingleton());
+
             container.Register(Classes.FromAssemblyNamed("EdugameCloud.Lti.Mp4.Host")
                 .Pick()
                 .If(Component.IsInNamespace("EdugameCloud.Lti.Mp4.Host.Controllers"))

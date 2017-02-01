@@ -96,7 +96,7 @@ namespace EdugameCloud.Lti.Content.Host.Controllers
             if (provider == null)
             {
                 string breezeSession = LoginCurrentUser(session);
-                provider = acAccountService.GetProvider2(new AdobeConnectAccess2(session.LmsCompany.AcServer, breezeSession));
+                provider = acAccountService.GetProvider2(new AdobeConnectAccess2(new Uri(session.LmsCompany.AcServer), breezeSession));
 
                 var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));

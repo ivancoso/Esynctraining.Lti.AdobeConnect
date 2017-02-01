@@ -91,7 +91,7 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             var provider = _cache.Get(cacheKey) as IAdobeConnectProxy;
             if (provider == null)
             {
-                provider = acAccountService.GetProvider(new AdobeConnectAccess(lmsCompany.AcServer, lmsCompany.AcUsername, lmsCompany.AcPassword), true);
+                provider = acAccountService.GetProvider(new AdobeConnectAccess(new Uri(lmsCompany.AcServer), lmsCompany.AcUsername, lmsCompany.AcPassword), true);
                 var sessionTimeout = acAccountService.GetAccountDetails(provider).SessionTimeout - 1; //-1 is to be sure 
                 _cache.Set(cacheKey, provider, DateTimeOffset.Now.AddMinutes(sessionTimeout));
             }

@@ -187,7 +187,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
         private static List<ACSessionDTO> GetSessionsWithParticipantsBySessionTime(string meetingId, List<MeetingAttendee> meetingAttendees,
             Esynctraining.AdobeConnect.IAdobeConnectProxy acp, int startIndex = 0, int limit = 0)
         {
-            List<MeetingSession> sessions = acp.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
+            List<MeetingSession> sessions = acp.ReportMeetingSessions(meetingId, null, startIndex, limit).Values.ToList();
             var result = sessions.Select(sco => new ACSessionDTO
             {
                 scoId = int.Parse(sco.ScoId),
@@ -274,7 +274,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                     .GroupBy(v => v.AssetId, v => v)
                     .ToDictionary(g => int.Parse(g.Key), g => g.ToList());
 
-                var sessions = acp.ReportMeetingSessions(meetingId, startIndex, limit).Values.ToList();
+                var sessions = acp.ReportMeetingSessions(meetingId, null, startIndex, limit).Values.ToList();
 
                 var sessionList =
                     (from asset in userSessions.Keys.Except(sessions.ConvertAll(s => int.Parse(s.AssetId)))

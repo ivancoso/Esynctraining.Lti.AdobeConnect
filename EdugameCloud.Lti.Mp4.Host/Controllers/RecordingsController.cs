@@ -31,7 +31,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
     {
         private static readonly MapperConfiguration mapConfig = new MapperConfiguration(cfg => cfg.CreateMap<RecordingDTO, RecordingWithMp4Dto>());
         private static readonly MapperConfiguration seminarMapConfig = new MapperConfiguration(cfg => cfg.CreateMap<SeminarSessionRecordingDto, SeminarRecordingWithMp4Dto>());
-
+        private readonly IMp4LinkBuilder _mp4LinkBuilder;
+        private readonly IVttLinkBuilder _vttLinkBuilder;
 
         private IRecordingsService RecordingsService
         {
@@ -43,9 +44,13 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
             LmsUserSessionModel userSessionModel,
             Esynctraining.AdobeConnect.IAdobeConnectAccountService acAccountService,
             ApplicationSettingsProvider settings,
-            ILogger logger)
+            ILogger logger, 
+            IMp4LinkBuilder mp4LinkBuilder, 
+            IVttLinkBuilder vttLinkBuilder)
             : base(userSessionModel, acAccountService, settings, logger)
         {
+            _mp4LinkBuilder = mp4LinkBuilder;
+            _vttLinkBuilder = vttLinkBuilder;
         }
 
 
@@ -93,6 +98,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                 List<IMp4StatusContainer> result = await Mp4ApiUtility.ProcessMp4(recordings.Cast<IMp4StatusContainer>().ToList(),
                     mp4,
                     mp4Subtitles,
+                    _mp4LinkBuilder,
+                    _vttLinkBuilder,
                     Logger);
 
                 return OperationResultWithData<IEnumerable<IMp4StatusContainer>>.Success(result);
@@ -127,6 +134,8 @@ namespace EdugameCloud.Lti.Mp4.Host.Controllers
                     return await Mp4ApiUtility.GetRecordingStatus(mp4Client, input.RecordingId.ToString(),
                         mp4,
                         mp4Subtitles,
+                        _mp4LinkBuilder,
+                        _vttLinkBuilder,
                         Logger);
                 }
 

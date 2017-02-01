@@ -45,9 +45,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
 
         public IAdobeConnectProxy GetProvider(string acDomain, UserCredentials credentials, bool login)
         {
-            string apiUrl = acDomain + "/api/xml";
-
-            var connectionDetails = new ConnectionDetails(apiUrl);
+            var connectionDetails = new ConnectionDetails(new Uri(acDomain));
             string principalId = null;
             var provider = new AdobeConnectProvider(connectionDetails);
             if (login)
@@ -61,7 +59,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
                 principalId = result.User.UserId;
             }
 
-            return new AdobeConnectProxy(provider, _logger, apiUrl, principalId);
+            return new AdobeConnectProxy(provider, _logger, new Uri(acDomain), principalId);
         }
         
 
@@ -72,7 +70,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.ApiUrl), () =>
+            var item = CacheUtility.GetCachedItem<ACDetailsDTO>(cache, CachePolicies.Keys.AcDetails(provider.AdobeConnectRoot.Host), () =>
             {
                 return IoC.Resolve<Esynctraining.AdobeConnect.IAdobeConnectAccountService>().GetAccountDetails(provider);
             });
@@ -180,7 +178,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             if (cache == null)
                 throw new ArgumentNullException(nameof(cache));
 
-            var item = CacheUtility.GetCachedItem<IEnumerable<TemplateDTO>>(cache, CachePolicies.Keys.SharedMeetingTemplates(provider.ApiUrl), () =>
+            var item = CacheUtility.GetCachedItem<IEnumerable<TemplateDTO>>(cache, CachePolicies.Keys.SharedMeetingTemplates(provider.AdobeConnectRoot.Host), () =>
             {
                 ScoContentCollectionResult sharedTemplates = provider.GetContentsByType("shared-meeting-templates");
                 if (!sharedTemplates.Success)
