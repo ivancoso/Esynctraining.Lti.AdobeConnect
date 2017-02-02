@@ -333,10 +333,6 @@
       <Project>{2c718c51-fa6e-47df-8260-e1f085b3bc48}</Project>
       <Name>EdugameCloud.Core.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EdugameCloud.MVC\EdugameCloud.MVC.csproj">
-      <Project>{A17D2033-4439-4418-8224-96A408B548DB}</Project>
-      <Name>EdugameCloud.MVC</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdugameCloud.Persistence\EdugameCloud.Persistence.csproj">
       <Project>{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}</Project>
       <Name>EdugameCloud.Persistence</Name>

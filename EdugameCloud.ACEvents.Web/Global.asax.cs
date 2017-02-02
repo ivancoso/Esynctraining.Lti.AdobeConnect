@@ -8,7 +8,6 @@ using System.Web.Routing;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
-using EdugameCloud.MVC.Controllers;
 using Esynctraining.CastleLog4Net;
 using Esynctraining.Core.Logging;
 using Esynctraining.Core.Utils;

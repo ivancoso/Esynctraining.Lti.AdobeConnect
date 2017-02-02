@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using EdugameCloud.ACEvents.Web.Models;
-using EdugameCloud.MVC.Controllers;
 using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
@@ -16,13 +15,15 @@ using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
 {
-    public class EventsController : BaseController
+    public class EventsController : Controller
     {
         //private readonly ILogger _logger;
         private readonly ILogger _logger;
+        private readonly dynamic _settings;
 
-        public EventsController(ILogger logger, ApplicationSettingsProvider settings):base(settings)
+        public EventsController(ILogger logger, ApplicationSettingsProvider settings)
         {
+            _settings = settings;
             _logger = logger;
             //  _logger = logger;
         }
@@ -97,7 +98,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             {
                 return false;
             }
-            var servicesUrl = Settings.EgcServicesUrl;
+            var servicesUrl = _settings.EgcServicesUrl;
             var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = acUrl + "/api/xml";
             var logger = IoC.Resolve<ILogger>();
