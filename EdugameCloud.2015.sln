@@ -71,6 +71,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Tests", "E
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{E106AB37-3EBA-4EE4-807B-7C02C910DC96}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.ACEvents.Web", "EdugameCloud.ACEvents.Web\EdugameCloud.ACEvents.Web.csproj", "{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -477,6 +479,24 @@ Global
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{2C3F36AB-F82B-41A0-8C98-336FD249BBDA}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Mp4Release|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.MyContentRelease|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.PublicApiRelease|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.RootRelease|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{A7EF6BE7-BFDD-4F56-B035-8B34766A65A8}.WebRequesterRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

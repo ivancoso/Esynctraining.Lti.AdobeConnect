@@ -1,0 +1,80 @@
+﻿@using EdugameCloud.MVC.HtmlHelpers
+@model EdugameCloud.ACEvents.Web.Models.EventModel
+
+<h2>@Model.EventName</h2>
+<br />
+<label>@Model.StartDate.ToUniversalTime() - @Model.EndDate.ToUniversalTime()</label>
+<br />
+<br />
+
+@using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Email address *</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email", tabindex = 1 })
+            @Html.ValidationMessageFor(m => m.Email)
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">First Name *</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First Name", tabindex = 1 })
+            @Html.ValidationMessageFor(m => m.FirstName)
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Last Name *</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Last Name", tabindex = 1 })
+            @Html.ValidationMessageFor(m => m.LastName)
+        </div>
+
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Password *</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.Password, new { @class = "form-control", placeholder = "Password", tabindex = 1 })
+            @Html.ValidationMessageFor(m => m.Password)
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Verify Password *</label>
+        <div class="col-sm-10">
+            @Html.TextBoxFor(m => m.VerifyPassword, new { @class = "form-control", placeholder = "Verify Password", tabindex = 1 })
+            @Html.ValidationMessageFor(m => m.VerifyPassword)
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">Country</label>
+        <label class="col-sm-1 control-label">USA</label>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">State *</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(x => x.State, Model.States, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.State)
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">School *</label>
+        <div class="col-sm-10">
+            @Html.DropDownListFor(x => x.School, Model.Schools, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.School)
+        </div>
+    </div>
+
+    @Html.LinkButton("Register", new { @class = "btn btn-default" })
+}
