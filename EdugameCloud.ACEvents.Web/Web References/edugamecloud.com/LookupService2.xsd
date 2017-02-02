@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="LookupAllDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="buildVersionTypes" nillable="true" type="tns:ArrayOfBuildVersionTypeDTO" />
+      <xs:element minOccurs="0" name="countries" nillable="true" type="tns:ArrayOfCountryDTO" />
+      <xs:element minOccurs="0" name="languages" nillable="true" type="tns:ArrayOfLanguageDTO" />
+      <xs:element minOccurs="0" name="mapProviders" nillable="true" type="tns:ArrayOfSNMapProviderDTO" />
+      <xs:element minOccurs="0" name="questionTypes" nillable="true" type="tns:ArrayOfQuestionTypeDTO" />
+      <xs:element minOccurs="0" name="quizFormats" nillable="true" type="tns:ArrayOfQuizFormatDTO" />
+      <xs:element minOccurs="0" name="schools" nillable="true" type="tns:ArrayOfSchoolDTO" />
+      <xs:element minOccurs="0" name="scoreTypes" nillable="true" type="tns:ArrayOfScoreTypeDTO" />
+      <xs:element minOccurs="0" name="services" nillable="true" type="tns:ArrayOfSNServiceDTO" />
+      <xs:element minOccurs="0" name="states" nillable="true" type="tns:ArrayOfStateDTO" />
+      <xs:element minOccurs="0" name="surveyGroupingTypes" nillable="true" type="tns:ArrayOfSurveyGroupingTypeDTO" />
+      <xs:element minOccurs="0" name="timeZones" nillable="true" type="tns:ArrayOfTimeZoneDTO" />
+      <xs:element minOccurs="0" name="userRoles" nillable="true" type="tns:ArrayOfUserRoleDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LookupAllDTO" nillable="true" type="tns:LookupAllDTO" />
+  <xs:complexType name="ArrayOfBuildVersionTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BuildVersionTypeDTO" nillable="true" type="tns:BuildVersionTypeDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBuildVersionTypeDTO" nillable="true" type="tns:ArrayOfBuildVersionTypeDTO" />
+  <xs:complexType name="BuildVersionTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="buildVersionType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="buildVersionTypeId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BuildVersionTypeDTO" nillable="true" type="tns:BuildVersionTypeDTO" />
+  <xs:complexType name="ArrayOfCountryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CountryDTO" nillable="true" type="tns:CountryDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCountryDTO" nillable="true" type="tns:ArrayOfCountryDTO" />
+  <xs:complexType name="CountryDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="countryCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="countryCode3" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="countryId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CountryDTO" nillable="true" type="tns:CountryDTO" />
+  <xs:complexType name="ArrayOfLanguageDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="LanguageDTO" nillable="true" type="tns:LanguageDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfLanguageDTO" nillable="true" type="tns:ArrayOfLanguageDTO" />
+  <xs:complexType name="LanguageDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="language" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="languageId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="LanguageDTO" nillable="true" type="tns:LanguageDTO" />
+  <xs:complexType name="ArrayOfSNMapProviderDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SNMapProviderDTO" nillable="true" type="tns:SNMapProviderDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSNMapProviderDTO" nillable="true" type="tns:ArrayOfSNMapProviderDTO" />
+  <xs:complexType name="SNMapProviderDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="mapProvider" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="snMapProviderId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SNMapProviderDTO" nillable="true" type="tns:SNMapProviderDTO" />
+  <xs:complexType name="ArrayOfQuestionTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="QuestionTypeDTO" nillable="true" type="tns:QuestionTypeDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfQuestionTypeDTO" nillable="true" type="tns:ArrayOfQuestionTypeDTO" />
+  <xs:complexType name="QuestionTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="correctText" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="iconSource" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="incorrectMessage" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="instruction" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="isActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="questionTypeDescription" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="questionTypeId" type="xs:int" />
+      <xs:element minOccurs="0" name="questionTypeOrder" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="type" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QuestionTypeDTO" nillable="true" type="tns:QuestionTypeDTO" />
+  <xs:complexType name="ArrayOfQuizFormatDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="QuizFormatDTO" nillable="true" type="tns:QuizFormatDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfQuizFormatDTO" nillable="true" type="tns:ArrayOfQuizFormatDTO" />
+  <xs:complexType name="QuizFormatDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="dateCreated" type="xs:double" />
+      <xs:element minOccurs="0" name="isActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="quizFormatId" type="xs:int" />
+      <xs:element minOccurs="0" name="quizFormatName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="QuizFormatDTO" nillable="true" type="tns:QuizFormatDTO" />
+  <xs:complexType name="ArrayOfSchoolDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SchoolDTO" nillable="true" type="tns:SchoolDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSchoolDTO" nillable="true" type="tns:ArrayOfSchoolDTO" />
+  <xs:complexType name="SchoolDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="AccountName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="AdvRepresentative" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CorporateName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ESSRepresentative" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FBCRepresentative" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Fax" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="FirstDirector" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MainPhone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="MktgRepresentative" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="OnsiteOperator" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SchoolEmail" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SchoolId" type="xs:int" />
+      <xs:element minOccurs="0" name="SchoolNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SpeedDialNumber" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="StandardsRepresentative" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="State" nillable="true" type="tns:StateDTO" />
+      <xs:element minOccurs="0" name="StateId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SchoolDTO" nillable="true" type="tns:SchoolDTO" />
+  <xs:complexType name="StateDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="isActive" type="xs:boolean" />
+      <xs:element minOccurs="0" name="stateCode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="stateId" type="xs:int" />
+      <xs:element minOccurs="0" name="stateName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StateDTO" nillable="true" type="tns:StateDTO" />
+  <xs:complexType name="ArrayOfScoreTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ScoreTypeDTO" nillable="true" type="tns:ScoreTypeDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfScoreTypeDTO" nillable="true" type="tns:ArrayOfScoreTypeDTO" />
+  <xs:complexType name="ScoreTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="dateCreated" type="xs:double" />
+      <xs:element minOccurs="0" name="defaultValue" type="xs:int" />
+      <xs:element minOccurs="0" name="isActive" nillable="true" type="xs:boolean" />
+      <xs:element minOccurs="0" name="prefix" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="scoreTypeId" type="xs:int" />
+      <xs:element minOccurs="0" name="scoreTypeName" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ScoreTypeDTO" nillable="true" type="tns:ScoreTypeDTO" />
+  <xs:complexType name="ArrayOfSNServiceDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SNServiceDTO" nillable="true" type="tns:SNServiceDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSNServiceDTO" nillable="true" type="tns:ArrayOfSNServiceDTO" />
+  <xs:complexType name="SNServiceDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="snServiceId" type="xs:int" />
+      <xs:element minOccurs="0" name="socialService" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SNServiceDTO" nillable="true" type="tns:SNServiceDTO" />
+  <xs:complexType name="ArrayOfStateDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StateDTO" nillable="true" type="tns:StateDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStateDTO" nillable="true" type="tns:ArrayOfStateDTO" />
+  <xs:complexType name="ArrayOfSurveyGroupingTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="SurveyGroupingTypeDTO" nillable="true" type="tns:SurveyGroupingTypeDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfSurveyGroupingTypeDTO" nillable="true" type="tns:ArrayOfSurveyGroupingTypeDTO" />
+  <xs:complexType name="SurveyGroupingTypeDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="surveyGroupingType" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="surveyGroupingTypeId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="SurveyGroupingTypeDTO" nillable="true" type="tns:SurveyGroupingTypeDTO" />
+  <xs:complexType name="ArrayOfTimeZoneDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="TimeZoneDTO" nillable="true" type="tns:TimeZoneDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTimeZoneDTO" nillable="true" type="tns:ArrayOfTimeZoneDTO" />
+  <xs:complexType name="TimeZoneDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="timeZone" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="timeZoneGMTDiff" nillable="true" type="xs:float" />
+      <xs:element minOccurs="0" name="timeZoneId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TimeZoneDTO" nillable="true" type="tns:TimeZoneDTO" />
+  <xs:complexType name="ArrayOfUserRoleDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="UserRoleDTO" nillable="true" type="tns:UserRoleDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfUserRoleDTO" nillable="true" type="tns:ArrayOfUserRoleDTO" />
+  <xs:complexType name="UserRoleDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="userRole" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="userRoleId" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="UserRoleDTO" nillable="true" type="tns:UserRoleDTO" />
+  <xs:complexType name="EGCVersionsDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="adminVersion" nillable="true" type="tns:VersionDTO" />
+      <xs:element minOccurs="0" name="publicVersion" nillable="true" type="tns:VersionDTO" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EGCVersionsDTO" nillable="true" type="tns:EGCVersionsDTO" />
+  <xs:complexType name="VersionDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="build" type="xs:int" />
+      <xs:element minOccurs="0" name="major" type="xs:int" />
+      <xs:element minOccurs="0" name="minor" type="xs:int" />
+      <xs:element minOccurs="0" name="revision" type="xs:int" />
+      <xs:element minOccurs="0" name="versionString" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="VersionDTO" nillable="true" type="tns:VersionDTO" />
+  <xs:complexType name="GeoDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="city" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="country" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="postalcode" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="query" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="state" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="street" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GeoDTO" nillable="true" type="tns:GeoDTO" />
+  <xs:complexType name="GeoResultDTO">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="latitude" type="xs:double" />
+      <xs:element minOccurs="0" name="longitude" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="GeoResultDTO" nillable="true" type="tns:GeoResultDTO" />
+</xs:schema>

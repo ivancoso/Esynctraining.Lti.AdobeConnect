@@ -78,7 +78,12 @@ namespace EdugameCloud.WCFService
         {
             get { return IoC.Resolve<StateModel>(); }
         }
-        
+
+        private SchoolModel SchoolModel
+        {
+            get { return IoC.Resolve<SchoolModel>(); }
+        }
+
         private CountryModel CountryModel
         {
             get { return IoC.Resolve<CountryModel>(); }
@@ -351,6 +356,25 @@ namespace EdugameCloud.WCFService
         }
 
         /// <summary>
+        /// The get schools.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SchoolDTO"/>.
+        /// </returns>
+        public SchoolDTO[] GetSchools()
+        {
+            try
+            {
+                return this.SchoolModel.GetAll().Select(x => new SchoolDTO(x)).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Lookup.GetSchools", ex);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// The get services.
         /// </summary>
         /// <returns>
@@ -502,6 +526,7 @@ namespace EdugameCloud.WCFService
                 scoreTypes = this.GetScoreTypes(),
                 services = this.GetServices(),
                 states = this.GetStates(),
+                schools = this.GetSchools(),
                 surveyGroupingTypes = this.GetSurveyGroupingTypes(),
                 timeZones = this.GetTimeZones(),
                 userRoles = this.GetUserRoles(),

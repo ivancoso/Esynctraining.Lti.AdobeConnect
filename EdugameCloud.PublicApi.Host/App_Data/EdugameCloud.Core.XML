@@ -4954,6 +4954,11 @@
             Gets or sets the states.
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.LookupAllDTO.schools">
+            <summary>
+            Gets or sets the states.
+            </summary>
+        </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.LookupAllDTO.surveyGroupingTypes">
             <summary>
             Gets or sets the survey grouping types.

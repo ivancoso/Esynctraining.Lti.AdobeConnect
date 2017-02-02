@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="LookupService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+      <xsd:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd4" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ILookupService_GetAll_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetAll" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetAll_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetAllResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetAll_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q1="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q1:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetVersionInfo_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetVersionInfo" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetVersionInfo_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetVersionInfoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetVersionInfo_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q2="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q2:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLanguages_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLanguages" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLanguages_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLanguagesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLanguages_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q3="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q3:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetBuildVersionTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBuildVersionTypes" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetBuildVersionTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBuildVersionTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetBuildVersionTypes_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q4="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q4:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuestionTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetQuestionTypes" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuestionTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetQuestionTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuestionTypes_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q5="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q5:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetScoreTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetScoreTypes" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetScoreTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetScoreTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetScoreTypes_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q6="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q6:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetTimeZones_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimeZones" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetTimeZones_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTimeZonesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetTimeZones_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q7:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetUserRoles_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserRoles" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetUserRoles_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetUserRolesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetUserRoles_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q8:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuizFormats_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetQuizFormats" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuizFormats_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetQuizFormatsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetQuizFormats_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q9:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSurveyGroupingTypes_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSurveyGroupingTypes" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSurveyGroupingTypes_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSurveyGroupingTypesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSurveyGroupingTypes_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q10:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetCountries_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetCountries" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetCountries_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetCountriesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetCountries_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q11="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q11:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetStates_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStates" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetStates_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStatesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetStates_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q12="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q12:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSchools_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchools" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSchools_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSchoolsResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetSchools_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q13="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q13:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetServices_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetServices" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetServices_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetServicesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetServices_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q14="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q14:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetMapProviders_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMapProviders" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetMapProviders_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMapProvidersResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetMapProviders_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q15="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q15:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLocation_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocation" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLocation_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLocationResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_GetLocation_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q16:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertFromVCF_InputMessage">
+    <wsdl:part name="parameters" element="tns:ConvertFromVCF" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertFromVCF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ConvertFromVCFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertFromVCF_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q17="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q17:Error" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertToVCF_InputMessage">
+    <wsdl:part name="parameters" element="tns:ConvertToVCF" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertToVCF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ConvertToVCFResponse" />
+  </wsdl:message>
+  <wsdl:message name="ILookupService_ConvertToVCF_ErrorFault_FaultMessage">
+    <wsdl:part xmlns:q18="http://schemas.datacontract.org/2004/07/Esynctraining.Core.Domain.Entities" name="detail" element="q18:Error" />
+  </wsdl:message>
+  <wsdl:portType name="ILookupService">
+    <wsdl:operation name="GetAll">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetAll" message="tns:ILookupService_GetAll_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetAllResponse" message="tns:ILookupService_GetAll_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetAllErrorFault" name="ErrorFault" message="tns:ILookupService_GetAll_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVersionInfo">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetVersionInfo" message="tns:ILookupService_GetVersionInfo_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetVersionInfoResponse" message="tns:ILookupService_GetVersionInfo_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetVersionInfoErrorFault" name="ErrorFault" message="tns:ILookupService_GetVersionInfo_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLanguages">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetLanguages" message="tns:ILookupService_GetLanguages_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetLanguagesResponse" message="tns:ILookupService_GetLanguages_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetLanguagesErrorFault" name="ErrorFault" message="tns:ILookupService_GetLanguages_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBuildVersionTypes">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetBuildVersionTypes" message="tns:ILookupService_GetBuildVersionTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetBuildVersionTypesResponse" message="tns:ILookupService_GetBuildVersionTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetBuildVersionTypesErrorFault" name="ErrorFault" message="tns:ILookupService_GetBuildVersionTypes_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQuestionTypes">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetQuestionTypes" message="tns:ILookupService_GetQuestionTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetQuestionTypesResponse" message="tns:ILookupService_GetQuestionTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetQuestionTypesErrorFault" name="ErrorFault" message="tns:ILookupService_GetQuestionTypes_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetScoreTypes">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetScoreTypes" message="tns:ILookupService_GetScoreTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetScoreTypesResponse" message="tns:ILookupService_GetScoreTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetScoreTypesErrorFault" name="ErrorFault" message="tns:ILookupService_GetScoreTypes_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZones">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetTimeZones" message="tns:ILookupService_GetTimeZones_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetTimeZonesResponse" message="tns:ILookupService_GetTimeZones_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetTimeZonesErrorFault" name="ErrorFault" message="tns:ILookupService_GetTimeZones_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetUserRoles">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetUserRoles" message="tns:ILookupService_GetUserRoles_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetUserRolesResponse" message="tns:ILookupService_GetUserRoles_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetUserRolesErrorFault" name="ErrorFault" message="tns:ILookupService_GetUserRoles_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQuizFormats">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetQuizFormats" message="tns:ILookupService_GetQuizFormats_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetQuizFormatsResponse" message="tns:ILookupService_GetQuizFormats_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetQuizFormatsErrorFault" name="ErrorFault" message="tns:ILookupService_GetQuizFormats_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSurveyGroupingTypes">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetSurveyGroupingTypes" message="tns:ILookupService_GetSurveyGroupingTypes_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetSurveyGroupingTypesResponse" message="tns:ILookupService_GetSurveyGroupingTypes_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetSurveyGroupingTypesErrorFault" name="ErrorFault" message="tns:ILookupService_GetSurveyGroupingTypes_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCountries">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetCountries" message="tns:ILookupService_GetCountries_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetCountriesResponse" message="tns:ILookupService_GetCountries_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetCountriesErrorFault" name="ErrorFault" message="tns:ILookupService_GetCountries_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStates">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetStates" message="tns:ILookupService_GetStates_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetStatesResponse" message="tns:ILookupService_GetStates_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetStatesErrorFault" name="ErrorFault" message="tns:ILookupService_GetStates_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetSchools">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetSchools" message="tns:ILookupService_GetSchools_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetSchoolsResponse" message="tns:ILookupService_GetSchools_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetSchoolsErrorFault" name="ErrorFault" message="tns:ILookupService_GetSchools_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetServices">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetServices" message="tns:ILookupService_GetServices_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetServicesResponse" message="tns:ILookupService_GetServices_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetServicesErrorFault" name="ErrorFault" message="tns:ILookupService_GetServices_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMapProviders">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetMapProviders" message="tns:ILookupService_GetMapProviders_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetMapProvidersResponse" message="tns:ILookupService_GetMapProviders_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetMapProvidersErrorFault" name="ErrorFault" message="tns:ILookupService_GetMapProviders_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLocation">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/GetLocation" message="tns:ILookupService_GetLocation_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/GetLocationResponse" message="tns:ILookupService_GetLocation_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/GetLocationErrorFault" name="ErrorFault" message="tns:ILookupService_GetLocation_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ConvertFromVCF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/ConvertFromVCF" message="tns:ILookupService_ConvertFromVCF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/ConvertFromVCFResponse" message="tns:ILookupService_ConvertFromVCF_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/ConvertFromVCFErrorFault" name="ErrorFault" message="tns:ILookupService_ConvertFromVCF_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ConvertToVCF">
+      <wsdl:input wsaw:Action="http://tempuri.org/ILookupService/ConvertToVCF" message="tns:ILookupService_ConvertToVCF_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/ILookupService/ConvertToVCFResponse" message="tns:ILookupService_ConvertToVCF_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/ILookupService/ConvertToVCFErrorFault" name="ErrorFault" message="tns:ILookupService_ConvertToVCF_ErrorFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_ILookupService" type="tns:ILookupService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAll">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetAll" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetVersionInfo">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetVersionInfo" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLanguages">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetLanguages" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetBuildVersionTypes">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetBuildVersionTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuestionTypes">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetQuestionTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetScoreTypes">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetScoreTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZones">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetTimeZones" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserRoles">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetUserRoles" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuizFormats">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetQuizFormats" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSurveyGroupingTypes">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetSurveyGroupingTypes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCountries">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetCountries" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetStates">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetStates" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSchools">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetSchools" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetServices">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetServices" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetMapProviders">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetMapProviders" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLocation">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/GetLocation" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertFromVCF">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/ConvertFromVCF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertToVCF">
+      <soap:operation soapAction="http://tempuri.org/ILookupService/ConvertToVCF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CustomBinding_ILookupService" type="tns:ILookupService">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetAll">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetAll" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetVersionInfo">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetVersionInfo" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLanguages">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetLanguages" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetBuildVersionTypes">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetBuildVersionTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuestionTypes">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetQuestionTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetScoreTypes">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetScoreTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetTimeZones">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetTimeZones" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetUserRoles">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetUserRoles" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQuizFormats">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetQuizFormats" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSurveyGroupingTypes">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetSurveyGroupingTypes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetCountries">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetCountries" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetStates">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetStates" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetSchools">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetSchools" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetServices">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetServices" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetMapProviders">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetMapProviders" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetLocation">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/GetLocation" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertFromVCF">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/ConvertFromVCF" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ConvertToVCF">
+      <soap12:operation soapAction="http://tempuri.org/ILookupService/ConvertToVCF" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="ErrorFault">
+        <soap12:fault use="literal" name="ErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LookupService">
+    <wsdl:port name="BasicHttpBinding_ILookupService" binding="tns:BasicHttpBinding_ILookupService">
+      <soap:address location="http://dev.edugamecloud.com/services/LookupService.svc" />
+    </wsdl:port>
+    <wsdl:port name="CustomBinding_ILookupService" binding="tns:CustomBinding_ILookupService">
+      <soap12:address location="http://dev.edugamecloud.com/services/LookupService.svc/amf" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

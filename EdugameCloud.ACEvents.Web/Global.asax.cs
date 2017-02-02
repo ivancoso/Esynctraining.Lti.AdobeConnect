@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using EdugameCloud.MVC.Controllers;
 using Esynctraining.CastleLog4Net;
@@ -29,14 +30,38 @@ namespace EdugameCloud.ACEvents.Web
             var container = new WindsorContainer();
             WindsorIoC.Initialize(container);
             DIConfig.RegisterComponents(container);
-            
 
+            container.Install(new ControllersInstaller("EdugameCloud.ACEvents.Web"));
             //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").Pick().If(Component.IsInNamespace("EdugameCloud.MVC.Controllers")).WithService.Self().LifestyleTransient());
 
             //container.Register(Classes.FromAssemblyNamed("EdugameCloud.MVC").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
             //container.Register(Classes.FromAssemblyNamed("EdugameCloud.ACEvents.Web").BasedOn(typeof(IValidator<>)).WithService.Base().LifestyleTransient());
-            container.Register(Classes.FromThisAssembly().BasedOn<BaseController>().LifestylePerWebRequest());
+            //container.Register(Classes.FromThisAssembly().BasedOn<BaseController>().LifestylePerWebRequest());
             SetControllerFactory(container);
+        }
+
+        public sealed class ControllersInstaller : IWindsorInstaller
+        {
+            private readonly string assemblyName;
+
+
+            public ControllersInstaller(string assemblyName)
+            {
+                if (string.IsNullOrWhiteSpace(assemblyName))
+                    throw new ArgumentException("Non-empty value expected", nameof(assemblyName));
+
+                this.assemblyName = assemblyName;
+            }
+
+            public void Install(IWindsorContainer container, IConfigurationStore store)
+            {
+                container.Register(
+                    Classes.FromAssemblyNamed(assemblyName).Pick()
+                    .If(t => t.Name.EndsWith("Controller"))
+                    .Configure(configurer => configurer.Named(configurer.Implementation.Name))
+                    .LifestylePerWebRequest());
+            }
+
         }
 
         private static void SetControllerFactory(IWindsorContainer container)

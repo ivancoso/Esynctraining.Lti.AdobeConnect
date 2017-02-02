@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using EdugameCloud.ACEvents.Web.Models;
@@ -9,6 +11,7 @@ using Esynctraining.AC.Provider;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AdobeConnect;
 using Esynctraining.Core.Logging;
+using Esynctraining.Core.Providers;
 using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.ACEvents.Web.Controllers
@@ -16,89 +19,101 @@ namespace EdugameCloud.ACEvents.Web.Controllers
     public class EventsController : BaseController
     {
         //private readonly ILogger _logger;
+        private readonly ILogger _logger;
 
-        public EventsController()
+        public EventsController(ILogger logger, ApplicationSettingsProvider settings):base(settings)
         {
-          //  _logger = logger;
+            _logger = logger;
+            //  _logger = logger;
         }
-
-        //public ActionResult Index()
-        //{
-
-
-        //    //var breezeSession = Request.Cookies["BREEZESESSION"];
-        //    //if (breezeSession != null)
-        //    //{
-
-        //    //}
-        //    //else
-        //    //{
-
-        //    //}
-        //    return RedirectToAction("Signup");
-        //}
 
         public ActionResult Signup()
         {
             //if (Request.QueryString["licenseId"] == null || Request.QueryString["eventScoId"] == null)
-            if ( Request.QueryString["eventScoId"] == null)
+            if (Request.QueryString["eventScoId"] == null)
                 throw new InvalidOperationException("You should pass licenseId and eventId in queryString");
 
             var eventScoId = Request.QueryString["eventScoId"];
             var acUrl = "http://esynctraining.adobeconnect.com";
             var apiUrl = acUrl + "/api/xml";
-            var logger = IoC.Resolve<ILogger>();
-            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
+            _logger.Info("Signup started");
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), _logger, apiUrl);
             var eventInfo = proxy.GetScoInfo(eventScoId);
             if (!eventInfo.Success)
                 throw new InvalidOperationException("Error getting event info");
-            var model = new EventModel();
-            model.EventName = eventInfo.ScoInfo.Name;
-            model.StartDate = eventInfo.ScoInfo.BeginDate;
-            model.EndDate = eventInfo.ScoInfo.EndDate;
+            var model = new EventModel
+            {
+                EventName = eventInfo.ScoInfo.Name,
+                StartDate = eventInfo.ScoInfo.BeginDate,
+                EndDate = eventInfo.ScoInfo.EndDate,
+                EventScoId = eventScoId
+            };
 
-            model.States = new List<SelectListItem>()
+            //var lookupServiceClient = new LookupServiceClient.LookupServiceClient();
+            var lookupWebService = new edugamecloud.com.LookupService();
+            var states = lookupWebService.GetStates();
+
+            model.States = states.Select(x => new SelectListItem()
+            {
+                Value = x.stateCode,
+                Text = x.stateCode
+            }).Concat(new List<SelectListItem>()
             {
                 new SelectListItem()
                 {
-                    Value = "LA",
-                    Text = "LA"
-                },
-                new SelectListItem()
-                {
-                    Value = "NY",
-                    Text = "NY"
-                },
-            };
+                    Text = "Please select a state",
+                    Value = "0",
+                    Selected = true
+                }
+            });
 
             model.Schools = new List<SelectListItem>()
             {
                 new SelectListItem()
                 {
-                    Value = "School N1",
-                    Text = "School N1"
-                },
-                new SelectListItem()
-                {
-                    Value = "School N2",
-                    Text = "School N2"
-                },
+                    Text = "Please select a school",
+                    Value = "",
+                    Selected = true
+                }
             };
 
             return View(model);
         }
 
-        [HttpPost]
-        public void EventRegister()
+        public ActionResult GetSchoolPerState(string stateCode)
         {
-            
+            _logger.Info("Gettings states");
+            var lookupWebService = new edugamecloud.com.LookupService();
+            _logger.Info("lookup url is "+lookupWebService.Url);
+            var schools = lookupWebService.GetSchools().Where(x => x.State.stateCode == stateCode);
+            var stateSchools = schools;
+            return Json(stateSchools, JsonRequestBehavior.AllowGet);
         }
 
-        //private ActionResult Signin()
-        //{
-        //    return View();
-        //}
+        [HttpPost]
+        public async Task<bool> EventRegister(EventModel eventModel)
+        {
+            if (!ModelState.IsValid) //Check for validation errors
+            {
+                return false;
+            }
+            var servicesUrl = Settings.EgcServicesUrl;
+            var acUrl = "http://esynctraining.adobeconnect.com";
+            var apiUrl = acUrl + "/api/xml";
+            var logger = IoC.Resolve<ILogger>();
+            var proxy = new AdobeConnectProxy(new AdobeConnectProvider(new ConnectionDetails(apiUrl)), logger, apiUrl);
 
+            var httpClient = new HttpClient();
+            var eventRegisterUrl = apiUrl + "?action=event-register&sco-id=" + eventModel.EventScoId + "&login=" +
+                             eventModel.Email + "&password=" + eventModel.Password + "&password-verify=" +
+                             eventModel.VerifyPassword +
+                             "&first-name=" + eventModel.FirstName + "&last-name=" + eventModel.LastName +
+                             "&interaction-id=1763444230&response=" + eventModel.School;
+            var result = await httpClient.GetAsync(eventRegisterUrl);
+            return true;
+        }
+
+      
 
     }
 }

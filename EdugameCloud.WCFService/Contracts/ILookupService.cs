@@ -133,6 +133,17 @@
         StateDTO[] GetStates();
 
         /// <summary>
+        /// The get schools.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="SchoolDTO"/>.
+        /// </returns>
+        [OperationContract]
+        [FaultContract(typeof(Error))]
+        [WebGet(UriTemplate = "GetSchools", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        SchoolDTO[] GetSchools();
+
+        /// <summary>
         /// The get states.
         /// </summary>
         /// <returns>

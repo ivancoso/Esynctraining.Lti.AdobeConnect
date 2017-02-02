@@ -73,6 +73,10 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.24\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Esynctraining.Core.Logging.CastleLogger, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.Core.Logging.CastleLogger.1.0.0.1\lib\net45\Esynctraining.Core.Logging.CastleLogger.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Esynctraining.Mvc, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Esynctraining.Mvc.1.0.0.1\lib\net45\Esynctraining.Mvc.dll</HintPath>
       <Private>True</Private>
@@ -106,6 +110,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -174,6 +180,17 @@
     </Compile>
     <Compile Include="Models\EventModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="Web References\edugamecloud.com\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -192,7 +209,17 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Properties\PublishProfiles\Local.pubxml" />
+    <Content Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="log4net.cfg.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Logs\placeholder.txt" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -218,6 +245,74 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Events\Signup.cshtml" />
+    <Content Include="Web References\edugamecloud.com\BuildVersionTypeDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\CountryDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\EGCVersionsDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\GeoResultDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\LanguageDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\LookupAllDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <None Include="Web References\edugamecloud.com\LookupService.wsdl" />
+    <None Include="Web References\edugamecloud.com\LookupService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com\LookupService0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com\LookupService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com\LookupService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\edugamecloud.com\LookupService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Web References\edugamecloud.com\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\QuestionTypeDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\QuizFormatDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\SchoolDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\ScoreTypeDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\SNMapProviderDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\SNServiceDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\StateDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\SurveyGroupingTypeDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\TimeZoneDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
+    <Content Include="Web References\edugamecloud.com\UserRoleDTO.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -240,6 +335,22 @@
       <Project>{69D07FBF-75CA-4C6E-89F7-033E2D9FB710}</Project>
       <Name>EdugameCloud.Persistence</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://dev.edugamecloud.com/services/LookupService.svc">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\edugamecloud.com\</RelPath>
+      <UpdateFromURL>http://dev.edugamecloud.com/services/LookupService.svc</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>EdugameCloud_ACEvents_Web_com_edugamecloud_dev_LookupService</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

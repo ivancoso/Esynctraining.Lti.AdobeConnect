@@ -115,6 +115,7 @@
     <Compile Include="Mappings\NewsletterSubscriptionMap.cs" />
     <Compile Include="Mappings\EmailHistoryMap.cs" />
     <Compile Include="Mappings\QuizQuestionResultAnswerMap.cs" />
+    <Compile Include="Mappings\SchoolMap.cs" />
     <Compile Include="Mappings\SubscriptionHistoryLogMap.cs" />
     <Compile Include="Mappings\SubscriptionUpdateMap.cs" />
     <Compile Include="Mappings\SocialUserTokensMap.cs" />

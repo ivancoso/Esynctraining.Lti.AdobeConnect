@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="http://dev.edugamecloud.com/services/LookupService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" />
+  <xs:element name="GetAll">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetAllResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetAllResult" nillable="true" type="q1:LookupAllDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetVersionInfo">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetVersionInfoResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q2="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetVersionInfoResult" nillable="true" type="q2:EGCVersionsDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLanguages">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLanguagesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetLanguagesResult" nillable="true" type="q3:ArrayOfLanguageDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBuildVersionTypes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetBuildVersionTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetBuildVersionTypesResult" nillable="true" type="q4:ArrayOfBuildVersionTypeDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetQuestionTypes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetQuestionTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetQuestionTypesResult" nillable="true" type="q5:ArrayOfQuestionTypeDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetScoreTypes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetScoreTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetScoreTypesResult" nillable="true" type="q6:ArrayOfScoreTypeDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZones">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetTimeZonesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q7="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetTimeZonesResult" nillable="true" type="q7:ArrayOfTimeZoneDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserRoles">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetUserRolesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q8="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetUserRolesResult" nillable="true" type="q8:ArrayOfUserRoleDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetQuizFormats">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetQuizFormatsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q9="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetQuizFormatsResult" nillable="true" type="q9:ArrayOfQuizFormatDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSurveyGroupingTypes">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSurveyGroupingTypesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q10="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetSurveyGroupingTypesResult" nillable="true" type="q10:ArrayOfSurveyGroupingTypeDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCountries">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetCountriesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q11="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetCountriesResult" nillable="true" type="q11:ArrayOfCountryDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetStates">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetStatesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q12="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetStatesResult" nillable="true" type="q12:ArrayOfStateDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSchools">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetSchoolsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q13="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetSchoolsResult" nillable="true" type="q13:ArrayOfSchoolDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetServices">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetServicesResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q14="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetServicesResult" nillable="true" type="q14:ArrayOfSNServiceDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMapProviders">
+    <xs:complexType>
+      <xs:sequence />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetMapProvidersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q15="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetMapProvidersResult" nillable="true" type="q15:ArrayOfSNMapProviderDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocation">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q16="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="geoDTO" nillable="true" type="q16:GeoDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="GetLocationResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element xmlns:q17="http://schemas.datacontract.org/2004/07/EdugameCloud.Core.Domain.DTO" minOccurs="0" name="GetLocationResult" nillable="true" type="q17:GeoResultDTO" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ConvertFromVCF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="vcfProfile" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ConvertFromVCFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ConvertFromVCFResult" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ConvertToVCF">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="xmlProfile" nillable="true" type="xs:string" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="ConvertToVCFResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" name="ConvertToVCFResult" nillable="true" type="xs:base64Binary" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -1,14 +1,46 @@
 ﻿@using EdugameCloud.MVC.HtmlHelpers
 @model EdugameCloud.ACEvents.Web.Models.EventModel
 
+@section Scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script type="text/javascript">
+    var onStateSelected = function (e) {
+        if ($('#State').val() !== "0") {
+            $('#School').removeAttr('disabled');
+            var stateCode = $('#State').val();
+            var getSchoolsUrl = '@Url.Action("GetSchoolPerState","Events")';
+            $.get(getSchoolsUrl + "?stateCode=" + stateCode).done(function (data) {
+                $('#School').empty();
+                $.each(data,
+                    function (index, school) {
+                        $("#School").append("<option value='" + school.SchoolNumber + "'>" + school.SchoolNumber + ' ' + school.SchoolEmail + "</option>");
+                    });
+
+            }).fail(function (err) {
+                console.log('error occurred ' + err);
+            });
+        } else {
+            $('#School').attr('disabled', 'disabled');
+        }
+
+    }
+</script>
+
+
 <h2>@Model.EventName</h2>
 <br />
 <label>@Model.StartDate.ToUniversalTime() - @Model.EndDate.ToUniversalTime()</label>
 <br />
 <br />
 
+
+
 @using (Html.BeginForm("EventRegister", "Events", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
+    @Html.HiddenFor(x => x.EventScoId)
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
@@ -57,13 +89,15 @@
 
     <div class="form-group">
         <label class="col-sm-2 control-label">Country</label>
-        <label class="col-sm-1 control-label">USA</label>
+        <div class="col-sm-10">
+            <label class="control-label">USA</label>
+        </div>
     </div>
 
     <div class="form-group">
         <label class="col-sm-2 control-label">State *</label>
         <div class="col-sm-10">
-            @Html.DropDownListFor(x => x.State, Model.States, new { @class = "form-control" })
+            @Html.DropDownListFor(x => x.State, Model.States, new { @class = "form-control", onchange = "onStateSelected()" })
             @Html.ValidationMessageFor(m => m.State)
         </div>
     </div>
@@ -71,10 +105,11 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">School *</label>
         <div class="col-sm-10">
-            @Html.DropDownListFor(x => x.School, Model.Schools, new { @class = "form-control" })
+            @Html.DropDownListFor(x => x.School, Model.Schools, new { @class = "form-control", @disabled = "disabled" })
             @Html.ValidationMessageFor(m => m.School)
         </div>
     </div>
 
-    @Html.LinkButton("Register", new { @class = "btn btn-default" })
+    @*@Html.LinkButton("Register", new { @class = "btn btn-default" })*@
+    <input type="submit" value="Register" class="btn btn-default" />
 }

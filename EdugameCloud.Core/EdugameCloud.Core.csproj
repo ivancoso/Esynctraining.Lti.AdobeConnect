@@ -118,6 +118,7 @@
     <Compile Include="Business\Models\EmailHistoryModel.cs" />
     <Compile Include="Business\Models\NewsletterSubscriptionModel.cs" />
     <Compile Include="Business\Models\QuizQuestionResultAnswerModel.cs" />
+    <Compile Include="Business\Models\SchoolModel.cs" />
     <Compile Include="Business\Models\SubscriptionHistoryLogModel.cs" />
     <Compile Include="Business\Models\SubscriptionUpdateModel.cs" />
     <Compile Include="Business\Models\SocialUserTokensModel.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Domain\DTO\OperationResultDto.cs" />
     <Compile Include="Domain\DTO\AdobeConnectSessionDtoBase.cs" />
     <Compile Include="Domain\DTO\QuestionResultDto.cs" />
+    <Compile Include="Domain\DTO\SchoolDTO.cs" />
     <Compile Include="Domain\DTO\UploadedFileDTO.cs" />
     <Compile Include="Domain\DTO\QuizFromStoredProcedureExDTO.cs" />
     <Compile Include="Domain\DTO\QuizPlayerFromStoredProcedureDTO.cs" />
@@ -286,6 +288,7 @@
     <Compile Include="Domain\Entities\EmailHistory.cs" />
     <Compile Include="Domain\Entities\NewsletterSubscription.cs" />
     <Compile Include="Domain\Entities\QuizQuestionResultAnswer.cs" />
+    <Compile Include="Domain\Entities\School.cs" />
     <Compile Include="Domain\Entities\SocialUserTokens.cs" />
     <Compile Include="Domain\Entities\SubModuleItemTheme.cs" />
     <Compile Include="Domain\Entities\QuestionFor.cs" />
