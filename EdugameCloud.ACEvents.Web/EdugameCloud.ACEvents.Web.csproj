@@ -263,7 +263,9 @@
     <Content Include="Web References\edugamecloud.com\LookupAllDTO.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </Content>
-    <None Include="Web References\edugamecloud.com\LookupService.wsdl" />
+    <None Include="Web References\edugamecloud.com\LookupService.wsdl">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Web References\edugamecloud.com\LookupService.xsd">
       <SubType>Designer</SubType>
     </None>
