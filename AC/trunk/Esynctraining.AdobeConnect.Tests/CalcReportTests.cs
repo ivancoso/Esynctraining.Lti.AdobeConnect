@@ -54,67 +54,67 @@ namespace Esynctraining.AdobeConnect.Tests
         //[TestCase("http://connect.uthsc.edu", "itsadmin", "Memphis2016", 0)]
         public void WillGetRecordingsStats(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
-            _provider = new AdobeConnectProvider(_connectionDetails);
-            var provider = _provider;
-            LoginResult loginResult = provider.Login(new UserCredentials(login, password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException("Invalid login");
-            var recordings = provider.ReportRecordingsPaged(totalObjCount);
+            //_connectionDetails = new ConnectionDetails(new Uri(apiUrl));
+            //_provider = new AdobeConnectProvider(_connectionDetails);
+            //var provider = _provider;
+            //LoginResult loginResult = provider.Login(new UserCredentials(login, password));
+            //if (!loginResult.Success)
+            //    throw new InvalidOperationException("Invalid login");
+            //var recordings = provider.ReportRecordingsPaged(totalObjCount);
 
-            var reports = GetRecLengthStats(recordings);
-            foreach (var rec in _recStorage)
-            {
-                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
-            }
-            LogRecStats(reports);
+            //var reports = GetRecLengthStats(recordings);
+            //foreach (var rec in _recStorage)
+            //{
+            //    _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            //}
+            //LogRecStats(reports);
         }
 
         [TestCase("https://rhi.adobeconnect.com", "mike@esynctraining.com", "Esync321", 0)]
         public void WillGetRecordingsStatsForRHI(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
-            _provider = new AdobeConnectProvider(_connectionDetails);
-            var provider = _provider;
-            LoginResult loginResult = provider.Login(new UserCredentials(login, password));
-            if (!loginResult.Success)
-                throw new InvalidOperationException("Invalid login");
-            var recordings = provider.ReportRecordingsPaged(totalObjCount);
+            //_connectionDetails = new ConnectionDetails(new Uri(apiUrl));
+            //_provider = new AdobeConnectProvider(_connectionDetails);
+            //var provider = _provider;
+            //LoginResult loginResult = provider.Login(new UserCredentials(login, password));
+            //if (!loginResult.Success)
+            //    throw new InvalidOperationException("Invalid login");
+            //var recordings = provider.ReportRecordingsPaged(totalObjCount);
 
-            var reports = GetRecLengthStats(recordings);
-            foreach (var rec in _recStorage)
-            {
-                _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
-            }
-            LogRecStats(reports);
+            //var reports = GetRecLengthStats(recordings);
+            //foreach (var rec in _recStorage)
+            //{
+            //    _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            //}
+            //LogRecStats(reports);
 
         }
 
         [TestCase("https://cca.acms.com/api/xml", "developer@esynctraining.com", "e$ync123CCA", 0)]
         public void WillGetRecordingsStatsForCCA(string apiUrl, string login, string password, int totalObjCount = 0)
         {
-            try
-            {
-                _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
-                _provider = new AdobeConnectProvider(_connectionDetails);
-                var provider = _provider;
-                LoginResult loginResult = provider.Login(new UserCredentials(login, password));
-                if (!loginResult.Success)
-                    throw new InvalidOperationException("Invalid login");
-                var recordings = provider.ReportRecordingsPaged(totalObjCount);
+            //try
+            //{
+            //    _connectionDetails = new ConnectionDetails(new Uri(apiUrl));
+            //    _provider = new AdobeConnectProvider(_connectionDetails);
+            //    var provider = _provider;
+            //    LoginResult loginResult = provider.Login(new UserCredentials(login, password));
+            //    if (!loginResult.Success)
+            //        throw new InvalidOperationException("Invalid login");
+            //    var recordings = provider.ReportRecordingsPaged(totalObjCount);
 
-                var reports = GetRecLengthStats(recordings);
-                foreach (var rec in _recStorage)
-                {
-                    _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
-                }
-                LogRecStats(reports);
-            }
-            catch (Exception e)
-            {
-                _smtpSender.SendEmail("General uncaught error", e.Message + e.StackTrace);
-            }
-            _smtpSender.SendEmail("Report processing is finished!", "Don't forget to look in the logs to inspect errors during processing!");
+            //    var reports = GetRecLengthStats(recordings);
+            //    foreach (var rec in _recStorage)
+            //    {
+            //        _logger.Info($"key: {rec.Key.Sco}, {rec.Key.FolderId}, {rec.Value}");
+            //    }
+            //    LogRecStats(reports);
+            //}
+            //catch (Exception e)
+            //{
+            //    _smtpSender.SendEmail("General uncaught error", e.Message + e.StackTrace);
+            //}
+            //_smtpSender.SendEmail("Report processing is finished!", "Don't forget to look in the logs to inspect errors during processing!");
         }
 
         private void LogRecStats<T>(T report34)
