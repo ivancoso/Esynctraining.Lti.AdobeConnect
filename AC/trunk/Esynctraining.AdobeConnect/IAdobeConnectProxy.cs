@@ -128,6 +128,11 @@ namespace Esynctraining.AdobeConnect
         CollectionResult<ReportBulkObjectItem> ReportBulkObjects(IEnumerable<string> scoIds);
 
         /// <summary>
+        /// Uses filter-type=xxx 
+        /// </summary>
+        CollectionResult<ReportBulkObjectItem> ReportBulkObjectsByType(IEnumerable<string> types, int startIndex = 0, int limit = 0);
+
+        /// <summary>
         /// NOTE: can return too much data and take a lot of time to complete.
         /// Consider using filter.
         /// Sorts by sco-id.
@@ -156,7 +161,7 @@ namespace Esynctraining.AdobeConnect
         //QuizResponseCollectionResult ReportQuizInteractions(string scoId, int startIndex = 0, int limit = 0);
         //ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0);
 
-        IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null);
+        //IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null);
 
         ReportScoViewsContentCollectionResult ReportScoViews(string scoId);
 

@@ -775,6 +775,15 @@ namespace Esynctraining.AdobeConnect
             return new CollectionResult<ReportBulkObjectItem>(new StatusInfo { Code = StatusCodes.ok }, result);
         }
 
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjectsByType(IEnumerable<string> types, int startIndex = 0, int limit = 0)
+        {
+            if (types == null)
+                throw new ArgumentNullException(nameof(types));
+
+            var filter = string.Join("&", types.Select(x => string.Format("filter-type={0}", x)));
+            return Execute(() => { return _provider.ReportBulkObjects(filter, startIndex, limit); }, filter);
+        }
+
         public MeetingItemCollectionResult ReportAllMeetings(string filter = null, int startIndex = 0, int limit = 0)
         {
             return Execute(() => { return _provider.ReportAllMeetings(filter, startIndex, limit); } );
@@ -820,10 +829,10 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.ReportMyMeetings(permission, startIndex, limit); });
         }
 
-        public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
-        {
-            return Execute(() => { return _provider.ReportRecordingsPaged(totalLimit, filter, sort); });
-        }
+        //public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
+        //{
+        //    return Execute(() => { return _provider.ReportRecordingsPaged(totalLimit, filter, sort); });
+        //}
 
         public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {
