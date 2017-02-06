@@ -80,68 +80,57 @@ namespace Esynctraining.AC.Provider
                 ? new TransactionCollectionResult(status, TransactionInfoCollectionParser.Parse(doc))
                 : new TransactionCollectionResult(status);
         }
+        
+        // Not used from Proxy level
+        //public ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0)
+        //{
+        //    // act: "report-bulk-objects"
+        //    StatusInfo status;
 
-        /// <summary>
-        /// The get contents by SCO id.
-        /// </summary>
-        /// <param name="startIndex">
-        /// The start Index.
-        /// </param>
-        /// <param name="limit">
-        /// The limit.
-        /// </param>
-        /// <returns>
-        /// The <see cref="ScoContentCollectionResult"/>.
-        /// </returns>
-        public ScoContentCollectionResult ReportRecordings(int startIndex = 0, int limit = 0)
-        {
-            // act: "report-bulk-objects"
-            StatusInfo status;
+        //    var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded(startIndex, limit), out status);
 
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded(startIndex, limit), out status);
+        //    if (ResponseIsOk(doc, status))
+        //    {
+        //        var result = new ScoContentCollectionResult(
+        //            status, ScoRecordingCollectionParser.Parse(doc));
 
-            if (ResponseIsOk(doc, status))
-            {
-                var result = new ScoContentCollectionResult(
-                    status, ScoRecordingCollectionParser.Parse(doc));
+        //        return result;
+        //    }
 
-                return result;
-            }
+        //    return new ScoContentCollectionResult(status);
+        //}
 
-            return new ScoContentCollectionResult(status);
-        }
+        //public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
+        //{
+        //    // act: "report-bulk-objects" paged by 10K
+        //    var status = new StatusInfo();
+        //    var responseIsOk = false;
+        //    var iteration = 1;
+        //    var limit = 10000;
+        //    if (totalLimit < limit && totalLimit != 0)
+        //        limit = totalLimit;
+        //    var scoContentCollectionResult = new ScoContentCollectionResult(status);
+        //    var result = new List<ScoContentCollectionResult>();
+        //    do
+        //    {
+        //        var doc = this.requestProcessor.Process(Commands.ReportBulkObjects,
+        //            $"{filter}{(filter!=null ? "&" : "")}{CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded((iteration - 1) * limit + 1, limit)}", out status);
 
-        public IEnumerable<ScoContentCollectionResult> ReportRecordingsPaged(int totalLimit = 0, string filter = null, string sort = null)
-        {
-            // act: "report-bulk-objects" paged by 10K
-            var status = new StatusInfo();
-            var responseIsOk = false;
-            var iteration = 1;
-            var limit = 10000;
-            if (totalLimit < limit && totalLimit != 0)
-                limit = totalLimit;
-            var scoContentCollectionResult = new ScoContentCollectionResult(status);
-            var result = new List<ScoContentCollectionResult>();
-            do
-            {
-                var doc = this.requestProcessor.Process(Commands.ReportBulkObjects,
-                    $"{filter}{(filter!=null ? "&" : "")}{CommandParams.ReportBulkObjectsFilters.Recording.AppendPagingIfNeeded((iteration - 1) * limit + 1, limit)}", out status);
-
-                responseIsOk = ResponseIsOk(doc, status);
-                if (responseIsOk)
-                {
-                    scoContentCollectionResult = new ScoContentCollectionResult(status, ScoRecordingCollectionParser.Parse(doc));
-                    result.Add(scoContentCollectionResult);
-                }
-                iteration++;
-            } while (scoContentCollectionResult.Success 
-                && scoContentCollectionResult.Values != null
-                && scoContentCollectionResult.Values.Any() 
-                && (totalLimit == 0 || totalLimit > 0 && (iteration - 1) * limit < totalLimit));
+        //        responseIsOk = ResponseIsOk(doc, status);
+        //        if (responseIsOk)
+        //        {
+        //            scoContentCollectionResult = new ScoContentCollectionResult(status, ScoRecordingCollectionParser.Parse(doc));
+        //            result.Add(scoContentCollectionResult);
+        //        }
+        //        iteration++;
+        //    } while (scoContentCollectionResult.Success 
+        //        && scoContentCollectionResult.Values != null
+        //        && scoContentCollectionResult.Values.Any() 
+        //        && (totalLimit == 0 || totalLimit > 0 && (iteration - 1) * limit < totalLimit));
 
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public ReportScoViewsContentCollectionResult ReportScoViews(string scoId)
         {
@@ -258,10 +247,12 @@ namespace Esynctraining.AC.Provider
                 : new CollectionResult<QuizQuestionDistributionItem>(status);
         }
 
-        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter)
+        public CollectionResult<ReportBulkObjectItem> ReportBulkObjects(string filter, int startIndex = 0, int limit = 0)
         {
             StatusInfo status;
-            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, filter, out status);
+            var doc = this.requestProcessor.Process(Commands.ReportBulkObjects, 
+                (filter ?? string.Empty).AppendPagingIfNeeded(startIndex, limit), 
+                out status);
 
             const string path = "//results/report-bulk-objects/row";
 
