@@ -2,6 +2,7 @@
 {
     using System.Runtime.Serialization;
 
+
     /// <summary>
     /// The lookup all DTO.
     /// </summary>

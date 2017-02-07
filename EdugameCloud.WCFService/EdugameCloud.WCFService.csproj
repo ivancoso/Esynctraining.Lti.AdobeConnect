@@ -171,6 +171,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CompanyAcDomainsService.svc" />
     <Content Include="FileStorage\Export\ReadMe.txt" />
     <Content Include="FileStorage\Import\ReadMe.txt" />
     <Content Include="FileStorage\Uploads\Placeholder.txt" />
@@ -238,10 +239,14 @@
     </Compile>
     <Compile Include="App_Start\DIConfig.cs" />
     <Compile Include="Base\ExportService.cs" />
+    <Compile Include="CompanyAcDomainsService.svc.cs">
+      <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Contracts\IACSessionService.cs" />
     <Compile Include="Contracts\IAppletItemService.cs" />
     <Compile Include="Contracts\IAppletResultService.cs" />
     <Compile Include="Contracts\IBuildVersionService.cs" />
+    <Compile Include="Contracts\ICompanyAcDomainsService.cs" />
     <Compile Include="Contracts\ICompanyLicenseService.cs" />
     <Compile Include="Contracts\ICompanyLmsService.cs" />
     <Compile Include="Contracts\ICompanyService.cs" />
