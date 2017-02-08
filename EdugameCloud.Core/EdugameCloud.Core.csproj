@@ -106,6 +106,7 @@
     <Compile Include="BuildVersionProcessor.cs" />
     <Compile Include="Business\CachePolicies.cs" />
     <Compile Include="Business\Models\ACUserModeModel.cs" />
+    <Compile Include="Business\Models\CompanyAcServerModel.cs" />
     <Compile Include="Business\Models\CompanyModel.cs" />
     <Compile Include="Business\Models\ACSessionModel.cs" />
     <Compile Include="Business\Models\AppletResultModel.cs" />
@@ -282,6 +283,7 @@
     <Compile Include="Domain\DTO\VersionDTO.cs" />
     <Compile Include="Domain\DTO\WebHeaderDTO.cs" />
     <Compile Include="Domain\DTO\WebRequestDTO.cs" />
+    <Compile Include="Domain\Entities\CompanyAcServer.cs" />
     <Compile Include="Domain\Entities\CompanyStatus.cs" />
     <Compile Include="Domain\Entities\ACSessionStatusEnum.cs" />
     <Compile Include="Domain\Entities\CompanyLicenseStatus.cs" />

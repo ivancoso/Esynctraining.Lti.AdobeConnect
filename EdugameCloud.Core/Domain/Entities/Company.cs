@@ -5,6 +5,7 @@
     using System.Linq;
     using Esynctraining.Core.Domain.Entities;
 
+
     /// <summary>
     /// The company.
     /// </summary>

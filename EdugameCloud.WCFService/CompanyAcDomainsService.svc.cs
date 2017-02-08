@@ -5,9 +5,12 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.Text;
+using EdugameCloud.Core.Business.Models;
 using EdugameCloud.Core.Domain.DTO;
+using EdugameCloud.Core.Domain.Entities;
 using EdugameCloud.WCFService.Base;
 using EdugameCloud.WCFService.Contracts;
+using Esynctraining.Core.Utils;
 
 namespace EdugameCloud.WCFService
 {
@@ -18,19 +21,36 @@ namespace EdugameCloud.WCFService
         IncludeExceptionDetailInFaults = true)]
     public class CompanyAcDomainsService : BaseService, ICompanyAcDomainsService
     {
+        /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CompanyAcServerModel CompanyAcServerModel
+        {
+            get { return IoC.Resolve<CompanyAcServerModel>(); }
+        }
+
+
         public CompanyAcDomainDTO[] GetAllByCompany(int companyId)
         {
-            var result = new List<CompanyAcDomainDTO>()
+            var items = CompanyAcServerModel.GetAllByCompany(companyId).Select(x => new CompanyAcDomainDTO()
             {
-                new CompanyAcDomainDTO()
-                {
-                    AcServer = "testurl",
-                    Password = "test",
-                    IsDefault = false,
-                    Username = "usertest"
-                }
-            };
-            return result.ToArray();
+                Password = x.Password,
+                IsDefault = x.IsDefault,
+                Username = x.Username,
+                AcServer = x.AcServer,
+                CompanyId = x.CompanyId
+            });
+            //var result = new List<CompanyAcDomainDTO>()
+            //{
+            //    new CompanyAcDomainDTO()
+            //    {
+            //        AcServer = "testurl",
+            //        Password = "test",
+            //        IsDefault = false,
+            //        Username = "usertest"
+            //    }
+            //};
+            return items.ToArray();
         }
 
         public int DeleteById(int id)

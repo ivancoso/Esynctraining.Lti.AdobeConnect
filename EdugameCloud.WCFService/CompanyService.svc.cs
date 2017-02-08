@@ -42,7 +42,7 @@ namespace EdugameCloud.WCFService
         {
             get { return IoC.Resolve<CompanyModel>(); }
         }
-
+        
         /// <summary>
         /// Gets the company license model.
         /// </summary>

@@ -35,6 +35,11 @@ namespace EdugameCloud.Core.Business
                 return "Schools";
             }
 
+            public static string CompanyAcServers()
+            {
+                return "CompanyAcServers";
+            }
+
             public static string Languages()
             {
                 return "Languages";
