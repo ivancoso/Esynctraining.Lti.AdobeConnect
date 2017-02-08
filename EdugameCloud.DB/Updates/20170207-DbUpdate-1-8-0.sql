@@ -1,5 +1,6 @@
-﻿CREATE TABLE [dbo].[CompanyAcDomains](
-	[AcDomainId] [int] NOT NULL,
+﻿
+CREATE TABLE [dbo].[CompanyAcDomains](
+	[CompanyAcServerId] [int] NOT NULL,
 	[AcServer] [nvarchar](100) NOT NULL,
 	[Username] [nvarchar](50) NULL,
 	[Password] [nvarchar](50) NULL,
@@ -7,7 +8,7 @@
 	[CompanyId] [int] NOT NULL,
  CONSTRAINT [PK_CompanyAcDomains] PRIMARY KEY CLUSTERED 
 (
-	[AcDomainId] ASC
+	[CompanyAcServerId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 

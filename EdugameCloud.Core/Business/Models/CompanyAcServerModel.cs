@@ -24,19 +24,20 @@ namespace EdugameCloud.Core.Business.Models
             _cache = cache;
         }
 
-        public override IEnumerable<CompanyAcServer> GetAll()
-        {
-            return CacheUtility.GetCachedItem<List<CompanyAcServer>>(_cache, CachePolicies.Keys.CompanyAcServers(), () =>
-            {
-                var query = new DefaultQueryOver<CompanyAcServer, int>().GetQueryOver().OrderBy(x => x.Id).Asc;
-                return this.Repository.FindAll(query).ToList();
-            });
-        }
+        //public override IEnumerable<CompanyAcServer> GetAll()
+        //{
+        //    return CacheUtility.GetCachedItem<List<CompanyAcServer>>(_cache, CachePolicies.Keys.CompanyAcServers(), () =>
+        //    {
+        //        var query = new DefaultQueryOver<CompanyAcServer, int>().GetQueryOver().OrderBy(x => x.Id).Asc;
+        //        return this.Repository.FindAll(query).ToList();
+        //    });
+        //}
 
 
         public IEnumerable<CompanyAcServer> GetAllByCompany(int companyId)
         {
-            var items = GetAll().Where(x => x.CompanyId == companyId);
+            var acServers = GetAll();
+            var items = acServers.Where(x => x.CompanyId == companyId);
             return items;
         }
 
