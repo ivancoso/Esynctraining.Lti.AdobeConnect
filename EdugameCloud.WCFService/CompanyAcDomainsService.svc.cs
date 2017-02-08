@@ -34,11 +34,11 @@ namespace EdugameCloud.WCFService
         {
             var items = CompanyAcServerModel.GetAllByCompany(companyId).Select(x => new CompanyAcDomainDTO()
             {
-                Password = x.Password,
+                password = x.Password,
                 IsDefault = x.IsDefault,
-                Username = x.Username,
-                AcServer = x.AcServer,
-                CompanyId = x.CompanyId
+                user = x.Username,
+                path = x.AcServer,
+                companyId = x.CompanyId
             });
             //var result = new List<CompanyAcDomainDTO>()
             //{
