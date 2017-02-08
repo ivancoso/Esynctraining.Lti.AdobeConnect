@@ -48,8 +48,17 @@
         /// </summary>
         courses,
 
-        chat_transcripts,
-
+        shared_training_templates,
+        my_training_templates,
+        shared_meeting_templates,
+        my_meeting_templates,
+        account_custom,
+        events,
+        my_events,
+        user_events,
+        training_catalog,
+        forced_archives,
+        chat_transcripts
     }
 
     //public static class ScoShortcutTypes
