@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Esynctraining.AC.Provider.Entities
+namespace Esynctraining.AC.Provider.Utils
 {
     public static class EnumHelper
     {
