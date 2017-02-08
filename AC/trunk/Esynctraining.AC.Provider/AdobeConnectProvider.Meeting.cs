@@ -69,7 +69,7 @@
                 permissionsFilter.Select(
                     x =>
                         string.Format(CommandParams.Permissions.Filter.PermissionId.Format,
-                            x.ToString().Replace("-", "_"))));
+                            x.GetACEnum())));
 
             return GetPermissionsInfo(scoId, filter);
         }

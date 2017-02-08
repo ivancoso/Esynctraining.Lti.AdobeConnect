@@ -277,29 +277,10 @@
                 internal static class PermissionId
                 {
                     public const string Format = "filter-permission-id={0}";
-                    
-                    /// <summary>
-                    /// The host.
-                    /// </summary>
-                    public const string Host = "filter-permission-id=host";
 
-                    /// <summary>
-                    /// The mini host.
-                    /// </summary>
-                    public const string MiniHost = "filter-permission-id=mini-host";
-
-                    /// <summary>
-                    /// The view.
-                    /// </summary>
-                    public const string View = "filter-permission-id=view";
-
-                    /// <summary>
-                    /// The view.
-                    /// </summary>
                     public const string MeetingAll = "filter-permission-id=host&filter-permission-id=mini-host&filter-permission-id=view";
 
-                    public const string NonMeetingAll = "filter-permission-id=view&filter-permission-id=publish&filter-permission-id=manage&filter-permission-id=denied";
-
+                    public const string NonMeetingAll = "filter-permission-id=view&filter-permission-id=view-only&filter-permission-id=publish&filter-permission-id=manage&filter-permission-id=denied";
                 }
 
             }

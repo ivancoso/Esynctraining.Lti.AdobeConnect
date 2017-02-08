@@ -197,19 +197,8 @@
 
         public MeetingItemCollectionResult ReportMyMeetings(MeetingPermissionId permission, int startIndex = 0, int limit = 0)
         {
-            string filter = string.Empty;
-            switch (permission)
-            {
-                case MeetingPermissionId.host:
-                    filter = CommandParams.Permissions.Filter.PermissionId.Host;
-                    break;
-                case MeetingPermissionId.mini_host:
-                    filter = CommandParams.Permissions.Filter.PermissionId.MiniHost;
-                    break;
-                case MeetingPermissionId.view:
-                    filter = CommandParams.Permissions.Filter.PermissionId.View;
-                    break;
-            }
+            string filter = string.Format(CommandParams.Permissions.Filter.PermissionId.Format,
+                permission.GetACEnum());
             return CallReportMyMeetings(filter, startIndex, limit);
         }
 

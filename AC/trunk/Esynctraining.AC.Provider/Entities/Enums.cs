@@ -155,6 +155,11 @@
         user,
     }
 
+    public enum SpecialPrincipalId
+    {
+        public_access
+    }
+
     public enum SpecialPermissionId
     {
         /// <summary>
@@ -202,14 +207,6 @@
     {
         none,
         /// <summary>
-        /// The principal has full access to an account and can create users, view any
-        /// folder, or launch any SCO. However, the principal cannot publish content or
-        /// act as host of an Acrobat Connect Professional meeting.
-        /// </summary>
-        admin,
-        author,
-        learner,
-        /// <summary>
         /// The principal can view, but cannot modify, the SCO. The principal can take a
         /// course, attend a meeting as participant, or view a folder’s content.
         /// </summary>
@@ -220,6 +217,10 @@
         /// meeting’s parent folder.
         /// </summary>
         view_hidden,
+        /// <summary>
+        /// Default for public-access principal permission for content folders
+        /// </summary>
+        view_only,
         /// <summary>
         /// The meeting is public, and anyone who has the URL for the meeting can enter the room.
         /// </summary>
