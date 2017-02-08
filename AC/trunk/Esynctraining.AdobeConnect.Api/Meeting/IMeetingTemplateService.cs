@@ -7,7 +7,9 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
 {
     public interface IMeetingTemplateService
     {
+        IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy provider);
         IEnumerable<TemplateDto> GetSharedMeetingTemplates(IAdobeConnectProxy provider, ICache cache, Func<string> cacheKeyFactory);
+        IEnumerable<TemplateDto> GetMyMeetingTemplates(IAdobeConnectProxy provider);
 
     }
 

@@ -1,5 +1,5 @@
 ﻿{
-	"version": "1.0.0.7",
+	"version": "1.0.0.8",
 
 	"title": "Esynctraining.Provider.Api",
 	"description": "Provides Adobe Connect high-level DTO and services",
@@ -14,9 +14,10 @@
 	},
 
 
-	"dependencies": {
-		"Esynctraining.AdobeConnect": "1.0.1.8"
-	},
+  "dependencies": {
+    "Esynctraining.AC.Provider": "1.0.2.14",
+    "Esynctraining.AdobeConnect": "1.0.1.10"
+  },
 
 	"frameworks": {
 		"net45": {
