@@ -51,12 +51,12 @@
       <HintPath>..\packages\Esynctraining.Core.Only.1.0.0.27\lib\net45\Esynctraining.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.MeetingOne, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.MeetingOne.RestClient.1.0.0.4\lib\net45\Esynctraining.MeetingOne.dll</HintPath>
+    <Reference Include="Esynctraining.MeetingOne, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.MeetingOne.RestClient.1.0.0.5\lib\net45\Esynctraining.MeetingOne.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Esynctraining.MeetingOne.RestClient, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Esynctraining.MeetingOne.RestClient.1.0.0.4\lib\net45\Esynctraining.MeetingOne.RestClient.dll</HintPath>
+    <Reference Include="Esynctraining.MeetingOne.RestClient, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Esynctraining.MeetingOne.RestClient.1.0.0.5\lib\net45\Esynctraining.MeetingOne.RestClient.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
