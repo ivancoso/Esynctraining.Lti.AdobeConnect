@@ -74,6 +74,10 @@ namespace EdugameCloud.Lti.DTO
             this.enableOfficeHours = instance.EnableOfficeHours.GetValueOrDefault();
             this.enableStudyGroups = instance.EnableStudyGroups.GetValueOrDefault();
             this.enableCourseMeetings = instance.EnableCourseMeetings.GetValueOrDefault();
+
+            this.enableVirtualClassrooms = instance.GetSetting<bool>(LmsCompanySettingNames.EnableVirtualClassrooms, false);
+            this.labelVirtualClassroom = instance.GetSetting<string>(LmsCompanySettingNames.VirtualClassroomsLabel);
+
             this.showEGCHelp = instance.ShowEGCHelp.GetValueOrDefault();
             this.showLmsHelp = instance.ShowLmsHelp.GetValueOrDefault();
             this.addPrefixToMeetingName = instance.AddPrefixToMeetingName.GetValueOrDefault();
@@ -101,6 +105,7 @@ namespace EdugameCloud.Lti.DTO
             this.labelMeeting = instance.GetSetting<string>(LmsCompanySettingNames.LabelMeeting);
             this.labelOfficeHour = instance.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour);
             this.labelStudyGroup = instance.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup);
+
             this.enableMeetingReuse = instance.EnableMeetingReuse;
             this.additionalLmsDomains = instance.AdditionalLmsDomains;
 
@@ -325,6 +330,12 @@ namespace EdugameCloud.Lti.DTO
         /// </summary>
         [DataMember]
         public bool enableCourseMeetings { get; set; }
+
+        [DataMember]
+        public bool enableVirtualClassrooms { get; set; }
+
+        [DataMember]
+        public string labelVirtualClassroom { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether show lms help.
