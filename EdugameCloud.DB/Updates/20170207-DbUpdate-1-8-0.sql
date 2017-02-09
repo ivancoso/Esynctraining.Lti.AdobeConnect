@@ -1,6 +1,5 @@
-﻿
-CREATE TABLE [dbo].[CompanyAcDomains](
-	[CompanyAcServerId] [int] NOT NULL,
+﻿CREATE TABLE [dbo].[CompanyAcDomains](
+	[CompanyAcServerId] [int] IDENTITY(1,1) NOT NULL,
 	[AcServer] [nvarchar](100) NOT NULL,
 	[Username] [nvarchar](50) NULL,
 	[Password] [nvarchar](50) NULL,
@@ -14,9 +13,9 @@ CREATE TABLE [dbo].[CompanyAcDomains](
 
 GO
 
-ALTER TABLE [dbo].[CompanyAcDomains]  WITH CHECK ADD  CONSTRAINT [FK_CompanyAcDomains_CompanyLms] FOREIGN KEY([CompanyId])
+ALTER TABLE [dbo].[CompanyAcDomains]  WITH CHECK ADD  CONSTRAINT [FK_CompanyAcDomains_Company] FOREIGN KEY([CompanyId])
 REFERENCES [dbo].[Company] ([companyId])
 GO
 
-ALTER TABLE [dbo].[CompanyAcDomains] CHECK CONSTRAINT [FK_CompanyAcDomains_CompanyLms]
+ALTER TABLE [dbo].[CompanyAcDomains] CHECK CONSTRAINT [FK_CompanyAcDomains_Company]
 GO

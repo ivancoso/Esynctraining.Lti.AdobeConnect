@@ -177,7 +177,7 @@
     <Compile Include="Converters\AddressDTOConverter.cs" />
     <Compile Include="Converters\CompanyThemeDTOConverter.cs" />
     <Compile Include="Converters\SubModuleItemDTOConverter.cs" />
-    <Compile Include="Domain\DTO\CompanyAcDomainDTO.cs" />
+    <Compile Include="Domain\DTO\AcDomainDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordResultByACSessionFromStoredProcedureDTO.cs" />
     <Compile Include="Domain\DTO\CrosswordSessionDTO.cs" />
     <Compile Include="Domain\DTO\CompanyFlatDTO.cs" />

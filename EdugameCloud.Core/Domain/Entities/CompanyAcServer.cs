@@ -9,8 +9,6 @@ namespace EdugameCloud.Core.Domain.Entities
         public virtual string Username { get; set; }
         public virtual string Password { get; set; }
         public virtual bool IsDefault { get; set; }
-        public virtual int CompanyId { get; set; }
-
         public virtual Company Company { get; set; }
 
         public CompanyAcServer()

@@ -12,7 +12,7 @@ namespace EdugameCloud.WCFService.Contracts
         [FaultContract(typeof(Error))]
         //[WebGet(UriTemplate = "GetAllByCompany", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
         [WebGet(UriTemplate = "GetAllByCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        CompanyAcDomainDTO[] GetAllByCompany(int companyId);
+        ACDomainDTO[] GetAllByCompany(int companyId);
 
         [OperationContract]
         [FaultContract(typeof(Error))]
@@ -20,6 +20,6 @@ namespace EdugameCloud.WCFService.Contracts
 
         [OperationContract]
         [FaultContract(typeof(Error))]
-        CompanyAcDomainDTO Save(CompanyAcDomainDTO acDomain);
+        ACDomainDTO Save(ACDomainDTO acDomain);
     }
 }

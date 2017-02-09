@@ -37,7 +37,7 @@ namespace EdugameCloud.Core.Business.Models
         public IEnumerable<CompanyAcServer> GetAllByCompany(int companyId)
         {
             var acServers = GetAll();
-            var items = acServers.Where(x => x.CompanyId == companyId);
+            var items = acServers.Where(x => x.Company.Id == companyId);
             return items;
         }
 

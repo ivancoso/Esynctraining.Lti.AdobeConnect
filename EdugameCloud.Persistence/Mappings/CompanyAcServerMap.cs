@@ -10,12 +10,11 @@ namespace EdugameCloud.Persistence.Mappings
         {
             Table("CompanyAcDomains");
             this.Map(x => x.AcServer).Length(100).Not.Nullable();
-            this.Map(x => x.CompanyId).Not.Nullable();
             this.Map(x => x.Username).Length(50);
             this.Map(x => x.Password).Length(50);
             this.Map(x => x.IsDefault);
            
-            this.References(x => x.Company).Nullable().Cascade.Delete();
+            this.References(x => x.Company).Nullable();
         }
 
         #endregion

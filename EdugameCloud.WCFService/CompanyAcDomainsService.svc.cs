@@ -30,15 +30,15 @@ namespace EdugameCloud.WCFService
         }
 
 
-        public CompanyAcDomainDTO[] GetAllByCompany(int companyId)
+        public ACDomainDTO[] GetAllByCompany(int companyId)
         {
-            var items = CompanyAcServerModel.GetAllByCompany(companyId).Select(x => new CompanyAcDomainDTO()
+            var items = CompanyAcServerModel.GetAllByCompany(companyId).Select(x => new ACDomainDTO()
             {
                 password = x.Password,
-                IsDefault = x.IsDefault,
+                isDefault = x.IsDefault,
                 user = x.Username,
                 path = x.AcServer,
-                companyId = x.CompanyId
+                companyId = x.Company.Id
             });
             //var result = new List<CompanyAcDomainDTO>()
             //{
@@ -58,8 +58,18 @@ namespace EdugameCloud.WCFService
             return id;
         }
 
-        public CompanyAcDomainDTO Save(CompanyAcDomainDTO acDomain)
+        public ACDomainDTO Save(ACDomainDTO acDomain)
         {
+            var companyAcServer = new CompanyAcServer()
+            {
+                Company = new Company() {Id=acDomain.companyId},
+                IsDefault = acDomain.isDefault,
+                Password = acDomain.password,
+                Username = acDomain.user,
+                AcServer = acDomain.path,
+                Id = acDomain.domainId
+            };
+            CompanyAcServerModel.RegisterSave(companyAcServer);
             return acDomain;
         }
     }
