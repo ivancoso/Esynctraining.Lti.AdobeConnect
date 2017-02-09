@@ -269,6 +269,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelMeeting, dto.labelMeeting);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelOfficeHour, dto.labelOfficeHour);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.LabelStudyGroup, dto.labelStudyGroup);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.VirtualClassroomsLabel, dto.labelVirtualClassroom);
 
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingSummary, dto.showSummary);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.ShowMeetingTime, dto.showTime);
@@ -283,6 +284,7 @@ namespace EdugameCloud.WCFService
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.SeminarsLabel, dto.labelSeminar);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.UseSakaiEvents, dto.useSakaiEvents);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMeetingSessions, dto.enableMeetingSessions);
+            UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableVirtualClassrooms, dto.enableVirtualClassrooms);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableMyContent, dto.enableMyContent);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableAddGuest, dto.enableAddGuest);
             UpdateOrDeleteSetting(instance, LmsCompanySettingNames.EnableSetUserRole, dto.enableSetUserRole);
