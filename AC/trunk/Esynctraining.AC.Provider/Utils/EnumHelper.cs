@@ -6,7 +6,9 @@ namespace Esynctraining.AC.Provider.Utils
     {
         public static string GetACEnum(this Enum shortcut)
         {
-            return shortcut.ToString().Replace("_", "-");
+            return shortcut.ToString().Replace('_', '-');
         }
+
     }
+
 }
