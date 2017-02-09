@@ -28,6 +28,9 @@ namespace EdugameCloud.Lti.DTO
             [DataMember(Name = "seminar")]
             public string SeminarLabel { get; set; }
 
+            [DataMember(Name = "virtualClassroom")]
+            public string VirtualClassroom { get; set; }
+
         }
 
         #endregion Inner Class: LabelsDto
@@ -91,7 +94,10 @@ namespace EdugameCloud.Lti.DTO
 
         [DataMember(Name = "enableOfficeHours")]
         public bool EnableOfficeHours { get; set; }
-        
+
+        [DataMember(Name = "enableVirtualClassrooms")]
+        public bool EnableVirtualClassrooms { get; set; }
+
 
         [DataMember(Name = "instructionText")]
         public string SupportPageHtml { get; set; }
@@ -190,6 +196,7 @@ namespace EdugameCloud.Lti.DTO
 
                     EnableSeminars = value.GetSetting<bool>(LmsCompanySettingNames.SeminarsEnable),
                     EnableOfficeHours = value.EnableOfficeHours.GetValueOrDefault(),
+                    EnableVirtualClassrooms = value.GetSetting<bool>(LmsCompanySettingNames.EnableVirtualClassrooms),
                     EnableMyContent = value.GetSetting<bool>(LmsCompanySettingNames.EnableMyContent),
                     EnableAddGuest = value.GetSetting<bool>(LmsCompanySettingNames.EnableAddGuest, true),
                     EnableSetUserRole = value.GetSetting<bool>(LmsCompanySettingNames.EnableSetUserRole, true),
@@ -214,6 +221,7 @@ namespace EdugameCloud.Lti.DTO
                         OfficeHourLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelOfficeHour) ?? "Office Hours",
                         StudyGroupLabel = value.GetSetting<string>(LmsCompanySettingNames.LabelStudyGroup) ?? "Study Groups",
                         SeminarLabel = value.GetSetting<string>(LmsCompanySettingNames.SeminarsLabel) ?? "Seminar Rooms",
+                        VirtualClassroom = value.GetSetting<string>(LmsCompanySettingNames.VirtualClassroomsLabel) ?? "Virtual Classrooms",
                     },
 
                     Telephony = new TelephonyDto
