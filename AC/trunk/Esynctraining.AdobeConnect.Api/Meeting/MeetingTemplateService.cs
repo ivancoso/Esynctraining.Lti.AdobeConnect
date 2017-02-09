@@ -56,9 +56,14 @@ namespace Esynctraining.AdobeConnect.Api.Meeting
         private IEnumerable<TemplateDto> GetShortcutContentsFromApi(IAdobeConnectProxy api, string shortcut)
         {
             ScoContentCollectionResult templates = api.GetContentsByType(shortcut);
-            if (!templates.Success || templates.Values == null)
+            if (!templates.Success)
             {
                 _logger.ErrorFormat("get {0}. AC error. {1}.", shortcut, templates.Status.GetErrorInfo());
+                return Enumerable.Empty<TemplateDto>();
+            }
+            if (templates.Values == null)
+            {
+                _logger.ErrorFormat("get {0}. Shortcut does not exist or Values is null", shortcut);
                 return Enumerable.Empty<TemplateDto>();
             }
 
