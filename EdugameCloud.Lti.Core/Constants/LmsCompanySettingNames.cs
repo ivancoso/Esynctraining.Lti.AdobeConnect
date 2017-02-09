@@ -29,8 +29,8 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string ShowAudioProfile = "ShowAudioProfile";
         public const string AudioProfileUnique = "AudioProfileUnique";
 
-        public const string SeminarsEnable = "SeminarsEnable";
-        public const string SeminarsLabel = "SeminarsLabel";
+        public const string SeminarsEnable = nameof(SeminarsEnable);
+        public const string SeminarsLabel = nameof(SeminarsLabel);
 
         public const string EnableAuditGuestEntry = "EnableAuditGuestEntry";
         public const string UseSakaiEvents = "UseSakaiEvents";
@@ -42,6 +42,9 @@ namespace EdugameCloud.Lti.Core.Constants
         public const string MoodleQuizServiceToken = nameof(MoodleQuizServiceToken);
         public const string CanStudentCreateStudyGroup = nameof(CanStudentCreateStudyGroup);
         public const string EnableMeetingSessions = nameof(EnableMeetingSessions);
+
+        public const string EnableVirtualClassrooms = nameof(EnableVirtualClassrooms);
+        public const string VirtualClassroomsLabel = nameof(VirtualClassroomsLabel);
 
         public static class Telephony
         {
