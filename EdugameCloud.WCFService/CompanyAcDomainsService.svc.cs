@@ -60,6 +60,15 @@ namespace EdugameCloud.WCFService
 
         public ACDomainDTO Save(ACDomainDTO acDomain)
         {
+            if (acDomain.isDefault == true)
+            {
+                var defaultDomain = CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault(x => x.IsDefault);
+                if (defaultDomain != null)
+                {
+                    defaultDomain.IsDefault = false;
+                    CompanyAcServerModel.RegisterSave(defaultDomain);
+                }
+            }
             var companyAcServer = new CompanyAcServer()
             {
                 Company = new Company() {Id=acDomain.companyId},

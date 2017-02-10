@@ -57,7 +57,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             model.States = states.Select(x => new SelectListItem()
             {
                 Value = x.stateCode,
-                Text = x.stateCode
+                Text = x.stateName
             }).Concat(new List<SelectListItem>()
             {
                 new SelectListItem()
@@ -87,7 +87,7 @@ namespace EdugameCloud.ACEvents.Web.Controllers
             var lookupWebService = new edugamecloud.com.LookupService();
             _logger.Info("lookup url is "+lookupWebService.Url);
             var schools = lookupWebService.GetSchools().Where(x => x.State.stateCode == stateCode);
-            var stateSchools = schools;
+            var stateSchools = schools.OrderBy(x => x.AccountName);
             return Json(stateSchools, JsonRequestBehavior.AllowGet);
         }
 
