@@ -7,7 +7,7 @@
     /// <summary>
     /// The string extensions.
     /// </summary>
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         /// <summary>
         /// The date time xml format.

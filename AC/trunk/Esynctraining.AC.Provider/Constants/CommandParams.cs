@@ -3,7 +3,7 @@
     /// <summary>
     /// Adobe Connect API command parameters formatting strings.
     /// </summary>
-    internal static class CommandParams
+    public static class CommandParams
     {
 
         /// <summary>
