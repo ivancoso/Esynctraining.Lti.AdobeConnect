@@ -2,50 +2,44 @@
 {
     using Esynctraining.AC.Provider.Entities;
 
-    /// <summary>
-    /// The sco info result.
-    /// </summary>
     public class ScoInfoResult : ResultBase
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ScoInfoResult"/> class.
-        /// </summary>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        public ScoInfoResult(StatusInfo status) : base(status)
+        public ScoInfo ScoInfo { get; set; }
+
+        public override bool Success
         {
+            get { return base.Success && ScoInfo != null; }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ScoInfoResult"/> class.
-        /// </summary>
-        /// <param name="status">
-        /// The status.
-        /// </param>
-        /// <param name="scoInfo">
-        /// The sco Info.
-        /// </param>
+
+        public ScoInfoResult(StatusInfo status) : base(status) { }
+
         public ScoInfoResult(StatusInfo status, ScoInfo scoInfo)
             : base(status)
         {
-            this.ScoInfo = scoInfo;
+            ScoInfo = scoInfo;
         }
 
-        /// <summary>
-        /// Gets or sets the sco info.
-        /// </summary>
-        public ScoInfo ScoInfo { get; set; }
+    }
+    
+    public class ScoInfoByUrlResult : ResultBase
+    {
+        public ScoInfoByUrl ScoInfo { get; set; }
 
-        /// <summary>
-        /// Gets a value indicating whether success.
-        /// </summary>
         public override bool Success
         {
-            get
-            {
-                return base.Success && this.ScoInfo != null;
-            }
+            get { return base.Success && ScoInfo != null; }
         }
+
+
+        public ScoInfoByUrlResult(StatusInfo status) : base(status) { }
+
+        public ScoInfoByUrlResult(StatusInfo status, ScoInfoByUrl scoInfo)
+            : base(status)
+        {
+            ScoInfo = scoInfo;
+        }
+
     }
+
 }

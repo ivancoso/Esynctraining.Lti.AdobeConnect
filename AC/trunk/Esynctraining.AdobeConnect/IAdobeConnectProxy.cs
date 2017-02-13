@@ -76,6 +76,9 @@ namespace Esynctraining.AdobeConnect
 
 
         ScoInfoResult GetScoByUrl(string scoUrl);
+
+        ScoInfoByUrlResult GetScoByUrl2(string scoUrl);
+
         ScoContentResult GetScoContent(string scoId);
 
         ScoContentCollectionResult GetScoExpandedContent(string scoId);

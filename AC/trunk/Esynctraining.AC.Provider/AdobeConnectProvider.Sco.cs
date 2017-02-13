@@ -104,6 +104,23 @@
                 : new ScoInfoResult(status);
         }
 
+        public ScoInfoByUrlResult GetScoByUrl2(string scoUrl)
+        {
+            if (string.IsNullOrWhiteSpace(scoUrl))
+                throw new ArgumentException("Non-empty value expected", nameof(scoUrl));
+
+            // act: "sco-by-url"
+            StatusInfo status;
+
+            var pathId = scoUrl.Split(new[] { '\\', '/' }, StringSplitOptions.RemoveEmptyEntries).LastOrDefault();
+            var urlPath = string.Format("/{0}/", pathId);
+            var doc = this.requestProcessor.Process(Commands.Sco.ByUrl, string.Format(CommandParams.UrlPath, urlPath), out status);
+
+            return ResponseIsOk(doc, status)
+                ? new ScoInfoByUrlResult(status, ScoInfoByUrlParser.Parse(doc.SelectSingleNode("/results")))
+                : new ScoInfoByUrlResult(status);
+        }
+
         /// <summary>
         /// The get contents by SCO id.
         /// </summary>

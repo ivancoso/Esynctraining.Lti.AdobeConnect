@@ -480,6 +480,11 @@ namespace Esynctraining.AdobeConnect
             return Execute(() => { return _provider.GetScoByUrl(scoUrl); }, scoUrl, scoUrl, true);
         }
 
+        public ScoInfoByUrlResult GetScoByUrl2(string scoUrl)
+        {
+            return Execute(() => { return _provider.GetScoByUrl2(scoUrl); }, scoUrl);
+        }
+
         public ScoContentResult GetScoContent(string scoId)
         {
             if (string.IsNullOrWhiteSpace(scoId))

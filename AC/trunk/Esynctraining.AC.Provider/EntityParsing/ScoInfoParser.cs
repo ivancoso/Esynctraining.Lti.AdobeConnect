@@ -22,31 +22,40 @@
                 return null;
             }
 
-            return new ScoInfo
+            var item = new ScoInfo();
+            Parse(xml, item);
+            return item;
+        }
+
+        public static void Parse(XmlNode xml, ScoInfo info)
+        {
+            if (xml == null || xml.Attributes == null)
             {
-                AccountId = xml.SelectAttributeValue("account-id"),
-                ScoId = xml.SelectAttributeValue("sco-id"),
-                FolderId = xml.SelectAttributeValue("folder-id"),
-                Icon = xml.SelectAttributeValue("icon"),
-                SourceScoId = xml.SelectAttributeValue("source-sco-id"),
-                Language = xml.SelectAttributeValue("lang"),
-                Type = xml.ParseAttributeEnum("type", ScoType.not_set),
-                BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime)),
-                EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime)),
-                DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now),
-                DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now),
-                Name = xml.SelectSingleNodeValue("name/text()"),
-                Description = xml.SelectSingleNodeValue("description/text()"),
-                UrlPath = xml.SelectSingleNodeValue("url-path/text()"),
-                PassingScore = xml.ParseNodeInt("passing-score/text()"),
-                Duration = xml.ParseNodeInt("duration/text()"),
-                SectionCount = xml.ParseNodeInt("section-count/text()"),
-                ExternalUrl = xml.SelectSingleNodeValue("external-url/text()"),
-                MaxScore = xml.ParseNodeInt("max-score/text()"),
-                TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()"),
-                ScoTag = xml.SelectSingleNodeValue("sco-tag/text()"),
-                MeetingPasscode = xml.SelectSingleNodeValue("meeting-passcode/text()")
-            };
+                return;
+            }
+
+            info.AccountId = xml.SelectAttributeValue("account-id");
+            info.ScoId = xml.SelectAttributeValue("sco-id");
+            info.FolderId = xml.SelectAttributeValue("folder-id");
+            info.Icon = xml.SelectAttributeValue("icon");
+            info.SourceScoId = xml.SelectAttributeValue("source-sco-id");
+            info.Language = xml.SelectAttributeValue("lang");
+            info.Type = xml.ParseAttributeEnum("type", ScoType.not_set);
+            info.BeginDate = xml.ParseNodeDateTime("date-begin/text()", default(DateTime));
+            info.EndDate = xml.ParseNodeDateTime("date-end/text()", default(DateTime));
+            info.DateCreated = xml.ParseNodeDateTime("date-created/text()", DateTime.Now);
+            info.DateModified = xml.ParseNodeDateTime("date-modified/text()", DateTime.Now);
+            info.Name = xml.SelectSingleNodeValue("name/text()");
+            info.Description = xml.SelectSingleNodeValue("description/text()");
+            info.UrlPath = xml.SelectSingleNodeValue("url-path/text()");
+            info.PassingScore = xml.ParseNodeInt("passing-score/text()");
+            info.Duration = xml.ParseNodeInt("duration/text()");
+            info.SectionCount = xml.ParseNodeInt("section-count/text()");
+            info.ExternalUrl = xml.SelectSingleNodeValue("external-url/text()");
+            info.MaxScore = xml.ParseNodeInt("max-score/text()");
+            info.TelephonyProfile = xml.SelectSingleNodeValue("telephony-profile/text()");
+            info.ScoTag = xml.SelectSingleNodeValue("sco-tag/text()");
+            info.MeetingPasscode = xml.SelectSingleNodeValue("meeting-passcode/text()");
         }
 
     }
