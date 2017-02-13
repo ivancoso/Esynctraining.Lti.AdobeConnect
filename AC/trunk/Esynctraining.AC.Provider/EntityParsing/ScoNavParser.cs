@@ -21,7 +21,7 @@ namespace Esynctraining.AC.Provider.EntityParsing
                     ScoId = xml.SelectAttributeValue("sco-id"),
                     Type = xml.SelectAttributeValue("type"),
                     Icon = xml.SelectAttributeValue("icon"),
-                    Depth = xml.ParseAttributeInt("display-seq"),
+                    Depth = xml.ParseAttributeInt("depth"),
                     Name = xml.SelectSingleNodeValue("name/text()")
                 };
             }

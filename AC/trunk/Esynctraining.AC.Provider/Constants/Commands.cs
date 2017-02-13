@@ -259,6 +259,8 @@
 
             /// <summary>
             /// Lists meeting recordings (archived meetings).
+            /// https://helpx.adobe.com/adobe-connect/webservices/list-recordings.html
+            ///  Note: Adobe Connect has discontinued this method of MP4 conversion and this API does not work as expected.
             /// </summary>
             public const string List = "list-recordings";
 
