@@ -34,7 +34,7 @@ namespace EdugameCloud.WCFService
         {
             var items = CompanyAcServerModel.GetAllByCompany(companyId).Select(x => new ACDomainDTO()
             {
-                password = x.Password,
+                //password = x.Password,
                 isDefault = x.IsDefault,
                 user = x.Username,
                 path = x.AcServer,
@@ -74,7 +74,7 @@ namespace EdugameCloud.WCFService
             {
                 Company = new Company() {Id=acDomain.companyId},
                 IsDefault = acDomain.isDefault,
-                Password = acDomain.password,
+                //Password = acDomain.password,
                 Username = acDomain.user,
                 AcServer = acDomain.path,
                 Id = acDomain.domainId
