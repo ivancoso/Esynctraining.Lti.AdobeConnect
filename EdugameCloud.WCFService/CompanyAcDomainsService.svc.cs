@@ -83,15 +83,24 @@ namespace EdugameCloud.WCFService
                 }
             }
             var company = CompanyModel.GetOneById(acDomain.companyId).Value;
-            var companyAcServer = new CompanyAcServer()
+            CompanyAcServer companyAcServer;
+            if (acDomain.domainId != 0)
             {
-                Company = company,
-                IsDefault = acDomain.isDefault,
-                //Password = acDomain.password,
-                Username = acDomain.user,
-                AcServer = acDomain.path,
-                Id = acDomain.domainId
-            };
+                companyAcServer = CompanyAcServerModel.GetOneById(acDomain.domainId).Value;
+            }
+            else
+            {
+                companyAcServer = new CompanyAcServer()
+                {
+                    Company = company,
+                    IsDefault = acDomain.isDefault,
+                    //Password = acDomain.password,
+                    Username = acDomain.user,
+                    AcServer = acDomain.path,
+                    Id = acDomain.domainId
+                };
+            }
+            
             if (acDomain.password != null)
                 companyAcServer.Password = acDomain.password;
             CompanyAcServerModel.RegisterSave(companyAcServer, true);
