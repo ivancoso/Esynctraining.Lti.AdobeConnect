@@ -65,7 +65,12 @@ namespace EdugameCloud.WCFService
         public int DeleteById(int id)
         {
             var companyAcServer = CompanyAcServerModel.GetOneById(id).Value;
-            CompanyAcServerModel.RegisterDelete(companyAcServer);
+            if (companyAcServer != null)
+                CompanyAcServerModel.RegisterDelete(companyAcServer);
+            else
+            {
+                CompanyAcServerModel.RegisterDelete(new CompanyAcServer() {Id = id});
+            }
             return id;
         }
 
