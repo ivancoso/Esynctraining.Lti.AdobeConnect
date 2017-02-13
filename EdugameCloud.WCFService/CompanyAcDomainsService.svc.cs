@@ -92,15 +92,14 @@ namespace EdugameCloud.WCFService
             {
                 companyAcServer = new CompanyAcServer()
                 {
-                    Company = company,
-                    IsDefault = acDomain.isDefault,
-                    //Password = acDomain.password,
-                    Username = acDomain.user,
-                    AcServer = acDomain.path,
-                    Id = acDomain.domainId
+
                 };
             }
-            
+            companyAcServer.Company = company;
+            companyAcServer.IsDefault = acDomain.isDefault;
+            companyAcServer.Username = acDomain.user;
+            companyAcServer.AcServer = acDomain.path;
+
             if (acDomain.password != null)
                 companyAcServer.Password = acDomain.password;
             CompanyAcServerModel.RegisterSave(companyAcServer, true);
