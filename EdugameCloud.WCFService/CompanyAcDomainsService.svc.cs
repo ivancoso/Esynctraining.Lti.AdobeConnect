@@ -38,7 +38,8 @@ namespace EdugameCloud.WCFService
                 isDefault = x.IsDefault,
                 user = x.Username,
                 path = x.AcServer,
-                companyId = x.Company.Id
+                companyId = x.Company.Id,
+                domainId = x.Id
             });
             //var result = new List<CompanyAcDomainDTO>()
             //{
