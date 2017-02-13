@@ -29,6 +29,14 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<CompanyAcServerModel>(); }
         }
 
+        /// <summary>
+        /// Gets the company model.
+        /// </summary>
+        private CompanyModel CompanyModel
+        {
+            get { return IoC.Resolve<CompanyModel>(); }
+        }
+
 
         public ACDomainDTO[] GetAllByCompany(int companyId)
         {
@@ -56,6 +64,10 @@ namespace EdugameCloud.WCFService
 
         public int DeleteById(int id)
         {
+            CompanyAcServerModel.RegisterDelete(new CompanyAcServer()
+            {
+                Id = id
+            });
             return id;
         }
 
@@ -67,19 +79,22 @@ namespace EdugameCloud.WCFService
                 if (defaultDomain != null)
                 {
                     defaultDomain.IsDefault = false;
-                    CompanyAcServerModel.RegisterSave(defaultDomain);
+                    CompanyAcServerModel.RegisterSave(defaultDomain, true);
                 }
             }
+            var company = CompanyModel.GetOneById(acDomain.companyId).Value;
             var companyAcServer = new CompanyAcServer()
             {
-                Company = new Company() {Id=acDomain.companyId},
+                Company = company,
                 IsDefault = acDomain.isDefault,
                 //Password = acDomain.password,
                 Username = acDomain.user,
                 AcServer = acDomain.path,
                 Id = acDomain.domainId
             };
-            CompanyAcServerModel.RegisterSave(companyAcServer);
+            if (acDomain.password != null)
+                companyAcServer.Password = acDomain.password;
+            CompanyAcServerModel.RegisterSave(companyAcServer, true);
             return acDomain;
         }
     }
