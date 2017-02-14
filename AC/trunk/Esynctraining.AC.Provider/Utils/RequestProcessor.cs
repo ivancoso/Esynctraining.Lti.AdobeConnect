@@ -222,7 +222,7 @@
             UploadScoInfo uploadData,
             out StatusInfo status)
         {
-            status = new StatusInfo { Code = StatusCodes.not_set };
+            status = new StatusInfo();
 
             if (parameters == null)
             {
@@ -250,6 +250,7 @@
             }
             catch (Exception ex)
             {
+                status.UnderlyingExceptionInfo = ex;
                 TraceTool.TraceException(ex);
                 return null;
             }

@@ -717,6 +717,7 @@
             }
             catch (Exception ex)
             {
+                status.UnderlyingExceptionInfo = ex;
                 TraceTool.TraceException(ex);
             }
 
