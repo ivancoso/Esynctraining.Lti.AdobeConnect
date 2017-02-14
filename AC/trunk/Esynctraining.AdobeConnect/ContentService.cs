@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AC.Provider.Utils;
 using Esynctraining.Core.Logging;
 
 namespace Esynctraining.AdobeConnect
@@ -44,7 +45,7 @@ namespace Esynctraining.AdobeConnect
                 throw new ArgumentNullException(nameof(typesToReturn));
 
             // TRICK: to change 'my_meetings' -> 'my-meetings'
-            IEnumerable<string> typeName = typesToReturn.Select(x => x.ToString().Replace("_", "-"));
+            IEnumerable<string> typeName = typesToReturn.Select(x => x.GetACEnum());
 
             var shortcuts = _provider.GetShortcuts();
             return shortcuts.Where(s => typeName.Contains(s.Type));

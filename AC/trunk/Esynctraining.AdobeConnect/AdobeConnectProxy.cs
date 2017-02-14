@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Esynctraining.Core.Logging;
 using Esynctraining.AC.Provider;
+using Esynctraining.AC.Provider.Constants;
 using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
+using Esynctraining.AC.Provider.Extensions;
 using Esynctraining.Core.Extensions;
 
 namespace Esynctraining.AdobeConnect
@@ -386,8 +388,36 @@ namespace Esynctraining.AdobeConnect
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
-            return Execute(() => { return _provider.GetContentsByScoId(scoId); },
+            return Execute(() => { return _provider.GetContents(scoId); },
                 scoId);
+        }
+
+        public ScoContentCollectionResult GetContents(string scoId, PageOptions pageOptions, SortOptions sortOptions = null, string filter = null)
+        {
+            if (string.IsNullOrWhiteSpace(scoId))
+                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (pageOptions == null)
+                throw new ArgumentNullException(nameof(pageOptions), "Page parameters are required. Use another method to get content by scoId.");
+            return Execute(() =>
+            {
+                List<string> filters = new List<string>();
+                if (!string.IsNullOrEmpty(filter))
+                    filters.Add(string.Format(CommandParams.FilterNameLike, filter));
+                if (sortOptions == null)
+                {
+                    sortOptions = new SortOptions
+                    {
+                        SortField = "name",
+                        SortOrder = SortOrder.Ascending
+                    };
+                }
+                filters.Add(string.Empty.AppendSortingIfNeeded(sortOptions.SortField, sortOptions.SortOrder));
+
+                var paging = string.Empty.AppendPagingIfNeeded(pageOptions.StartIndex, pageOptions.Count);
+                filters.Add(paging);
+
+                return _provider.GetContents(scoId, string.Join("&", filters.Where(x => !string.IsNullOrEmpty(x))));
+            });
         }
 
         public ScoContentCollectionResult GetContentsByScoIdSourceScoId(string scoId, string filterSourceScoId)

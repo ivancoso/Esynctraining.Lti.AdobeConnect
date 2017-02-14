@@ -45,6 +45,8 @@ namespace Esynctraining.AdobeConnect
 
         ScoContentCollectionResult GetContentsByScoId(string scoId);
 
+        ScoContentCollectionResult GetContents(string scoId, PageOptions pageOptions, SortOptions sortOptions = null,
+            string filter = null);
         ScoContentCollectionResult GetContentsByScoIdSourceScoId(string scoId, string filterSourceScoId);
 
         ScoContentCollectionResult GetContentsByType(string type);
