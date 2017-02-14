@@ -123,7 +123,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
         //    }
         //}
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetFolderContent(string folderScoId, IDtoProcessor<TDto> processor)
+        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetFolderContent(string folderScoId, IDtoProcessor<TDto> processor, PageOptions pageOptions = null, SortOptions sortOptions = null, string filter = null)
         {
             if (string.IsNullOrWhiteSpace(folderScoId))
                 throw new ArgumentException("Non-empty value expected", nameof(folderScoId));
@@ -132,7 +132,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
 
             try
             {
-                var result = _contentService.GetFolderContent(folderScoId)
+                var result = _contentService.GetFolderContent(folderScoId, pageOptions, sortOptions, filter)
                     .Select(x => _mapper.Map(x))
                     .Select(y => processor.Process(y));
 
