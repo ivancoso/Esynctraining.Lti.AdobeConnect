@@ -110,6 +110,17 @@ namespace Esynctraining.AdobeConnect
             return result.Values;
         }
 
+        public IEnumerable<ScoContent> GetFolderContent(string folderScoId, PageOptions pageOptions,
+            SortOptions sortOptions, string filter)
+        {
+            if (string.IsNullOrWhiteSpace(folderScoId))
+                throw new ArgumentException("Folder's sco-id should have value", nameof(folderScoId));
+
+            ScoContentCollectionResult result = _provider.GetContents(folderScoId, pageOptions, sortOptions, filter);
+
+            return result.Values;
+        }
+
         public IEnumerable<ScoContent> GetFolderContent(string folderScoId, string sourceScoId)
         {
             if (string.IsNullOrWhiteSpace(folderScoId))

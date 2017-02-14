@@ -392,12 +392,11 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
-        public ScoContentCollectionResult GetContents(string scoId, PageOptions pageOptions, SortOptions sortOptions = null, string filter = null)
+        public ScoContentCollectionResult GetContents(string scoId, PageOptions pageOptions = null, SortOptions sortOptions = null, string filter = null)
         {
             if (string.IsNullOrWhiteSpace(scoId))
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
-            if (pageOptions == null)
-                throw new ArgumentNullException(nameof(pageOptions), "Page parameters are required. Use another method to get content by scoId.");
+
             return Execute(() =>
             {
                 List<string> filters = new List<string>();
@@ -413,8 +412,11 @@ namespace Esynctraining.AdobeConnect
                 }
                 filters.Add(string.Empty.AppendSortingIfNeeded(sortOptions.SortField, sortOptions.SortOrder));
 
-                var paging = string.Empty.AppendPagingIfNeeded(pageOptions.StartIndex, pageOptions.Count);
-                filters.Add(paging);
+                if (pageOptions != null)
+                {
+                    var paging = string.Empty.AppendPagingIfNeeded(pageOptions.StartIndex, pageOptions.Count);
+                    filters.Add(paging);
+                }
 
                 return _provider.GetContents(scoId, string.Join("&", filters.Where(x => !string.IsNullOrEmpty(x))));
             });
