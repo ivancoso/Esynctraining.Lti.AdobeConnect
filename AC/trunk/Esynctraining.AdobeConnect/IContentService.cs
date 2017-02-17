@@ -17,7 +17,7 @@ namespace Esynctraining.AdobeConnect
         IEnumerable<ScoContent> GetSharedContent();
 
         IEnumerable<ScoContent> GetFolderContent(string folderScoId);
-        IEnumerable<ScoContent> GetFolderContent(string folderScoId, PageOptions pageOptions, SortOptions sortOptions, string filter);
+        IEnumerable<ScoContent> GetFolderContent(ScoContentsFilter filter);
 
         IEnumerable<ScoContent> GetFolderContent(string folderScoId, string sourceScoId);
 

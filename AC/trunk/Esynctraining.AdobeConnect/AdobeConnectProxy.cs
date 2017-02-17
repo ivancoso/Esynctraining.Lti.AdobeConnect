@@ -8,6 +8,7 @@ using Esynctraining.AC.Provider.DataObjects;
 using Esynctraining.AC.Provider.DataObjects.Results;
 using Esynctraining.AC.Provider.Entities;
 using Esynctraining.AC.Provider.Extensions;
+using Esynctraining.AC.Provider.Utils;
 using Esynctraining.Core.Extensions;
 
 namespace Esynctraining.AdobeConnect
@@ -392,33 +393,38 @@ namespace Esynctraining.AdobeConnect
                 scoId);
         }
 
-        public ScoContentCollectionResult GetContents(string scoId, PageOptions pageOptions = null, SortOptions sortOptions = null, string filter = null)
+        public ScoContentCollectionResult GetContents(ScoContentsFilter filter)
         {
-            if (string.IsNullOrWhiteSpace(scoId))
-                throw new ArgumentException("Non-empty value expected", nameof(scoId));
+            if (filter == null)
+                throw new ArgumentNullException(nameof(filter));
+            if (string.IsNullOrEmpty(filter.ScoId))
+                throw new ArgumentException("Folder's sco-id should have value", nameof(filter.ScoId));
+
 
             return Execute(() =>
             {
                 List<string> filters = new List<string>();
-                if (!string.IsNullOrEmpty(filter))
-                    filters.Add(string.Format(CommandParams.FilterNameLike, filter));
-                if (sortOptions == null)
-                {
-                    sortOptions = new SortOptions
-                    {
-                        SortField = "name",
-                        SortOrder = SortOrder.Ascending
-                    };
-                }
-                filters.Add(string.Empty.AppendSortingIfNeeded(sortOptions.SortField, sortOptions.SortOrder));
 
-                if (pageOptions != null)
+                if (filter.Types != null)
                 {
-                    var paging = string.Empty.AppendPagingIfNeeded(pageOptions.StartIndex, pageOptions.Count);
+                    filters.AddRange(filter.Types.Select(x => string.Format("filter-type={0}", x.GetACEnum()))); //todo: CommandParams.FilterType
+                }
+
+                if (!string.IsNullOrEmpty(filter.NameLikeFilter))
+                    filters.Add(string.Format(CommandParams.FilterNameLike, filter.NameLikeFilter));
+
+                if (filter.SortOptions != null)
+                {
+                    filters.Add(string.Empty.AppendSortingIfNeeded(filter.SortOptions.SortField, filter.SortOptions.SortOrder));
+                }
+
+                if (filter.PageOptions != null)
+                {
+                    var paging = string.Empty.AppendPagingIfNeeded(filter.PageOptions.StartIndex, filter.PageOptions.Count);
                     filters.Add(paging);
                 }
 
-                return _provider.GetContents(scoId, string.Join("&", filters.Where(x => !string.IsNullOrEmpty(x))));
+                return _provider.GetContents(filter.ScoId, string.Join("&", filters.Where(x => !string.IsNullOrEmpty(x))));
             });
         }
 
