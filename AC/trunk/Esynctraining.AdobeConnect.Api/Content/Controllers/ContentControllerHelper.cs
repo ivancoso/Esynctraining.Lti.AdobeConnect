@@ -123,7 +123,7 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
         //    }
         //}
 
-        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetFolderContent(string folderScoId, IDtoProcessor<TDto> processor, PageOptions pageOptions = null, SortOptions sortOptions = null, string filter = null)
+        public async Task<OperationResultWithData<IEnumerable<TDto>>> GetFolderContent(string folderScoId, IDtoProcessor<TDto> processor, PageOptions pageOptions = null, SortOptions sortOptions = null, string search = null, IEnumerable<string> types = null)
         {
             if (string.IsNullOrWhiteSpace(folderScoId))
                 throw new ArgumentException("Non-empty value expected", nameof(folderScoId));
@@ -132,7 +132,15 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
 
             try
             {
-                var result = _contentService.GetFolderContent(folderScoId, pageOptions, sortOptions, filter)
+                var filter = new ScoContentsFilter
+                {
+                    ScoId = folderScoId,
+                    PageOptions  = pageOptions,
+                    SortOptions = sortOptions,
+                    NameLikeFilter = search,
+                    Types = GetScoTypesByStrings(types)
+                };
+                var result = _contentService.GetFolderContent(filter)
                     .Select(x => _mapper.Map(x))
                     .Select(y => processor.Process(y));
 
@@ -153,6 +161,23 @@ namespace Esynctraining.AdobeConnect.Api.Content.Controllers
                 string errorMessage = GetOutputErrorMessage("FolderContent", ex);
                 return OperationResultWithData<IEnumerable<TDto>>.Error(errorMessage);
             }
+        }
+
+        private IEnumerable<ScoType> GetScoTypesByStrings(IEnumerable<string> types)
+        {
+            if(types == null)
+                return null;
+            List<ScoType> result = new List<ScoType>();
+            foreach (var stringType in types)
+            {
+                ScoType type;
+                if (Enum.TryParse(stringType, true, out type))
+                {
+                    result.Add(type);
+                }
+            }
+
+            return result;
         }
 
         public OperationResultWithData<string> GetDownloadAsZipLink(string scoId, string breezeToken)

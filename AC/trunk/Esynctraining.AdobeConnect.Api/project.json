@@ -1,5 +1,5 @@
 ﻿{
-	"version": "1.0.0.10",
+	"version": "1.0.0.11",
 
 	"title": "Esynctraining.Provider.Api",
 	"description": "Provides Adobe Connect high-level DTO and services",
@@ -10,13 +10,13 @@
 		"requireLicenseAcceptance": false,
 		"tags": [ "AC", "AdobeConnect" ],
 		"owners": [ "eSyncTraining.com" ],
-		"releaseNotes": ""
+		"releaseNotes": "adapted ContentHelper to sco-content filter"
 	},
 
 
   "dependencies": {
-    "Esynctraining.AC.Provider": "1.0.2.17",
-    "Esynctraining.AdobeConnect": "1.0.1.13"
+    "Esynctraining.AC.Provider": "1.0.2.19",
+    "Esynctraining.AdobeConnect": "1.0.1.15"
   },
 
 	"frameworks": {
