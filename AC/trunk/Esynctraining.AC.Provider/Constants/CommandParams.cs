@@ -130,6 +130,8 @@
 
         public const string FilterIcon = "filter-icon={0}";
 
+        public const string FilterType = "filter-type={0}";
+
         public const string FilterNameLike = "filter-like-name={0}";
 
         public const string ScoNameAndType = "sco-id={0}&filter-name={1}&filter-type={2}";

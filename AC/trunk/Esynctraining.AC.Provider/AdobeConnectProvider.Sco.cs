@@ -141,12 +141,12 @@
                 throw new ArgumentException("Non-empty value expected", nameof(scoId));
 
             StatusInfo status;
+            // TRICK: http://www.connectusers.com/forums/topic/8827/adobe-connect-8-web-services-bytecount-missing-scocontents/
             var apiParameters = string.Format(CommandParams.ScoId + "&counters=true", scoId);
             if (!string.IsNullOrEmpty(filter))
             {
-                apiParameters += filter;
+                apiParameters += $"&{filter.TrimStart('&')}";
             }
-            // TRICK: http://www.connectusers.com/forums/topic/8827/adobe-connect-8-web-services-bytecount-missing-scocontents/
             var scos = this.requestProcessor.Process(Commands.Sco.Contents, apiParameters, out status);
 
             return ResponseIsOk(scos, status)
