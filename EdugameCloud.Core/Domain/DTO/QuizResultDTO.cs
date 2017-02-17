@@ -138,6 +138,13 @@
         [DataMember]
         public bool isCompleted { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether is completed.
+        /// </summary>
+        [DataMember]
+        public int inFocusIndex { get; set; }
+
+
         #endregion
     }
 }

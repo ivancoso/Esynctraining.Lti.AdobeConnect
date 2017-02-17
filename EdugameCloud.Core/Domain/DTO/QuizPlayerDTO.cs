@@ -96,6 +96,12 @@
         [DataMember]
         public double startTime { get; set; }
 
+        /// <summary>
+        /// Gets or sets of a flag isParticipated. Formula - not less than 95% for each parameter of (inFocusIndex, maximizedIndex)
+        /// </summary>
+        [DataMember]
+        public bool isParticipated { get; set; }
+
         #endregion
 
     }
