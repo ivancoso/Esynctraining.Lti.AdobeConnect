@@ -18,7 +18,7 @@ namespace Esynctraining.AdobeConnect
 
             if (value.UnderlyingExceptionInfo != null)
             {
-                msg.AppendFormat("Status.UnderlyingExceptionInfo: {0}.", value.UnderlyingExceptionInfo.Message);
+                msg.AppendFormat("Status.UnderlyingExceptionInfo: {0}.", value.UnderlyingExceptionInfo.ToString());
             }
 
             if (!string.IsNullOrEmpty(value.InvalidField))

@@ -1,5 +1,5 @@
 {
-	"version": "1.0.1.13",
+	"version": "1.0.1.14",
 	"title": "Esynctraining.AdobeConnect",
 	"description": "Esynctraining AC DTO, Proxies, Services and Wrappers",
 	"copyright": "Copyright © 2016-2017 eSyncTraining.com",
@@ -9,7 +9,7 @@
 		"requireLicenseAcceptance": false,
 		"tags": [ "AC", "AdobeConnect" ],
 		"owners": [ "eSyncTraining.com" ],
-		"releaseNotes": "paging, sorting, search for sco-contents"
+		"releaseNotes": "StatusInfo GetErrorInfo - output all exception info, not only message"
 	},
 
 	"buildOptions": {
