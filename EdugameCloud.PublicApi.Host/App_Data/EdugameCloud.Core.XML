@@ -7672,6 +7672,11 @@
             Gets or sets the start time. (Unix Timestamp value)
             </summary>
         </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuizPlayerDTO.isParticipated">
+            <summary>
+            Gets or sets of a flag isParticipated. Formula - not less than 95% for each parameter of (inFocusIndex, maximizedIndex)
+            </summary>
+        </member>
         <member name="T:EdugameCloud.Core.Domain.DTO.QuizResultDataDTO">
             <summary>
             The quiz result data DTO.
@@ -9684,6 +9689,11 @@
             </summary>
         </member>
         <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.isCompleted">
+            <summary>
+            Gets or sets a value indicating whether is completed.
+            </summary>
+        </member>
+        <member name="P:EdugameCloud.Core.Domain.DTO.QuizResultDTO.inFocusIndex">
             <summary>
             Gets or sets a value indicating whether is completed.
             </summary>

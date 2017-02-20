@@ -65,21 +65,69 @@ namespace EdugameCloud.WCFService
         public int DeleteById(int id)
         {
             var companyAcServer = CompanyAcServerModel.GetOneById(id).Value;
+
+            var companyId = 0;
             if (companyAcServer != null)
-                CompanyAcServerModel.RegisterDelete(companyAcServer);
-            
+            {
+                companyId = companyAcServer.Company.Id;
+                CompanyAcServerModel.RegisterDelete(companyAcServer, true);
+            }
+
+            // if default is deleted - set first one as default
+            if (!CompanyAcServerModel.GetAllByCompany(companyId).Any(x => x.IsDefault))
+            {
+                var defaultDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault();
+                if (defaultDomain != null)
+                {
+                    defaultDomain.IsDefault = true;
+                    CompanyAcServerModel.RegisterSave(defaultDomain, true);
+                }
+            }
+           
             return id;
         }
 
         public ACDomainDTO Save(ACDomainDTO acDomain)
         {
-            if (acDomain.isDefault == true)
+            if (acDomain.isDefault)
             {
-                var defaultDomain = CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault(x => x.IsDefault);
+                var defaultDomain =
+                    CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault(x => x.IsDefault);
                 if (defaultDomain != null)
                 {
                     defaultDomain.IsDefault = false;
                     CompanyAcServerModel.RegisterSave(defaultDomain, true);
+                }
+            }
+            else
+            {
+                // for update
+                if (acDomain.domainId != 0)
+                {
+                    // you can't uncheck default if there is only one record
+                    if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() == 1)
+                        return acDomain;
+
+                    if (CompanyAcServerModel.GetAllByCompany(acDomain.companyId).Count() > 1)
+                    {
+                        var firstAcServer =
+                            CompanyAcServerModel.GetAllByCompany(acDomain.companyId)
+                                .FirstOrDefault(x => x.Id != acDomain.domainId);
+                        if (firstAcServer != null)
+                        {
+                            firstAcServer.IsDefault = true;
+                            CompanyAcServerModel.RegisterSave(firstAcServer, true);
+                        }
+                    }
+                }
+                else
+                {
+                    var existing = CompanyAcServerModel.GetAllByCompany(acDomain.companyId).FirstOrDefault();
+                    if (existing != null)
+                    {
+                        existing.IsDefault = true;
+                        CompanyAcServerModel.RegisterSave(existing, true);
+                    }
                 }
             }
             var company = CompanyModel.GetOneById(acDomain.companyId).Value;
