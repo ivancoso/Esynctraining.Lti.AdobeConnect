@@ -80,6 +80,7 @@
                 instance.DateCreated = DateTime.Now;
             }
 
+            instance.UseEventMapping = companyDto.useEventMapping;
             instance.CompanyName = companyDto.companyName;
             instance.Status = companyDto.isActive ? CompanyStatus.Active : CompanyStatus.Inactive;
             instance.DateModified = DateTime.Now;

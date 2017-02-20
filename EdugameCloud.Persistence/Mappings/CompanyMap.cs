@@ -19,6 +19,7 @@
             this.Map(x => x.CompanyName).Length(50).Not.Nullable();
             this.Map(x => x.Status).Not.Nullable();
             this.Map(x => x.DateCreated).Not.Nullable();
+            this.Map(x => x.UseEventMapping).Not.Nullable();
             this.Map(x => x.DateModified).Not.Nullable();
             this.References(x => x.Address).Nullable().Cascade.Delete();
             this.References(x => x.Theme).Nullable().Cascade.Delete();

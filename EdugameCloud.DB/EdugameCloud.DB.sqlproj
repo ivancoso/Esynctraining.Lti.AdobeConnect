@@ -209,6 +209,7 @@
     <Build Include="dbo\Tables\School.sql" />
     <Build Include="dbo\Tables\QuizQuestionResultAnswer.sql" />
     <None Include="Updates\20170207-DbUpdate-1-8-0.sql" />
+    <None Include="Updates\20170220-DbUpdate-1-8-0.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="DB-To-Schema.scmp" />

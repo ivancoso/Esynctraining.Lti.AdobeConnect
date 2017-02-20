@@ -25,6 +25,8 @@
         /// </summary>
         public virtual string CompanyName { get; set; }
 
+        public virtual bool UseEventMapping { get; set; }
+
         /// <summary>
         /// Gets or sets the date created.
         /// </summary>

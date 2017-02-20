@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CompanyAcDomainsService.svc" />
+    <Content Include="CompanyEventsService.svc" />
     <Content Include="FileStorage\Export\ReadMe.txt" />
     <Content Include="FileStorage\Import\ReadMe.txt" />
     <Content Include="FileStorage\Uploads\Placeholder.txt" />
@@ -242,6 +243,9 @@
     <Compile Include="CompanyAcDomainsService.svc.cs">
       <DependentUpon>CompanyAcDomainsService.svc</DependentUpon>
     </Compile>
+    <Compile Include="CompanyEventsService.svc.cs">
+      <DependentUpon>CompanyEventsService.svc</DependentUpon>
+    </Compile>
     <Compile Include="Contracts\IACSessionService.cs" />
     <Compile Include="Contracts\IAppletItemService.cs" />
     <Compile Include="Contracts\IAppletResultService.cs" />
@@ -298,6 +302,7 @@
     <Compile Include="ErrorHandling\ErrorHandlerBehavior.cs" />
     <Compile Include="ErrorHandling\ErrorServiceBehavior.cs" />
     <Compile Include="ErrorHandling\Log4NetErrorHandler.cs" />
+    <Compile Include="Contracts\ICompanyEventsService.cs" />
     <Compile Include="LmsService.svc.cs">
       <DependentUpon>LmsService.svc</DependentUpon>
     </Compile>

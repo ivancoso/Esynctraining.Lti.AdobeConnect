@@ -40,6 +40,7 @@
             
             this.primaryContactVO = c.PrimaryContact.Return(x => new UserDTO(x), null);
             this.companyName = c.CompanyName;
+            this.useEventMapping = c.UseEventMapping;
             this.isActive = c.Status == CompanyStatus.Active;
             this.dateCreated = c.DateCreated.ConvertToUnixTimestamp();
             this.dateModified = c.DateModified.ConvertToUnixTimestamp();
@@ -51,6 +52,12 @@
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets the address id.
+        /// </summary>
+        [DataMember]
+        public bool useEventMapping { get; set; }
 
         /// <summary>
         /// Gets or sets the address id.
