@@ -15,10 +15,15 @@ namespace EdugameCloud.Core.Domain.DTO
             CompanyAcDomainId = entity.CompanyAcDomain.Id;
         }
 
+        [DataMember]
         public int EventQuizMappingId { get; set; }
+        [DataMember]
         public int PreQuizId { get; set; }
+        [DataMember]
         public int PostQuizId { get; set; }
+        [DataMember]
         public int CompanyAcDomainId { get; set; }
+        [DataMember]
         public string AcEventScoId { get; set; }
 
     }
