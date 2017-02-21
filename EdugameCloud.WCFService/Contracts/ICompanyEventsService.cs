@@ -10,8 +10,8 @@ namespace EdugameCloud.WCFService.Contracts
     {
         [OperationContract]
         [FaultContract(typeof(Error))]
-        [WebGet(UriTemplate = "GetAllByCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
-        CompanyEventDTO[] GetAllByCompany(int companyId);
+        [WebGet(UriTemplate = "GetEventsByCompany?companyId={companyId}", ResponseFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Bare)]
+        CompanyEventDTO[] GetEventsByCompany(int companyId);
 
         [OperationContract]
         [FaultContract(typeof(Error))]

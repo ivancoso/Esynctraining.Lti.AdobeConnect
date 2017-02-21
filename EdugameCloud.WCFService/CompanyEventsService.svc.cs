@@ -51,7 +51,7 @@ namespace EdugameCloud.WCFService
             get { return IoC.Resolve<ILogger>(); }
         }
 
-        public CompanyEventDTO[] GetAllByCompany(int companyId)
+        public CompanyEventDTO[] GetEventsByCompany(int companyId)
         {
             var defaultAcDomain = CompanyAcServerModel.GetAllByCompany(companyId).FirstOrDefault(x => x.IsDefault);
             if (defaultAcDomain == null)
@@ -98,7 +98,9 @@ namespace EdugameCloud.WCFService
 
         public int DeleteById(int id)
         {
-            throw new NotImplementedException();
+            var item = CompanyEventQuizMappingModel.GetOneById(id).Value;
+            CompanyEventQuizMappingModel.RegisterDelete(item,true);
+            return id;
         }
 
         public CompanyQuizEventMappingDTO Save(CompanyQuizEventMappingDTO eventQuizMapping)
