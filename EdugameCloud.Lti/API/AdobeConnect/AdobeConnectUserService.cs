@@ -180,19 +180,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return UrlEncode(text, Encoding.UTF8);
         }
 
-        /// <summary>
-        /// The url encode.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <param name="encoding">
-        /// The encoding.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string UrlEncode(string text, Encoding encoding)
+        private static string UrlEncode(string text, Encoding encoding)
         {
             if (text == null)
             {
@@ -223,19 +211,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return UrlEncodeToBytes(text, Encoding.UTF8);
         }
 
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <param name="encoding">
-        /// The encoding.
-        /// </param>
-        /// <returns>
-        /// The bytes.
-        /// </returns>
-        public static byte[] UrlEncodeToBytes(string text, Encoding encoding)
+        private static byte[] UrlEncodeToBytes(string text, Encoding encoding)
         {
             if (text == null)
             {
@@ -252,44 +228,7 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return UrlEncodeToBytes(bytes, 0, bytes.Length);
         }
 
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="bytes">
-        /// The bytes.
-        /// </param>
-        /// <returns>
-        /// The encoded bytes.
-        /// </returns>
-        public static byte[] UrlEncodeToBytes(byte[] bytes)
-        {
-            if (bytes == null)
-            {
-                return null;
-            }
-
-            return bytes.Length == 0 ? new byte[0] : UrlEncodeToBytes(bytes, 0, bytes.Length);
-        }
-
-        /// <summary>
-        /// The url encode to bytes.
-        /// </summary>
-        /// <param name="bytes">
-        /// The bytes.
-        /// </param>
-        /// <param name="offset">
-        /// The offset.
-        /// </param>
-        /// <param name="count">
-        /// The count.
-        /// </param>
-        /// <returns>
-        /// The encoded bytes.
-        /// </returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// on invalid offset or count
-        /// </exception>
-        public static byte[] UrlEncodeToBytes(byte[] bytes, int offset, int count)
+        private static byte[] UrlEncodeToBytes(byte[] bytes, int offset, int count)
         {
             if (bytes == null)
             {
@@ -324,32 +263,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             return result.ToArray();
         }
 
-        /// <summary>
-        /// The url encode unicode.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <returns>
-        /// The <see cref="string"/>.
-        /// </returns>
-        public static string UrlEncodeUnicode(string text)
-        {
-            return text == null ? null : Encoding.ASCII.GetString(UrlEncodeUnicodeToBytes(text));
-        }
-
-        /// <summary>
-        /// The url encode char.
-        /// </summary>
-        /// <param name="symbol">
-        /// The symbol.
-        /// </param>
-        /// <param name="result">
-        /// The result.
-        /// </param>
-        /// <param name="isUnicode">
-        /// The is unicode.
-        /// </param>
         private static void UrlEncodeChar(char symbol, Stream result, bool isUnicode)
         {
             var hexChars = "0123456789abcdef".ToCharArray();
@@ -413,36 +326,6 @@ namespace EdugameCloud.Lti.API.AdobeConnect
             }
         }
 
-        /// <summary>
-        /// The url encode unicode to bytes.
-        /// </summary>
-        /// <param name="text">
-        /// The text.
-        /// </param>
-        /// <returns>
-        /// The bytes.
-        /// </returns>
-        private static byte[] UrlEncodeUnicodeToBytes(string text)
-        {
-            if (text == null)
-            {
-                return null;
-            }
-
-            if (text == string.Empty)
-            {
-                return new byte[0];
-            }
-
-            var result = new MemoryStream(text.Length);
-
-            foreach (var c in text)
-            {
-                UrlEncodeChar(c, result, true);
-            }
-
-            return result.ToArray();
-        }
     }
 
 }

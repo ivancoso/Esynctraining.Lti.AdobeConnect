@@ -59,8 +59,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Mp4.Host",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Telephony", "EdugameCloud.Lti.Telephony\EdugameCloud.Lti.Telephony.csproj", "{D1C9FBB4-1F27-4BDB-846C-C3FF86441D76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esynctraining.AdobeConnect.WebApi", "Esynctraining.AdobeConnect.WebApi\Esynctraining.AdobeConnect.WebApi.csproj", "{0E8BD124-A63C-4F57-86AE-58B97CFA3752}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Content.Host", "EdugameCloud.Lti.Content.Host\EdugameCloud.Lti.Content.Host.csproj", "{F36FD586-01F6-49E5-9CA9-30118F3A2CE6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdugameCloud.Lti.Host", "EdugameCloud.Lti.Host\EdugameCloud.Lti.Host.csproj", "{0DDBBDBC-1479-4592-9E0A-EE25B5AC947B}"
@@ -417,20 +415,6 @@ Global
 		{D1C9FBB4-1F27-4BDB-846C-C3FF86441D76}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{D1C9FBB4-1F27-4BDB-846C-C3FF86441D76}.ServiceRelease|Any CPU.Build.0 = Release|Any CPU
 		{D1C9FBB4-1F27-4BDB-846C-C3FF86441D76}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.LmsUserUpdaterRelease|Any CPU.Build.0 = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Mp4Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Mp4Release|Any CPU.Build.0 = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.MyContentRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.MyContentRelease|Any CPU.Build.0 = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.PublicApiRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.RootRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.ServiceRelease|Any CPU.ActiveCfg = Release|Any CPU
-		{0E8BD124-A63C-4F57-86AE-58B97CFA3752}.WebRequesterRelease|Any CPU.ActiveCfg = Release|Any CPU
 		{F36FD586-01F6-49E5-9CA9-30118F3A2CE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F36FD586-01F6-49E5-9CA9-30118F3A2CE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F36FD586-01F6-49E5-9CA9-30118F3A2CE6}.LmsUserUpdaterRelease|Any CPU.ActiveCfg = Release|Any CPU
